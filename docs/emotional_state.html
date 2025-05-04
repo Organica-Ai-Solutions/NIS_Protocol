@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emotional State System - NIS Protocol</title>
+    <style>
+        :root {
+            --primary-color: #2a9d8f; /* Organic teal/green */
+            --secondary-color: #8ab17d; /* Soft green */
+            --accent-color: #e9c46a; /* Warm yellow */
+            --text-color: #2d3748;
+            --light-bg: #f8f9fa;
+            --dark-bg: #264653; /* Dark blue/green */
+            --earth-tone: #6b705c; /* Earthy olive */
+            --cream: #f2f4e8; /* Natural cream color */
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--cream);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--dark-bg));
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+        
+        .logo {
+            max-width: 150px;
+            margin-bottom: 1rem;
+            border-radius: 50%;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        nav {
+            background-color: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+        
+        .nav-logo {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-logo:hover {
+            color: var(--secondary-color);
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-left: 1.5rem;
+        }
+        
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 0;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-links a:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+        
+        .nav-links a:hover:after {
+            width: 100%;
+        }
+        
+        section {
+            padding: 4rem 0;
+        }
+        
+        section.hero {
+            background-color: white;
+            padding: 4rem 0;
+        }
+        
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        h2:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 80px;
+            height: 3px;
+            background-color: var(--accent-color);
+        }
+        
+        h3 {
+            font-size: 1.5rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+        
+        p {
+            margin-bottom: 1rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 30px;
+            text-decoration: none;
+            margin-top: 1rem;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            border: none;
+            font-weight: 500;
+        }
+        
+        .btn:hover {
+            background-color: #799c6c;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background-color: var(--primary-color);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #248a7f;
+        }
+        
+        .diagram {
+            max-width: 100%;
+            margin: 2rem 0;
+            display: block;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .table-container {
+            margin: 2rem 0;
+            overflow-x: auto;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            overflow: hidden;
+        }
+        
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            position: relative;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        tr:hover {
+            background-color: rgba(42, 157, 143, 0.05);
+        }
+        
+        .emotion-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            padding: 1.8rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--primary-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .emotion-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .suspicion {
+            border-color: #ef6351; /* Coral */
+        }
+        
+        .urgency {
+            border-color: #f4a261; /* Orange */
+        }
+        
+        .confidence {
+            border-color: #57cc99; /* Light green */
+        }
+        
+        .interest {
+            border-color: #38a3a5; /* Teal */
+        }
+        
+        .novelty {
+            border-color: #c77dff; /* Purple */
+        }
+        
+        .code-block {
+            background-color: #f1f5f9;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.8rem 0;
+            overflow-x: auto;
+            font-family: 'Fira Code', Consolas, Monaco, 'Andale Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--dark-bg);
+            border-left: 4px solid var(--secondary-color);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .code-block pre {
+            margin: 0;
+        }
+        
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        li {
+            margin-bottom: 0.5rem;
+        }
+        
+        footer {
+            background-color: var(--dark-bg);
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+            margin-top: 3rem;
+        }
+        
+        footer a {
+            color: var(--accent-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        footer a:hover {
+            color: #f0d48a;
+            text-decoration: underline;
+        }
+        
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background-color: var(--primary-color);
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .back-to-top:hover {
+            opacity: 1;
+            transform: translateY(-3px);
+        }
+        
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            header p {
+                font-size: 1rem;
+            }
+            
+            h2 {
+                font-size: 1.75rem;
+            }
+            
+            .nav-container {
+                flex-direction: column;
+            }
+            
+            .nav-links {
+                margin-top: 1rem;
+            }
+            
+            .nav-links li {
+                margin-left: 1rem;
+                margin-right: 1rem;
+            }
+            
+            td, th {
+                padding: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="container nav-container">
+            <a href="index.html" class="nav-logo">NIS Protocol</a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="architecture.html">Architecture</a></li>
+                <li><a href="NIS_Protocol_Whitepaper.html">White Paper</a></li>
+                <li><a href="examples.html">Examples</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <header>
+        <div class="container">
+            <h1>Emotional State System</h1>
+            <p>A unique feature of the NIS Protocol that modulates agent behavior based on context-sensitive dimensions</p>
+        </div>
+    </header>
+    
+    <section>
+        <div class="container">
+            <h2>Overview</h2>
+            <p>
+                The Emotional State System is a core innovation of the NIS Protocol, inspired by how emotions influence human decision-making processes. Unlike traditional priority systems, these emotional dimensions provide a more nuanced and adaptive approach to resource allocation, attention management, and decision thresholds.
+            </p>
+            
+            <p>
+                Each emotional dimension represents a different aspect of the system's state, such as urgency, suspicion, or confidence. These dimensions decay over time, naturally returning to a neutral state unless consistently reinforced, creating a dynamic system that responds differently based on context and recent history.
+            </p>
+            
+            <div style="text-align: center;">
+                <img src="https://mermaid.ink/img/pako:eNqNlN1u2jAUx1_FsptAKkVK6ccoRCHttAtQUFVVu5jdOCcQKbEj28nKWN892AlQWjYu4iL-f87_HNs-cm-UkBRZb5SmrE8jCd6dtRvzxV2v10tSrkaVlQ2CLlddZ1_LSSvtbGvjA4DKbIwZm40xMyoFRxpCrdQI7I5dYzA9j1YYJVFJu46SdlNMOPNDYCeqIV3vDF_zrG5vsqbCqqLqfB_YmOi8CQ6xO6X1Ml8ucxrXeSFpK2FIa1ItbCHN-Q62I0uDPiEL1HSHOzJGZxPlhCkHSPdWg9c49oHpDpW8wXoI7lJSrukOVWMcx4YxlDWRJCbShCwtRLZcLhudJMcwQR-1KMQSDjm_5nZGTFe8bM4WbIjzDcM-A6RN5gk8JE4rDIfSc7IIB68BHPsXkDeDZ44P1m60ZBDk_qNUF_BnCakIM9Vc3UfpSPdgLbP2DXuOBuwXq7bmJmOpz9pGfVz68aEQB7uYxUuxeE-OtYWsCyVN1Vu5rodKaHPjA4kR6_o8OzNrBgfmaXrecFlMBoTUXPK4icX-uVe2RmN0a0FfvJKTF6ZWrS6rgrHS7CR__Tt1_UbQj9bV-X-zb0_uZ0ORgkflzu2F-cVCnF_Q_qtAEVnXTsS8X034C3P2_GVFFZOXW5SUXL2ej74YxycnMZvdqt-rbm2MjtpbmeuWk8sDa7nffw" alt="Emotional State System Diagram" class="diagram">
+            </div>
+            
+            <h3>Key Benefits</h3>
+            <ul>
+                <li>Dynamic prioritization of inputs and actions based on context</li>
+                <li>Automatic decay mechanics that mimic human attention shifts</li>
+                <li>More nuanced decision thresholds that adapt to changing situations</li>
+                <li>Natural resource allocation that focuses on novel or urgent inputs</li>
+                <li>System-level awareness of potential issues or opportunities</li>
+            </ul>
+        </div>
+    </section>
+    
+    <section>
+        <div class="container">
+            <h2>Emotional Dimensions</h2>
+            <p>
+                The NIS Protocol defines five core emotional dimensions, each influencing different aspects of system behavior. These dimensions exist on a scale from 0.0 (very low) to 1.0 (very high), with 0.5 representing a neutral state.
+            </p>
+            
+            <div class="emotion-card suspicion">
+                <h3>Suspicion</h3>
+                <p><strong>Default Decay Rate:</strong> 0.05 per time unit</p>
+                <p>
+                    Suspicion represents the system's level of caution or scrutiny toward inputs and patterns. Higher suspicion leads to more thorough verification and analysis of data.
+                </p>
+                <p><strong>Triggers:</strong> unusual patterns, warning signs, security alerts, inconsistent data</p>
+                <p><strong>Effects:</strong></p>
+                <ul>
+                    <li>Increases scrutiny of inputs and decisions</li>
+                    <li>Lowers threshold for flagging anomalies</li>
+                    <li>Activates additional verification steps</li>
+                    <li>Allocates more resources to security or validation</li>
+                </ul>
+            </div>
+            
+            <div class="emotion-card urgency">
+                <h3>Urgency</h3>
+                <p><strong>Default Decay Rate:</strong> 0.10 per time unit</p>
+                <p>
+                    Urgency reflects the time-sensitive nature of current operations. Higher urgency prioritizes speed and immediate response over thoroughness.
+                </p>
+                <p><strong>Triggers:</strong> deadlines, critical events, time-sensitive inputs, emergency signals</p>
+                <p><strong>Effects:</strong></p>
+                <ul>
+                    <li>Increases priority of task processing</li>
+                    <li>Reduces processing time at the cost of thoroughness</li>
+                    <li>Allocates more computational resources to immediate tasks</li>
+                    <li>May bypass certain non-critical verification steps</li>
+                </ul>
+            </div>
+            
+            <div class="emotion-card confidence">
+                <h3>Confidence</h3>
+                <p><strong>Default Decay Rate:</strong> 0.02 per time unit</p>
+                <p>
+                    Confidence represents the system's trust in its own assessments and decisions. Higher confidence allows for more decisive action with less deliberation.
+                </p>
+                <p><strong>Triggers:</strong> confirmed predictions, successful outcomes, stable patterns, expert inputs</p>
+                <p><strong>Effects:</strong></p>
+                <ul>
+                    <li>Lowers decision thresholds (requires less evidence)</li>
+                    <li>Reduces redundant verification of trusted sources</li>
+                    <li>Enables more autonomous decision-making</li>
+                    <li>Increases assertiveness in responses or recommendations</li>
+                </ul>
+            </div>
+            
+            <div class="emotion-card interest">
+                <h3>Interest</h3>
+                <p><strong>Default Decay Rate:</strong> 0.03 per time unit</p>
+                <p>
+                    Interest directs attention toward specific features, topics, or domains. Higher interest allocates more resources to related inputs or patterns.
+                </p>
+                <p><strong>Triggers:</strong> priority topics, user focus areas, high-value domains, previously useful information</p>
+                <p><strong>Effects:</strong></p>
+                <ul>
+                    <li>Directs more processing resources to areas of interest</li>
+                    <li>Increases retention of related information in memory</li>
+                    <li>Enhances pattern recognition for topics of interest</li>
+                    <li>Prioritizes reporting or actions related to interested areas</li>
+                </ul>
+            </div>
+            
+            <div class="emotion-card novelty">
+                <h3>Novelty</h3>
+                <p><strong>Default Decay Rate:</strong> 0.15 per time unit</p>
+                <p>
+                    Novelty highlights deviation from expectations or previously observed patterns. Higher novelty directs attention to new or unexpected inputs.
+                </p>
+                <p><strong>Triggers:</strong> new patterns, unexpected inputs, deviations from predictions, first-time events</p>
+                <p><strong>Effects:</strong></p>
+                <ul>
+                    <li>Increases attention to novel stimuli or patterns</li>
+                    <li>Allocates more resources to processing new information</li>
+                    <li>Enhances learning from unexpected outcomes</li>
+                    <li>Prioritizes storage of novel experiences in memory</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+    
+    <section>
+        <div class="container">
+            <h2>Decay Mechanism</h2>
+            <p>
+                A key feature of the emotional state system is that dimensions naturally decay toward a neutral state (0.5) over time. This decay creates a system that "forgets" emotional responses unless they are continuously reinforced, similar to how human emotions naturally fade.
+            </p>
+            
+            <p>
+                Each emotional dimension has a different decay rate, reflecting how different emotions persist in biological systems:
+            </p>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Dimension</th>
+                            <th>Decay Rate</th>
+                            <th>Persistence</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Novelty</td>
+                            <td>0.15</td>
+                            <td>Very Short</td>
+                            <td>Novelty fades quickly as stimuli become familiar</td>
+                        </tr>
+                        <tr>
+                            <td>Urgency</td>
+                            <td>0.10</td>
+                            <td>Short</td>
+                            <td>Time pressure naturally diminishes after immediate events</td>
+                        </tr>
+                        <tr>
+                            <td>Suspicion</td>
+                            <td>0.05</td>
+                            <td>Medium</td>
+                            <td>Caution lingers longer after potential threats</td>
+                        </tr>
+                        <tr>
+                            <td>Interest</td>
+                            <td>0.03</td>
+                            <td>Long</td>
+                            <td>Topics of interest remain relevant for extended periods</td>
+                        </tr>
+                        <tr>
+                            <td>Confidence</td>
+                            <td>0.02</td>
+                            <td>Very Long</td>
+                            <td>Trust builds slowly and persists longer</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <p>
+                The decay mechanism is implemented as follows:
+            </p>
+            
+            <div class="code-block">
+                <pre>def _apply_decay(self) -> None:
+    """Apply time-based decay to all emotional dimensions."""
+    current_time = time.time()
+    elapsed = current_time - self.last_update
+    
+    # Apply decay to each dimension
+    for dimension, value in self.state.items():
+        decay_rate = self.decay_rates.get(dimension, 0.05)
+        decay_amount = decay_rate * elapsed
+        
+        # Move toward neutral (0.5)
+        if value > 0.5:
+            self.state[dimension] = max(0.5, value - decay_amount)
+        elif value < 0.5:
+            self.state[dimension] = min(0.5, value + decay_amount)
+            
+    self.last_update = current_time</pre>
+            </div>
+        </div>
+    </section>
+    
+    <section>
+        <div class="container">
+            <h2>Using Emotional State in Agents</h2>
+            <p>
+                Agents in the NIS Protocol both update and respond to the emotional state system. This bidirectional relationship creates a dynamic and adaptive system that evolves based on experience.
+            </p>
+            
+            <h3>Updating Emotional State</h3>
+            <p>
+                Agents update emotional dimensions based on their observations and outcomes:
+            </p>
+            
+            <div class="code-block">
+                <pre># Example: Vision Agent detects an unusual object
+if detection_confidence < 0.3 and object_type == "unknown":
+    # Increase suspicion due to unrecognized object
+    self.emotional_state.update("suspicion", 0.7)
+    
+    # Increase novelty due to new pattern
+    self.emotional_state.update("novelty", 0.8)
+    
+# Example: Input Agent receives an urgent command
+if "urgent" in command_text or "immediately" in command_text:
+    # Increase urgency based on command language
+    self.emotional_state.update("urgency", 0.9)</pre>
+            </div>
+            
+            <h3>Responding to Emotional State</h3>
+            <p>
+                Agents adjust their behavior based on the current emotional state:
+            </p>
+            
+            <div class="code-block">
+                <pre># Example: Cortex Agent adjusts decision threshold based on suspicion
+suspicion_level = self.emotional_state.get_dimension("suspicion")
+confidence_level = self.emotional_state.get_dimension("confidence")
+
+# Calculate decision threshold dynamically
+if suspicion_level > 0.7:
+    # Higher threshold when suspicious
+    decision_threshold = 0.75
+elif confidence_level > 0.8:
+    # Lower threshold when confident
+    decision_threshold = 0.6
+else:
+    # Default threshold
+    decision_threshold = 0.7
+    
+# Apply threshold to decision
+if evidence_score > decision_threshold:
+    decision = "approve"
+else:
+    decision = "reject"</pre>
+            </div>
+        </div>
+    </section>
+    
+    <section>
+        <div class="container">
+            <h2>Practical Example: Toll Booth System</h2>
+            <p>
+                The toll booth example demonstrates how emotional state influences a real-world system:
+            </p>
+            
+            <div class="code-block">
+                <pre># Decision logic with emotional influence
+suspicion_level = self.emotional_state.get_dimension("suspicion")
+urgency_level = self.emotional_state.get_dimension("urgency")
+
+# Default decision
+decision = "allow_passage"
+
+# Payment issues increase suspicion
+if payment_status in ["missing_payment", "expired_payment"]:
+    decision = "deny_passage"
+    self.emotional_state.update("suspicion", 0.7)
+
+# Previous violations increase suspicion
+if previous_violations > 0:
+    violation_ratio = previous_violations / max(1, previous_passages)
+    if violation_ratio > 0.3:  # More than 30% violations
+        self.emotional_state.update("suspicion", 0.8)
+        
+        if decision == "allow_passage":
+            decision = "flag_for_inspection"
+
+# High urgency (high traffic) might lower inspection threshold
+if urgency_level > 0.7 and decision == "flag_for_inspection":
+    # In high urgency situations, we might let more vehicles through
+    # to prevent traffic jams, accepting some risk
+    if random.random() > suspicion_level:
+        decision = "allow_passage"
+        reason += " (expedited due to high traffic)"</pre>
+            </div>
+            
+            <p>
+                In this example, the system balances multiple factors:
+            </p>
+            <ul>
+                <li>Payment issues increase suspicion, leading to denied passage</li>
+                <li>Vehicle history affects suspicion level and inspection decisions</li>
+                <li>Traffic conditions (urgency) can override suspicion in some cases</li>
+                <li>The system learns over time from successful and problematic passages</li>
+            </ul>
+        </div>
+    </section>
+    
+    <section>
+        <div class="container">
+            <h2>Implementing Your Own Emotional State System</h2>
+            <p>
+                To implement an emotional state system in your own NIS Protocol application:
+            </p>
+            
+            <ol>
+                <li>
+                    <p><strong>Define Relevant Dimensions</strong></p>
+                    <p>Choose the emotional dimensions most relevant to your application domain. The five core dimensions (suspicion, urgency, confidence, interest, novelty) are a good starting point, but you can add domain-specific dimensions if needed.</p>
+                </li>
+                <li>
+                    <p><strong>Set Appropriate Decay Rates</strong></p>
+                    <p>Configure decay rates based on how persistent each dimension should be in your system. Fast-changing aspects should have higher decay rates.</p>
+                </li>
+                <li>
+                    <p><strong>Establish Update Triggers</strong></p>
+                    <p>Identify specific events, inputs, or patterns that should trigger changes in each emotional dimension.</p>
+                </li>
+                <li>
+                    <p><strong>Implement Decision Modulation</strong></p>
+                    <p>Modify agent behavior based on the current emotional state, adjusting thresholds, priorities, and resource allocation.</p>
+                </li>
+                <li>
+                    <p><strong>Create Feedback Loops</strong></p>
+                    <p>Ensure actions and outcomes update the emotional state, creating a learning system that adapts over time.</p>
+                </li>
+            </ol>
+            
+            <div style="text-align: center; margin-top: 2rem;">
+                <a href="memory_system.html" class="btn">Next: Memory System</a>
+                <a href="architecture.html" class="btn btn-secondary">Back to Architecture</a>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <div class="container">
+            <p>
+                &copy; 2024 Organica AI Solutions. Released under MIT License.
+            </p>
+            <p>
+                <a href="https://github.com/Organica-Ai-Solutions/NIS_Protocol">GitHub</a> |
+                <a href="NIS_Protocol_Whitepaper.html">White Paper</a> |
+                <a href="index.html">Home</a>
+            </p>
+        </div>
+    </footer>
+    
+    <a href="#" class="back-to-top">↑</a>
+</body>
+</html> 
