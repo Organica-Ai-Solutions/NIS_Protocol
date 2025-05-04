@@ -104,6 +104,6 @@ The NIS Protocol is released under the [MIT License](LICENSE).
 
 ## 🔗 Contact
 
-- **GitHub**: [github.com/Organica-Ai-Solutions/NIS_Protocol](https://github.com/Organica-Ai-Solutions/NIS_Protocol)
+- **GitHub**: [github.com/Organica-AI-Solutions/NIS-Protocol](https://github.com/Organica-AI-Solutions/NIS-Protocol)
 - **Email**: hello@organicaai.com
 - **Website**: [organicaai.com](https://organicaai.com) 
