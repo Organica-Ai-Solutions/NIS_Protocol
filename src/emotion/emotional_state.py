@@ -1,123 +1,285 @@
 """
-NIS Protocol Emotional State Module
+NIS Protocol Emotional State System Implementation
 
-This module implements the emotional state management for the NIS Protocol.
+This module provides the emotional state system that modulates agent behavior
+based on context-sensitive dimensions analogous to human emotions.
 """
 
-from enum import Enum
-from typing import Dict, Any, Optional
 import time
+from typing import Dict, Optional, List, Tuple, Any
 
-
-class EmotionalDimension(Enum):
-    """Emotional dimensions used in the NIS Protocol."""
+class EmotionalStateSystem:
+    """Emotional state management for NIS Protocol.
     
-    SUSPICION = "suspicion"  # Increases scrutiny of unusual patterns
-    URGENCY = "urgency"      # Prioritizes time-sensitive processing
-    CONFIDENCE = "confidence"  # Influences threshold for decision-making
-    INTEREST = "interest"    # Directs attention to specific features
-    NOVELTY = "novelty"      # Highlights deviation from expectations
-
-
-class EmotionalState:
-    """
-    Manages the emotional state of NIS Protocol agents.
+    The Emotional State System is a unique feature of the NIS Protocol that modulates 
+    agent behavior based on context-sensitive dimensions analogous to human emotions. 
+    Unlike traditional priority systems, these dimensions decay over time and influence 
+    multiple aspects of system behavior.
     
-    Emotional state influences decision-making, attention, and resource allocation
-    in the NIS Protocol.
+    Attributes:
+        state: Dictionary of emotional dimensions and their current values
+        decay_rates: Dictionary of emotional dimensions and their decay rates
+        last_update: Timestamp of the last update to the emotional state
+        influence_matrix: Dictionary mapping emotional dimensions to influenced behaviors
     """
     
-    def __init__(self, initial_state: Optional[Dict[str, float]] = None):
-        """
-        Initialize emotional state with default or provided values.
+    def __init__(self, custom_dimensions: Optional[Dict[str, float]] = None):
+        """Initialize the emotional state system.
         
         Args:
-            initial_state: Optional initial emotional state values (0.0-1.0)
+            custom_dimensions: Optional dictionary of custom emotional dimensions
+                              and their initial values
         """
-        # Default neutral state (0.5 for all dimensions)
+        # Default emotional dimensions
         self.state = {
-            EmotionalDimension.SUSPICION.value: 0.5,
-            EmotionalDimension.URGENCY.value: 0.5,
-            EmotionalDimension.CONFIDENCE.value: 0.5,
-            EmotionalDimension.INTEREST.value: 0.5,
-            EmotionalDimension.NOVELTY.value: 0.5
+            "suspicion": 0.5,   # Increases scrutiny of unusual patterns
+            "urgency": 0.5,     # Prioritizes time-sensitive processing
+            "confidence": 0.5,  # Influences threshold for decision-making
+            "interest": 0.5,    # Directs attention to specific features
+            "novelty": 0.5      # Highlights deviation from expectations
         }
         
-        # Override with any provided values
-        if initial_state:
-            for dimension, value in initial_state.items():
-                if dimension in self.state:
-                    self.state[dimension] = max(0.0, min(1.0, value))
+        # Add any custom dimensions
+        if custom_dimensions:
+            for dimension, value in custom_dimensions.items():
+                # Ensure the value is in the valid range
+                self.state[dimension] = max(0.0, min(1.0, value))
         
-        # Decay rates determine how quickly emotions return to neutral
+        # Default decay rates (per second)
         self.decay_rates = {
-            EmotionalDimension.SUSPICION.value: 0.05,  # Suspicion decays moderately
-            EmotionalDimension.URGENCY.value: 0.1,     # Urgency decays quickly
-            EmotionalDimension.CONFIDENCE.value: 0.02, # Confidence decays slowly
-            EmotionalDimension.INTEREST.value: 0.03,   # Interest decays slowly
-            EmotionalDimension.NOVELTY.value: 0.15     # Novelty decays very quickly
+            "suspicion": 0.05,
+            "urgency": 0.1,
+            "confidence": 0.03,
+            "interest": 0.07,
+            "novelty": 0.2
         }
         
-        # Last update timestamp for decay calculation
+        # Influence matrix: maps emotional dimensions to influenced behaviors
+        self.influence_matrix = {
+            "suspicion": ["validation_threshold", "verification_level", "scrutiny_depth"],
+            "urgency": ["processing_priority", "resource_allocation", "response_time"],
+            "confidence": ["decision_threshold", "action_boldness", "retry_attempts"],
+            "interest": ["attention_focus", "detail_level", "memory_retention"],
+            "novelty": ["learning_rate", "exploration_bias", "pattern_sensitivity"]
+        }
+        
+        # Initialize the last update timestamp
         self.last_update = time.time()
+        
+        # History of emotional state changes
+        self.history: List[Tuple[float, Dict[str, float]]] = []
+        self._record_history()
     
-    def update(self, dimension: str, value: float) -> None:
-        """
-        Update a single emotional dimension.
+    def update(self, dimension: str, value: float, record_history: bool = True) -> None:
+        """Update an emotional dimension.
         
         Args:
             dimension: The emotional dimension to update
-            value: The new value (0.0-1.0)
+            value: The new value (0.0 to 1.0)
+            record_history: Whether to record this update in history
+        
+        Raises:
+            ValueError: If the dimension does not exist
         """
-        # Apply decay first to get current state
+        # Apply decay to ensure we're starting from the current state
         self._apply_decay()
         
-        # Ensure dimension exists
+        # Check if the dimension exists
         if dimension not in self.state:
-            return
+            raise ValueError(f"Emotional dimension '{dimension}' does not exist")
         
-        # Ensure value is in range [0.0, 1.0]
-        value = max(0.0, min(1.0, value))
+        # Ensure the value is in the valid range
+        clamped_value = max(0.0, min(1.0, value))
         
-        # Update with exponential moving average (70% current, 30% new)
-        current = self.state[dimension]
-        self.state[dimension] = 0.7 * current + 0.3 * value
+        # Update the dimension
+        self.state[dimension] = clamped_value
         
-        # Update timestamp
+        # Update the timestamp
         self.last_update = time.time()
+        
+        # Record history if requested
+        if record_history:
+            self._record_history()
     
     def get_state(self) -> Dict[str, float]:
-        """
-        Get the current emotional state.
+        """Get the current emotional state.
         
         Returns:
-            Dictionary of emotional dimensions and values
+            Dictionary of emotional dimensions and their current values
         """
-        # Apply decay before returning
+        # Apply decay before returning the state
         self._apply_decay()
+        
+        # Return a copy of the state to prevent modification
         return self.state.copy()
     
     def get_dimension(self, dimension: str) -> float:
-        """
-        Get the current value of a specific emotional dimension.
+        """Get the current value of a specific emotional dimension.
         
         Args:
             dimension: The emotional dimension to get
             
         Returns:
-            The current value (0.0-1.0)
+            The current value of the dimension
+            
+        Raises:
+            ValueError: If the dimension does not exist
         """
-        # Apply decay first
+        # Apply decay before returning the value
         self._apply_decay()
-        return self.state.get(dimension, 0.5)
+        
+        # Check if the dimension exists
+        if dimension not in self.state:
+            raise ValueError(f"Emotional dimension '{dimension}' does not exist")
+        
+        return self.state[dimension]
+    
+    def reset(self) -> None:
+        """Reset all emotional dimensions to neutral (0.5)."""
+        for dimension in self.state:
+            self.state[dimension] = 0.5
+        
+        self.last_update = time.time()
+        self._record_history()
+    
+    def add_dimension(self, dimension: str, initial_value: float = 0.5, decay_rate: float = 0.05) -> None:
+        """Add a new emotional dimension.
+        
+        Args:
+            dimension: The name of the new dimension
+            initial_value: The initial value for the dimension (0.0 to 1.0)
+            decay_rate: The decay rate for the dimension (per second)
+            
+        Raises:
+            ValueError: If the dimension already exists
+        """
+        # Check if the dimension already exists
+        if dimension in self.state:
+            raise ValueError(f"Emotional dimension '{dimension}' already exists")
+        
+        # Ensure the initial value is in the valid range
+        clamped_value = max(0.0, min(1.0, initial_value))
+        
+        # Add the dimension
+        self.state[dimension] = clamped_value
+        self.decay_rates[dimension] = decay_rate
+        
+        # Record history
+        self._record_history()
+    
+    def remove_dimension(self, dimension: str) -> None:
+        """Remove an emotional dimension.
+        
+        Args:
+            dimension: The name of the dimension to remove
+            
+        Raises:
+            ValueError: If the dimension does not exist
+            ValueError: If the dimension is a default dimension
+        """
+        # Check if the dimension exists
+        if dimension not in self.state:
+            raise ValueError(f"Emotional dimension '{dimension}' does not exist")
+        
+        # Check if the dimension is a default dimension
+        if dimension in ["suspicion", "urgency", "confidence", "interest", "novelty"]:
+            raise ValueError(f"Cannot remove default dimension '{dimension}'")
+        
+        # Remove the dimension
+        del self.state[dimension]
+        del self.decay_rates[dimension]
+        
+        # Record history
+        self._record_history()
+    
+    def get_influenced_behaviors(self, dimension: str) -> List[str]:
+        """Get the behaviors influenced by a specific emotional dimension.
+        
+        Args:
+            dimension: The emotional dimension to get influenced behaviors for
+            
+        Returns:
+            List of behaviors influenced by the dimension
+            
+        Raises:
+            ValueError: If the dimension does not exist
+        """
+        # Check if the dimension exists
+        if dimension not in self.state:
+            raise ValueError(f"Emotional dimension '{dimension}' does not exist")
+        
+        # Return the influenced behaviors
+        return self.influence_matrix.get(dimension, [])
+    
+    def set_influence(self, dimension: str, behaviors: List[str]) -> None:
+        """Set the behaviors influenced by a specific emotional dimension.
+        
+        Args:
+            dimension: The emotional dimension to set influences for
+            behaviors: List of behaviors influenced by the dimension
+            
+        Raises:
+            ValueError: If the dimension does not exist
+        """
+        # Check if the dimension exists
+        if dimension not in self.state:
+            raise ValueError(f"Emotional dimension '{dimension}' does not exist")
+        
+        # Set the influenced behaviors
+        self.influence_matrix[dimension] = behaviors
+    
+    def get_behavioral_influence(self, behavior: str) -> Dict[str, float]:
+        """Get the influence of each emotional dimension on a specific behavior.
+        
+        Args:
+            behavior: The behavior to get influences for
+            
+        Returns:
+            Dictionary mapping emotional dimensions to their influence on the behavior
+        """
+        influences = {}
+        
+        for dimension, behaviors in self.influence_matrix.items():
+            if behavior in behaviors:
+                influences[dimension] = self.state[dimension]
+        
+        return influences
+    
+    def get_history(self, start_time: Optional[float] = None, end_time: Optional[float] = None) -> List[Tuple[float, Dict[str, float]]]:
+        """Get the history of emotional state changes.
+        
+        Args:
+            start_time: Optional start time to filter history
+            end_time: Optional end time to filter history
+            
+        Returns:
+            List of (timestamp, state) tuples
+        """
+        if start_time is None and end_time is None:
+            return self.history
+        
+        filtered_history = []
+        
+        for timestamp, state in self.history:
+            if start_time is not None and timestamp < start_time:
+                continue
+            if end_time is not None and timestamp > end_time:
+                continue
+            filtered_history.append((timestamp, state))
+        
+        return filtered_history
+    
+    def clear_history(self) -> None:
+        """Clear the history of emotional state changes."""
+        self.history = []
     
     def _apply_decay(self) -> None:
         """Apply time-based decay to all emotional dimensions."""
         current_time = time.time()
         elapsed = current_time - self.last_update
         
-        # Only apply decay if some time has passed
-        if elapsed < 0.01:
+        # If no time has passed, do nothing
+        if elapsed <= 0:
             return
         
         # Apply decay to each dimension
@@ -131,5 +293,47 @@ class EmotionalState:
             elif value < 0.5:
                 self.state[dimension] = min(0.5, value + decay_amount)
         
-        # Update timestamp
-        self.last_update = current_time 
+        # Update the timestamp
+        self.last_update = current_time
+    
+    def _record_history(self) -> None:
+        """Record the current emotional state in history."""
+        self.history.append((time.time(), self.state.copy()))
+        
+        # Limit history size to prevent memory issues
+        max_history_size = 1000
+        if len(self.history) > max_history_size:
+            self.history = self.history[-max_history_size:]
+    
+    def compute_overall_emotional_state(self) -> Dict[str, Any]:
+        """Compute an overall emotional state assessment.
+        
+        Returns:
+            Dictionary with overall emotional state assessment
+        """
+        # Apply decay to ensure we're using the current state
+        self._apply_decay()
+        
+        # Calculate the dominant emotional dimension
+        dominant_dimension = max(self.state.items(), key=lambda x: abs(x[1] - 0.5))[0]
+        
+        # Calculate the overall intensity (average deviation from neutral)
+        intensity = sum(abs(value - 0.5) for value in self.state.values()) / len(self.state)
+        
+        # Calculate the overall valence (positive/negative balance)
+        positive_dimensions = ["confidence", "interest"]
+        negative_dimensions = ["suspicion", "urgency"]
+        
+        positive_sum = sum(self.state.get(dim, 0.5) for dim in positive_dimensions)
+        negative_sum = sum(self.state.get(dim, 0.5) for dim in negative_dimensions)
+        
+        valence = (positive_sum / len(positive_dimensions)) - (negative_sum / len(negative_dimensions))
+        
+        # Create the overall assessment
+        return {
+            "dominant_dimension": dominant_dimension,
+            "intensity": intensity,
+            "valence": valence,
+            "state": self.state.copy(),
+            "timestamp": time.time()
+        } 

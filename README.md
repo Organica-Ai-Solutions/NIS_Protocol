@@ -1,79 +1,109 @@
 # Neuro-Inspired System Protocol (NIS Protocol)
 
-<div align="center">
-  <img src="diagrams/nis-protocol-logo.png" alt="NIS Protocol" width="300" />
-  <br>
-  <em>A biologically inspired framework for designing intelligent multi-agent systems</em>
-</div>
+![NIS Protocol Logo](assets/images/nis-protocol-logo.png)
 
-## Overview
+The Neuro-Inspired System Protocol (NIS Protocol) is a biologically inspired framework for designing intelligent multi-agent systems. Drawing on the structure and function of the human brain, this protocol integrates perception, memory, emotional weighting, reasoning, and action into a cohesive architecture, enabling more adaptive and naturally intelligent systems.
 
-The Neuro-Inspired System Protocol (NIS Protocol) introduces a biologically inspired framework for designing intelligent multi-agent systems. Drawing from the structure and function of the human brain, this protocol integrates perception, memory, emotional weighting, reasoning, and action into modular agents designed for real-time automation environments — such as tolling systems, surveillance, and smart infrastructure.
+## 📄 Whitepaper
 
-## Key Features
+For a comprehensive overview of the NIS Protocol:
 
-- **Biologically Plausible Architecture**: Mimics proven cognitive structures found in the brain
-- **Emotional Modulation**: Includes priority and suspicion weighting for more human-like decision-making
-- **Memory Integration**: Uses short and long-term memory systems to influence contextual decisions
-- **Modular Agent Design**: Each cognitive function is implemented as a specialized agent
-- **Adaptive Learning**: System improves over time through feedback loops and neuroplasticity
+- [Read Online Version](docs/NIS_Protocol_Whitepaper.html)
+- [Download PDF Version](docs/finalwhitepaper.pdf)
 
-## Protocol Layers
+## 🧠 Key Features
 
-| Layer | Biological Analogy | AI Role |
-|-------|-------------------|---------|
-| Perception | Visual Cortex | Processes sensory inputs (images, text, data streams) |
-| Memory | Hippocampus | Stores and retrieves historical data |
-| Emotion | Amygdala | Modulates priority and suspicion |
-| Reasoning | Prefrontal Cortex | Synthesizes inputs into decisions |
-| Action | Motor Cortex | Executes system actions |
-| Learning | Neuroplasticity | Adjusts weights and policies |
+- **Layered Cognitive Architecture**: Inspired by the brain's hierarchical processing
+- **Emotional State System**: Dynamic modulation of agent behavior through emotional dimensions
+- **Memory Integration**: Short and long-term memory for context-aware decision making
+- **Standardized Messaging**: Consistent message format for inter-agent communication
+- **Biologically Inspired Learning**: Continuous adaptation based on experience
 
-## Use Cases
+![NIS Protocol Architecture](assets/images/diagram.png)
 
-- **Automated Tolling Systems**
-- **Smart City Infrastructure**
-- **Security and Surveillance**
-- **Traffic Management**
-- **Healthcare Monitoring**
-- **Financial Fraud Detection**
+## 📖 Documentation
 
-## Repository Structure
+Comprehensive documentation is available to help you understand and implement the NIS Protocol:
 
-- `/architecture` - Detailed design documents
-- `/diagrams` - Visual representations of the protocol
-- `/docs` - Whitepapers and technical documentation
-- `/examples` - Implementation examples
-- `/research` - Background research and papers
-- `/src` - Reference implementation code
+- [Getting Started Guide](getting_started/index.html)
+- [Architecture Overview](architecture/index.html)
+- [Emotional State System](emotional_state/index.html)
+- [Memory System](memory_system/index.html)
+- [Implementation Examples](examples/index.html)
+- [Frequently Asked Questions](docs/faq.html)
 
-## Getting Started
+## 🔧 Installation
 
-See the [Documentation](/docs/README.md) for detailed information on implementing the NIS Protocol in your own projects.
+To install the NIS Protocol framework:
 
-## Roadmap
-
-- **Phase 1**: Core specification and documentation
-- **Phase 2**: Reference implementation in Python
-- **Phase 3**: Integration examples for common platforms
-- **Phase 4**: Performance benchmarks and optimization guides
-
-## Citation
-
-```
-@misc{torres2025nis,
-  author = {Torres, Diego},
-  title = {Neuro-Inspired System Protocol},
-  year = {2025},
-  publisher = {Organica AI Solutions},
-  url = {https://github.com/OrganicaAI/NIS-Protocol}
-}
+```bash
+pip install nis-protocol
 ```
 
-## License
+## 🚀 Quick Start
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+```python
+from nis_protocol import NISRegistry, NISAgent, NISLayer
 
-## Contact
+# Create a registry
+registry = NISRegistry()
 
-Organica AI Solutions - [hello@organicaai.com](mailto:hello@organicaai.com) 
+# Define a simple agent
+class MyPerceptionAgent(NISAgent):
+    def __init__(self):
+        super().__init__(
+            agent_id="my_perception_agent",
+            layer=NISLayer.PERCEPTION,
+            description="A simple perception agent"
+        )
+    
+    def process(self, message):
+        # Process incoming data
+        # ...
+        return processed_data
+
+# Register the agent
+agent = MyPerceptionAgent()
+
+# Start processing
+registry.start()
+```
+
+## 📊 Application Examples
+
+The NIS Protocol can be applied to various domains:
+
+![Usage Examples](assets/images/usesExamples.png)
+
+- **Autonomous Systems**: Robotics, drones, self-driving vehicles
+- **Smart Infrastructure**: Traffic management, energy distribution
+- **Security Applications**: Surveillance, fraud detection
+- **Healthcare**: Patient monitoring with adaptive priorities
+- **Customer Interaction**: Context-aware support systems
+
+## 🌟 Emotional State System
+
+The emotional state system modulates agent behavior based on context-sensitive dimensions:
+
+![Emotional State Heatmap](assets/images/heatmap.png)
+
+Key emotional dimensions include:
+- **Suspicion**: Increases scrutiny for unusual patterns
+- **Urgency**: Prioritizes time-sensitive processing
+- **Confidence**: Adjusts decision-making thresholds
+- **Interest**: Directs focus to specific features
+- **Novelty**: Highlights deviations from expectations
+
+## 🤝 Contributing
+
+Contributions to the NIS Protocol are welcome! Please see our [contribution guidelines](CONTRIBUTING.md) for details on how to get involved.
+
+## 📝 License
+
+The NIS Protocol is released under the [MIT License](LICENSE).
+
+## 🔗 Contact
+
+- **GitHub**: [github.com/Organica-Ai-Solutions/NIS_Protocol](https://github.com/Organica-Ai-Solutions/NIS_Protocol)
+- **Email**: hello@organicaai.com
+- **Website**: [organicaai.com](https://organicaai.com) 

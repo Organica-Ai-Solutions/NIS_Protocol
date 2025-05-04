@@ -1,249 +1,378 @@
 #!/usr/bin/env python3
 """
-Basic NIS Protocol Agent Communication Example
+Basic Agent Communication Example
 
-This example demonstrates the basics of NIS Protocol agent communication,
-emotional weighting, and decision-making.
+This example demonstrates how agents in the NIS Protocol communicate
+and how the emotional state system modulates their behavior.
 """
 
+import os
 import sys
 import time
-import random
 from typing import Dict, Any
 
-# Add the src directory to the path
-sys.path.insert(0, "../../src")
+# Add the parent directory to the path so we can import the NIS Protocol
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
-from core.registry import NISRegistry, NISAgent, NISLayer
-from emotion.emotional_state import EmotionalState, EmotionalDimension
+from src.core.agent import NISAgent, NISLayer
+from src.core.registry import NISRegistry
+from src.emotion.emotional_state import EmotionalStateSystem
+from src.memory.memory_manager import MemoryManager
 
-
-# Define some basic agents
-class VisionAgentSimple(NISAgent):
-    """Simple vision agent that simulates detecting vehicles."""
+class VisionAgent(NISAgent):
+    """Agent for processing visual inputs."""
     
-    def __init__(self):
-        super().__init__(
-            agent_id="vision_agent",
-            layer=NISLayer.PERCEPTION,
-            description="Basic vision agent for detecting vehicles"
-        )
-        self.vehicle_types = ["sedan", "suv", "truck", "motorcycle", "bus"]
-        
-    def process(self, message: Dict[str, Any]) -> Dict[str, Any]:
-        """Simulate detecting a vehicle."""
-        vehicle_type = random.choice(self.vehicle_types)
-        confidence = random.uniform(0.7, 0.99)
-        
-        return {
-            "vehicle_detected": True,
-            "vehicle_type": vehicle_type,
-            "confidence": confidence,
-            "timestamp": time.time()
-        }
-
-
-class MemoryAgentSimple(NISAgent):
-    """Simple memory agent that stores and retrieves data."""
+    def __init__(self, agent_id: str, description: str):
+        super().__init__(agent_id, NISLayer.PERCEPTION, description)
     
-    def __init__(self):
-        super().__init__(
-            agent_id="memory_agent",
-            layer=NISLayer.MEMORY,
-            description="Basic memory agent for storing vehicle data"
-        )
-        self.memory = {}
-        
     def process(self, message: Dict[str, Any]) -> Dict[str, Any]:
-        """Store or retrieve data."""
-        operation = message.get("operation", "")
+        """Process an incoming message.
         
-        if operation == "store":
-            key = message.get("key", "")
-            data = message.get("data", {})
-            if key:
-                self.memory[key] = data
-                return {"success": True, "key": key}
-            else:
-                return {"success": False, "error": "No key provided"}
-                
-        elif operation == "retrieve":
-            key = message.get("key", "")
-            if key in self.memory:
-                return {"success": True, "data": self.memory[key]}
-            else:
-                return {"success": False, "error": "Key not found"}
-                
-        return {"success": False, "error": "Unknown operation"}
-
-
-class EmotionAgentSimple(NISAgent):
-    """Simple emotion agent that manages emotional state."""
-    
-    def __init__(self):
-        super().__init__(
-            agent_id="emotion_agent",
-            layer=NISLayer.INTERPRETATION,
-            description="Basic emotion agent for weighting decisions"
-        )
-        self.emotional_state = EmotionalState()
+        In this simple example, we simulate detecting objects in an image.
+        """
+        start_time = self._start_processing_timer()
         
-    def process(self, message: Dict[str, Any]) -> Dict[str, Any]:
-        """Update or retrieve emotional state."""
-        operation = message.get("operation", "")
+        # Extract the image data from the message
+        image_data = message.get("payload", {}).get("image_data")
         
-        if operation == "update":
-            dimension = message.get("dimension", "")
-            value = message.get("value", 0.5)
+        if not image_data:
+            # No image data provided
+            processing_time = self._end_processing_timer(start_time)
             
-            if dimension:
-                self.emotional_state.update(dimension, value)
-                return {"success": True, "dimension": dimension, "value": value}
-            else:
-                return {"success": False, "error": "No dimension provided"}
-                
-        elif operation == "get_state":
-            return {
-                "success": True,
-                "emotional_state": self.emotional_state.get_state()
-            }
-            
-        return {"success": False, "error": "Unknown operation"}
-
-
-class ReasoningAgentSimple(NISAgent):
-    """Simple reasoning agent that makes decisions."""
-    
-    def __init__(self, emotion_agent):
-        super().__init__(
-            agent_id="reasoning_agent",
-            layer=NISLayer.REASONING,
-            description="Basic reasoning agent for decision-making"
-        )
-        self.emotion_agent = emotion_agent
+            return self._create_response(
+                status="error",
+                payload={"error": "No image data provided"},
+                metadata={},
+                emotional_state=message.get("emotional_state")
+            )
         
-    def process(self, message: Dict[str, Any]) -> Dict[str, Any]:
-        """Make a decision based on input and emotional state."""
-        # Get current emotional state
-        emotion_response = self.emotion_agent.process({"operation": "get_state"})
-        emotional_state = emotion_response.get("emotional_state", {})
+        # Simulate object detection
+        # In a real implementation, this would use computer vision libraries
+        detected_objects = []
         
-        # Extract relevant data from message
-        vehicle_type = message.get("vehicle_type", "")
-        confidence = message.get("confidence", 0.0)
-        
-        # Apply emotional weighting to decision
-        suspicion = emotional_state.get("suspicion", 0.5)
-        urgency = emotional_state.get("urgency", 0.5)
-        
-        # Calculate inspection threshold based on emotional state
-        inspection_threshold = 0.3 - (suspicion * 0.2)  # Lower threshold when suspicious
-        
-        # Determine if vehicle needs inspection
-        random_factor = random.uniform(0.0, 0.1)  # Small random factor
-        needs_inspection = (confidence < inspection_threshold) or (random_factor > 0.95)
-        
-        # Update emotional state based on decision
-        if needs_inspection:
-            # Increase suspicion when we need to inspect
-            self.emotion_agent.process({
-                "operation": "update",
-                "dimension": "suspicion",
-                "value": suspicion + 0.1
+        if "car" in image_data:
+            detected_objects.append({
+                "type": "vehicle",
+                "confidence": 0.95,
+                "location": [100, 200, 300, 400]
             })
         
-        return {
-            "decision": "inspect" if needs_inspection else "proceed",
-            "confidence": confidence,
-            "inspection_threshold": inspection_threshold,
-            "suspicion_level": suspicion,
-            "urgency_level": urgency
-        }
-
-
-class ActionAgentSimple(NISAgent):
-    """Simple action agent that executes decisions."""
-    
-    def __init__(self):
-        super().__init__(
-            agent_id="action_agent",
-            layer=NISLayer.ACTION,
-            description="Basic action agent for executing decisions"
-        )
+        if "person" in image_data:
+            detected_objects.append({
+                "type": "person",
+                "confidence": 0.85,
+                "location": [50, 100, 100, 200]
+            })
         
-    def process(self, message: Dict[str, Any]) -> Dict[str, Any]:
-        """Execute the decision."""
-        decision = message.get("decision", "")
-        
-        if decision == "inspect":
-            print(f"🔴 GATE: Stopping vehicle for inspection")
-            return {"action": "stop_vehicle", "gate": "closed"}
+        # Suspicious object detection
+        if "suspicious" in image_data:
+            detected_objects.append({
+                "type": "unknown",
+                "confidence": 0.3,
+                "location": [400, 300, 450, 350]
+            })
+            
+            # Update emotional state - increase suspicion
+            emotional_state = message.get("emotional_state", {})
+            emotional_state = self._update_emotional_state(emotional_state, "suspicion", 0.8)
         else:
-            print(f"🟢 GATE: Allowing vehicle to proceed")
-            return {"action": "allow_vehicle", "gate": "open"}
+            emotional_state = message.get("emotional_state")
+        
+        processing_time = self._end_processing_timer(start_time)
+        
+        return self._create_response(
+            status="success",
+            payload={"detected_objects": detected_objects},
+            metadata={"object_count": len(detected_objects)},
+            emotional_state=emotional_state
+        )
+
+class MemoryAgent(NISAgent):
+    """Agent for storing and retrieving information."""
+    
+    def __init__(self, agent_id: str, description: str):
+        super().__init__(agent_id, NISLayer.MEMORY, description)
+        self.memory_manager = MemoryManager()
+    
+    def process(self, message: Dict[str, Any]) -> Dict[str, Any]:
+        """Process an incoming message."""
+        start_time = self._start_processing_timer()
+        
+        # Get the current emotion state
+        emotional_state = message.get("emotional_state", {})
+        
+        # Process the message based on the operation
+        operation = message.get("payload", {}).get("operation")
+        
+        if operation == "store":
+            key = message["payload"].get("key")
+            data = message["payload"].get("data")
+            
+            if not key or not data:
+                processing_time = self._end_processing_timer(start_time)
+                return self._create_response(
+                    status="error",
+                    payload={"error": "Missing key or data for store operation"},
+                    metadata={},
+                    emotional_state=emotional_state
+                )
+            
+            self.memory_manager.store(key, data)
+            
+            processing_time = self._end_processing_timer(start_time)
+            return self._create_response(
+                status="success",
+                payload={"message": f"Data stored with key {key}"},
+                metadata={},
+                emotional_state=emotional_state
+            )
+            
+        elif operation == "retrieve":
+            key = message["payload"].get("key")
+            
+            if not key:
+                processing_time = self._end_processing_timer(start_time)
+                return self._create_response(
+                    status="error",
+                    payload={"error": "Missing key for retrieve operation"},
+                    metadata={},
+                    emotional_state=emotional_state
+                )
+            
+            data = self.memory_manager.retrieve(key)
+            
+            processing_time = self._end_processing_timer(start_time)
+            return self._create_response(
+                status="success",
+                payload={"key": key, "data": data},
+                metadata={},
+                emotional_state=emotional_state
+            )
+        
+        else:
+            processing_time = self._end_processing_timer(start_time)
+            return self._create_response(
+                status="error",
+                payload={"error": f"Unknown operation: {operation}"},
+                metadata={},
+                emotional_state=emotional_state
+            )
+
+class CortexAgent(NISAgent):
+    """Agent for high-level decision making."""
+    
+    def __init__(self, agent_id: str, description: str):
+        super().__init__(agent_id, NISLayer.REASONING, description)
+    
+    def process(self, message: Dict[str, Any]) -> Dict[str, Any]:
+        """Process an incoming message."""
+        start_time = self._start_processing_timer()
+        
+        detected_objects = message.get("payload", {}).get("detected_objects", [])
+        emotional_state = message.get("emotional_state", {})
+        
+        # Determine the appropriate action based on detected objects and emotional state
+        decision = self._make_decision(detected_objects, emotional_state)
+        
+        processing_time = self._end_processing_timer(start_time)
+        return self._create_response(
+            status="success",
+            payload={"decision": decision},
+            metadata={},
+            emotional_state=emotional_state
+        )
+    
+    def _make_decision(self, detected_objects, emotional_state):
+        """Make a decision based on detected objects and emotional state."""
+        suspicion_level = emotional_state.get("suspicion", 0.5)
+        
+        # Initialize decision
+        decision = {
+            "action": "monitor",
+            "priority": "low",
+            "details": "Continue normal monitoring"
+        }
+        
+        # Check for suspicious objects or high suspicion level
+        unknown_objects = [obj for obj in detected_objects if obj.get("type") == "unknown"]
+        low_confidence_objects = [obj for obj in detected_objects if obj.get("confidence", 1.0) < 0.5]
+        
+        if unknown_objects or low_confidence_objects:
+            if suspicion_level > 0.7:
+                decision = {
+                    "action": "alert",
+                    "priority": "high",
+                    "details": "Alert security personnel about suspicious objects"
+                }
+            elif suspicion_level > 0.5:
+                decision = {
+                    "action": "investigate",
+                    "priority": "medium",
+                    "details": "Investigate suspicious objects further"
+                }
+            else:
+                decision = {
+                    "action": "flag",
+                    "priority": "low",
+                    "details": "Flag objects for later review"
+                }
+        
+        return decision
+
+class ActionAgent(NISAgent):
+    """Agent for executing actions in the environment."""
+    
+    def __init__(self, agent_id: str, description: str):
+        super().__init__(agent_id, NISLayer.ACTION, description)
+    
+    def process(self, message: Dict[str, Any]) -> Dict[str, Any]:
+        """Process an incoming message."""
+        start_time = self._start_processing_timer()
+        
+        decision = message.get("payload", {}).get("decision", {})
+        emotional_state = message.get("emotional_state", {})
+        
+        # Execute the decision
+        result = self._execute_action(decision)
+        
+        processing_time = self._end_processing_timer(start_time)
+        return self._create_response(
+            status="success",
+            payload={"result": result},
+            metadata={},
+            emotional_state=emotional_state
+        )
+    
+    def _execute_action(self, decision):
+        """Execute an action based on the decision."""
+        action = decision.get("action", "monitor")
+        priority = decision.get("priority", "low")
+        details = decision.get("details", "")
+        
+        # In a real implementation, this would interact with the environment
+        result = {
+            "action_taken": action,
+            "priority": priority,
+            "timestamp": time.time(),
+            "status": "completed",
+            "details": f"Executed: {details}"
+        }
+        
+        # Print the action for demonstration purposes
+        print(f"Executing action: {action} (Priority: {priority})")
+        print(f"Details: {details}")
+        
+        return result
 
 
 def main():
-    """Run the basic agent communication example."""
-    print("=== NIS Protocol Basic Agent Communication Example ===\n")
+    """Run the example."""
+    # Create the registry
+    registry = NISRegistry()
+    
+    # Create the emotional state system
+    emotional_state_system = EmotionalStateSystem()
+    registry.set_emotional_state(emotional_state_system)
     
     # Create agents
-    vision_agent = VisionAgentSimple()
-    memory_agent = MemoryAgentSimple()
-    emotion_agent = EmotionAgentSimple()
-    reasoning_agent = ReasoningAgentSimple(emotion_agent)
-    action_agent = ActionAgentSimple()
+    vision_agent = VisionAgent("vision_1", "Processes visual input")
+    memory_agent = MemoryAgent("memory_1", "Stores and retrieves information")
+    cortex_agent = CortexAgent("cortex_1", "Makes decisions based on inputs")
+    action_agent = ActionAgent("action_1", "Executes actions in the environment")
     
-    # Initialize emotional state with some values
-    emotion_agent.process({
-        "operation": "update",
-        "dimension": "suspicion",
-        "value": 0.3  # Start with low suspicion
-    })
+    # Create a simple scenario
+    print("\n=== Scenario 1: Normal Image ===")
     
-    emotion_agent.process({
-        "operation": "update",
-        "dimension": "urgency",
-        "value": 0.6  # Moderate urgency
-    })
+    # Process a normal image
+    image_message = {
+        "payload": {
+            "image_data": "normal image with car and person"
+        },
+        "emotional_state": emotional_state_system.get_state()
+    }
     
-    # Simulate processing 10 vehicles
-    for i in range(10):
-        print(f"\n--- Vehicle {i+1} ---")
-        
-        # 1. Vision agent detects vehicle
-        vehicle_data = vision_agent.process({})
-        vehicle_type = vehicle_data["vehicle_type"]
-        confidence = vehicle_data["confidence"]
-        print(f"🚗 VISION: Detected {vehicle_type} (confidence: {confidence:.2f})")
-        
-        # 2. Memory agent stores vehicle data
-        memory_result = memory_agent.process({
+    # Process through each agent
+    vision_result = vision_agent.process(image_message)
+    memory_store = memory_agent.process({
+        "payload": {
             "operation": "store",
-            "key": f"vehicle_{i}",
-            "data": vehicle_data
-        })
-        
-        # 3. Reasoning agent makes decision
-        decision_result = reasoning_agent.process(vehicle_data)
-        print(f"🧠 REASONING: Decision '{decision_result['decision']}' " +
-              f"(suspicion: {decision_result['suspicion_level']:.2f}, " +
-              f"threshold: {decision_result['inspection_threshold']:.2f})")
-        
-        # 4. Action agent executes decision
-        action_result = action_agent.process(decision_result)
-        
-        # Wait a moment between vehicles
-        time.sleep(1)
+            "key": "scene_1",
+            "data": vision_result["payload"]
+        },
+        "emotional_state": vision_result["emotional_state"]
+    })
+    cortex_result = cortex_agent.process(vision_result)
+    action_result = action_agent.process(cortex_result)
     
-    # Print final emotional state
-    final_state = emotion_agent.process({"operation": "get_state"})
-    print("\n--- Final Emotional State ---")
-    for dimension, value in final_state["emotional_state"].items():
-        print(f"{dimension}: {value:.2f}")
+    # Display the emotional state
+    print("\nEmotional State after normal image:")
+    for dimension, value in vision_result["emotional_state"].items():
+        print(f"  {dimension}: {value:.2f}")
     
-    print("\n=== Example Complete ===")
-
+    # Create a suspicious scenario
+    print("\n=== Scenario 2: Suspicious Image ===")
+    
+    # Reset emotional state
+    emotional_state_system.reset()
+    
+    # Process a suspicious image
+    suspicious_message = {
+        "payload": {
+            "image_data": "suspicious person near car"
+        },
+        "emotional_state": emotional_state_system.get_state()
+    }
+    
+    # Process through each agent
+    vision_result = vision_agent.process(suspicious_message)
+    memory_store = memory_agent.process({
+        "payload": {
+            "operation": "store",
+            "key": "scene_2",
+            "data": vision_result["payload"]
+        },
+        "emotional_state": vision_result["emotional_state"]
+    })
+    cortex_result = cortex_agent.process(vision_result)
+    action_result = action_agent.process(cortex_result)
+    
+    # Display the emotional state
+    print("\nEmotional State after suspicious image:")
+    for dimension, value in vision_result["emotional_state"].items():
+        print(f"  {dimension}: {value:.2f}")
+    
+    # Retrieve memory
+    print("\n=== Memory Retrieval ===")
+    
+    # Retrieve the first scene
+    memory_retrieve = memory_agent.process({
+        "payload": {
+            "operation": "retrieve",
+            "key": "scene_1"
+        },
+        "emotional_state": emotional_state_system.get_state()
+    })
+    
+    if memory_retrieve["payload"]["data"]:
+        print("\nRetrieved scene 1:")
+        objects = memory_retrieve["payload"]["data"].get("detected_objects", [])
+        for obj in objects:
+            print(f"  {obj['type']} (confidence: {obj['confidence']:.2f})")
+    
+    # Retrieve the second scene
+    memory_retrieve = memory_agent.process({
+        "payload": {
+            "operation": "retrieve",
+            "key": "scene_2"
+        },
+        "emotional_state": emotional_state_system.get_state()
+    })
+    
+    if memory_retrieve["payload"]["data"]:
+        print("\nRetrieved scene 2:")
+        objects = memory_retrieve["payload"]["data"].get("detected_objects", [])
+        for obj in objects:
+            print(f"  {obj['type']} (confidence: {obj['confidence']:.2f})")
 
 if __name__ == "__main__":
     main() 

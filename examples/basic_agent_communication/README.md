@@ -1,59 +1,72 @@
 # Basic Agent Communication Example
 
-This example demonstrates how to create and connect multiple agents using the NIS Protocol. It showcases the flow of information through the cognitive layers and how the emotional state system influences decision-making.
+This example demonstrates how agents in the NIS Protocol communicate with each other and how the emotional state system modulates their behavior.
 
 ## Overview
 
-In this example, we create a simple system with the following agents:
+In this example, we create a simple scenario with four types of agents:
 
-1. **Vision Agent** - Processes visual input (simulated camera feed)
-2. **Input Agent** - Processes text commands
-3. **Memory Agent** - Stores and retrieves information
-4. **Cortex Agent** - Makes decisions based on inputs and memory
-5. **Action Agent** - Executes actions based on decisions
+1. **Vision Agent** - Processes visual inputs (simulated images)
+2. **Memory Agent** - Stores and retrieves information
+3. **Cortex Agent** - Makes decisions based on detected objects and emotional state
+4. **Action Agent** - Executes actions based on decisions
 
-The example simulates a toll booth system where the agents need to process vehicles passing through, determine if they have valid payment methods, and decide whether to allow them to pass or flag them for inspection.
+The example simulates two scenarios:
 
-## Key Concepts Demonstrated
+1. A normal image containing everyday objects
+2. A suspicious image that triggers an elevated emotional state
 
-- Agent registration and communication
-- Information flow through cognitive layers
-- Emotional state influence on decision thresholds
-- Memory storage and retrieval
-- Feedback loops for continuous learning
+## What This Example Demonstrates
+
+- How agents process and pass messages to each other
+- How the emotional state system influences agent decisions
+- How memory is used to store and retrieve information
+- How the system responds differently to normal vs. suspicious inputs
 
 ## Running the Example
 
-```bash
-# Navigate to the example directory
-cd examples/basic_agent_communication
+To run this example:
 
-# Run the example
-python toll_booth_simulation.py
+```bash
+# From the project root directory
+python examples/basic_agent_communication/run.py
 ```
 
 ## Expected Output
 
-The example will output the processing of several vehicles through the toll system:
+The example will print information about:
 
-```
-[INFO] System initialized with 5 agents
-[INFO] Processing vehicle: ABC123
-[INFO] Vision Agent detected vehicle type: sedan
-[INFO] Input Agent processed payment info: valid_ezpass
-[INFO] Memory Agent found previous entries: 5 (all valid passages)
-[INFO] Cortex Agent decision: allow_passage
-[INFO] Action Agent executed: opened_gate
-[INFO] Memory updated with successful passage
+- Objects detected in each scenario
+- Decisions made by the cortex agent
+- Actions taken by the action agent
+- Changes in the emotional state
+- Memory retrieval results
 
-[INFO] Processing vehicle: XYZ789
-[INFO] Vision Agent detected vehicle type: truck
-[INFO] Input Agent processed payment info: missing_payment
-[INFO] Memory Agent found previous entries: 0
-[INFO] Cortex Agent decision: deny_passage (suspicion level: 0.72)
-[INFO] Action Agent executed: alert_operator
-[INFO] Memory updated with flagged passage
-```
+## Key Concepts
+
+### Agent Communication
+
+Agents communicate by passing messages to each other. Each message contains:
+
+- A payload with the main information
+- Metadata with additional context
+- The current emotional state
+
+### Emotional Modulation
+
+The emotional state influences decision-making. When suspicious objects are detected:
+
+1. The suspicion dimension increases
+2. This affects the decision threshold in the cortex agent
+3. The action agent takes more cautious actions
+
+### Memory Usage
+
+The memory system stores information that can be retrieved later:
+
+- Scene information is stored with unique keys
+- Other agents can retrieve this information when needed
+- This provides historical context for decisions
 
 ## Code Structure
 

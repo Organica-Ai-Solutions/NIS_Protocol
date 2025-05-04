@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NIS Protocol Examples - Neuro-Inspired System Protocol</title>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <style>
+        .example-card {
+            background: #f5f5f5;
+            border-radius: 6px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-left: 5px solid #3498db;
+        }
+        
+        .example-card h3 {
+            margin-top: 0;
+        }
+        
+        .toll-booth { border-left-color: #3498db; }
+        .smart-city { border-left-color: #2ecc71; }
+        .security { border-left-color: #e74c3c; }
+        .healthcare { border-left-color: #f39c12; }
+        
+        .code-preview {
+            background: #f8f8f8;
+            border-radius: 4px;
+            padding: 1rem;
+            margin: 1rem 0;
+            border: 1px solid #ddd;
+            font-family: monospace;
+            font-size: 0.9rem;
+            overflow: auto;
+            max-height: 300px;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="container nav-container">
+            <a href="../index.html" class="nav-logo">NIS Protocol</a>
+            <ul class="nav-links">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../architecture/index.html">Architecture</a></li>
+                <li><a href="../emotional_state/index.html">Emotional State</a></li>
+                <li><a href="../memory_system/index.html">Memory System</a></li>
+                <li><a href="../docs/NIS_Protocol_Whitepaper.html">White Paper</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <header>
+        <div class="container">
+            <h1>NIS Protocol Examples</h1>
+            <p>Practical implementations of the Neuro-Inspired System Protocol</p>
+        </div>
+    </header>
+    
+    <section>
+        <div class="container">
+            <h2>Overview</h2>
+            <p>
+                This section contains practical examples of the NIS Protocol in action. Each example demonstrates how the protocol's components work together to create adaptive, context-aware systems for different application domains.
+            </p>
+            
+            <p>
+                These examples are designed to be educational starting points that you can adapt for your own applications. The complete source code for all examples is available in the <a href="https://github.com/Organica-Ai-Solutions/NIS_Protocol/tree/main/examples">examples directory</a> of the GitHub repository.
+            </p>
+            
+            <div class="center">
+                <img src="../assets/images/usesExamples.png" alt="NIS Protocol Use Cases" style="max-width: 600px; margin: 20px 0;">
+                <p><em>The toll booth example demonstrates the NIS Protocol's layered architecture in action</em></p>
+            </div>
+        </div>
+    </section>
+    
+    <section class="alt">
+        <div class="container">
+            <h2>Featured Example: Automated Toll Booth System</h2>
+            
+            <div class="example-card toll-booth">
+                <h3>Toll Booth Simulation</h3>
+                <p>
+                    The automated toll booth example demonstrates a complete implementation of the NIS Protocol for processing vehicles at a toll plaza. The system uses multiple agents working together to identify vehicles, verify payment methods, detect anomalies, and manage toll operations.
+                </p>
+                
+                <h4>Key Components:</h4>
+                <ul>
+                    <li><strong>Vision Agent:</strong> Processes camera feeds to identify vehicle type, license plate, and occupancy</li>
+                    <li><strong>RFID Agent:</strong> Detects and processes transponder information for registered vehicles</li>
+                    <li><strong>Memory Agent:</strong> Maintains records of vehicle history, payment status, and known issues</li>
+                    <li><strong>Emotion Agent:</strong> Modulates system behavior based on traffic conditions and anomaly detection</li>
+                    <li><strong>Reasoning Agent:</strong> Makes decisions about toll amounts, lane assignments, and security flags</li>
+                    <li><strong>Action Agent:</strong> Controls barrier gates, lane signals, and customer information displays</li>
+                </ul>
+                
+                <h4>NIS Protocol Features Demonstrated:</h4>
+                <ul>
+                    <li>Multi-modal input processing (visual, RFID, database)</li>
+                    <li>Context-aware decision making with memory integration</li>
+                    <li>Emotional state modulation for adaptive security thresholds</li>
+                    <li>Learning from historical patterns to optimize traffic flow</li>
+                    <li>Coordinated agent communication across cognitive layers</li>
+                </ul>
+                
+                <div class="center" style="margin: 20px 0;">
+                    <a href="basic_agent_communication/run.py" class="btn">View Full Code Example</a>
+                    <a href="basic_agent_communication/README.md" class="btn">View Documentation</a>
+                </div>
+            </div>
+            
+            <h4>Example Code Snippet:</h4>
+            <div class="code-preview">
+<pre>from nis_protocol.core import NISRegistry
+from nis_protocol.agents import VisionAgent, RFIDAgent, MemoryAgent, EmotionAgent, ReasoningAgent, ActionAgent
+from nis_protocol.emotion import EmotionalStateSystem
+
+# Initialize the NIS Protocol registry
+registry = NISRegistry()
+
+# Set up the emotional state system
+emotional_system = EmotionalStateSystem()
+registry.set_emotional_state(emotional_system)
+
+# Create and register agents
+vision_agent = VisionAgent("vision_1", "Processes camera feeds")
+rfid_agent = RFIDAgent("rfid_1", "Processes transponder signals")
+memory_agent = MemoryAgent("memory_1", "Maintains vehicle records")
+emotion_agent = EmotionAgent("emotion_1", "Modulates system behavior")
+reasoning_agent = ReasoningAgent("reasoning_1", "Makes toll decisions")
+action_agent = ActionAgent("action_1", "Controls toll booth equipment")
+
+# Process a vehicle approaching the toll booth
+def process_vehicle(camera_image, rfid_signal):
+    # Initial emotional state - standard monitoring
+    emotional_state = emotional_system.get_state()
+    
+    # Step 1: Vision agent processes the vehicle image
+    vision_result = vision_agent.process({
+        "payload": {"camera_image": camera_image},
+        "emotional_state": emotional_state
+    })
+    
+    # Step 2: RFID agent processes transponder signal
+    rfid_result = rfid_agent.process({
+        "payload": {"rfid_signal": rfid_signal},
+        "emotional_state": emotional_state
+    })
+    
+    # Step 3: Check vehicle history in memory
+    vehicle_id = vision_result["payload"]["license_plate"] or rfid_result["payload"]["transponder_id"]
+    memory_result = memory_agent.process({
+        "payload": {
+            "operation": "retrieve",
+            "key": vehicle_id
+        },
+        "emotional_state": emotional_state
+    })
+    
+    # Step 4: Update emotional state based on vehicle history
+    if memory_result["payload"].get("payment_issues"):
+        emotional_system.update_dimension("suspicion", 0.3)
+    if memory_result["payload"].get("flagged"):
+        emotional_system.update_dimension("suspicion", 0.5)
+        
+    # Step 5: Reasoning agent makes decision
+    reasoning_result = reasoning_agent.process({
+        "payload": {
+            "vision_data": vision_result["payload"],
+            "rfid_data": rfid_result["payload"],
+            "memory_data": memory_result["payload"]
+        },
+        "emotional_state": emotional_system.get_state()
+    })
+    
+    # Step 6: Action agent executes the decision
+    action_result = action_agent.process(reasoning_result)
+    
+    return action_result</pre>
+            </div>
+        </div>
+    </section>
+    
+    <section>
+        <div class="container">
+            <h2>Additional Examples</h2>
+            
+            <div class="example-card smart-city">
+                <h3>Smart Traffic Management</h3>
+                <p>
+                    This example demonstrates using the NIS Protocol to manage traffic signals in a smart city environment, optimizing traffic flow based on real-time conditions and historical patterns.
+                </p>
+                <h4>Key Features:</h4>
+                <ul>
+                    <li>Integration with multiple traffic camera feeds</li>
+                    <li>Adaptive signal timing based on traffic density</li>
+                    <li>Emergency vehicle prioritization</li>
+                    <li>Learning from daily, weekly, and seasonal patterns</li>
+                </ul>
+                <div class="center">
+                    <a href="#" class="btn btn-secondary">Coming Soon</a>
+                </div>
+            </div>
+            
+            <div class="example-card security">
+                <h3>Security Monitoring System</h3>
+                <p>
+                    This example shows how to implement a security monitoring system with the NIS Protocol, using emotional state to modulate alertness levels and prioritize surveillance resources.
+                </p>
+                <h4>Key Features:</h4>
+                <ul>
+                    <li>Multi-zone surveillance with adaptive attention</li>
+                    <li>Anomaly detection with contextual awareness</li>
+                    <li>Progressive alert escalation based on suspicion levels</li>
+                    <li>Integration of both visual and non-visual security sensors</li>
+                </ul>
+                <div class="center">
+                    <a href="#" class="btn btn-secondary">Coming Soon</a>
+                </div>
+            </div>
+            
+            <div class="example-card healthcare">
+                <h3>Patient Monitoring System</h3>
+                <p>
+                    This example demonstrates the NIS Protocol applied to healthcare monitoring, where emotional dimensions like urgency and concern affect alarm thresholds and care prioritization.
+                </p>
+                <h4>Key Features:</h4>
+                <ul>
+                    <li>Integration of multiple vital sign monitors</li>
+                    <li>Personalized baseline adaptation</li>
+                    <li>Context-aware alerting with reduced false alarms</li>
+                    <li>Care prioritization based on urgency and patient history</li>
+                </ul>
+                <div class="center">
+                    <a href="#" class="btn btn-secondary">Coming Soon</a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="alt">
+        <div class="container">
+            <h2>Building Your Own Examples</h2>
+            <p>
+                To create your own NIS Protocol implementation:
+            </p>
+            
+            <ol>
+                <li><strong>Define Your Agents:</strong> Identify which specialized agents you need for your application domain</li>
+                <li><strong>Configure Emotional Dimensions:</strong> Customize emotional dimensions relevant to your use case</li>
+                <li><strong>Set Up Memory Systems:</strong> Design appropriate memory structures for your data</li>
+                <li><strong>Implement Processing Flow:</strong> Define how information flows through your agent network</li>
+                <li><strong>Add Learning Mechanisms:</strong> Determine how your system will adapt over time</li>
+            </ol>
+            
+            <p>
+                For detailed implementation guidance, see the <a href="../docs/Implementation_Guide.html">Implementation Guide</a>.
+            </p>
+            
+            <div class="center" style="margin-top: 30px;">
+                <a href="https://github.com/Organica-Ai-Solutions/NIS_Protocol/tree/main/examples" class="btn">Explore All Examples on GitHub</a>
+            </div>
+        </div>
+    </section>
+    
+    <section>
+        <div class="container">
+            <div class="center">
+                <h2>Related Components</h2>
+                <div style="margin-top: 2rem;">
+                    <a href="../architecture/index.html" class="btn">Protocol Architecture</a>
+                    <a href="../emotional_state/index.html" class="btn">Emotional State System</a>
+                    <a href="../memory_system/index.html" class="btn">Memory System</a>
+                    <a href="../index.html" class="btn btn-secondary">Back to Home</a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <div class="container">
+            <p>
+                &copy; 2024 Organica AI Solutions. Released under MIT License.
+            </p>
+            <p>
+                <a href="https://github.com/Organica-Ai-Solutions/NIS_Protocol">GitHub</a> |
+                <a href="../docs/NIS_Protocol_Whitepaper.html">White Paper</a> |
+                <a href="../index.html">Home</a>
+            </p>
+        </div>
+    </footer>
+    
+    <a href="#" class="back-to-top">↑</a>
+</body>
+</html> 

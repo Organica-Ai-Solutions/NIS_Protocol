@@ -13,7 +13,7 @@
             <ul class="nav-links">
                 <li><a href="../index.html">Home</a></li>
                 <li><a href="../getting_started/index.html">Getting Started</a></li>
-                <li><a href="../NIS_Protocol_Whitepaper.html">White Paper</a></li>
+                <li><a href="../docs/NIS_Protocol_Whitepaper.html">White Paper</a></li>
                 <li><a href="../examples/index.html">Examples</a></li>
             </ul>
         </div>
@@ -37,18 +37,165 @@
                 This design enables a more natural form of information processing, where raw inputs are progressively refined and enriched with context as they flow through the system, ultimately resulting in informed decisions and adaptive behaviors.
             </p>
             
-            <div style="text-align: center;">
-                <img src="https://mermaid.ink/img/pako:eNqNVN9v2jAQ_lci6yVMQklpGRkDlWJN3R6aEkWVyoP9YJzbFIvExo4zKOrY_z57QkIp3aTeS8533-_7nGOn1VoKlVELWqNZFimE4cDaG7I9z_OCgDJJjCJzBpDj2fZolRnCqOEtgdvq3eATBl5N9b0jOJFVaOd6A2zLKK6j0SBGEJBKcXf0hnJ1s7lVlWi6Eg0JHYh6WCRWc3kP67PbPPe2M4OzfZLjPM-MmjQd9RuNM75Cw6pFgrmUe0TJFpwCXAWd4RXqOiZoYuDJdZLr1HlFUASSCKIyRcBGijqWBnlcNx2Nzv3reTYY79HwVrVoBkm8BSYIUrgWYrmXlRbjpHAJYNjExm_uRZJ8SV5Vgij3zZAc3wqzRfuMsjY_cVWe_QLecjfTqmZXnftULLOgFvn9j5FGlpM8QK9aY13i26qfkKnxMkJnTGmVcGHWvZ5vjmRu3TvjbNqjZZpQMXqjTAP_UXMzSNKGVTfO-2Mq3TKj0WnLQd89w_8lNcHMGkuKRqt4vO17pM82cJVWRzJ5S5u2EaxgRUe_Zrb3xJSgq52-Qi8wJn1Jma2BT3VO7lMldH3WM_LKK18QwaNy8Nba9G48BxubvkLSPLr1M2-uWm1GHsIR_6XfE-QHgfM7pnwk6OyYv0v3M0HfVYrZG9m3H6LoQODvhGJn0sclhbM-Hf0k6FKt78DlTp8j4k76bj0WqKBgJldxSu4P18WuHZ2NzWm2LnVmGc3dJ6PzrEb-AJpcXXs" alt="NIS Protocol Architecture Diagram" class="architecture-diagram">
+            <div class="center">
+                <img src="../assets/images/diagram.png" alt="NIS Protocol Architecture Diagram" style="max-width: 600px; margin: 20px 0;">
+                <p><em>The NIS Protocol's layered processing flow, from sensory input to action</em></p>
+            </div>
+        </div>
+    </section>
+    
+    <section class="alt">
+        <div class="container">
+            <h2>Layer-by-Layer Breakdown</h2>
+            
+            <div class="card">
+                <h3>1. Perception Layer</h3>
+                <p>
+                    The Perception Layer is responsible for processing raw sensory inputs from the environment. It acts as the interface between the external world and the cognitive system. This layer corresponds to the sensory cortices in the human brain.
+                </p>
+                <ul>
+                    <li><strong>Vision Agent:</strong> Processes visual information from cameras, images, or video streams</li>
+                    <li><strong>Input Agent:</strong> Handles non-visual inputs like text, audio, or sensor data</li>
+                    <li><strong>RFID Agent:</strong> Processes radio-frequency identification signals</li>
+                </ul>
+                <p>
+                    The output of the Perception Layer is structured data that represents the essential features of the raw input, ready for higher-level processing.
+                </p>
+            </div>
+            
+            <div class="card">
+                <h3>2. Memory Layer</h3>
+                <p>
+                    The Memory Layer stores and retrieves information across different time scales, providing historical context for decision-making. It is analogous to the hippocampus and associated structures in the human brain.
+                </p>
+                <ul>
+                    <li><strong>Short-term Memory Agent:</strong> Maintains recent information for immediate use</li>
+                    <li><strong>Long-term Memory Agent:</strong> Stores persistent information and learned patterns</li>
+                    <li><strong>Context Agent:</strong> Integrates current perceptions with historical data</li>
+                </ul>
+                <p>
+                    By maintaining both short and long-term memory, agents can make decisions informed by both immediate context and historical patterns.
+                </p>
+            </div>
+            
+            <div class="card">
+                <h3>3. Emotional State Layer</h3>
+                <p>
+                    The Emotional State Layer modulates the processing of information based on various dimensions such as urgency, suspicion, and confidence. This layer corresponds to the limbic system, particularly the amygdala, in the human brain.
+                </p>
+                <ul>
+                    <li><strong>Suspicion Agent:</strong> Monitors for unusual or potentially threatening patterns</li>
+                    <li><strong>Attention Agent:</strong> Allocates processing resources based on importance</li>
+                    <li><strong>Urgency Agent:</strong> Prioritizes time-sensitive information</li>
+                </ul>
+                <p>
+                    The emotional state system provides a dynamic weighting mechanism that allows the protocol to adapt its behavior based on context.
+                </p>
+            </div>
+            
+            <div class="card">
+                <h3>4. Reasoning Layer</h3>
+                <p>
+                    The Reasoning Layer integrates information from perception, memory, and emotional state to make decisions. It corresponds to the prefrontal cortex in the human brain.
+                </p>
+                <ul>
+                    <li><strong>Cortex Agent:</strong> Synthesizes all available information for high-level reasoning</li>
+                    <li><strong>Planning Agent:</strong> Develops sequences of actions to achieve goals</li>
+                    <li><strong>Decision Agent:</strong> Selects appropriate responses based on analysis</li>
+                </ul>
+                <p>
+                    This layer represents the highest level of cognitive processing in the NIS Protocol, where complex decision-making occurs.
+                </p>
+            </div>
+            
+            <div class="card">
+                <h3>5. Action Layer</h3>
+                <p>
+                    The Action Layer translates decisions into concrete actions that affect the environment. It is analogous to the motor cortex in the human brain.
+                </p>
+                <ul>
+                    <li><strong>Response Agent:</strong> Generates appropriate outputs based on decisions</li>
+                    <li><strong>Control Agent:</strong> Manages physical actuators or system interfaces</li>
+                    <li><strong>Feedback Agent:</strong> Monitors the results of actions for learning</li>
+                </ul>
+                <p>
+                    The actions produced by this layer then generate feedback that can be processed by the perception layer, creating a closed loop.
+                </p>
+            </div>
+            
+            <div class="card">
+                <h3>6. Learning Layer</h3>
+                <p>
+                    The Learning Layer adapts the system over time based on experience. It implements neuroplasticity, the brain's ability to reorganize itself by forming new neural connections.
+                </p>
+                <ul>
+                    <li><strong>Update Agent:</strong> Modifies parameters and weights based on feedback</li>
+                    <li><strong>Pattern Recognition Agent:</strong> Identifies recurring patterns in data</li>
+                    <li><strong>Optimization Agent:</strong> Improves system performance over time</li>
+                </ul>
+                <p>
+                    Through continuous learning, the NIS Protocol becomes more effective at its tasks over time, just as biological systems improve with practice.
+                </p>
             </div>
         </div>
     </section>
     
     <section>
         <div class="container">
-            <div style="text-align: center; margin-top: 2rem;">
-                <a href="../emotional_state/index.html" class="btn">Emotional State System</a>
-                <a href="../memory_system/index.html" class="btn">Memory System</a>
-                <a href="../index.html" class="btn btn-secondary">Back to Home</a>
+            <h2>Information Flow in the NIS Protocol</h2>
+            <p>
+                Information in the NIS Protocol flows both sequentially through the layers and in feedback loops:
+            </p>
+            
+            <ol>
+                <li><strong>Forward Flow:</strong> Sensory input → Perception → Memory → Emotion → Reasoning → Action</li>
+                <li><strong>Feedback Loops:</strong> 
+                    <ul>
+                        <li>Actions generate new sensory inputs</li>
+                        <li>Learning updates parameters across all layers</li>
+                        <li>Memory informs perception and reasoning</li>
+                        <li>Emotional state modulates all processing stages</li>
+                    </ul>
+                </li>
+            </ol>
+            
+            <p>
+                This bidirectional flow of information creates a dynamic, adaptive system that continuously refines its behavior based on experience and context.
+            </p>
+        </div>
+    </section>
+    
+    <section class="alt">
+        <div class="container">
+            <h2>Implementation Considerations</h2>
+            <p>
+                When implementing the NIS Protocol architecture, consider the following:
+            </p>
+            
+            <ul>
+                <li><strong>Agent Granularity:</strong> Depending on your application, you may need more or fewer specialized agents within each layer</li>
+                <li><strong>Communication Patterns:</strong> Define clear interfaces for how agents within and across layers communicate</li>
+                <li><strong>State Management:</strong> Determine how much state each agent maintains versus what is stored in shared memory</li>
+                <li><strong>Processing Order:</strong> Consider whether processing is strictly sequential or allows for parallel execution</li>
+                <li><strong>Scaling:</strong> Design your architecture to scale with the complexity of your application domain</li>
+            </ul>
+            
+            <p>
+                For detailed implementation guidance, see the <a href="../docs/Implementation_Guide.html">Implementation Guide</a>.
+            </p>
+        </div>
+    </section>
+    
+    <section>
+        <div class="container">
+            <div class="center">
+                <h2>Related Components</h2>
+                <div style="margin-top: 2rem;">
+                    <a href="../emotional_state/index.html" class="btn">Emotional State System</a>
+                    <a href="../memory_system/index.html" class="btn">Memory System</a>
+                    <a href="../examples/index.html" class="btn">Examples</a>
+                    <a href="../index.html" class="btn btn-secondary">Back to Home</a>
+                </div>
             </div>
         </div>
     </section>
@@ -60,7 +207,7 @@
             </p>
             <p>
                 <a href="https://github.com/Organica-Ai-Solutions/NIS_Protocol">GitHub</a> |
-                <a href="../NIS_Protocol_Whitepaper.html">White Paper</a> |
+                <a href="../docs/NIS_Protocol_Whitepaper.html">White Paper</a> |
                 <a href="../index.html">Home</a>
             </p>
         </div>

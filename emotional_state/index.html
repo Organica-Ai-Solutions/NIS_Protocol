@@ -5,6 +5,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Emotional State System - NIS Protocol</title>
     <link rel="stylesheet" href="../assets/css/styles.css">
+    <style>
+        .emotion-card {
+            background: #f5f5f5;
+            border-radius: 6px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-left: 5px solid #333;
+        }
+        .suspicion { border-left-color: #e74c3c; }
+        .urgency { border-left-color: #3498db; }
+        .confidence { border-left-color: #2ecc71; }
+        .interest { border-left-color: #f39c12; }
+        .novelty { border-left-color: #9b59b6; }
+        
+        .emotion-meter {
+            height: 30px;
+            background: linear-gradient(to right, #3498db, #f39c12, #e74c3c);
+            border-radius: 4px;
+            margin: 10px 0;
+            position: relative;
+        }
+        
+        .emotion-meter::after {
+            content: "Neutral";
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+        }
+        
+        .emotion-meter::before {
+            content: "";
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            height: 15px;
+            width: 2px;
+            background: #333;
+        }
+    </style>
 </head>
 <body>
     <nav>
@@ -13,7 +54,7 @@
             <ul class="nav-links">
                 <li><a href="../index.html">Home</a></li>
                 <li><a href="../architecture/index.html">Architecture</a></li>
-                <li><a href="../NIS_Protocol_Whitepaper.html">White Paper</a></li>
+                <li><a href="../docs/NIS_Protocol_Whitepaper.html">White Paper</a></li>
                 <li><a href="../examples/index.html">Examples</a></li>
             </ul>
         </div>
@@ -37,13 +78,14 @@
                 Each emotional dimension represents a different aspect of the system's state, such as urgency, suspicion, or confidence. These dimensions decay over time, naturally returning to a neutral state unless consistently reinforced, creating a dynamic system that responds differently based on context and recent history.
             </p>
             
-            <div style="text-align: center;">
-                <img src="https://mermaid.ink/img/pako:eNqNlN1u2jAUx1_FsptAKkVK6ccoRCHttAtQUFVVu5jdOCcQKbEj28nKWN892AlQWjYu4iL-f87_HNs-cm-UkBRZb5SmrE8jCd6dtRvzxV2v10tSrkaVlQ2CLlddZ1_LSSvtbGvjA4DKbIwZm40xMyoFRxpCrdQI7I5dYzA9j1YYJVFJu46SdlNMOPNDYCeqIV3vDF_zrG5vsqbCqqLqfB_YmOi8CQ6xO6X1Ml8ucxrXeSFpK2FIa1ItbCHN-Q62I0uDPiEL1HSHOzJGZxPlhCkHSPdWg9c49oHpDpW8wXoI7lJSrukOVWMcx4YxlDWRJCbShCwtRLZcLhudJMcwQR-1KMQSDjm_5nZGTFe8bM4WbIjzDcM-A6RN5gk8JE4rDIfSc7IIB68BHPsXkDeDZ44P1m60ZBDk_qNUF_BnCakIM9Vc3UfpSPdgLbP2DXuOBuwXq7bmJmOpz9pGfVz68aEQB7uYxUuxeE-OtYWsCyVN1Vu5rodKaHPjA4kR6_o8OzNrBgfmaXrecFlMBoTUXPK4icX-uVe2RmN0a0FfvJKTF6ZWrS6rgrHS7CR__Tt1_UbQj9bV-X-zb0_uZ0ORgkflzu2F-cVCnF_Q_qtAEVnXTsS8X034C3P2_GVFFZOXW5SUXL2ej74YxycnMZvdqt-rbm2MjtpbmeuWk8sDa7nffw" alt="Emotional State System Diagram" class="diagram">
+            <div class="center">
+                <img src="../assets/images/heatmap.png" alt="Emotional State Heatmap" style="max-width: 600px; margin: 20px 0;">
+                <p><em>Heatmap showing how confidence and suspicion levels interact to modulate agent behavior</em></p>
             </div>
         </div>
     </section>
     
-    <section>
+    <section class="alt">
         <div class="container">
             <h2>Emotional Dimensions</h2>
             <p>
@@ -53,34 +95,242 @@
             <div class="emotion-card suspicion">
                 <h3>Suspicion</h3>
                 <p><strong>Default Decay Rate:</strong> 0.05 per time unit</p>
+                <div class="emotion-meter"></div>
                 <p>
                     Suspicion represents the system's level of caution or scrutiny toward inputs and patterns. Higher suspicion leads to more thorough verification and analysis of data.
                 </p>
+                <h4>Effects on System Behavior:</h4>
+                <ul>
+                    <li>Increases verification steps for inputs</li>
+                    <li>Lowers thresholds for flagging anomalies</li>
+                    <li>Prioritizes security over efficiency</li>
+                    <li>Increases logging detail</li>
+                </ul>
+                <h4>Trigger Events:</h4>
+                <ul>
+                    <li>Detection of unusual patterns</li>
+                    <li>Failed authentication attempts</li>
+                    <li>Unexpected system behavior</li>
+                    <li>Input from untrusted sources</li>
+                </ul>
             </div>
             
             <div class="emotion-card urgency">
                 <h3>Urgency</h3>
                 <p><strong>Default Decay Rate:</strong> 0.10 per time unit</p>
+                <div class="emotion-meter"></div>
                 <p>
                     Urgency reflects the time-sensitive nature of current operations. Higher urgency prioritizes speed and immediate response over thoroughness.
                 </p>
+                <h4>Effects on System Behavior:</h4>
+                <ul>
+                    <li>Reduces processing time limits</li>
+                    <li>Prioritizes mission-critical functions</li>
+                    <li>May bypass non-essential verifications</li>
+                    <li>Increases resource allocation to time-sensitive tasks</li>
+                </ul>
+                <h4>Trigger Events:</h4>
+                <ul>
+                    <li>Approaching deadlines</li>
+                    <li>Emergency conditions</li>
+                    <li>Resource constraints</li>
+                    <li>Time-critical external events</li>
+                </ul>
             </div>
             
             <div class="emotion-card confidence">
                 <h3>Confidence</h3>
                 <p><strong>Default Decay Rate:</strong> 0.02 per time unit</p>
+                <div class="emotion-meter"></div>
                 <p>
                     Confidence represents the system's trust in its own assessments and decisions. Higher confidence allows for more decisive action with less deliberation.
                 </p>
+                <h4>Effects on System Behavior:</h4>
+                <ul>
+                    <li>Reduces multiple validation steps</li>
+                    <li>Increases willingness to commit to decisions</li>
+                    <li>Enables more autonomous operation</li>
+                    <li>Reduces reliance on external confirmation</li>
+                </ul>
+                <h4>Trigger Events:</h4>
+                <ul>
+                    <li>Successful predictions</li>
+                    <li>Consistent sensor readings</li>
+                    <li>Positive feedback loops</li>
+                    <li>High-quality training data</li>
+                </ul>
+            </div>
+            
+            <div class="emotion-card interest">
+                <h3>Interest</h3>
+                <p><strong>Default Decay Rate:</strong> 0.08 per time unit</p>
+                <div class="emotion-meter"></div>
+                <p>
+                    Interest directs attention toward specific features or patterns in the input data. Higher interest allocates more resources to analyzing particular aspects of a situation.
+                </p>
+                <h4>Effects on System Behavior:</h4>
+                <ul>
+                    <li>Focuses sensors or attention on specific inputs</li>
+                    <li>Increases processing depth for interesting features</li>
+                    <li>Prioritizes storage of interesting data</li>
+                    <li>Influences exploration vs. exploitation balance</li>
+                </ul>
+                <h4>Trigger Events:</h4>
+                <ul>
+                    <li>Recognition of patterns related to goals</li>
+                    <li>Detection of novelty in familiar contexts</li>
+                    <li>Correlation with historical significant events</li>
+                    <li>User-defined points of interest</li>
+                </ul>
+            </div>
+            
+            <div class="emotion-card novelty">
+                <h3>Novelty</h3>
+                <p><strong>Default Decay Rate:</strong> 0.15 per time unit</p>
+                <div class="emotion-meter"></div>
+                <p>
+                    Novelty highlights deviation from learned patterns or expectations. Higher novelty triggers exploration and learning mechanisms.
+                </p>
+                <h4>Effects on System Behavior:</h4>
+                <ul>
+                    <li>Increases learning rate for new patterns</li>
+                    <li>Allocates resources to exploratory behavior</li>
+                    <li>Triggers more detailed analysis of unexpected inputs</li>
+                    <li>May temporarily override other priorities</li>
+                </ul>
+                <h4>Trigger Events:</h4>
+                <ul>
+                    <li>Encountering previously unseen patterns</li>
+                    <li>Significant deviation from predictions</li>
+                    <li>New environmental conditions</li>
+                    <li>Introduction of new entities or agents</li>
+                </ul>
             </div>
         </div>
     </section>
     
     <section>
         <div class="container">
-            <div style="text-align: center; margin-top: 2rem;">
-                <a href="../memory_system/index.html" class="btn">Memory System</a>
-                <a href="../architecture/index.html" class="btn btn-secondary">Back to Architecture</a>
+            <h2>Decay Mechanism</h2>
+            <p>
+                A key feature of the emotional state system is the natural decay of emotional dimensions over time. This mimics how human emotions fade without reinforcement, allowing the system to return to a more neutral state after periods of heightened activity.
+            </p>
+            
+            <div class="code-block">
+                <pre><code class="language-python">def _apply_decay(self) -> None:
+    """Apply time-based decay to all emotional dimensions."""
+    current_time = time.time()
+    elapsed = current_time - self.last_update
+    
+    # Apply decay to each dimension
+    for dimension, value in self.state.items():
+        decay_rate = self.decay_rates.get(dimension, 0.05)
+        decay_amount = decay_rate * elapsed
+        
+        # Move toward neutral (0.5)
+        if value > 0.5:
+            self.state[dimension] = max(0.5, value - decay_amount)
+        elif value < 0.5:
+            self.state[dimension] = min(0.5, value + decay_amount)
+</code></pre>
+            </div>
+            
+            <p>
+                This decay mechanism ensures that temporary emotional spikes don't permanently affect system behavior, creating a more adaptive and resilient system.
+            </p>
+        </div>
+    </section>
+    
+    <section class="alt">
+        <div class="container">
+            <h2>Interaction Between Dimensions</h2>
+            <p>
+                The emotional dimensions don't operate in isolation; they interact to create complex behavioral patterns. For example:
+            </p>
+            
+            <ul>
+                <li><strong>High Suspicion + High Urgency:</strong> Prioritizes quick security measures</li>
+                <li><strong>High Confidence + Low Suspicion:</strong> Enables rapid, decisive action</li>
+                <li><strong>High Novelty + High Interest:</strong> Triggers deep learning and exploration</li>
+                <li><strong>Low Confidence + High Suspicion:</strong> Maximizes validation and verification steps</li>
+            </ul>
+            
+            <p>
+                These interactions create a rich behavioral space that allows the system to respond appropriately to a wide range of situations.
+            </p>
+        </div>
+    </section>
+    
+    <section>
+        <div class="container">
+            <h2>Implementation Example</h2>
+            <p>
+                Here's a simple example of how to use the emotional state system in your NIS Protocol implementation:
+            </p>
+            
+            <div class="code-block">
+                <pre><code class="language-python">from nis_protocol.emotion import EmotionalStateSystem
+
+# Initialize the emotional state system
+emotional_system = EmotionalStateSystem()
+
+# Increase suspicion due to unusual input
+emotional_system.update_dimension("suspicion", 0.2)  # Increase by 0.2
+
+# Process input with emotional context
+input_message = {
+    "payload": {
+        "sensor_data": sensor_reading
+    },
+    "emotional_state": emotional_system.get_state()
+}
+
+# Pass to agent for processing
+result = vision_agent.process(input_message)
+
+# Update emotional state based on result
+if result.get("anomaly_detected", False):
+    emotional_system.update_dimension("suspicion", 0.3)
+    emotional_system.update_dimension("urgency", 0.2)
+</code></pre>
+            </div>
+            
+            <p>
+                This example shows how emotional state is passed along with data, allowing each agent to modulate its behavior based on the current emotional context.
+            </p>
+        </div>
+    </section>
+    
+    <section class="alt">
+        <div class="container">
+            <h2>Case Study: Toll Booth System</h2>
+            <p>
+                In the toll booth example, the emotional state system modulates the behavior of various agents based on traffic patterns and vehicle characteristics:
+            </p>
+            
+            <ul>
+                <li><strong>Rush Hour Traffic:</strong> Increases urgency, leading to faster processing with simplified verification</li>
+                <li><strong>Unusual Vehicle Behavior:</strong> Raises suspicion, triggering additional identity checks</li>
+                <li><strong>New Vehicle Types:</strong> Increases novelty, allocating more resources to learning and classification</li>
+                <li><strong>Consistent Operation:</strong> Builds confidence, enabling more streamlined processing</li>
+            </ul>
+            
+            <p>
+                This dynamic modulation allows the system to handle various scenarios effectively, from high-volume routine traffic to potential security concerns.
+            </p>
+        </div>
+    </section>
+    
+    <section>
+        <div class="container">
+            <div class="center">
+                <h2>Related Components</h2>
+                <div style="margin-top: 2rem;">
+                    <a href="../architecture/index.html" class="btn">Protocol Architecture</a>
+                    <a href="../memory_system/index.html" class="btn">Memory System</a>
+                    <a href="../examples/index.html" class="btn">Examples</a>
+                    <a href="../index.html" class="btn btn-secondary">Back to Home</a>
+                </div>
             </div>
         </div>
     </section>
@@ -92,7 +342,7 @@
             </p>
             <p>
                 <a href="https://github.com/Organica-Ai-Solutions/NIS_Protocol">GitHub</a> |
-                <a href="../NIS_Protocol_Whitepaper.html">White Paper</a> |
+                <a href="../docs/NIS_Protocol_Whitepaper.html">White Paper</a> |
                 <a href="../index.html">Home</a>
             </p>
         </div>

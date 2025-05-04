@@ -5,6 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Neuro-Inspired System Protocol (NIS Protocol)</title>
     <link rel="stylesheet" href="assets/css/styles.css">
+    <style>
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        
+        .download-btn {
+            background-color: #27ae60;
+        }
+        
+        .download-btn:hover {
+            background-color: #219653;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -32,6 +49,19 @@
     
     <section class="alt">
         <div class="container">
+            <h2 class="centered">Protocol Architecture</h2>
+            <div class="center">
+                <img src="assets/images/diagram.png" alt="NIS Protocol Architecture" style="max-width: 600px; margin-bottom: 20px;">
+                <p>The NIS Protocol's layered cognitive architecture, from sensory input to action</p>
+            </div>
+            <p>
+                The NIS Protocol defines a layered cognitive architecture where specialized agents handle different aspects of information processing. Each layer builds upon and transforms the output of previous layers, culminating in actions that affect the environment.
+            </p>
+        </div>
+    </section>
+    
+    <section>
+        <div class="container">
             <h2 class="centered">Key Features</h2>
             <div class="grid">
                 <div class="card">
@@ -43,6 +73,7 @@
                 </div>
                 <div class="card">
                     <h3>Emotional State System</h3>
+                    <img src="assets/images/heatmap.png" alt="Emotional State Heatmap" style="max-width: 100%; margin-bottom: 10px;">
                     <p>
                         Modulates agent behavior through dimensions like suspicion, urgency, confidence, interest, and novelty, with natural decay mechanics that simulate attention shifts.
                     </p>
@@ -59,7 +90,7 @@
         </div>
     </section>
     
-    <section>
+    <section class="alt">
         <div class="container">
             <h2 class="centered">Documentation</h2>
             <div class="grid">
@@ -75,7 +106,10 @@
                     <p>
                         Read the complete NIS Protocol white paper, which details the theoretical foundations and implementation strategies.
                     </p>
-                    <a href="NIS_Protocol_Whitepaper.html" class="btn">Read White Paper</a>
+                    <div class="btn-group">
+                        <a href="docs/NIS_Protocol_Whitepaper.html" class="btn">Read Online</a>
+                        <a href="docs/finalwhitepaper.pdf" class="btn download-btn" download>Download PDF</a>
+                    </div>
                 </div>
                 <div class="card">
                     <h3>Examples</h3>
@@ -88,9 +122,13 @@
         </div>
     </section>
     
-    <section class="alt">
+    <section>
         <div class="container">
             <h2 class="centered">Applications</h2>
+            <div class="center">
+                <img src="assets/images/usesExamples.png" alt="NIS Protocol Applications" style="max-width: 600px; margin-bottom: 20px;">
+                <p>Example application: Automated toll booth system with distributed NIS agents</p>
+            </div>
             <p>
                 The NIS Protocol can be applied to various domains requiring intelligent, adaptive decision-making systems:
             </p>
@@ -124,8 +162,9 @@
             </p>
             <p>
                 <a href="https://github.com/Organica-Ai-Solutions/NIS_Protocol">GitHub</a> |
-                <a href="NIS_Protocol_Whitepaper.html">White Paper</a> |
-                <a href="getting_started/index.html">Documentation</a>
+                <a href="docs/NIS_Protocol_Whitepaper.html">White Paper</a> |
+                <a href="docs/finalwhitepaper.pdf">Download PDF</a> |
+                <a href="docs/index.html">Documentation</a>
             </p>
         </div>
     </footer>
