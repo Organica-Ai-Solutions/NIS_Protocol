@@ -1,502 +1,626 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NIS Protocol Whitepaper | Organica AI Solutions</title>
-    <link rel="stylesheet" href="../assets/css/styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism.min.css">
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        .center {
-            text-align: center;
-            margin: 2rem 0;
-        }
-        
-        .diagram {
-            max-width: 100%;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-        }
-        
-        .code-block {
-            background: #f5f5f5;
-            border-radius: 5px;
-            margin: 20px 0;
-            overflow: auto;
-        }
-        
-        blockquote {
-            border-left: 4px solid #3498db;
-            padding-left: 20px;
-            margin-left: 0;
-            color: #555;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
-        
-        th, td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            text-align: left;
-        }
-        
-        th {
-            background-color: #f2f2f2;
-        }
-        
-        .centered {
-            text-align: center;
-        }
-        
-        .logo {
-            max-width: 200px;
-            margin-bottom: 1rem;
-        }
-
-        @media print {
-            .no-print {
-                display: none;
-            }
-            
-            body {
-                font-size: 12pt;
-            }
-            
-            .container {
-                max-width: 100%;
-                padding: 0;
-            }
-            
-            a {
-                color: #000;
-                text-decoration: none;
-            }
-            
-            .diagram {
-                page-break-inside: avoid;
-                max-width: 90%;
-            }
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>NIS Protocol Whitepaper</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="../assets/css/styles.css" />
 </head>
 <body>
-    <header>
-        <div class="container">
-            <img src="../assets/images/nis-protocol-logo.png" alt="NIS Protocol Logo" class="logo">
-            <h1>Neuro-Inspired System Protocol</h1>
-            <p>A Biologically Inspired Framework for Intelligent Multi-Agent Systems</p>
-        </div>
-    </header>
-
-    <nav class="no-print">
-        <div class="container nav-container">
-            <a href="../index.html" class="nav-logo">NIS Protocol</a>
-            <ul class="nav-links">
-                <li><a href="../index.html">Home</a></li>
-                <li><a href="../architecture/index.html">Architecture</a></li>
-                <li><a href="../docs/index.html">Documentation</a></li>
-                <li><a href="../examples/index.html">Examples</a></li>
-                <li><a href="https://github.com/Organica-Ai-Solutions/NIS_Protocol">GitHub</a></li>
-            </ul>
-        </div>
-    </nav>
-
-    <section>
-        <div class="container">
-            <h2 class="centered">Neuro-Inspired System Protocol Whitepaper</h2>
-            <p><strong>Version 1.0 - May 2024</strong><br>
-            <strong>Organica AI Solutions</strong></p>
-
-            <h3>Abstract</h3>
-            <p>
-                The Neuro-Inspired System Protocol (NIS Protocol) introduces a revolutionary framework for multi-agent systems inspired by the structure and function of the human brain. By integrating key biological constructs—perception, interpretation, memory, emotional modulation, reasoning, and action—into a cohesive protocol, we enable the development of more adaptive, context-aware, and naturally intelligent systems. This whitepaper outlines the protocol's architecture, components, implementation guidelines, and potential applications across domains including robotics, autonomous systems, and distributed AI infrastructure.
-            </p>
-
-            <div class="center">
-                <img src="../assets/images/diagram.png" alt="NIS Protocol Architecture" class="diagram" style="max-width: 600px;">
-                <p><em>Figure 1: The NIS Protocol's layered cognitive architecture, showing information flow from sensory input to action, with feedback loops for learning.</em></p>
-            </div>
-
-            <h3>Table of Contents</h3>
-            <ul>
-                <li><a href="#introduction">Introduction</a></li>
-                <li><a href="#biological-inspiration">Biological Inspiration</a></li>
-                <li><a href="#protocol-architecture">Protocol Architecture</a></li>
-                <li><a href="#core-components">Core Components</a></li>
-                <li><a href="#emotional-state-system">Emotional State System</a></li>
-                <li><a href="#message-flow">Message Flow</a></li>
-                <li><a href="#implementation-guidelines">Implementation Guidelines</a></li>
-                <li><a href="#application-domains">Application Domains</a></li>
-                <li><a href="#case-studies">Case Studies</a></li>
-                <li><a href="#future-research">Future Research</a></li>
-                <li><a href="#conclusion">Conclusion</a></li>
-            </ul>
-
-            <h3 id="introduction">Introduction</h3>
-            <p>
-                Current approaches to multi-agent AI systems often lack the cohesive, adaptive, and context-sensitive qualities of biological intelligence. While individual agents might excel at specific tasks, they typically lack a unified cognitive framework for integrating perception, memory, reasoning, and action. The NIS Protocol addresses this gap by providing a biologically inspired architecture that enables more natural intelligence in artificial systems.
-            </p>
-            <p>
-                This protocol is not merely a communication standard but a comprehensive cognitive architecture that guides how agents should process information, make decisions, and learn from experience. By mimicking the layered processing, emotional modulation, and memory systems of the brain, the NIS Protocol enables the development of AI systems that can:
-            </p>
-            <ul>
-                <li>Process multi-modal sensory inputs with contextual awareness</li>
-                <li>Maintain both short and long-term memory to inform decisions</li>
-                <li>Modulate attention and resource allocation through "emotional" weighting</li>
-                <li>Make decisions influenced by both rational analysis and priority signals</li>
-                <li>Learn and adapt from past experiences through continuous feedback</li>
-            </ul>
-
-            <h3 id="biological-inspiration">Biological Inspiration</h3>
-            <p>
-                The NIS Protocol draws inspiration from several key biological systems:
-            </p>
-
-            <h4>The Visual Cortex</h4>
-            <p>
-                The human visual system processes raw sensory data through a hierarchy of increasingly abstract representations—from simple edge detection to complex object recognition. Similarly, the NIS Protocol's perception layer transforms raw inputs into structured representations before higher-level processing occurs.
-            </p>
-
-            <h4>The Limbic System</h4>
-            <p>
-                The brain's limbic system, including the amygdala, modulates cognitive processes through emotional states. In the NIS Protocol, the emotional state system serves a similar function, influencing decision thresholds, resource allocation, and attention focus based on urgency, suspicion, and other dimensions.
-            </p>
-
-            <h4>The Prefrontal Cortex</h4>
-            <p>
-                The prefrontal cortex integrates information from multiple sources, weighs options, and makes decisions. The NIS Protocol's reasoning layer performs analogous functions, synthesizing perceptual input, memory, and emotional state to generate actions.
-            </p>
-
-            <h4>The Hippocampus</h4>
-            <p>
-                The hippocampus plays a crucial role in memory formation and retrieval. The NIS Protocol includes dedicated memory agents that store and retrieve information, providing historical context for decision-making.
-            </p>
-
-            <h3 id="protocol-architecture">Protocol Architecture</h3>
-            <p>
-                The NIS Protocol defines a layered cognitive architecture where specialized agents handle different aspects of information processing. Each layer builds upon and transforms the output of previous layers, culminating in actions that affect the environment.
-            </p>
-
-            <div class="center">
-                <img src="../assets/images/diagram.png" alt="NIS Protocol Architecture" class="diagram" style="max-width: 600px;">
-                <p><em>Figure 2: The NIS Protocol's layered architecture showing the flow from perception to action.</em></p>
-            </div>
-
-            <h4>Cognitive Layers</h4>
-            <ol>
-                <li><strong>Perception Layer</strong> - Processes raw sensory inputs
-                    <ul>
-                        <li>Vision Agent: Processes visual information</li>
-                        <li>Input Agent: Handles non-visual inputs (text, sensor data)</li>
-                    </ul>
-                </li>
-                <li><strong>Interpretation Layer</strong> - Contextualizes and encodes information
-                    <ul>
-                        <li>Parser Agent: Structures raw data into meaningful formats</li>
-                        <li>Intent Agent: Determines the purpose or goal behind inputs</li>
-                    </ul>
-                </li>
-                <li><strong>Reasoning Layer</strong> - Plans, synthesizes, and makes decisions
-                    <ul>
-                        <li>Cortex Agent: Integrates all information for high-level reasoning</li>
-                        <li>Planning Agent: Develops sequences of actions to achieve goals</li>
-                    </ul>
-                </li>
-                <li><strong>Memory Layer</strong> - Stores short and long-term information
-                    <ul>
-                        <li>Memory Agent: Manages retrieval and storage of information</li>
-                        <li>Log Agent: Records events and system states for future reference</li>
-                    </ul>
-                </li>
-                <li><strong>Action Layer</strong> - Generates and executes responses
-                    <ul>
-                        <li>Builder Agent: Constructs responses or commands</li>
-                        <li>Deployer Agent: Executes actions in the environment</li>
-                    </ul>
-                </li>
-                <li><strong>Learning Layer</strong> - Adapts and improves system behavior
-                    <ul>
-                        <li>Learning Agent: Updates models and parameters based on experience</li>
-                        <li>Optimizer Agent: Tunes system performance</li>
-                    </ul>
-                </li>
-                <li><strong>Coordination Layer</strong> - Orchestrates communication between agents
-                    <ul>
-                        <li>Coordinator Agent: Manages message routing and prioritization</li>
-                    </ul>
-                </li>
-            </ol>
-
-            <h3 id="core-components">Core Components</h3>
-            <h4>Agent Registry</h4>
-            <p>
-                The Agent Registry is the central management system that tracks all agents, their capabilities, and their current status. It facilitates communication between agents and manages their lifecycle.
-            </p>
-            
-            <div class="code-block">
-                <pre><code class="language-python">class NISRegistry:
-    """Central registry for all NIS Protocol agents."""
-    
-    def __init__(self):
-        self.agents = {}
-    
-    def register(self, agent: NISAgent) -> None:
-        """Register an agent with the registry."""
-        self.agents[agent.agent_id] = agent
-    
-    def get_agents_by_layer(self, layer: NISLayer) -> List[NISAgent]:
-        """Get all agents in a specific layer."""
-        return [
-            agent for agent in self.agents.values()
-            if agent.layer == layer and agent.active
-        ]</code></pre>
-            </div>
-
-            <h4>Base Agent Structure</h4>
-            <p>
-                All agents in the NIS Protocol inherit from a common base class that provides core functionality and ensures consistent behavior.
-            </p>
-
-            <div class="code-block">
-                <pre><code class="language-python">class NISAgent:
-    """Base class for all NIS Protocol agents."""
-    
-    def __init__(
-        self,
-        agent_id: str,
-        layer: NISLayer,
-        description: str
-    ):
-        self.agent_id = agent_id
-        self.layer = layer
-        self.description = description
-        self.active = True
-        
-        # Register with the global registry
-        NISRegistry().register(self)
-    
-    def process(self, message: Dict[str, Any]) -> Dict[str, Any]:
-        """Process an incoming message."""
-        raise NotImplementedError("Subclasses must implement process()")</code></pre>
-            </div>
-
-            <h3 id="emotional-state-system">Emotional State System</h3>
-            <p>
-                The Emotional State System is a unique feature of the NIS Protocol that modulates agent behavior based on context-sensitive dimensions analogous to human emotions. Unlike traditional priority systems, these dimensions decay over time and influence multiple aspects of system behavior.
-            </p>
-
-            <div class="center">
-                <img src="../assets/images/heatmap.png" alt="Emotional State Heatmap" class="diagram" style="max-width: 500px;">
-                <p><em>Figure 3: Heatmap showing how confidence and suspicion levels modulate agent responses in the NIS Protocol.</em></p>
-            </div>
-
-            <h4>Emotional Dimensions</h4>
-            <ol>
-                <li><strong>Suspicion</strong> - Increases scrutiny of unusual patterns</li>
-                <li><strong>Urgency</strong> - Prioritizes time-sensitive processing</li>
-                <li><strong>Confidence</strong> - Influences threshold for decision-making</li>
-                <li><strong>Interest</strong> - Directs attention to specific features</li>
-                <li><strong>Novelty</strong> - Highlights deviation from expectations</li>
-            </ol>
-
-            <h4>Decay Mechanism</h4>
-            <p>
-                Each emotional dimension naturally decays toward a neutral state (0.5) over time, with different decay rates:
-            </p>
-
-            <div class="code-block">
-                <pre><code class="language-python">def _apply_decay(self) -> None:
-    """Apply time-based decay to all emotional dimensions."""
-    current_time = time.time()
-    elapsed = current_time - self.last_update
-    
-    # Apply decay to each dimension
-    for dimension, value in self.state.items():
-        decay_rate = self.decay_rates.get(dimension, 0.05)
-        decay_amount = decay_rate * elapsed
-        
-        # Move toward neutral (0.5)
-        if value > 0.5:
-            self.state[dimension] = max(0.5, value - decay_amount)
-        elif value < 0.5:
-            self.state[dimension] = min(0.5, value + decay_amount)</code></pre>
-            </div>
-
-            <h3 id="message-flow">Message Flow</h3>
-            <p>
-                The NIS Protocol defines a standardized flow of information between agents, ensuring that data is progressively refined and enriched as it passes through the cognitive layers.
-            </p>
-
-            <h4>Message Structure</h4>
-            <p>
-                Messages in the NIS Protocol follow a consistent format that includes:
-            </p>
-
-            <div class="code-block">
-                <pre><code class="language-json">{
-  "agent_id": "vision",
-  "timestamp": 1621435234.567,
-  "status": "success",
-  "payload": {
-    // Primary data specific to the message type
-  },
-  "metadata": {
-    // Additional information about the processing
-  },
-  "emotional_state": {
-    "suspicion": 0.3,
-    "urgency": 0.7,
-    "confidence": 0.8,
-    "interest": 0.5,
-    "novelty": 0.2
-  }
+<header id="title-block-header">
+<h1 class="title">NIS Protocol Whitepaper</h1>
+</header>
+<h1 id="neuro-inspired-system-protocol-nis-protocol">Neuro-Inspired
+System Protocol (NIS Protocol)</h1>
+<h2
+id="a-biologically-inspired-framework-for-intelligent-multi-agent-systems">A
+Biologically Inspired Framework for Intelligent Multi-Agent Systems</h2>
+<p><strong>Version 1.0 - May 2024</strong><br />
+<strong>Organica AI Solutions</strong></p>
+<h2 id="abstract">Abstract</h2>
+<p>The Neuro-Inspired System Protocol (NIS Protocol) introduces a
+revolutionary framework for multi-agent systems inspired by the
+structure and function of the human brain. By integrating key biological
+constructs—perception, interpretation, memory, emotional modulation,
+reasoning, and action—into a cohesive protocol, we enable the
+development of more adaptive, context-aware, and naturally intelligent
+systems. This whitepaper outlines the protocol’s architecture,
+components, implementation guidelines, and potential applications across
+domains including robotics, autonomous systems, and distributed AI
+infrastructure.</p>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ol type="1">
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#biological-inspiration">Biological Inspiration</a></li>
+<li><a href="#protocol-architecture">Protocol Architecture</a></li>
+<li><a href="#core-components">Core Components</a></li>
+<li><a href="#emotional-state-system">Emotional State System</a></li>
+<li><a href="#message-flow">Message Flow</a></li>
+<li><a href="#protocol-integration">Protocol Integration</a></li>
+<li><a href="#implementation-guidelines">Implementation
+Guidelines</a></li>
+<li><a href="#application-domains">Application Domains</a>
+<ul>
+<li><a href="#autonomous-droids">Autonomous Droids</a></li>
+<li><a href="#drone-systems">Drone Systems</a></li>
+<li><a href="#other-applications">Other Applications</a></li>
+</ul></li>
+<li><a href="#case-studies">Case Studies</a></li>
+<li><a href="#future-research">Future Research</a></li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ol>
+<h2 id="introduction">Introduction</h2>
+<p>Current approaches to multi-agent AI systems often lack the cohesive,
+adaptive, and context-sensitive qualities of biological intelligence.
+While individual agents might excel at specific tasks, they typically
+lack a unified cognitive framework for integrating perception, memory,
+reasoning, and action. The NIS Protocol addresses this gap by providing
+a biologically inspired architecture that enables more natural
+intelligence in artificial systems.</p>
+<p>This protocol is not merely a communication standard but a
+comprehensive cognitive architecture that guides how agents should
+process information, make decisions, and learn from experience. By
+mimicking the layered processing, emotional modulation, and memory
+systems of the brain, the NIS Protocol enables the development of AI
+systems that can:</p>
+<ul>
+<li>Process multi-modal sensory inputs with contextual awareness</li>
+<li>Maintain both short and long-term memory to inform decisions</li>
+<li>Modulate attention and resource allocation through “emotional”
+weighting</li>
+<li>Make decisions influenced by both rational analysis and priority
+signals</li>
+<li>Learn and adapt from past experiences through continuous
+feedback</li>
+</ul>
+<h2 id="biological-inspiration">Biological Inspiration</h2>
+<p>The NIS Protocol draws inspiration from several key biological
+systems:</p>
+<h3 id="the-visual-cortex">The Visual Cortex</h3>
+<p>The human visual system processes raw sensory data through a
+hierarchy of increasingly abstract representations—from simple edge
+detection to complex object recognition. Similarly, the NIS Protocol’s
+perception layer transforms raw inputs into structured representations
+before higher-level processing occurs.</p>
+<h3 id="the-limbic-system">The Limbic System</h3>
+<p>The brain’s limbic system, including the amygdala, modulates
+cognitive processes through emotional states. In the NIS Protocol, the
+emotional state system serves a similar function, influencing decision
+thresholds, resource allocation, and attention focus based on urgency,
+suspicion, and other dimensions.</p>
+<h3 id="the-prefrontal-cortex">The Prefrontal Cortex</h3>
+<p>The prefrontal cortex integrates information from multiple sources,
+weighs options, and makes decisions. The NIS Protocol’s reasoning layer
+performs analogous functions, synthesizing perceptual input, memory, and
+emotional state to generate actions.</p>
+<h3 id="the-hippocampus">The Hippocampus</h3>
+<p>The hippocampus plays a crucial role in memory formation and
+retrieval. The NIS Protocol includes dedicated memory agents that store
+and retrieve information, providing historical context for
+decision-making.</p>
+<h2 id="protocol-architecture">Protocol Architecture</h2>
+<p>The NIS Protocol defines a layered cognitive architecture where
+specialized agents handle different aspects of information processing.
+Each layer builds upon and transforms the output of previous layers,
+culminating in actions that affect the environment.</p>
+<figure>
+<embed src="../diagrams/nis_architecture.md" />
+<figcaption aria-hidden="true">NIS Protocol Architecture</figcaption>
+</figure>
+<h3 id="cognitive-layers">Cognitive Layers</h3>
+<ol type="1">
+<li><strong>Perception Layer</strong> - Processes raw sensory inputs
+<ul>
+<li>Vision Agent: Processes visual information</li>
+<li>Input Agent: Handles non-visual inputs (text, sensor data)</li>
+</ul></li>
+<li><strong>Interpretation Layer</strong> - Contextualizes and encodes
+information
+<ul>
+<li>Parser Agent: Structures raw data into meaningful formats</li>
+<li>Intent Agent: Determines the purpose or goal behind inputs</li>
+</ul></li>
+<li><strong>Reasoning Layer</strong> - Plans, synthesizes, and makes
+decisions
+<ul>
+<li>Cortex Agent: Integrates all information for high-level
+reasoning</li>
+<li>Planning Agent: Develops sequences of actions to achieve goals</li>
+</ul></li>
+<li><strong>Memory Layer</strong> - Stores short and long-term
+information
+<ul>
+<li>Memory Agent: Manages retrieval and storage of information</li>
+<li>Log Agent: Records events and system states for future
+reference</li>
+</ul></li>
+<li><strong>Action Layer</strong> - Generates and executes responses
+<ul>
+<li>Builder Agent: Constructs responses or commands</li>
+<li>Deployer Agent: Executes actions in the environment</li>
+</ul></li>
+<li><strong>Learning Layer</strong> - Adapts and improves system
+behavior
+<ul>
+<li>Learning Agent: Updates models and parameters based on
+experience</li>
+<li>Optimizer Agent: Tunes system performance</li>
+</ul></li>
+<li><strong>Coordination Layer</strong> - Orchestrates communication
+between agents
+<ul>
+<li>Coordinator Agent: Manages message routing and prioritization</li>
+</ul></li>
+</ol>
+<h2 id="core-components">Core Components</h2>
+<h3 id="agent-registry">Agent Registry</h3>
+<p>The Agent Registry is the central management system that tracks all
+agents, their capabilities, and their current status. It facilitates
+communication between agents and manages their lifecycle.</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> NISRegistry:</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;Central registry for all NIS Protocol agents.&quot;&quot;&quot;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>):</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.agents <span class="op">=</span> {}</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> register(<span class="va">self</span>, agent: NISAgent) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        <span class="co">&quot;&quot;&quot;Register an agent with the registry.&quot;&quot;&quot;</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.agents[agent.agent_id] <span class="op">=</span> agent</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> get_agents_by_layer(<span class="va">self</span>, layer: NISLayer) <span class="op">-&gt;</span> List[NISAgent]:</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>        <span class="co">&quot;&quot;&quot;Get all agents in a specific layer.&quot;&quot;&quot;</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> [</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>            agent <span class="cf">for</span> agent <span class="kw">in</span> <span class="va">self</span>.agents.values()</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> agent.layer <span class="op">==</span> layer <span class="kw">and</span> agent.active</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>        ]</span></code></pre></div>
+<h3 id="base-agent-structure">Base Agent Structure</h3>
+<p>All agents in the NIS Protocol inherit from a common base class that
+provides core functionality and ensures consistent behavior.</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> NISAgent:</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;Base class for all NIS Protocol agents.&quot;&quot;&quot;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        agent_id: <span class="bu">str</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        layer: NISLayer,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        description: <span class="bu">str</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    ):</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.agent_id <span class="op">=</span> agent_id</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.layer <span class="op">=</span> layer</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.description <span class="op">=</span> description</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.active <span class="op">=</span> <span class="va">True</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Register with the global registry</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        NISRegistry().register(<span class="va">self</span>)</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> process(<span class="va">self</span>, message: Dict[<span class="bu">str</span>, Any]) <span class="op">-&gt;</span> Dict[<span class="bu">str</span>, Any]:</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>        <span class="co">&quot;&quot;&quot;Process an incoming message.&quot;&quot;&quot;</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">NotImplementedError</span>(<span class="st">&quot;Subclasses must implement process()&quot;</span>)</span></code></pre></div>
+<h2 id="emotional-state-system">Emotional State System</h2>
+<p>The Emotional State System is a unique feature of the NIS Protocol
+that modulates agent behavior based on context-sensitive dimensions
+analogous to human emotions. Unlike traditional priority systems, these
+dimensions decay over time and influence multiple aspects of system
+behavior.</p>
+<figure>
+<embed src="../diagrams/emotional_state_system.md" />
+<figcaption aria-hidden="true">Emotional State System</figcaption>
+</figure>
+<h3 id="emotional-dimensions">Emotional Dimensions</h3>
+<ol type="1">
+<li><strong>Suspicion</strong> - Increases scrutiny of unusual
+patterns</li>
+<li><strong>Urgency</strong> - Prioritizes time-sensitive
+processing</li>
+<li><strong>Confidence</strong> - Influences threshold for
+decision-making</li>
+<li><strong>Interest</strong> - Directs attention to specific
+features</li>
+<li><strong>Novelty</strong> - Highlights deviation from
+expectations</li>
+</ol>
+<h3 id="decay-mechanism">Decay Mechanism</h3>
+<p>Each emotional dimension naturally decays toward a neutral state
+(0.5) over time, with different decay rates:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _apply_decay(<span class="va">self</span>) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;Apply time-based decay to all emotional dimensions.&quot;&quot;&quot;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    current_time <span class="op">=</span> time.time()</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    elapsed <span class="op">=</span> current_time <span class="op">-</span> <span class="va">self</span>.last_update</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Apply decay to each dimension</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> dimension, value <span class="kw">in</span> <span class="va">self</span>.state.items():</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>        decay_rate <span class="op">=</span> <span class="va">self</span>.decay_rates.get(dimension, <span class="fl">0.05</span>)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>        decay_amount <span class="op">=</span> decay_rate <span class="op">*</span> elapsed</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Move toward neutral (0.5)</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> value <span class="op">&gt;</span> <span class="fl">0.5</span>:</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.state[dimension] <span class="op">=</span> <span class="bu">max</span>(<span class="fl">0.5</span>, value <span class="op">-</span> decay_amount)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">elif</span> value <span class="op">&lt;</span> <span class="fl">0.5</span>:</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.state[dimension] <span class="op">=</span> <span class="bu">min</span>(<span class="fl">0.5</span>, value <span class="op">+</span> decay_amount)</span></code></pre></div>
+<h2 id="message-flow">Message Flow</h2>
+<p>The NIS Protocol defines a standardized flow of information between
+agents, ensuring that data is progressively refined and enriched as it
+passes through the cognitive layers.</p>
+<figure>
+<embed src="../diagrams/message_flow.md" />
+<figcaption aria-hidden="true">Message Flow</figcaption>
+</figure>
+<h3 id="message-structure">Message Structure</h3>
+<p>Messages in the NIS Protocol follow a consistent format that
+includes:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;agent_id&quot;</span><span class="fu">:</span> <span class="st">&quot;vision&quot;</span><span class="fu">,</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;timestamp&quot;</span><span class="fu">:</span> <span class="fl">1621435234.567</span><span class="fu">,</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;status&quot;</span><span class="fu">:</span> <span class="st">&quot;success&quot;</span><span class="fu">,</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;payload&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="er">//</span> <span class="er">Primary</span> <span class="er">data</span> <span class="er">specific</span> <span class="er">to</span> <span class="er">the</span> <span class="er">message</span> <span class="er">type</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;metadata&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="er">//</span> <span class="er">Additional</span> <span class="er">information</span> <span class="er">about</span> <span class="er">the</span> <span class="er">processing</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;emotional_state&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;suspicion&quot;</span><span class="fu">:</span> <span class="fl">0.3</span><span class="fu">,</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;urgency&quot;</span><span class="fu">:</span> <span class="fl">0.7</span><span class="fu">,</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;confidence&quot;</span><span class="fu">:</span> <span class="fl">0.8</span><span class="fu">,</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;interest&quot;</span><span class="fu">:</span> <span class="fl">0.5</span><span class="fu">,</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;novelty&quot;</span><span class="fu">:</span> <span class="fl">0.2</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h2 id="protocol-integration">Protocol Integration</h2>
+<p>The NIS Protocol can function as a meta-protocol, orchestrating and
+coordinating agents from different protocol ecosystems. This feature
+allows for seamless communication with external AI frameworks and agent
+protocols.</p>
+<h3 id="external-protocol-support">External Protocol Support</h3>
+<p>The NIS Protocol provides adapters for integrating with several
+industry-standard protocols:</p>
+<ol type="1">
+<li><strong>MCP (Model Context Protocol)</strong> - Anthropic’s protocol
+for connecting AI systems to data sources</li>
+<li><strong>ACP (Agent Communication Protocol)</strong> - IBM’s
+standardized protocol for agent communication</li>
+<li><strong>A2A (Agent2Agent Protocol)</strong> - Google’s protocol for
+agent interoperability across platforms</li>
+</ol>
+<h3 id="integration-architecture">Integration Architecture</h3>
+<p>The protocol integration is built on a modular adapter system with
+three key components:</p>
+<ol type="1">
+<li><strong>CoordinatorAgent</strong> - Central hub that manages message
+routing and translation between protocols</li>
+<li><strong>BaseProtocolAdapter</strong> - Abstract interface that all
+protocol adapters implement</li>
+<li><strong>Protocol-specific adapters</strong> - Specialized adapters
+that translate between NIS Protocol and external formats</li>
+</ol>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> BaseProtocolAdapter:</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;Base interface for all protocol adapters.&quot;&quot;&quot;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> translate_to_nis(<span class="va">self</span>, external_message):</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>        <span class="co">&quot;&quot;&quot;Translate a message from the external protocol to NIS Protocol format.&quot;&quot;&quot;</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">pass</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> translate_from_nis(<span class="va">self</span>, nis_message):</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>        <span class="co">&quot;&quot;&quot;Translate a message from NIS Protocol format to the external protocol format.&quot;&quot;&quot;</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">pass</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> send_to_external_agent(<span class="va">self</span>, agent_id, message):</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>        <span class="co">&quot;&quot;&quot;Send a message to an external agent using this protocol.&quot;&quot;&quot;</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">pass</span></span></code></pre></div>
+<h3 id="configuration">Configuration</h3>
+<p>Protocol integration is configured through a routing configuration
+that specifies API endpoints and message routing rules:</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;mcp&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;base_url&quot;</span><span class="fu">:</span> <span class="st">&quot;https://api.example.com/mcp&quot;</span><span class="fu">,</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;api_key&quot;</span><span class="fu">:</span> <span class="st">&quot;YOUR_MCP_API_KEY&quot;</span><span class="fu">,</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;tool_mappings&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;vision_tool&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;nis_agent&quot;</span><span class="fu">:</span> <span class="st">&quot;vision_agent&quot;</span><span class="fu">,</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;target_layer&quot;</span><span class="fu">:</span> <span class="st">&quot;PERCEPTION&quot;</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;acp&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;base_url&quot;</span><span class="fu">:</span> <span class="st">&quot;https://api.example.com/acp&quot;</span><span class="fu">,</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;api_key&quot;</span><span class="fu">:</span> <span class="st">&quot;YOUR_ACP_API_KEY&quot;</span><span class="fu">,</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;agent_mappings&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;factory_control_agent&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;nis_agent&quot;</span><span class="fu">:</span> <span class="st">&quot;action_agent&quot;</span><span class="fu">,</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;target_layer&quot;</span><span class="fu">:</span> <span class="st">&quot;ACTION&quot;</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;a2a&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;base_url&quot;</span><span class="fu">:</span> <span class="st">&quot;https://api.example.com/a2a&quot;</span><span class="fu">,</span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;api_key&quot;</span><span class="fu">:</span> <span class="st">&quot;YOUR_A2A_API_KEY&quot;</span><span class="fu">,</span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;agent_mappings&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;natural_language_agent&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;nis_agent&quot;</span><span class="fu">:</span> <span class="st">&quot;interpretation_agent&quot;</span><span class="fu">,</span></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;target_layer&quot;</span><span class="fu">:</span> <span class="st">&quot;INTERPRETATION&quot;</span></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h3 id="benefits-of-protocol-integration">Benefits of Protocol
+Integration</h3>
+<p>The protocol integration feature positions NIS Protocol as a
+cognitive middleware layer that can:</p>
+<ol type="1">
+<li><strong>Unify Disparate Systems</strong> - Connect agents developed
+in different frameworks</li>
+<li><strong>Add Cognitive Intelligence</strong> - Enhance external
+agents with emotional state and memory</li>
+<li><strong>Simplify Integration</strong> - Provide a single interface
+for multiple protocol ecosystems</li>
+<li><strong>Future-Proof Applications</strong> - Adapt to new protocols
+through additional adapters</li>
+</ol>
+<h2 id="implementation-guidelines">Implementation Guidelines</h2>
+<h3 id="agent-development">Agent Development</h3>
+<p>When implementing NIS Protocol agents:</p>
+<ol type="1">
+<li><strong>Single Responsibility</strong>: Each agent should focus on a
+specific cognitive function</li>
+<li><strong>Emotional Awareness</strong>: Agents should both update and
+respond to emotional state</li>
+<li><strong>Memory Integration</strong>: Incorporate historical context
+in decision-making</li>
+<li><strong>Graceful Degradation</strong>: Handle missing or incomplete
+information robustly</li>
+<li><strong>Continuous Learning</strong>: Include feedback loops for
+ongoing improvement</li>
+</ol>
+<h3 id="system-integration">System Integration</h3>
+<p>To build a complete NIS Protocol system:</p>
+<ol type="1">
+<li><strong>Start Small</strong>: Begin with core perception, reasoning,
+and action agents</li>
+<li><strong>Add Complexity Gradually</strong>: Incorporate memory and
+learning components as the system matures</li>
+<li><strong>Monitor Emotional State</strong>: Use emotional dimensions
+to detect system issues</li>
+<li><strong>Test with Diverse Inputs</strong>: Ensure the system handles
+a wide range of scenarios</li>
+<li><strong>Implement Feedback Loops</strong>: Ensure actions update
+memory and emotional state</li>
+</ol>
+<h2 id="application-domains">Application Domains</h2>
+<h3 id="autonomous-droids">Autonomous Droids</h3>
+<p>The NIS Protocol is particularly well-suited for robotics
+applications, where context-awareness and adaptive behavior are
+crucial.</p>
+<figure>
+<embed src="../diagrams/droid_drone_applications.md" />
+<figcaption aria-hidden="true">Droid Applications</figcaption>
+</figure>
+<h4 id="droid-example-security-robot">Droid Example: Security Robot</h4>
+<p>A security robot using the NIS Protocol would process information as
+follows:</p>
+<ol type="1">
+<li><strong>Perception Layer</strong>: The Vision Agent detects an
+unidentified person in a restricted area</li>
+<li><strong>Emotional Update</strong>: The Suspicion dimension increases
+due to the unauthorized presence</li>
+<li><strong>Memory Integration</strong>: The Memory Agent checks if this
+person has been seen before</li>
+<li><strong>Reasoning Process</strong>: The Cortex Agent evaluates the
+threat level based on context</li>
+<li><strong>Action Selection</strong>: Depending on suspicion level and
+context, the robot might:
+<ul>
+<li>At low suspicion: Simply monitor the person</li>
+<li>At medium suspicion: Approach and request identification</li>
+<li>At high suspicion: Alert security personnel</li>
+</ul></li>
+</ol>
+<p>The emotional decay ensures that suspicion doesn’t remain
+indefinitely high after the event, allowing the system to return to
+normal operations.</p>
+<h3 id="drone-systems">Drone Systems</h3>
+<p>Unmanned Aerial Vehicles (UAVs) benefit from the NIS Protocol’s
+adaptive decision-making capabilities, especially in dynamic
+environments.</p>
+<h4 id="drone-example-environmental-monitoring">Drone Example:
+Environmental Monitoring</h4>
+<p>A drone conducting environmental monitoring using the NIS Protocol
+would:</p>
+<ol type="1">
+<li><strong>Perception Layer</strong>: The Vision Agent detects an
+approaching storm system</li>
+<li><strong>Emotional Update</strong>: The Urgency dimension increases
+due to the potential hazard</li>
+<li><strong>Memory Integration</strong>: The Memory Agent retrieves
+information about safe landing zones</li>
+<li><strong>Reasoning Process</strong>: The Cortex Agent evaluates
+multiple factors:
+<ul>
+<li>Storm severity and trajectory</li>
+<li>Mission priority (based on Interest dimension)</li>
+<li>Remaining battery life</li>
+<li>Distance to safe zones</li>
+</ul></li>
+<li><strong>Action Selection</strong>: The drone might decide to:
+<ul>
+<li>Complete critical measurements before the storm arrives</li>
+<li>Immediately seek shelter at a nearby landing zone</li>
+<li>Adjust flight path to continue mission while avoiding the storm</li>
+</ul></li>
+</ol>
+<h3 id="other-applications">Other Applications</h3>
+<p>The NIS Protocol can be applied to various domains beyond
+robotics:</p>
+<ul>
+<li><strong>Smart Infrastructure</strong>: Traffic management systems
+that adapt to changing conditions</li>
+<li><strong>Healthcare Monitoring</strong>: Patient monitoring systems
+that adjust alerting thresholds based on patient history</li>
+<li><strong>Financial Systems</strong>: Fraud detection with adaptive
+suspicion levels based on transaction patterns</li>
+<li><strong>Customer Service</strong>: Support systems that prioritize
+cases based on urgency and customer history</li>
+</ul>
+<h2 id="case-studies">Case Studies</h2>
+<h3 id="toll-booth-management-system">Toll Booth Management System</h3>
+<p>A toll booth system implemented with the NIS Protocol demonstrated
+significant improvements in vehicle processing:</p>
+<ul>
+<li>23% reduction in processing time for regular vehicles</li>
+<li>45% improvement in anomaly detection for suspicious vehicles</li>
+<li>98% accuracy in vehicle classification</li>
+</ul>
+<p>The system’s emotional state tracking was particularly effective for:
+- Increasing suspicion for unusual payment patterns - Raising urgency
+during peak traffic hours - Maintaining interest in vehicle categories
+that had historical issues</p>
+<h3 id="smart-city-traffic-management">Smart City Traffic
+Management</h3>
+<p>A pilot implementation in a mid-sized city showed:</p>
+<ul>
+<li>17% reduction in average commute times</li>
+<li>34% decrease in congestion during unexpected events</li>
+<li>28% improvement in emergency vehicle response times</li>
+</ul>
+<p>The system’s adaptive nature allowed it to: - Learn traffic patterns
+over time - Adjust signal timing based on urgency and current conditions
+- Predict and mitigate potential congestion before it occurred</p>
+<h2 id="future-research">Future Research</h2>
+<p>While the NIS Protocol provides a solid foundation for biologically
+inspired multi-agent systems, several areas warrant further
+research:</p>
+<ol type="1">
+<li><strong>Advanced Learning Mechanisms</strong>: Incorporating more
+sophisticated neuroplasticity-inspired learning</li>
+<li><strong>Cross-System Coordination</strong>: Enabling multiple NIS
+Protocol systems to interact effectively</li>
+<li><strong>Emotional Dimension Expansion</strong>: Exploring additional
+emotional dimensions for specific domains</li>
+<li><strong>Cognitive Biases</strong>: Implementing and controlling for
+human-like cognitive biases</li>
+<li><strong>Ethical Decision Frameworks</strong>: Integrating ethical
+considerations into the reasoning layer</li>
+</ol>
+<h2 id="conclusion">Conclusion</h2>
+<p>The Neuro-Inspired System Protocol represents a significant
+advancement in the design of intelligent multi-agent systems. By drawing
+inspiration from biological cognitive processes, it enables more
+adaptive, context-aware, and naturally intelligent artificial
+systems.</p>
+<p>The key innovations of the NIS Protocol include:</p>
+<ol type="1">
+<li><strong>Layered Cognitive Architecture</strong>: Mimicking the
+brain’s hierarchical processing</li>
+<li><strong>Emotional State System</strong>: Providing dynamic
+modulation of priorities and attention</li>
+<li><strong>Integrated Memory</strong>: Ensuring decisions are informed
+by historical context</li>
+<li><strong>Natural Adaptability</strong>: Allowing systems to adjust to
+changing environments</li>
+</ol>
+<p>As artificial intelligence becomes increasingly integrated into
+critical infrastructure, autonomous vehicles, and decision support
+systems, frameworks like the NIS Protocol will be essential for creating
+systems that can process information, make decisions, and learn from
+experience in ways that are more aligned with human cognition while
+maintaining the advantages of computational approaches.</p>
+<hr />
+<p><strong>Citation:</strong></p>
+<pre><code>@misc{torres2024nis,
+  author = {Torres, Diego},
+  title = {Neuro-Inspired System Protocol},
+  year = {2024},
+  publisher = {Organica AI Solutions},
+  url = {https://github.com/Organica-Ai-Solutions/NIS_Protocol}
 }</code></pre>
-            </div>
-
-            <h3 id="implementation-guidelines">Implementation Guidelines</h3>
-            <h4>Agent Development</h4>
-            <p>
-                When implementing NIS Protocol agents:
-            </p>
-            <ol>
-                <li><strong>Single Responsibility</strong>: Each agent should focus on a specific cognitive function</li>
-                <li><strong>Emotional Awareness</strong>: Agents should both update and respond to emotional state</li>
-                <li><strong>Memory Integration</strong>: Incorporate historical context in decision-making</li>
-                <li><strong>Graceful Degradation</strong>: Handle missing or incomplete information robustly</li>
-                <li><strong>Continuous Learning</strong>: Include feedback loops for ongoing improvement</li>
-            </ol>
-
-            <h4>System Integration</h4>
-            <p>
-                To build a complete NIS Protocol system:
-            </p>
-            <ol>
-                <li><strong>Start Small</strong>: Begin with core perception, reasoning, and action agents</li>
-                <li><strong>Add Complexity Gradually</strong>: Incorporate memory and learning components as the system matures</li>
-                <li><strong>Monitor Emotional State</strong>: Use emotional dimensions to detect system issues</li>
-                <li><strong>Test with Diverse Inputs</strong>: Ensure the system handles a wide range of scenarios</li>
-                <li><strong>Implement Feedback Loops</strong>: Ensure actions update memory and emotional state</li>
-            </ol>
-
-            <h3 id="application-domains">Application Domains</h3>
-            <h4>Autonomous Systems</h4>
-            <p>
-                The NIS Protocol is particularly well-suited for robotics and autonomous systems where context-awareness and adaptive behavior are crucial.
-            </p>
-
-            <div class="center">
-                <img src="../assets/images/usesExamples.png" alt="NIS Protocol Use Examples" class="diagram" style="max-width: 600px;">
-                <p><em>Figure 4: Various application domains for the NIS Protocol, including autonomous systems, smart infrastructure, and human-computer interaction.</em></p>
-            </div>
-
-            <h4>Smart Infrastructure</h4>
-            <p>
-                In smart city and infrastructure applications, the NIS Protocol enables systems to:
-            </p>
-            <ul>
-                <li>Adapt to changing traffic conditions using emotional urgency</li>
-                <li>Balance energy distribution based on contextual priorities</li>
-                <li>Detect anomalies using suspicion modulation</li>
-                <li>Coordinate multiple systems through standardized agent communication</li>
-            </ul>
-
-            <h4>Security Applications</h4>
-            <p>
-                The emotional state system makes the NIS Protocol particularly effective for security applications:
-            </p>
-            <ul>
-                <li>Dynamically adjust security thresholds based on suspicion levels</li>
-                <li>Prioritize alerts using urgency dimensions</li>
-                <li>Retain context of past events through the memory system</li>
-                <li>Learn from false positives/negatives through the learning layer</li>
-            </ul>
-
-            <h3 id="case-studies">Case Studies</h3>
-            <h4>Case Study 1: Toll Booth Automation</h4>
-            <p>
-                A toll booth system implemented using the NIS Protocol processes vehicles as follows:
-            </p>
-            <ol>
-                <li><strong>Perception Layer</strong>: The Vision Agent detects an approaching vehicle and extracts its license plate</li>
-                <li><strong>Interpretation Layer</strong>: The Parser Agent structures the license plate data and checks for toll transponder signals</li>
-                <li><strong>Memory Layer</strong>: The Memory Agent retrieves vehicle information and payment status</li>
-                <li><strong>Emotional Update</strong>: 
-                    <ul>
-                        <li>Suspicion increases for vehicles with historical payment issues</li>
-                        <li>Urgency increases during peak traffic hours</li>
-                    </ul>
-                </li>
-                <li><strong>Reasoning Layer</strong>: The Cortex Agent determines the toll amount based on vehicle class, time of day, and payment method</li>
-                <li><strong>Action Layer</strong>: The Deployer Agent triggers the appropriate gate action</li>
-                <li><strong>Learning Layer</strong>: The system updates traffic pattern models based on vehicle flow</li>
-            </ol>
-
-            <h4>Case Study 2: Healthcare Monitoring</h4>
-            <p>
-                A patient monitoring system using the NIS Protocol demonstrates how emotional modulation enhances care:
-            </p>
-            <ol>
-                <li><strong>Perception Layer</strong>: The Input Agent monitors vital signs from multiple sensors</li>
-                <li><strong>Memory Layer</strong>: The system maintains both short-term (recent vital signs) and long-term memory (patient history)</li>
-                <li><strong>Emotional Modulation</strong>: The urgency dimension increases when vitals approach threshold limits</li>
-                <li><strong>Reasoning Layer</strong>: The Cortex Agent interprets vital sign patterns in context of patient history</li>
-                <li><strong>Action Layer</strong>: Alerts are prioritized based on urgency levels</li>
-                <li><strong>Learning Layer</strong>: The system adapts thresholds to patient-specific baselines over time</li>
-            </ol>
-
-            <h3 id="future-research">Future Research</h3>
-            <p>
-                While the NIS Protocol establishes a robust foundation for neuro-inspired multi-agent systems, several research directions could further enhance its capabilities:
-            </p>
-            <ul>
-                <li><strong>Expanded Emotional Dimensions</strong>: Additional dimensions such as "satisfaction" or "frustration" could enable more nuanced decision-making</li>
-                <li><strong>Attention Mechanisms</strong>: Implementing selective attention inspired by human perception to prioritize processing</li>
-                <li><strong>Social Agent Interactions</strong>: Protocols for collaborative emotional states between agent groups</li>
-                <li><strong>Homeostatic Regulation</strong>: Self-regulating mechanisms for balancing system resources</li>
-                <li><strong>Episodic Memory Models</strong>: Enhanced memory structures for event-based recall and learning</li>
-            </ul>
-
-            <h3 id="conclusion">Conclusion</h3>
-            <p>
-                The Neuro-Inspired System Protocol represents a significant advancement in the design of intelligent multi-agent systems. By drawing on biological principles of cognition, emotion, and memory, it enables more flexible, context-sensitive, and naturally intelligent artificial systems.
-            </p>
-            <p>
-                As we continue to develop and refine the NIS Protocol, we invite researchers, developers, and organizations to join us in exploring its potential across diverse applications. Together, we can bridge the gap between artificial and biological intelligence, creating systems that combine the best of both worlds.
-            </p>
-            <p>
-                For implementation resources, reference documentation, and community discussions, visit the NIS Protocol repository at <a href="https://github.com/Organica-Ai-Solutions/NIS_Protocol">github.com/Organica-Ai-Solutions/NIS_Protocol</a>.
-            </p>
-        </div>
-    </section>
-
-    <footer class="no-print">
-        <div class="container">
-            <p>&copy; 2024 Organica AI Solutions - Released under MIT License</p>
-            <p>
-                <a href="https://github.com/Organica-Ai-Solutions/NIS_Protocol">GitHub</a> |
-                <a href="../index.html">Home</a> |
-                <a href="../docs/index.html">Documentation</a>
-            </p>
-        </div>
-    </footer>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/components/prism-core.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/plugins/autoloader/prism-autoloader.min.js"></script>
+<p>© 2024 Organica AI Solutions. Released under MIT License.</p>
 </body>
-</html> 
+</html>

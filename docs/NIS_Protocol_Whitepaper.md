@@ -16,14 +16,15 @@ The Neuro-Inspired System Protocol (NIS Protocol) introduces a revolutionary fra
 4. [Core Components](#core-components)
 5. [Emotional State System](#emotional-state-system)
 6. [Message Flow](#message-flow)
-7. [Implementation Guidelines](#implementation-guidelines)
-8. [Application Domains](#application-domains)
+7. [Protocol Integration](#protocol-integration)
+8. [Implementation Guidelines](#implementation-guidelines)
+9. [Application Domains](#application-domains)
    - [Autonomous Droids](#autonomous-droids)
    - [Drone Systems](#drone-systems)
    - [Other Applications](#other-applications)
-9. [Case Studies](#case-studies)
-10. [Future Research](#future-research)
-11. [Conclusion](#conclusion)
+10. [Case Studies](#case-studies)
+11. [Future Research](#future-research)
+12. [Conclusion](#conclusion)
 
 ## Introduction
 
@@ -210,6 +211,91 @@ Messages in the NIS Protocol follow a consistent format that includes:
   }
 }
 ```
+
+## Protocol Integration
+
+The NIS Protocol can function as a meta-protocol, orchestrating and coordinating agents from different protocol ecosystems. This feature allows for seamless communication with external AI frameworks and agent protocols.
+
+### External Protocol Support
+
+The NIS Protocol provides adapters for integrating with several industry-standard protocols:
+
+1. **MCP (Model Context Protocol)** - Anthropic's protocol for connecting AI systems to data sources
+2. **ACP (Agent Communication Protocol)** - IBM's standardized protocol for agent communication
+3. **A2A (Agent2Agent Protocol)** - Google's protocol for agent interoperability across platforms
+
+### Integration Architecture
+
+The protocol integration is built on a modular adapter system with three key components:
+
+1. **CoordinatorAgent** - Central hub that manages message routing and translation between protocols
+2. **BaseProtocolAdapter** - Abstract interface that all protocol adapters implement
+3. **Protocol-specific adapters** - Specialized adapters that translate between NIS Protocol and external formats
+
+```python
+class BaseProtocolAdapter:
+    """Base interface for all protocol adapters."""
+    
+    def translate_to_nis(self, external_message):
+        """Translate a message from the external protocol to NIS Protocol format."""
+        pass
+    
+    def translate_from_nis(self, nis_message):
+        """Translate a message from NIS Protocol format to the external protocol format."""
+        pass
+    
+    def send_to_external_agent(self, agent_id, message):
+        """Send a message to an external agent using this protocol."""
+        pass
+```
+
+### Configuration
+
+Protocol integration is configured through a routing configuration that specifies API endpoints and message routing rules:
+
+```json
+{
+  "mcp": {
+    "base_url": "https://api.example.com/mcp",
+    "api_key": "YOUR_MCP_API_KEY",
+    "tool_mappings": {
+      "vision_tool": {
+        "nis_agent": "vision_agent",
+        "target_layer": "PERCEPTION"
+      }
+    }
+  },
+  "acp": {
+    "base_url": "https://api.example.com/acp",
+    "api_key": "YOUR_ACP_API_KEY",
+    "agent_mappings": {
+      "factory_control_agent": {
+        "nis_agent": "action_agent",
+        "target_layer": "ACTION"
+      }
+    }
+  },
+  "a2a": {
+    "base_url": "https://api.example.com/a2a",
+    "api_key": "YOUR_A2A_API_KEY",
+    "agent_mappings": {
+      "natural_language_agent": {
+        "nis_agent": "interpretation_agent",
+        "target_layer": "INTERPRETATION"
+      }
+    }
+  }
+}
+```
+
+### Benefits of Protocol Integration
+
+The protocol integration feature positions NIS Protocol as a cognitive middleware layer that can:
+
+1. **Unify Disparate Systems** - Connect agents developed in different frameworks
+2. **Add Cognitive Intelligence** - Enhance external agents with emotional state and memory
+3. **Simplify Integration** - Provide a single interface for multiple protocol ecosystems
+4. **Future-Proof Applications** - Adapt to new protocols through additional adapters
 
 ## Implementation Guidelines
 
