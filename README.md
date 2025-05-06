@@ -18,6 +18,7 @@ For a comprehensive overview of the NIS Protocol:
 - **Memory Integration**: Short and long-term memory for context-aware decision making
 - **Standardized Messaging**: Consistent message format for inter-agent communication
 - **Biologically Inspired Learning**: Continuous adaptation based on experience
+- **Protocol Integration**: Seamless communication with MCP, ACP, and A2A protocols
 
 ![NIS Protocol Architecture](assets/images/diagram.png)
 
@@ -29,6 +30,7 @@ Comprehensive documentation is available to help you understand and implement th
 - [Architecture Overview](architecture/index.html)
 - [Emotional State System](emotional_state/index.html)
 - [Memory System](memory_system/index.html)
+- [Protocol Integration](src/adapters/README.md)
 - [Implementation Examples](examples/index.html)
 - [Frequently Asked Questions](docs/faq.html)
 
@@ -67,6 +69,37 @@ agent = MyPerceptionAgent()
 
 # Start processing
 registry.start()
+```
+
+## 🔄 External Protocol Integration
+
+NIS Protocol can integrate with other major AI agent communication protocols:
+
+```python
+from nis_protocol import CoordinatorAgent
+from nis_protocol.adapters import configure_coordinator_agent
+
+# Create coordinator
+coordinator = CoordinatorAgent()
+
+# Configure with adapters for external protocols
+configure_coordinator_agent(coordinator, config_path="config/protocol_routing.json")
+
+# Process messages from external protocols
+mcp_response = coordinator.process({
+    "protocol": "mcp",
+    "original_message": mcp_message  # Anthropic's Model Context Protocol
+})
+
+acp_response = coordinator.process({
+    "protocol": "acp",
+    "original_message": acp_message  # IBM's Agent Communication Protocol
+})
+
+a2a_response = coordinator.process({
+    "protocol": "a2a",
+    "original_message": a2a_message  # Google's Agent2Agent Protocol
+})
 ```
 
 ## 📊 Application Examples

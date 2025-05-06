@@ -1,0 +1,40 @@
+{
+  "mcp": {
+    "base_url": "https://api.example.com/mcp",
+    "api_key": "YOUR_MCP_API_KEY",
+    "tool_mappings": {
+      "vision_tool": {
+        "nis_agent": "vision_agent",
+        "target_layer": "PERCEPTION"
+      },
+      "memory_tool": {
+        "nis_agent": "memory_agent",
+        "target_layer": "MEMORY"
+      },
+      "reasoning_tool": {
+        "nis_agent": "reasoning_agent",
+        "target_layer": "REASONING"
+      }
+    }
+  },
+  "acp": {
+    "base_url": "https://api.example.com/acp",
+    "api_key": "YOUR_ACP_API_KEY",
+    "agent_mappings": {
+      "factory_control_agent": {
+        "nis_agent": "action_agent",
+        "target_layer": "ACTION"
+      }
+    }
+  },
+  "a2a": {
+    "base_url": "https://api.example.com/a2a",
+    "api_key": "YOUR_A2A_API_KEY",
+    "agent_mappings": {
+      "natural_language_agent": {
+        "nis_agent": "interpretation_agent",
+        "target_layer": "INTERPRETATION"
+      }
+    }
+  }
+} 

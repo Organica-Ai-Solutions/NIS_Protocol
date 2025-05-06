@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protocol Integration - NIS Protocol</title>
+    <link rel="stylesheet" href="../../assets/css/styles.css">
+    <style>
+        pre {
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            padding: 15px;
+            overflow-x: auto;
+            margin: 20px 0;
+            line-height: 1.5;
+            border-left: 4px solid #27ae60;
+        }
+        
+        code {
+            font-family: 'Courier New', Courier, monospace;
+        }
+        
+        .protocol-diagram {
+            max-width: 700px;
+            margin: 30px auto;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .protocol-comparison {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .protocol-comparison th,
+        .protocol-comparison td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        .protocol-comparison th {
+            background-color: #f2f2f2;
+        }
+
+        .protocol-comparison tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        .protocol-image {
+            max-width: 100%;
+            border-radius: 8px;
+            margin: 20px 0;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <img src="../../assets/images/nis-protocol-logo.png" alt="NIS Protocol Logo" class="logo">
+            <h1>Protocol Integration</h1>
+            <p>Connecting NIS Protocol with External AI Communication Standards</p>
+        </div>
+    </header>
+    
+    <nav class="breadcrumb">
+        <div class="container">
+            <a href="../../index.html">Home</a> &gt;
+            <a href="../index.html">Examples</a> &gt;
+            Protocol Integration
+        </div>
+    </nav>
+    
+    <section>
+        <div class="container">
+            <h2>Overview</h2>
+            
+            <div class="center">
+                <img src="../../assets/images/extrenalprotocol.png" alt="NIS Protocol Integration with External Protocols" class="protocol-image">
+            </div>
+            
+            <p>
+                The NIS Protocol can function as a meta-protocol, orchestrating and coordinating agents from different protocol ecosystems. Our integration adapters allow NIS Protocol to seamlessly communicate with:
+            </p>
+            <ul>
+                <li><strong>MCP (Model Context Protocol)</strong> - Anthropic's protocol for connecting AI systems to data sources</li>
+                <li><strong>ACP (Agent Communication Protocol)</strong> - IBM's standardized protocol for agent communication</li>
+                <li><strong>A2A (Agent2Agent Protocol)</strong> - Google's protocol for agent interoperability across platforms</li>
+            </ul>
+            
+            <div class="protocol-diagram">
+                <pre style="text-align: center;">
+┌─────────────────────────────────────┐
+│          NIS Protocol Core          │
+│                                     │
+│  ┌─────────┐ ┌─────────┐ ┌────────┐ │
+│  │ Vision  │ │ Memory  │ │  Other │ │
+│  │ Agent   │ │ Agent   │ │ Agents │ │
+│  └─────────┘ └─────────┘ └────────┘ │
+│         │         │          │      │
+│         └────┬────┴──────────┘      │
+│              │                      │
+│     ┌────────▼─────────┐            │
+│     │  Coordinator     │            │
+│     │     Agent        │            │
+│     └────────┬─────────┘            │
+└──────────────┼──────────────────────┘
+               │
+    ┌───────────────────────┐
+    │   Protocol Adapters   │
+    │                       │
+┌───▼───┐   ┌───────┐   ┌───▼───┐
+│  MCP  │   │  ACP  │   │  A2A  │
+│Adapter│   │Adapter│   │Adapter│
+└───┬───┘   └───┬───┘   └───┬───┘
+    │           │           │
+    ▼           ▼           ▼
+┌─────────┐ ┌─────────┐ ┌─────────┐
+│   MCP   │ │   ACP   │ │   A2A   │
+│  Tools  │ │  Agents │ │  Agents │
+└─────────┘ └─────────┘ └─────────┘</pre>
+            </div>
+        </div>
+    </section>
+    
+    <section class="alt">
+        <div class="container">
+            <h2>Protocol Comparison</h2>
+            <p>
+                Each protocol has unique strengths and focuses. The NIS Protocol acts as a cognitive middleware layer that can leverage the best of each:
+            </p>
+            
+            <table class="protocol-comparison">
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>NIS Protocol</th>
+                        <th>MCP (Anthropic)</th>
+                        <th>ACP (IBM)</th>
+                        <th>A2A (Google)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Inspiration</td>
+                        <td>Biological (human brain)</td>
+                        <td>Data integration standard</td>
+                        <td>Standardized agent communication</td>
+                        <td>Cross-platform agent interoperability</td>
+                    </tr>
+                    <tr>
+                        <td>Architecture</td>
+                        <td>Modular, multi-agent</td>
+                        <td>Open standard protocol</td>
+                        <td>Common "wire format"</td>
+                        <td>Open protocol for agent communication</td>
+                    </tr>
+                    <tr>
+                        <td>Contextual Awareness</td>
+                        <td>High (emulates human cognition)</td>
+                        <td>Medium (data source integration)</td>
+                        <td>Medium (standardized interactions)</td>
+                        <td>Medium (capability discovery)</td>
+                    </tr>
+                    <tr>
+                        <td>Unique Focus</td>
+                        <td>Emotional state integration</td>
+                        <td>Secure data connections</td>
+                        <td>Secure agent communication</td>
+                        <td>Secure information exchange</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    
+    <section>
+        <div class="container">
+            <h2>Integration Architecture</h2>
+            <p>
+                The NIS Protocol integrates with external protocols through a modular adapter system. Key components include:
+            </p>
+            <ol>
+                <li><strong>CoordinatorAgent</strong> - Central hub that manages message routing and translation</li>
+                <li><strong>BaseProtocolAdapter</strong> - Abstract interface that all protocol adapters implement</li>
+                <li><strong>Protocol-specific adapters</strong> - Translate between NIS Protocol and external formats</li>
+            </ol>
+            
+            <h3>Example Usage</h3>
+            <pre><code>from nis_protocol import CoordinatorAgent
+from nis_protocol.adapters import configure_coordinator_agent
+
+# Create coordinator
+coordinator = CoordinatorAgent()
+
+# Configure with adapters for external protocols
+configure_coordinator_agent(coordinator, config_path="config/protocol_routing.json")
+
+# Process messages from external protocols
+mcp_response = coordinator.process({
+    "protocol": "mcp",
+    "original_message": mcp_message  # Anthropic's Model Context Protocol
+})
+
+acp_response = coordinator.process({
+    "protocol": "acp",
+    "original_message": acp_message  # IBM's Agent Communication Protocol
+})
+
+a2a_response = coordinator.process({
+    "protocol": "a2a",
+    "original_message": a2a_message  # Google's Agent2Agent Protocol
+})</code></pre>
+        </div>
+    </section>
+    
+    <section class="alt">
+        <div class="container">
+            <h2>Configuration</h2>
+            <p>
+                Protocol integration is configured through a JSON file that specifies API endpoints and routing rules:
+            </p>
+            
+            <pre><code>{
+  "mcp": {
+    "base_url": "https://api.example.com/mcp",
+    "api_key": "YOUR_MCP_API_KEY",
+    "tool_mappings": {
+      "vision_tool": {
+        "nis_agent": "vision_agent",
+        "target_layer": "PERCEPTION"
+      },
+      "memory_tool": {
+        "nis_agent": "memory_agent", 
+        "target_layer": "MEMORY"
+      }
+    }
+  },
+  "acp": {
+    "base_url": "https://api.example.com/acp",
+    "api_key": "YOUR_ACP_API_KEY",
+    "agent_mappings": {
+      "factory_control_agent": {
+        "nis_agent": "action_agent",
+        "target_layer": "ACTION"
+      }
+    }
+  },
+  "a2a": {
+    "base_url": "https://api.example.com/a2a",
+    "api_key": "YOUR_A2A_API_KEY",
+    "agent_mappings": {
+      "natural_language_agent": {
+        "nis_agent": "interpretation_agent",
+        "target_layer": "INTERPRETATION"
+      }
+    }
+  }
+}</code></pre>
+        </div>
+    </section>
+    
+    <section>
+        <div class="container">
+            <h2>Why This Matters</h2>
+            
+            <div class="center">
+                <img src="../../assets/images/integration.png" alt="NIS Protocol as Central Integration Hub" class="protocol-image">
+            </div>
+            
+            <p>
+                The protocol integration feature positions NIS Protocol as a central "brain" that can:
+            </p>
+            <ul>
+                <li><strong>Unify Disparate Systems</strong> - Connect agents developed in different frameworks</li>
+                <li><strong>Add Cognitive Intelligence</strong> - Enhance external agents with emotional state and memory</li>
+                <li><strong>Simplify Integration</strong> - Provide a single interface for multiple protocol ecosystems</li>
+                <li><strong>Future-Proof Applications</strong> - Adapt to new protocols through additional adapters</li>
+            </ul>
+            
+            <p>
+                This makes NIS Protocol particularly valuable in environments with heterogeneous AI systems and multiple agent frameworks.
+            </p>
+            
+            <div class="center">
+                <a href="https://github.com/Organica-AI-Solutions/NIS-Protocol/tree/master/examples/protocol_integration" class="cta">View Code on GitHub</a>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <div class="container">
+            <p>
+                &copy; 2024 Organica AI Solutions. Released under MIT License.
+            </p>
+            <p>
+                <a href="https://github.com/Organica-AI-Solutions/NIS-Protocol">GitHub</a> |
+                <a href="../../docs/NIS_Protocol_Whitepaper.html">White Paper</a> |
+                <a href="../../docs/index.html">Documentation</a>
+            </p>
+        </div>
+    </footer>
+    
+    <a href="#" class="back-to-top">↑</a>
+</body>
+</html> 
