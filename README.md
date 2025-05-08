@@ -1,142 +1,193 @@
-# Neuro-Inspired System Protocol (NIS Protocol)
+# NIS Protocol
 
-![NIS Protocol Logo](assets/images/nis-protocol-logo.png)
+A neural-inspired system for agent communication and cognitive processing, implementing a universal meta-protocol for AI agent communication.
 
-The Neuro-Inspired System Protocol (NIS Protocol) is a biologically inspired framework for designing intelligent multi-agent systems. Drawing on the structure and function of the human brain, this protocol integrates perception, memory, emotional weighting, reasoning, and action into a cohesive architecture, enabling more adaptive and naturally intelligent systems.
+## Features
 
-## 📄 Whitepaper
+- **Meta Protocol Architecture**
+  - Universal translation layer between different AI protocols
+  - Seamless integration of MCP, ACP, and A2A protocols
+  - Cognitive context preservation across protocol boundaries
+  - Real-time protocol performance monitoring
+  - Automatic scaling and load balancing
 
-For a comprehensive overview of the NIS Protocol:
+- **Neural Architecture**
+  - Layered cognitive processing (Sensory → Perception → Memory → Emotional → Executive → Motor)
+  - Signal-based communication between agents
+  - Activation-based processing with priority handling
 
-- [Read Online Version](docs/NIS_Protocol_Whitepaper.html)
-- [Download PDF Version](docs/finalwhitepaper.pdf)
+- **Memory System**
+  - Working memory with Miller's Law implementation (7±2 items)
+  - Enhanced memory with semantic search capabilities
+  - Memory consolidation and forgetting mechanisms
+  - Neuroplasticity for adaptive learning
 
-## 🧠 Key Features
+- **Protocol Support**
+  - Universal Meta Protocol Layer
+  - Agent-to-Agent (A2A) Protocol
+  - Agent Computing Protocol (ACP)
+  - Managed Compute Protocol (MCP)
+  - Protocol translation and routing
+  - Cross-protocol emotional state preservation
+  - Unified memory context across protocols
 
-- **Layered Cognitive Architecture**: Inspired by the brain's hierarchical processing
-- **Emotional State System**: Dynamic modulation of agent behavior through emotional dimensions
-- **Memory Integration**: Short and long-term memory for context-aware decision making
-- **Standardized Messaging**: Consistent message format for inter-agent communication
-- **Biologically Inspired Learning**: Continuous adaptation based on experience
-- **Protocol Integration**: Seamless communication with MCP, ACP, and A2A protocols
+- **Cognitive Processing**
+  - Pattern recognition with transformer models
+  - Emotional processing with sentiment analysis
+  - Executive control for decision making
+  - Motor actions for system output
 
-![NIS Protocol Architecture](assets/images/diagram.png)
+## Meta Protocol Capabilities
 
-## 📖 Documentation
+The NIS Protocol serves as a universal meta-protocol for AI agent communication, offering:
 
-Comprehensive documentation is available to help you understand and implement the NIS Protocol:
+1. **Protocol Translation**
+   - Seamless translation between different AI protocols
+   - Preservation of semantic meaning and context
+   - Emotional state mapping across protocols
+   - Memory context sharing
 
-- [Getting Started Guide](getting_started/index.html)
-- [Architecture Overview](architecture/index.html)
-- [Emotional State System](emotional_state/index.html)
-- [Memory System](memory_system/index.html)
-- [Protocol Integration](src/adapters/README.md)
-- [Implementation Examples](examples/index.html)
-- [Frequently Asked Questions](docs/faq.html)
+2. **Cognitive Enhancement**
+   - Addition of emotional intelligence to existing protocols
+   - Memory integration for context preservation
+   - Learning capabilities for protocol optimization
+   - Adaptive routing based on conversation context
 
-## 🔧 Installation
+3. **Performance Monitoring**
+   - Real-time protocol metrics tracking
+   - Latency and error rate monitoring
+   - Automatic scaling based on load
+   - Alert system for performance issues
 
-To install the NIS Protocol framework:
+4. **Security & Compliance**
+   - End-to-end encryption support
+   - Rate limiting and access control
+   - Protocol validation and sanitization
+   - Audit logging for all translations
 
-```bash
-pip install nis-protocol
-```
+## Installation
 
-## 🚀 Quick Start
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/NIS-Protocol.git
+   cd NIS-Protocol
+   ```
 
-```python
-from nis_protocol import NISRegistry, NISAgent, NISLayer
+2. Create a virtual environment:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
 
-# Create a registry
-registry = NISRegistry()
+3. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-# Define a simple agent
-class MyPerceptionAgent(NISAgent):
-    def __init__(self):
-        super().__init__(
-            agent_id="my_perception_agent",
-            layer=NISLayer.PERCEPTION,
-            description="A simple perception agent"
-        )
-    
-    def process(self, message):
-        # Process incoming data
-        # ...
-        return processed_data
+4. Configure the system:
+   - Copy `config/protocol_config.example.json` to `config/protocol_config.json`
+   - Update the configuration with your API keys and endpoints
+   - Set up environment variables in `.env`
 
-# Register the agent
-agent = MyPerceptionAgent()
+## Usage
 
-# Start processing
-registry.start()
-```
+1. Initialize the Meta Protocol:
+   ```python
+   from src.meta import MetaProtocolCoordinator
+   from src.adapters import MCPAdapter, ACPAdapter, A2AAdapter
+   
+   # Create coordinator
+   coordinator = MetaProtocolCoordinator()
+   
+   # Register protocols
+   coordinator.register_protocol("mcp", MCPAdapter())
+   coordinator.register_protocol("acp", ACPAdapter())
+   coordinator.register_protocol("a2a", A2AAdapter())
+   
+   # Route message between protocols
+   response = await coordinator.route_message(
+       source_protocol="mcp",
+       target_protocol="a2a",
+       message={
+           "content": "Hello from MCP!",
+           "metadata": {"priority": "HIGH"}
+       }
+   )
+   ```
 
-## 🔄 External Protocol Integration
+2. Monitor Protocol Performance:
+   ```python
+   # Get protocol metrics
+   mcp_metrics = coordinator.get_protocol_metrics("mcp")
+   print(f"MCP Success Rate: {mcp_metrics.successful_translations / mcp_metrics.total_messages}")
+   ```
 
-NIS Protocol can integrate with other major AI agent communication protocols:
+## Architecture
 
-```python
-from nis_protocol import CoordinatorAgent
-from nis_protocol.adapters import configure_coordinator_agent
+The system follows a layered architecture inspired by neural processing:
 
-# Create coordinator
-coordinator = CoordinatorAgent()
+1. **Sensory Layer**
+   - Handles input processing (text, data)
+   - Performs initial tokenization and formatting
 
-# Configure with adapters for external protocols
-configure_coordinator_agent(coordinator, config_path="config/protocol_routing.json")
+2. **Perception Layer**
+   - Pattern recognition
+   - Feature extraction
+   - Initial interpretation
 
-# Process messages from external protocols
-mcp_response = coordinator.process({
-    "protocol": "mcp",
-    "original_message": mcp_message  # Anthropic's Model Context Protocol
-})
+3. **Memory Layer**
+   - Working memory management
+   - Long-term storage
+   - Memory consolidation
+   - Semantic search
 
-acp_response = coordinator.process({
-    "protocol": "acp",
-    "original_message": acp_message  # IBM's Agent Communication Protocol
-})
+4. **Emotional Layer**
+   - Sentiment analysis
+   - Emotional state tracking
+   - Affective processing
 
-a2a_response = coordinator.process({
-    "protocol": "a2a",
-    "original_message": a2a_message  # Google's Agent2Agent Protocol
-})
-```
+5. **Executive Layer**
+   - Decision making
+   - Action planning
+   - Goal management
 
-## 📊 Application Examples
+6. **Motor Layer**
+   - Action execution
+   - Output generation
+   - Protocol handling
 
-The NIS Protocol can be applied to various domains:
+## Development
 
-![Usage Examples](assets/images/usesExamples.png)
+1. Run tests:
+   ```bash
+   pytest tests/
+   ```
 
-- **Autonomous Systems**: Robotics, drones, self-driving vehicles
-- **Smart Infrastructure**: Traffic management, energy distribution
-- **Security Applications**: Surveillance, fraud detection
-- **Healthcare**: Patient monitoring with adaptive priorities
-- **Customer Interaction**: Context-aware support systems
+2. Check code style:
+   ```bash
+   flake8 src/
+   black src/
+   ```
 
-## 🌟 Emotional State System
+3. Generate documentation:
+   ```bash
+   pdoc --html src/ -o docs/
+   ```
 
-The emotional state system modulates agent behavior based on context-sensitive dimensions:
+## Contributing
 
-![Emotional State Heatmap](assets/images/heatmap.png)
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run tests
+5. Submit a pull request
 
-Key emotional dimensions include:
-- **Suspicion**: Increases scrutiny for unusual patterns
-- **Urgency**: Prioritizes time-sensitive processing
-- **Confidence**: Adjusts decision-making thresholds
-- **Interest**: Directs focus to specific features
-- **Novelty**: Highlights deviations from expectations
+## License
 
-## 🤝 Contributing
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-Contributions to the NIS Protocol are welcome! Please see our [contribution guidelines](CONTRIBUTING.md) for details on how to get involved.
+## Acknowledgments
 
-## 📝 License
-
-The NIS Protocol is released under the [MIT License](LICENSE).
-
-## 🔗 Contact
-
-- **GitHub**: [github.com/Organica-AI-Solutions/NIS-Protocol](https://github.com/Organica-AI-Solutions/NIS-Protocol)
-- **Email**: hello@organicaai.com
-- **Website**: [organicaai.com](https://organicaai.com) 
+- Inspired by cognitive architectures and neural processing
+- Uses Hugging Face Transformers for NLP
+- Implements protocols for agent communication 

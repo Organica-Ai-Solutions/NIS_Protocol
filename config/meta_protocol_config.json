@@ -1,0 +1,71 @@
+{
+    "meta_protocol": {
+        "version": "1.0.0",
+        "name": "NIS Meta Protocol",
+        "description": "Neural-Inspired System Meta Protocol for AI Agent Communication",
+        "default_priority": "NORMAL",
+        "metrics_retention_days": 30,
+        "emotional_context_ttl": 3600,
+        "logging": {
+            "level": "INFO",
+            "file_path": "./logs/meta_protocol.log",
+            "max_file_size": 10485760,
+            "backup_count": 5
+        }
+    },
+    "protocol_priorities": {
+        "mcp": "HIGH",
+        "acp": "NORMAL",
+        "a2a": "NORMAL",
+        "custom": "LOW"
+    },
+    "translation_rules": {
+        "preserve_emotional_state": true,
+        "preserve_memory_context": true,
+        "preserve_conversation_history": true,
+        "fallback_strategy": "best_effort"
+    },
+    "security": {
+        "enable_encryption": true,
+        "required_auth": true,
+        "allowed_protocols": ["mcp", "acp", "a2a"],
+        "rate_limits": {
+            "messages_per_minute": 1000,
+            "burst_limit": 100
+        }
+    },
+    "monitoring": {
+        "enable_metrics": true,
+        "enable_tracing": true,
+        "alert_thresholds": {
+            "error_rate": 0.1,
+            "latency_ms": 1000,
+            "memory_usage_mb": 1024
+        }
+    },
+    "cognitive_enhancement": {
+        "enable_emotional_processing": true,
+        "enable_memory_integration": true,
+        "enable_learning": true,
+        "emotional_dimensions": [
+            "trust",
+            "urgency",
+            "confidence",
+            "interest",
+            "satisfaction"
+        ],
+        "memory_types": [
+            "conversation",
+            "emotional",
+            "semantic",
+            "procedural"
+        ]
+    },
+    "scaling": {
+        "auto_scale": true,
+        "min_instances": 1,
+        "max_instances": 10,
+        "scale_up_threshold": 0.8,
+        "scale_down_threshold": 0.2
+    }
+} 

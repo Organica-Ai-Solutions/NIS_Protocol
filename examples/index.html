@@ -23,6 +23,8 @@
         .smart-city { border-left-color: #2ecc71; }
         .security { border-left-color: #e74c3c; }
         .healthcare { border-left-color: #f39c12; }
+        .vision-detection { border-left-color: #1abc9c; }
+        .enhanced-memory { border-left-color: #34495e; }
         
         .code-preview {
             background: #f8f8f8;
@@ -102,6 +104,63 @@
                 </div>
             </div>
             
+            <div class="example-card enhanced-memory">
+                <h3>Enhanced Memory System</h3>
+                <p>
+                    This example demonstrates the advanced memory capabilities of the NIS Protocol, including semantic search, memory organization, and biologically-inspired forgetting mechanisms. It showcases how an intelligent agent can store, retrieve, and reason about information across different memory types.
+                </p>
+                
+                <h4>Key Components:</h4>
+                <ul>
+                    <li><strong>Semantic Search:</strong> Find memories based on meaning rather than keyword matching</li>
+                    <li><strong>Memory Types:</strong> Episodic, semantic, and procedural memory organization</li>
+                    <li><strong>Working Memory:</strong> Limited capacity short-term memory for active information</li>
+                    <li><strong>Memory Consolidation:</strong> Automatic transfer from short-term to long-term memory</li>
+                    <li><strong>Forgetting Mechanism:</strong> Importance-based memory decay over time</li>
+                </ul>
+                
+                <h4>NIS Protocol Features Demonstrated:</h4>
+                <ul>
+                    <li>Vector embedding-based memory representation</li>
+                    <li>Multi-layer memory organization</li>
+                    <li>Importance and recency-based memory management</li>
+                    <li>Context-aware information retrieval</li>
+                </ul>
+                
+                <div class="center" style="margin: 20px 0;">
+                    <a href="enhanced_memory_example/README.md" class="btn">View Documentation</a>
+                    <a href="enhanced_memory_example/run.py" class="btn">View Code Example</a>
+                </div>
+            </div>
+            
+            <div class="example-card vision-detection">
+                <h3>Vision Detection with YOLO</h3>
+                <p>
+                    This example demonstrates how to use the VisionAgent with YOLO integration for object detection in images and video streams. It showcases advanced computer vision capabilities within the NIS Protocol framework.
+                </p>
+                
+                <h4>Key Components:</h4>
+                <ul>
+                    <li><strong>VisionAgent:</strong> Processes visual inputs using advanced computer vision techniques</li>
+                    <li><strong>YOLO Integration:</strong> Uses state-of-the-art object detection for identifying objects in images and videos</li>
+                    <li><strong>OpenCV Processing:</strong> Performs image manipulation and feature extraction</li>
+                    <li><strong>Emotional Response:</strong> Modulates system behavior based on detected unusual patterns</li>
+                </ul>
+                
+                <h4>NIS Protocol Features Demonstrated:</h4>
+                <ul>
+                    <li>Perception layer integration with modern AI vision models</li>
+                    <li>Real-time processing of visual data streams</li>
+                    <li>Emotional state modulation based on visual patterns</li>
+                    <li>Structured data extraction from visual inputs</li>
+                </ul>
+                
+                <div class="center" style="margin: 20px 0;">
+                    <a href="vision_detection_example/README.md" class="btn">View Documentation</a>
+                    <a href="vision_detection_example/run.py" class="btn">View Code Example</a>
+                </div>
+            </div>
+            
             <div class="example-card protocol-integration">
                 <h3>Protocol Integration</h3>
                 <p>
@@ -130,32 +189,40 @@
                 </div>
             </div>
             
-            <h4>Protocol Integration Code Snippet:</h4>
+            <h4>Enhanced Memory Code Snippet:</h4>
             <div class="code-preview">
-<pre>from nis_protocol import CoordinatorAgent
-from nis_protocol.adapters import configure_coordinator_agent
+<pre>from src.agents.memory.enhanced_memory_agent import EnhancedMemoryAgent, MemoryType
+from src.emotion.emotional_state import EmotionalState
 
-# Create coordinator
-coordinator = CoordinatorAgent()
+# Initialize the memory agent
+memory_agent = EnhancedMemoryAgent(
+    agent_id="my_memory",
+    description="Enhanced memory system with semantic search",
+    storage_path="./memory_data"
+)
 
-# Configure with adapters for external protocols
-configure_coordinator_agent(coordinator, config_path="config/protocol_routing.json")
-
-# Process messages from external protocols
-mcp_response = coordinator.process({
-    "protocol": "mcp",
-    "original_message": mcp_message  # Anthropic's Model Context Protocol
+# Store a memory
+response = memory_agent.process({
+    "operation": "store",
+    "content": "The system detected unusual login patterns at 3:45 AM.",
+    "memory_type": MemoryType.EPISODIC,
+    "themes": ["security", "anomaly"],
+    "importance": 0.9
 })
 
-acp_response = coordinator.process({
-    "protocol": "acp",
-    "original_message": acp_message  # IBM's Agent Communication Protocol
+# Semantic search
+search_results = memory_agent.process({
+    "operation": "search",
+    "query": {
+        "text": "Have there been any security issues recently?",
+        "top_k": 5,
+        "min_similarity": 0.6
+    }
 })
 
-a2a_response = coordinator.process({
-    "protocol": "a2a",
-    "original_message": a2a_message  # Google's Agent2Agent Protocol
-})</pre>
+# Process search results
+for memory in search_results["results"]:
+    print(f"Found relevant memory (similarity: {memory['similarity']:.2f}): {memory['content']}")</pre>
             </div>
         </div>
     </section>
