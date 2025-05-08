@@ -1,0 +1,64 @@
+{
+    "providers": {
+        "deepseek": {
+            "api_key": "YOUR_DEEPSEEK_API_KEY",
+            "api_base": "https://api.deepseek.com/v1",
+            "models": {
+                "chat": {
+                    "name": "deepseek-chat",
+                    "max_tokens": 4096,
+                    "temperature": 0.7
+                },
+                "embedding": {
+                    "name": "deepseek-embed",
+                    "dimensions": 1536
+                }
+            }
+        }
+    },
+    "agent_llm_config": {
+        "perception_agent": {
+            "provider": "deepseek",
+            "model": "deepseek-chat",
+            "temperature": 0.5,
+            "system_prompt": "You are a perception agent in a neural network, responsible for processing and understanding input data. Focus on pattern recognition and feature extraction."
+        },
+        "memory_agent": {
+            "provider": "deepseek",
+            "model": "deepseek-chat",
+            "temperature": 0.3,
+            "system_prompt": "You are a memory agent responsible for storing and retrieving information. Focus on organizing and consolidating knowledge."
+        },
+        "emotional_agent": {
+            "provider": "deepseek",
+            "model": "deepseek-chat",
+            "temperature": 0.8,
+            "system_prompt": "You are an emotional processing agent responsible for analyzing emotional content and context. Focus on sentiment analysis and emotional state tracking."
+        },
+        "executive_agent": {
+            "provider": "deepseek",
+            "model": "deepseek-chat",
+            "temperature": 0.4,
+            "system_prompt": "You are an executive control agent responsible for decision making and planning. Focus on goal-oriented reasoning and action selection."
+        },
+        "motor_agent": {
+            "provider": "deepseek",
+            "model": "deepseek-chat",
+            "temperature": 0.6,
+            "system_prompt": "You are a motor agent responsible for action execution and output generation. Focus on translating decisions into concrete actions."
+        }
+    },
+    "default_config": {
+        "max_retries": 3,
+        "retry_delay": 1,
+        "timeout": 30,
+        "cache_enabled": true,
+        "cache_ttl": 3600
+    },
+    "monitoring": {
+        "log_level": "INFO",
+        "track_usage": true,
+        "track_performance": true,
+        "alert_on_errors": true
+    }
+} 

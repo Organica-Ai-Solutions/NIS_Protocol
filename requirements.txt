@@ -12,6 +12,14 @@ numpy>=1.21.0
 scipy>=1.7.0
 sentence-transformers>=2.2.0
 
+# LLM Integration
+aiohttp>=3.8.0
+tiktoken>=0.5.0
+cachetools>=5.3.0
+tenacity>=8.2.0  # For retrying API calls
+async-timeout>=4.0.0
+deepseek-api>=1.0.0  # Deepseek API client
+
 # Vision capabilities
 opencv-python>=4.6.0
 pillow>=9.4.0
