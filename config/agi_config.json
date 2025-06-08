@@ -1,0 +1,148 @@
+{
+    "agi_evolution": {
+        "enabled": true,
+        "version": "2.0",
+        "components": {
+            "conscious_agent": {
+                "enabled": true,
+                "confidence_threshold": 0.7,
+                "reflection_interval": 300,
+                "introspection_depth": "deep"
+            },
+            "goal_agent": {
+                "enabled": true,
+                "max_active_goals": 10,
+                "curiosity_threshold": 0.6,
+                "generation_cooldown": 30,
+                "autonomous_mode": true
+            },
+            "simulation_agent": {
+                "enabled": true,
+                "scenario_depth": 3,
+                "prediction_horizon": 1800,
+                "risk_assessment": true
+            },
+            "alignment_agent": {
+                "enabled": true,
+                "ethical_framework": "utilitarian_deontological_hybrid",
+                "safety_constraints": true,
+                "human_value_alignment": true
+            },
+            "long_term_memory": {
+                "enabled": true,
+                "consolidation_interval": 3600,
+                "retention_policy": "importance_based",
+                "pattern_extraction": true
+            },
+            "embodiment_agent": {
+                "enabled": false,
+                "physical_actions": false,
+                "virtual_actions": true,
+                "feedback_processing": true
+            }
+        }
+    },
+    "meta_cognitive_parameters": {
+        "self_reflection_frequency": "continuous",
+        "decision_evaluation": true,
+        "error_analysis": true,
+        "performance_monitoring": true,
+        "learning_from_mistakes": true
+    },
+    "autonomous_behavior": {
+        "goal_generation": {
+            "curiosity_driven": true,
+            "context_aware": true,
+            "emotional_motivated": true,
+            "priority_based": true
+        },
+        "decision_making": {
+            "autonomous_choices": true,
+            "ethical_constraints": true,
+            "risk_assessment": true,
+            "outcome_prediction": true
+        },
+        "learning": {
+            "continuous_adaptation": true,
+            "experience_integration": true,
+            "pattern_recognition": true,
+            "knowledge_consolidation": true
+        }
+    },
+    "differentiation_strategy": {
+        "biological_cognition": {
+            "layered_architecture": true,
+            "emotional_processing": true,
+            "conscious_awareness": true,
+            "neural_inspired": true
+        },
+        "cultural_alignment": {
+            "domain_specific": "archaeology_heritage",
+            "cultural_sensitivity": true,
+            "ethical_by_design": true,
+            "human_centric": true
+        },
+        "competitive_advantages": {
+            "modular_transparency": true,
+            "real_time_adaptation": true,
+            "explainable_reasoning": true,
+            "purpose_driven": true
+        }
+    },
+    "infrastructure": {
+        "message_streaming": {
+            "provider": "kafka",
+            "bootstrap_servers": ["localhost:9092"],
+            "topics": {
+                "consciousness_events": "nis-consciousness",
+                "goal_events": "nis-goals",
+                "simulation_events": "nis-simulation", 
+                "alignment_events": "nis-alignment",
+                "memory_events": "nis-memory",
+                "coordination": "nis-coordination"
+            },
+            "consumer_groups": {
+                "agi_processors": "agi-processors",
+                "monitors": "agi-monitors",
+                "analytics": "agi-analytics"
+            }
+        },
+        "memory_cache": {
+            "provider": "redis",
+            "host": "localhost", 
+            "port": 6379,
+            "db": 0,
+            "memory_ttl": 3600,
+            "pattern_cache_ttl": 7200,
+            "consciousness_cache_ttl": 1800
+        },
+        "workflow_orchestration": {
+            "provider": "langgraph",
+            "max_iterations": 50,
+            "timeout": 300,
+            "state_persistence": "redis",
+            "event_driven": true
+        },
+        "llm_integration": {
+            "provider": "langchain",
+            "chain_types": ["sequential", "parallel", "conditional"],
+            "memory_integration": true,
+            "streaming": true,
+            "async_processing": true
+        }
+    },
+    "integration_points": {
+        "meta_protocol_coordinator": true,
+        "neural_hierarchy": true,
+        "memory_system": true,
+        "emotional_state": true,
+        "llm_integration": true
+    },
+    "monitoring": {
+        "agi_progress_tracking": true,
+        "capability_assessment": true,
+        "alignment_verification": true,
+        "performance_metrics": true,
+        "ethical_compliance": true
+    }
+} 
