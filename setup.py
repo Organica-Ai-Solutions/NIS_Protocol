@@ -5,17 +5,17 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="nis-protocol",
-    version="0.1.0",
+    version="2.0.0",
     author="Diego Torres",
     author_email="contact@organicaai.com",
-    description="Neuro-Inspired System Protocol for intelligent multi-agent systems",
+    description="Neuro-Inspired System Protocol v2.0 - Advanced multi-agent cognitive architecture with consciousness simulation",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/OrganicaAI/NIS-Protocol",
+    url="https://github.com/Organica-Ai-Solutions/NIS_Protocol",
     packages=find_packages(where="src"),
     package_dir={"": "src"},
     classifiers=[
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
         "Intended Audience :: Science/Research",
         "License :: OSI Approved :: MIT License",
@@ -23,7 +23,10 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "Topic :: Scientific/Engineering :: Artificial Intelligence",
+        "Topic :: Software Development :: Libraries :: Python Modules",
+        "Topic :: System :: Distributed Computing",
     ],
     python_requires=">=3.8",
     install_requires=[
@@ -41,6 +44,12 @@ setup(
             "opencv-python>=4.6.0",
             "pillow>=9.4.0",
         ],
+        "llm": [
+            "openai>=1.0.0",
+            "anthropic>=0.7.0",
+            "aiohttp>=3.8.0",
+            "tiktoken>=0.5.0",
+        ],
         "dev": [
             "pytest>=7.3.1",
             "black>=23.3.0",
@@ -49,4 +58,5 @@ setup(
             "mypy>=1.2.0",
         ],
     },
+    keywords="ai, agents, consciousness, multi-agent, llm, cognitive-architecture, agi",
 ) 
