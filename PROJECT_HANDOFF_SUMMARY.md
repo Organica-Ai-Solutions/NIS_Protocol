@@ -310,7 +310,7 @@ pytest tests/  # If tests exist
 All dependencies are in `requirements.txt`:
 - Core: `redis`, `pydantic`, `fastapi`, `uvicorn`
 - Memory: `hnswlib`, `numpy`, `sentence-transformers`
-- LLM: `aiohttp`, `tiktoken`, `deepseek-api`
+- LLM: `aiohttp`, `tiktoken`
 - Vision: `opencv-python`, `ultralytics`
 - AI/ML: `transformers`, `torch`, `scikit-learn`
 

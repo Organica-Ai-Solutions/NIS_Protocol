@@ -16,10 +16,6 @@ from src.emotion.emotional_state import EmotionalStateSystem
 
 # Memory system
 from src.memory.memory_manager import MemoryManager
-from src.memory.backends import (
-    InMemoryBackend,
-    FileSystemBackend
-)
 
 # Coordinator agent
 from src.agents.coordination.coordinator_agent import CoordinatorAgent
