@@ -140,4 +140,15 @@ dmypy.json
 .LSOverride
 
 # Redis
-dump.rdb 
+dump.rdb
+
+# 🔐 PyPI Security Files
+.pypi/RECOVERY_CODES.md
+.pypi/tokens.txt
+*.pypi-token
+recovery_codes.txt
+
+# API Keys and Tokens
+.env.local
+*.key
+*.token 

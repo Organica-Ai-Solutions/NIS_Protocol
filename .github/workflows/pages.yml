@@ -64,19 +64,31 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
-  # PyPI publishing disabled for now - requires trusted publisher setup
-  # To enable: configure trusted publisher on PyPI/TestPyPI with repository details
-  #
-  # publish-to-testpypi:
-  #   name: Publish to TestPyPI
+  # 🚀 ENABLED: PyPI Publishing to TestPyPI with API Token
+  publish-to-testpypi:
+    name: Publish to TestPyPI
+    needs: build
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Download all the dists
+        uses: actions/download-artifact@v4
+        with:
+          name: python-package-distributions
+          path: dist/
+          
+      - name: Publish to TestPyPI
+        uses: pypa/gh-action-pypi-publish@v1.12.4
+        with:
+          repository-url: https://test.pypi.org/legacy/
+          password: ${{ secrets.TESTPYPI_API_TOKEN }}
+
+  # 🚀 Main PyPI Publishing (when you get main PyPI token)
+  # publish-to-pypi:
+  #   name: Publish to PyPI
+  #   if: github.event_name == 'release'
   #   needs: build
   #   runs-on: ubuntu-latest
-  #   environment:
-  #     name: testpypi
-  #     url: https://test.pypi.org/p/nis-protocol
-  #   
-  #   permissions:
-  #     id-token: write
   #   
   #   steps:
   #     - name: Download all the dists
@@ -85,7 +97,5 @@ jobs:
   #         name: python-package-distributions
   #         path: dist/
   #         
-  #     - name: Publish to TestPyPI
-  #       uses: pypa/gh-action-pypi-publish@v1.12.4
-  #       with:
-  #         repository-url: https://test.pypi.org/legacy/ 
+  #     - name: Publish to PyPI
+  #       uses: pypa/gh-action-pypi-publish@v1.12.4 
