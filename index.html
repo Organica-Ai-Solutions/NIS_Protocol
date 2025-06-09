@@ -34,13 +34,17 @@
         }
         
         .new-feature {
-            background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
-            color: white;
+            background: #f093fb !important; /* Fallback */
+            background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%) !important;
+            color: white !important;
             padding: 3px 8px;
             border-radius: 12px;
             font-size: 0.8em;
             font-weight: bold;
             margin-left: 5px;
+            display: inline-block;
+            box-shadow: 0 2px 8px rgba(240, 147, 251, 0.3);
+            animation: shimmer 2s infinite;
         }
     </style>
 </head>
