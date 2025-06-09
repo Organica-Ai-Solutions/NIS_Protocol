@@ -370,8 +370,10 @@ h3 {
 }
 
 .new-feature {
+    background: #f093fb; /* Fallback color */
     background: var(--gradient-2);
-    color: white;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); /* Explicit gradient as backup */
+    color: white !important;
     padding: 4px 12px;
     border-radius: 15px;
     font-size: 0.8rem;
@@ -379,6 +381,8 @@ h3 {
     margin-left: 8px;
     display: inline-block;
     animation: shimmer 2s infinite;
+    box-shadow: 0 2px 8px rgba(240, 147, 251, 0.3);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 @keyframes shimmer {
