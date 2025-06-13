@@ -9,8 +9,14 @@ and OpenCV for image processing.
 from typing import Dict, Any, List, Optional, Tuple, Union
 import time
 import numpy as np
-import cv2
 import os
+
+try:
+    import cv2
+    CV2_AVAILABLE = True
+except ImportError:
+    CV2_AVAILABLE = False
+    cv2 = None
 
 from src.core.registry import NISAgent, NISLayer, NISRegistry
 from src.emotion.emotional_state import EmotionalState, EmotionalDimension
@@ -41,6 +47,10 @@ class YOLOModel:
     
     def _load_model(self):
         """Load the appropriate YOLO model."""
+        if not CV2_AVAILABLE:
+            print("OpenCV not available. Vision detection disabled.")
+            return
+            
         try:
             # First try to load using ultralytics (YOLOv5/v8)
             import torch
@@ -129,7 +139,7 @@ class YOLOModel:
         Returns:
             List of detections with class, confidence, and bounding box
         """
-        if self.model is None:
+        if not CV2_AVAILABLE or self.model is None:
             return []
         
         if self.use_ultralytics:
@@ -223,28 +233,36 @@ class VisionAgent(NISAgent):
         confidence_threshold: float = 0.5
     ):
         """
-        Initialize a new Vision Agent.
+        Initialize the Vision Agent.
         
         Args:
-            agent_id: Unique identifier for this agent
-            description: Human-readable description of the agent's role
-            emotional_state: Optional pre-configured emotional state
-            yolo_model_path: Path to YOLO model weights file
+            agent_id: Unique identifier for the agent
+            description: Human-readable description
+            emotional_state: Initial emotional state
+            yolo_model_path: Path to YOLO model weights
             confidence_threshold: Minimum confidence for object detection
         """
-        super().__init__(agent_id, NISLayer.PERCEPTION, description)
-        self.emotional_state = emotional_state or EmotionalState()
-        self.detection_history = []
+        super().__init__(agent_id, description, emotional_state)
         
         # Initialize YOLO model
-        self.object_detector = YOLOModel(
-            model_path=yolo_model_path,
-            confidence_threshold=confidence_threshold
-        )
+        if CV2_AVAILABLE:
+            self.yolo_model = YOLOModel(yolo_model_path, confidence_threshold)
+        else:
+            self.yolo_model = None
+            self.logger.warning("OpenCV (cv2) not available. Vision functionality will be limited.")
         
-        # Initialize video capture for streaming sources
+        # Initialize video capture
         self.video_capture = None
         self.is_streaming = False
+        
+        # Initialize image processing settings
+        self.max_image_size = (1024, 1024)  # Max dimensions for processing
+        self.supported_formats = ['.jpg', '.jpeg', '.png', '.bmp', '.tiff']
+        
+        # Register with NIS system
+        NISRegistry.register_agent(self)
+        
+        self.logger.info(f"Vision Agent '{agent_id}' initialized with OpenCV available: {CV2_AVAILABLE}")
     
     def process(self, message: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -464,7 +482,7 @@ class VisionAgent(NISAgent):
         }
         
         # Use YOLO for object detection
-        detections = self.object_detector.detect(image)
+        detections = self.yolo_model.detect(image)
         
         # Apply further OpenCV processing (example: edge detection)
         try:

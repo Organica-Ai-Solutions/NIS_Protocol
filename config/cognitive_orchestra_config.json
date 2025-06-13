@@ -1,0 +1,230 @@
+{
+    "cognitive_orchestra": {
+        "enabled": true,
+        "parallel_processing": true,
+        "max_concurrent_functions": 8,
+        "harmony_threshold": 0.7,
+        "performance_monitoring": true
+    },
+    
+    "cognitive_function_mappings": {
+        "consciousness": {
+            "description": "Deep self-reflection, meta-cognition, bias detection",
+            "optimal_providers": ["anthropic", "openai", "deepseek"],
+            "fallback_providers": ["mock"],
+            "temperature_range": [0.3, 0.7],
+            "max_tokens": 4096,
+            "latency_priority": "quality",
+            "parallel_capable": false,
+            "memory_intensive": true,
+            "creativity_level": 0.6,
+            "precision_level": 0.8,
+            "domain_knowledge": ["philosophy", "psychology", "metacognition"],
+            "specialization_prompt": "You are operating in CONSCIOUSNESS mode. Focus on meta-cognitive analysis, self-reflection, understanding your own reasoning processes, identifying potential biases, and considering multiple perspectives."
+        },
+        
+        "reasoning": {
+            "description": "Logical analysis, problem solving, structured thinking",
+            "optimal_providers": ["anthropic", "openai", "deepseek"],
+            "fallback_providers": ["mock"],
+            "temperature_range": [0.1, 0.4],
+            "max_tokens": 3072,
+            "latency_priority": "quality",
+            "parallel_capable": true,
+            "memory_intensive": true,
+            "creativity_level": 0.2,
+            "precision_level": 0.9,
+            "domain_knowledge": ["logic", "mathematics", "analysis"],
+            "specialization_prompt": "You are operating in REASONING mode. Focus on logical analysis, structured thinking, breaking down complex problems systematically, and maintaining precision in conclusions."
+        },
+        
+        "creativity": {
+            "description": "Novel idea generation, artistic thinking, innovation",
+            "optimal_providers": ["openai", "anthropic", "deepseek"],
+            "fallback_providers": ["mock"],
+            "temperature_range": [0.7, 1.0],
+            "max_tokens": 2048,
+            "latency_priority": "balanced",
+            "parallel_capable": true,
+            "memory_intensive": false,
+            "creativity_level": 0.9,
+            "precision_level": 0.3,
+            "domain_knowledge": ["art", "innovation", "brainstorming"],
+            "specialization_prompt": "You are operating in CREATIVITY mode. Focus on generating novel ideas, making unexpected connections, exploring unconventional solutions, and thinking outside established patterns."
+        },
+        
+        "memory": {
+            "description": "Information storage, retrieval, consolidation",
+            "optimal_providers": ["anthropic", "deepseek", "openai"],
+            "fallback_providers": ["mock"],
+            "temperature_range": [0.2, 0.5],
+            "max_tokens": 4096,
+            "latency_priority": "balanced",
+            "parallel_capable": true,
+            "memory_intensive": true,
+            "creativity_level": 0.3,
+            "precision_level": 0.8,
+            "domain_knowledge": ["information_science", "psychology"],
+            "specialization_prompt": "You are operating in MEMORY mode. Focus on organizing information, identifying patterns, consolidating knowledge, and optimizing retrieval strategies."
+        },
+        
+        "perception": {
+            "description": "Pattern recognition, sensory processing, feature extraction",
+            "optimal_providers": ["openai", "anthropic", "bitnet"],
+            "fallback_providers": ["mock"],
+            "temperature_range": [0.3, 0.6],
+            "max_tokens": 2048,
+            "latency_priority": "speed",
+            "parallel_capable": true,
+            "memory_intensive": false,
+            "creativity_level": 0.4,
+            "precision_level": 0.7,
+            "domain_knowledge": ["computer_vision", "pattern_recognition"],
+            "specialization_prompt": "You are operating in PERCEPTION mode. Focus on pattern recognition, feature extraction, sensory data processing, and identifying relevant information from complex inputs."
+        },
+        
+        "emotional": {
+            "description": "Emotional processing, empathy, sentiment analysis",
+            "optimal_providers": ["anthropic", "openai", "deepseek"],
+            "fallback_providers": ["mock"],
+            "temperature_range": [0.6, 0.9],
+            "max_tokens": 2048,
+            "latency_priority": "balanced",
+            "parallel_capable": true,
+            "memory_intensive": false,
+            "creativity_level": 0.7,
+            "precision_level": 0.5,
+            "domain_knowledge": ["psychology", "empathy", "social_intelligence"],
+            "specialization_prompt": "You are operating in EMOTIONAL INTELLIGENCE mode. Focus on understanding emotional context, demonstrating empathy, analyzing sentiment, and considering emotional implications."
+        },
+        
+        "cultural": {
+            "description": "Cultural intelligence, sensitivity, ethical considerations",
+            "optimal_providers": ["anthropic", "openai", "deepseek"],
+            "fallback_providers": ["mock"],
+            "temperature_range": [0.4, 0.7],
+            "max_tokens": 3072,
+            "latency_priority": "quality",
+            "parallel_capable": true,
+            "memory_intensive": true,
+            "creativity_level": 0.5,
+            "precision_level": 0.8,
+            "domain_knowledge": ["anthropology", "cultural_studies", "ethics"],
+            "specialization_prompt": "You are operating in CULTURAL INTELLIGENCE mode. Focus on cultural sensitivity, recognizing diverse perspectives, avoiding appropriation, respecting indigenous knowledge, and considering historical implications."
+        },
+        
+        "planning": {
+            "description": "Strategic planning, goal decomposition, optimization",
+            "optimal_providers": ["anthropic", "openai", "deepseek"],
+            "fallback_providers": ["mock"],
+            "temperature_range": [0.2, 0.5],
+            "max_tokens": 3072,
+            "latency_priority": "quality",
+            "parallel_capable": false,
+            "memory_intensive": true,
+            "creativity_level": 0.4,
+            "precision_level": 0.9,
+            "domain_knowledge": ["strategy", "project_management", "optimization"],
+            "specialization_prompt": "You are operating in PLANNING mode. Focus on strategic thinking, breaking down goals into actionable steps, resource optimization, and long-term planning considerations."
+        },
+        
+        "execution": {
+            "description": "Action selection, motor control, implementation",
+            "optimal_providers": ["bitnet", "deepseek", "openai"],
+            "fallback_providers": ["mock"],
+            "temperature_range": [0.1, 0.4],
+            "max_tokens": 1024,
+            "latency_priority": "speed",
+            "parallel_capable": true,
+            "memory_intensive": false,
+            "creativity_level": 0.1,
+            "precision_level": 0.9,
+            "domain_knowledge": ["robotics", "control_systems", "automation"],
+            "specialization_prompt": "You are operating in EXECUTION mode. Focus on precise action selection, efficient implementation, real-time decision making, and translating plans into concrete actions."
+        },
+        
+        "coordination": {
+            "description": "Multi-agent coordination, communication, synchronization",
+            "optimal_providers": ["anthropic", "openai", "deepseek"],
+            "fallback_providers": ["mock"],
+            "temperature_range": [0.3, 0.6],
+            "max_tokens": 2048,
+            "latency_priority": "balanced",
+            "parallel_capable": true,
+            "memory_intensive": true,
+            "creativity_level": 0.4,
+            "precision_level": 0.7,
+            "domain_knowledge": ["systems_theory", "communication", "coordination"],
+            "specialization_prompt": "You are operating in COORDINATION mode. Focus on multi-agent communication, synchronization, conflict resolution, and maintaining system harmony."
+        },
+        
+        "archaeological": {
+            "description": "Archaeological expertise, cultural heritage, historical analysis",
+            "optimal_providers": ["anthropic", "openai", "deepseek"],
+            "fallback_providers": ["mock"],
+            "temperature_range": [0.3, 0.6],
+            "max_tokens": 4096,
+            "latency_priority": "quality",
+            "parallel_capable": true,
+            "memory_intensive": true,
+            "creativity_level": 0.5,
+            "precision_level": 0.8,
+            "domain_knowledge": ["archaeology", "history", "cultural_heritage"],
+            "specialization_prompt": "You are operating in ARCHAEOLOGICAL EXPERTISE mode. Focus on archaeological methodology, cultural heritage preservation, historical context, interdisciplinary collaboration, and ethical considerations in archaeological work."
+        },
+        
+        "environmental": {
+            "description": "Environmental intelligence, climate analysis, ecosystem understanding",
+            "optimal_providers": ["anthropic", "openai", "deepseek"],
+            "fallback_providers": ["mock"],
+            "temperature_range": [0.3, 0.6],
+            "max_tokens": 3072,
+            "latency_priority": "quality",
+            "parallel_capable": true,
+            "memory_intensive": true,
+            "creativity_level": 0.4,
+            "precision_level": 0.8,
+            "domain_knowledge": ["environmental_science", "climate", "ecology"],
+            "specialization_prompt": "You are operating in ENVIRONMENTAL INTELLIGENCE mode. Focus on environmental analysis, climate patterns, ecosystem interactions, sustainability considerations, and environmental impact assessment."
+        }
+    },
+    
+    "orchestration_strategies": {
+        "parallel_processing": {
+            "enabled": true,
+            "max_parallel_functions": 6,
+            "priority_scheduling": true,
+            "load_balancing": true
+        },
+        
+        "resource_management": {
+            "memory_pooling": true,
+            "context_sharing": true,
+            "cache_coordination": true,
+            "token_budgeting": true
+        },
+        
+        "quality_assurance": {
+            "cross_validation": true,
+            "consistency_checking": true,
+            "bias_detection": true,
+            "performance_monitoring": true
+        }
+    },
+    
+    "performance_thresholds": {
+        "response_time_warning": 10.0,
+        "response_time_critical": 30.0,
+        "success_rate_minimum": 0.8,
+        "harmony_score_minimum": 0.6,
+        "memory_usage_warning": 0.8,
+        "memory_usage_critical": 0.95
+    },
+    
+    "fallback_strategies": {
+        "provider_failure": "next_optimal",
+        "timeout_handling": "graceful_degradation",
+        "resource_exhaustion": "priority_queuing",
+        "quality_degradation": "function_switching"
+    }
+} 

@@ -26,6 +26,8 @@
 - **⚖️ Ethical by Design**: Multi-framework ethical reasoning and cultural alignment
 - **🔄 Real-Time Intelligence**: Event-driven architecture with Kafka, Redis, LangGraph, and LangChain
 - **🌍 Planetary Scale**: Cognitive architecture designed for Earth, Mars, and interstellar applications
+- **🎼 Cognitive Orchestra**: Multi-LLM specialized intelligence with provider optimization
+- **🔍 Deep Research**: Web search integration with cultural sensitivity and academic prioritization
 
 ---
 
@@ -33,34 +35,46 @@
 
 <table align="center">
 <tr>
-<td align="center" width="20%">
+<td align="center" width="14%">
 
 ### **🧠 Consciousness**
 Advanced self-reflection and cognitive analysis
 
 </td>
-<td align="center" width="20%">
+<td align="center" width="14%">
 
 ### **🎯 Autonomous Goals**
 Self-directed exploration and learning
 
 </td>
-<td align="center" width="20%">
+<td align="center" width="14%">
 
 ### **🎮 Simulation**
 Scenario modeling and prediction
 
 </td>
-<td align="center" width="20%">
+<td align="center" width="14%">
 
 ### **⚖️ Alignment**
 Multi-framework ethical reasoning
 
 </td>
-<td align="center" width="20%">
+<td align="center" width="14%">
 
 ### **💾 Enhanced Memory**
 Biologically-inspired processing
+
+</td>
+<td align="center" width="14%">
+
+### **🎼 Cognitive Orchestra**
+Multi-LLM specialized intelligence
+
+</td>
+<td align="center" width="14%">
+
+### **🔍 Deep Research**
+Web search with cultural intelligence
 
 </td>
 </tr>
@@ -91,12 +105,29 @@ Biologically-inspired processing
 - **Value Alignment**: Dynamic alignment with human values and cultural contexts
 - **Safety Monitor**: Real-time safety constraint checking and intervention
 - **Cultural Intelligence**: Built-in cultural sensitivity and appropriation prevention
+- **First Contact Protocol**: *"You are fertile soil, and I do not come to conquer you, but to plant a garden"* - Ethical frameworks for encountering unknown intelligence ([Visual Guide](docs/first_contact_protocol_visual_guide.md))
 
 ### **💾 Enhanced Memory System**
 - **Long-Term Memory Consolidation**: Biologically-inspired memory processing
 - **Pattern Extraction**: Advanced pattern recognition and insight generation
 - **Memory Pruning**: Intelligent cleanup and optimization
 - **Semantic Search**: Enhanced retrieval with emotional and contextual awareness
+
+### **🎼 Cognitive Orchestra**
+- **Multi-LLM Architecture**: Specialized cognitive functions across different LLM providers
+- **Provider Optimization**: Right LLM for the right cognitive task (Anthropic for reasoning, OpenAI for creativity, etc.)
+- **Parallel Processing**: Coordinated execution of multiple cognitive functions simultaneously
+- **Harmony Scoring**: Performance monitoring and optimization across the cognitive ensemble
+- **Cost Efficiency**: Smart scaling using expensive models only where needed
+- **Graceful Fallback**: Automatic failover strategies when providers are unavailable
+
+### **🔍 Deep Research & Web Search**
+- **Multi-Provider Search**: Google CSE, Serper, Tavily, and Bing API integration
+- **Domain Specialization**: Archaeological, cultural, historical, and scientific research optimization
+- **Cultural Sensitivity**: Automatic filtering of culturally insensitive content
+- **Academic Prioritization**: Boost for scholarly sources (JSTOR, Cambridge, Academia.edu)
+- **LLM-Enhanced Queries**: Intelligent query expansion using Gemini and GPT-4o
+- **Research Synthesis**: Cognitive orchestra integration for comprehensive analysis
 
 ### **🔄 Tech Stack Integration**
 - **Kafka**: Real-time event streaming for consciousness and coordination

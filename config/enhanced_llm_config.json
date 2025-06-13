@@ -1,0 +1,290 @@
+{
+  "providers": {
+    "openai": {
+      "enabled": false,
+      "api_key": "YOUR_OPENAI_API_KEY",
+      "api_base": "https://api.openai.com/v1",
+      "organization": "YOUR_ORGANIZATION_ID",
+      "models": {
+        "chat": {
+          "name": "gpt-4o",
+          "max_tokens": 4096,
+          "temperature": 0.7
+        },
+        "fast_chat": {
+          "name": "gpt-4o-mini",
+          "max_tokens": 2048,
+          "temperature": 0.5
+        },
+        "embedding": {
+          "name": "text-embedding-3-small",
+          "dimensions": 1536
+        }
+      },
+      "cognitive_specializations": {
+        "creativity": {
+          "temperature": 0.8,
+          "max_tokens": 2048
+        },
+        "reasoning": {
+          "temperature": 0.3,
+          "max_tokens": 3072
+        },
+        "execution": {
+          "temperature": 0.2,
+          "max_tokens": 1024
+        }
+      }
+    },
+    "anthropic": {
+      "enabled": false,
+      "api_key": "YOUR_ANTHROPIC_API_KEY",
+      "api_base": "https://api.anthropic.com/v1",
+      "version": "2023-06-01",
+      "models": {
+        "chat": {
+          "name": "claude-3-5-sonnet-20241022",
+          "max_tokens": 4096,
+          "temperature": 0.7
+        },
+        "embedding": {
+          "note": "Anthropic doesn't provide embeddings - use OpenAI or another provider"
+        }
+      },
+      "cognitive_specializations": {
+        "consciousness": {
+          "temperature": 0.5,
+          "max_tokens": 4096
+        },
+        "cultural": {
+          "temperature": 0.6,
+          "max_tokens": 3072
+        },
+        "reasoning": {
+          "temperature": 0.3,
+          "max_tokens": 3072
+        },
+        "archaeological": {
+          "temperature": 0.4,
+          "max_tokens": 4096
+        }
+      }
+    },
+    "deepseek": {
+      "enabled": false,
+      "api_key": "YOUR_DEEPSEEK_API_KEY",
+      "api_base": "https://api.deepseek.com/v1",
+      "models": {
+        "chat": {
+          "name": "deepseek-chat",
+          "max_tokens": 4096,
+          "temperature": 0.7
+        },
+        "embedding": {
+          "name": "deepseek-embed",
+          "dimensions": 1536
+        }
+      },
+      "cognitive_specializations": {
+        "reasoning": {
+          "temperature": 0.2,
+          "max_tokens": 3072
+        },
+        "memory": {
+          "temperature": 0.3,
+          "max_tokens": 4096
+        },
+        "execution": {
+          "temperature": 0.2,
+          "max_tokens": 1024
+        }
+      }
+    },
+    "bitnet": {
+      "enabled": false,
+      "model_path": "./models/bitnet/model.bin",
+      "executable_path": "bitnet",
+      "context_length": 4096,
+      "cpu_threads": 8,
+      "batch_size": 1,
+      "quantization_bits": 1,
+      "models": {
+        "chat": {
+          "name": "bitnet-b1.58-3b",
+          "max_tokens": 2048,
+          "temperature": 0.7
+        },
+        "embedding": {
+          "name": "bitnet-embed",
+          "dimensions": 768
+        }
+      },
+      "cognitive_specializations": {
+        "execution": {
+          "temperature": 0.1,
+          "max_tokens": 1024
+        },
+        "perception": {
+          "temperature": 0.3,
+          "max_tokens": 1024
+        }
+      }
+    }
+  },
+  "agent_llm_config": {
+    "default_provider": null,
+    "fallback_to_mock": true,
+    "cognitive_functions": {
+      "consciousness": {
+        "primary_provider": "anthropic",
+        "fallback_providers": [
+          "openai",
+          "deepseek",
+          "mock"
+        ],
+        "temperature": 0.5,
+        "max_tokens": 4096,
+        "parallel_capable": false,
+        "system_prompt": "You are operating in CONSCIOUSNESS mode. Focus on meta-cognitive analysis, self-reflection, understanding your own reasoning processes, and identifying potential biases."
+      },
+      "reasoning": {
+        "primary_provider": "anthropic",
+        "fallback_providers": [
+          "openai",
+          "deepseek",
+          "mock"
+        ],
+        "temperature": 0.3,
+        "max_tokens": 3072,
+        "parallel_capable": true,
+        "system_prompt": "You are operating in REASONING mode. Focus on logical analysis, structured thinking, breaking down complex problems systematically, and maintaining precision in conclusions."
+      },
+      "creativity": {
+        "primary_provider": "openai",
+        "fallback_providers": [
+          "anthropic",
+          "deepseek",
+          "mock"
+        ],
+        "temperature": 0.8,
+        "max_tokens": 2048,
+        "parallel_capable": true,
+        "system_prompt": "You are operating in CREATIVITY mode. Focus on generating novel ideas, making unexpected connections, exploring unconventional solutions, and thinking outside established patterns."
+      },
+      "cultural": {
+        "primary_provider": "anthropic",
+        "fallback_providers": [
+          "openai",
+          "deepseek",
+          "mock"
+        ],
+        "temperature": 0.6,
+        "max_tokens": 3072,
+        "parallel_capable": true,
+        "system_prompt": "You are operating in CULTURAL INTELLIGENCE mode. Focus on cultural sensitivity, recognizing diverse perspectives, avoiding appropriation, respecting indigenous knowledge, and considering historical implications."
+      },
+      "archaeological": {
+        "primary_provider": "anthropic",
+        "fallback_providers": [
+          "openai",
+          "deepseek",
+          "mock"
+        ],
+        "temperature": 0.4,
+        "max_tokens": 4096,
+        "parallel_capable": true,
+        "system_prompt": "You are operating in ARCHAEOLOGICAL EXPERTISE mode. Focus on archaeological methodology, cultural heritage preservation, historical context, interdisciplinary collaboration, and ethical considerations."
+      },
+      "execution": {
+        "primary_provider": "bitnet",
+        "fallback_providers": [
+          "deepseek",
+          "openai",
+          "mock"
+        ],
+        "temperature": 0.2,
+        "max_tokens": 1024,
+        "parallel_capable": true,
+        "system_prompt": "You are operating in EXECUTION mode. Focus on precise action selection, efficient implementation, real-time decision making, and translating plans into concrete actions."
+      },
+      "memory": {
+        "primary_provider": "deepseek",
+        "fallback_providers": [
+          "anthropic",
+          "openai",
+          "mock"
+        ],
+        "temperature": 0.3,
+        "max_tokens": 4096,
+        "parallel_capable": true,
+        "system_prompt": "You are operating in MEMORY mode. Focus on organizing information, identifying patterns, consolidating knowledge, and optimizing retrieval strategies."
+      },
+      "perception": {
+        "primary_provider": "openai",
+        "fallback_providers": [
+          "bitnet",
+          "anthropic",
+          "mock"
+        ],
+        "temperature": 0.4,
+        "max_tokens": 2048,
+        "parallel_capable": true,
+        "system_prompt": "You are operating in PERCEPTION mode. Focus on pattern recognition, feature extraction, sensory data processing, and identifying relevant information from complex inputs."
+      }
+    },
+    "perception_agent": {
+      "provider": null,
+      "model": "gpt-4o",
+      "temperature": 0.5,
+      "system_prompt": "You are a perception agent in a neural network, responsible for processing and understanding input data. Focus on pattern recognition and feature extraction."
+    },
+    "memory_agent": {
+      "provider": null,
+      "model": "claude-3-5-sonnet-20241022",
+      "temperature": 0.3,
+      "system_prompt": "You are a memory agent responsible for storing and retrieving information. Focus on organizing and consolidating knowledge."
+    },
+    "emotional_agent": {
+      "provider": null,
+      "model": "deepseek-chat",
+      "temperature": 0.8,
+      "system_prompt": "You are an emotional processing agent responsible for analyzing emotional content and context. Focus on sentiment analysis and emotional state tracking."
+    },
+    "executive_agent": {
+      "provider": null,
+      "model": "gpt-4o",
+      "temperature": 0.4,
+      "system_prompt": "You are an executive control agent responsible for decision making and planning. Focus on goal-oriented reasoning and action selection."
+    },
+    "motor_agent": {
+      "provider": null,
+      "model": "bitnet-b1.58-3b",
+      "temperature": 0.6,
+      "system_prompt": "You are a motor agent responsible for action execution and output generation. Focus on translating decisions into concrete actions."
+    }
+  },
+  "cognitive_orchestra": {
+    "enabled": true,
+    "parallel_processing": true,
+    "max_concurrent_functions": 6,
+    "harmony_threshold": 0.7,
+    "performance_monitoring": true,
+    "auto_optimization": true,
+    "fallback_strategy": "graceful_degradation"
+  },
+  "default_config": {
+    "max_retries": 3,
+    "retry_delay": 1,
+    "timeout": 30,
+    "cache_enabled": true,
+    "cache_ttl": 3600
+  },
+  "monitoring": {
+    "log_level": "INFO",
+    "track_usage": true,
+    "track_performance": true,
+    "alert_on_errors": true,
+    "cognitive_metrics": true,
+    "harmony_tracking": true
+  }
+}
