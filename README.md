@@ -278,8 +278,52 @@ graph TD
 - **Performance Bounds**: Mathematical limits on approximation error
 - **Cultural Sensitivity**: Bias detection with mathematical validation
 
-### **🧮 Mathematical Rigor (v3.0)**
-- **KAN Integration**: Kolmogorov-Arnold Networks for interpretable reasoning
+### **See the Difference: KAN vs MLP**
+
+<div align="center">
+  <img src="assets/images/v3_mathematical_foundation/see_the_difference.png" alt="See the Difference - KAN vs MLP" width="800"/>
+  <p><em>MLP: static, hard to interpret. KAN: dynamic, visual, symbolic. Clear visual proof of KAN's superiority for interpretable AI.</em></p>
+</div>
+
+### **Enter KAN: The Future of Interpretable AI**
+
+<div align="center">
+  <img src="assets/images/v3_mathematical_foundation/enter_kan.png" alt="Enter KAN - Beautiful Surface Comparison" width="800"/>
+  <p><em>KAN's smooth, mathematically elegant surfaces vs MLP's rigid, blocky approximations. The future of AI is interpretable.</em></p>
+</div>
+
+### **Understanding MLP Limitations**
+
+<div align="center">
+  <img src="assets/images/v3_mathematical_foundation/what_is_mlp.png" alt="What is MLP - Understanding Limitations" width="800"/>
+  <p><em>MLPs are the backbone of most LLMs and neural networks, but suffer from black-box logic, poor extrapolation, and brittleness with out-of-distribution inputs.</em></p>
+</div>
+
+### **Why KAN Matters for AGI**
+
+<div align="center">
+  <img src="assets/images/v3_mathematical_foundation/why_kan_matters_agi.png" alt="Why KAN Matters for AGI" width="800"/>
+  <p><em>From chatbots that guess to reasoning agents that think. KAN enables human-like symbolic logic, mathematical reasoning, and smooth generalization across unseen inputs.</em></p>
+</div>
+
+### **KAN Inside NIS Protocol v3**
+
+<div align="center">
+  <img src="assets/images/v3_mathematical_foundation/kan_inside_nis_protocol.png" alt="KAN Inside NIS Protocol v3 Architecture" width="800"/>
+  <p><em>ReasoningAgent and EmotionAgent powered by KAN layers for explainable, general-purpose intelligence. Perception flows through KAN-enhanced reasoning to produce interpretable emotional responses.</em></p>
+</div>
+
+**NIS Protocol v3.0 KAN Integration:**
+- **🧠 ReasoningAgent**: KAN-powered symbolic logic and mathematical reasoning
+- **💭 EmotionAgent**: Interpretable emotional processing with spline-based functions
+- **👁️ VisionAgent**: Feature curve mapping for visual understanding
+- **🔄 Explainable Intelligence**: Every decision path mathematically traceable and visualizable
+
+---
+
+## 🧮 **Mathematical Rigor (v3.0)**
+
+### **KAN Integration**: Kolmogorov-Arnold Networks for interpretable reasoning
 - **Cognitive Wave Fields**: Neural field theory for spatial-temporal processing
 - **Spline-Based Logic**: Universal function approximation with interpretability
 - **Theoretical Foundation**: Rigorous mathematical framework for all components
