@@ -2,7 +2,7 @@
 
 ## Executive Summary
 
-Based on the competitive landscape analysis and the conversation with AI researchers, this roadmap outlines the evolution of NIS Protocol from its current sophisticated multi-agent system to a true AGI competitor capable of challenging OpenAI, DeepMind, and Anthropic.
+Based on the competitive landscape analysis and the conversation with AI researchers, this roadmap outlines the evolution of NIS Protocol from its current sophisticated multi-agent system to an advanced cognitive architecture with unique biological cognition principles and cultural intelligence capabilities.
 
 ## Current State (NIS Protocol v1.0)
 

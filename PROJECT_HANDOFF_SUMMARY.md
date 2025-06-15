@@ -2,7 +2,7 @@
 
 ## 🎯 **Project Overview**
 
-**NIS Protocol** is a neural-inspired system for agent communication and cognitive processing that implements a universal meta-protocol for AI agent communication. We're evolving it from a sophisticated multi-agent system (v1.0) to a **true AGI competitor** (v2.0) capable of challenging OpenAI, DeepMind, and Anthropic.
+**NIS Protocol** is a neural-inspired system for agent communication and cognitive processing that implements a universal meta-protocol for AI agent communication. We're evolving it from a sophisticated multi-agent system (v1.0) to an **advanced cognitive architecture** (v2.0) with enhanced consciousness, autonomous goal generation, and cultural intelligence capabilities.
 
 ### **Core Mission:**
 Building AGI with **purpose, consciousness, and cultural wisdom** - specifically focused on archaeological heritage preservation and cultural intelligence.
