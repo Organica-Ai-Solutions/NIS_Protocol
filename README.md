@@ -28,6 +28,7 @@
 - **🌍 Planetary Scale**: Cognitive architecture designed for Earth, Mars, and interstellar applications
 - **🎼 Cognitive Orchestra**: Multi-LLM specialized intelligence with provider optimization
 - **🔍 Deep Research**: Web search integration with cultural sensitivity and academic prioritization
+- **🧮 KAN-Enhanced Reasoning**: Kolmogorov-Arnold Networks for interpretable spline-based intelligence
 
 ---
 
@@ -35,46 +36,52 @@
 
 <table align="center">
 <tr>
-<td align="center" width="14%">
+<td align="center" width="12%">
 
 ### **🧠 Consciousness**
 Advanced self-reflection and cognitive analysis
 
 </td>
-<td align="center" width="14%">
+<td align="center" width="12%">
 
 ### **🎯 Autonomous Goals**
 Self-directed exploration and learning
 
 </td>
-<td align="center" width="14%">
+<td align="center" width="12%">
 
 ### **🎮 Simulation**
 Scenario modeling and prediction
 
 </td>
-<td align="center" width="14%">
+<td align="center" width="12%">
 
 ### **⚖️ Alignment**
 Multi-framework ethical reasoning
 
 </td>
-<td align="center" width="14%">
+<td align="center" width="12%">
 
 ### **💾 Enhanced Memory**
 Biologically-inspired processing
 
 </td>
-<td align="center" width="14%">
+<td align="center" width="12%">
 
 ### **🎼 Cognitive Orchestra**
 Multi-LLM specialized intelligence
 
 </td>
-<td align="center" width="14%">
+<td align="center" width="12%">
 
 ### **🔍 Deep Research**
 Web search with cultural intelligence
+
+</td>
+<td align="center" width="12%">
+
+### **🧮 KAN Reasoning**
+Interpretable spline-based logic
 
 </td>
 </tr>
@@ -129,6 +136,14 @@ Web search with cultural intelligence
 - **LLM-Enhanced Queries**: Intelligent query expansion using Gemini and GPT-4o
 - **Research Synthesis**: Cognitive orchestra integration for comprehensive analysis
 
+### **🧮 KAN-Enhanced Reasoning (v3.0 Foundation)**
+- **Kolmogorov-Arnold Networks**: Replace traditional MLPs with interpretable spline-based layers
+- **Universal Function Approximation**: Better generalization with fewer parameters
+- **Cognitive Wave Fields**: Spatial-temporal reasoning using neural field dynamics
+- **Interpretable Decision Paths**: Full traceability of reasoning processes
+- **Mathematical Foundation**: Rigorous theoretical framework for cognitive processing
+- **Biologically-Inspired**: Wave propagation models inspired by neural field theory
+
 ### **🔄 Tech Stack Integration**
 - **Kafka**: Real-time event streaming for consciousness and coordination
 - **Redis**: High-speed caching for cognitive analysis and patterns
@@ -170,6 +185,46 @@ The ultimate expression of planetary-scale cognitive intelligence:
 From ancient civilizations buried in rainforests to new worlds waiting among the stars - the same neural-inspired architecture that preserves human heritage today will guide humanity's expansion across the cosmos.
 
 **Every domain benefits from consciousness, memory, ethical reasoning, and adaptive intelligence.**
+
+---
+
+## 🧮 **Mathematical Foundation (v3.0)**
+
+### **Kolmogorov-Arnold Networks (KAN)**
+NIS Protocol v3.0 integrates KAN layers for interpretable reasoning:
+
+```
+f(x₁, ..., xₙ) = Σ(q=0 to 2n) Φ_q(Σ(p=1 to n) ψ_{q,p}(x_p))
+```
+
+Where ψ and Φ are learnable univariate spline functions, providing:
+- **Universal Approximation** with interpretability
+- **Better Extrapolation** in sparse data regions
+- **Symbolic Reasoning** integration
+- **Reduced Parameter Count** vs traditional MLPs
+
+### **Cognitive Wave Field Dynamics**
+Agent cognition modeled as wave propagation:
+
+```
+∂φ_A/∂t = D_A ∇²φ_A + S_A(x,y,t) - R_A φ_A
+```
+
+Enabling:
+- **Spatial Reasoning** across conceptual spaces
+- **Temporal Dynamics** of cognitive processes
+- **Emergent Coherence** from agent interactions
+- **Memory Consolidation** through field evolution
+
+### **Enhanced ReAct Loop**
+KAN-enhanced reasoning cycle:
+1. **Observation**: O_t = Perceive(environment)
+2. **Reasoning**: R_t = KAN_Reason(O_t, c_t, z_memory)
+3. **Action**: A_t = KAN_Plan(R_t, constraints)
+4. **Reflection**: Ref_t = KAN_Reflect(A_t, outcome)
+5. **Memory Update**: c_{t+1} = Update_Context(c_t, Ref_t)
+
+**Full Mathematical Documentation**: [NIS Protocol v3.0 Mathematical Foundation](docs/NIS_Protocol_v3_Mathematical_Foundation.md)
 
 ---
 
@@ -283,6 +338,9 @@ pip install -r requirements.txt
 
 # Install AGI tech stack
 pip install -r requirements_tech_stack.txt
+
+# Install KAN dependencies (for v3.0 features)
+pip install torch scipy efficient-kan
 ```
 </details>
 
@@ -322,6 +380,9 @@ python examples/agi_evolution_demo.py
 # Test tech stack integration
 python examples/tech_stack_integration_demo.py
 
+# Test KAN reasoning (v3.0)
+python src/agents/reasoning/enhanced_reasoning_agent.py
+
 # Run basic agent communication
 python examples/basic_agent_communication/run.py
 ```
@@ -360,6 +421,28 @@ async def agi_demo():
         print(f"  • {goal['description']} (Priority: {goal['priority']})")
 
 asyncio.run(agi_demo())
+```
+
+### **🧮 KAN-Enhanced Reasoning (v3.0)**
+```python
+from src.agents.reasoning.enhanced_reasoning_agent import EnhancedReasoningAgent
+
+# Initialize KAN-enhanced reasoning
+reasoning_agent = EnhancedReasoningAgent()
+
+# Perform interpretable reasoning
+result = reasoning_agent.process({
+    "operation": "reason",
+    "payload": {
+        "input_data": [0.5, 0.8, 0.3, 0.9, 0.2],  # Sample input
+        "mode": "analytical"
+    }
+})
+
+print(f"🧮 KAN Reasoning Results:")
+print(f"   Conclusion: {result['payload']['reasoning_result']['conclusion']:.3f}")
+print(f"   Confidence: {result['payload']['reasoning_result']['confidence']:.3f}")
+print(f"   Interpretable: ✅ Spline-based decision paths")
 ```
 
 ### **🔄 Tech Stack Integration**
@@ -469,6 +552,14 @@ NIS Protocol v2.0 implements a sophisticated **layered cognitive architecture** 
 │  └─────────────────┘  └─────────────────┘  └─────────────────┘  │
 └─────────────────────────────────────────────────────────────────┘
 ┌─────────────────────────────────────────────────────────────────┐
+│                🧮 KAN-ENHANCED REASONING (v3.0)                 │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐  │
+│  │ Spline-Based    │  │ Cognitive Wave  │  │ Interpretable   │  │
+│  │ Function        │  │ Field           │  │ Decision        │  │
+│  │ Approximation   │  │ Processing      │  │ Paths           │  │
+│  └─────────────────┘  └─────────────────┘  └─────────────────┘  │
+└─────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
 │                    🌐 NEURAL HIERARCHY (Classic)                │
 │  Sensory → Perception → Memory → Emotional → Executive → Motor   │
 │                                                                 │
@@ -504,7 +595,12 @@ NIS Protocol v2.0 implements a sophisticated **layered cognitive architecture** 
    - Cultural sensitivity validation
    - Safety constraint verification
 
-5. **🚀 Action Execution**
+5. **🧮 KAN-Enhanced Reasoning**
+   - Spline-based interpretable processing
+   - Cognitive wave field propagation
+   - Mathematical rigor with biological inspiration
+
+6. **🚀 Action Execution**
    - Protocol-aware communication
    - Real-time performance monitoring
    - Continuous learning and adaptation
@@ -521,12 +617,12 @@ NIS Protocol v2.0 implements a sophisticated **layered cognitive architecture** 
 
 <div align="center">
 
-| 🎯 **Cultural Intelligence** | 🧠 **Biologically-Inspired** | 🏛️ **Domain Specialization** | 🔄 **Modern Foundation** |
-|:---:|:---:|:---:|:---:|
-| Indigenous rights protection | Neural hierarchy processing | Archaeological heritage focus | Event-driven architecture |
-| Multi-framework ethics | Meta-cognitive awareness | Historical contextualization | Kafka real-time streams |
-| Cultural sensitivity | Autonomous goal generation | Artifact analysis | Redis intelligent caching |
-| Community-centered approach | Real-time adaptation | Preservation planning | LangGraph orchestration |
+| 🎯 **Cultural Intelligence** | 🧠 **Biologically-Inspired** | 🏛️ **Domain Specialization** | 🔄 **Modern Foundation** | 🧮 **Mathematical Rigor** |
+|:---:|:---:|:---:|:---:|:---:|
+| Indigenous rights protection | Neural hierarchy processing | Archaeological heritage focus | Event-driven architecture | KAN spline-based reasoning |
+| Multi-framework ethics | Meta-cognitive awareness | Historical contextualization | Kafka real-time streams | Cognitive wave dynamics |
+| Cultural sensitivity | Autonomous goal generation | Artifact analysis | Redis intelligent caching | Interpretable decision paths |
+| Community-centered approach | Real-time adaptation | Preservation planning | LangGraph orchestration | Mathematical foundation |
 
 </div>
 
@@ -554,6 +650,12 @@ NIS Protocol v2.0 implements a sophisticated **layered cognitive architecture** 
 - **Workflow Orchestration**: Complex reasoning with LangGraph
 - **LLM Integration**: Advanced language understanding with LangChain
 
+### **🧮 Mathematical Rigor (v3.0)**
+- **KAN Integration**: Kolmogorov-Arnold Networks for interpretable reasoning
+- **Cognitive Wave Fields**: Neural field theory for spatial-temporal processing
+- **Spline-Based Logic**: Universal function approximation with interpretability
+- **Theoretical Foundation**: Rigorous mathematical framework for all components
+
 ---
 
 ## 🛠️ **Development**
@@ -571,6 +673,9 @@ pytest tests/integration/ -v
 
 # Run consciousness module tests
 pytest tests/consciousness/ -v
+
+# Test KAN reasoning (v3.0)
+pytest tests/reasoning/ -v
 
 # Full test suite with coverage
 pytest tests/ --cov=src/ --cov-report=html
@@ -624,6 +729,9 @@ python tools/analyze_goal_performance.py
 
 # Track memory consolidation
 python tools/memory_performance.py
+
+# Test KAN reasoning performance
+python tools/benchmark_kan_reasoning.py
 ```
 </details>
 
@@ -664,10 +772,16 @@ Multi-cultural ethical frameworks and safety monitoring
 </td>
 </tr>
 <tr>
-<td colspan="2" align="center">
+<td align="center">
 
 **💾 Memory**
 Biologically-inspired consolidation and pattern extraction
+
+</td>
+<td align="center">
+
+**🧮 KAN Reasoning**
+Spline-based interpretable reasoning enhancement
 
 </td>
 </tr>
@@ -686,6 +800,7 @@ Biologically-inspired consolidation and pattern extraction
 - Include consciousness-driven testing scenarios
 - Document ethical considerations and cultural sensitivity
 - Maintain real-time performance for autonomous operations
+- Use KAN layers for interpretable reasoning where applicable
 
 ---
 
@@ -701,6 +816,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Inspired by cognitive architectures (SOAR, ACT-R) and neural processing
 - Consciousness research from Integrated Information Theory and Global Workspace Theory
 - Ethical AI frameworks from Partnership on AI and IEEE Standards
+- Kolmogorov-Arnold Networks research and spline-based function approximation
 
 ### **🔧 Technology Stack**
 <div align="center">
@@ -711,6 +827,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 | 🧠 **Redis** | High-performance caching | Cognitive analysis |
 | 🔄 **LangGraph** | Workflow orchestration | Complex reasoning |
 | 🤖 **LangChain** | LLM integration | Memory and context |
+| 🧮 **KAN Networks** | Interpretable reasoning | Spline-based logic |
 | 🤗 **Hugging Face** | NLP and pattern recognition | State-of-the-art models |
 
 </div>
@@ -721,6 +838,12 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Cultural intelligence and multi-framework ethical reasoning
 - Real-time adaptation and autonomous learning systems
 
+### **🧮 Mathematical Foundations**
+- Kolmogorov-Arnold representation theory
+- Neural field theory and cognitive wave dynamics
+- Spline-based function approximation
+- Biologically-inspired cognitive architectures
+
 ---
 
 ## 🌟 **Vision Statement**
@@ -728,6 +851,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 <div align="center">
   <blockquote>
     <h3><em>"NIS Protocol v2.0 represents a new approach to AI: purpose-driven, ethically aware, and culturally intelligent. Starting with heritage preservation and expanding toward planetary-scale cognitive intelligence—from ancient civilizations to new worlds among the stars."</em></h3>
+    <h4><em>"With v3.0's mathematical foundation, we're not just building AI that works—we're building AI that thinks, explains, and evolves with mathematical rigor and biological inspiration."</em></h4>
   </blockquote>
 </div>
 
@@ -738,12 +862,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 [![🚀 Get Started](https://img.shields.io/badge/🚀-Get%20Started-blue?style=for-the-badge)](examples/agi_evolution_demo.py)
 [![📚 Documentation](https://img.shields.io/badge/📚-Documentation-green?style=for-the-badge)](docs/)
 [![🔬 Research](https://img.shields.io/badge/🔬-Research-purple?style=for-the-badge)](docs/NIS_Protocol_v2_Roadmap.md)
-[![💬 Community](https://img.shields.io/badge/💬-Community-orange?style=for-the-badge)](https://github.com/yourusername/NIS-Protocol/discussions)
+[![🧮 Mathematics](https://img.shields.io/badge/🧮-Mathematics-orange?style=for-the-badge)](docs/NIS_Protocol_v3_Mathematical_Foundation.md)
+[![💬 Community](https://img.shields.io/badge/💬-Community-red?style=for-the-badge)](https://github.com/yourusername/NIS-Protocol/discussions)
 
 </div>
 
 ---
 
 <div align="center">
-  <sub>Built with ❤️ for cultural preservation and ethical AI • NIS Protocol v2.0 • 2025</sub>
-</div> # Trigger new deployment
+  <sub>Built with ❤️ for cultural preservation and ethical AI • NIS Protocol v2.0 → v3.0 • 2025</sub>
+</div>
