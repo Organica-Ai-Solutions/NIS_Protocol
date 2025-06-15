@@ -1,0 +1,1 @@
+To Add Mathematical Visualizations: Save KAN vs MLP image as kan_vs_mlp_comparison.png and cognitive wave fields as cognitive_wave_fields.png in assets/images/v3_mathematical_foundation/ - README already references them
