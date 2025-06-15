@@ -32,6 +32,42 @@
 
 ---
 
+## 🧮 **Mathematical Rigor (v3.0)**
+
+### **KAN Integration**: Kolmogorov-Arnold Networks for interpretable reasoning
+- **Cognitive Wave Fields**: Neural field theory for spatial-temporal processing
+- **Spline-Based Logic**: Universal function approximation with interpretability
+- **Theoretical Foundation**: Rigorous mathematical framework for all components
+
+## 🏆 **Competitive Mathematical Advantages**
+
+### **🧮 First Interpretable AGI System**
+<div align="center">
+
+| **NIS Protocol v3.0** | **GPT-4** | **Claude** | **Gemini** |
+|:---:|:---:|:---:|:---:|
+| **🔍 Interpretability** | 95% (KAN-based) | 15% (Black box) | 25% (Limited) | 20% (Minimal) |
+| **🧮 Mathematical Guarantees** | ✅ Convergence proofs | ❌ None | ❌ None | ❌ None |
+| **🌊 Cognitive Wave Fields** | ✅ Spatial-temporal reasoning | ❌ None | ❌ None | ❌ None |
+| **🎯 Cultural Intelligence** | ✅ Built-in (98% accuracy) | ⚠️ Limited (60%) | ⚠️ Moderate (70%) | ⚠️ Basic (55%) |
+| **🏛️ Domain Specialization** | ✅ Archaeological heritage | ❌ General purpose | ❌ General purpose | ❌ General purpose |
+
+</div>
+
+### **🔬 Theoretical Breakthroughs**
+- **World's First AGI with Mathematical Proofs**: Convergence guarantees and stability analysis
+- **Spline-Based Interpretability**: Every decision path mathematically traceable
+- **Cognitive Wave Dynamics**: Spatial-temporal reasoning with field theory
+- **Cultural Bias Detection**: Mathematical validation of ethical reasoning
+
+### **🎯 Unique Value Propositions**
+1. **🧮 Mathematical Transparency**: 100% explainable decisions vs competitors' black boxes
+2. **🌊 Biological Inspiration**: Cognitive wave fields vs pure statistical transformers
+3. **🏛️ Cultural Wisdom**: Indigenous rights protection built into architecture
+4. **🔬 Academic Rigor**: Peer-reviewable mathematical foundations
+
+---
+
 ## 🚀 **AGI v2.0 Features**
 
 <table align="center">
@@ -188,139 +224,6 @@ From ancient civilizations buried in rainforests to new worlds waiting among the
 
 ---
 
-## 🧮 **Mathematical Foundation (v3.0)**
-
-### **Kolmogorov-Arnold Networks (KAN)**
-NIS Protocol v3.0 integrates KAN layers for interpretable reasoning:
-
-```
-f(x₁, ..., xₙ) = Σ(q=0 to 2n) Φ_q(Σ(p=1 to n) ψ_{q,p}(x_p))
-```
-
-Where ψ and Φ are learnable univariate spline functions, providing:
-- **Universal Approximation** with interpretability
-- **Better Extrapolation** in sparse data regions
-- **Symbolic Reasoning** integration
-- **Reduced Parameter Count** vs traditional MLPs
-
-### **Cognitive Wave Field Dynamics**
-Agent cognition modeled as wave propagation:
-
-```
-∂φ_A/∂t = D_A ∇²φ_A + S_A(x,y,t) - R_A φ_A
-```
-
-Enabling:
-- **Spatial Reasoning** across conceptual spaces
-- **Temporal Dynamics** of cognitive processes
-- **Emergent Coherence** from agent interactions
-- **Memory Consolidation** through field evolution
-
-### **Enhanced ReAct Loop**
-KAN-enhanced reasoning cycle:
-1. **Observation**: O_t = Perceive(environment)
-2. **Reasoning**: R_t = KAN_Reason(O_t, c_t, z_memory)
-3. **Action**: A_t = KAN_Plan(R_t, constraints)
-4. **Reflection**: Ref_t = KAN_Reflect(A_t, outcome)
-5. **Memory Update**: c_{t+1} = Update_Context(c_t, Ref_t)
-
-**Full Mathematical Documentation**: [NIS Protocol v3.0 Mathematical Foundation](docs/NIS_Protocol_v3_Mathematical_Foundation.md)
-
----
-
-## 🧮 **Mathematical Visualizations (v3.0)**
-
-### **KAN vs Traditional MLP Comparison**
-
-<div align="center">
-  <img src="assets/images/v3_mathematical_foundation/kan_vs_mlp_comparison.png" alt="KAN vs MLP Surface Comparison" width="800"/>
-  <p><em>Left: KAN's smooth, interpretable spline-based surfaces. Right: Traditional MLP's complex, noisy approximations. KAN provides superior interpretability with mathematical guarantees.</em></p>
-</div>
-
-**Key Advantages of KAN Architecture:**
-- **🔍 Interpretable Surfaces**: Smooth, mathematically traceable function approximations
-- **📊 Better Extrapolation**: Superior performance in sparse data regions
-- **⚡ Efficiency**: Fewer parameters while maintaining accuracy
-- **🧮 Mathematical Rigor**: Theoretical guarantees and convergence proofs
-
-### **Cognitive Wave Field Dynamics**
-
-<div align="center">
-  <img src="assets/images/v3_mathematical_foundation/cognitive_wave_fields.png" alt="Cognitive Wave Field Visualization" width="800"/>
-  <p><em>Cognitive Wave Fields showing the flow of information between VISION, MEMORY, EMOTION, and ACTION - demonstrating spatial-temporal reasoning with mathematical elegance.</em></p>
-</div>
-
-**Wave Field Properties:**
-- **🌊 Spatial Reasoning**: Multi-dimensional cognitive processing across conceptual spaces
-- **⏰ Temporal Dynamics**: Evolution of agent states over time with stability guarantees
-- **🔄 Emergent Coherence**: Coordinated multi-agent behavior through field interactions
-- **🧠 Memory Consolidation**: Field-based information integration and pattern formation
-
-### **Enhanced ReAct Loop with Mathematical Foundation**
-
-```mermaid
-graph TD
-    A[🔍 KAN Observation] --> B[🧮 Spline-based Reasoning]
-    B --> C[⚡ Mathematical Action Planning]
-    C --> D[🔄 Cognitive Wave Reflection]
-    D --> E[💾 Field-based Memory Update]
-    E --> A
-    
-    F[📊 Interpretability Dashboard] --> B
-    G[🧮 Mathematical Guarantees] --> C
-    H[🌊 Wave Field Dynamics] --> D
-    I[📈 Convergence Analysis] --> E
-```
-
-**Mathematical Advantages:**
-- **100% Interpretability**: Every decision path is mathematically traceable
-- **Convergence Guarantees**: Theoretical proofs of system stability
-- **Performance Bounds**: Mathematical limits on approximation error
-- **Cultural Sensitivity**: Bias detection with mathematical validation
-
-### **See the Difference: KAN vs MLP**
-
-<div align="center">
-  <img src="assets/images/v3_mathematical_foundation/see_the_difference.png" alt="See the Difference - KAN vs MLP" width="800"/>
-  <p><em>MLP: static, hard to interpret. KAN: dynamic, visual, symbolic. Clear visual proof of KAN's superiority for interpretable AI.</em></p>
-</div>
-
-### **Enter KAN: The Future of Interpretable AI**
-
-<div align="center">
-  <img src="assets/images/v3_mathematical_foundation/enter_kan.png" alt="Enter KAN - Beautiful Surface Comparison" width="800"/>
-  <p><em>KAN's smooth, mathematically elegant surfaces vs MLP's rigid, blocky approximations. The future of AI is interpretable.</em></p>
-</div>
-
-### **Understanding MLP Limitations**
-
-<div align="center">
-  <img src="assets/images/v3_mathematical_foundation/what_is_mlp.png" alt="What is MLP - Understanding Limitations" width="800"/>
-  <p><em>MLPs are the backbone of most LLMs and neural networks, but suffer from black-box logic, poor extrapolation, and brittleness with out-of-distribution inputs.</em></p>
-</div>
-
-### **Why KAN Matters for AGI**
-
-<div align="center">
-  <img src="assets/images/v3_mathematical_foundation/why_kan_matters_agi.png" alt="Why KAN Matters for AGI" width="800"/>
-  <p><em>From chatbots that guess to reasoning agents that think. KAN enables human-like symbolic logic, mathematical reasoning, and smooth generalization across unseen inputs.</em></p>
-</div>
-
-### **KAN Inside NIS Protocol v3**
-
-<div align="center">
-  <img src="assets/images/v3_mathematical_foundation/kan_inside_nis_protocol.png" alt="KAN Inside NIS Protocol v3 Architecture" width="800"/>
-  <p><em>ReasoningAgent and EmotionAgent powered by KAN layers for explainable, general-purpose intelligence. Perception flows through KAN-enhanced reasoning to produce interpretable emotional responses.</em></p>
-</div>
-
-**NIS Protocol v3.0 KAN Integration:**
-- **🧠 ReasoningAgent**: KAN-powered symbolic logic and mathematical reasoning
-- **💭 EmotionAgent**: Interpretable emotional processing with spline-based functions
-- **👁️ VisionAgent**: Feature curve mapping for visual understanding
-- **🔄 Explainable Intelligence**: Every decision path mathematically traceable and visualizable
-
----
-
 ## 🧮 **Mathematical Rigor (v3.0)**
 
 ### **KAN Integration**: Kolmogorov-Arnold Networks for interpretable reasoning
@@ -328,32 +231,28 @@ graph TD
 - **Spline-Based Logic**: Universal function approximation with interpretability
 - **Theoretical Foundation**: Rigorous mathematical framework for all components
 
-## 🏆 **Competitive Mathematical Advantages**
+## 📊 **System Architecture & Performance Visualizations**
 
-### **🧮 First Interpretable AGI System**
+### **NIS Protocol Architecture Diagram**
+
 <div align="center">
-
-| **NIS Protocol v3.0** | **GPT-4** | **Claude** | **Gemini** |
-|:---:|:---:|:---:|:---:|
-| **🔍 Interpretability** | 95% (KAN-based) | 15% (Black box) | 25% (Limited) | 20% (Minimal) |
-| **🧮 Mathematical Guarantees** | ✅ Convergence proofs | ❌ None | ❌ None | ❌ None |
-| **🌊 Cognitive Wave Fields** | ✅ Spatial-temporal reasoning | ❌ None | ❌ None | ❌ None |
-| **🎯 Cultural Intelligence** | ✅ Built-in (98% accuracy) | ⚠️ Limited (60%) | ⚠️ Moderate (70%) | ⚠️ Basic (55%) |
-| **🏛️ Domain Specialization** | ✅ Archaeological heritage | ❌ General purpose | ❌ General purpose | ❌ General purpose |
-
+  <img src="assets/images/diagram.png" alt="NIS Protocol System Architecture" width="800"/>
+  <p><em>Complete system architecture showing the integration of consciousness, goals, simulation, alignment, and KAN-enhanced reasoning modules working together in harmony.</em></p>
 </div>
 
-### **🔬 Theoretical Breakthroughs**
-- **World's First AGI with Mathematical Proofs**: Convergence guarantees and stability analysis
-- **Spline-Based Interpretability**: Every decision path mathematically traceable
-- **Cognitive Wave Dynamics**: Spatial-temporal reasoning with field theory
-- **Cultural Bias Detection**: Mathematical validation of ethical reasoning
+### **Performance Heatmap Analysis**
 
-### **🎯 Unique Value Propositions**
-1. **🧮 Mathematical Transparency**: 100% explainable decisions vs competitors' black boxes
-2. **🌊 Biological Inspiration**: Cognitive wave fields vs pure statistical transformers
-3. **🏛️ Cultural Wisdom**: Indigenous rights protection built into architecture
-4. **🔬 Academic Rigor**: Peer-reviewable mathematical foundations
+<div align="center">
+  <img src="assets/images/heatmap.png" alt="NIS Protocol Performance Heatmap" width="800"/>
+  <p><em>Performance analysis heatmap showing system efficiency across different cognitive functions, with KAN-enhanced reasoning providing superior interpretability and accuracy.</em></p>
+</div>
+
+### **External Protocol Integration**
+
+<div align="center">
+  <img src="assets/images/extrenalprotocol.png" alt="External Protocol Integration" width="800"/>
+  <p><em>Visualization of how NIS Protocol integrates with external systems and protocols, maintaining cultural intelligence and ethical reasoning across all interactions.</em></p>
+</div>
 
 ---
 
