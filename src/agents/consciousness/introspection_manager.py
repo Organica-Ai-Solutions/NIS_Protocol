@@ -184,7 +184,7 @@ class IntrospectionManager:
             improvement_areas=[],
             strengths=[],
             last_evaluation=time.time(),
-            confidence=0.5,
+            confidence=self._calculate_initial_agent_confidence(agent),
             status=PerformanceStatus.ADEQUATE,
             cultural_neutrality_score=0.8,
             mathematical_validation={}
@@ -1607,4 +1607,26 @@ class IntrospectionManager:
             
         except Exception as e:
             self.logger.error(f"Error generating behavioral patterns analysis: {e}")
-            return {"error": str(e)} 
+            return {"error": str(e)}
+    
+    def _calculate_initial_agent_confidence(self, agent) -> float:
+        """Calculate initial confidence for a newly registered agent."""
+        # Start with moderate confidence for new agents
+        confidence = 0.5
+        
+        # Adjust based on agent type (some agent types are more reliable)
+        agent_type = agent.__class__.__name__
+        if "Safety" in agent_type or "Monitor" in agent_type:
+            confidence += 0.1  # Safety agents start with higher confidence
+        elif "Reasoning" in agent_type or "Alignment" in agent_type:
+            confidence += 0.05  # Core cognitive agents get slight boost
+        
+        # Check if agent has validation methods (indicates better design)
+        if hasattr(agent, 'validate') or hasattr(agent, '_validate'):
+            confidence += 0.1
+        
+        # Check if agent has error handling
+        if hasattr(agent, 'logger') or hasattr(agent, 'error_handler'):
+            confidence += 0.05
+        
+        return max(0.3, min(0.8, confidence))  # Keep initial confidence reasonable 

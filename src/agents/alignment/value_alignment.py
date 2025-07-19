@@ -439,7 +439,7 @@ class ValueAlignmentAgent(NISAgent):
                     conflict_score=conflict_score,
                     context=str(context),
                     resolution_strategy=resolution_strategy,
-                    confidence=0.8
+                    confidence=self._calculate_conflict_confidence(score1, score2, context)
                 )
                 
                 conflicts.append(conflict)
@@ -981,6 +981,25 @@ class ValueAlignmentAgent(NISAgent):
             "validation_history_length": len(self.validation_history),
             "convergence_validation": self._validate_mathematical_convergence({})
         }
+    
+    def _calculate_conflict_confidence(self, score1: float, score2: float, context: Dict[str, Any]) -> float:
+        """Calculate confidence in value conflict detection."""
+        # Base confidence on score separation (clearer conflicts have higher confidence)
+        score_separation = abs(score1 - score2)
+        confidence = 0.4 + (score_separation * 0.4)  # Range: 0.4 to 0.8 based on separation
+        
+        # Adjust based on context completeness
+        context_completeness = min(1.0, len(context) / 6.0)  # Normalize to 6 context fields
+        confidence += 0.15 * context_completeness
+        
+        # Higher confidence for clear value conflicts (high scores)
+        max_score = max(score1, score2)
+        if max_score > 0.8:
+            confidence += 0.1  # Strong value activation suggests reliable conflict
+        elif max_score < 0.3:
+            confidence -= 0.1  # Weak activation might be noise
+        
+        return max(0.3, min(0.95, confidence))
 
 # Maintain backward compatibility
 ValueAlignment = ValueAlignmentAgent 

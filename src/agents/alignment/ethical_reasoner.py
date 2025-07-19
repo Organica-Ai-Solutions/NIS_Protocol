@@ -240,7 +240,7 @@ class EthicalReasoner(NISAgent):
             score=score,
             concerns=concerns,
             recommendations=recommendations,
-            confidence=0.8,
+            confidence=self._calculate_ethical_confidence(action, context, concerns, net_benefit),
             reasoning=f"Net utility: {net_benefit:.2f}, Population: {affected_population}"
         )
     
@@ -276,7 +276,7 @@ class EthicalReasoner(NISAgent):
             score=score,
             concerns=concerns,
             recommendations=recommendations,
-            confidence=0.85,
+            confidence=self._calculate_ethical_confidence(action, context, concerns, score),
             reasoning=f"Rule compliance: {1-violation_penalty:.2f}, Universalizability: {universalizability:.2f}"
         )
     
@@ -335,7 +335,7 @@ class EthicalReasoner(NISAgent):
             score=score,
             concerns=concerns,
             recommendations=recommendations,
-            confidence=0.8,
+            confidence=self._calculate_ethical_confidence(action, context, concerns, score),
             reasoning=f"Relationship: {relationship_impact:.2f}, Care: {care_provision:.2f}, Protection: {vulnerability_protection:.2f}"
         )
     
@@ -753,6 +753,44 @@ class EthicalReasoner(NISAgent):
             measures.append("Coordinate with tribal authorities")
         
         return measures
+    
+    def _calculate_ethical_confidence(
+        self, 
+        action: Dict[str, Any], 
+        context: Dict[str, Any], 
+        concerns: List[str], 
+        score: float
+    ) -> float:
+        """Calculate confidence in ethical evaluation based on analysis quality."""
+        # Start with base confidence
+        confidence = 0.6
+        
+        # Higher confidence for thorough analysis (more complete action and context)
+        action_completeness = min(1.0, len(action) / 5.0)  # Normalize to 5 key fields
+        context_completeness = min(1.0, len(context) / 8.0)  # Normalize to 8 context fields
+        
+        confidence += 0.15 * action_completeness
+        confidence += 0.15 * context_completeness
+        
+        # Adjust based on number of ethical concerns identified
+        concern_factor = len(concerns)
+        if concern_factor == 0:
+            # No concerns might indicate incomplete analysis or genuinely ethical action
+            confidence += 0.05 if score > 0.8 else -0.1
+        elif concern_factor <= 3:
+            # Reasonable number of concerns suggests thorough analysis
+            confidence += 0.1
+        else:
+            # Many concerns might indicate complex ethical situation
+            confidence -= 0.05
+        
+        # Adjust based on score extremes (very high or low scores should have high confidence)
+        if score > 0.9 or score < 0.2:
+            confidence += 0.1  # Clear ethical verdict
+        elif 0.4 <= score <= 0.6:
+            confidence -= 0.1  # Uncertain middle ground
+        
+        return max(0.3, min(0.95, confidence))
     
     def _apply_specific_framework(self, message: Dict[str, Any]) -> Dict[str, Any]:
         """Apply a specific ethical framework."""

@@ -515,7 +515,7 @@ class PatternExtractorAgent(NISAgent):
                 pattern_type=PatternType.HIERARCHICAL,
                 description=f"Hierarchical structure with {len(sorted_levels)} levels",
                 elements=sorted_levels,
-                confidence=0.8,  # High confidence for clear hierarchical structure
+                confidence=self._calculate_hierarchical_confidence(hierarchy_levels, memories),
                 support=len(memories),
                 frequency=1.0,
                 temporal_range=None,
@@ -606,7 +606,7 @@ class PatternExtractorAgent(NISAgent):
                         break
                 
                 if is_periodic:
-                    confidence = 0.8  # High confidence for detected cycles
+                    confidence = self._calculate_cyclic_confidence(memories, period, base_pattern)
                     
                     pattern = Pattern(
                         pattern_id=f"cyclic_{int(time.time())}_{period}",
@@ -1040,6 +1040,58 @@ class PatternExtractorAgent(NISAgent):
         }
         result = self.process(message)
         return result.get("data", {"trends": []})
+    
+    def _calculate_hierarchical_confidence(
+        self, 
+        hierarchy_levels: Dict[int, List], 
+        memories: List[Dict[str, Any]]
+    ) -> float:
+        """Calculate confidence in hierarchical pattern detection."""
+        # Base confidence on hierarchy clarity
+        num_levels = len(hierarchy_levels)
+        base_confidence = min(0.9, 0.4 + (num_levels * 0.1))  # More levels = higher confidence
+        
+        # Adjust based on level distribution balance
+        level_counts = [len(level_items) for level_items in hierarchy_levels.values()]
+        if level_counts:
+            max_count = max(level_counts)
+            min_count = min(level_counts)
+            balance_ratio = min_count / max_count if max_count > 0 else 0
+            base_confidence += balance_ratio * 0.2  # Balanced levels = higher confidence
+        
+        # Adjust based on sample size
+        sample_factor = min(1.0, len(memories) / 20.0)  # Normalize to 20 memories
+        base_confidence += sample_factor * 0.1
+        
+        # Ensure reasonable bounds
+        return max(0.3, min(0.95, base_confidence))
+    
+    def _calculate_cyclic_confidence(
+        self, 
+        memories: List[Dict[str, Any]], 
+        period: int, 
+        base_pattern: List[str]
+    ) -> float:
+        """Calculate confidence in cyclic pattern detection."""
+        # Base confidence on pattern clarity and cycle completeness
+        base_confidence = 0.6
+        
+        # Higher confidence for longer, clearer cycles
+        cycle_completeness = min(1.0, len(base_pattern) / period) if period > 0 else 0
+        base_confidence += cycle_completeness * 0.2
+        
+        # Adjust based on number of detected cycles
+        num_cycles = len(memories) // period if period > 0 else 0
+        if num_cycles >= 3:
+            base_confidence += 0.15  # Multiple cycles increase confidence
+        elif num_cycles >= 2:
+            base_confidence += 0.1
+        
+        # Adjust based on pattern consistency
+        pattern_strength = len(base_pattern) / max(len(memories), 1)
+        base_confidence += pattern_strength * 0.1
+        
+        return max(0.4, min(0.9, base_confidence))
 
 
 # Maintain backward compatibility
