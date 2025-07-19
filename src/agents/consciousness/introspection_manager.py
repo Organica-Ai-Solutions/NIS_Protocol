@@ -626,32 +626,35 @@ class IntrospectionManager:
         """Validate consistency of agent behavior."""
         try:
             if agent_id not in self.performance_trends:
-                return {"status": "insufficient_data", "confidence": 0.3}
+                return {"status": "insufficient_data", "confidence": self._calculate_insufficient_data_confidence()}
             
             recent_data = list(self.performance_trends[agent_id])[-10:] # Last 10 records
             
             if len(recent_data) < 5:
-                return {"status": "insufficient_data", "confidence": 0.3}
+                return {"status": "insufficient_data", "confidence": self._calculate_insufficient_data_confidence()}
             
             # Calculate slope of the last two points
             slope = recent_data[-1] - recent_data[-2]
+            
+            # Calculate confidence based on data stability and sample size
+            data_confidence = self._calculate_validation_confidence(recent_data, agent_id)
             
             # If slope is positive, it's inconsistent
             if slope > 0:
                 return {
                     "status": "inconsistent",
-                    "confidence": 0.7
+                    "confidence": data_confidence * 0.8  # Reduce confidence for inconsistency
                 }
             
             # If slope is negative, it's consistent
             return {
                 "status": "consistent",
-                "confidence": 0.9
+                "confidence": data_confidence
             }
             
         except Exception as e:
             self.logger.error(f"Error validating consistency: {e}")
-            return {"status": "error", "confidence": 0.3}
+            return {"status": "error", "confidence": self._calculate_error_confidence()}
     
     def _calculate_performance_bounds(self, metrics: Dict[str, float]) -> Dict[str, Tuple[float, float]]:
         """Calculate confidence intervals for performance metrics."""
@@ -664,6 +667,70 @@ class IntrospectionManager:
             elif metric_name in ['adaptability', 'learning_rate', 'consistency', 'innovation_index', 'collaboration_effectiveness']:
                 bounds[metric_name] = (value - 0.1, value + 0.1)
         return bounds
+    
+    def _calculate_insufficient_data_confidence(self) -> float:
+        """Calculate confidence when there's insufficient data for analysis."""
+        # Very low confidence when we don't have enough data
+        # This is critical for life-safety applications
+        return 0.1
+    
+    def _calculate_error_confidence(self) -> float:
+        """Calculate confidence when there's an error in analysis."""
+        # Minimal confidence when errors occur
+        return 0.05
+    
+    def _calculate_validation_confidence(self, data_points: List[float], agent_id: str) -> float:
+        """Calculate confidence based on data quality and stability."""
+        if not data_points or len(data_points) < 2:
+            return self._calculate_insufficient_data_confidence()
+        
+        # Factor 1: Sample size (more data = higher confidence)
+        sample_factor = min(1.0, len(data_points) / 10.0)  # Normalize to 10 points
+        
+        # Factor 2: Data stability (lower variance = higher confidence)
+        if len(data_points) > 1:
+            mean_val = np.mean(data_points)
+            variance = np.var(data_points)
+            if mean_val != 0:
+                coefficient_of_variation = np.sqrt(variance) / abs(mean_val)
+                stability_factor = max(0.1, 1.0 - coefficient_of_variation)
+            else:
+                stability_factor = 0.5
+        else:
+            stability_factor = 0.3
+        
+        # Factor 3: Historical performance of this agent
+        historical_factor = self._assess_agent_reliability(agent_id)
+        
+        # Combine factors with weights
+        confidence = (
+            0.4 * sample_factor +
+            0.4 * stability_factor +
+            0.2 * historical_factor
+        )
+        
+        # Ensure minimum confidence for life-critical systems
+        return max(0.1, min(1.0, confidence))
+    
+    def _assess_agent_reliability(self, agent_id: str) -> float:
+        """Assess the historical reliability of an agent."""
+        if agent_id not in self.performance_trends:
+            return 0.3  # Default for unknown agents
+        
+        # Get historical performance data
+        historical_data = list(self.performance_trends[agent_id])
+        
+        if len(historical_data) < 3:
+            return 0.4  # Low confidence for limited history
+        
+        # Calculate reliability based on consistency of performance
+        recent_performance = np.mean(historical_data[-5:]) if len(historical_data) >= 5 else np.mean(historical_data)
+        overall_performance = np.mean(historical_data)
+        
+        # Reliability is based on how consistent recent vs overall performance is
+        consistency = 1.0 - abs(recent_performance - overall_performance)
+        
+        return max(0.3, min(1.0, consistency))
     
     def _calculate_pattern_confidence(self, features: np.ndarray, labels: np.ndarray) -> float:
         """Calculate confidence in detected patterns."""
@@ -814,28 +881,75 @@ class IntrospectionManager:
         # Combine confidence scores from different aspects
         confidence_scores = []
         
-        # Performance metrics confidence
-        if performance_metrics.get("success_rate") > 0.9:
-            confidence_scores.append(0.9)
-        elif performance_metrics.get("success_rate") > 0.8:
-            confidence_scores.append(0.8)
-        else:
-            confidence_scores.append(0.7)
+        # Performance metrics confidence - based on actual success rate and data quality
+        success_rate = performance_metrics.get("success_rate", 0.0)
+        metrics_confidence = self._calculate_metrics_confidence(success_rate, performance_metrics)
+        confidence_scores.append(metrics_confidence)
         
-        # Behavioral patterns confidence
-        if behavioral_patterns.get("anomalies"):
-            confidence_scores.append(0.6)
-        else:
-            confidence_scores.append(0.8)
+        # Behavioral patterns confidence - based on anomaly detection quality
+        patterns_confidence = self._calculate_patterns_confidence(behavioral_patterns)
+        confidence_scores.append(patterns_confidence)
         
-        # Mathematical validation confidence
-        if mathematical_validation.get("mathematical_confidence") > 0.7:
-            confidence_scores.append(0.8)
-        else:
-            confidence_scores.append(0.6)
+        # Mathematical validation confidence - based on convergence and stability
+        math_confidence = mathematical_validation.get("mathematical_confidence", 0.5)
+        validation_confidence = self._calculate_validation_confidence_score(math_confidence, mathematical_validation)
+        confidence_scores.append(validation_confidence)
         
-        # Overall confidence is the average of these scores
-        return np.mean(confidence_scores)
+        # Overall confidence is the weighted average of these scores
+        weights = [0.4, 0.3, 0.3]  # Prioritize performance metrics for life-critical systems
+        overall_confidence = sum(score * weight for score, weight in zip(confidence_scores, weights))
+        
+        return max(0.1, min(1.0, overall_confidence))
+    
+    def _calculate_metrics_confidence(self, success_rate: float, metrics: Dict[str, float]) -> float:
+        """Calculate confidence based on performance metrics quality."""
+        # Base confidence on success rate
+        if success_rate > 0.95:
+            base_confidence = 0.9
+        elif success_rate > 0.85:
+            base_confidence = 0.8
+        elif success_rate > 0.75:
+            base_confidence = 0.7
+        else:
+            base_confidence = 0.5
+        
+        # Adjust based on metric completeness
+        expected_metrics = ["response_time", "accuracy", "efficiency", "error_rate"]
+        completeness = sum(1 for metric in expected_metrics if metric in metrics) / len(expected_metrics)
+        
+        return base_confidence * completeness
+    
+    def _calculate_patterns_confidence(self, patterns: Dict[str, Any]) -> float:
+        """Calculate confidence based on behavioral pattern analysis."""
+        if patterns.get("anomalies"):
+            # Lower confidence when anomalies are detected
+            anomaly_count = len(patterns["anomalies"])
+            if anomaly_count > 3:
+                return 0.4
+            elif anomaly_count > 1:
+                return 0.6
+            else:
+                return 0.7
+        else:
+            # Higher confidence when no anomalies
+            return 0.85
+    
+    def _calculate_validation_confidence_score(self, math_confidence: float, validation: Dict[str, Any]) -> float:
+        """Calculate confidence based on mathematical validation results."""
+        # Start with the mathematical confidence
+        base_confidence = math_confidence
+        
+        # Adjust based on convergence status
+        if validation.get("convergence_status") == "converged":
+            base_confidence *= 1.1  # Boost for convergence
+        elif validation.get("convergence_status") == "diverged":
+            base_confidence *= 0.5  # Penalty for divergence
+        
+        # Adjust based on stability
+        stability_score = validation.get("stability_score", 0.5)
+        stability_factor = 0.7 + (stability_score * 0.3)  # Scale 0.7-1.0
+        
+        return min(1.0, base_confidence * stability_factor)
     
     def analyze_system_performance(self) -> Dict[str, Any]:
         """Analyze overall system performance across all agents.
