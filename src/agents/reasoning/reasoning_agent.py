@@ -245,16 +245,17 @@ class ReasoningAgent(NISAgent):
                 num_return_sequences=1
             )[0]["generated_text"]
             
-            # Extract confidence assessment (simple heuristic)
-            confidence = 0.0
+            # Extract confidence assessment based on reasoning quality
+            confidence = self._assess_reasoning_confidence(reasoning, observation, question)
+            
+            # Apply evidence-based heuristic adjustments
             if "strong evidence" in reasoning.lower():
-                confidence = 0.9
+                confidence = max(confidence, 0.9)
             elif "moderate evidence" in reasoning.lower():
-                confidence = 0.7
+                confidence = max(confidence, 0.7)
             elif "weak evidence" in reasoning.lower():
-                confidence = 0.4
-            else:
-                confidence = 0.5
+                confidence = max(confidence, 0.4)
+            # Use calculated confidence if no explicit evidence markers
             
             return {
                 "status": "success",
@@ -503,6 +504,36 @@ class ReasoningAgent(NISAgent):
             for chain_id, chain in self.active_chains.items()
             if chain["status"] == "active"
         ]
+    
+    def _assess_reasoning_confidence(self, reasoning: str, observation: str, question: str) -> float:
+        """Calculate confidence based on reasoning quality metrics."""
+        # Start with base confidence
+        confidence = 0.5
+        
+        # Assess reasoning length and detail (longer, more detailed reasoning suggests higher confidence)
+        reasoning_length = len(reasoning.split())
+        if reasoning_length > 50:
+            confidence += 0.1
+        elif reasoning_length < 20:
+            confidence -= 0.1
+        
+        # Check for logical structure indicators
+        logical_indicators = ["because", "therefore", "since", "given that", "as a result"]
+        logical_structure = sum(1 for indicator in logical_indicators if indicator in reasoning.lower())
+        confidence += min(0.2, logical_structure * 0.05)
+        
+        # Check for uncertainty indicators
+        uncertainty_indicators = ["might", "could", "possibly", "uncertain", "unclear"]
+        uncertainty_count = sum(1 for indicator in uncertainty_indicators if indicator in reasoning.lower())
+        confidence -= min(0.3, uncertainty_count * 0.1)
+        
+        # Assess relevance between reasoning and question
+        question_words = set(question.lower().split())
+        reasoning_words = set(reasoning.lower().split())
+        relevance = len(question_words & reasoning_words) / max(len(question_words), 1)
+        confidence += relevance * 0.2
+        
+        return max(0.1, min(0.9, confidence))
     
     def clear_cache(self) -> None:
         """Clear the reasoning cache."""
