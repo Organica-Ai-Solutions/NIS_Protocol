@@ -161,59 +161,438 @@ class CompetenceAssessor(nn.Module):
 
 
 class KnowledgeGapAnalyzer:
-    """Embedding-based knowledge gap identification system."""
+    """Enhanced embedding-based knowledge gap identification with cultural neutrality."""
     
     def __init__(self, embedding_dim: int = 128):
         self.embedding_dim = embedding_dim
         self.vectorizer = TfidfVectorizer(max_features=embedding_dim, stop_words='english')
         self.knowledge_embeddings = {}
         self.domain_knowledge = defaultdict(list)
+        self.cross_domain_mappings = defaultdict(dict)
+        self.cultural_contexts = {}
+        self.bias_detection_threshold = 0.3
         self.is_fitted = False
         
-    def fit(self, knowledge_corpus: List[str]):
-        """Fit the analyzer on existing knowledge corpus."""
-        if knowledge_corpus:
+        # Multi-domain knowledge representation
+        self.domain_vectorizers = {}
+        self.domain_centroids = {}
+        self.knowledge_graph = defaultdict(set)
+        
+        # Cross-linguistic support (template for expansion)
+        self.language_mappings = {
+            'en': 'english',
+            'es': 'spanish', 
+            'fr': 'french',
+            'de': 'german',
+            'zh': 'chinese',
+            'ar': 'arabic',
+            'default': 'english'
+        }
+        
+        # Cultural neutrality weights
+        self.cultural_balance_weights = {
+            'western': 0.2,
+            'eastern': 0.2, 
+            'indigenous': 0.2,
+            'african': 0.2,
+            'neutral': 0.2
+        }
+        
+    def fit(self, knowledge_corpus: List[str], domains: List[str] = None, 
+            cultural_contexts: List[str] = None):
+        """Enhanced fitting with multi-domain and cultural awareness."""
+        if not knowledge_corpus:
+            return
+            
+        try:
+            # Fit main vectorizer
             self.vectorizer.fit(knowledge_corpus)
             self.is_fitted = True
             
-            # Create embeddings for existing knowledge
+            # Create main embeddings
             embeddings = self.vectorizer.transform(knowledge_corpus)
             for i, text in enumerate(knowledge_corpus):
                 self.knowledge_embeddings[text] = embeddings[i].toarray()[0]
+            
+            # Organize by domains if provided
+            if domains:
+                self._organize_domain_knowledge(knowledge_corpus, domains)
+            
+            # Add cultural context if provided
+            if cultural_contexts:
+                self._add_cultural_contexts(knowledge_corpus, cultural_contexts)
+            
+            # Build cross-domain mappings
+            self._build_cross_domain_mappings()
+            
+            # Detect and mitigate bias
+            self._analyze_corpus_bias()
+            
+        except Exception as e:
+            logging.warning(f"Error in enhanced knowledge fitting: {e}")
     
-    def analyze_knowledge_gap(self, query: str, domain: str = "general") -> float:
-        """Analyze knowledge gap for a query in a specific domain."""
+    def analyze_knowledge_gap(self, query: str, domain: str = "general", 
+                            cultural_context: str = "neutral") -> float:
+        """Enhanced knowledge gap analysis with cultural neutrality."""
         if not self.is_fitted:
             return 0.8  # High gap if no knowledge base
             
         try:
-            # Transform query to embedding
-            query_embedding = self.vectorizer.transform([query]).toarray()[0]
+            # Multi-stage gap analysis
+            semantic_gap = self._analyze_semantic_gap(query, domain)
+            cross_domain_gap = self._analyze_cross_domain_gap(query, domain)
+            cultural_gap = self._analyze_cultural_gap(query, cultural_context)
             
-            # Find most similar existing knowledge
-            max_similarity = 0.0
-            domain_knowledge = self.domain_knowledge.get(domain, [])
+            # Bias-resistant aggregation
+            gap_scores = [semantic_gap, cross_domain_gap, cultural_gap]
+            bias_adjusted_gap = self._apply_bias_resistance(gap_scores, domain, cultural_context)
             
-            if domain_knowledge:
-                # Check similarity with domain-specific knowledge
-                for knowledge_text in domain_knowledge:
-                    if knowledge_text in self.knowledge_embeddings:
-                        existing_embedding = self.knowledge_embeddings[knowledge_text]
-                        similarity = cosine_similarity([query_embedding], [existing_embedding])[0][0]
-                        max_similarity = max(max_similarity, similarity)
-            else:
-                # Check similarity with all knowledge
-                for knowledge_text, embedding in self.knowledge_embeddings.items():
-                    similarity = cosine_similarity([query_embedding], [embedding.reshape(1, -1)])[0][0]
-                    max_similarity = max(max_similarity, similarity)
-            
-            # Knowledge gap is inverse of similarity
-            knowledge_gap = 1.0 - max_similarity
-            return max(0.0, min(1.0, knowledge_gap))
+            return max(0.0, min(1.0, bias_adjusted_gap))
             
         except Exception as e:
-            logging.warning(f"Error in knowledge gap analysis: {e}")
-            return 0.5  # Default moderate gap
+            logging.warning(f"Error in enhanced gap analysis: {e}")
+            return 0.5
+    
+    def _organize_domain_knowledge(self, corpus: List[str], domains: List[str]):
+        """Organize knowledge by domains with specialized vectorizers."""
+        domain_texts = defaultdict(list)
+        
+        # Group texts by domain
+        for text, domain in zip(corpus, domains):
+            domain_texts[domain].append(text)
+            self.domain_knowledge[domain].append(text)
+        
+        # Create domain-specific vectorizers
+        for domain, texts in domain_texts.items():
+            if len(texts) > 1:
+                try:
+                    vectorizer = TfidfVectorizer(
+                        max_features=min(self.embedding_dim, len(texts) * 10),
+                        stop_words='english'
+                    )
+                    domain_embeddings = vectorizer.fit_transform(texts)
+                    
+                    # Store domain vectorizer and centroid
+                    self.domain_vectorizers[domain] = vectorizer
+                    self.domain_centroids[domain] = np.mean(domain_embeddings.toarray(), axis=0)
+                    
+                except Exception as e:
+                    logging.warning(f"Error creating domain vectorizer for {domain}: {e}")
+    
+    def _add_cultural_contexts(self, corpus: List[str], contexts: List[str]):
+        """Add cultural context metadata to knowledge."""
+        for text, context in zip(corpus, contexts):
+            if context not in self.cultural_contexts:
+                self.cultural_contexts[context] = []
+            self.cultural_contexts[context].append(text)
+    
+    def _build_cross_domain_mappings(self):
+        """Build mappings between related concepts across domains."""
+        try:
+            # Create similarity matrix between domain centroids
+            domains = list(self.domain_centroids.keys())
+            
+            for i, domain1 in enumerate(domains):
+                for j, domain2 in enumerate(domains[i+1:], i+1):
+                    centroid1 = self.domain_centroids[domain1]
+                    centroid2 = self.domain_centroids[domain2]
+                    
+                    # Calculate similarity between domain centroids
+                    similarity = cosine_similarity([centroid1], [centroid2])[0][0]
+                    
+                    if similarity > 0.3:  # Threshold for relatedness
+                        self.cross_domain_mappings[domain1][domain2] = similarity
+                        self.cross_domain_mappings[domain2][domain1] = similarity
+                        
+                        # Add to knowledge graph
+                        self.knowledge_graph[domain1].add(domain2)
+                        self.knowledge_graph[domain2].add(domain1)
+                        
+        except Exception as e:
+            logging.warning(f"Error building cross-domain mappings: {e}")
+    
+    def _analyze_corpus_bias(self):
+        """Analyze potential bias in the knowledge corpus."""
+        try:
+            # Check cultural representation balance
+            cultural_counts = defaultdict(int)
+            total_texts = 0
+            
+            for context, texts in self.cultural_contexts.items():
+                cultural_counts[context] = len(texts)
+                total_texts += len(texts)
+            
+            if total_texts > 0:
+                # Calculate bias score based on cultural imbalance
+                expected_proportion = 1.0 / len(cultural_counts) if cultural_counts else 1.0
+                bias_scores = []
+                
+                for context, count in cultural_counts.items():
+                    actual_proportion = count / total_texts
+                    bias_score = abs(actual_proportion - expected_proportion)
+                    bias_scores.append(bias_score)
+                
+                # Overall bias level
+                self.corpus_bias_level = np.mean(bias_scores) if bias_scores else 0.0
+                
+                # Adjust cultural balance weights if bias detected
+                if self.corpus_bias_level > self.bias_detection_threshold:
+                    self._adjust_cultural_weights()
+            
+        except Exception as e:
+            logging.warning(f"Error analyzing corpus bias: {e}")
+            self.corpus_bias_level = 0.0
+    
+    def _adjust_cultural_weights(self):
+        """Adjust cultural weights to counteract detected bias."""
+        try:
+            # Reduce weights for over-represented cultures
+            total_texts = sum(len(texts) for texts in self.cultural_contexts.values())
+            
+            for context, texts in self.cultural_contexts.items():
+                proportion = len(texts) / total_texts if total_texts > 0 else 0.2
+                
+                # Inverse weighting to balance representation
+                if proportion > 0.3:  # Over-represented
+                    self.cultural_balance_weights[context] = max(0.1, 0.2 - (proportion - 0.2))
+                elif proportion < 0.1:  # Under-represented
+                    self.cultural_balance_weights[context] = min(0.4, 0.2 + (0.1 - proportion))
+                    
+        except Exception as e:
+            logging.warning(f"Error adjusting cultural weights: {e}")
+    
+    def _analyze_semantic_gap(self, query: str, domain: str) -> float:
+        """Analyze semantic gap within domain knowledge."""
+        try:
+            # Use domain-specific vectorizer if available
+            if domain in self.domain_vectorizers:
+                vectorizer = self.domain_vectorizers[domain]
+                domain_texts = self.domain_knowledge[domain]
+            else:
+                vectorizer = self.vectorizer
+                domain_texts = list(self.knowledge_embeddings.keys())
+            
+            if not domain_texts:
+                return 0.8
+            
+            # Transform query
+            query_embedding = vectorizer.transform([query]).toarray()[0]
+            
+            # Find best matches in domain
+            max_similarity = 0.0
+            for text in domain_texts:
+                if text in self.knowledge_embeddings:
+                    existing_embedding = self.knowledge_embeddings[text]
+                    similarity = cosine_similarity([query_embedding], [existing_embedding])[0][0]
+                    max_similarity = max(max_similarity, similarity)
+            
+            return 1.0 - max_similarity
+            
+        except Exception as e:
+            logging.warning(f"Error in semantic gap analysis: {e}")
+            return 0.5
+    
+    def _analyze_cross_domain_gap(self, query: str, primary_domain: str) -> float:
+        """Analyze knowledge gap across related domains."""
+        try:
+            if primary_domain not in self.cross_domain_mappings:
+                return 0.3  # Moderate gap if no cross-domain connections
+            
+            # Check related domains
+            related_domains = self.cross_domain_mappings[primary_domain]
+            cross_domain_similarities = []
+            
+            query_embedding = self.vectorizer.transform([query]).toarray()[0]
+            
+            for related_domain, domain_similarity in related_domains.items():
+                # Check knowledge in related domain
+                domain_texts = self.domain_knowledge.get(related_domain, [])
+                
+                max_similarity = 0.0
+                for text in domain_texts:
+                    if text in self.knowledge_embeddings:
+                        text_embedding = self.knowledge_embeddings[text]
+                        similarity = cosine_similarity([query_embedding], [text_embedding])[0][0]
+                        max_similarity = max(max_similarity, similarity)
+                
+                # Weight by domain relatedness
+                weighted_similarity = max_similarity * domain_similarity
+                cross_domain_similarities.append(weighted_similarity)
+            
+            if cross_domain_similarities:
+                best_cross_domain_match = max(cross_domain_similarities)
+                return 1.0 - best_cross_domain_match
+            
+            return 0.5
+            
+        except Exception as e:
+            logging.warning(f"Error in cross-domain gap analysis: {e}")
+            return 0.5
+    
+    def _analyze_cultural_gap(self, query: str, cultural_context: str) -> float:
+        """Analyze cultural knowledge gap with neutrality consideration."""
+        try:
+            if cultural_context not in self.cultural_contexts:
+                # Use balanced representation from all cultures
+                all_cultural_texts = []
+                for context, texts in self.cultural_contexts.items():
+                    weight = self.cultural_balance_weights.get(context, 0.2)
+                    sample_size = max(1, int(len(texts) * weight))
+                    all_cultural_texts.extend(texts[:sample_size])
+                cultural_texts = all_cultural_texts
+            else:
+                cultural_texts = self.cultural_contexts[cultural_context]
+            
+            if not cultural_texts:
+                return 0.4  # Moderate gap for unknown cultural context
+            
+            query_embedding = self.vectorizer.transform([query]).toarray()[0]
+            
+            # Find best cultural match
+            max_similarity = 0.0
+            for text in cultural_texts:
+                if text in self.knowledge_embeddings:
+                    text_embedding = self.knowledge_embeddings[text]
+                    similarity = cosine_similarity([query_embedding], [text_embedding])[0][0]
+                    max_similarity = max(max_similarity, similarity)
+            
+            return 1.0 - max_similarity
+            
+        except Exception as e:
+            logging.warning(f"Error in cultural gap analysis: {e}")
+            return 0.4
+    
+    def _apply_bias_resistance(self, gap_scores: List[float], domain: str, 
+                             cultural_context: str) -> float:
+        """Apply bias resistance to gap score aggregation."""
+        try:
+            # Remove outliers to reduce bias impact
+            gap_scores_array = np.array(gap_scores)
+            q25, q75 = np.percentile(gap_scores_array, [25, 75])
+            iqr = q75 - q25
+            
+            # Filter outliers
+            lower_bound = q25 - 1.5 * iqr
+            upper_bound = q75 + 1.5 * iqr
+            filtered_scores = gap_scores_array[
+                (gap_scores_array >= lower_bound) & (gap_scores_array <= upper_bound)
+            ]
+            
+            if len(filtered_scores) == 0:
+                filtered_scores = gap_scores_array
+            
+            # Weighted aggregation with cultural balance
+            cultural_weight = self.cultural_balance_weights.get(cultural_context, 0.2)
+            
+            # Adjust for known bias level
+            bias_adjustment = 1.0 - (self.corpus_bias_level * 0.3)
+            
+            # Final score
+            base_score = np.mean(filtered_scores)
+            adjusted_score = base_score * bias_adjustment * cultural_weight * 5.0  # Scale back
+            
+            return max(0.0, min(1.0, adjusted_score))
+            
+        except Exception as e:
+            logging.warning(f"Error applying bias resistance: {e}")
+            return np.mean(gap_scores)
+    
+    def get_knowledge_recommendations(self, query: str, domain: str = "general") -> Dict[str, Any]:
+        """Get specific knowledge acquisition recommendations."""
+        try:
+            gap_score = self.analyze_knowledge_gap(query, domain)
+            
+            recommendations = {
+                "gap_severity": "high" if gap_score > 0.7 else "medium" if gap_score > 0.4 else "low",
+                "primary_gaps": [],
+                "related_domains": [],
+                "cultural_perspectives": [],
+                "learning_priorities": []
+            }
+            
+            # Identify specific gap types
+            semantic_gap = self._analyze_semantic_gap(query, domain)
+            cross_domain_gap = self._analyze_cross_domain_gap(query, domain)
+            
+            if semantic_gap > 0.6:
+                recommendations["primary_gaps"].append(f"Core knowledge in {domain}")
+            if cross_domain_gap > 0.6:
+                recommendations["primary_gaps"].append("Cross-domain connections")
+            
+            # Suggest related domains to explore
+            if domain in self.cross_domain_mappings:
+                related = list(self.cross_domain_mappings[domain].keys())[:3]
+                recommendations["related_domains"] = related
+            
+            # Suggest cultural perspectives to include
+            underrepresented_cultures = [
+                culture for culture, weight in self.cultural_balance_weights.items()
+                if weight > 0.25  # Higher weight indicates under-representation
+            ]
+            recommendations["cultural_perspectives"] = underrepresented_cultures[:3]
+            
+            # Learning priorities
+            if gap_score > 0.7:
+                recommendations["learning_priorities"] = [
+                    "Foundational knowledge acquisition",
+                    "Cultural perspective integration",
+                    "Cross-domain pattern recognition"
+                ]
+            elif gap_score > 0.4:
+                recommendations["learning_priorities"] = [
+                    "Knowledge depth enhancement",
+                    "Cross-cultural validation"
+                ]
+            else:
+                recommendations["learning_priorities"] = [
+                    "Knowledge refinement",
+                    "Bias detection and correction"
+                ]
+            
+            return recommendations
+            
+        except Exception as e:
+            logging.warning(f"Error generating knowledge recommendations: {e}")
+            return {"gap_severity": "unknown", "primary_gaps": [], "related_domains": [], 
+                   "cultural_perspectives": [], "learning_priorities": []}
+    
+    def add_knowledge_incrementally(self, new_knowledge: str, domain: str = "general", 
+                                  cultural_context: str = "neutral"):
+        """Add new knowledge incrementally while maintaining balance."""
+        try:
+            # Add to appropriate collections
+            self.domain_knowledge[domain].append(new_knowledge)
+            if cultural_context not in self.cultural_contexts:
+                self.cultural_contexts[cultural_context] = []
+            self.cultural_contexts[cultural_context].append(new_knowledge)
+            
+            # Update embeddings
+            if self.is_fitted:
+                try:
+                    # Transform new knowledge with existing vectorizer
+                    new_embedding = self.vectorizer.transform([new_knowledge]).toarray()[0]
+                    self.knowledge_embeddings[new_knowledge] = new_embedding
+                    
+                    # Update domain centroid if applicable
+                    if domain in self.domain_centroids:
+                        domain_texts = self.domain_knowledge[domain]
+                        if len(domain_texts) > 1:
+                            domain_embeddings = [self.knowledge_embeddings[text] 
+                                               for text in domain_texts 
+                                               if text in self.knowledge_embeddings]
+                            if domain_embeddings:
+                                self.domain_centroids[domain] = np.mean(domain_embeddings, axis=0)
+                    
+                    # Re-analyze bias periodically
+                    total_knowledge = sum(len(texts) for texts in self.domain_knowledge.values())
+                    if total_knowledge % 50 == 0:  # Every 50 additions
+                        self._analyze_corpus_bias()
+                        
+                except Exception as e:
+                    logging.warning(f"Error updating embeddings incrementally: {e}")
+            
+        except Exception as e:
+            logging.warning(f"Error adding knowledge incrementally: {e}")
 
 
 class CuriosityType(Enum):
@@ -356,8 +735,11 @@ class CuriosityEngine(NISAgent):
                 skill_dim=32, context_dim=64, hidden_dim=48
             )
             
-            # Knowledge gap analyzer
+            # Enhanced knowledge gap analyzer with cultural neutrality
             self.knowledge_gap_analyzer = KnowledgeGapAnalyzer(embedding_dim=128)
+            
+            # Initialize with diverse knowledge corpus for cultural balance
+            self._initialize_balanced_knowledge_base()
             
             # Isolation forest for anomaly detection
             self.anomaly_detector = IsolationForest(
@@ -379,6 +761,626 @@ class CuriosityEngine(NISAgent):
             self.knowledge_gap_analyzer = None
             self.anomaly_detector = None
     
+    def _initialize_balanced_knowledge_base(self):
+        """Initialize knowledge base with culturally balanced examples."""
+        try:
+            # Template knowledge corpus with cultural balance
+            balanced_knowledge = [
+                # Western knowledge
+                "Scientific method and empirical research approaches",
+                "Democratic governance systems and human rights",
+                "Industrial revolution and technological advancement",
+                
+                # Eastern knowledge  
+                "Holistic thinking and systems integration approaches",
+                "Harmony-based decision making and consensus building",
+                "Traditional medicine and energy-based healing",
+                
+                # Indigenous knowledge
+                "Ecological wisdom and sustainable resource management",
+                "Oral tradition storytelling and knowledge transmission",
+                "Ceremonial practices and spiritual connection to nature",
+                
+                # African knowledge
+                "Ubuntu philosophy and community-centered ethics",
+                "Traditional governance and elder council systems",
+                "Rhythmic communication and artistic expression",
+                
+                # Neutral/Universal knowledge
+                "Mathematical principles and logical reasoning",
+                "Universal patterns in nature and cosmos",
+                "Basic human needs and survival strategies"
+            ]
+            
+            # Cultural contexts for each knowledge piece
+            cultural_contexts = [
+                'western', 'western', 'western',
+                'eastern', 'eastern', 'eastern', 
+                'indigenous', 'indigenous', 'indigenous',
+                'african', 'african', 'african',
+                'neutral', 'neutral', 'neutral'
+            ]
+            
+            # Domain classifications
+            domains = [
+                'science', 'governance', 'technology',
+                'philosophy', 'social', 'health',
+                'ecology', 'education', 'spirituality', 
+                'ethics', 'governance', 'arts',
+                'mathematics', 'science', 'survival'
+            ]
+            
+            # Fit the knowledge gap analyzer with balanced corpus
+            if self.knowledge_gap_analyzer:
+                self.knowledge_gap_analyzer.fit(
+                    balanced_knowledge, 
+                    domains=domains, 
+                    cultural_contexts=cultural_contexts
+                )
+                
+                self.logger.info("Initialized balanced knowledge base with cultural neutrality")
+            
+        except Exception as e:
+            self.logger.warning(f"Error initializing balanced knowledge base: {e}")
+    
+    def generate_advanced_curiosity_signals(self, observations: List[Dict[str, Any]], 
+                                          context: Dict[str, Any]) -> List[CuriositySignal]:
+        """Generate advanced curiosity signals using enhanced ML algorithms."""
+        signals = []
+        
+        try:
+            for observation in observations:
+                # Enhanced curiosity signal generation
+                enhanced_signals = self._generate_enhanced_curiosity_signals(observation, context)
+                signals.extend(enhanced_signals)
+            
+            # Add meta-curiosity signals about learning itself
+            meta_signals = self._generate_meta_curiosity_signals(context)
+            signals.extend(meta_signals)
+            
+            # Cultural perspective curiosity
+            cultural_signals = self._generate_cultural_curiosity_signals(observations, context)
+            signals.extend(cultural_signals)
+            
+            # Cross-domain exploration signals
+            cross_domain_signals = self._generate_cross_domain_curiosity_signals(observations, context)
+            signals.extend(cross_domain_signals)
+            
+            return signals
+            
+        except Exception as e:
+            self.logger.warning(f"Error generating advanced curiosity signals: {e}")
+            return []
+    
+    def _generate_enhanced_curiosity_signals(self, observation: Dict[str, Any], 
+                                           context: Dict[str, Any]) -> List[CuriositySignal]:
+        """Generate enhanced curiosity signals with multi-domain analysis."""
+        signals = []
+        
+        try:
+            target = observation.get("target", "unknown")
+            domain = observation.get("domain", "general")
+            cultural_context = context.get("cultural_context", "neutral")
+            
+            # Enhanced knowledge gap analysis
+            if self.knowledge_gap_analyzer:
+                # Get detailed gap analysis
+                gap_score = self.knowledge_gap_analyzer.analyze_knowledge_gap(
+                    self._observation_to_text(observation), domain, cultural_context
+                )
+                
+                # Get knowledge recommendations
+                recommendations = self.knowledge_gap_analyzer.get_knowledge_recommendations(
+                    self._observation_to_text(observation), domain
+                )
+                
+                if gap_score > self.knowledge_gap_threshold:
+                    signal = CuriositySignal(
+                        curiosity_type=CuriosityType.KNOWLEDGE_GAP,
+                        target=target,
+                        motivation_strength=gap_score * self.curiosity_weights[CuriosityType.KNOWLEDGE_GAP],
+                        novelty_score=0.0,
+                        knowledge_gap_score=gap_score,
+                        prediction_error=0.0,
+                        exploration_value=gap_score,
+                        timestamp=time.time(),
+                        context={
+                            **context,
+                            "gap_recommendations": recommendations,
+                            "domain": domain,
+                            "cultural_context": cultural_context,
+                            "gap_type": "enhanced_multi_domain"
+                        }
+                    )
+                    signals.append(signal)
+            
+            # Enhanced novelty detection with cultural awareness
+            novelty_score = self._calculate_novelty_score(observation)
+            if novelty_score > self.novelty_threshold:
+                # Adjust novelty based on cultural context
+                cultural_novelty_adjustment = self._assess_cultural_novelty(observation, cultural_context)
+                adjusted_novelty = novelty_score * cultural_novelty_adjustment
+                
+                if adjusted_novelty > self.novelty_threshold:
+                    signal = CuriositySignal(
+                        curiosity_type=CuriosityType.NOVELTY_SEEKING,
+                        target=target,
+                        motivation_strength=adjusted_novelty * self.curiosity_weights[CuriosityType.NOVELTY_SEEKING],
+                        novelty_score=adjusted_novelty,
+                        knowledge_gap_score=0.0,
+                        prediction_error=0.0,
+                        exploration_value=adjusted_novelty,
+                        timestamp=time.time(),
+                        context={
+                            **context,
+                            "cultural_novelty_adjustment": cultural_novelty_adjustment,
+                            "raw_novelty": novelty_score,
+                            "novelty_type": "culturally_adjusted"
+                        }
+                    )
+                    signals.append(signal)
+            
+            # Enhanced competence building with cultural learning
+            competence_potential = self._calculate_competence_building_potential(observation)
+            if competence_potential > 0.5:
+                # Add cultural competence dimension
+                cultural_competence_gap = self._assess_cultural_competence_gap(target, cultural_context)
+                combined_potential = (competence_potential + cultural_competence_gap) / 2.0
+                
+                signal = CuriositySignal(
+                    curiosity_type=CuriosityType.COMPETENCE_BUILDING,
+                    target=target,
+                    motivation_strength=combined_potential * self.curiosity_weights[CuriosityType.COMPETENCE_BUILDING],
+                    novelty_score=0.0,
+                    knowledge_gap_score=0.0,
+                    prediction_error=0.0,
+                    exploration_value=combined_potential,
+                    timestamp=time.time(),
+                    context={
+                        **context,
+                        "technical_competence_potential": competence_potential,
+                        "cultural_competence_gap": cultural_competence_gap,
+                        "competence_type": "multi_dimensional"
+                    }
+                )
+                signals.append(signal)
+            
+            return signals
+            
+        except Exception as e:
+            self.logger.warning(f"Error generating enhanced curiosity signals: {e}")
+            return []
+    
+    def _generate_meta_curiosity_signals(self, context: Dict[str, Any]) -> List[CuriositySignal]:
+        """Generate curiosity about learning and thinking processes themselves."""
+        signals = []
+        
+        try:
+            # Curiosity about own learning effectiveness
+            learning_effectiveness = self._assess_learning_effectiveness()
+            if learning_effectiveness < 0.7:
+                signal = CuriositySignal(
+                    curiosity_type=CuriosityType.KNOWLEDGE_GAP,
+                    target="learning_process_optimization",
+                    motivation_strength=0.6,
+                    novelty_score=0.0,
+                    knowledge_gap_score=1.0 - learning_effectiveness,
+                    prediction_error=0.0,
+                    exploration_value=0.8,
+                    timestamp=time.time(),
+                    context={
+                        **context,
+                        "meta_type": "learning_effectiveness",
+                        "current_effectiveness": learning_effectiveness
+                    }
+                )
+                signals.append(signal)
+            
+            # Curiosity about thinking patterns
+            thinking_diversity = self._assess_thinking_pattern_diversity()
+            if thinking_diversity < 0.6:
+                signal = CuriositySignal(
+                    curiosity_type=CuriosityType.CREATIVE_EXPLORATION,
+                    target="thinking_pattern_diversification",
+                    motivation_strength=0.5,
+                    novelty_score=0.0,
+                    knowledge_gap_score=1.0 - thinking_diversity,
+                    prediction_error=0.0,
+                    exploration_value=0.7,
+                    timestamp=time.time(),
+                    context={
+                        **context,
+                        "meta_type": "thinking_diversity",
+                        "current_diversity": thinking_diversity
+                    }
+                )
+                signals.append(signal)
+            
+            # Curiosity about cultural perspectives not yet explored
+            unexplored_cultures = self._identify_unexplored_cultural_perspectives()
+            if unexplored_cultures:
+                for culture in unexplored_cultures[:2]:  # Limit to 2 to avoid overwhelming
+                    signal = CuriositySignal(
+                        curiosity_type=CuriosityType.SOCIAL_CURIOSITY,
+                        target=f"cultural_perspective_{culture}",
+                        motivation_strength=0.4,
+                        novelty_score=0.0,
+                        knowledge_gap_score=0.8,
+                        prediction_error=0.0,
+                        exploration_value=0.6,
+                        timestamp=time.time(),
+                        context={
+                            **context,
+                            "meta_type": "cultural_exploration",
+                            "target_culture": culture
+                        }
+                    )
+                    signals.append(signal)
+            
+            return signals
+            
+        except Exception as e:
+            self.logger.warning(f"Error generating meta curiosity signals: {e}")
+            return []
+    
+    def _generate_cultural_curiosity_signals(self, observations: List[Dict[str, Any]], 
+                                           context: Dict[str, Any]) -> List[CuriositySignal]:
+        """Generate curiosity signals focused on cultural perspectives and balance."""
+        signals = []
+        
+        try:
+            if not self.knowledge_gap_analyzer:
+                return signals
+            
+            # Check cultural balance in recent observations
+            cultural_representation = self._analyze_cultural_representation(observations)
+            
+            # Generate curiosity for under-represented cultural perspectives
+            for culture, representation_score in cultural_representation.items():
+                if representation_score < 0.3:  # Under-represented
+                    signal = CuriositySignal(
+                        curiosity_type=CuriosityType.SOCIAL_CURIOSITY,
+                        target=f"cultural_knowledge_{culture}",
+                        motivation_strength=0.5 * (0.5 - representation_score),
+                        novelty_score=0.0,
+                        knowledge_gap_score=1.0 - representation_score,
+                        prediction_error=0.0,
+                        exploration_value=0.6,
+                        timestamp=time.time(),
+                        context={
+                            **context,
+                            "curiosity_type": "cultural_balance",
+                            "target_culture": culture,
+                            "current_representation": representation_score
+                        }
+                    )
+                    signals.append(signal)
+            
+            # Curiosity about cultural synthesis opportunities
+            synthesis_opportunities = self._identify_cultural_synthesis_opportunities(observations)
+            for opportunity in synthesis_opportunities:
+                signal = CuriositySignal(
+                    curiosity_type=CuriosityType.CREATIVE_EXPLORATION,
+                    target=f"cultural_synthesis_{opportunity['name']}",
+                    motivation_strength=opportunity['potential'],
+                    novelty_score=opportunity['novelty'],
+                    knowledge_gap_score=0.0,
+                    prediction_error=0.0,
+                    exploration_value=opportunity['potential'],
+                    timestamp=time.time(),
+                    context={
+                        **context,
+                        "curiosity_type": "cultural_synthesis",
+                        "synthesis_opportunity": opportunity
+                    }
+                )
+                signals.append(signal)
+            
+            return signals
+            
+        except Exception as e:
+            self.logger.warning(f"Error generating cultural curiosity signals: {e}")
+            return []
+    
+    def _generate_cross_domain_curiosity_signals(self, observations: List[Dict[str, Any]], 
+                                               context: Dict[str, Any]) -> List[CuriositySignal]:
+        """Generate curiosity signals for cross-domain exploration and connection."""
+        signals = []
+        
+        try:
+            if not self.knowledge_gap_analyzer:
+                return signals
+            
+            # Identify current domain focus
+            current_domains = [obs.get("domain", "general") for obs in observations]
+            domain_diversity = len(set(current_domains))
+            
+            # If too focused on one domain, generate cross-domain curiosity
+            if domain_diversity < 3:
+                # Find related domains to explore
+                for domain in set(current_domains):
+                    if domain in self.knowledge_gap_analyzer.cross_domain_mappings:
+                        related_domains = self.knowledge_gap_analyzer.cross_domain_mappings[domain]
+                        
+                        for related_domain, similarity in list(related_domains.items())[:2]:
+                            signal = CuriositySignal(
+                                curiosity_type=CuriosityType.KNOWLEDGE_GAP,
+                                target=f"cross_domain_{domain}_to_{related_domain}",
+                                motivation_strength=similarity * 0.6,
+                                novelty_score=0.0,
+                                knowledge_gap_score=similarity,
+                                prediction_error=0.0,
+                                exploration_value=similarity * 0.8,
+                                timestamp=time.time(),
+                                context={
+                                    **context,
+                                    "curiosity_type": "cross_domain",
+                                    "source_domain": domain,
+                                    "target_domain": related_domain,
+                                    "domain_similarity": similarity
+                                }
+                            )
+                            signals.append(signal)
+            
+            # Generate curiosity for domain bridging opportunities
+            bridging_opportunities = self._identify_domain_bridging_opportunities(observations)
+            for opportunity in bridging_opportunities:
+                signal = CuriositySignal(
+                    curiosity_type=CuriosityType.CREATIVE_EXPLORATION,
+                    target=f"domain_bridge_{opportunity['name']}",
+                    motivation_strength=opportunity['potential'],
+                    novelty_score=opportunity['novelty'],
+                    knowledge_gap_score=0.0,
+                    prediction_error=0.0,
+                    exploration_value=opportunity['potential'],
+                    timestamp=time.time(),
+                    context={
+                        **context,
+                        "curiosity_type": "domain_bridging",
+                        "bridging_opportunity": opportunity
+                    }
+                )
+                signals.append(signal)
+            
+            return signals
+            
+        except Exception as e:
+            self.logger.warning(f"Error generating cross-domain curiosity signals: {e}")
+            return []
+    
+    def _assess_cultural_novelty(self, observation: Dict[str, Any], cultural_context: str) -> float:
+        """Assess novelty from a specific cultural perspective."""
+        try:
+            if not self.knowledge_gap_analyzer or cultural_context not in self.knowledge_gap_analyzer.cultural_contexts:
+                return 1.0  # Neutral adjustment if no cultural context
+            
+            # Get cultural knowledge base
+            cultural_knowledge = self.knowledge_gap_analyzer.cultural_contexts[cultural_context]
+            
+            if not cultural_knowledge:
+                return 1.0
+            
+            # Check similarity to cultural knowledge
+            observation_text = self._observation_to_text(observation)
+            query_embedding = self.knowledge_gap_analyzer.vectorizer.transform([observation_text]).toarray()[0]
+            
+            max_cultural_similarity = 0.0
+            for knowledge_text in cultural_knowledge[:20]:  # Sample for efficiency
+                if knowledge_text in self.knowledge_gap_analyzer.knowledge_embeddings:
+                    knowledge_embedding = self.knowledge_gap_analyzer.knowledge_embeddings[knowledge_text]
+                    similarity = cosine_similarity([query_embedding], [knowledge_embedding])[0][0]
+                    max_cultural_similarity = max(max_cultural_similarity, similarity)
+            
+            # Higher cultural novelty = higher adjustment factor
+            cultural_novelty = 1.0 - max_cultural_similarity
+            adjustment = 0.5 + (cultural_novelty * 0.5)  # Range: 0.5 to 1.0
+            
+            return adjustment
+            
+        except Exception as e:
+            self.logger.warning(f"Error assessing cultural novelty: {e}")
+            return 1.0
+    
+    def _assess_cultural_competence_gap(self, target: str, cultural_context: str) -> float:
+        """Assess gap in cultural competence for a target skill/domain."""
+        try:
+            # Check if we have cultural competence data for this target
+            cultural_competence_key = f"{target}_{cultural_context}"
+            
+            if cultural_competence_key in self.competence_levels:
+                current_competence = self.competence_levels[cultural_competence_key]
+                return 1.0 - current_competence
+            
+            # If no specific cultural competence data, estimate based on general competence
+            general_competence = self.competence_levels.get(target, 0.0)
+            
+            # Assume cultural competence starts lower than general competence
+            cultural_competence = general_competence * 0.7
+            gap = 1.0 - cultural_competence
+            
+            return max(0.0, min(1.0, gap))
+            
+        except Exception as e:
+            self.logger.warning(f"Error assessing cultural competence gap: {e}")
+            return 0.5
+    
+    def _assess_learning_effectiveness(self) -> float:
+        """Assess effectiveness of recent learning activities."""
+        try:
+            if not self.learning_outcomes:
+                return 0.5  # Default moderate effectiveness
+            
+            recent_outcomes = self.learning_outcomes[-10:]  # Last 10 outcomes
+            
+            # Calculate average satisfaction and competence increase
+            avg_satisfaction = np.mean([outcome.satisfaction_score for outcome in recent_outcomes])
+            avg_competence_increase = np.mean([outcome.competence_increase for outcome in recent_outcomes])
+            
+            # Combined effectiveness score
+            effectiveness = (avg_satisfaction + avg_competence_increase) / 2.0
+            
+            return max(0.0, min(1.0, effectiveness))
+            
+        except Exception as e:
+            self.logger.warning(f"Error assessing learning effectiveness: {e}")
+            return 0.5
+    
+    def _assess_thinking_pattern_diversity(self) -> float:
+        """Assess diversity in thinking patterns and strategies."""
+        try:
+            # Check variety of curiosity types generated recently
+            recent_signals = self.active_curiosity_signals[-20:]  # Last 20 signals
+            
+            if not recent_signals:
+                return 0.5
+            
+            # Count unique curiosity types
+            curiosity_types = [signal.curiosity_type for signal in recent_signals]
+            unique_types = len(set(curiosity_types))
+            max_types = len(CuriosityType)
+            
+            type_diversity = unique_types / max_types
+            
+            # Check variety of exploration strategies
+            exploration_goals = self.active_exploration_goals[-10:]  # Last 10 goals
+            if exploration_goals:
+                strategies = [goal.exploration_strategy for goal in exploration_goals]
+                unique_strategies = len(set(strategies))
+                max_strategies = len(ExplorationStrategy)
+                strategy_diversity = unique_strategies / max_strategies
+            else:
+                strategy_diversity = 0.5
+            
+            # Combined diversity score
+            diversity = (type_diversity + strategy_diversity) / 2.0
+            
+            return max(0.0, min(1.0, diversity))
+            
+        except Exception as e:
+            self.logger.warning(f"Error assessing thinking pattern diversity: {e}")
+            return 0.5
+    
+    def _identify_unexplored_cultural_perspectives(self) -> List[str]:
+        """Identify cultural perspectives that haven't been explored recently."""
+        try:
+            if not self.knowledge_gap_analyzer:
+                return ['eastern', 'indigenous', 'african']  # Default suggestions
+            
+            # Available cultural contexts
+            available_cultures = set(self.knowledge_gap_analyzer.cultural_contexts.keys())
+            
+            # Recently explored cultures (from context of recent signals)
+            recent_cultures = set()
+            for signal in self.active_curiosity_signals[-20:]:
+                culture = signal.context.get("cultural_context")
+                if culture:
+                    recent_cultures.add(culture)
+            
+            # Find unexplored cultures
+            unexplored = available_cultures - recent_cultures
+            
+            return list(unexplored)[:3]  # Return up to 3 suggestions
+            
+        except Exception as e:
+            self.logger.warning(f"Error identifying unexplored cultural perspectives: {e}")
+            return []
+    
+    def _analyze_cultural_representation(self, observations: List[Dict[str, Any]]) -> Dict[str, float]:
+        """Analyze cultural representation in recent observations."""
+        try:
+            cultural_counts = defaultdict(int)
+            total_observations = len(observations)
+            
+            if total_observations == 0:
+                return {}
+            
+            # Count cultural contexts in observations
+            for obs in observations:
+                culture = obs.get("cultural_context", "neutral")
+                cultural_counts[culture] += 1
+            
+            # Calculate representation scores
+            representation = {}
+            for culture, count in cultural_counts.items():
+                representation[culture] = count / total_observations
+            
+            # Add zero scores for unrepresented cultures
+            if self.knowledge_gap_analyzer:
+                for culture in self.knowledge_gap_analyzer.cultural_contexts.keys():
+                    if culture not in representation:
+                        representation[culture] = 0.0
+            
+            return representation
+            
+        except Exception as e:
+            self.logger.warning(f"Error analyzing cultural representation: {e}")
+            return {}
+    
+    def _identify_cultural_synthesis_opportunities(self, observations: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Identify opportunities for synthesizing different cultural perspectives."""
+        opportunities = []
+        
+        try:
+            # Look for observations from different cultures on similar topics
+            topics_by_culture = defaultdict(list)
+            
+            for obs in observations:
+                topic = obs.get("target", "unknown")
+                culture = obs.get("cultural_context", "neutral")
+                topics_by_culture[topic].append(culture)
+            
+            # Find topics with multiple cultural perspectives
+            for topic, cultures in topics_by_culture.items():
+                unique_cultures = set(cultures)
+                if len(unique_cultures) > 1:
+                    opportunity = {
+                        "name": f"{topic}_cultural_synthesis",
+                        "topic": topic,
+                        "cultures": list(unique_cultures),
+                        "potential": min(1.0, len(unique_cultures) * 0.3),
+                        "novelty": 0.7  # Cultural synthesis is inherently novel
+                    }
+                    opportunities.append(opportunity)
+            
+            return opportunities[:3]  # Limit to top 3 opportunities
+            
+        except Exception as e:
+            self.logger.warning(f"Error identifying cultural synthesis opportunities: {e}")
+            return []
+    
+    def _identify_domain_bridging_opportunities(self, observations: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Identify opportunities for bridging different knowledge domains."""
+        opportunities = []
+        
+        try:
+            # Look for observations from different domains with potential connections
+            domains_present = set(obs.get("domain", "general") for obs in observations)
+            
+            if len(domains_present) > 1 and self.knowledge_gap_analyzer:
+                # Find domains with known mappings
+                for domain1 in domains_present:
+                    if domain1 in self.knowledge_gap_analyzer.cross_domain_mappings:
+                        related_domains = self.knowledge_gap_analyzer.cross_domain_mappings[domain1]
+                        
+                        for domain2 in domains_present:
+                            if domain2 in related_domains and domain1 != domain2:
+                                similarity = related_domains[domain2]
+                                
+                                opportunity = {
+                                    "name": f"{domain1}_to_{domain2}_bridge",
+                                    "source_domain": domain1,
+                                    "target_domain": domain2,
+                                    "potential": similarity * 0.8,
+                                    "novelty": 0.6 + (similarity * 0.3)  # Higher similarity = more novel bridging
+                                }
+                                opportunities.append(opportunity)
+            
+            return opportunities[:3]  # Limit to top 3 opportunities
+            
+        except Exception as e:
+            self.logger.warning(f"Error identifying domain bridging opportunities: {e}")
+            return []
+
     def process(self, message: Dict[str, Any]) -> Dict[str, Any]:
         """Process curiosity-related requests."""
         start_time = self._start_processing_timer()
