@@ -1,5 +1,5 @@
 {
-  "audit_timestamp": "2025-07-18T21:59:57.625585",
+  "audit_timestamp": "2025-07-18T22:21:55.177346",
   "project_path": "..",
   "issues": [
     {
@@ -10,7 +10,7 @@
         "term": "interpretable"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.692705"
+      "timestamp": "2025-07-18T22:21:55.243132"
     },
     {
       "type": "documentation_hype",
@@ -20,7 +20,7 @@
         "term": "interpretable"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.695845"
+      "timestamp": "2025-07-18T22:21:55.247201"
     },
     {
       "type": "documentation_hype",
@@ -30,7 +30,7 @@
         "term": "advanced"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.696548"
+      "timestamp": "2025-07-18T22:21:55.247891"
     },
     {
       "type": "documentation_hype",
@@ -40,7 +40,7 @@
         "term": "novel"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.696760"
+      "timestamp": "2025-07-18T22:21:55.248228"
     },
     {
       "type": "documentation_hype",
@@ -50,7 +50,7 @@
         "term": "95%+"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.697763"
+      "timestamp": "2025-07-18T22:21:55.249401"
     },
     {
       "type": "unverified_claim",
@@ -60,7 +60,7 @@
         "claim": "processing"
       },
       "severity": "MEDIUM",
-      "timestamp": "2025-07-18T21:59:57.699216"
+      "timestamp": "2025-07-18T22:21:55.250701"
     },
     {
       "type": "documentation_hype",
@@ -70,7 +70,7 @@
         "term": "interpretable"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.700530"
+      "timestamp": "2025-07-18T22:21:55.251957"
     },
     {
       "type": "documentation_hype",
@@ -80,7 +80,7 @@
         "term": "multi-agent system"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.701511"
+      "timestamp": "2025-07-18T22:21:55.252940"
     },
     {
       "type": "documentation_hype",
@@ -90,7 +90,7 @@
         "term": "advanced"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.702017"
+      "timestamp": "2025-07-18T22:21:55.253581"
     },
     {
       "type": "documentation_hype",
@@ -100,7 +100,7 @@
         "term": "improvement"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.702125"
+      "timestamp": "2025-07-18T22:21:55.253692"
     },
     {
       "type": "documentation_hype",
@@ -110,7 +110,7 @@
         "term": "novel"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.702302"
+      "timestamp": "2025-07-18T22:21:55.253873"
     },
     {
       "type": "documentation_hype",
@@ -120,7 +120,7 @@
         "term": "optimized"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.703227"
+      "timestamp": "2025-07-18T22:21:55.255138"
     },
     {
       "type": "documentation_hype",
@@ -130,7 +130,7 @@
         "term": "95%+"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.704377"
+      "timestamp": "2025-07-18T22:21:55.256356"
     },
     {
       "type": "unverified_claim",
@@ -143,7 +143,7 @@
         ]
       },
       "severity": "MEDIUM",
-      "timestamp": "2025-07-18T21:59:57.705569"
+      "timestamp": "2025-07-18T22:21:55.257443"
     },
     {
       "type": "unverified_claim",
@@ -156,7 +156,7 @@
         ]
       },
       "severity": "MEDIUM",
-      "timestamp": "2025-07-18T21:59:57.705588"
+      "timestamp": "2025-07-18T22:21:55.257454"
     },
     {
       "type": "unverified_claim",
@@ -166,7 +166,7 @@
         "claim": "Processing"
       },
       "severity": "MEDIUM",
-      "timestamp": "2025-07-18T21:59:57.707530"
+      "timestamp": "2025-07-18T22:21:55.259604"
     },
     {
       "type": "unverified_claim",
@@ -176,7 +176,7 @@
         "claim": "Monitoring"
       },
       "severity": "MEDIUM",
-      "timestamp": "2025-07-18T21:59:57.707548"
+      "timestamp": "2025-07-18T22:21:55.259618"
     },
     {
       "type": "documentation_hype",
@@ -186,7 +186,7 @@
         "term": "interpretable"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.709078"
+      "timestamp": "2025-07-18T22:21:55.261209"
     },
     {
       "type": "documentation_hype",
@@ -196,7 +196,7 @@
         "term": "advanced"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.709782"
+      "timestamp": "2025-07-18T22:21:55.262120"
     },
     {
       "type": "documentation_hype",
@@ -206,7 +206,7 @@
         "term": "improvement"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.709835"
+      "timestamp": "2025-07-18T22:21:55.262292"
     },
     {
       "type": "documentation_hype",
@@ -216,7 +216,7 @@
         "term": "novel"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.709882"
+      "timestamp": "2025-07-18T22:21:55.262380"
     },
     {
       "type": "documentation_hype",
@@ -226,7 +226,7 @@
         "term": "95%+"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.710906"
+      "timestamp": "2025-07-18T22:21:55.263911"
     },
     {
       "type": "unverified_claim",
@@ -236,7 +236,7 @@
         "claim": "Monitoring"
       },
       "severity": "MEDIUM",
-      "timestamp": "2025-07-18T21:59:57.712264"
+      "timestamp": "2025-07-18T22:21:55.265876"
     },
     {
       "type": "unverified_claim",
@@ -246,7 +246,7 @@
         "claim": "Monitoring"
       },
       "severity": "MEDIUM",
-      "timestamp": "2025-07-18T21:59:57.712282"
+      "timestamp": "2025-07-18T22:21:55.265913"
     },
     {
       "type": "documentation_hype",
@@ -256,7 +256,7 @@
         "term": "interpretable"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.713408"
+      "timestamp": "2025-07-18T22:21:55.267599"
     },
     {
       "type": "documentation_hype",
@@ -266,7 +266,7 @@
         "term": "self-aware"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.713733"
+      "timestamp": "2025-07-18T22:21:55.267978"
     },
     {
       "type": "documentation_hype",
@@ -276,50 +276,7 @@
         "term": "advanced"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.715678"
-    },
-    {
-      "type": "documentation_hype",
-      "description": "Unsubstantiated advanced claim in README.md",
-      "details": {
-        "file": "../README.md",
-        "term": "improvement"
-      },
-      "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.715814"
-    },
-    {
-      "type": "documentation_hype",
-      "description": "Unsubstantiated advanced claim in README.md",
-      "details": {
-        "file": "../README.md",
-        "term": "novel"
-      },
-      "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.715911"
-    },
-    {
-      "type": "documentation_hype",
-      "description": "Unsubstantiated interpretability claim in README.md",
-      "details": {
-        "file": "../README.md",
-        "term": "95%+"
-      },
-      "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.719543"
-    },
-    {
-      "type": "unverified_claim",
-      "description": "Technical claim needs verification in README.md: ('98', 'accuracy')",
-      "details": {
-        "file": "../README.md",
-        "claim": [
-          "98",
-          "accuracy"
-        ]
-      },
-      "severity": "MEDIUM",
-      "timestamp": "2025-07-18T21:59:57.721159"
+      "timestamp": "2025-07-18T22:21:55.269685"
     },
     {
       "type": "unverified_claim",
@@ -329,7 +286,7 @@
         "claim": "processing"
       },
       "severity": "MEDIUM",
-      "timestamp": "2025-07-18T21:59:57.723806"
+      "timestamp": "2025-07-18T22:21:55.278334"
     },
     {
       "type": "documentation_hype",
@@ -339,7 +296,7 @@
         "term": "interpretable"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.726976"
+      "timestamp": "2025-07-18T22:21:55.280311"
     },
     {
       "type": "documentation_hype",
@@ -349,7 +306,7 @@
         "term": "self-aware"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.727144"
+      "timestamp": "2025-07-18T22:21:55.280473"
     },
     {
       "type": "documentation_hype",
@@ -359,7 +316,7 @@
         "term": "multi-agent system"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.727431"
+      "timestamp": "2025-07-18T22:21:55.280760"
     },
     {
       "type": "documentation_hype",
@@ -369,7 +326,7 @@
         "term": "advanced"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.727690"
+      "timestamp": "2025-07-18T22:21:55.281017"
     },
     {
       "type": "documentation_hype",
@@ -379,7 +336,7 @@
         "term": "improvement"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.727746"
+      "timestamp": "2025-07-18T22:21:55.281071"
     },
     {
       "type": "documentation_hype",
@@ -389,7 +346,7 @@
         "term": "novel"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.727786"
+      "timestamp": "2025-07-18T22:21:55.281109"
     },
     {
       "type": "documentation_hype",
@@ -399,7 +356,7 @@
         "term": "95%+"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.728841"
+      "timestamp": "2025-07-18T22:21:55.282154"
     },
     {
       "type": "unverified_claim",
@@ -412,7 +369,7 @@
         ]
       },
       "severity": "MEDIUM",
-      "timestamp": "2025-07-18T21:59:57.729408"
+      "timestamp": "2025-07-18T22:21:55.282889"
     },
     {
       "type": "unverified_claim",
@@ -425,7 +382,7 @@
         ]
       },
       "severity": "MEDIUM",
-      "timestamp": "2025-07-18T21:59:57.729419"
+      "timestamp": "2025-07-18T22:21:55.282955"
     },
     {
       "type": "unverified_claim",
@@ -438,7 +395,7 @@
         ]
       },
       "severity": "MEDIUM",
-      "timestamp": "2025-07-18T21:59:57.729426"
+      "timestamp": "2025-07-18T22:21:55.282968"
     },
     {
       "type": "documentation_hype",
@@ -448,7 +405,7 @@
         "term": "advanced"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.732400"
+      "timestamp": "2025-07-18T22:21:55.285653"
     },
     {
       "type": "documentation_hype",
@@ -458,7 +415,7 @@
         "term": "improvement"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.732587"
+      "timestamp": "2025-07-18T22:21:55.285841"
     },
     {
       "type": "documentation_hype",
@@ -468,7 +425,7 @@
         "term": "optimized"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.733181"
+      "timestamp": "2025-07-18T22:21:55.286405"
     },
     {
       "type": "documentation_hype",
@@ -478,7 +435,7 @@
         "term": "95%+"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.733706"
+      "timestamp": "2025-07-18T22:21:55.286942"
     },
     {
       "type": "unverified_claim",
@@ -491,7 +448,7 @@
         ]
       },
       "severity": "MEDIUM",
-      "timestamp": "2025-07-18T21:59:57.734205"
+      "timestamp": "2025-07-18T22:21:55.287439"
     },
     {
       "type": "unverified_claim",
@@ -504,7 +461,7 @@
         ]
       },
       "severity": "MEDIUM",
-      "timestamp": "2025-07-18T21:59:57.734215"
+      "timestamp": "2025-07-18T22:21:55.287450"
     },
     {
       "type": "unverified_claim",
@@ -517,7 +474,7 @@
         ]
       },
       "severity": "MEDIUM",
-      "timestamp": "2025-07-18T21:59:57.734221"
+      "timestamp": "2025-07-18T22:21:55.287456"
     },
     {
       "type": "documentation_hype",
@@ -527,7 +484,7 @@
         "term": "KAN interpretability"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.736074"
+      "timestamp": "2025-07-18T22:21:55.289226"
     },
     {
       "type": "documentation_hype",
@@ -537,7 +494,7 @@
         "term": "interpretable"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.736100"
+      "timestamp": "2025-07-18T22:21:55.289252"
     },
     {
       "type": "documentation_hype",
@@ -547,7 +504,7 @@
         "term": "multi-agent system"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.736820"
+      "timestamp": "2025-07-18T22:21:55.289972"
     },
     {
       "type": "documentation_hype",
@@ -557,7 +514,7 @@
         "term": "advanced"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.737619"
+      "timestamp": "2025-07-18T22:21:55.290431"
     },
     {
       "type": "documentation_hype",
@@ -567,7 +524,7 @@
         "term": "95%+"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.740338"
+      "timestamp": "2025-07-18T22:21:55.293460"
     },
     {
       "type": "unverified_claim",
@@ -580,7 +537,7 @@
         ]
       },
       "severity": "MEDIUM",
-      "timestamp": "2025-07-18T21:59:57.741325"
+      "timestamp": "2025-07-18T22:21:55.294523"
     },
     {
       "type": "documentation_hype",
@@ -590,7 +547,7 @@
         "term": "novel"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.744609"
+      "timestamp": "2025-07-18T22:21:55.297867"
     },
     {
       "type": "documentation_hype",
@@ -600,7 +557,7 @@
         "term": "improvement"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.746346"
+      "timestamp": "2025-07-18T22:21:55.299371"
     },
     {
       "type": "documentation_hype",
@@ -610,7 +567,7 @@
         "term": "novel"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.746425"
+      "timestamp": "2025-07-18T22:21:55.299392"
     },
     {
       "type": "documentation_hype",
@@ -620,7 +577,7 @@
         "term": "advanced"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.752979"
+      "timestamp": "2025-07-18T22:21:55.305396"
     },
     {
       "type": "documentation_hype",
@@ -630,7 +587,7 @@
         "term": "improvement"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.753130"
+      "timestamp": "2025-07-18T22:21:55.305543"
     },
     {
       "type": "documentation_hype",
@@ -640,7 +597,7 @@
         "term": "novel"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.753149"
+      "timestamp": "2025-07-18T22:21:55.305561"
     },
     {
       "type": "unverified_claim",
@@ -654,7 +611,7 @@
         ]
       },
       "severity": "MEDIUM",
-      "timestamp": "2025-07-18T21:59:57.755484"
+      "timestamp": "2025-07-18T22:21:55.307468"
     },
     {
       "type": "documentation_hype",
@@ -664,7 +621,7 @@
         "term": "multi-agent system"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.762351"
+      "timestamp": "2025-07-18T22:21:55.314261"
     },
     {
       "type": "documentation_hype",
@@ -674,7 +631,7 @@
         "term": "advanced"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.763095"
+      "timestamp": "2025-07-18T22:21:55.314804"
     },
     {
       "type": "documentation_hype",
@@ -684,7 +641,7 @@
         "term": "improvement"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.763331"
+      "timestamp": "2025-07-18T22:21:55.315012"
     },
     {
       "type": "documentation_hype",
@@ -694,7 +651,7 @@
         "term": "novel"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.763425"
+      "timestamp": "2025-07-18T22:21:55.315173"
     },
     {
       "type": "unverified_claim",
@@ -707,7 +664,7 @@
         ]
       },
       "severity": "MEDIUM",
-      "timestamp": "2025-07-18T21:59:57.766413"
+      "timestamp": "2025-07-18T22:21:55.317778"
     },
     {
       "type": "documentation_hype",
@@ -717,7 +674,7 @@
         "term": "interpretable"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.769145"
+      "timestamp": "2025-07-18T22:21:55.320357"
     },
     {
       "type": "documentation_hype",
@@ -727,7 +684,7 @@
         "term": "quantum computing"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.770712"
+      "timestamp": "2025-07-18T22:21:55.321951"
     },
     {
       "type": "documentation_hype",
@@ -737,7 +694,7 @@
         "term": "advanced"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.775107"
+      "timestamp": "2025-07-18T22:21:55.327120"
     },
     {
       "type": "documentation_hype",
@@ -747,7 +704,7 @@
         "term": "advanced"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.780095"
+      "timestamp": "2025-07-18T22:21:55.333856"
     },
     {
       "type": "documentation_hype",
@@ -757,7 +714,7 @@
         "term": "improvement"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.780351"
+      "timestamp": "2025-07-18T22:21:55.334138"
     },
     {
       "type": "documentation_hype",
@@ -767,7 +724,7 @@
         "term": "novel"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.780409"
+      "timestamp": "2025-07-18T22:21:55.334264"
     },
     {
       "type": "documentation_hype",
@@ -777,7 +734,7 @@
         "term": "interpretable"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.784549"
+      "timestamp": "2025-07-18T22:21:55.338575"
     },
     {
       "type": "documentation_hype",
@@ -787,7 +744,7 @@
         "term": "multi-agent system"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.785559"
+      "timestamp": "2025-07-18T22:21:55.339723"
     },
     {
       "type": "documentation_hype",
@@ -797,7 +754,7 @@
         "term": "advanced"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.786082"
+      "timestamp": "2025-07-18T22:21:55.340241"
     },
     {
       "type": "documentation_hype",
@@ -807,7 +764,7 @@
         "term": "improvement"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.786143"
+      "timestamp": "2025-07-18T22:21:55.340295"
     },
     {
       "type": "documentation_hype",
@@ -817,7 +774,7 @@
         "term": "novel"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.786227"
+      "timestamp": "2025-07-18T22:21:55.340375"
     },
     {
       "type": "documentation_hype",
@@ -827,7 +784,7 @@
         "term": "95%+"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.788531"
+      "timestamp": "2025-07-18T22:21:55.342988"
     },
     {
       "type": "unverified_claim",
@@ -840,7 +797,7 @@
         ]
       },
       "severity": "MEDIUM",
-      "timestamp": "2025-07-18T21:59:57.789613"
+      "timestamp": "2025-07-18T22:21:55.344084"
     },
     {
       "type": "unverified_claim",
@@ -850,7 +807,7 @@
         "claim": "monitoring"
       },
       "severity": "MEDIUM",
-      "timestamp": "2025-07-18T21:59:57.791408"
+      "timestamp": "2025-07-18T22:21:55.345903"
     },
     {
       "type": "unverified_claim",
@@ -860,7 +817,7 @@
         "claim": "Monitoring"
       },
       "severity": "MEDIUM",
-      "timestamp": "2025-07-18T21:59:57.791419"
+      "timestamp": "2025-07-18T22:21:55.345916"
     },
     {
       "type": "unverified_claim",
@@ -870,7 +827,7 @@
         "claim": "Monitoring"
       },
       "severity": "MEDIUM",
-      "timestamp": "2025-07-18T21:59:57.791425"
+      "timestamp": "2025-07-18T22:21:55.345922"
     },
     {
       "type": "unverified_claim",
@@ -880,7 +837,7 @@
         "claim": "Processing"
       },
       "severity": "MEDIUM",
-      "timestamp": "2025-07-18T21:59:57.791434"
+      "timestamp": "2025-07-18T22:21:55.345930"
     },
     {
       "type": "unverified_claim",
@@ -890,7 +847,7 @@
         "claim": "processing"
       },
       "severity": "MEDIUM",
-      "timestamp": "2025-07-18T21:59:57.791439"
+      "timestamp": "2025-07-18T22:21:55.345935"
     },
     {
       "type": "unverified_claim",
@@ -900,7 +857,7 @@
         "claim": "monitoring"
       },
       "severity": "MEDIUM",
-      "timestamp": "2025-07-18T21:59:57.791444"
+      "timestamp": "2025-07-18T22:21:55.345940"
     },
     {
       "type": "documentation_hype",
@@ -910,7 +867,7 @@
         "term": "multi-agent system"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.793598"
+      "timestamp": "2025-07-18T22:21:55.348089"
     },
     {
       "type": "documentation_hype",
@@ -920,7 +877,7 @@
         "term": "advanced"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.793936"
+      "timestamp": "2025-07-18T22:21:55.348429"
     },
     {
       "type": "documentation_hype",
@@ -930,7 +887,7 @@
         "term": "improvement"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.794119"
+      "timestamp": "2025-07-18T22:21:55.348608"
     },
     {
       "type": "documentation_hype",
@@ -940,7 +897,7 @@
         "term": "novel"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.794144"
+      "timestamp": "2025-07-18T22:21:55.348634"
     },
     {
       "type": "documentation_hype",
@@ -950,7 +907,7 @@
         "term": "innovative"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.794267"
+      "timestamp": "2025-07-18T22:21:55.348756"
     },
     {
       "type": "documentation_hype",
@@ -960,7 +917,7 @@
         "term": "optimized"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.794501"
+      "timestamp": "2025-07-18T22:21:55.348990"
     },
     {
       "type": "documentation_hype",
@@ -970,7 +927,7 @@
         "term": "self-aware"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.797437"
+      "timestamp": "2025-07-18T22:21:55.351888"
     },
     {
       "type": "documentation_hype",
@@ -980,7 +937,7 @@
         "term": "advanced"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.797893"
+      "timestamp": "2025-07-18T22:21:55.352306"
     },
     {
       "type": "documentation_hype",
@@ -990,7 +947,7 @@
         "term": "self-aware"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.801119"
+      "timestamp": "2025-07-18T22:21:55.355599"
     },
     {
       "type": "documentation_hype",
@@ -1000,7 +957,7 @@
         "term": "advanced"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.801562"
+      "timestamp": "2025-07-18T22:21:55.356039"
     },
     {
       "type": "documentation_hype",
@@ -1010,7 +967,7 @@
         "term": "improvement"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.801607"
+      "timestamp": "2025-07-18T22:21:55.356072"
     },
     {
       "type": "documentation_hype",
@@ -1020,7 +977,7 @@
         "term": "novel"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.801646"
+      "timestamp": "2025-07-18T22:21:55.356100"
     },
     {
       "type": "documentation_hype",
@@ -1030,7 +987,7 @@
         "term": "general intelligence"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.804891"
+      "timestamp": "2025-07-18T22:21:55.359659"
     },
     {
       "type": "documentation_hype",
@@ -1040,7 +997,7 @@
         "term": "advanced"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.804913"
+      "timestamp": "2025-07-18T22:21:55.359695"
     },
     {
       "type": "documentation_hype",
@@ -1050,7 +1007,7 @@
         "term": "interpretable"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.806871"
+      "timestamp": "2025-07-18T22:21:55.361532"
     },
     {
       "type": "documentation_hype",
@@ -1060,7 +1017,7 @@
         "term": "general intelligence"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.808559"
+      "timestamp": "2025-07-18T22:21:55.363064"
     },
     {
       "type": "documentation_hype",
@@ -1070,7 +1027,7 @@
         "term": "advanced"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.808581"
+      "timestamp": "2025-07-18T22:21:55.363078"
     },
     {
       "type": "documentation_hype",
@@ -1080,7 +1037,7 @@
         "term": "improvement"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.808605"
+      "timestamp": "2025-07-18T22:21:55.363100"
     },
     {
       "type": "documentation_hype",
@@ -1090,7 +1047,7 @@
         "term": "novel"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.808634"
+      "timestamp": "2025-07-18T22:21:55.363129"
     },
     {
       "type": "documentation_hype",
@@ -1100,7 +1057,7 @@
         "term": "optimized"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.809711"
+      "timestamp": "2025-07-18T22:21:55.364211"
     },
     {
       "type": "documentation_hype",
@@ -1110,7 +1067,7 @@
         "term": "95%+"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.811043"
+      "timestamp": "2025-07-18T22:21:55.365466"
     },
     {
       "type": "unverified_claim",
@@ -1123,7 +1080,7 @@
         ]
       },
       "severity": "MEDIUM",
-      "timestamp": "2025-07-18T21:59:57.812261"
+      "timestamp": "2025-07-18T22:21:55.366681"
     },
     {
       "type": "unverified_claim",
@@ -1136,7 +1093,7 @@
         ]
       },
       "severity": "MEDIUM",
-      "timestamp": "2025-07-18T21:59:57.812275"
+      "timestamp": "2025-07-18T22:21:55.366698"
     },
     {
       "type": "documentation_hype",
@@ -1146,7 +1103,7 @@
         "term": "optimized"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.817258"
+      "timestamp": "2025-07-18T22:21:55.371509"
     },
     {
       "type": "documentation_hype",
@@ -1156,7 +1113,7 @@
         "term": "advanced"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.820654"
+      "timestamp": "2025-07-18T22:21:55.375098"
     },
     {
       "type": "documentation_hype",
@@ -1166,7 +1123,7 @@
         "term": "improvement"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.820750"
+      "timestamp": "2025-07-18T22:21:55.375305"
     },
     {
       "type": "documentation_hype",
@@ -1176,7 +1133,7 @@
         "term": "novel"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.825736"
+      "timestamp": "2025-07-18T22:21:55.380242"
     },
     {
       "type": "documentation_hype",
@@ -1186,7 +1143,7 @@
         "term": "interpretable"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.828354"
+      "timestamp": "2025-07-18T22:21:55.382853"
     },
     {
       "type": "documentation_hype",
@@ -1196,7 +1153,7 @@
         "term": "multi-agent system"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.828902"
+      "timestamp": "2025-07-18T22:21:55.383404"
     },
     {
       "type": "documentation_hype",
@@ -1206,7 +1163,7 @@
         "term": "advanced"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.829251"
+      "timestamp": "2025-07-18T22:21:55.383753"
     },
     {
       "type": "documentation_hype",
@@ -1216,7 +1173,7 @@
         "term": "improvement"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.829343"
+      "timestamp": "2025-07-18T22:21:55.383859"
     },
     {
       "type": "documentation_hype",
@@ -1226,7 +1183,7 @@
         "term": "novel"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.829514"
+      "timestamp": "2025-07-18T22:21:55.384027"
     },
     {
       "type": "documentation_hype",
@@ -1236,7 +1193,7 @@
         "term": "95%+"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.831177"
+      "timestamp": "2025-07-18T22:21:55.385621"
     },
     {
       "type": "documentation_hype",
@@ -1246,7 +1203,7 @@
         "term": "full interpretability"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.831396"
+      "timestamp": "2025-07-18T22:21:55.385761"
     },
     {
       "type": "unverified_claim",
@@ -1259,7 +1216,7 @@
         ]
       },
       "severity": "MEDIUM",
-      "timestamp": "2025-07-18T21:59:57.832010"
+      "timestamp": "2025-07-18T22:21:55.386349"
     },
     {
       "type": "documentation_hype",
@@ -1269,7 +1226,7 @@
         "term": "advanced"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.836127"
+      "timestamp": "2025-07-18T22:21:55.390284"
     },
     {
       "type": "documentation_hype",
@@ -1279,7 +1236,7 @@
         "term": "advanced"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.842228"
+      "timestamp": "2025-07-18T22:21:55.396412"
     },
     {
       "type": "documentation_hype",
@@ -1289,7 +1246,7 @@
         "term": "advanced"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-18T21:59:57.852856"
+      "timestamp": "2025-07-18T22:21:55.406679"
     },
     {
       "type": "incomplete_implementation",
@@ -1299,7 +1256,7 @@
         "count": 4
       },
       "severity": "MEDIUM",
-      "timestamp": "2025-07-18T21:59:57.893261"
+      "timestamp": "2025-07-18T22:21:55.447614"
     },
     {
       "type": "incomplete_implementation",
@@ -1309,7 +1266,7 @@
         "count": 1
       },
       "severity": "MEDIUM",
-      "timestamp": "2025-07-18T21:59:57.897150"
+      "timestamp": "2025-07-18T22:21:55.451259"
     },
     {
       "type": "incomplete_implementation",
@@ -1319,7 +1276,7 @@
         "count": 10
       },
       "severity": "MEDIUM",
-      "timestamp": "2025-07-18T21:59:57.917772"
+      "timestamp": "2025-07-18T22:21:55.471742"
     },
     {
       "type": "incomplete_implementation",
@@ -1329,7 +1286,7 @@
         "count": 6
       },
       "severity": "MEDIUM",
-      "timestamp": "2025-07-18T21:59:57.933567"
+      "timestamp": "2025-07-18T22:21:55.487630"
     },
     {
       "type": "incomplete_implementation",
@@ -1339,7 +1296,7 @@
         "count": 15
       },
       "severity": "MEDIUM",
-      "timestamp": "2025-07-18T21:59:57.937111"
+      "timestamp": "2025-07-18T22:21:55.491411"
     },
     {
       "type": "incomplete_implementation",
@@ -1349,7 +1306,7 @@
         "count": 2
       },
       "severity": "MEDIUM",
-      "timestamp": "2025-07-18T21:59:57.949975"
+      "timestamp": "2025-07-18T22:21:55.504123"
     },
     {
       "type": "incomplete_implementation",
@@ -1359,7 +1316,7 @@
         "count": 1
       },
       "severity": "MEDIUM",
-      "timestamp": "2025-07-18T21:59:57.954999"
+      "timestamp": "2025-07-18T22:21:55.508947"
     },
     {
       "type": "complex_dependencies",
@@ -1371,7 +1328,7 @@
         ]
       },
       "severity": "MEDIUM",
-      "timestamp": "2025-07-18T21:59:58.008063"
+      "timestamp": "2025-07-18T22:21:55.559169"
     },
     {
       "type": "marketing_hype",
@@ -1382,7 +1339,7 @@
         "count": 21
       },
       "severity": "MEDIUM",
-      "timestamp": "2025-07-18T21:59:58.084684"
+      "timestamp": "2025-07-18T22:21:55.639110"
     },
     {
       "type": "marketing_hype",
@@ -1393,7 +1350,7 @@
         "count": 1
       },
       "severity": "LOW",
-      "timestamp": "2025-07-18T21:59:58.085314"
+      "timestamp": "2025-07-18T22:21:55.639766"
     },
     {
       "type": "marketing_hype",
@@ -1404,40 +1361,7 @@
         "count": 4
       },
       "severity": "MEDIUM",
-      "timestamp": "2025-07-18T21:59:58.087398"
-    },
-    {
-      "type": "marketing_hype",
-      "description": "Marketing language in README.md: 'improvement' appears 1 times",
-      "details": {
-        "file": "../README.md",
-        "term": "improvement",
-        "count": 1
-      },
-      "severity": "LOW",
-      "timestamp": "2025-07-18T21:59:58.088026"
-    },
-    {
-      "type": "marketing_hype",
-      "description": "Marketing language in README.md: 'novel' appears 1 times",
-      "details": {
-        "file": "../README.md",
-        "term": "novel",
-        "count": 1
-      },
-      "severity": "LOW",
-      "timestamp": "2025-07-18T21:59:58.088418"
-    },
-    {
-      "type": "marketing_hype",
-      "description": "Marketing language in README.md: '95%+' appears 1 times",
-      "details": {
-        "file": "../README.md",
-        "term": "95%+",
-        "count": 1
-      },
-      "severity": "LOW",
-      "timestamp": "2025-07-18T21:59:58.091884"
+      "timestamp": "2025-07-18T22:21:55.641994"
     },
     {
       "type": "marketing_hype",
@@ -1448,7 +1372,7 @@
         "count": 2
       },
       "severity": "LOW",
-      "timestamp": "2025-07-18T21:59:58.093083"
+      "timestamp": "2025-07-18T22:21:55.647778"
     },
     {
       "type": "marketing_hype",
@@ -1459,7 +1383,7 @@
         "count": 2
       },
       "severity": "LOW",
-      "timestamp": "2025-07-18T21:59:58.093550"
+      "timestamp": "2025-07-18T22:21:55.648245"
     },
     {
       "type": "marketing_hype",
@@ -1470,7 +1394,7 @@
         "count": 1
       },
       "severity": "LOW",
-      "timestamp": "2025-07-18T21:59:58.095584"
+      "timestamp": "2025-07-18T22:21:55.650256"
     },
     {
       "type": "marketing_hype",
@@ -1481,28 +1405,28 @@
         "count": 1
       },
       "severity": "LOW",
-      "timestamp": "2025-07-18T21:59:58.099144"
+      "timestamp": "2025-07-18T22:21:55.653605"
     }
   ],
   "metrics": {
     "claimed_services": 0,
     "actual_services": 0,
-    "service_directories": 14,
-    "total_hype_instances": 35,
-    "high_issues": 96,
-    "medium_issues": 38,
-    "low_issues": 8
+    "service_directories": 15,
+    "total_hype_instances": 32,
+    "high_issues": 93,
+    "medium_issues": 37,
+    "low_issues": 5
   },
   "recommendations": [
     {
       "priority": "HIGH",
       "action": "Replace hardcoded performance metrics with actual calculations",
-      "reason": "Found 96 high-severity issues that damage credibility"
+      "reason": "Found 93 high-severity issues that damage credibility"
     },
     {
       "priority": "HIGH",
       "action": "Rewrite marketing language with evidence-based descriptions",
-      "reason": "Found 35 instances of unsupported hype language"
+      "reason": "Found 32 instances of unsupported hype language"
     },
     {
       "priority": "MEDIUM",
