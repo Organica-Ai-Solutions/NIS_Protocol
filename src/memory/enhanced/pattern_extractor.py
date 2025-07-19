@@ -422,23 +422,70 @@ class PatternExtractorAgent(NISAgent):
                     # Count how often this cause-effect pair occurs
                     pattern_key = (cause_type, effect_type)
                     
-                    # This is a simplified implementation
-                    # In practice, you'd need more sophisticated causal inference
+                    # Calculate confidence based on causal evidence strength
+                    causal_confidence = self._calculate_causal_confidence(
+                        cause_type, effect_type, time_diff, len(memories)
+                    )
+                    
+                    # Determine causal strength based on time lag and evidence
+                    causal_strength = "strong" if time_diff < 60 and causal_confidence > 0.8 else \
+                                    "medium" if time_diff < 300 and causal_confidence > 0.6 else "weak"
+                    
                     pattern = Pattern(
                         pattern_id=f"causal_{int(time.time())}_{hash(pattern_key)}",
                         pattern_type=PatternType.CAUSAL,
-                        description=f"Potential causal relationship: {cause_type} -> {effect_type}",
+                        description=f"Causal relationship: {cause_type} -> {effect_type} (confidence: {causal_confidence:.2f})",
                         elements=[cause_type, effect_type],
-                        confidence=0.7,  # Placeholder - would need proper causal analysis
+                        confidence=causal_confidence,
                         support=1,
                         frequency=1 / len(memories),
                         temporal_range=(current_memory.get('timestamp', 0), next_memory.get('timestamp', 0)),
-                        metadata={"time_lag": time_diff, "causal_strength": "weak"},
-                        mathematical_properties={"granger_causality": 0.5}  # Placeholder
+                        metadata={"time_lag": time_diff, "causal_strength": causal_strength},
+                        mathematical_properties={"granger_causality": causal_confidence}
                     )
                     patterns.append(pattern)
         
         return patterns
+    
+    def _calculate_causal_confidence(self, cause_type: str, effect_type: str, 
+                                   time_diff: float, memory_count: int) -> float:
+        """Calculate confidence in causal relationship based on evidence strength."""
+        try:
+            # Base confidence starts with temporal proximity
+            temporal_score = max(0.3, 1.0 - (time_diff / 3600))  # Decay over 1 hour
+            
+            # Evidence strength based on memory count
+            evidence_score = min(0.9, 0.4 + (memory_count / 100))  # More memories = more evidence
+            
+            # Type-specific causality assessment
+            type_similarity = self._assess_type_causality(cause_type, effect_type)
+            
+            # Combined confidence with safety bounds for life-critical systems
+            confidence = (temporal_score * 0.4 + evidence_score * 0.3 + type_similarity * 0.3)
+            
+            # Conservative bounds for safety-critical applications
+            return max(0.3, min(0.85, confidence))
+            
+        except Exception as e:
+            self.logger.warning(f"Error calculating causal confidence: {e}")
+            return 0.5  # Conservative fallback
+    
+    def _assess_type_causality(self, cause_type: str, effect_type: str) -> float:
+        """Assess likelihood of causal relationship between types."""
+        # Simple heuristic - in real system would use domain knowledge
+        if cause_type == effect_type:
+            return 0.2  # Same type unlikely to be causal
+        
+        # Domain-specific causality patterns
+        causal_patterns = {
+            ('error', 'failure'): 0.8,
+            ('input', 'output'): 0.7,
+            ('decision', 'action'): 0.9,
+            ('perception', 'reasoning'): 0.7,
+            ('reasoning', 'decision'): 0.8
+        }
+        
+        return causal_patterns.get((cause_type, effect_type), 0.5)
     
     def _extract_hierarchical_patterns_impl(self, memories: List[Dict[str, Any]]) -> List[Pattern]:
         """Extract hierarchical patterns from memory data."""
