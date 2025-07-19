@@ -1505,7 +1505,7 @@ class IntrospectionManager:
         try:
             report = {
                 "report_metadata": {
-                    "timestamp": time.time(),
+            "timestamp": time.time(),
                     "total_agents_monitored": len(self.monitored_agents),
                     "monitoring_active": self.monitoring_active,
                     "monitoring_interval": self.monitoring_interval

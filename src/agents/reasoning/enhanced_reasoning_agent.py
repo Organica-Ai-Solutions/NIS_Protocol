@@ -22,7 +22,6 @@ from dataclasses import dataclass
 from enum import Enum
 
 from src.core.agent import NISAgent, NISLayer
-from src.core.message import MessageBuilder
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

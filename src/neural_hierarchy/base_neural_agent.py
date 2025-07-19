@@ -133,7 +133,7 @@ class NeuralAgent(ABC):
         self.logger = logging.getLogger(f"neural.{agent_id}")
         
         self.logger.info(f"Enhanced NeuralAgent {agent_id} initialized in {layer.value} layer")
-    
+        
     @abstractmethod
     def process_signal(self, signal: NeuralSignal) -> Optional[NeuralSignal]:
         """Process incoming neural signal and optionally generate response"""
@@ -561,7 +561,7 @@ class NeuralAgent(ABC):
     def reset(self):
         """Reset agent to initial state while preserving learned connections"""
         self.activation_level = 0.0
-        self.state = {}
+        self.state = {} 
         
         # Don't reset connection weights (preserve learning)
         # But reset usage statistics
