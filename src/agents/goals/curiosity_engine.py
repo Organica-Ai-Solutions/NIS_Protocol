@@ -3,19 +3,217 @@ NIS Protocol Curiosity Engine
 
 This module implements a sophisticated curiosity-driven exploration and learning system
 that generates intrinsic motivation, detects novelty, and drives autonomous goal formation.
+
+Enhanced with V3.0 ML algorithms:
+- Neural network-based novelty detection
+- Variational autoencoder for novelty scoring  
+- Embedding-based knowledge gap analysis
+- Uncertainty quantification for prediction errors
+- Competence assessment through skill modeling
 """
 
 import logging
 import time
 import math
 import random
+import numpy as np
 from typing import Dict, Any, List, Optional, Tuple, Set
 from dataclasses import dataclass
 from enum import Enum
 from collections import defaultdict, deque
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.ensemble import IsolationForest
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
 
 from ...core.agent import NISAgent, NISLayer
 from ...memory.memory_manager import MemoryManager
+
+
+# V3.0 ML MODEL ARCHITECTURES
+
+class VariationalNoveltyDetector(nn.Module):
+    """Variational Autoencoder for novelty detection and scoring."""
+    
+    def __init__(self, input_dim: int = 128, latent_dim: int = 32, hidden_dim: int = 64):
+        super().__init__()
+        self.input_dim = input_dim
+        self.latent_dim = latent_dim
+        
+        # Encoder
+        self.encoder = nn.Sequential(
+            nn.Linear(input_dim, hidden_dim),
+            nn.ReLU(),
+            nn.Linear(hidden_dim, hidden_dim),
+            nn.ReLU()
+        )
+        
+        # Latent space
+        self.fc_mu = nn.Linear(hidden_dim, latent_dim)
+        self.fc_logvar = nn.Linear(hidden_dim, latent_dim)
+        
+        # Decoder
+        self.decoder = nn.Sequential(
+            nn.Linear(latent_dim, hidden_dim),
+            nn.ReLU(),
+            nn.Linear(hidden_dim, hidden_dim),
+            nn.ReLU(),
+            nn.Linear(hidden_dim, input_dim),
+            nn.Sigmoid()
+        )
+        
+    def encode(self, x):
+        h = self.encoder(x)
+        mu = self.fc_mu(h)
+        logvar = self.fc_logvar(h)
+        return mu, logvar
+    
+    def reparameterize(self, mu, logvar):
+        std = torch.exp(0.5 * logvar)
+        eps = torch.randn_like(std)
+        return mu + eps * std
+    
+    def decode(self, z):
+        return self.decoder(z)
+    
+    def forward(self, x):
+        mu, logvar = self.encode(x)
+        z = self.reparameterize(mu, logvar)
+        recon_x = self.decode(z)
+        return recon_x, mu, logvar
+    
+    def get_novelty_score(self, x):
+        """Calculate novelty score based on reconstruction error."""
+        with torch.no_grad():
+            recon_x, mu, logvar = self.forward(x)
+            recon_error = F.mse_loss(recon_x, x, reduction='none').mean(dim=1)
+            return recon_error.cpu().numpy()
+
+
+class UncertaintyQuantifier(nn.Module):
+    """Neural network with uncertainty quantification for prediction errors."""
+    
+    def __init__(self, input_dim: int = 64, output_dim: int = 1, hidden_dim: int = 32):
+        super().__init__()
+        self.network = nn.Sequential(
+            nn.Linear(input_dim, hidden_dim),
+            nn.ReLU(),
+            nn.Dropout(0.2),
+            nn.Linear(hidden_dim, hidden_dim),
+            nn.ReLU(),
+            nn.Dropout(0.2),
+            nn.Linear(hidden_dim, output_dim * 2)  # Mean and variance
+        )
+        
+    def forward(self, x):
+        output = self.network(x)
+        mean = output[:, :output.shape[1]//2]
+        log_var = output[:, output.shape[1]//2:]
+        return mean, log_var
+    
+    def predict_with_uncertainty(self, x):
+        """Predict with uncertainty estimation."""
+        with torch.no_grad():
+            mean, log_var = self.forward(x)
+            variance = torch.exp(log_var)
+            std = torch.sqrt(variance)
+            return mean.cpu().numpy(), std.cpu().numpy()
+
+
+class CompetenceAssessor(nn.Module):
+    """Neural network for assessing competence and skill development potential."""
+    
+    def __init__(self, skill_dim: int = 32, context_dim: int = 64, hidden_dim: int = 48):
+        super().__init__()
+        self.skill_encoder = nn.Sequential(
+            nn.Linear(skill_dim, hidden_dim),
+            nn.ReLU(),
+            nn.Linear(hidden_dim, hidden_dim)
+        )
+        
+        self.context_encoder = nn.Sequential(
+            nn.Linear(context_dim, hidden_dim),
+            nn.ReLU(),
+            nn.Linear(hidden_dim, hidden_dim)
+        )
+        
+        self.competence_predictor = nn.Sequential(
+            nn.Linear(hidden_dim * 2, hidden_dim),
+            nn.ReLU(),
+            nn.Linear(hidden_dim, 1),
+            nn.Sigmoid()
+        )
+        
+    def forward(self, skills, context):
+        skill_features = self.skill_encoder(skills)
+        context_features = self.context_encoder(context)
+        combined = torch.cat([skill_features, context_features], dim=1)
+        competence = self.competence_predictor(combined)
+        return competence
+    
+    def assess_competence(self, skills, context):
+        """Assess current competence level."""
+        with torch.no_grad():
+            competence = self.forward(skills, context)
+            return competence.cpu().numpy()
+
+
+class KnowledgeGapAnalyzer:
+    """Embedding-based knowledge gap identification system."""
+    
+    def __init__(self, embedding_dim: int = 128):
+        self.embedding_dim = embedding_dim
+        self.vectorizer = TfidfVectorizer(max_features=embedding_dim, stop_words='english')
+        self.knowledge_embeddings = {}
+        self.domain_knowledge = defaultdict(list)
+        self.is_fitted = False
+        
+    def fit(self, knowledge_corpus: List[str]):
+        """Fit the analyzer on existing knowledge corpus."""
+        if knowledge_corpus:
+            self.vectorizer.fit(knowledge_corpus)
+            self.is_fitted = True
+            
+            # Create embeddings for existing knowledge
+            embeddings = self.vectorizer.transform(knowledge_corpus)
+            for i, text in enumerate(knowledge_corpus):
+                self.knowledge_embeddings[text] = embeddings[i].toarray()[0]
+    
+    def analyze_knowledge_gap(self, query: str, domain: str = "general") -> float:
+        """Analyze knowledge gap for a query in a specific domain."""
+        if not self.is_fitted:
+            return 0.8  # High gap if no knowledge base
+            
+        try:
+            # Transform query to embedding
+            query_embedding = self.vectorizer.transform([query]).toarray()[0]
+            
+            # Find most similar existing knowledge
+            max_similarity = 0.0
+            domain_knowledge = self.domain_knowledge.get(domain, [])
+            
+            if domain_knowledge:
+                # Check similarity with domain-specific knowledge
+                for knowledge_text in domain_knowledge:
+                    if knowledge_text in self.knowledge_embeddings:
+                        existing_embedding = self.knowledge_embeddings[knowledge_text]
+                        similarity = cosine_similarity([query_embedding], [existing_embedding])[0][0]
+                        max_similarity = max(max_similarity, similarity)
+            else:
+                # Check similarity with all knowledge
+                for knowledge_text, embedding in self.knowledge_embeddings.items():
+                    similarity = cosine_similarity([query_embedding], [embedding.reshape(1, -1)])[0][0]
+                    max_similarity = max(max_similarity, similarity)
+            
+            # Knowledge gap is inverse of similarity
+            knowledge_gap = 1.0 - max_similarity
+            return max(0.0, min(1.0, knowledge_gap))
+            
+        except Exception as e:
+            logging.warning(f"Error in knowledge gap analysis: {e}")
+            return 0.5  # Default moderate gap
 
 
 class CuriosityType(Enum):
@@ -87,7 +285,7 @@ class CuriosityEngine(NISAgent):
         agent_id: str = "curiosity_engine",
         description: str = "Curiosity-driven exploration and learning agent"
     ):
-        super().__init__(agent_id, NISLayer.GOALS, description)
+        super().__init__(agent_id, NISLayer.REASONING, description)
         self.logger = logging.getLogger(f"nis.{agent_id}")
         
         # Initialize memory for curiosity tracking
@@ -135,7 +333,51 @@ class CuriosityEngine(NISAgent):
         self.active_exploration_goals: List[ExplorationGoal] = []
         self.completed_exploration_goals: List[ExplorationGoal] = []
         
+        # V3.0 ML MODELS INITIALIZATION
+        self._initialize_ml_models()
+        
         self.logger.info(f"Initialized {self.__class__.__name__} with base curiosity level {self.base_curiosity_level}")
+    
+    def _initialize_ml_models(self):
+        """Initialize V3.0 ML models for advanced curiosity algorithms."""
+        try:
+            # Novelty detection VAE
+            self.novelty_detector = VariationalNoveltyDetector(
+                input_dim=128, latent_dim=32, hidden_dim=64
+            )
+            
+            # Uncertainty quantifier for prediction errors
+            self.uncertainty_quantifier = UncertaintyQuantifier(
+                input_dim=64, output_dim=1, hidden_dim=32
+            )
+            
+            # Competence assessor
+            self.competence_assessor = CompetenceAssessor(
+                skill_dim=32, context_dim=64, hidden_dim=48
+            )
+            
+            # Knowledge gap analyzer
+            self.knowledge_gap_analyzer = KnowledgeGapAnalyzer(embedding_dim=128)
+            
+            # Isolation forest for anomaly detection
+            self.anomaly_detector = IsolationForest(
+                contamination=0.1, random_state=42, n_estimators=100
+            )
+            
+            # Feature extraction and caching
+            self.feature_cache = {}
+            self.observation_history = deque(maxlen=1000)
+            
+            self.logger.info("V3.0 ML models initialized successfully")
+            
+        except Exception as e:
+            self.logger.error(f"Error initializing ML models: {e}")
+            # Fallback to basic heuristics if ML models fail
+            self.novelty_detector = None
+            self.uncertainty_quantifier = None
+            self.competence_assessor = None
+            self.knowledge_gap_analyzer = None
+            self.anomaly_detector = None
     
     def process(self, message: Dict[str, Any]) -> Dict[str, Any]:
         """Process curiosity-related requests."""
@@ -348,7 +590,58 @@ class CuriosityEngine(NISAgent):
         return signals
     
     def _calculate_novelty_score(self, observation: Dict[str, Any]) -> float:
-        """Calculate novelty score for an observation."""
+        """Calculate novelty score using VAE-based novelty detection."""
+        try:
+            if self.novelty_detector is None:
+                return self._calculate_novelty_score_fallback(observation)
+            
+            # Extract features from observation
+            features = self._extract_observation_features(observation)
+            
+            if features is None:
+                return self._calculate_novelty_score_fallback(observation)
+            
+            # Convert to tensor
+            features_tensor = torch.FloatTensor(features).unsqueeze(0)
+            
+            # Calculate novelty using VAE reconstruction error
+            novelty_scores = self.novelty_detector.get_novelty_score(features_tensor)
+            base_novelty = float(novelty_scores[0])
+            
+            # Enhance with isolation forest anomaly detection
+            if hasattr(self, 'observation_history') and len(self.observation_history) > 10:
+                try:
+                    # Fit anomaly detector on recent observations
+                    recent_features = [self._extract_observation_features(obs) for obs in list(self.observation_history)[-50:]]
+                    recent_features = [f for f in recent_features if f is not None]
+                    
+                    if len(recent_features) > 5:
+                        self.anomaly_detector.fit(recent_features)
+                        anomaly_score = self.anomaly_detector.decision_function([features])[0]
+                        # Convert anomaly score to 0-1 range (more negative = more anomalous)
+                        anomaly_novelty = max(0.0, min(1.0, (0.5 - anomaly_score) / 1.0))
+                        
+                        # Combine VAE and anomaly detection scores
+                        novelty_score = 0.7 * base_novelty + 0.3 * anomaly_novelty
+                    else:
+                        novelty_score = base_novelty
+                except:
+                    novelty_score = base_novelty
+            else:
+                novelty_score = base_novelty
+            
+            # Store observation for future comparisons
+            self.observation_history.append(observation)
+            
+            # Normalize and bound
+            return max(0.0, min(1.0, novelty_score))
+            
+        except Exception as e:
+            self.logger.warning(f"Error in ML novelty detection: {e}")
+            return self._calculate_novelty_score_fallback(observation)
+    
+    def _calculate_novelty_score_fallback(self, observation: Dict[str, Any]) -> float:
+        """Fallback novelty calculation using basic similarity."""
         observation_str = str(observation)
         
         # Compare with recent observations
@@ -368,7 +661,44 @@ class CuriosityEngine(NISAgent):
         return max(0.0, min(1.0, novelty_score))
     
     def _calculate_knowledge_gap_score(self, observation: Dict[str, Any]) -> float:
-        """Calculate knowledge gap score for an observation."""
+        """Calculate knowledge gap score using embedding-based analysis."""
+        try:
+            if self.knowledge_gap_analyzer is None:
+                return self._calculate_knowledge_gap_score_fallback(observation)
+            
+            target = observation.get("target", "unknown")
+            
+            # Create query from observation
+            observation_text = self._observation_to_text(observation)
+            domain = observation.get("domain", "general")
+            
+            # Use ML-based knowledge gap analysis
+            gap_score = self.knowledge_gap_analyzer.analyze_knowledge_gap(observation_text, domain)
+            
+            # Enhance with semantic similarity to existing knowledge
+            enhanced_gap = self._enhance_knowledge_gap_with_semantics(
+                observation_text, target, gap_score
+            )
+            
+            # Adjust based on observation complexity and context
+            complexity = self._estimate_observation_complexity(observation)
+            context_relevance = observation.get("relevance", 0.5)
+            
+            # Weighted combination
+            final_gap = (
+                0.6 * enhanced_gap +
+                0.3 * complexity +
+                0.1 * (1.0 - context_relevance)  # Higher gap if less relevant to known context
+            )
+            
+            return max(0.0, min(1.0, final_gap))
+            
+        except Exception as e:
+            self.logger.warning(f"Error in ML knowledge gap analysis: {e}")
+            return self._calculate_knowledge_gap_score_fallback(observation)
+    
+    def _calculate_knowledge_gap_score_fallback(self, observation: Dict[str, Any]) -> float:
+        """Fallback knowledge gap calculation."""
         target = observation.get("target", "unknown")
         
         # Check current knowledge level about the target
@@ -384,8 +714,106 @@ class CuriosityEngine(NISAgent):
         
         return max(0.0, min(1.0, adjusted_gap))
     
+    def _observation_to_text(self, observation: Dict[str, Any]) -> str:
+        """Convert observation to text for embedding analysis."""
+        text_parts = []
+        
+        for key, value in observation.items():
+            if isinstance(value, str):
+                text_parts.append(f"{key}: {value}")
+            elif isinstance(value, (int, float)):
+                text_parts.append(f"{key}: {value}")
+            elif isinstance(value, list):
+                text_parts.append(f"{key}: {' '.join(map(str, value))}")
+        
+        return " ".join(text_parts)
+    
+    def _enhance_knowledge_gap_with_semantics(self, observation_text: str, target: str, base_gap: float) -> float:
+        """Enhance knowledge gap analysis with semantic understanding."""
+        try:
+            # Check if we have domain-specific knowledge
+            domain_knowledge = self.knowledge_gap_analyzer.domain_knowledge.get(target, [])
+            
+            if domain_knowledge:
+                # Calculate semantic distance to domain knowledge
+                similarities = []
+                for knowledge_text in domain_knowledge:
+                    try:
+                        # Use TF-IDF similarity
+                        corpus = [observation_text, knowledge_text]
+                        vectorizer = TfidfVectorizer()
+                        tfidf_matrix = vectorizer.fit_transform(corpus)
+                        similarity = cosine_similarity(tfidf_matrix[0:1], tfidf_matrix[1:2])[0][0]
+                        similarities.append(similarity)
+                    except:
+                        continue
+                
+                if similarities:
+                    max_similarity = max(similarities)
+                    # Adjust gap based on semantic similarity
+                    semantic_gap = 1.0 - max_similarity
+                    # Combine with base gap
+                    enhanced_gap = 0.7 * base_gap + 0.3 * semantic_gap
+                    return enhanced_gap
+            
+            return base_gap
+            
+        except Exception as e:
+            self.logger.warning(f"Error in semantic enhancement: {e}")
+            return base_gap
+    
     def _calculate_prediction_error(self, observation: Dict[str, Any]) -> float:
-        """Calculate prediction error for an observation."""
+        """Calculate prediction error with uncertainty quantification."""
+        try:
+            if self.uncertainty_quantifier is None:
+                return self._calculate_prediction_error_fallback(observation)
+            
+            target = observation.get("target", "unknown")
+            
+            # Extract features for prediction
+            features = self._extract_prediction_features(observation)
+            
+            if features is None:
+                return self._calculate_prediction_error_fallback(observation)
+            
+            # Convert to tensor
+            features_tensor = torch.FloatTensor(features).unsqueeze(0)
+            
+            # Get prediction with uncertainty
+            prediction_mean, prediction_std = self.uncertainty_quantifier.predict_with_uncertainty(features_tensor)
+            
+            # Get actual outcome
+            actual_outcome = observation.get("outcome", 0.5)
+            predicted_outcome = float(prediction_mean[0][0])
+            uncertainty = float(prediction_std[0][0])
+            
+            # Calculate prediction error
+            base_error = abs(predicted_outcome - actual_outcome)
+            
+            # Incorporate uncertainty - higher uncertainty should increase curiosity
+            uncertainty_bonus = uncertainty * 0.5
+            
+            # Combine error and uncertainty
+            total_error = base_error + uncertainty_bonus
+            
+            # Enhance with temporal prediction consistency
+            temporal_error = self._calculate_temporal_prediction_consistency(target, predicted_outcome, actual_outcome)
+            
+            # Weighted combination
+            final_error = (
+                0.6 * total_error +
+                0.3 * temporal_error +
+                0.1 * uncertainty  # Direct uncertainty contribution
+            )
+            
+            return max(0.0, min(1.0, final_error))
+            
+        except Exception as e:
+            self.logger.warning(f"Error in ML prediction error calculation: {e}")
+            return self._calculate_prediction_error_fallback(observation)
+    
+    def _calculate_prediction_error_fallback(self, observation: Dict[str, Any]) -> float:
+        """Fallback prediction error calculation."""
         target = observation.get("target", "unknown")
         
         # Get prediction model for this target
@@ -401,8 +829,122 @@ class CuriosityEngine(NISAgent):
         prediction_error = abs(predicted_outcome - actual_outcome)
         return min(1.0, prediction_error)
     
+    def _extract_prediction_features(self, observation: Dict[str, Any]) -> Optional[np.ndarray]:
+        """Extract features for prediction error calculation."""
+        try:
+            # Create feature vector from observation
+            features = []
+            
+            # Add numerical features
+            for key, value in observation.items():
+                if isinstance(value, (int, float)):
+                    features.append(float(value))
+                elif isinstance(value, bool):
+                    features.append(float(value))
+                elif isinstance(value, str):
+                    # Convert string to hash-based feature
+                    features.append(hash(value) % 1000 / 1000.0)
+            
+            # Pad or truncate to fixed size
+            target_size = 64
+            if len(features) < target_size:
+                features.extend([0.0] * (target_size - len(features)))
+            elif len(features) > target_size:
+                features = features[:target_size]
+            
+            return np.array(features, dtype=np.float32)
+            
+        except Exception as e:
+            self.logger.warning(f"Error extracting prediction features: {e}")
+            return None
+    
+    def _calculate_temporal_prediction_consistency(self, target: str, predicted: float, actual: float) -> float:
+        """Calculate how consistent predictions are over time for this target."""
+        try:
+            # Get recent prediction history for this target
+            if target not in self.prediction_models:
+                self.prediction_models[target] = {"history": []}
+            
+            history = self.prediction_models[target].get("history", [])
+            
+            # Add current prediction to history
+            history.append({
+                "predicted": predicted,
+                "actual": actual,
+                "error": abs(predicted - actual),
+                "timestamp": time.time()
+            })
+            
+            # Keep only recent history (last 10 predictions)
+            history = history[-10:]
+            self.prediction_models[target]["history"] = history
+            
+            if len(history) < 3:
+                return 0.3  # Default moderate inconsistency for new targets
+            
+            # Calculate variance in prediction errors
+            recent_errors = [h["error"] for h in history[-5:]]
+            error_variance = np.var(recent_errors)
+            
+            # High variance indicates inconsistent predictions (higher curiosity)
+            inconsistency = min(1.0, error_variance * 2.0)
+            
+            return inconsistency
+            
+        except Exception as e:
+            self.logger.warning(f"Error calculating temporal consistency: {e}")
+            return 0.3
+    
     def _calculate_competence_building_potential(self, observation: Dict[str, Any]) -> float:
-        """Calculate potential for competence building from an observation."""
+        """Calculate potential for competence building using neural network assessment."""
+        try:
+            if self.competence_assessor is None:
+                return self._calculate_competence_building_potential_fallback(observation)
+            
+            target = observation.get("target", "unknown")
+            
+            # Extract skill and context features
+            skill_features = self._extract_skill_features(target, observation)
+            context_features = self._extract_context_features(observation)
+            
+            if skill_features is None or context_features is None:
+                return self._calculate_competence_building_potential_fallback(observation)
+            
+            # Convert to tensors
+            skill_tensor = torch.FloatTensor(skill_features).unsqueeze(0)
+            context_tensor = torch.FloatTensor(context_features).unsqueeze(0)
+            
+            # Assess current competence
+            current_competence = self.competence_assessor.assess_competence(skill_tensor, context_tensor)[0][0]
+            
+            # Calculate learning potential based on competence gap
+            competence_gap = 1.0 - current_competence
+            
+            # Enhance with observation-specific factors
+            observation_complexity = self._estimate_observation_complexity(observation)
+            skill_alignment = self._calculate_skill_alignment(observation, target)
+            challenge_level = self._assess_challenge_level(observation, current_competence)
+            
+            # Optimal challenge level is slightly above current competence (flow theory)
+            optimal_challenge = 0.7  # Sweet spot for learning
+            challenge_optimality = 1.0 - abs(challenge_level - optimal_challenge)
+            
+            # Combine factors
+            learning_potential = (
+                0.4 * competence_gap +
+                0.3 * observation_complexity +
+                0.2 * skill_alignment +
+                0.1 * challenge_optimality
+            )
+            
+            return max(0.0, min(1.0, learning_potential))
+            
+        except Exception as e:
+            self.logger.warning(f"Error in ML competence assessment: {e}")
+            return self._calculate_competence_building_potential_fallback(observation)
+    
+    def _calculate_competence_building_potential_fallback(self, observation: Dict[str, Any]) -> float:
+        """Fallback competence building calculation."""
         target = observation.get("target", "unknown")
         
         # Get current competence level
@@ -413,6 +955,249 @@ class CuriosityEngine(NISAgent):
         learning_potential = observation_complexity * (1.0 - current_competence)
         
         return max(0.0, min(1.0, learning_potential))
+    
+    def _extract_skill_features(self, target: str, observation: Dict[str, Any]) -> Optional[np.ndarray]:
+        """Extract skill-related features for competence assessment."""
+        try:
+            features = []
+            
+            # Current competence level
+            current_competence = self.competence_levels.get(target, 0.0)
+            features.append(current_competence)
+            
+            # Skill usage frequency
+            skill_usage = len([o for o in self.observation_history if o.get("target") == target])
+            normalized_usage = min(1.0, skill_usage / 100.0)
+            features.append(normalized_usage)
+            
+            # Recent performance with this skill
+            recent_performance = self._get_recent_performance(target)
+            features.append(recent_performance)
+            
+            # Skill complexity based on past observations
+            skill_complexity = self._estimate_skill_complexity(target)
+            features.append(skill_complexity)
+            
+            # Time since last skill practice
+            time_since_practice = self._get_time_since_practice(target)
+            features.append(time_since_practice)
+            
+            # Pad to required size (32 dimensions)
+            target_size = 32
+            while len(features) < target_size:
+                features.append(0.0)
+            
+            return np.array(features[:target_size], dtype=np.float32)
+            
+        except Exception as e:
+            self.logger.warning(f"Error extracting skill features: {e}")
+            return None
+    
+    def _extract_context_features(self, observation: Dict[str, Any]) -> Optional[np.ndarray]:
+        """Extract context features for competence assessment."""
+        try:
+            features = []
+            
+            # Observation complexity
+            complexity = self._estimate_observation_complexity(observation)
+            features.append(complexity)
+            
+            # Context richness (number of contextual elements)
+            context_richness = len(observation.get("context", {})) / 10.0
+            features.append(min(1.0, context_richness))
+            
+            # Resource availability
+            resources = observation.get("resources", {})
+            resource_score = len(resources) / 5.0
+            features.append(min(1.0, resource_score))
+            
+            # Time pressure
+            time_pressure = observation.get("time_pressure", 0.5)
+            features.append(time_pressure)
+            
+            # Social context
+            social_context = 1.0 if observation.get("social_interaction") else 0.0
+            features.append(social_context)
+            
+            # Environmental factors
+            env_complexity = observation.get("environment_complexity", 0.5)
+            features.append(env_complexity)
+            
+            # Pad to required size (64 dimensions)
+            target_size = 64
+            while len(features) < target_size:
+                features.append(0.0)
+            
+            return np.array(features[:target_size], dtype=np.float32)
+            
+        except Exception as e:
+            self.logger.warning(f"Error extracting context features: {e}")
+            return None
+    
+    def _calculate_skill_alignment(self, observation: Dict[str, Any], target: str) -> float:
+        """Calculate how well observation aligns with skill development goals."""
+        try:
+            # Check if observation involves the target skill
+            obs_skills = observation.get("skills_required", [])
+            if target in obs_skills:
+                return 1.0
+            
+            # Check semantic similarity of skills
+            target_skills = self.competence_levels.keys()
+            alignment_scores = []
+            
+            for skill in obs_skills:
+                if skill in target_skills:
+                    alignment_scores.append(1.0)
+                else:
+                    # Simple semantic similarity based on string similarity
+                    similarity = self._calculate_observation_similarity(target, skill)
+                    alignment_scores.append(similarity)
+            
+            if alignment_scores:
+                return max(alignment_scores)
+            
+            return 0.3  # Default moderate alignment
+            
+        except Exception as e:
+            self.logger.warning(f"Error calculating skill alignment: {e}")
+            return 0.3
+    
+    def _assess_challenge_level(self, observation: Dict[str, Any], current_competence: float) -> float:
+        """Assess the challenge level of an observation relative to current competence."""
+        try:
+            observation_difficulty = observation.get("difficulty", 0.5)
+            
+            # Challenge level is relative to competence
+            # If difficulty >> competence, high challenge
+            # If difficulty << competence, low challenge
+            # If difficulty ≈ competence, optimal challenge
+            
+            challenge_level = observation_difficulty / max(current_competence, 0.1)
+            return min(1.0, challenge_level)
+            
+        except Exception as e:
+            self.logger.warning(f"Error assessing challenge level: {e}")
+            return 0.5
+    
+    def _get_recent_performance(self, target: str) -> float:
+        """Get recent performance score for a target skill."""
+        try:
+            recent_outcomes = []
+            for outcome in self.learning_outcomes[-10:]:  # Last 10 outcomes
+                if target in outcome.skills_developed:
+                    recent_outcomes.append(outcome.satisfaction_score)
+            
+            if recent_outcomes:
+                return np.mean(recent_outcomes)
+            
+            return 0.5  # Default moderate performance
+            
+        except Exception as e:
+            self.logger.warning(f"Error getting recent performance: {e}")
+            return 0.5
+    
+    def _estimate_skill_complexity(self, target: str) -> float:
+        """Estimate complexity of a skill based on historical data."""
+        try:
+            # Check historical competence development rate
+            competence_history = self.prediction_models.get(target, {}).get("competence_history", [])
+            
+            if len(competence_history) < 2:
+                return 0.5  # Default moderate complexity
+            
+            # Calculate learning rate (how fast competence improves)
+            learning_rates = []
+            for i in range(1, len(competence_history)):
+                prev_comp = competence_history[i-1]["competence"]
+                curr_comp = competence_history[i]["competence"]
+                time_diff = competence_history[i]["timestamp"] - competence_history[i-1]["timestamp"]
+                
+                if time_diff > 0:
+                    rate = (curr_comp - prev_comp) / time_diff
+                    learning_rates.append(rate)
+            
+            if learning_rates:
+                avg_rate = np.mean(learning_rates)
+                # Lower learning rate suggests higher complexity
+                complexity = 1.0 - min(1.0, avg_rate * 10)  # Scale appropriately
+                return max(0.1, complexity)
+            
+            return 0.5
+            
+        except Exception as e:
+            self.logger.warning(f"Error estimating skill complexity: {e}")
+            return 0.5
+    
+    def _get_time_since_practice(self, target: str) -> float:
+        """Get normalized time since last practice of a skill."""
+        try:
+            current_time = time.time()
+            last_practice_time = 0
+            
+            # Find last time this skill was practiced
+            for obs in reversed(self.observation_history):
+                if obs.get("target") == target:
+                    last_practice_time = obs.get("timestamp", current_time)
+                    break
+            
+            if last_practice_time == 0:
+                return 1.0  # Long time since practice (or never practiced)
+            
+            time_diff = current_time - last_practice_time
+            # Normalize to 0-1 range (1 day = 86400 seconds)
+            normalized_time = min(1.0, time_diff / 86400)
+            
+            return normalized_time
+            
+        except Exception as e:
+            self.logger.warning(f"Error calculating time since practice: {e}")
+            return 0.5
+    
+    def _extract_observation_features(self, observation: Dict[str, Any]) -> Optional[np.ndarray]:
+        """Extract features from observation for VAE novelty detection."""
+        try:
+            features = []
+            
+            # Convert observation to numerical features
+            for key, value in observation.items():
+                if isinstance(value, (int, float)):
+                    features.append(float(value))
+                elif isinstance(value, bool):
+                    features.append(float(value))
+                elif isinstance(value, str):
+                    # Convert string to hash-based features
+                    hash_val = hash(value) % 10000
+                    features.append(hash_val / 10000.0)
+                elif isinstance(value, list):
+                    # Add list length and first few elements
+                    features.append(len(value) / 10.0)  # Normalized length
+                    for item in value[:3]:  # First 3 items
+                        if isinstance(item, (int, float)):
+                            features.append(float(item))
+                        else:
+                            features.append(hash(str(item)) % 1000 / 1000.0)
+                elif isinstance(value, dict):
+                    # Add dict size and a few key-value pairs
+                    features.append(len(value) / 10.0)
+                    for k, v in list(value.items())[:2]:  # First 2 pairs
+                        if isinstance(v, (int, float)):
+                            features.append(float(v))
+                        else:
+                            features.append(hash(str(v)) % 1000 / 1000.0)
+            
+            # Pad or truncate to fixed size for VAE
+            target_size = 128
+            if len(features) < target_size:
+                features.extend([0.0] * (target_size - len(features)))
+            elif len(features) > target_size:
+                features = features[:target_size]
+            
+            return np.array(features, dtype=np.float32)
+            
+        except Exception as e:
+            self.logger.warning(f"Error extracting observation features: {e}")
+            return None
     
     def _estimate_observation_complexity(self, observation: Dict[str, Any]) -> float:
         """Estimate the complexity of an observation."""
