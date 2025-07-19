@@ -15,9 +15,15 @@ import time
 import logging
 import asyncio
 import json
+import numpy as np
 from typing import Dict, Any, List, Optional, Tuple
 from dataclasses import dataclass, asdict
 from enum import Enum
+from collections import defaultdict, deque
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+import math
 
 # Core NIS imports
 from ...memory.memory_manager import MemoryManager
@@ -826,25 +832,802 @@ class MetaCognitiveProcessor:
             time_window: Time window in seconds to analyze
             
         Returns:
-            Thinking pattern analysis
+            Thinking pattern analysis with ML-based insights
         """
-        # TODO: Implement pattern analysis
-        # Should identify:
-        # - Recurring thought patterns
-        # - Efficiency trends
-        # - Problem-solving strategies
-        # - Learning patterns
-        # - Adaptation behaviors
-        
         self.logger.info(f"Analyzing thinking patterns over {time_window} seconds")
         
-        # Placeholder implementation
+        # Get analysis history within time window
+        current_time = time.time()
+        cutoff_time = current_time - time_window
+        
+        recent_analyses = [
+            analysis for analysis in self.analysis_history
+            if analysis.timestamp >= cutoff_time
+        ]
+        
+        if len(recent_analyses) < 3:
+            self.logger.warning(f"Insufficient data for pattern analysis: {len(recent_analyses)} analyses")
+            return self._generate_minimal_pattern_analysis()
+        
+        # 1. IDENTIFY RECURRING THOUGHT PATTERNS
+        dominant_patterns = self._identify_dominant_patterns(recent_analyses)
+        
+        # 2. ANALYZE EFFICIENCY TRENDS
+        efficiency_trends = self._analyze_efficiency_trends(recent_analyses)
+        
+        # 3. DETECT STRATEGY PREFERENCES
+        strategy_preferences = self._analyze_strategy_preferences(recent_analyses)
+        
+        # 4. MEASURE LEARNING INDICATORS
+        learning_indicators = self._measure_learning_indicators(recent_analyses)
+        
+        # 5. ASSESS ADAPTATION BEHAVIORS
+        adaptation_metrics = self._assess_adaptation_behaviors(recent_analyses)
+        
+        # 6. GENERATE PATTERN-BASED INSIGHTS
+        pattern_insights = self._generate_pattern_insights(
+            dominant_patterns, efficiency_trends, strategy_preferences,
+            learning_indicators, adaptation_metrics
+        )
+        
         return {
-            "dominant_patterns": [],
-            "efficiency_trends": {},
-            "strategy_preferences": {},
-            "learning_indicators": {},
-            "adaptation_metrics": {}
+            "analysis_period": {
+                "time_window": time_window,
+                "analyses_count": len(recent_analyses),
+                "start_time": cutoff_time,
+                "end_time": current_time
+            },
+            "dominant_patterns": dominant_patterns,
+            "efficiency_trends": efficiency_trends,
+            "strategy_preferences": strategy_preferences,
+            "learning_indicators": learning_indicators,
+            "adaptation_metrics": adaptation_metrics,
+            "pattern_insights": pattern_insights,
+            "confidence": self._calculate_pattern_confidence(recent_analyses)
+        }
+    
+    def _identify_dominant_patterns(self, analyses: List[CognitiveAnalysis]) -> Dict[str, Any]:
+        """Identify dominant cognitive patterns using ML clustering."""
+        if len(analyses) < 5:
+            return {"insufficient_data": True, "patterns": []}
+        
+        # Extract features for pattern recognition
+        features = []
+        process_types = []
+        
+        for analysis in analyses:
+            # Create feature vector from analysis
+            feature_vector = [
+                analysis.efficiency_score,
+                len(analysis.bottlenecks),
+                len(analysis.improvement_suggestions),
+                analysis.confidence,
+                len(analysis.quality_metrics),
+                # Process type as numerical
+                hash(analysis.process_type.value) % 1000 / 1000.0
+            ]
+            
+            # Add quality metrics
+            for metric in ['accuracy', 'completeness', 'relevance', 'coherence']:
+                feature_vector.append(analysis.quality_metrics.get(metric, 0.5))
+            
+            features.append(feature_vector)
+            process_types.append(analysis.process_type.value)
+        
+        # Normalize features
+        features_array = np.array(features)
+        scaler = StandardScaler()
+        normalized_features = scaler.fit_transform(features_array)
+        
+        # Cluster patterns
+        n_clusters = min(5, len(analyses) // 2)
+        if n_clusters < 2:
+            n_clusters = 2
+            
+        kmeans = KMeans(n_clusters=n_clusters, random_state=42, n_init=10)
+        cluster_labels = kmeans.fit_predict(normalized_features)
+        
+        # Analyze clusters to identify patterns
+        patterns = []
+        for cluster_id in range(n_clusters):
+            cluster_indices = np.where(cluster_labels == cluster_id)[0]
+            cluster_analyses = [analyses[i] for i in cluster_indices]
+            
+            if len(cluster_analyses) > 0:
+                pattern = self._characterize_pattern_cluster(cluster_analyses, cluster_id)
+                patterns.append(pattern)
+        
+        # Sort patterns by frequency and significance
+        patterns.sort(key=lambda x: x['frequency'] * x['significance'], reverse=True)
+        
+        return {
+            "total_patterns": len(patterns),
+            "patterns": patterns,
+            "clustering_confidence": self._calculate_clustering_confidence(features_array, cluster_labels),
+            "most_dominant": patterns[0] if patterns else None
+        }
+    
+    def _characterize_pattern_cluster(self, cluster_analyses: List[CognitiveAnalysis], cluster_id: int) -> Dict[str, Any]:
+        """Characterize a cluster of cognitive analyses as a pattern."""
+        if not cluster_analyses:
+            return {}
+        
+        # Calculate cluster statistics
+        efficiencies = [a.efficiency_score for a in cluster_analyses]
+        confidences = [a.confidence for a in cluster_analyses]
+        process_types = [a.process_type.value for a in cluster_analyses]
+        
+        # Find most common process type
+        process_type_counts = defaultdict(int)
+        for pt in process_types:
+            process_type_counts[pt] += 1
+        most_common_process = max(process_type_counts.items(), key=lambda x: x[1])
+        
+        # Analyze bottlenecks and improvements
+        all_bottlenecks = []
+        all_improvements = []
+        for analysis in cluster_analyses:
+            all_bottlenecks.extend(analysis.bottlenecks)
+            all_improvements.extend(analysis.improvement_suggestions)
+        
+        bottleneck_counts = defaultdict(int)
+        improvement_counts = defaultdict(int)
+        
+        for bottleneck in all_bottlenecks:
+            bottleneck_counts[bottleneck] += 1
+        for improvement in all_improvements:
+            improvement_counts[improvement] += 1
+        
+        # Calculate pattern characteristics
+        pattern = {
+            "cluster_id": cluster_id,
+            "frequency": len(cluster_analyses),
+            "frequency_percentage": len(cluster_analyses) / len(self.analysis_history) * 100,
+            "significance": np.mean(confidences) * (len(cluster_analyses) / len(self.analysis_history)),
+            "characteristics": {
+                "avg_efficiency": np.mean(efficiencies),
+                "efficiency_std": np.std(efficiencies),
+                "avg_confidence": np.mean(confidences),
+                "dominant_process_type": most_common_process[0],
+                "process_type_consistency": most_common_process[1] / len(cluster_analyses)
+            },
+            "common_bottlenecks": sorted(bottleneck_counts.items(), key=lambda x: x[1], reverse=True)[:3],
+            "common_improvements": sorted(improvement_counts.items(), key=lambda x: x[1], reverse=True)[:3],
+            "pattern_description": self._generate_pattern_description(
+                most_common_process[0], np.mean(efficiencies), bottleneck_counts, improvement_counts
+            )
+        }
+        
+        return pattern
+    
+    def _generate_pattern_description(self, process_type: str, avg_efficiency: float, 
+                                    bottlenecks: defaultdict, improvements: defaultdict) -> str:
+        """Generate human-readable pattern description."""
+        efficiency_level = "high" if avg_efficiency > 0.8 else "medium" if avg_efficiency > 0.6 else "low"
+        
+        description = f"Pattern involves {process_type} processes with {efficiency_level} efficiency ({avg_efficiency:.2f})"
+        
+        if bottlenecks:
+            top_bottleneck = max(bottlenecks.items(), key=lambda x: x[1])[0]
+            description += f", commonly experiencing {top_bottleneck.replace('_', ' ')}"
+        
+        if improvements:
+            top_improvement = max(improvements.items(), key=lambda x: x[1])[0]
+            description += f", typically requiring {top_improvement.replace('_', ' ')}"
+        
+        return description
+    
+    def _analyze_efficiency_trends(self, analyses: List[CognitiveAnalysis]) -> Dict[str, Any]:
+        """Analyze efficiency trends over time using statistical methods."""
+        if len(analyses) < 3:
+            return {"insufficient_data": True}
+        
+        # Sort by timestamp
+        sorted_analyses = sorted(analyses, key=lambda x: x.timestamp)
+        
+        # Extract efficiency scores and timestamps
+        timestamps = [a.timestamp for a in sorted_analyses]
+        efficiencies = [a.efficiency_score for a in sorted_analyses]
+        
+        # Calculate trend using linear regression
+        n = len(efficiencies)
+        x = np.arange(n)
+        
+        # Linear regression coefficients
+        x_mean = np.mean(x)
+        y_mean = np.mean(efficiencies)
+        
+        numerator = sum((x[i] - x_mean) * (efficiencies[i] - y_mean) for i in range(n))
+        denominator = sum((x[i] - x_mean) ** 2 for i in range(n))
+        
+        if denominator == 0:
+            slope = 0
+        else:
+            slope = numerator / denominator
+        
+        intercept = y_mean - slope * x_mean
+        
+        # Calculate correlation coefficient
+        if len(efficiencies) > 1:
+            correlation = np.corrcoef(x, efficiencies)[0, 1]
+        else:
+            correlation = 0
+        
+        # Trend analysis
+        trend_direction = "improving" if slope > 0.01 else "declining" if slope < -0.01 else "stable"
+        trend_strength = abs(correlation)
+        
+        # Calculate moving averages
+        window_size = min(5, len(efficiencies) // 2)
+        if window_size > 1:
+            moving_avg = []
+            for i in range(window_size - 1, len(efficiencies)):
+                avg = np.mean(efficiencies[i - window_size + 1:i + 1])
+                moving_avg.append(avg)
+        else:
+            moving_avg = efficiencies
+        
+        # Volatility analysis
+        volatility = np.std(efficiencies) if len(efficiencies) > 1 else 0
+        
+        return {
+            "trend_direction": trend_direction,
+            "trend_slope": slope,
+            "trend_strength": trend_strength,
+            "correlation": correlation,
+            "current_efficiency": efficiencies[-1],
+            "avg_efficiency": np.mean(efficiencies),
+            "efficiency_range": (min(efficiencies), max(efficiencies)),
+            "volatility": volatility,
+            "stability": "high" if volatility < 0.1 else "medium" if volatility < 0.2 else "low",
+            "moving_average": moving_avg[-3:] if len(moving_avg) >= 3 else moving_avg,
+            "prediction": {
+                "next_efficiency": max(0, min(1, intercept + slope * n)),
+                "confidence": trend_strength
+            }
+        }
+    
+    def _analyze_strategy_preferences(self, analyses: List[CognitiveAnalysis]) -> Dict[str, Any]:
+        """Analyze preferred cognitive strategies and decision patterns."""
+        if not analyses:
+            return {"insufficient_data": True}
+        
+        # Analyze improvement suggestions as strategy indicators
+        strategy_usage = defaultdict(int)
+        process_strategies = defaultdict(lambda: defaultdict(int))
+        
+        for analysis in analyses:
+            process_type = analysis.process_type.value
+            
+            for suggestion in analysis.improvement_suggestions:
+                strategy_usage[suggestion] += 1
+                process_strategies[process_type][suggestion] += 1
+        
+        # Calculate strategy preferences
+        total_suggestions = sum(strategy_usage.values())
+        strategy_preferences = {}
+        
+        for strategy, count in strategy_usage.items():
+            preference_score = count / total_suggestions if total_suggestions > 0 else 0
+            strategy_preferences[strategy] = {
+                "usage_count": count,
+                "preference_score": preference_score,
+                "effectiveness": self._calculate_strategy_effectiveness(strategy, analyses)
+            }
+        
+        # Identify dominant strategies
+        sorted_strategies = sorted(
+            strategy_preferences.items(),
+            key=lambda x: x[1]['preference_score'] * x[1]['effectiveness'],
+            reverse=True
+        )
+        
+        # Analyze process-specific strategy patterns
+        process_strategy_patterns = {}
+        for process_type, strategies in process_strategies.items():
+            if strategies:
+                total_process_strategies = sum(strategies.values())
+                process_strategy_patterns[process_type] = {
+                    strategy: count / total_process_strategies
+                    for strategy, count in strategies.items()
+                }
+        
+        return {
+            "total_strategies_used": len(strategy_usage),
+            "strategy_preferences": strategy_preferences,
+            "dominant_strategies": sorted_strategies[:5],
+            "process_specific_patterns": process_strategy_patterns,
+            "strategy_diversity": len(strategy_usage) / max(1, total_suggestions),
+            "adaptability_score": self._calculate_adaptability_score(process_strategy_patterns)
+        }
+    
+    def _calculate_strategy_effectiveness(self, strategy: str, analyses: List[CognitiveAnalysis]) -> float:
+        """Calculate effectiveness of a specific strategy."""
+        strategy_analyses = [
+            a for a in analyses 
+            if strategy in a.improvement_suggestions
+        ]
+        
+        if not strategy_analyses:
+            return 0.5  # Default neutral effectiveness
+        
+        # Calculate average efficiency when this strategy was suggested
+        avg_efficiency = np.mean([a.efficiency_score for a in strategy_analyses])
+        
+        # Calculate average confidence when this strategy was suggested
+        avg_confidence = np.mean([a.confidence for a in strategy_analyses])
+        
+        # Combined effectiveness score
+        effectiveness = (avg_efficiency + avg_confidence) / 2.0
+        
+        return effectiveness
+    
+    def _calculate_adaptability_score(self, process_patterns: Dict[str, Dict[str, float]]) -> float:
+        """Calculate cognitive adaptability based on strategy diversity across processes."""
+        if not process_patterns:
+            return 0.0
+        
+        # Calculate entropy for each process type (higher entropy = more diverse strategies)
+        entropies = []
+        
+        for process_type, strategies in process_patterns.items():
+            if strategies:
+                # Calculate Shannon entropy
+                entropy = 0
+                for probability in strategies.values():
+                    if probability > 0:
+                        entropy -= probability * math.log2(probability)
+                entropies.append(entropy)
+        
+        if not entropies:
+            return 0.0
+        
+        # Normalize entropy (max entropy for n strategies is log2(n))
+        avg_entropy = np.mean(entropies)
+        max_possible_entropy = math.log2(len(next(iter(process_patterns.values()))))
+        
+        if max_possible_entropy > 0:
+            normalized_adaptability = avg_entropy / max_possible_entropy
+        else:
+            normalized_adaptability = 0.0
+        
+        return min(1.0, normalized_adaptability)
+    
+    def _measure_learning_indicators(self, analyses: List[CognitiveAnalysis]) -> Dict[str, Any]:
+        """Measure indicators of learning and improvement over time."""
+        if len(analyses) < 5:
+            return {"insufficient_data": True}
+        
+        # Sort by timestamp
+        sorted_analyses = sorted(analyses, key=lambda x: x.timestamp)
+        
+        # Split into early and late periods
+        split_point = len(sorted_analyses) // 2
+        early_analyses = sorted_analyses[:split_point]
+        late_analyses = sorted_analyses[split_point:]
+        
+        # Calculate improvement metrics
+        early_efficiency = np.mean([a.efficiency_score for a in early_analyses])
+        late_efficiency = np.mean([a.efficiency_score for a in late_analyses])
+        efficiency_improvement = late_efficiency - early_efficiency
+        
+        early_confidence = np.mean([a.confidence for a in early_analyses])
+        late_confidence = np.mean([a.confidence for a in late_analyses])
+        confidence_improvement = late_confidence - early_confidence
+        
+        # Analyze bottleneck reduction
+        early_bottlenecks = []
+        late_bottlenecks = []
+        
+        for analysis in early_analyses:
+            early_bottlenecks.extend(analysis.bottlenecks)
+        for analysis in late_analyses:
+            late_bottlenecks.extend(analysis.bottlenecks)
+        
+        avg_early_bottlenecks = len(early_bottlenecks) / len(early_analyses)
+        avg_late_bottlenecks = len(late_bottlenecks) / len(late_analyses)
+        bottleneck_reduction = avg_early_bottlenecks - avg_late_bottlenecks
+        
+        # Learning velocity (rate of improvement)
+        time_span = sorted_analyses[-1].timestamp - sorted_analyses[0].timestamp
+        learning_velocity = efficiency_improvement / max(time_span / 3600, 0.1)  # per hour
+        
+        # Consistency improvement
+        early_efficiency_std = np.std([a.efficiency_score for a in early_analyses])
+        late_efficiency_std = np.std([a.efficiency_score for a in late_analyses])
+        consistency_improvement = early_efficiency_std - late_efficiency_std
+        
+        return {
+            "efficiency_improvement": efficiency_improvement,
+            "confidence_improvement": confidence_improvement,
+            "bottleneck_reduction": bottleneck_reduction,
+            "learning_velocity": learning_velocity,
+            "consistency_improvement": consistency_improvement,
+            "overall_learning_score": self._calculate_overall_learning_score(
+                efficiency_improvement, confidence_improvement, 
+                bottleneck_reduction, consistency_improvement
+            ),
+            "learning_trajectory": "positive" if efficiency_improvement > 0.05 else 
+                                  "negative" if efficiency_improvement < -0.05 else "stable",
+            "time_to_improvement": time_span / 3600,  # hours
+            "improvement_sustainability": self._assess_improvement_sustainability(sorted_analyses)
+        }
+    
+    def _calculate_overall_learning_score(self, efficiency_imp: float, confidence_imp: float,
+                                        bottleneck_red: float, consistency_imp: float) -> float:
+        """Calculate overall learning score from individual improvements."""
+        # Normalize improvements to 0-1 scale
+        normalized_efficiency = max(0, min(1, (efficiency_imp + 0.5)))  # -0.5 to +0.5 -> 0 to 1
+        normalized_confidence = max(0, min(1, (confidence_imp + 0.5)))
+        normalized_bottleneck = max(0, min(1, (bottleneck_red + 2) / 4))  # -2 to +2 -> 0 to 1
+        normalized_consistency = max(0, min(1, (consistency_imp + 0.2) / 0.4))  # -0.2 to +0.2 -> 0 to 1
+        
+        # Weighted combination
+        overall_score = (
+            0.4 * normalized_efficiency +
+            0.3 * normalized_confidence +
+            0.2 * normalized_bottleneck +
+            0.1 * normalized_consistency
+        )
+        
+        return overall_score
+    
+    def _assess_improvement_sustainability(self, sorted_analyses: List[CognitiveAnalysis]) -> str:
+        """Assess whether improvements are sustainable or temporary."""
+        if len(sorted_analyses) < 6:
+            return "insufficient_data"
+        
+        # Divide into three periods
+        third = len(sorted_analyses) // 3
+        early = sorted_analyses[:third]
+        middle = sorted_analyses[third:2*third]
+        late = sorted_analyses[2*third:]
+        
+        early_eff = np.mean([a.efficiency_score for a in early])
+        middle_eff = np.mean([a.efficiency_score for a in middle])
+        late_eff = np.mean([a.efficiency_score for a in late])
+        
+        # Check for sustained improvement
+        if late_eff > middle_eff > early_eff:
+            return "sustainable_growth"
+        elif late_eff > early_eff and abs(late_eff - middle_eff) < 0.05:
+            return "plateau_after_improvement"
+        elif middle_eff > early_eff and late_eff < middle_eff:
+            return "temporary_improvement"
+        elif late_eff < early_eff:
+            return "declining"
+        else:
+            return "stable"
+    
+    def _assess_adaptation_behaviors(self, analyses: List[CognitiveAnalysis]) -> Dict[str, Any]:
+        """Assess adaptation behaviors and flexibility in cognitive processing."""
+        if len(analyses) < 4:
+            return {"insufficient_data": True}
+        
+        # Analyze process type switching
+        process_transitions = []
+        for i in range(1, len(analyses)):
+            prev_process = analyses[i-1].process_type.value
+            curr_process = analyses[i].process_type.value
+            if prev_process != curr_process:
+                process_transitions.append((prev_process, curr_process))
+        
+        transition_rate = len(process_transitions) / (len(analyses) - 1)
+        
+        # Analyze strategy adaptation
+        strategy_changes = 0
+        for i in range(1, len(analyses)):
+            prev_strategies = set(analyses[i-1].improvement_suggestions)
+            curr_strategies = set(analyses[i].improvement_suggestions)
+            if prev_strategies != curr_strategies:
+                strategy_changes += 1
+        
+        strategy_adaptation_rate = strategy_changes / (len(analyses) - 1)
+        
+        # Response to bottlenecks
+        bottleneck_response_effectiveness = self._analyze_bottleneck_responses(analyses)
+        
+        # Cognitive flexibility
+        flexibility_score = self._calculate_cognitive_flexibility(analyses)
+        
+        # Context sensitivity
+        context_sensitivity = self._assess_context_sensitivity(analyses)
+        
+        return {
+            "process_transition_rate": transition_rate,
+            "strategy_adaptation_rate": strategy_adaptation_rate,
+            "bottleneck_response_effectiveness": bottleneck_response_effectiveness,
+            "cognitive_flexibility_score": flexibility_score,
+            "context_sensitivity_score": context_sensitivity,
+            "adaptation_level": self._categorize_adaptation_level(
+                transition_rate, strategy_adaptation_rate, flexibility_score
+            ),
+            "common_transitions": self._identify_common_transitions(process_transitions),
+            "adaptation_triggers": self._identify_adaptation_triggers(analyses)
+        }
+    
+    def _analyze_bottleneck_responses(self, analyses: List[CognitiveAnalysis]) -> float:
+        """Analyze how effectively the system responds to identified bottlenecks."""
+        bottleneck_response_pairs = []
+        
+        for i in range(1, len(analyses)):
+            prev_bottlenecks = set(analyses[i-1].bottlenecks)
+            curr_bottlenecks = set(analyses[i].bottlenecks)
+            prev_efficiency = analyses[i-1].efficiency_score
+            curr_efficiency = analyses[i].efficiency_score
+            
+            # Check if bottlenecks were addressed
+            resolved_bottlenecks = prev_bottlenecks - curr_bottlenecks
+            new_bottlenecks = curr_bottlenecks - prev_bottlenecks
+            
+            if prev_bottlenecks:  # Only if there were bottlenecks to address
+                resolution_rate = len(resolved_bottlenecks) / len(prev_bottlenecks)
+                efficiency_change = curr_efficiency - prev_efficiency
+                
+                bottleneck_response_pairs.append({
+                    "resolution_rate": resolution_rate,
+                    "efficiency_change": efficiency_change,
+                    "effectiveness": resolution_rate * max(0, efficiency_change + 0.1)
+                })
+        
+        if not bottleneck_response_pairs:
+            return 0.5  # Neutral score when no data
+        
+        avg_effectiveness = np.mean([pair["effectiveness"] for pair in bottleneck_response_pairs])
+        return min(1.0, avg_effectiveness)
+    
+    def _calculate_cognitive_flexibility(self, analyses: List[CognitiveAnalysis]) -> float:
+        """Calculate cognitive flexibility based on variety and adaptation."""
+        if not analyses:
+            return 0.0
+        
+        # Process type diversity
+        process_types = [a.process_type.value for a in analyses]
+        unique_processes = len(set(process_types))
+        max_possible_processes = len(CognitiveProcess)
+        process_diversity = unique_processes / max_possible_processes
+        
+        # Strategy diversity
+        all_strategies = []
+        for analysis in analyses:
+            all_strategies.extend(analysis.improvement_suggestions)
+        unique_strategies = len(set(all_strategies))
+        strategy_diversity = min(1.0, unique_strategies / 10)  # Normalize to reasonable max
+        
+        # Efficiency variance (moderate variance indicates adaptation)
+        efficiencies = [a.efficiency_score for a in analyses]
+        efficiency_variance = np.var(efficiencies) if len(efficiencies) > 1 else 0
+        optimal_variance = 0.05  # Sweet spot for adaptive behavior
+        variance_score = 1.0 - abs(efficiency_variance - optimal_variance) / optimal_variance
+        variance_score = max(0, min(1, variance_score))
+        
+        # Combined flexibility score
+        flexibility = (
+            0.4 * process_diversity +
+            0.4 * strategy_diversity +
+            0.2 * variance_score
+        )
+        
+        return flexibility
+    
+    def _assess_context_sensitivity(self, analyses: List[CognitiveAnalysis]) -> float:
+        """Assess how well the system adapts to different contexts."""
+        # This is a simplified implementation
+        # In a full system, this would analyze how well responses change based on context
+        
+        if len(analyses) < 3:
+            return 0.5
+        
+        # Look for appropriate efficiency changes in response to different process types
+        process_efficiency_map = defaultdict(list)
+        for analysis in analyses:
+            process_efficiency_map[analysis.process_type.value].append(analysis.efficiency_score)
+        
+        # Calculate how efficiency varies appropriately by process type
+        if len(process_efficiency_map) < 2:
+            return 0.5
+        
+        # Higher variance across process types suggests good context sensitivity
+        process_avg_efficiencies = [
+            np.mean(efficiencies) for efficiencies in process_efficiency_map.values()
+        ]
+        
+        context_sensitivity = np.std(process_avg_efficiencies) if len(process_avg_efficiencies) > 1 else 0
+        return min(1.0, context_sensitivity * 2)  # Scale appropriately
+    
+    def _categorize_adaptation_level(self, transition_rate: float, adaptation_rate: float, flexibility: float) -> str:
+        """Categorize overall adaptation level."""
+        avg_adaptation = (transition_rate + adaptation_rate + flexibility) / 3
+        
+        if avg_adaptation > 0.7:
+            return "highly_adaptive"
+        elif avg_adaptation > 0.5:
+            return "moderately_adaptive"
+        elif avg_adaptation > 0.3:
+            return "somewhat_adaptive"
+        else:
+            return "low_adaptability"
+    
+    def _identify_common_transitions(self, transitions: List[Tuple[str, str]]) -> Dict[str, int]:
+        """Identify most common process transitions."""
+        transition_counts = defaultdict(int)
+        for transition in transitions:
+            key = f"{transition[0]} -> {transition[1]}"
+            transition_counts[key] += 1
+        
+        return dict(sorted(transition_counts.items(), key=lambda x: x[1], reverse=True)[:5])
+    
+    def _identify_adaptation_triggers(self, analyses: List[CognitiveAnalysis]) -> List[str]:
+        """Identify what triggers adaptation behaviors."""
+        triggers = []
+        
+        for i in range(1, len(analyses)):
+            prev_analysis = analyses[i-1]
+            curr_analysis = analyses[i]
+            
+            # Check for efficiency drops that trigger changes
+            if prev_analysis.efficiency_score > curr_analysis.efficiency_score + 0.1:
+                triggers.append("efficiency_drop")
+            
+            # Check for new bottlenecks triggering changes
+            if len(curr_analysis.bottlenecks) > len(prev_analysis.bottlenecks):
+                triggers.append("new_bottlenecks")
+            
+            # Check for confidence drops
+            if prev_analysis.confidence > curr_analysis.confidence + 0.1:
+                triggers.append("confidence_drop")
+        
+        # Return most common triggers
+        trigger_counts = defaultdict(int)
+        for trigger in triggers:
+            trigger_counts[trigger] += 1
+        
+        return sorted(trigger_counts.keys(), key=lambda x: trigger_counts[x], reverse=True)[:3]
+    
+    def _generate_pattern_insights(self, dominant_patterns: Dict[str, Any], efficiency_trends: Dict[str, Any],
+                                 strategy_preferences: Dict[str, Any], learning_indicators: Dict[str, Any],
+                                 adaptation_metrics: Dict[str, Any]) -> Dict[str, Any]:
+        """Generate high-level insights from pattern analysis."""
+        insights = {
+            "cognitive_health": "unknown",
+            "optimization_opportunities": [],
+            "strength_areas": [],
+            "concern_areas": [],
+            "recommendations": []
+        }
+        
+        # Assess cognitive health
+        health_factors = []
+        
+        if efficiency_trends.get("avg_efficiency", 0) > 0.8:
+            health_factors.append("high_efficiency")
+            insights["strength_areas"].append("Consistently high processing efficiency")
+        elif efficiency_trends.get("avg_efficiency", 0) < 0.6:
+            health_factors.append("low_efficiency")
+            insights["concern_areas"].append("Below-average processing efficiency")
+        
+        if efficiency_trends.get("trend_direction") == "improving":
+            health_factors.append("improving_trend")
+            insights["strength_areas"].append("Positive efficiency trend")
+        elif efficiency_trends.get("trend_direction") == "declining":
+            health_factors.append("declining_trend")
+            insights["concern_areas"].append("Declining efficiency trend")
+        
+        if learning_indicators.get("overall_learning_score", 0) > 0.7:
+            health_factors.append("strong_learning")
+            insights["strength_areas"].append("Strong learning and adaptation")
+        elif learning_indicators.get("overall_learning_score", 0) < 0.3:
+            health_factors.append("weak_learning")
+            insights["concern_areas"].append("Limited learning progress")
+        
+        if adaptation_metrics.get("cognitive_flexibility_score", 0) > 0.7:
+            health_factors.append("high_flexibility")
+            insights["strength_areas"].append("High cognitive flexibility")
+        elif adaptation_metrics.get("cognitive_flexibility_score", 0) < 0.3:
+            health_factors.append("low_flexibility")
+            insights["concern_areas"].append("Limited cognitive flexibility")
+        
+        # Determine overall health
+        positive_factors = sum(1 for f in health_factors if f in ["high_efficiency", "improving_trend", "strong_learning", "high_flexibility"])
+        negative_factors = sum(1 for f in health_factors if f in ["low_efficiency", "declining_trend", "weak_learning", "low_flexibility"])
+        
+        if positive_factors > negative_factors + 1:
+            insights["cognitive_health"] = "excellent"
+        elif positive_factors > negative_factors:
+            insights["cognitive_health"] = "good"
+        elif positive_factors == negative_factors:
+            insights["cognitive_health"] = "fair"
+        else:
+            insights["cognitive_health"] = "needs_attention"
+        
+        # Generate optimization opportunities
+        if efficiency_trends.get("volatility", 0) > 0.2:
+            insights["optimization_opportunities"].append("Reduce efficiency volatility through better consistency")
+        
+        if dominant_patterns.get("patterns"):
+            for pattern in dominant_patterns["patterns"][:2]:
+                if pattern.get("characteristics", {}).get("avg_efficiency", 0) < 0.7:
+                    insights["optimization_opportunities"].append(
+                        f"Improve {pattern.get('characteristics', {}).get('dominant_process_type', 'unknown')} processing efficiency"
+                    )
+        
+        if strategy_preferences.get("strategy_diversity", 0) < 0.3:
+            insights["optimization_opportunities"].append("Increase strategy diversity for better adaptability")
+        
+        # Generate recommendations
+        if insights["cognitive_health"] in ["fair", "needs_attention"]:
+            insights["recommendations"].append("Focus on identifying and addressing primary efficiency bottlenecks")
+        
+        if learning_indicators.get("learning_velocity", 0) < 0.01:
+            insights["recommendations"].append("Implement more active learning strategies")
+        
+        if adaptation_metrics.get("adaptation_level") in ["low_adaptability", "somewhat_adaptive"]:
+            insights["recommendations"].append("Practice cognitive flexibility exercises")
+        
+        return insights
+    
+    def _calculate_pattern_confidence(self, analyses: List[CognitiveAnalysis]) -> float:
+        """Calculate confidence in pattern analysis results."""
+        if not analyses:
+            return 0.0
+        
+        # Base confidence on data quantity
+        data_quantity_score = min(1.0, len(analyses) / 20)  # Optimal at 20+ analyses
+        
+        # Base confidence on data quality (average confidence of analyses)
+        avg_analysis_confidence = np.mean([a.confidence for a in analyses])
+        
+        # Base confidence on time span coverage
+        if len(analyses) > 1:
+            time_span = analyses[-1].timestamp - analyses[0].timestamp
+            time_coverage_score = min(1.0, time_span / 3600)  # Optimal at 1+ hours
+        else:
+            time_coverage_score = 0.1
+        
+        # Combined confidence
+        overall_confidence = (
+            0.4 * data_quantity_score +
+            0.4 * avg_analysis_confidence +
+            0.2 * time_coverage_score
+        )
+        
+        return overall_confidence
+    
+    def _calculate_clustering_confidence(self, features: np.ndarray, labels: np.ndarray) -> float:
+        """Calculate confidence in clustering results."""
+        if len(features) < 3:
+            return 0.0
+        
+        try:
+            from sklearn.metrics import silhouette_score
+            score = silhouette_score(features, labels)
+            # Convert from [-1, 1] to [0, 1] range
+            return (score + 1) / 2
+        except:
+            # Fallback calculation
+            return 0.5
+    
+    def _generate_minimal_pattern_analysis(self) -> Dict[str, Any]:
+        """Generate minimal pattern analysis when insufficient data."""
+        return {
+            "analysis_period": {
+                "time_window": 3600,
+                "analyses_count": len(self.analysis_history),
+                "insufficient_data": True
+            },
+            "dominant_patterns": {"insufficient_data": True},
+            "efficiency_trends": {"insufficient_data": True},
+            "strategy_preferences": {"insufficient_data": True},
+            "learning_indicators": {"insufficient_data": True},
+            "adaptation_metrics": {"insufficient_data": True},
+            "pattern_insights": {
+                "cognitive_health": "unknown",
+                "optimization_opportunities": ["Collect more cognitive analysis data"],
+                "strength_areas": [],
+                "concern_areas": ["Insufficient data for pattern analysis"],
+                "recommendations": ["Continue operating to generate analysis data"]
+            },
+            "confidence": 0.1
         }
     
     def optimize_cognitive_performance(
