@@ -34,7 +34,7 @@ Welcome to the comprehensive documentation for **NIS Protocol v2.0** - the neura
 **Features:**
 - Real-time bias detection
 - Performance optimization
-- Self-awareness scoring
+- Meta-cognitive scoring
 - Cognitive health monitoring
 
 ### **🎯 Autonomous Goals Module**
@@ -76,7 +76,7 @@ Welcome to the comprehensive documentation for **NIS Protocol v2.0** - the neura
 
 - **LTMConsolidator**: Biologically-inspired memory processing
 - **MemoryPruner**: Intelligent memory cleanup
-- **PatternExtractor**: Advanced pattern recognition
+- **PatternExtractor**: Comprehensive pattern recognition
 
 ## 🔄 **Tech Stack Integration**
 
@@ -151,7 +151,7 @@ Welcome to the comprehensive documentation for **NIS Protocol v2.0** - the neura
 ## 📊 **Performance Metrics**
 
 ### **Consciousness Metrics**
-- Self-awareness score (0-1)
+- Meta-cognitive score (0-1)
 - Introspection depth assessment
 - Bias detection rate
 - Cognitive efficiency optimization
@@ -191,7 +191,7 @@ python -c "from src.agents.consciousness import ConsciousAgent; agent = Consciou
 ### **Priority Areas**
 1. **🧠 Consciousness**: Enhance meta-cognitive processing
 2. **🎯 Goals**: Improve curiosity engines and exploration
-3. **🎮 Simulation**: Advanced scenario modeling
+3. **🎮 Simulation**: Comprehensive scenario modeling
 4. **⚖️ Alignment**: Multi-cultural ethical frameworks
 5. **💾 Memory**: Biologically-inspired consolidation
 

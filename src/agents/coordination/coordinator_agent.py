@@ -7,11 +7,12 @@ This module provides the CoordinatorAgent class which is responsible for:
 3. Managing multi-agent workflows
 """
 
+import asyncio
 import json
 import time
 from typing import Dict, Any, List, Optional, Union
 
-from src.core.agent import NISAgent, NISLayer
+from core.agent import NISAgent, NISLayer
 
 class CoordinatorAgent(NISAgent):
     """Coordinator Agent for managing inter-agent communication and protocol translation.

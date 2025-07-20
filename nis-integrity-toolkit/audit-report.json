@@ -1,0 +1,58 @@
+{
+  "audit_timestamp": "2025-07-19T12:58:04.060888",
+  "project_path": ".",
+  "issues": [
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in full-audit.py",
+      "details": {
+        "file": "audit-scripts/full-audit.py",
+        "count": 4
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-19T12:58:04.068543"
+    },
+    {
+      "type": "missing_benchmarks",
+      "description": "No test or benchmark files found to validate performance claims",
+      "details": {
+        "test_files": 0,
+        "benchmark_files": 0
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-19T12:58:04.070316"
+    }
+  ],
+  "metrics": {
+    "claimed_services": 0,
+    "actual_services": 0,
+    "service_directories": 6,
+    "total_hype_instances": 0,
+    "high_issues": 1,
+    "medium_issues": 1,
+    "low_issues": 0
+  },
+  "recommendations": [
+    {
+      "priority": "HIGH",
+      "action": "Replace hardcoded performance metrics with actual calculations",
+      "reason": "Found 1 high-severity issues that damage credibility"
+    },
+    {
+      "priority": "MEDIUM",
+      "action": "Create comprehensive benchmark suite to validate all performance claims",
+      "reason": "Performance claims lack validation"
+    },
+    {
+      "priority": "MEDIUM",
+      "action": "Implement pre-commit hooks with this audit tool",
+      "reason": "Prevent future integrity issues"
+    },
+    {
+      "priority": "LOW",
+      "action": "Add explicit limitations section to documentation",
+      "reason": "Transparent communication of constraints builds trust"
+    }
+  ],
+  "integrity_score": 80
+}

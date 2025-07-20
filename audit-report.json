@@ -1,0 +1,110 @@
+{
+  "audit_timestamp": "2025-07-19T21:28:33.214195",
+  "project_path": ".",
+  "issues": [
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in README.md: processing",
+      "details": {
+        "file": "README.md",
+        "claim": "processing"
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-19T21:28:33.290966"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in full-audit.py",
+      "details": {
+        "file": "nis-integrity-toolkit/audit-scripts/full-audit.py",
+        "count": 4
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-19T21:28:33.349384"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in cognitive_orchestra.py",
+      "details": {
+        "file": "src/llm/cognitive_orchestra.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-19T21:28:33.352252"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in goal_priority_manager.py",
+      "details": {
+        "file": "src/agents/goals/goal_priority_manager.py",
+        "count": 10
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-19T21:28:33.374137"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in meta_cognitive_processor.py",
+      "details": {
+        "file": "src/agents/consciousness/meta_cognitive_processor.py",
+        "count": 6
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-19T21:28:33.384940"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in introspection_manager.py",
+      "details": {
+        "file": "src/agents/consciousness/introspection_manager.py",
+        "count": 15
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-19T21:28:33.387015"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in safety_monitor.py",
+      "details": {
+        "file": "src/agents/alignment/safety_monitor.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-19T21:28:33.399983"
+    },
+    {
+      "type": "complex_dependencies",
+      "description": "Complex ML dependencies found: ['transformers', 'torch']. Are these actually used?",
+      "details": {
+        "dependencies": [
+          "transformers",
+          "torch"
+        ]
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-19T21:28:33.442709"
+    }
+  ],
+  "metrics": {
+    "claimed_services": 0,
+    "actual_services": 0,
+    "service_directories": 15,
+    "total_hype_instances": 0,
+    "high_issues": 0,
+    "medium_issues": 8,
+    "low_issues": 0
+  },
+  "recommendations": [
+    {
+      "priority": "MEDIUM",
+      "action": "Implement pre-commit hooks with this audit tool",
+      "reason": "Prevent future integrity issues"
+    },
+    {
+      "priority": "LOW",
+      "action": "Add explicit limitations section to documentation",
+      "reason": "Transparent communication of constraints builds trust"
+    }
+  ],
+  "integrity_score": 30
+}

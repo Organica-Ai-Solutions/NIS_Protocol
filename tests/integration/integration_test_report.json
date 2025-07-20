@@ -1,0 +1,164 @@
+{
+  "summary": {
+    "total_tests": 17,
+    "passed_tests": 2,
+    "failed_tests": 14,
+    "skipped_tests": 1,
+    "pass_rate": 0.11764705882352941,
+    "total_execution_time": 105.95170092582703,
+    "system_status": "NEEDS_ATTENTION"
+  },
+  "recommendations": [
+    "Address 14 failing tests before production use",
+    "Implement 1 skipped test areas for complete coverage",
+    "Optimize 3 slow-performing operations"
+  ],
+  "detailed_results": [
+    {
+      "test_name": "core_imports",
+      "category": "Core Components",
+      "status": "FAIL",
+      "execution_time": 8.164721727371216,
+      "details": {},
+      "error_message": "attempted relative import beyond top-level package"
+    },
+    {
+      "test_name": "self_audit_functionality",
+      "category": "Core Components",
+      "status": "PASS",
+      "execution_time": 0.003017902374267578,
+      "details": {
+        "test_text": "System analysis completed with measured performance metrics",
+        "integrity_score": 100.0,
+        "violations_count": 0
+      },
+      "error_message": null
+    },
+    {
+      "test_name": "coordinator_initialization",
+      "category": "Core Components",
+      "status": "FAIL",
+      "execution_time": 3.0994415283203125e-06,
+      "details": {},
+      "error_message": "local variable 'EnhancedScientificCoordinator' referenced before assignment"
+    },
+    {
+      "test_name": "agent_init_laplace_transformer",
+      "category": "Scientific Pipeline",
+      "status": "FAIL",
+      "execution_time": 90.91836786270142,
+      "details": {},
+      "error_message": "attempted relative import beyond top-level package"
+    },
+    {
+      "test_name": "agent_init_kan_reasoning_agent",
+      "category": "Scientific Pipeline",
+      "status": "FAIL",
+      "execution_time": 0.263948917388916,
+      "details": {},
+      "error_message": "attempted relative import beyond top-level package"
+    },
+    {
+      "test_name": "agent_init_pinn_physics_agent",
+      "category": "Scientific Pipeline",
+      "status": "FAIL",
+      "execution_time": 6.5814220905303955,
+      "details": {},
+      "error_message": "attempted relative import beyond top-level package"
+    },
+    {
+      "test_name": "complete_pipeline_execution",
+      "category": "Scientific Pipeline",
+      "status": "FAIL",
+      "execution_time": 0.0025289058685302734,
+      "details": {},
+      "error_message": "attempted relative import beyond top-level package"
+    },
+    {
+      "test_name": "conscious_agent_init",
+      "category": "Consciousness System",
+      "status": "FAIL",
+      "execution_time": 0.002190113067626953,
+      "details": {},
+      "error_message": "attempted relative import beyond top-level package"
+    },
+    {
+      "test_name": "basic_message_passing",
+      "category": "Inter-Agent Communication",
+      "status": "SKIP",
+      "execution_time": 1.1920928955078125e-06,
+      "details": {
+        "reason": "No explicit message passing implementation found"
+      },
+      "error_message": null
+    },
+    {
+      "test_name": "pipeline_coordination_communication",
+      "category": "Inter-Agent Communication",
+      "status": "FAIL",
+      "execution_time": 0.0006279945373535156,
+      "details": {},
+      "error_message": "attempted relative import beyond top-level package"
+    },
+    {
+      "test_name": "docs_integrity_example",
+      "category": "Documentation Examples",
+      "status": "PASS",
+      "execution_time": 0.0020961761474609375,
+      "details": {
+        "original_text": "System analysis completed with measured performance metrics",
+        "integrity_score": 100.0,
+        "violations_count": 0
+      },
+      "error_message": null
+    },
+    {
+      "test_name": "docs_signal_processing_example",
+      "category": "Documentation Examples",
+      "status": "FAIL",
+      "execution_time": 0.00164031982421875,
+      "details": {},
+      "error_message": "attempted relative import beyond top-level package"
+    },
+    {
+      "test_name": "invalid_input_handling",
+      "category": "Error Handling",
+      "status": "FAIL",
+      "execution_time": 0.0005719661712646484,
+      "details": {},
+      "error_message": "attempted relative import beyond top-level package"
+    },
+    {
+      "test_name": "agent_init_error_handling",
+      "category": "Error Handling",
+      "status": "FAIL",
+      "execution_time": 0.0004911422729492188,
+      "details": {},
+      "error_message": "attempted relative import beyond top-level package"
+    },
+    {
+      "test_name": "laplace_performance_benchmark",
+      "category": "Performance Benchmarks",
+      "status": "FAIL",
+      "execution_time": 0.0007419586181640625,
+      "details": {},
+      "error_message": "attempted relative import beyond top-level package"
+    },
+    {
+      "test_name": "consciousness_performance_benchmark",
+      "category": "Performance Benchmarks",
+      "status": "FAIL",
+      "execution_time": 0.0008711814880371094,
+      "details": {},
+      "error_message": "attempted relative import beyond top-level package"
+    },
+    {
+      "test_name": "end_to_end_integration",
+      "category": "System Integration",
+      "status": "FAIL",
+      "execution_time": 0.0004150867462158203,
+      "details": {},
+      "error_message": "attempted relative import beyond top-level package"
+    }
+  ]
+}

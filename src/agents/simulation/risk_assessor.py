@@ -908,18 +908,41 @@ class RiskAssessor:
         context: Dict[str, Any]
     ) -> float:
         """Calculate confidence score for the risk assessment."""
-        # Base confidence
-        confidence = 0.7
+        # Calculate base confidence from data quality
+        base_confidence = self._calculate_base_confidence(risk_factors, context)
         
         # Adjust based on data completeness
         context_completeness = len([v for v in context.values() if v is not None]) / max(1, len(context))
-        confidence += (context_completeness - 0.5) * 0.2
+        confidence = base_confidence + (context_completeness - 0.5) * 0.2
         
         # Adjust based on number of risk factors assessed
         factor_coverage = min(1.0, len(risk_factors) / 15)  # Assume 15 is comprehensive
         confidence += (factor_coverage - 0.5) * 0.1
         
         return max(0.3, min(0.95, confidence))
+    
+    def _calculate_base_confidence(
+        self,
+        risk_factors: List[RiskFactor],
+        context: Dict[str, Any]
+    ) -> float:
+        """Calculate base confidence from available data quality."""
+        # Start with moderate confidence
+        base = 0.5
+        
+        # Increase confidence based on risk factor reliability
+        if risk_factors:
+            avg_probability_confidence = sum(
+                getattr(factor, 'probability_confidence', 0.7) 
+                for factor in risk_factors
+            ) / len(risk_factors)
+            base = 0.3 + (avg_probability_confidence * 0.4)
+        
+        # Adjust for context richness
+        context_quality = min(1.0, len(context) / 10.0)  # Normalize to 10 context items
+        base += context_quality * 0.2
+        
+        return max(0.3, min(0.8, base))
     
     # Utility methods
     def _assess_action_complexity(self, action: Dict[str, Any]) -> float:

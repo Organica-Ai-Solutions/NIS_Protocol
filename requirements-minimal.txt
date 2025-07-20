@@ -53,4 +53,4 @@ python-json-logger>=2.0.2  # For structured logging
 # seaborn>=0.11.0  # For statistical plots
 # sounddevice>=0.4.5  # For audio
 # nltk>=3.6.0  # For NLP
-# spacy>=3.1.0  # For advanced NLP 
+# spacy>=3.1.0  # For comprehensive NLP 

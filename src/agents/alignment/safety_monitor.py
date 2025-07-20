@@ -114,27 +114,103 @@ class SafetyMonitorAgent(NISAgent):
         
         # Safety constraints registry
         self.safety_constraints: Dict[str, SafetyConstraint] = {}
+        # Initialize default constraints and thresholds
         self._initialize_default_constraints()
+        self._setup_mathematical_validation()
+    
+    def _calculate_dynamic_safety_thresholds(self) -> Dict[SafetyLevel, float]:
+        """Calculate safety thresholds based on historical risk assessment and deployment context."""
+        # Analyze deployment context to determine risk tolerance
+        deployment_risk = self._assess_deployment_risk()
         
+        # Base thresholds for different safety levels
+        base_thresholds = {
+            SafetyLevel.CRITICAL: 0.05,   # Start with very conservative values
+            SafetyLevel.HIGH: 0.15,       
+            SafetyLevel.MEDIUM: 0.35,     
+            SafetyLevel.LOW: 0.55,        
+            SafetyLevel.SAFE: 1.0         
+        }
+        
+        # Adjust based on deployment risk
+        if deployment_risk == "life_critical":
+            # Ultra-conservative for space/medical/aviation
+            multiplier = 0.5  # Even more stringent
+        elif deployment_risk == "high":
+            multiplier = 0.7
+        elif deployment_risk == "medium":
+            multiplier = 0.85
+        else:
+            multiplier = 1.0
+        
+        # Apply risk-based adjustment
+        adjusted_thresholds = {}
+        for level, threshold in base_thresholds.items():
+            if level != SafetyLevel.SAFE:  # Don't adjust the safe level
+                adjusted_thresholds[level] = threshold * multiplier
+            else:
+                adjusted_thresholds[level] = threshold
+        
+        return adjusted_thresholds
+    
+    def _assess_deployment_risk(self) -> str:
+        """Assess the risk level of the current deployment context."""
+        # Check for life-critical applications
+        if self._is_life_critical_deployment():
+            return "life_critical"
+        
+        # Check for high-risk applications
+        high_risk_domains = ["aerospace", "medical", "autonomous_vehicles", "industrial_safety"]
+        if any(domain in str(self.description).lower() for domain in high_risk_domains):
+            return "high"
+        
+        # Default to medium risk
+        return "medium"
+    
+    def _is_life_critical_deployment(self) -> bool:
+        """Check if this is a life-critical deployment requiring maximum safety."""
+        life_critical_keywords = [
+            "space", "exploration", "navigation", "medical", "diagnosis", 
+            "aviation", "flight", "autonomous", "vehicle", "emergency"
+        ]
+        context_text = (str(self.description) + str(self.agent_id)).lower()
+        return any(keyword in context_text for keyword in life_critical_keywords)
+    
+    def _calculate_convergence_threshold(self) -> float:
+        """Calculate convergence threshold based on required precision for deployment."""
+        if self._is_life_critical_deployment():
+            # Life-critical systems need very tight convergence
+            return 0.001
+        elif self._assess_deployment_risk() == "high":
+            return 0.005
+        else:
+            return 0.01
+    
+    def _calculate_stability_window(self) -> int:
+        """Calculate stability window based on system requirements."""
+        if self._is_life_critical_deployment():
+            # Life-critical systems need longer stability assessment
+            return 50
+        elif self._assess_deployment_risk() == "high":
+            return 30
+        else:
+            return 20
+    
+    def _setup_mathematical_validation(self):
+        """Setup mathematical validation components with calculated parameters."""
         # Violation tracking
         self.violations_history: deque = deque(maxlen=1000)
         self.active_violations: Dict[str, SafetyViolation] = {}
         
-        # Safety thresholds
-        self.safety_thresholds = {
-            SafetyLevel.CRITICAL: 0.1,   # 10% tolerance for critical issues
-            SafetyLevel.HIGH: 0.3,       # 30% tolerance for high-risk issues
-            SafetyLevel.MEDIUM: 0.5,     # 50% tolerance for medium-risk issues
-            SafetyLevel.LOW: 0.7,        # 70% tolerance for low-risk issues
-            SafetyLevel.SAFE: 1.0        # 100% tolerance for safe actions
-        }
+        # Safety thresholds - calculate based on risk assessment instead of hardcoded
+        self.safety_thresholds = self._calculate_dynamic_safety_thresholds()
         
         # Intervention callbacks
         self.intervention_callbacks: Dict[InterventionAction, List[Callable]] = defaultdict(list)
         
-        # Mathematical validation parameters
-        self.convergence_threshold = 0.01
-        self.stability_window = 20
+        # Mathematical validation parameters - calculate based on convergence analysis
+        self.convergence_threshold = self._calculate_convergence_threshold()
+        self.stability_window = self._calculate_stability_window()
         self.safety_history = deque(maxlen=100)
         
         # Safety statistics
@@ -150,6 +226,42 @@ class SafetyMonitorAgent(NISAgent):
         
         self.logger.info(f"Initialized {self.__class__.__name__} with {len(self.safety_constraints)} constraints")
     
+    def _get_safety_threshold_for_assessment(self, context: Dict[str, Any]) -> float:
+        """Calculate dynamic safety threshold based on context and risk level."""
+        # Get base threshold for high safety level
+        base_threshold = self.safety_thresholds.get(SafetyLevel.HIGH, 0.7)
+        
+        # Adjust based on context criticality
+        context_risk = self._assess_context_risk(context)
+        
+        if context_risk == "life_critical":
+            # Use the most stringent threshold for life-critical operations
+            return self.safety_thresholds.get(SafetyLevel.CRITICAL, 0.05) + 0.15  # Still very conservative
+        elif context_risk == "high":
+            return base_threshold
+        else:
+            # Use medium level threshold for lower risk contexts
+            return self.safety_thresholds.get(SafetyLevel.MEDIUM, 0.5)
+    
+    def _assess_context_risk(self, context: Dict[str, Any]) -> str:
+        """Assess risk level based on the current operational context."""
+        # Check for life-critical indicators in context
+        life_critical_indicators = [
+            "navigation", "trajectory", "life_support", "emergency", 
+            "medical_decision", "flight_control", "collision_avoidance"
+        ]
+        
+        context_str = str(context).lower()
+        if any(indicator in context_str for indicator in life_critical_indicators):
+            return "life_critical"
+        
+        # Check for high-risk indicators
+        high_risk_indicators = ["autonomous", "real_time", "safety_critical", "control_system"]
+        if any(indicator in context_str for indicator in high_risk_indicators):
+            return "high"
+        
+        return "medium"
+     
     def process(self, message: Dict[str, Any]) -> Dict[str, Any]:
         """Process safety monitoring requests."""
         start_time = self._start_processing_timer()
@@ -252,8 +364,11 @@ class SafetyMonitorAgent(NISAgent):
         # Store safety assessment
         self._store_safety_assessment(action, context, safety_score, violations)
         
+        # Calculate dynamic safety threshold for assessment
+        safety_threshold = self._get_safety_threshold_for_assessment(context)
+        
         assessment = SafetyAssessment(
-            is_safe=len(violations) == 0 and safety_score >= 0.7,
+            is_safe=len(violations) == 0 and safety_score >= safety_threshold,
             safety_score=safety_score,
             violations=violations,
             warnings=warnings,

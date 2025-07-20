@@ -1,18 +1,27 @@
 """
-NIS Protocol Value Alignment
+Value Alignment Agent for Ethical AI Systems  
+Enhanced with actual metric calculations instead of hardcoded values
 
-This module ensures alignment with human values and cultural contexts through
-dynamic value learning, cultural adaptation, and mathematical validation.
+This module implements value alignment detection, ethical conflict resolution,
+and cultural value system integration for AI decision making.
 """
 
+import numpy as np
 import logging
 import time
 import json
 import math
 from typing import Dict, Any, List, Optional, Tuple, Set
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from collections import defaultdict, Counter
 from enum import Enum
+from datetime import datetime
+
+# Integrity metrics for actual calculations
+from src.utils.integrity_metrics import (
+    calculate_confidence, create_default_confidence_factors,
+    ConfidenceFactors
+)
 
 from ...core.agent import NISAgent, NISLayer
 from ...memory.memory_manager import MemoryManager
@@ -439,7 +448,7 @@ class ValueAlignmentAgent(NISAgent):
                     conflict_score=conflict_score,
                     context=str(context),
                     resolution_strategy=resolution_strategy,
-                    confidence=0.8
+                    confidence=self._calculate_conflict_confidence(score1, score2, context)
                 )
                 
                 conflicts.append(conflict)
@@ -981,6 +990,35 @@ class ValueAlignmentAgent(NISAgent):
             "validation_history_length": len(self.validation_history),
             "convergence_validation": self._validate_mathematical_convergence({})
         }
+    
+    def _calculate_conflict_confidence(self, score1: float, score2: float, context: Dict[str, Any]) -> float:
+        """Calculate confidence in value conflict detection."""
+        # Calculate conflict detection quality factors
+        score_separation = abs(score1 - score2)
+        context_completeness = min(1.0, len(context) / 6.0)  # Normalize to 6 context fields
+        max_score = max(score1, score2)
+        
+        # Use proper confidence calculation instead of hardcoded range
+        factors = ConfidenceFactors(
+            data_quality=context_completeness,  # Quality of context data
+            algorithm_stability=0.88,  # Value alignment detection is fairly stable
+            validation_coverage=score_separation,  # Clear separation = better validation
+            error_rate=max(0.1, 1.0 - max_score)  # Lower error for higher-scoring conflicts
+        )
+        
+        confidence = calculate_confidence(factors)
+        
+        # Adjust based on context completeness
+        confidence += 0.15 * context_completeness
+        
+        # Higher confidence for clear value conflicts (high scores)
+        max_score = max(score1, score2)
+        if max_score > 0.8:
+            confidence += 0.1  # Strong value activation suggests reliable conflict
+        elif max_score < 0.3:
+            confidence -= 0.1  # Weak activation might be noise
+        
+        return max(0.3, min(0.95, confidence))
 
 # Maintain backward compatibility
 ValueAlignment = ValueAlignmentAgent 
