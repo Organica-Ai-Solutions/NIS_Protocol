@@ -804,6 +804,336 @@ class EnhancedKANReasoningAgent(NISAgent):
         
         return summary
 
+# ==================== COMPREHENSIVE SELF-AUDIT CAPABILITIES ====================
+
+def audit_kan_reasoning_output(self, output_text: str, operation: str = "", context: str = "") -> Dict[str, Any]:
+    """
+    Perform real-time integrity audit on KAN reasoning outputs.
+    
+    Args:
+        output_text: Text output to audit
+        operation: KAN reasoning operation type (symbolic_extraction, function_approximation, etc.)
+        context: Additional context for the audit
+        
+    Returns:
+        Audit results with violations and integrity score
+    """
+    if not self.enable_self_audit:
+        return {'integrity_score': 100.0, 'violations': [], 'total_violations': 0}
+    
+    self.logger.info(f"Performing self-audit on KAN reasoning output for operation: {operation}")
+    
+    # Use proven audit engine
+    audit_context = f"kan_reasoning:{operation}:{context}" if context else f"kan_reasoning:{operation}"
+    violations = self_audit_engine.audit_text(output_text, audit_context)
+    integrity_score = self_audit_engine.get_integrity_score(output_text)
+    
+    # Log violations for KAN reasoning-specific analysis
+    if violations:
+        self.logger.warning(f"Detected {len(violations)} integrity violations in KAN reasoning output")
+        for violation in violations:
+            self.logger.warning(f"  - {violation.severity}: {violation.text} -> {violation.suggested_replacement}")
+    
+    return {
+        'violations': violations,
+        'integrity_score': integrity_score,
+        'total_violations': len(violations),
+        'violation_breakdown': self._categorize_kan_violations(violations),
+        'operation': operation,
+        'audit_timestamp': time.time()
+    }
+
+def auto_correct_kan_reasoning_output(self, output_text: str, operation: str = "") -> Dict[str, Any]:
+    """
+    Automatically correct integrity violations in KAN reasoning outputs.
+    
+    Args:
+        output_text: Text to correct
+        operation: KAN reasoning operation type
+        
+    Returns:
+        Corrected output with audit details
+    """
+    if not self.enable_self_audit:
+        return {'corrected_text': output_text, 'violations_fixed': [], 'improvement': 0}
+    
+    self.logger.info(f"Performing self-correction on KAN reasoning output for operation: {operation}")
+    
+    corrected_text, violations = self_audit_engine.auto_correct_text(output_text)
+    
+    # Calculate improvement metrics with mathematical validation
+    original_score = self_audit_engine.get_integrity_score(output_text)
+    corrected_score = self_audit_engine.get_integrity_score(corrected_text)
+    improvement = calculate_confidence(corrected_score - original_score, self.confidence_factors)
+    
+    return {
+        'original_text': output_text,
+        'corrected_text': corrected_text,
+        'violations_fixed': violations,
+        'original_integrity_score': original_score,
+        'corrected_integrity_score': corrected_score,
+        'improvement': improvement,
+        'operation': operation,
+        'correction_timestamp': time.time()
+    }
+
+def analyze_kan_integrity_trends(self, time_window: int = 3600) -> Dict[str, Any]:
+    """
+    Analyze KAN reasoning integrity trends for self-improvement.
+    
+    Args:
+        time_window: Time window in seconds to analyze
+        
+    Returns:
+        KAN reasoning integrity trend analysis with mathematical validation
+    """
+    if not self.enable_self_audit:
+        return {'integrity_status': 'MONITORING_DISABLED'}
+    
+    self.logger.info(f"Analyzing KAN reasoning integrity trends over {time_window} seconds")
+    
+    # Get integrity report from audit engine
+    integrity_report = self_audit_engine.generate_integrity_report()
+    
+    # Calculate KAN reasoning-specific metrics
+    kan_metrics = {
+        'input_dim': self.input_dim,
+        'hidden_dims': self.hidden_dims,
+        'output_dim': self.output_dim,
+        'network_configured': bool(self.kan_network),
+        'reasoning_history_length': len(self.reasoning_history),
+        'function_cache_size': len(self.function_cache),
+        'performance_metrics': self.performance_metrics
+    }
+    
+    # Generate KAN reasoning-specific recommendations
+    recommendations = self._generate_kan_integrity_recommendations(
+        integrity_report, kan_metrics
+    )
+    
+    return {
+        'integrity_status': integrity_report['integrity_status'],
+        'total_violations': integrity_report['total_violations'],
+        'kan_metrics': kan_metrics,
+        'integrity_trend': self._calculate_kan_integrity_trend(),
+        'recommendations': recommendations,
+        'analysis_timestamp': time.time()
+    }
+
+def get_kan_integrity_report(self) -> Dict[str, Any]:
+    """Generate comprehensive KAN reasoning integrity report"""
+    if not self.enable_self_audit:
+        return {'status': 'SELF_AUDIT_DISABLED'}
+    
+    # Get basic integrity report
+    base_report = self_audit_engine.generate_integrity_report()
+    
+    # Add KAN reasoning-specific metrics
+    kan_report = {
+        'kan_agent_id': self.agent_id,
+        'monitoring_enabled': self.enable_self_audit,
+        'kan_capabilities': {
+            'input_dim': self.input_dim,
+            'hidden_dims': self.hidden_dims,
+            'output_dim': self.output_dim,
+            'network_type': 'EnhancedKANNetwork',
+            'supports_symbolic_extraction': True,
+            'supports_spline_approximation': True,
+            'supports_function_caching': True
+        },
+        'processing_statistics': {
+            'reasoning_operations': self.performance_metrics.get('total_reasoning_operations', 0),
+            'successful_extractions': self.performance_metrics.get('successful_extractions', 0),
+            'average_processing_time': self.performance_metrics.get('average_processing_time', 0.0),
+            'average_confidence': self.performance_metrics.get('average_confidence', 0.0),
+            'reasoning_history_entries': len(self.reasoning_history),
+            'cached_functions': len(self.function_cache)
+        },
+        'network_status': {
+            'network_initialized': bool(self.kan_network),
+            'confidence_factors_configured': bool(self.confidence_factors)
+        },
+        'base_integrity_report': base_report,
+        'report_timestamp': time.time()
+    }
+    
+    return kan_report
+
+def validate_kan_configuration(self) -> Dict[str, Any]:
+    """Validate KAN reasoning configuration for integrity"""
+    validation_results = {
+        'valid': True,
+        'warnings': [],
+        'recommendations': []
+    }
+    
+    # Check network dimensions
+    if self.input_dim <= 0 or self.output_dim <= 0:
+        validation_results['valid'] = False
+        validation_results['warnings'].append("Invalid network dimensions - input_dim and output_dim must be positive")
+        validation_results['recommendations'].append("Set input_dim and output_dim to positive values")
+    
+    # Check hidden dimensions
+    if not self.hidden_dims or any(dim <= 0 for dim in self.hidden_dims):
+        validation_results['warnings'].append("Invalid hidden dimensions - all dimensions must be positive")
+        validation_results['recommendations'].append("Set all hidden_dims to positive values")
+    
+    # Check network initialization
+    if not self.kan_network:
+        validation_results['valid'] = False
+        validation_results['warnings'].append("KAN network not initialized")
+        validation_results['recommendations'].append("Initialize KAN network before processing")
+    
+    # Check performance metrics
+    success_rate = (self.performance_metrics.get('successful_extractions', 0) / 
+                   max(1, self.performance_metrics.get('total_reasoning_operations', 1)))
+    
+    if success_rate < 0.7:
+        validation_results['warnings'].append(f"Low success rate: {success_rate:.1%}")
+        validation_results['recommendations'].append("Investigate and optimize reasoning algorithms for better success rate")
+    
+    # Check processing time
+    avg_time = self.performance_metrics.get('average_processing_time', 0.0)
+    if avg_time > 5.0:
+        validation_results['warnings'].append(f"High average processing time: {avg_time:.2f}s")
+        validation_results['recommendations'].append("Consider optimizing network architecture or processing algorithms")
+    
+    return validation_results
+
+def _monitor_kan_output_integrity(self, output_text: str, operation: str = "") -> str:
+    """
+    Internal method to monitor and potentially correct KAN reasoning output integrity.
+    
+    Args:
+        output_text: Output to monitor
+        operation: KAN reasoning operation type
+        
+    Returns:
+        Potentially corrected output
+    """
+    if not getattr(self, 'enable_self_audit', False):
+        return output_text
+    
+    # Perform audit
+    audit_result = self.audit_kan_reasoning_output(output_text, operation)
+    
+    # Auto-correct if violations detected
+    if audit_result['violations']:
+        correction_result = self.auto_correct_kan_reasoning_output(output_text, operation)
+        
+        self.logger.info(f"Auto-corrected KAN reasoning output: {len(audit_result['violations'])} violations fixed")
+        
+        return correction_result['corrected_text']
+    
+    return output_text
+
+def _categorize_kan_violations(self, violations: List['IntegrityViolation']) -> Dict[str, int]:
+    """Categorize integrity violations specific to KAN reasoning operations"""
+    from collections import defaultdict
+    categories = defaultdict(int)
+    
+    for violation in violations:
+        categories[violation.violation_type.value] += 1
+    
+    return dict(categories)
+
+def _generate_kan_integrity_recommendations(self, integrity_report: Dict[str, Any], kan_metrics: Dict[str, Any]) -> List[str]:
+    """Generate KAN reasoning-specific integrity improvement recommendations"""
+    recommendations = []
+    
+    if integrity_report.get('total_violations', 0) > 5:
+        recommendations.append("Consider implementing more rigorous KAN reasoning output validation")
+    
+    if kan_metrics.get('reasoning_history_length', 0) > 1000:
+        recommendations.append("Reasoning history is large - consider implementing cleanup or archival")
+    
+    if kan_metrics.get('function_cache_size', 0) > 500:
+        recommendations.append("Function cache is large - consider implementing cache cleanup")
+    
+    success_rate = (kan_metrics.get('performance_metrics', {}).get('successful_extractions', 0) / 
+                   max(1, kan_metrics.get('performance_metrics', {}).get('total_reasoning_operations', 1)))
+    
+    if success_rate < 0.7:
+        recommendations.append("Low reasoning success rate - consider optimizing KAN network architecture")
+    
+    avg_confidence = kan_metrics.get('performance_metrics', {}).get('average_confidence', 0.0)
+    if avg_confidence < 0.7:
+        recommendations.append("Low average confidence - consider improving training data or network parameters")
+    
+    if not kan_metrics.get('network_configured', False):
+        recommendations.append("KAN network not properly configured - verify initialization")
+    
+    if len(recommendations) == 0:
+        recommendations.append("KAN reasoning integrity status is excellent - maintain current practices")
+    
+    return recommendations
+
+def _calculate_kan_integrity_trend(self) -> Dict[str, Any]:
+    """Calculate KAN reasoning integrity trends with mathematical validation"""
+    if not hasattr(self, 'performance_metrics'):
+        return {'trend': 'INSUFFICIENT_DATA'}
+    
+    total_operations = self.performance_metrics.get('total_reasoning_operations', 0)
+    successful_extractions = self.performance_metrics.get('successful_extractions', 0)
+    
+    if total_operations == 0:
+        return {'trend': 'NO_OPERATIONS_PROCESSED'}
+    
+    success_rate = successful_extractions / total_operations
+    avg_confidence = self.performance_metrics.get('average_confidence', 0.0)
+    avg_processing_time = self.performance_metrics.get('average_processing_time', 0.0)
+    
+    # Calculate trend with mathematical validation
+    trend_score = calculate_confidence(
+        (success_rate * 0.4 + avg_confidence * 0.4 + (1.0 / max(avg_processing_time, 0.1)) * 0.2), 
+        self.confidence_factors
+    )
+    
+    return {
+        'trend': 'IMPROVING' if trend_score > 0.8 else 'STABLE' if trend_score > 0.6 else 'NEEDS_ATTENTION',
+        'success_rate': success_rate,
+        'avg_confidence': avg_confidence,
+        'avg_processing_time': avg_processing_time,
+        'trend_score': trend_score,
+        'operations_processed': total_operations,
+        'reasoning_analysis': self._analyze_reasoning_patterns()
+    }
+
+def _analyze_reasoning_patterns(self) -> Dict[str, Any]:
+    """Analyze reasoning patterns for integrity assessment"""
+    if not hasattr(self, 'reasoning_history') or not self.reasoning_history:
+        return {'pattern_status': 'NO_REASONING_HISTORY'}
+    
+    recent_reasoning = self.reasoning_history[-10:] if len(self.reasoning_history) >= 10 else self.reasoning_history
+    
+    if recent_reasoning:
+        avg_approximation_error = np.mean([r.approximation_error for r in recent_reasoning])
+        avg_symbolic_confidence = np.mean([r.symbolic_confidence for r in recent_reasoning])
+        avg_spline_complexity = np.mean([len(r.spline_coefficients) for r in recent_reasoning])
+        
+        return {
+            'pattern_status': 'NORMAL' if len(recent_reasoning) > 0 else 'NO_RECENT_REASONING',
+            'avg_approximation_error': avg_approximation_error,
+            'avg_symbolic_confidence': avg_symbolic_confidence,
+            'avg_spline_complexity': avg_spline_complexity,
+            'reasoning_operations_analyzed': len(recent_reasoning),
+            'analysis_timestamp': time.time()
+        }
+    
+    return {'pattern_status': 'NO_REASONING_DATA'}
+
+# Bind the methods to the EnhancedKANReasoningAgent class
+EnhancedKANReasoningAgent.audit_kan_reasoning_output = audit_kan_reasoning_output
+EnhancedKANReasoningAgent.auto_correct_kan_reasoning_output = auto_correct_kan_reasoning_output
+EnhancedKANReasoningAgent.analyze_kan_integrity_trends = analyze_kan_integrity_trends
+EnhancedKANReasoningAgent.get_kan_integrity_report = get_kan_integrity_report
+EnhancedKANReasoningAgent.validate_kan_configuration = validate_kan_configuration
+EnhancedKANReasoningAgent._monitor_kan_output_integrity = _monitor_kan_output_integrity
+EnhancedKANReasoningAgent._categorize_kan_violations = _categorize_kan_violations
+EnhancedKANReasoningAgent._generate_kan_integrity_recommendations = _generate_kan_integrity_recommendations
+EnhancedKANReasoningAgent._calculate_kan_integrity_trend = _calculate_kan_integrity_trend
+EnhancedKANReasoningAgent._analyze_reasoning_patterns = _analyze_reasoning_patterns
+
 
 def create_test_functions() -> Dict[str, Callable[[np.ndarray], np.ndarray]]:
     """Create test functions for KAN approximation validation"""

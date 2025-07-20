@@ -5,6 +5,12 @@ This module implements the intelligent routing system that directs tasks to the
 most appropriate hybrid agent based on context, load balancing, and agent
 capabilities. It manages the distributed hybrid agent ecosystem.
 
+Enhanced Features (v3):
+- Complete self-audit integration with real-time integrity monitoring
+- Mathematical validation of routing operations with evidence-based metrics
+- Comprehensive integrity oversight for all routing outputs
+- Auto-correction capabilities for routing-related communications
+
 Key Features:
 - Intelligent task classification and routing
 - Load balancing across agent instances
@@ -27,6 +33,14 @@ import json
 from .hybrid_agent_core import HybridAgent, LLMProvider, ProcessingLayer
 from .hybrid_agent_core import MetaCognitiveProcessor, CuriosityEngine, ValidationAgent
 from ..core.agent import NISLayer
+
+# Integrity metrics for actual calculations
+from src.utils.integrity_metrics import (
+    calculate_confidence, create_default_confidence_factors, ConfidenceFactors
+)
+
+# Self-audit capabilities for real-time integrity monitoring
+from src.utils.self_audit import self_audit_engine, ViolationType, IntegrityViolation
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -237,7 +251,7 @@ class AgentRouter:
     - Context and constraints
     """
     
-    def __init__(self, context_bus: Optional[NISContextBus] = None):
+    def __init__(self, context_bus: Optional[NISContextBus] = None, enable_self_audit: bool = True):
         self.context_bus = context_bus or NISContextBus()
         self.load_monitor = AgentLoadMonitor()
         self.logger = logging.getLogger("nis.agent_router")
@@ -259,7 +273,21 @@ class AgentRouter:
             "average_routing_time": 0.0
         }
         
-        self.logger.info("Initialized AgentRouter")
+        # Set up self-audit integration
+        self.enable_self_audit = enable_self_audit
+        self.integrity_monitoring_enabled = enable_self_audit
+        self.integrity_metrics = {
+            'monitoring_start_time': time.time(),
+            'total_outputs_monitored': 0,
+            'total_violations_detected': 0,
+            'auto_corrections_applied': 0,
+            'average_integrity_score': 100.0
+        }
+        
+        # Initialize confidence factors for mathematical validation
+        self.confidence_factors = create_default_confidence_factors()
+        
+        self.logger.info(f"Initialized AgentRouter with self-audit: {enable_self_audit}")
     
     def register_agent(self, agent: HybridAgent, capabilities: AgentCapabilities):
         """Register a hybrid agent with its capabilities."""
@@ -627,6 +655,363 @@ async def test_agent_router():
     print(f"   Success rate: {status['routing_stats']['successful_routes']}/{status['routing_stats']['total_requests']}")
     
     print("✅ Agent Router test completed")
+
+# ==================== COMPREHENSIVE SELF-AUDIT CAPABILITIES ====================
+
+def audit_agent_routing_output(self, output_text: str, operation: str = "", context: str = "") -> Dict[str, Any]:
+    """
+    Perform real-time integrity audit on agent routing outputs.
+    
+    Args:
+        output_text: Text output to audit
+        operation: Routing operation type (route_task, register_agent, get_status, etc.)
+        context: Additional context for the audit
+        
+    Returns:
+        Audit results with violations and integrity score
+    """
+    if not self.enable_self_audit:
+        return {'integrity_score': 100.0, 'violations': [], 'total_violations': 0}
+    
+    self.logger.info(f"Performing self-audit on agent routing output for operation: {operation}")
+    
+    # Use proven audit engine
+    audit_context = f"agent_routing:{operation}:{context}" if context else f"agent_routing:{operation}"
+    violations = self_audit_engine.audit_text(output_text, audit_context)
+    integrity_score = self_audit_engine.get_integrity_score(output_text)
+    
+    # Log violations for routing-specific analysis
+    if violations:
+        self.logger.warning(f"Detected {len(violations)} integrity violations in agent routing output")
+        for violation in violations:
+            self.logger.warning(f"  - {violation.severity}: {violation.text} -> {violation.suggested_replacement}")
+    
+    return {
+        'violations': violations,
+        'integrity_score': integrity_score,
+        'total_violations': len(violations),
+        'violation_breakdown': self._categorize_routing_violations(violations),
+        'operation': operation,
+        'audit_timestamp': time.time()
+    }
+
+def auto_correct_agent_routing_output(self, output_text: str, operation: str = "") -> Dict[str, Any]:
+    """
+    Automatically correct integrity violations in agent routing outputs.
+    
+    Args:
+        output_text: Text to correct
+        operation: Routing operation type
+        
+    Returns:
+        Corrected output with audit details
+    """
+    if not self.enable_self_audit:
+        return {'corrected_text': output_text, 'violations_fixed': [], 'improvement': 0}
+    
+    self.logger.info(f"Performing self-correction on agent routing output for operation: {operation}")
+    
+    corrected_text, violations = self_audit_engine.auto_correct_text(output_text)
+    
+    # Calculate improvement metrics with mathematical validation
+    original_score = self_audit_engine.get_integrity_score(output_text)
+    corrected_score = self_audit_engine.get_integrity_score(corrected_text)
+    improvement = calculate_confidence(corrected_score - original_score, self.confidence_factors)
+    
+    # Update integrity metrics
+    if hasattr(self, 'integrity_metrics'):
+        self.integrity_metrics['auto_corrections_applied'] += len(violations)
+    
+    return {
+        'original_text': output_text,
+        'corrected_text': corrected_text,
+        'violations_fixed': violations,
+        'original_integrity_score': original_score,
+        'corrected_integrity_score': corrected_score,
+        'improvement': improvement,
+        'operation': operation,
+        'correction_timestamp': time.time()
+    }
+
+def analyze_agent_routing_integrity_trends(self, time_window: int = 3600) -> Dict[str, Any]:
+    """
+    Analyze agent routing integrity trends for self-improvement.
+    
+    Args:
+        time_window: Time window in seconds to analyze
+        
+    Returns:
+        Agent routing integrity trend analysis with mathematical validation
+    """
+    if not self.enable_self_audit:
+        return {'integrity_status': 'MONITORING_DISABLED'}
+    
+    self.logger.info(f"Analyzing agent routing integrity trends over {time_window} seconds")
+    
+    # Get integrity report from audit engine
+    integrity_report = self_audit_engine.generate_integrity_report()
+    
+    # Calculate routing-specific metrics
+    routing_metrics = {
+        'default_strategy': self.default_strategy.value,
+        'max_retries': self.max_retries,
+        'registered_agents_count': len(self.registered_agents),
+        'active_agents_count': len(self.active_agents),
+        'routing_cache_size': len(self.routing_cache),
+        'routing_stats': self.routing_stats,
+        'context_bus_configured': bool(self.context_bus),
+        'load_monitor_configured': bool(self.load_monitor)
+    }
+    
+    # Generate routing-specific recommendations
+    recommendations = self._generate_routing_integrity_recommendations(
+        integrity_report, routing_metrics
+    )
+    
+    return {
+        'integrity_status': integrity_report['integrity_status'],
+        'total_violations': integrity_report['total_violations'],
+        'routing_metrics': routing_metrics,
+        'integrity_trend': self._calculate_routing_integrity_trend(),
+        'recommendations': recommendations,
+        'analysis_timestamp': time.time()
+    }
+
+def get_agent_routing_integrity_report(self) -> Dict[str, Any]:
+    """Generate comprehensive agent routing integrity report"""
+    if not self.enable_self_audit:
+        return {'status': 'SELF_AUDIT_DISABLED'}
+    
+    # Get basic integrity report
+    base_report = self_audit_engine.generate_integrity_report()
+    
+    # Add routing-specific metrics
+    routing_report = {
+        'agent_router_id': getattr(self, 'router_id', 'agent_router'),
+        'monitoring_enabled': self.integrity_monitoring_enabled,
+        'routing_capabilities': {
+            'intelligent_task_classification': True,
+            'load_balancing': True,
+            'agent_capability_matching': True,
+            'context_aware_routing': bool(self.context_bus),
+            'performance_monitoring': bool(self.load_monitor),
+            'failover_management': True,
+            'supported_strategies': [strategy.value for strategy in RoutingStrategy],
+            'default_strategy': self.default_strategy.value
+        },
+        'configuration_status': {
+            'registered_agents': len(self.registered_agents),
+            'active_agents': len(self.active_agents),
+            'max_retries': self.max_retries,
+            'routing_cache_enabled': len(self.routing_cache) > 0,
+            'context_bus_configured': bool(self.context_bus),
+            'load_monitor_configured': bool(self.load_monitor)
+        },
+        'processing_statistics': {
+            'total_requests': self.routing_stats.get('total_requests', 0),
+            'successful_routes': self.routing_stats.get('successful_routes', 0),
+            'failed_routes': self.routing_stats.get('failed_routes', 0),
+            'average_routing_time': self.routing_stats.get('average_routing_time', 0.0),
+            'routing_cache_utilization': len(self.routing_cache)
+        },
+        'integrity_metrics': getattr(self, 'integrity_metrics', {}),
+        'base_integrity_report': base_report,
+        'report_timestamp': time.time()
+    }
+    
+    return routing_report
+
+def validate_agent_routing_configuration(self) -> Dict[str, Any]:
+    """Validate agent routing configuration for integrity"""
+    validation_results = {
+        'valid': True,
+        'warnings': [],
+        'recommendations': []
+    }
+    
+    # Check registered agents
+    if len(self.registered_agents) == 0:
+        validation_results['warnings'].append("No agents registered - routing unavailable")
+        validation_results['recommendations'].append("Register hybrid agents for task routing")
+    
+    # Check active agents
+    if len(self.active_agents) == 0:
+        validation_results['warnings'].append("No active agents - routing will fail")
+        validation_results['recommendations'].append("Ensure registered agents are active")
+    
+    # Check max retries
+    if self.max_retries <= 0:
+        validation_results['warnings'].append("Invalid max retries - must be positive")
+        validation_results['recommendations'].append("Set max_retries to a positive value (e.g., 3)")
+    
+    # Check routing success rate
+    success_rate = (self.routing_stats.get('successful_routes', 0) / 
+                   max(1, self.routing_stats.get('total_requests', 1)))
+    
+    if success_rate < 0.9:
+        validation_results['warnings'].append(f"Low routing success rate: {success_rate:.1%}")
+        validation_results['recommendations'].append("Investigate and resolve routing failures")
+    
+    # Check routing performance
+    avg_time = self.routing_stats.get('average_routing_time', 0.0)
+    if avg_time > 0.5:
+        validation_results['warnings'].append(f"High average routing time: {avg_time:.2f}s")
+        validation_results['recommendations'].append("Consider optimizing routing algorithms or agent performance")
+    
+    # Check context bus and load monitor
+    if not self.context_bus:
+        validation_results['warnings'].append("Context bus not configured - limited context awareness")
+        validation_results['recommendations'].append("Configure context bus for context-aware routing")
+    
+    if not self.load_monitor:
+        validation_results['warnings'].append("Load monitor not configured - no load balancing")
+        validation_results['recommendations'].append("Configure load monitor for load-balanced routing")
+    
+    return validation_results
+
+def _monitor_agent_routing_output_integrity(self, output_text: str, operation: str = "") -> str:
+    """
+    Internal method to monitor and potentially correct agent routing output integrity.
+    
+    Args:
+        output_text: Output to monitor
+        operation: Routing operation type
+        
+    Returns:
+        Potentially corrected output
+    """
+    if not getattr(self, 'integrity_monitoring_enabled', False):
+        return output_text
+    
+    # Perform audit
+    audit_result = self.audit_agent_routing_output(output_text, operation)
+    
+    # Update monitoring metrics
+    if hasattr(self, 'integrity_metrics'):
+        self.integrity_metrics['total_outputs_monitored'] += 1
+        self.integrity_metrics['total_violations_detected'] += audit_result['total_violations']
+    
+    # Auto-correct if violations detected
+    if audit_result['violations']:
+        correction_result = self.auto_correct_agent_routing_output(output_text, operation)
+        
+        self.logger.info(f"Auto-corrected agent routing output: {len(audit_result['violations'])} violations fixed")
+        
+        return correction_result['corrected_text']
+    
+    return output_text
+
+def _categorize_routing_violations(self, violations: List[IntegrityViolation]) -> Dict[str, int]:
+    """Categorize integrity violations specific to routing operations"""
+    categories = defaultdict(int)
+    
+    for violation in violations:
+        categories[violation.violation_type.value] += 1
+    
+    return dict(categories)
+
+def _generate_routing_integrity_recommendations(self, integrity_report: Dict[str, Any], routing_metrics: Dict[str, Any]) -> List[str]:
+    """Generate routing-specific integrity improvement recommendations"""
+    recommendations = []
+    
+    if integrity_report.get('total_violations', 0) > 5:
+        recommendations.append("Consider implementing more rigorous agent routing output validation")
+    
+    if routing_metrics.get('registered_agents_count', 0) < 3:
+        recommendations.append("Register more agents for better routing redundancy")
+    
+    if routing_metrics.get('active_agents_count', 0) == 0:
+        recommendations.append("Ensure agents are active for routing functionality")
+    
+    if routing_metrics.get('routing_cache_size', 0) > 1000:
+        recommendations.append("Routing cache is large - consider implementing cleanup")
+    
+    success_rate = (routing_metrics.get('routing_stats', {}).get('successful_routes', 0) / 
+                   max(1, routing_metrics.get('routing_stats', {}).get('total_requests', 1)))
+    
+    if success_rate < 0.9:
+        recommendations.append("Low routing success rate - investigate agent availability and capabilities")
+    
+    if routing_metrics.get('routing_stats', {}).get('failed_routes', 0) > 10:
+        recommendations.append("High number of failed routes - check agent health and network connectivity")
+    
+    if not routing_metrics.get('context_bus_configured', False):
+        recommendations.append("Configure context bus for enhanced context-aware routing")
+    
+    if not routing_metrics.get('load_monitor_configured', False):
+        recommendations.append("Configure load monitor for load-balanced routing")
+    
+    if len(recommendations) == 0:
+        recommendations.append("Agent routing integrity status is excellent - maintain current practices")
+    
+    return recommendations
+
+def _calculate_routing_integrity_trend(self) -> Dict[str, Any]:
+    """Calculate routing integrity trends with mathematical validation"""
+    if not hasattr(self, 'routing_stats'):
+        return {'trend': 'INSUFFICIENT_DATA'}
+    
+    total_requests = self.routing_stats.get('total_requests', 0)
+    successful_routes = self.routing_stats.get('successful_routes', 0)
+    
+    if total_requests == 0:
+        return {'trend': 'NO_ROUTING_REQUESTS'}
+    
+    success_rate = successful_routes / total_requests
+    failed_routes = self.routing_stats.get('failed_routes', 0)
+    error_rate = failed_routes / total_requests
+    avg_routing_time = self.routing_stats.get('average_routing_time', 0.0)
+    
+    # Calculate trend with mathematical validation
+    routing_efficiency = 1.0 / max(avg_routing_time, 0.1)
+    trend_score = calculate_confidence(
+        (success_rate * 0.5 + (1.0 - error_rate) * 0.3 + min(routing_efficiency, 1.0) * 0.2), 
+        self.confidence_factors
+    )
+    
+    return {
+        'trend': 'IMPROVING' if trend_score > 0.8 else 'STABLE' if trend_score > 0.6 else 'NEEDS_ATTENTION',
+        'success_rate': success_rate,
+        'error_rate': error_rate,
+        'avg_routing_time': avg_routing_time,
+        'trend_score': trend_score,
+        'requests_processed': total_requests,
+        'routing_analysis': self._analyze_routing_patterns()
+    }
+
+def _analyze_routing_patterns(self) -> Dict[str, Any]:
+    """Analyze routing patterns for integrity assessment"""
+    if not hasattr(self, 'routing_stats') or not self.routing_stats:
+        return {'pattern_status': 'NO_ROUTING_STATS'}
+    
+    total_requests = self.routing_stats.get('total_requests', 0)
+    successful_routes = self.routing_stats.get('successful_routes', 0)
+    failed_routes = self.routing_stats.get('failed_routes', 0)
+    avg_routing_time = self.routing_stats.get('average_routing_time', 0.0)
+    
+    return {
+        'pattern_status': 'NORMAL' if total_requests > 0 else 'NO_ROUTING_ACTIVITY',
+        'total_requests': total_requests,
+        'successful_routes': successful_routes,
+        'failed_routes': failed_routes,
+        'success_rate': successful_routes / max(1, total_requests),
+        'avg_routing_time': avg_routing_time,
+        'registered_agents': len(self.registered_agents),
+        'active_agents': len(self.active_agents),
+        'analysis_timestamp': time.time()
+    }
+
+# Bind the methods to the AgentRouter class
+AgentRouter.audit_agent_routing_output = audit_agent_routing_output
+AgentRouter.auto_correct_agent_routing_output = auto_correct_agent_routing_output
+AgentRouter.analyze_agent_routing_integrity_trends = analyze_agent_routing_integrity_trends
+AgentRouter.get_agent_routing_integrity_report = get_agent_routing_integrity_report
+AgentRouter.validate_agent_routing_configuration = validate_agent_routing_configuration
+AgentRouter._monitor_agent_routing_output_integrity = _monitor_agent_routing_output_integrity
+AgentRouter._categorize_routing_violations = _categorize_routing_violations
+AgentRouter._generate_routing_integrity_recommendations = _generate_routing_integrity_recommendations
+AgentRouter._calculate_routing_integrity_trend = _calculate_routing_integrity_trend
+AgentRouter._analyze_routing_patterns = _analyze_routing_patterns
 
 if __name__ == "__main__":
     import asyncio

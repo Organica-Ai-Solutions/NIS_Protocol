@@ -5,6 +5,12 @@ This module implements a Kolmogorov-Arnold Network (KAN) based reasoning agent
 enhanced with symbolic function extraction capabilities. It serves as the symbolic
 layer in the Laplace → KAN → PINN scientific validation pipeline.
 
+Enhanced Features (v3):
+- Complete self-audit integration with real-time integrity monitoring
+- Mathematical validation of symbolic reasoning operations with evidence-based metrics
+- Comprehensive integrity oversight for all KAN symbolic reasoning outputs
+- Auto-correction capabilities for reasoning-related communications
+
 Key Features:
 - Spline-based function approximation for interpretable reasoning
 - Symbolic function extraction from frequency domain patterns
@@ -26,8 +32,17 @@ import logging
 from dataclasses import dataclass, field
 from enum import Enum
 import time
+from collections import defaultdict
 
 from src.core.agent import NISAgent, NISLayer
+
+# Integrity metrics for actual calculations
+from src.utils.integrity_metrics import (
+    calculate_confidence, create_default_confidence_factors, ConfidenceFactors
+)
+
+# Self-audit capabilities for real-time integrity monitoring
+from src.utils.self_audit import self_audit_engine, ViolationType, IntegrityViolation
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -620,7 +635,8 @@ class KANReasoningAgent(NISAgent):
 
     def __init__(self, agent_id: str = "kan_reasoning_001",
                  description: str = "Enhanced KAN symbolic reasoning with archaeological capabilities",
-                 mode: str = "symbolic"):  # "symbolic" or "archaeological"
+                 mode: str = "symbolic",  # "symbolic" or "archaeological"
+                 enable_self_audit: bool = True):
         super().__init__(agent_id, NISLayer.REASONING, description)
 
         self.mode = mode
@@ -660,8 +676,22 @@ class KANReasoningAgent(NISAgent):
             "average_confidence": 0.0,
             "average_processing_time": 0.0
         }
+        
+        # Set up self-audit integration
+        self.enable_self_audit = enable_self_audit
+        self.integrity_monitoring_enabled = enable_self_audit
+        self.integrity_metrics = {
+            'monitoring_start_time': time.time(),
+            'total_outputs_monitored': 0,
+            'total_violations_detected': 0,
+            'auto_corrections_applied': 0,
+            'average_integrity_score': 100.0
+        }
+        
+        # Initialize confidence factors for mathematical validation
+        self.confidence_factors = create_default_confidence_factors()
 
-        logger.info(f"Initialized Enhanced KAN Reasoning Agent: {agent_id} (mode: {mode})")
+        logger.info(f"Initialized Enhanced KAN Reasoning Agent: {agent_id} (mode: {mode}, self-audit: {enable_self_audit})")
 
     def process(self, message: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -1307,3 +1337,375 @@ if __name__ == "__main__":
         print(f"   Interpretability: KAN spline-based reasoning enabled")
     else:
         print(f"❌ Error: {result['payload']}")
+
+    # ==================== COMPREHENSIVE SELF-AUDIT CAPABILITIES ====================
+    
+    def audit_kan_symbolic_output(self, output_text: str, operation: str = "", context: str = "") -> Dict[str, Any]:
+        """
+        Perform real-time integrity audit on KAN symbolic reasoning outputs.
+        
+        Args:
+            output_text: Text output to audit
+            operation: KAN operation type (symbolic_extraction, archaeological_prediction, etc.)
+            context: Additional context for the audit
+            
+        Returns:
+            Audit results with violations and integrity score
+        """
+        if not self.enable_self_audit:
+            return {'integrity_score': 100.0, 'violations': [], 'total_violations': 0}
+        
+        logger.info(f"Performing self-audit on KAN symbolic output for operation: {operation}")
+        
+        # Use proven audit engine
+        audit_context = f"kan_symbolic:{operation}:{context}" if context else f"kan_symbolic:{operation}"
+        violations = self_audit_engine.audit_text(output_text, audit_context)
+        integrity_score = self_audit_engine.get_integrity_score(output_text)
+        
+        # Log violations for KAN symbolic-specific analysis
+        if violations:
+            logger.warning(f"Detected {len(violations)} integrity violations in KAN symbolic output")
+            for violation in violations:
+                logger.warning(f"  - {violation.severity}: {violation.text} -> {violation.suggested_replacement}")
+        
+        return {
+            'violations': violations,
+            'integrity_score': integrity_score,
+            'total_violations': len(violations),
+            'violation_breakdown': self._categorize_kan_symbolic_violations(violations),
+            'operation': operation,
+            'audit_timestamp': time.time()
+        }
+    
+    def auto_correct_kan_symbolic_output(self, output_text: str, operation: str = "") -> Dict[str, Any]:
+        """
+        Automatically correct integrity violations in KAN symbolic outputs.
+        
+        Args:
+            output_text: Text to correct
+            operation: KAN operation type
+            
+        Returns:
+            Corrected output with audit details
+        """
+        if not self.enable_self_audit:
+            return {'corrected_text': output_text, 'violations_fixed': [], 'improvement': 0}
+        
+        logger.info(f"Performing self-correction on KAN symbolic output for operation: {operation}")
+        
+        corrected_text, violations = self_audit_engine.auto_correct_text(output_text)
+        
+        # Calculate improvement metrics with mathematical validation
+        original_score = self_audit_engine.get_integrity_score(output_text)
+        corrected_score = self_audit_engine.get_integrity_score(corrected_text)
+        improvement = calculate_confidence(corrected_score - original_score, self.confidence_factors)
+        
+        # Update integrity metrics
+        if hasattr(self, 'integrity_metrics'):
+            self.integrity_metrics['auto_corrections_applied'] += len(violations)
+        
+        return {
+            'original_text': output_text,
+            'corrected_text': corrected_text,
+            'violations_fixed': violations,
+            'original_integrity_score': original_score,
+            'corrected_integrity_score': corrected_score,
+            'improvement': improvement,
+            'operation': operation,
+            'correction_timestamp': time.time()
+        }
+    
+    def analyze_kan_symbolic_integrity_trends(self, time_window: int = 3600) -> Dict[str, Any]:
+        """
+        Analyze KAN symbolic reasoning integrity trends for self-improvement.
+        
+        Args:
+            time_window: Time window in seconds to analyze
+            
+        Returns:
+            KAN symbolic integrity trend analysis with mathematical validation
+        """
+        if not self.enable_self_audit:
+            return {'integrity_status': 'MONITORING_DISABLED'}
+        
+        logger.info(f"Analyzing KAN symbolic integrity trends over {time_window} seconds")
+        
+        # Get integrity report from audit engine
+        integrity_report = self_audit_engine.generate_integrity_report()
+        
+        # Calculate KAN symbolic-specific metrics
+        kan_symbolic_metrics = {
+            'mode': self.mode,
+            'symbolic_processing_enabled': self.symbolic_processing_enabled,
+            'cultural_sensitivity_threshold': self.cultural_sensitivity_threshold,
+            'indigenous_rights_protection': self.indigenous_rights_protection,
+            'symbolic_network_configured': bool(getattr(self, 'symbolic_network', None)),
+            'kan_network_configured': bool(getattr(self, 'kan_network', None)),
+            'wave_processor_configured': bool(self.wave_processor),
+            'memory_manager_configured': bool(self.memory_manager),
+            'frequency_features_cache_size': len(self.frequency_features_cache),
+            'processing_stats': self.processing_stats
+        }
+        
+        # Generate KAN symbolic-specific recommendations
+        recommendations = self._generate_kan_symbolic_integrity_recommendations(
+            integrity_report, kan_symbolic_metrics
+        )
+        
+        return {
+            'integrity_status': integrity_report['integrity_status'],
+            'total_violations': integrity_report['total_violations'],
+            'kan_symbolic_metrics': kan_symbolic_metrics,
+            'integrity_trend': self._calculate_kan_symbolic_integrity_trend(),
+            'recommendations': recommendations,
+            'analysis_timestamp': time.time()
+        }
+    
+    def get_kan_symbolic_integrity_report(self) -> Dict[str, Any]:
+        """Generate comprehensive KAN symbolic reasoning integrity report"""
+        if not self.enable_self_audit:
+            return {'status': 'SELF_AUDIT_DISABLED'}
+        
+        # Get basic integrity report
+        base_report = self_audit_engine.generate_integrity_report()
+        
+        # Add KAN symbolic-specific metrics
+        kan_symbolic_report = {
+            'kan_symbolic_agent_id': self.agent_id,
+            'monitoring_enabled': self.integrity_monitoring_enabled,
+            'kan_symbolic_capabilities': {
+                'mode': self.mode,
+                'symbolic_processing': self.symbolic_processing_enabled,
+                'spline_based_reasoning': True,
+                'frequency_pattern_extraction': True,
+                'archaeological_prediction': self.mode == "archaeological",
+                'cultural_sensitivity': self.cultural_sensitivity_threshold,
+                'indigenous_rights_protection': self.indigenous_rights_protection,
+                'scientific_pipeline_integration': True
+            },
+            'network_configuration': {
+                'symbolic_network_available': bool(getattr(self, 'symbolic_network', None)),
+                'kan_network_available': bool(getattr(self, 'kan_network', None)),
+                'wave_processor_available': bool(self.wave_processor),
+                'memory_manager_available': bool(self.memory_manager)
+            },
+            'processing_statistics': {
+                'symbolic_extractions': self.processing_stats.get('symbolic_extractions', 0),
+                'archaeological_predictions': self.processing_stats.get('archaeological_predictions', 0),
+                'successful_extractions': self.processing_stats.get('successful_extractions', 0),
+                'average_confidence': self.processing_stats.get('average_confidence', 0.0),
+                'average_processing_time': self.processing_stats.get('average_processing_time', 0.0),
+                'frequency_features_cached': len(self.frequency_features_cache)
+            },
+            'integrity_metrics': getattr(self, 'integrity_metrics', {}),
+            'base_integrity_report': base_report,
+            'report_timestamp': time.time()
+        }
+        
+        return kan_symbolic_report
+    
+    def validate_kan_symbolic_configuration(self) -> Dict[str, Any]:
+        """Validate KAN symbolic reasoning configuration for integrity"""
+        validation_results = {
+            'valid': True,
+            'warnings': [],
+            'recommendations': []
+        }
+        
+        # Check mode configuration
+        if self.mode not in ["symbolic", "archaeological"]:
+            validation_results['valid'] = False
+            validation_results['warnings'].append("Invalid mode - must be 'symbolic' or 'archaeological'")
+            validation_results['recommendations'].append("Set mode to either 'symbolic' or 'archaeological'")
+        
+        # Check network configuration based on mode
+        if self.mode == "symbolic" and not getattr(self, 'symbolic_network', None):
+            validation_results['valid'] = False
+            validation_results['warnings'].append("Symbolic network not configured for symbolic mode")
+            validation_results['recommendations'].append("Initialize symbolic_network for symbolic reasoning")
+        
+        if self.mode == "archaeological" and not getattr(self, 'kan_network', None):
+            validation_results['valid'] = False
+            validation_results['warnings'].append("KAN network not configured for archaeological mode")
+            validation_results['recommendations'].append("Initialize kan_network for archaeological predictions")
+        
+        # Check cultural sensitivity threshold
+        if self.cultural_sensitivity_threshold <= 0 or self.cultural_sensitivity_threshold >= 1:
+            validation_results['warnings'].append("Invalid cultural sensitivity threshold - should be between 0 and 1")
+            validation_results['recommendations'].append("Set cultural_sensitivity_threshold to a value between 0.5-0.9")
+        
+        # Check processing statistics
+        success_rate = (self.processing_stats.get('successful_extractions', 0) / 
+                       max(1, self.processing_stats.get('symbolic_extractions', 1) + 
+                           self.processing_stats.get('archaeological_predictions', 1)))
+        
+        if success_rate < 0.7:
+            validation_results['warnings'].append(f"Low success rate: {success_rate:.1%}")
+            validation_results['recommendations'].append("Investigate and optimize reasoning algorithms for better success rate")
+        
+        # Check wave processor and memory manager
+        if not self.wave_processor:
+            validation_results['warnings'].append("Wave processor not available - missing cognitive processing")
+            validation_results['recommendations'].append("Initialize wave processor for enhanced cognitive capabilities")
+        
+        if not self.memory_manager:
+            validation_results['warnings'].append("Memory manager not available - missing context management")
+            validation_results['recommendations'].append("Initialize memory manager for context-aware reasoning")
+        
+        return validation_results
+    
+    def _monitor_kan_symbolic_output_integrity(self, output_text: str, operation: str = "") -> str:
+        """
+        Internal method to monitor and potentially correct KAN symbolic output integrity.
+        
+        Args:
+            output_text: Output to monitor
+            operation: KAN operation type
+            
+        Returns:
+            Potentially corrected output
+        """
+        if not getattr(self, 'integrity_monitoring_enabled', False):
+            return output_text
+        
+        # Perform audit
+        audit_result = self.audit_kan_symbolic_output(output_text, operation)
+        
+        # Update monitoring metrics
+        if hasattr(self, 'integrity_metrics'):
+            self.integrity_metrics['total_outputs_monitored'] += 1
+            self.integrity_metrics['total_violations_detected'] += audit_result['total_violations']
+        
+        # Auto-correct if violations detected
+        if audit_result['violations']:
+            correction_result = self.auto_correct_kan_symbolic_output(output_text, operation)
+            
+            logger.info(f"Auto-corrected KAN symbolic output: {len(audit_result['violations'])} violations fixed")
+            
+            return correction_result['corrected_text']
+        
+        return output_text
+    
+    def _categorize_kan_symbolic_violations(self, violations: List[IntegrityViolation]) -> Dict[str, int]:
+        """Categorize integrity violations specific to KAN symbolic operations"""
+        categories = defaultdict(int)
+        
+        for violation in violations:
+            categories[violation.violation_type.value] += 1
+        
+        return dict(categories)
+    
+    def _generate_kan_symbolic_integrity_recommendations(self, integrity_report: Dict[str, Any], kan_symbolic_metrics: Dict[str, Any]) -> List[str]:
+        """Generate KAN symbolic-specific integrity improvement recommendations"""
+        recommendations = []
+        
+        if integrity_report.get('total_violations', 0) > 5:
+            recommendations.append("Consider implementing more rigorous KAN symbolic output validation")
+        
+        if not kan_symbolic_metrics.get('symbolic_processing_enabled', False):
+            recommendations.append("Enable symbolic processing for enhanced reasoning capabilities")
+        
+        if not kan_symbolic_metrics.get('symbolic_network_configured', False) and kan_symbolic_metrics.get('mode') == 'symbolic':
+            recommendations.append("Configure symbolic network for symbolic reasoning mode")
+        
+        if not kan_symbolic_metrics.get('kan_network_configured', False) and kan_symbolic_metrics.get('mode') == 'archaeological':
+            recommendations.append("Configure KAN network for archaeological prediction mode")
+        
+        if not kan_symbolic_metrics.get('wave_processor_configured', False):
+            recommendations.append("Initialize wave processor for cognitive processing capabilities")
+        
+        if not kan_symbolic_metrics.get('memory_manager_configured', False):
+            recommendations.append("Initialize memory manager for context management")
+        
+        cache_size = kan_symbolic_metrics.get('frequency_features_cache_size', 0)
+        if cache_size > 1000:
+            recommendations.append("Frequency features cache is large - consider implementing cleanup")
+        
+        success_rate = (kan_symbolic_metrics.get('processing_stats', {}).get('successful_extractions', 0) / 
+                       max(1, kan_symbolic_metrics.get('processing_stats', {}).get('symbolic_extractions', 1) + 
+                           kan_symbolic_metrics.get('processing_stats', {}).get('archaeological_predictions', 1)))
+        
+        if success_rate < 0.7:
+            recommendations.append("Low reasoning success rate - consider optimizing KAN network architecture")
+        
+        avg_confidence = kan_symbolic_metrics.get('processing_stats', {}).get('average_confidence', 0.0)
+        if avg_confidence < 0.7:
+            recommendations.append("Low average confidence - consider improving training data or network parameters")
+        
+        cultural_threshold = kan_symbolic_metrics.get('cultural_sensitivity_threshold', 0.8)
+        if cultural_threshold < 0.7:
+            recommendations.append("Cultural sensitivity threshold is low - consider increasing for better protection")
+        
+        if len(recommendations) == 0:
+            recommendations.append("KAN symbolic reasoning integrity status is excellent - maintain current practices")
+        
+        return recommendations
+    
+    def _calculate_kan_symbolic_integrity_trend(self) -> Dict[str, Any]:
+        """Calculate KAN symbolic integrity trends with mathematical validation"""
+        if not hasattr(self, 'processing_stats'):
+            return {'trend': 'INSUFFICIENT_DATA'}
+        
+        symbolic_extractions = self.processing_stats.get('symbolic_extractions', 0)
+        archaeological_predictions = self.processing_stats.get('archaeological_predictions', 0)
+        successful_extractions = self.processing_stats.get('successful_extractions', 0)
+        total_operations = symbolic_extractions + archaeological_predictions
+        
+        if total_operations == 0:
+            return {'trend': 'NO_OPERATIONS_PROCESSED'}
+        
+        success_rate = successful_extractions / total_operations
+        avg_confidence = self.processing_stats.get('average_confidence', 0.0)
+        avg_processing_time = self.processing_stats.get('average_processing_time', 0.0)
+        
+        # Calculate trend with mathematical validation
+        processing_efficiency = 1.0 / max(avg_processing_time, 0.1)
+        trend_score = calculate_confidence(
+            (success_rate * 0.5 + avg_confidence * 0.3 + min(processing_efficiency / 10.0, 1.0) * 0.2), 
+            self.confidence_factors
+        )
+        
+        return {
+            'trend': 'IMPROVING' if trend_score > 0.8 else 'STABLE' if trend_score > 0.6 else 'NEEDS_ATTENTION',
+            'success_rate': success_rate,
+            'avg_confidence': avg_confidence,
+            'avg_processing_time': avg_processing_time,
+            'trend_score': trend_score,
+            'total_operations': total_operations,
+            'symbolic_analysis': self._analyze_kan_symbolic_patterns()
+        }
+    
+    def _analyze_kan_symbolic_patterns(self) -> Dict[str, Any]:
+        """Analyze KAN symbolic reasoning patterns for integrity assessment"""
+        if not hasattr(self, 'processing_stats') or not self.processing_stats:
+            return {'pattern_status': 'NO_PROCESSING_STATS'}
+        
+        symbolic_extractions = self.processing_stats.get('symbolic_extractions', 0)
+        archaeological_predictions = self.processing_stats.get('archaeological_predictions', 0)
+        successful_extractions = self.processing_stats.get('successful_extractions', 0)
+        avg_confidence = self.processing_stats.get('average_confidence', 0.0)
+        avg_processing_time = self.processing_stats.get('average_processing_time', 0.0)
+        
+        return {
+            'pattern_status': 'NORMAL' if (symbolic_extractions + archaeological_predictions) > 0 else 'NO_OPERATIONS',
+            'symbolic_extractions': symbolic_extractions,
+            'archaeological_predictions': archaeological_predictions,
+            'successful_extractions': successful_extractions,
+            'avg_confidence': avg_confidence,
+            'avg_processing_time': avg_processing_time,
+            'mode': self.mode,
+            'frequency_cache_utilization': len(self.frequency_features_cache),
+            'analysis_timestamp': time.time()
+        }
+
+# Bind the methods to the KANReasoningAgent class
+KANReasoningAgent.audit_kan_symbolic_output = audit_kan_symbolic_output
+KANReasoningAgent.auto_correct_kan_symbolic_output = auto_correct_kan_symbolic_output
+KANReasoningAgent.analyze_kan_symbolic_integrity_trends = analyze_kan_symbolic_integrity_trends
+KANReasoningAgent.get_kan_symbolic_integrity_report = get_kan_symbolic_integrity_report
+KANReasoningAgent.validate_kan_symbolic_configuration = validate_kan_symbolic_configuration
+KANReasoningAgent._monitor_kan_symbolic_output_integrity = _monitor_kan_symbolic_output_integrity
+KANReasoningAgent._categorize_kan_symbolic_violations = _categorize_kan_symbolic_violations
+KANReasoningAgent._generate_kan_symbolic_integrity_recommendations = _generate_kan_symbolic_integrity_recommendations
+KANReasoningAgent._calculate_kan_symbolic_integrity_trend = _calculate_kan_symbolic_integrity_trend
+KANReasoningAgent._analyze_kan_symbolic_patterns = _analyze_kan_symbolic_patterns

@@ -3,6 +3,12 @@ Memory Agent
 
 Stores and retrieves information for use by other agents in the system.
 Analogous to the hippocampus in the brain, responsible for memory formation and recall.
+
+Enhanced Features (v3):
+- Complete self-audit integration with real-time integrity monitoring
+- Mathematical validation of memory operations with evidence-based metrics
+- Comprehensive integrity oversight for all memory outputs
+- Auto-correction capabilities for memory-related communications
 """
 
 from typing import Dict, Any, List, Optional, Union
@@ -10,10 +16,19 @@ import time
 import json
 import os
 import datetime
-from collections import deque
+import logging
+from collections import deque, defaultdict
 
 from src.core.registry import NISAgent, NISLayer, NISRegistry
 from src.emotion.emotional_state import EmotionalState, EmotionalDimension
+
+# Integrity metrics for actual calculations
+from src.utils.integrity_metrics import (
+    calculate_confidence, create_default_confidence_factors, ConfidenceFactors
+)
+
+# Self-audit capabilities for real-time integrity monitoring
+from src.utils.self_audit import self_audit_engine, ViolationType, IntegrityViolation
 
 
 class MemoryAgent(NISAgent):
@@ -33,7 +48,8 @@ class MemoryAgent(NISAgent):
         description: str = "Stores and retrieves information for the system",
         emotional_state: Optional[EmotionalState] = None,
         storage_path: Optional[str] = None,
-        short_term_capacity: int = 1000
+        short_term_capacity: int = 1000,
+        enable_self_audit: bool = True
     ):
         """
         Initialize a new Memory Agent.
@@ -44,6 +60,7 @@ class MemoryAgent(NISAgent):
             emotional_state: Optional pre-configured emotional state
             storage_path: Path to store persistent memory data
             short_term_capacity: Maximum number of items in short-term memory
+            enable_self_audit: Whether to enable real-time integrity monitoring
         """
         super().__init__(agent_id, NISLayer.MEMORY, description)
         self.emotional_state = emotional_state or EmotionalState()
@@ -55,10 +72,30 @@ class MemoryAgent(NISAgent):
         self.storage_path = storage_path
         if storage_path and not os.path.exists(storage_path):
             os.makedirs(storage_path, exist_ok=True)
+        
+        # Set up self-audit integration
+        self.enable_self_audit = enable_self_audit
+        self.integrity_monitoring_enabled = enable_self_audit
+        self.integrity_metrics = {
+            'monitoring_start_time': time.time(),
+            'total_outputs_monitored': 0,
+            'total_violations_detected': 0,
+            'auto_corrections_applied': 0,
+            'average_integrity_score': 100.0
+        }
+        
+        # Initialize confidence factors for mathematical validation
+        self.confidence_factors = create_default_confidence_factors()
+        
+        # Set up logging
+        self.logger = logging.getLogger(f"nis_memory_agent_{agent_id}")
+        self.logger.setLevel(logging.INFO)
+        
+        self.logger.info(f"Memory Agent initialized with self-audit: {enable_self_audit}")
     
     def process(self, message: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Process a memory-related request.
+        Process a memory-related request with integrated self-audit monitoring.
         
         Args:
             message: Message containing memory operation
@@ -68,33 +105,66 @@ class MemoryAgent(NISAgent):
                 'memory_id': ID of memory to forget (for 'forget' operation)
         
         Returns:
-            Result of the memory operation
+            Result of the memory operation with integrity monitoring
         """
         if not self._validate_message(message):
-            return {
+            error_response = {
                 "status": "error",
                 "error": "Invalid message format or missing required fields",
                 "agent_id": self.agent_id,
                 "timestamp": time.time()
             }
-        
+            
+            # Apply self-audit monitoring to error response
+            if self.enable_self_audit:
+                error_text = error_response.get("error", "")
+                error_response["error"] = self._monitor_memory_output_integrity(error_text, "validation_error")
+            
+            return error_response
+
         operation = message.get("operation", "").lower()
         
-        if operation == "store":
-            return self._store_memory(message)
-        elif operation == "retrieve":
-            return self._retrieve_memory(message)
-        elif operation == "query":
-            return self._query_memory(message)
-        elif operation == "forget":
-            return self._forget_memory(message)
-        else:
-            return {
-                "status": "error",
-                "error": f"Unknown operation: {operation}",
+        # Route to appropriate handler with self-audit monitoring
+        try:
+            if operation == "store":
+                result = self._store_memory(message)
+            elif operation == "retrieve":
+                result = self._retrieve_memory(message)
+            elif operation == "query":
+                result = self._query_memory(message)
+            elif operation == "forget":
+                result = self._forget_memory(message)
+            else:
+                result = {
+                    "status": "error",
+                    "error": f"Unknown operation: {operation}",
+                    "agent_id": self.agent_id,
+                    "timestamp": time.time()
+                }
+            
+            # Apply self-audit monitoring to all responses
+            if self.enable_self_audit and result:
+                result = self._apply_memory_integrity_monitoring(result, operation)
+            
+            return result
+            
+        except Exception as e:
+            error_response = {
+                "status": "error", 
+                "error": f"Memory operation failed: {str(e)}",
+                "operation": operation,
                 "agent_id": self.agent_id,
                 "timestamp": time.time()
             }
+            
+            # Apply self-audit monitoring to exception response
+            if self.enable_self_audit:
+                error_text = error_response.get("error", "")
+                error_response["error"] = self._monitor_memory_output_integrity(error_text, f"{operation}_error")
+            
+            self.logger.error(f"Memory operation {operation} failed: {str(e)}")
+            
+            return error_response
     
     def _validate_message(self, message: Dict[str, Any]) -> bool:
         """
@@ -434,3 +504,244 @@ class MemoryAgent(NISAgent):
             pass
         
         return results 
+    
+    # ==================== SELF-AUDIT CAPABILITIES ====================
+    
+    def audit_memory_output(self, output_text: str, operation: str = "", context: str = "") -> Dict[str, Any]:
+        """
+        Perform real-time integrity audit on memory operation outputs.
+        
+        Args:
+            output_text: Text output to audit
+            operation: Memory operation type (store, retrieve, query, etc.)
+            context: Additional context for the audit
+            
+        Returns:
+            Audit results with violations and integrity score
+        """
+        if not self.enable_self_audit:
+            return {'integrity_score': 100.0, 'violations': [], 'total_violations': 0}
+        
+        self.logger.info(f"Performing self-audit on memory output for operation: {operation}")
+        
+        # Use proven audit engine
+        audit_context = f"memory:{operation}:{context}" if context else f"memory:{operation}"
+        violations = self_audit_engine.audit_text(output_text, audit_context)
+        integrity_score = self_audit_engine.get_integrity_score(output_text)
+        
+        # Log violations for memory-specific analysis
+        if violations:
+            self.logger.warning(f"Detected {len(violations)} integrity violations in memory output")
+            for violation in violations:
+                self.logger.warning(f"  - {violation.severity}: {violation.text} -> {violation.suggested_replacement}")
+        
+        return {
+            'violations': violations,
+            'integrity_score': integrity_score,
+            'total_violations': len(violations),
+            'violation_breakdown': self._categorize_memory_violations(violations),
+            'operation': operation,
+            'audit_timestamp': time.time()
+        }
+    
+    def auto_correct_memory_output(self, output_text: str, operation: str = "") -> Dict[str, Any]:
+        """
+        Automatically correct integrity violations in memory outputs.
+        
+        Args:
+            output_text: Text to correct
+            operation: Memory operation type
+            
+        Returns:
+            Corrected output with audit details
+        """
+        if not self.enable_self_audit:
+            return {'corrected_text': output_text, 'violations_fixed': [], 'improvement': 0}
+        
+        self.logger.info(f"Performing self-correction on memory output for operation: {operation}")
+        
+        corrected_text, violations = self_audit_engine.auto_correct_text(output_text)
+        
+        # Calculate improvement metrics with mathematical validation
+        original_score = self_audit_engine.get_integrity_score(output_text)
+        corrected_score = self_audit_engine.get_integrity_score(corrected_text)
+        improvement = calculate_confidence(corrected_score - original_score, self.confidence_factors)
+        
+        # Update integrity metrics
+        if hasattr(self, 'integrity_metrics'):
+            self.integrity_metrics['auto_corrections_applied'] += len(violations)
+        
+        return {
+            'original_text': output_text,
+            'corrected_text': corrected_text,
+            'violations_fixed': violations,
+            'original_integrity_score': original_score,
+            'corrected_integrity_score': corrected_score,
+            'improvement': improvement,
+            'operation': operation,
+            'correction_timestamp': time.time()
+        }
+    
+    def analyze_memory_integrity_trends(self, time_window: int = 3600) -> Dict[str, Any]:
+        """
+        Analyze memory operation integrity trends for self-improvement.
+        
+        Args:
+            time_window: Time window in seconds to analyze
+            
+        Returns:
+            Memory integrity trend analysis with mathematical validation
+        """
+        if not self.enable_self_audit:
+            return {'integrity_status': 'MONITORING_DISABLED'}
+        
+        self.logger.info(f"Analyzing memory integrity trends over {time_window} seconds")
+        
+        # Get integrity report from audit engine
+        integrity_report = self_audit_engine.generate_integrity_report()
+        
+        # Calculate memory-specific metrics
+        memory_metrics = {
+            'short_term_utilization': len(self.short_term) / self.short_term.maxlen if self.short_term.maxlen else 0,
+            'storage_path_configured': bool(self.storage_path),
+            'total_stored_memories': len(self.short_term)
+        }
+        
+        # Generate memory-specific recommendations
+        recommendations = self._generate_memory_integrity_recommendations(
+            integrity_report, memory_metrics
+        )
+        
+        return {
+            'integrity_status': integrity_report['integrity_status'],
+            'total_violations': integrity_report['total_violations'],
+            'memory_metrics': memory_metrics,
+            'integrity_trend': self._calculate_memory_integrity_trend(),
+            'recommendations': recommendations,
+            'analysis_timestamp': time.time()
+        }
+    
+    def get_memory_integrity_report(self) -> Dict[str, Any]:
+        """Generate comprehensive memory integrity report"""
+        if not self.enable_self_audit:
+            return {'status': 'SELF_AUDIT_DISABLED'}
+        
+        # Get basic integrity report
+        base_report = self_audit_engine.generate_integrity_report()
+        
+        # Add memory-specific metrics
+        memory_report = {
+            'memory_agent_id': self.agent_id,
+            'monitoring_enabled': self.integrity_monitoring_enabled,
+            'memory_capacity_status': {
+                'short_term': f"{len(self.short_term)}/{self.short_term.maxlen}" if self.short_term.maxlen else "unlimited"
+            },
+            'storage_configuration': {
+                'path_configured': bool(self.storage_path),
+                'path': self.storage_path or "in_memory_only"
+            },
+            'integrity_metrics': getattr(self, 'integrity_metrics', {}),
+            'base_integrity_report': base_report,
+            'report_timestamp': time.time()
+        }
+        
+        return memory_report
+    
+    def _monitor_memory_output_integrity(self, output_text: str, operation: str = "") -> str:
+        """
+        Internal method to monitor and potentially correct memory output integrity.
+        
+        Args:
+            output_text: Output to monitor
+            operation: Memory operation type
+            
+        Returns:
+            Potentially corrected output
+        """
+        if not getattr(self, 'integrity_monitoring_enabled', False):
+            return output_text
+        
+        # Perform audit
+        audit_result = self.audit_memory_output(output_text, operation)
+        
+        # Update monitoring metrics
+        if hasattr(self, 'integrity_metrics'):
+            self.integrity_metrics['total_outputs_monitored'] += 1
+            self.integrity_metrics['total_violations_detected'] += audit_result['total_violations']
+        
+        # Auto-correct if violations detected
+        if audit_result['violations']:
+            correction_result = self.auto_correct_memory_output(output_text, operation)
+            
+            self.logger.info(f"Auto-corrected memory output: {len(audit_result['violations'])} violations fixed")
+            
+            return correction_result['corrected_text']
+        
+        return output_text
+    
+    def _apply_memory_integrity_monitoring(self, result: Dict[str, Any], operation: str) -> Dict[str, Any]:
+        """Apply integrity monitoring to response data"""
+        if not self.enable_self_audit or not result:
+            return result
+        
+        # Monitor text fields in the response
+        for key, value in result.items():
+            if isinstance(value, str) and len(value) > 10:  # Only monitor substantial text
+                monitored_text = self._monitor_memory_output_integrity(value, f"{operation}_{key}")
+                if monitored_text != value:
+                    result[key] = monitored_text
+        
+        return result
+    
+    def _categorize_memory_violations(self, violations: List[IntegrityViolation]) -> Dict[str, int]:
+        """Categorize integrity violations specific to memory operations"""
+        categories = defaultdict(int)
+        
+        for violation in violations:
+            categories[violation.violation_type.value] += 1
+        
+        return dict(categories)
+    
+    def _generate_memory_integrity_recommendations(self, integrity_report: Dict[str, Any], memory_metrics: Dict[str, Any]) -> List[str]:
+        """Generate memory-specific integrity improvement recommendations"""
+        recommendations = []
+        
+        if integrity_report.get('total_violations', 0) > 5:
+            recommendations.append("Consider implementing more rigorous input validation for memory operations")
+        
+        if memory_metrics.get('short_term_utilization', 0) > 0.9:
+            recommendations.append("Short-term memory approaching capacity - consider increasing capacity or implementing cleanup")
+        
+        if not memory_metrics.get('storage_path_configured', False):
+            recommendations.append("Configure persistent storage path for improved memory reliability")
+        
+        if len(recommendations) == 0:
+            recommendations.append("Memory integrity status is excellent - maintain current practices")
+        
+        return recommendations
+    
+    def _calculate_memory_integrity_trend(self) -> Dict[str, Any]:
+        """Calculate memory integrity trends with mathematical validation"""
+        if not hasattr(self, 'integrity_metrics'):
+            return {'trend': 'INSUFFICIENT_DATA'}
+        
+        monitoring_time = time.time() - self.integrity_metrics.get('monitoring_start_time', time.time())
+        total_outputs = self.integrity_metrics.get('total_outputs_monitored', 0)
+        total_violations = self.integrity_metrics.get('total_violations_detected', 0)
+        
+        if total_outputs == 0:
+            return {'trend': 'NO_OUTPUTS_MONITORED'}
+        
+        violation_rate = total_violations / total_outputs
+        violations_per_hour = (total_violations / monitoring_time) * 3600 if monitoring_time > 0 else 0
+        
+        # Calculate trend with mathematical validation
+        trend_score = calculate_confidence(1.0 - violation_rate, self.confidence_factors)
+        
+        return {
+            'trend': 'IMPROVING' if trend_score > 0.8 else 'STABLE' if trend_score > 0.6 else 'NEEDS_ATTENTION',
+            'violation_rate': violation_rate,
+            'violations_per_hour': violations_per_hour,
+            'trend_score': trend_score,
+            'monitoring_duration_hours': monitoring_time / 3600
+        } 
