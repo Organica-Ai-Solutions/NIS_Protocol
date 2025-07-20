@@ -1,6 +1,6 @@
 # NIS Protocol Enhanced Memory Example
 
-This example demonstrates the capabilities of the EnhancedMemoryAgent, which provides advanced memory management features including semantic search, memory organization, and forgetting mechanisms inspired by cognitive architectures.
+This example demonstrates the capabilities of the EnhancedMemoryAgent, which provides comprehensive memory management features including semantic search, memory organization, and forgetting mechanisms inspired by cognitive architectures.
 
 ## Features Demonstrated
 

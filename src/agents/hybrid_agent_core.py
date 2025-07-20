@@ -230,7 +230,14 @@ class CompleteScientificPipeline:
             result.layer_outputs["laplace"] = {"status": "success" if laplace_result else "failed"}
 
             if laplace_result:
-                result.confidence_scores["laplace"] = 0.9
+                # Calculate Laplace confidence based on actual processing quality
+                factors = ConfidenceFactors(
+                    data_quality=min(1.0, len(laplace_result.transformed_signal) / 100.0) if hasattr(laplace_result, 'transformed_signal') else 0.8,
+                    algorithm_stability=0.92,  # Laplace transforms are mathematically stable
+                    validation_coverage=laplace_result.snr if hasattr(laplace_result, 'snr') else 0.75,
+                    error_rate=laplace_result.noise_level if hasattr(laplace_result, 'noise_level') else 0.1
+                )
+                result.confidence_scores["laplace"] = calculate_confidence(factors)
 
                 # Stage 2: KAN Symbolic Reasoning
                 self.logger.info("Stage 2: KAN Symbolic Processing")

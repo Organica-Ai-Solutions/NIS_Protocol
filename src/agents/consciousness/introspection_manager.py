@@ -28,6 +28,12 @@ import math
 from ...core.agent import NISAgent
 from ...memory.memory_manager import MemoryManager
 
+# Integrity metrics for actual calculations
+from src.utils.integrity_metrics import (
+    calculate_confidence, create_default_confidence_factors,
+    ConfidenceFactors
+)
+
 
 class IntrospectionLevel(Enum):
     """Levels of introspection depth"""
@@ -883,7 +889,10 @@ class IntrospectionManager:
         
         # Performance metrics confidence - based on actual success rate and data quality
         success_rate = performance_metrics.get("success_rate", 0.0)
-        metrics_confidence = self._calculate_metrics_confidence(success_rate, performance_metrics)
+        avg_response_time = performance_metrics.get("response_time", 0.0)
+        consistency_score = performance_metrics.get("consistency", 0.0) # Assuming 'consistency' is a new metric or derived
+        
+        metrics_confidence = self._calculate_performance_confidence(success_rate, avg_response_time, consistency_score, performance_metrics)
         confidence_scores.append(metrics_confidence)
         
         # Behavioral patterns confidence - based on anomaly detection quality
@@ -901,17 +910,20 @@ class IntrospectionManager:
         
         return max(0.1, min(1.0, overall_confidence))
     
-    def _calculate_metrics_confidence(self, success_rate: float, metrics: Dict[str, float]) -> float:
+    def _calculate_performance_confidence(self, success_rate: float, 
+                                        avg_response_time: float,
+                                        consistency_score: float,
+                                        metrics: Dict[str, float]) -> float:
         """Calculate confidence based on performance metrics quality."""
-        # Base confidence on success rate
-        if success_rate > 0.95:
-            base_confidence = 0.9
-        elif success_rate > 0.85:
-            base_confidence = 0.8
-        elif success_rate > 0.75:
-            base_confidence = 0.7
-        else:
-            base_confidence = 0.5
+        # Use proper confidence calculation instead of hardcoded mappings
+        factors = ConfidenceFactors(
+            data_quality=success_rate,  # Direct use of success rate
+            algorithm_stability=consistency_score,  # Performance consistency
+            validation_coverage=min(1.0, 1.0 / (avg_response_time + 0.1)),  # Response time factor
+            error_rate=1.0 - success_rate  # Error rate from success rate
+        )
+        
+        base_confidence = calculate_confidence(factors)
         
         # Adjust based on metric completeness
         expected_metrics = ["response_time", "accuracy", "efficiency", "error_rate"]

@@ -41,10 +41,10 @@ def test_llm_provider_manager():
         # Test 2: Single provider response
         context = PhysicsInformedContext(
             original_prompt="Analyze the energy conservation in this oscillating system",
-            physics_compliance=0.85,
+            physics_compliance=0.72,  # Realistic test value, not "impressive"
             symbolic_functions=["sin(2*pi*t)*exp(-0.1*t)"],
             scientific_insights=["Damped harmonic oscillator", "Energy dissipation present"],
-            integrity_score=0.88,
+            integrity_score=0.68,  # Realistic test value
             task_type=TaskType.SCIENTIFIC_ANALYSIS
         )
         
@@ -395,10 +395,10 @@ def test_response_fusion_quality():
         for test_config in fusion_tests:
             context = PhysicsInformedContext(
                 original_prompt="Compare different approaches to solving this optimization problem",
-                physics_compliance=0.87,
+                physics_compliance=0.74,  # Realistic test value
                 symbolic_functions=["minimize f(x) subject to g(x) ≤ 0"],
                 scientific_insights=["Constrained optimization", "Lagrange multipliers applicable"],
-                integrity_score=0.89,
+                integrity_score=0.71,  # Realistic test value
                 task_type=TaskType.MATHEMATICAL_REASONING
             )
             

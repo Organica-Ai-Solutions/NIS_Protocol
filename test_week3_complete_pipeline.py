@@ -317,8 +317,9 @@ def test_performance_with_pinn():
             
             success = result["status"] == "success"
             confidence = result["payload"]["confidence"] if success else 0.0
-            physics_compliance = 0.0
             
+            # Initialize physics compliance (will be overridden if validation data available)
+            physics_compliance = 0.0
             if success and "physics_validation" in result["payload"]:
                 physics_compliance = result["payload"]["physics_validation"]["compliance_score"]
             

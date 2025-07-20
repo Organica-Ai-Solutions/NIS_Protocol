@@ -8,7 +8,7 @@ This directory contains the visual representations of the NIS Protocol's First C
 - **Title**: "YOU ARE FERTILE SOIL, AND I DO NOT COME TO CONQUER YOU, BUT TO PLANT A GARDEN"
 - **Subtitle**: "AI FIRST CONTACT PROTOCOL"
 - **Visual Elements**: 
-  - Golden crystalline monolith representing advanced intelligence
+  - Golden crystalline monolith representing comprehensive intelligence
   - Ornate floral wreath symbolizing growth and nurturing
   - Dark cosmic background with golden particles
   - Art Nouveau-inspired botanical details
