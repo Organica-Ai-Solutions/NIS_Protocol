@@ -1,0 +1,179 @@
+# 🎯 NIS PROTOCOL ENGINEERING INTEGRITY RULES
+# Version: 2.0 | Updated: 2025-01-19
+# Purpose: Prevent integrity violations and maintain professional credibility
+
+## 🚨 CORE PRINCIPLE: HONEST ENGINEERING
+# "Build impressive systems, describe them accurately, deploy them reliably"
+
+## 📋 MANDATORY INTEGRITY CHECKS
+
+### 1. NO HARDCODED PERFORMANCE VALUES
+# NEVER hardcode impressive-looking metrics:
+# ❌ FORBIDDEN:
+# confidence = 0.9
+# physics_compliance = 0.85  
+# accuracy = 0.95
+# interpretability = 0.90
+
+# ✅ REQUIRED:
+# confidence = calculate_confidence(data)
+# physics_compliance = validate_physics(result)
+# accuracy = measure_performance(test_data)
+# interpretability = assess_transparency(model)
+
+### 2. NO UNSUBSTANTIATED HYPE LANGUAGE
+# FORBIDDEN TERMS without actual implementation:
+# ❌ "advanced multi-agent system"
+# ❌ "KAN interpretability-driven"  
+# ❌ "novel breakthrough"
+# ❌ "optimized performance"
+# ❌ "97.3% interpretability"
+# ❌ "sub-second processing"
+# ❌ "mathematically-inspired"
+
+# PREFERRED ACCURATE TERMS:
+# ✅ "physics-informed constraints"
+# ✅ "well-engineered architecture" 
+# ✅ "production-ready implementation"
+# ✅ "validated performance metrics"
+# ✅ "measured accuracy: [actual benchmark result]"
+
+### 3. EVIDENCE-BASED CLAIMS ONLY
+# Every technical claim MUST have supporting code/benchmarks:
+# ❌ "95% accuracy" without benchmark
+# ❌ "5x faster" without comparison test
+# ❌ "real-time processing" without timing validation
+# ❌ "zero hallucination" without error analysis
+
+# ✅ Link to specific test: "see benchmarks/accuracy_test.py"
+# ✅ Reference implementation: "measured in test_performance.py"
+# ✅ Provide actual results: "achieved 0.89 accuracy on test dataset"
+
+### 4. IMPLEMENTATION-FIRST DEVELOPMENT
+# Build the capability BEFORE claiming it:
+# 1. Write the actual implementation
+# 2. Create comprehensive tests  
+# 3. Run performance benchmarks
+# 4. THEN document the verified results
+# 5. Include limitations and constraints
+
+### 5. MODULAR ARCHITECTURE VALIDATION
+# For the NIS Protocol v3 Laplace→KAN→PINN→LLM pipeline:
+# ✅ Each layer must have independent tests
+# ✅ Integration tests for full pipeline
+# ✅ Physics validation must be actual computation
+# ✅ Performance claims backed by benchmarks
+# ✅ Clear separation of concerns
+
+## 🔧 SPECIFIC NIS PROTOCOL RULES
+
+### LAPLACE TRANSFORM LAYER
+# ✅ Implement actual signal processing, not placeholder
+# ✅ Validate frequency domain transformation
+# ✅ Test with realistic signal data
+# ❌ No hardcoded "signal_quality = 0.9"
+
+### KAN REASONING LAYER  
+# ✅ Implement spline-based function approximation
+# ✅ Validate symbolic function extraction
+# ✅ Test interpretability claims with actual analysis
+# ❌ No claims about "interpretability" without measurement
+
+### PINN PHYSICS LAYER
+# ✅ Implement actual physics constraint validation
+# ✅ Test conservation law enforcement
+# ✅ Validate auto-correction mechanisms
+# ❌ No hardcoded "physics_compliance" scores
+
+### LLM INTEGRATION LAYER
+# ✅ Test actual multi-LLM provider management
+# ✅ Validate response fusion algorithms
+# ✅ Benchmark performance optimization
+# ❌ No claims about "advanced" without comparison
+
+## 📊 TESTING & VALIDATION REQUIREMENTS
+
+### MANDATORY TEST COVERAGE
+# Every module MUST have:
+# ✅ Unit tests for core functionality
+# ✅ Integration tests for layer interactions
+# ✅ Performance benchmarks for claims
+# ✅ Error handling and edge case tests
+
+### PERFORMANCE VALIDATION
+# Before claiming ANY performance metric:
+# ✅ Run actual benchmark with real data
+# ✅ Compare against baseline implementation
+# ✅ Document test methodology and results
+# ✅ Include confidence intervals and limitations
+
+### DOCUMENTATION ACCURACY
+# All documentation MUST:
+# ✅ Match actual implementation
+# ✅ Include working code examples
+# ✅ Reference specific test files
+# ✅ Acknowledge current limitations
+
+## 🚀 DEVELOPMENT WORKFLOW
+
+### BEFORE ANY COMMIT
+# 1. Run integrity check: `python nis-integrity-toolkit/audit-scripts/pre-submission-check.py`
+# 2. Fix ALL blocking issues before committing
+# 3. Ensure claims match implementation
+# 4. Validate all performance metrics
+
+### BEFORE ANY PULL REQUEST
+# 1. Run full audit: `python nis-integrity-toolkit/audit-scripts/full-audit.py --project-path . --output-report`
+# 2. Achieve integrity score ≥ 80/100
+# 3. Address all HIGH and MEDIUM issues
+# 4. Update documentation to match code
+
+### BEFORE ANY RELEASE
+# 1. Complete end-to-end testing
+# 2. Validate all architectural claims  
+# 3. Confirm benchmark results
+# 4. Generate honest performance report
+
+## 💡 POSITIVE FRAMING EXAMPLES
+
+### INSTEAD OF: "Revolutionary KAN interpretability breakthrough"
+### SAY: "Spline-based function approximation with measurable transparency"
+
+### INSTEAD OF: "97.3% physics compliance guarantee"  
+### SAY: "Physics constraint validation with auto-correction (tested on [dataset])"
+
+### INSTEAD OF: "Advanced multi-agent system coordination"
+### SAY: "Multi-LLM provider management with validated response fusion"
+
+### INSTEAD OF: "Sub-second processing breakthrough"
+### SAY: "Processing time: [actual measured latency] on [test hardware]"
+
+## 🎯 SUCCESS METRICS
+
+### ENGINEERING SUCCESS
+# ✅ All claims backed by actual implementation
+# ✅ Performance metrics validated through testing
+# ✅ Architecture documentation matches code
+# ✅ Integrity score consistently ≥ 80/100
+
+### COMMUNICATION SUCCESS
+# ✅ Technical claims are verifiable
+# ✅ Marketing language supported by evidence
+# ✅ Limitations clearly acknowledged
+# ✅ Professional credibility maintained
+
+## 🛡️ FINAL CHECKPOINT
+
+### ASK BEFORE ANY SUBMISSION
+# 1. "Can I demonstrate every claim I'm making?"
+# 2. "Do the tests actually validate what I'm claiming?"
+# 3. "Would a skeptical expert agree with my technical descriptions?"
+# 4. "Am I proud of both the engineering work AND how I'm describing it?"
+
+## 🔥 REMEMBER
+# Great engineering speaks for itself.
+# Accurate technical communication builds trust.
+# Reliable systems win in the long run.
+# Honest descriptions of impressive work are more impressive than hype.
+
+# INTEGRITY FIRST. ALWAYS. 

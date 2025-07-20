@@ -65,24 +65,29 @@ class A2AAdapter(BaseProtocolAdapter):
         header = a2a_message.get("agentCardHeader", {})
         content = a2a_message.get("agentCardContent", {})
         
-        # Extract the action from the content
+        # Extract the action from the content - handle different formats
         action = "unknown_action"
+        data = {}
+        
         if "actionRequest" in content:
             action = content["actionRequest"].get("actionName", "unknown_action")
+            if "arguments" in content["actionRequest"]:
+                data = content["actionRequest"]["arguments"]
         elif "actionResponse" in content:
             action = "response"
+            if "returnValue" in content["actionResponse"]:
+                data = content["actionResponse"]["returnValue"]
+        elif "request" in content:
+            # Handle simple request format used in tests
+            request = content["request"]
+            action = request.get("action", "unknown_action")
+            data = request.get("data", {})
         
-        # Extract the data payload
-        data = {}
-        if "actionRequest" in content and "arguments" in content["actionRequest"]:
-            data = content["actionRequest"]["arguments"]
-        elif "actionResponse" in content and "returnValue" in content["actionResponse"]:
-            data = content["actionResponse"]["returnValue"]
-        
-        # Map to NIS format
+        # Map to NIS format with action at top level
         nis_message = {
             "protocol": "nis",
             "timestamp": time.time(),
+            "action": action,  # Action at top level for compatibility
             "source_protocol": "a2a",
             "original_message": a2a_message,
             "payload": {

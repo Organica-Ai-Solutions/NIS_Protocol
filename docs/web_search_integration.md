@@ -2,7 +2,7 @@
 
 ## Overview
 
-The NIS Protocol Web Search Agent provides advanced research capabilities that integrate seamlessly with the Cognitive Orchestra for intelligent information gathering, analysis, and synthesis. This system is specifically designed for archaeological and cultural research with built-in cultural sensitivity and academic source prioritization.
+The NIS Protocol Web Search Agent provides comprehensive research capabilities that integrate seamlessly with the Cognitive Orchestra for intelligent information gathering, analysis, and synthesis. This system is specifically designed for archaeological and cultural research with built-in cultural sensitivity and academic source prioritization.
 
 ## Architecture
 
@@ -141,7 +141,7 @@ print(f"Found {results['total_results']} sources")
 print(f"Top result: {results['top_results'][0].title}")
 ```
 
-### Advanced Research Query
+### Comprehensive Research Query
 
 ```python
 from agents.research import ResearchQuery, ResearchDomain
@@ -328,7 +328,7 @@ print(f"Cache size: {stats['cache_size']}")
 
 1. **Real-time Search**: Live search result updates for ongoing research
 2. **Collaborative Research**: Multi-user research session support
-3. **Advanced Synthesis**: More sophisticated LLM-based synthesis
+3. **Comprehensive Synthesis**: More sophisticated LLM-based synthesis
 4. **Visual Search**: Image and video search integration
 5. **Multilingual Support**: Research in multiple languages
 

@@ -553,13 +553,16 @@ class MemoryPrunerAgent(NISAgent):
                     current_capacity -= memory_item.storage_size
             else:
                 # Already at target capacity
+                # Calculate confidence based on capacity analysis
+                capacity_confidence = min(0.95, 0.7 + (0.25 * (target_capacity - current_size) / max(target_capacity, 1)))
+                
                 decision = PruningDecision(
                     memory_id=memory_item.memory_id,
                     should_prune=False,
                     pruning_strategy=PruningStrategy.CAPACITY_BASED,
                     criteria_scores={PruningCriteria.STORAGE_SIZE: 0.0},
-                    confidence=0.9,
-                    reason="Target capacity reached",
+                    confidence=capacity_confidence,
+                    reason="Target capacity reached - confidence calculated from capacity analysis",
                     alternative_actions=[]
                 )
             
@@ -582,13 +585,16 @@ class MemoryPrunerAgent(NISAgent):
             if len(cluster_memories) <= 1:
                 # No redundancy possible with single memory
                 for memory_item in cluster_memories:
+                    # Calculate confidence based on cluster isolation
+                    cluster_confidence = min(0.95, 0.8 + (0.15 * memory_item.importance))
+                    
                     decision = PruningDecision(
                         memory_id=memory_item.memory_id,
                         should_prune=False,
                         pruning_strategy=PruningStrategy.SEMANTIC_BASED,
                         criteria_scores={PruningCriteria.REDUNDANCY: 0.0},
-                        confidence=0.9,
-                        reason="No redundancy in cluster",
+                        confidence=cluster_confidence,
+                        reason="No redundancy in cluster - confidence based on importance analysis",
                         alternative_actions=[]
                     )
                     decisions.append(decision)

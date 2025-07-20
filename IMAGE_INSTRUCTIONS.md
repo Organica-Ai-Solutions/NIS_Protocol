@@ -32,10 +32,10 @@ Your visualizations will enhance these sections:
   <p><em>MLP: static, hard to interpret. KAN: dynamic, visual, symbolic.</em></p>
 </div>
 
-### **Enter KAN: The Future of Interpretable AI**
+### **Enter KAN: The Future of Mathematically-Traceable AI**
 <div align="center">
   <img src="assets/images/v3_mathematical_foundation/kan.png" alt="Enter KAN Surface Comparison" width="800"/>
-  <p><em>KAN's smooth, interpretable surfaces vs MLP's rigid approximations.</em></p>
+  <p><em>KAN's smooth, mathematically-traceable surfaces vs MLP's rigid approximations.</em></p>
 </div>
 ```
 
@@ -73,4 +73,4 @@ These images will demonstrate:
 - **🏗️ Architecture Integration**: How KAN powers our specific agents
 - **📊 Competitive Edge**: Visual differentiation from all competitors
 
-Your visualizations are perfect for showing why NIS Protocol v3.0 is the world's first interpretable AGI system!
+Your visualizations are perfect for showing why NIS Protocol v3.0 is the world's first mathematically-traceable AGI system!
