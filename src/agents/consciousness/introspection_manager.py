@@ -34,6 +34,9 @@ from src.utils.integrity_metrics import (
     ConfidenceFactors
 )
 
+# Self-audit capabilities for real-time integrity monitoring
+from src.utils.self_audit import self_audit_engine, ViolationType, IntegrityViolation
+
 
 class IntrospectionLevel(Enum):
     """Levels of introspection depth"""
@@ -1642,3 +1645,299 @@ class IntrospectionManager:
             confidence += 0.05
         
         return max(0.3, min(0.8, confidence))  # Keep initial confidence reasonable 
+    
+    # ==================== SELF-AUDIT CAPABILITIES ====================
+    
+    def audit_introspection_output(self, introspection_result: Dict[str, Any], 
+                                 agent_id: str = "") -> Dict[str, Any]:
+        """
+        Audit introspection outputs for integrity violations.
+        
+        Args:
+            introspection_result: The introspection result to audit
+            agent_id: ID of the agent being introspected
+            
+        Returns:
+            Audit results with violations and integrity score
+        """
+        self.logger.info(f"Auditing introspection output for agent {agent_id}")
+        
+        # Extract text content from introspection result
+        text_content = self._extract_text_from_introspection(introspection_result)
+        
+        # Perform audit
+        violations = self_audit_engine.audit_text(text_content, f"introspection:{agent_id}")
+        integrity_score = self_audit_engine.get_integrity_score(text_content)
+        
+        # Log violations
+        if violations:
+            self.logger.warning(f"Introspection integrity violations for {agent_id}: {len(violations)}")
+            for violation in violations:
+                self.logger.warning(f"  - {violation.severity}: {violation.text}")
+        
+        return {
+            'agent_id': agent_id,
+            'violations': violations,
+            'integrity_score': integrity_score,
+            'total_violations': len(violations),
+            'violation_breakdown': self._categorize_violations(violations),
+            'introspection_integrity_status': self._assess_introspection_integrity(integrity_score),
+            'audit_timestamp': time.time()
+        }
+    
+    def monitor_agent_integrity_patterns(self, agent_id: str, 
+                                       time_window: int = 3600) -> Dict[str, Any]:
+        """
+        Monitor integrity patterns for a specific agent over time.
+        
+        Args:
+            agent_id: Agent to monitor
+            time_window: Time window in seconds to analyze
+            
+        Returns:
+            Agent-specific integrity pattern analysis
+        """
+        self.logger.info(f"Monitoring integrity patterns for agent {agent_id}")
+        
+        # Get agent's introspection history
+        agent_introspections = [
+            result for result in self.introspection_results 
+            if result.agent_id == agent_id
+        ]
+        
+        # Analyze integrity trends for this agent
+        integrity_trends = self._analyze_agent_integrity_trends(agent_introspections)
+        
+        # Generate agent-specific recommendations
+        recommendations = self._generate_agent_integrity_recommendations(
+            agent_id, integrity_trends
+        )
+        
+        return {
+            'agent_id': agent_id,
+            'introspections_analyzed': len(agent_introspections),
+            'integrity_trends': integrity_trends,
+            'recommendations': recommendations,
+            'monitoring_timestamp': time.time()
+        }
+    
+    def enable_system_wide_integrity_monitoring(self) -> Dict[str, Any]:
+        """
+        Enable integrity monitoring across all agents in the system.
+        
+        Returns:
+            System monitoring status
+        """
+        self.logger.info("Enabling system-wide integrity monitoring")
+        
+        # Initialize system integrity monitoring
+        self.system_integrity_monitoring = {
+            'enabled': True,
+            'start_time': time.time(),
+            'monitored_agents': set(),
+            'total_violations_system_wide': 0,
+            'agent_integrity_scores': {},
+            'system_integrity_trends': []
+        }
+        
+        return {
+            'status': 'ENABLED',
+            'monitoring_start_time': self.system_integrity_monitoring['start_time'],
+            'message': 'System-wide integrity monitoring activated'
+        }
+    
+    def generate_system_integrity_report(self) -> Dict[str, Any]:
+        """
+        Generate comprehensive system-wide integrity report.
+        
+        Returns:
+            System integrity analysis
+        """
+        self.logger.info("Generating system integrity report")
+        
+        if not hasattr(self, 'system_integrity_monitoring') or not self.system_integrity_monitoring['enabled']:
+            return {
+                'status': 'MONITORING_NOT_ENABLED',
+                'message': 'Enable system-wide monitoring first'
+            }
+        
+        # Analyze integrity across all monitored agents
+        system_analysis = self._analyze_system_integrity()
+        
+        # Calculate system-wide integrity score
+        system_score = self._calculate_system_integrity_score()
+        
+        # Generate system recommendations
+        recommendations = self._generate_system_integrity_recommendations(system_analysis)
+        
+        return {
+            'system_integrity_score': system_score,
+            'total_agents_monitored': len(self.system_integrity_monitoring['monitored_agents']),
+            'system_violations': self.system_integrity_monitoring['total_violations_system_wide'],
+            'agent_integrity_breakdown': self.system_integrity_monitoring['agent_integrity_scores'],
+            'system_analysis': system_analysis,
+            'recommendations': recommendations,
+            'report_timestamp': time.time()
+        }
+    
+    def _extract_text_from_introspection(self, introspection_result: Dict[str, Any]) -> str:
+        """Extract text content from introspection result for auditing"""
+        text_parts = []
+        
+        # Extract from various result fields
+        if 'summary' in introspection_result:
+            text_parts.append(str(introspection_result['summary']))
+        
+        if 'recommendations' in introspection_result:
+            recommendations = introspection_result['recommendations']
+            if isinstance(recommendations, list):
+                text_parts.extend([str(rec) for rec in recommendations])
+            else:
+                text_parts.append(str(recommendations))
+        
+        if 'analysis' in introspection_result:
+            text_parts.append(str(introspection_result['analysis']))
+        
+        if 'insights' in introspection_result:
+            text_parts.append(str(introspection_result['insights']))
+        
+        return " ".join(text_parts)
+    
+    def _categorize_violations(self, violations: List[IntegrityViolation]) -> Dict[str, int]:
+        """Categorize violations by type and severity"""
+        breakdown = {
+            'hype_language': 0,
+            'unsubstantiated_claims': 0,
+            'perfection_claims': 0,
+            'interpretability_claims': 0,
+            'high_severity': 0,
+            'medium_severity': 0,
+            'low_severity': 0
+        }
+        
+        for violation in violations:
+            # Count by type
+            if violation.violation_type == ViolationType.HYPE_LANGUAGE:
+                breakdown['hype_language'] += 1
+            elif violation.violation_type == ViolationType.UNSUBSTANTIATED_CLAIM:
+                breakdown['unsubstantiated_claims'] += 1
+            elif violation.violation_type == ViolationType.PERFECTION_CLAIM:
+                breakdown['perfection_claims'] += 1
+            elif violation.violation_type == ViolationType.INTERPRETABILITY_CLAIM:
+                breakdown['interpretability_claims'] += 1
+            
+            # Count by severity
+            if violation.severity == "HIGH":
+                breakdown['high_severity'] += 1
+            elif violation.severity == "MEDIUM":
+                breakdown['medium_severity'] += 1
+            else:
+                breakdown['low_severity'] += 1
+        
+        return breakdown
+    
+    def _assess_introspection_integrity(self, integrity_score: float) -> str:
+        """Assess the integrity status of introspection results"""
+        if integrity_score >= 90:
+            return "EXCELLENT"
+        elif integrity_score >= 75:
+            return "GOOD"
+        elif integrity_score >= 60:
+            return "NEEDS_IMPROVEMENT"
+        else:
+            return "CRITICAL"
+    
+    def _analyze_agent_integrity_trends(self, introspections: List) -> Dict[str, Any]:
+        """Analyze integrity trends for a specific agent"""
+        if len(introspections) < 2:
+            return {'trend': 'INSUFFICIENT_DATA', 'analysis': 'Need more introspection data'}
+        
+        # Simple trend analysis
+        recent_introspections = introspections[-5:]  # Last 5
+        older_introspections = introspections[:-5] if len(introspections) > 5 else []
+        
+        if not older_introspections:
+            return {'trend': 'BASELINE_ESTABLISHED', 'analysis': 'Initial integrity baseline set'}
+        
+        # For now, return stable trend (can be enhanced with actual integrity scoring)
+        return {
+            'trend': 'STABLE',
+            'recent_count': len(recent_introspections),
+            'older_count': len(older_introspections),
+            'analysis': 'Agent integrity appears stable over time'
+        }
+    
+    def _generate_agent_integrity_recommendations(self, agent_id: str, 
+                                                integrity_trends: Dict[str, Any]) -> List[str]:
+        """Generate agent-specific integrity recommendations"""
+        recommendations = []
+        
+        recommendations.append(f"Continue monitoring {agent_id} for integrity patterns")
+        recommendations.append("Enable real-time integrity correction for agent outputs")
+        
+        if integrity_trends['trend'] == 'INSUFFICIENT_DATA':
+            recommendations.append("Increase introspection frequency to gather more integrity data")
+        
+        return recommendations
+    
+    def _analyze_system_integrity(self) -> Dict[str, Any]:
+        """Analyze integrity patterns across the entire system"""
+        if not hasattr(self, 'system_integrity_monitoring'):
+            return {'status': 'NO_MONITORING_DATA'}
+        
+        monitoring = self.system_integrity_monitoring
+        
+        return {
+            'total_agents': len(monitoring['monitored_agents']),
+            'total_violations': monitoring['total_violations_system_wide'],
+            'average_integrity_score': self._calculate_average_system_integrity(),
+            'integrity_distribution': self._calculate_integrity_distribution()
+        }
+    
+    def _calculate_system_integrity_score(self) -> float:
+        """Calculate overall system integrity score"""
+        if not hasattr(self, 'system_integrity_monitoring'):
+            return 0.0
+        
+        agent_scores = self.system_integrity_monitoring['agent_integrity_scores']
+        
+        if not agent_scores:
+            return 100.0  # No violations detected yet
+        
+        return sum(agent_scores.values()) / len(agent_scores)
+    
+    def _calculate_average_system_integrity(self) -> float:
+        """Calculate average integrity score across all agents"""
+        return self._calculate_system_integrity_score()
+    
+    def _calculate_integrity_distribution(self) -> Dict[str, int]:
+        """Calculate distribution of integrity scores across agents"""
+        if not hasattr(self, 'system_integrity_monitoring'):
+            return {}
+        
+        scores = self.system_integrity_monitoring['agent_integrity_scores'].values()
+        
+        distribution = {
+            'excellent': sum(1 for score in scores if score >= 90),
+            'good': sum(1 for score in scores if 75 <= score < 90),
+            'needs_improvement': sum(1 for score in scores if 60 <= score < 75),
+            'critical': sum(1 for score in scores if score < 60)
+        }
+        
+        return distribution
+    
+    def _generate_system_integrity_recommendations(self, system_analysis: Dict[str, Any]) -> List[str]:
+        """Generate system-wide integrity recommendations"""
+        recommendations = []
+        
+        recommendations.append("Continue system-wide integrity monitoring")
+        recommendations.append("Enable auto-correction for high-violation agents")
+        
+        if system_analysis.get('total_violations', 0) > 10:
+            recommendations.append("Focus on agents with highest violation rates")
+        
+        avg_score = system_analysis.get('average_integrity_score', 100)
+        if avg_score < 80:
+            recommendations.append("Implement comprehensive integrity training for all agents")
+        
+        return recommendations 

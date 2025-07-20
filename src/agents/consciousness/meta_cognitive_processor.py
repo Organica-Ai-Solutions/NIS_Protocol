@@ -47,6 +47,9 @@ from src.utils.integrity_metrics import (
     ConfidenceFactors
 )
 
+# Self-audit capabilities for real-time integrity monitoring
+from src.utils.self_audit import self_audit_engine, ViolationType, IntegrityViolation
+
 
 class CognitiveProcess(Enum):
     """Types of cognitive processes that can be analyzed"""
@@ -2748,3 +2751,266 @@ class MetaCognitiveProcessor:
         confidence = data_confidence * complexity_factor * baseline_factor
         
         return max(0.1, min(1.0, confidence))
+    
+    # ==================== SELF-AUDIT CAPABILITIES ====================
+    
+    def audit_self_output(self, output_text: str, context: str = "") -> Dict[str, Any]:
+        """
+        Perform real-time integrity audit on the agent's own output.
+        
+        Args:
+            output_text: Text output to audit
+            context: Additional context for the audit
+            
+        Returns:
+            Audit results with violations and integrity score
+        """
+        self.logger.info("Performing self-audit on output")
+        
+        # Use our proven audit engine
+        violations = self_audit_engine.audit_text(output_text, context)
+        integrity_score = self_audit_engine.get_integrity_score(output_text)
+        
+        # Log violations for metacognitive analysis
+        if violations:
+            self.logger.warning(f"Detected {len(violations)} integrity violations in output")
+            for violation in violations:
+                self.logger.warning(f"  - {violation.severity}: {violation.text} -> {violation.suggested_replacement}")
+        
+        return {
+            'violations': violations,
+            'integrity_score': integrity_score,
+            'total_violations': len(violations),
+            'violation_breakdown': self._categorize_violations(violations),
+            'self_correction_suggestions': self._generate_self_corrections(violations),
+            'audit_timestamp': time.time()
+        }
+    
+    def auto_correct_self_output(self, output_text: str) -> Dict[str, Any]:
+        """
+        Automatically correct integrity violations in agent output.
+        
+        Args:
+            output_text: Text to correct
+            
+        Returns:
+            Corrected output with audit details
+        """
+        self.logger.info("Performing self-correction on output")
+        
+        corrected_text, violations = self_audit_engine.auto_correct_text(output_text)
+        
+        # Calculate improvement metrics
+        original_score = self_audit_engine.get_integrity_score(output_text)
+        corrected_score = self_audit_engine.get_integrity_score(corrected_text)
+        improvement = corrected_score - original_score
+        
+        return {
+            'original_text': output_text,
+            'corrected_text': corrected_text,
+            'violations_fixed': violations,
+            'original_integrity_score': original_score,
+            'corrected_integrity_score': corrected_score,
+            'improvement': improvement,
+            'correction_timestamp': time.time()
+        }
+    
+    def analyze_integrity_trends(self, time_window: int = 3600) -> Dict[str, Any]:
+        """
+        Analyze integrity violation trends over time for self-improvement.
+        
+        Args:
+            time_window: Time window in seconds to analyze
+            
+        Returns:
+            Integrity trend analysis
+        """
+        self.logger.info(f"Analyzing integrity trends over {time_window} seconds")
+        
+        # Get integrity report from audit engine
+        integrity_report = self_audit_engine.generate_integrity_report()
+        
+        # Analyze patterns in violations
+        violation_patterns = self._analyze_violation_patterns()
+        
+        # Calculate integrity improvement recommendations
+        recommendations = self._generate_integrity_recommendations(
+            integrity_report, violation_patterns
+        )
+        
+        return {
+            'integrity_status': integrity_report['integrity_status'],
+            'total_violations': integrity_report['total_violations'],
+            'violation_patterns': violation_patterns,
+            'improvement_trend': self._calculate_integrity_trend(),
+            'recommendations': recommendations,
+            'analysis_timestamp': time.time()
+        }
+    
+    def enable_real_time_integrity_monitoring(self) -> bool:
+        """
+        Enable continuous integrity monitoring for all agent outputs.
+        
+        Returns:
+            Success status
+        """
+        self.logger.info("Enabling real-time integrity monitoring")
+        
+        # Set flag for monitoring
+        self.integrity_monitoring_enabled = True
+        
+        # Initialize monitoring metrics
+        self.integrity_metrics = {
+            'monitoring_start_time': time.time(),
+            'total_outputs_monitored': 0,
+            'total_violations_detected': 0,
+            'auto_corrections_applied': 0,
+            'average_integrity_score': 100.0
+        }
+        
+        return True
+    
+    def _monitor_output_integrity(self, output_text: str) -> str:
+        """
+        Internal method to monitor and potentially correct output integrity.
+        
+        Args:
+            output_text: Output to monitor
+            
+        Returns:
+            Potentially corrected output
+        """
+        if not hasattr(self, 'integrity_monitoring_enabled') or not self.integrity_monitoring_enabled:
+            return output_text
+        
+        # Perform audit
+        audit_result = self.audit_self_output(output_text)
+        
+        # Update monitoring metrics
+        self.integrity_metrics['total_outputs_monitored'] += 1
+        self.integrity_metrics['total_violations_detected'] += audit_result['total_violations']
+        
+        # Auto-correct if violations detected
+        if audit_result['violations']:
+            correction_result = self.auto_correct_self_output(output_text)
+            self.integrity_metrics['auto_corrections_applied'] += 1
+            
+            self.logger.info(f"Auto-corrected output: {len(audit_result['violations'])} violations fixed")
+            return correction_result['corrected_text']
+        
+        return output_text
+    
+    def _categorize_violations(self, violations: List[IntegrityViolation]) -> Dict[str, int]:
+        """Categorize violations by type and severity"""
+        breakdown = {
+            'hype_language': 0,
+            'unsubstantiated_claims': 0,
+            'perfection_claims': 0,
+            'interpretability_claims': 0,
+            'high_severity': 0,
+            'medium_severity': 0,
+            'low_severity': 0
+        }
+        
+        for violation in violations:
+            # Count by type
+            if violation.violation_type == ViolationType.HYPE_LANGUAGE:
+                breakdown['hype_language'] += 1
+            elif violation.violation_type == ViolationType.UNSUBSTANTIATED_CLAIM:
+                breakdown['unsubstantiated_claims'] += 1
+            elif violation.violation_type == ViolationType.PERFECTION_CLAIM:
+                breakdown['perfection_claims'] += 1
+            elif violation.violation_type == ViolationType.INTERPRETABILITY_CLAIM:
+                breakdown['interpretability_claims'] += 1
+            
+            # Count by severity
+            if violation.severity == "HIGH":
+                breakdown['high_severity'] += 1
+            elif violation.severity == "MEDIUM":
+                breakdown['medium_severity'] += 1
+            else:
+                breakdown['low_severity'] += 1
+        
+        return breakdown
+    
+    def _generate_self_corrections(self, violations: List[IntegrityViolation]) -> List[str]:
+        """Generate specific self-correction suggestions"""
+        suggestions = []
+        
+        for violation in violations:
+            suggestion = f"Replace '{violation.text}' with '{violation.suggested_replacement}'"
+            if violation.severity == "HIGH":
+                suggestion += " (HIGH PRIORITY)"
+            suggestions.append(suggestion)
+        
+        return suggestions
+    
+    def _analyze_violation_patterns(self) -> Dict[str, Any]:
+        """Analyze patterns in integrity violations"""
+        violations = self_audit_engine.violation_history
+        
+        if not violations:
+            return {'pattern_status': 'No violations detected'}
+        
+        # Analyze common violation types
+        type_counts = {}
+        for violation in violations:
+            type_key = violation.violation_type.value
+            type_counts[type_key] = type_counts.get(type_key, 0) + 1
+        
+        # Find most common violation
+        most_common = max(type_counts.items(), key=lambda x: x[1]) if type_counts else None
+        
+        return {
+            'total_violations_analyzed': len(violations),
+            'violation_type_distribution': type_counts,
+            'most_common_violation': most_common[0] if most_common else None,
+            'most_common_count': most_common[1] if most_common else 0,
+            'pattern_analysis_timestamp': time.time()
+        }
+    
+    def _generate_integrity_recommendations(self, integrity_report: Dict[str, Any], 
+                                          violation_patterns: Dict[str, Any]) -> List[str]:
+        """Generate specific recommendations for integrity improvement"""
+        recommendations = []
+        
+        # Base recommendations from audit engine
+        recommendations.extend(integrity_report.get('recommendations', []))
+        
+        # Pattern-specific recommendations
+        if violation_patterns.get('most_common_violation'):
+            common_violation = violation_patterns['most_common_violation']
+            if common_violation == 'hype_language':
+                recommendations.append('Focus on replacing hype language with technical descriptions')
+            elif common_violation == 'unsubstantiated_claim':
+                recommendations.append('Provide evidence links for all performance claims')
+        
+        # Meta-cognitive specific recommendations
+        recommendations.append('Integrate self-audit into all output generation processes')
+        recommendations.append('Enable real-time integrity monitoring for continuous improvement')
+        
+        return list(set(recommendations))  # Remove duplicates
+    
+    def _calculate_integrity_trend(self) -> str:
+        """Calculate overall integrity improvement trend"""
+        violations = self_audit_engine.violation_history
+        
+        if len(violations) < 2:
+            return "INSUFFICIENT_DATA"
+        
+        # Simple trend analysis based on recent vs older violations
+        recent_violations = [v for v in violations[-10:]]  # Last 10
+        older_violations = [v for v in violations[:-10]] if len(violations) > 10 else []
+        
+        if not older_violations:
+            return "BASELINE_ESTABLISHED"
+        
+        recent_avg_severity = sum(1 if v.severity == "HIGH" else 0.5 for v in recent_violations) / len(recent_violations)
+        older_avg_severity = sum(1 if v.severity == "HIGH" else 0.5 for v in older_violations) / len(older_violations)
+        
+        if recent_avg_severity < older_avg_severity:
+            return "IMPROVING"
+        elif recent_avg_severity > older_avg_severity:
+            return "DECLINING"
+        else:
+            return "STABLE"

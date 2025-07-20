@@ -13,8 +13,8 @@ import asyncio
 import logging
 from enum import Enum
 
-from ..core.agent import NISAgent, NISLayer
-from ..adapters.base_adapter import BaseProtocolAdapter
+from core.agent import NISAgent, NISLayer
+from adapters.base_adapter import BaseProtocolAdapter
 
 class ProtocolPriority(Enum):
     """Priority levels for protocol message handling"""

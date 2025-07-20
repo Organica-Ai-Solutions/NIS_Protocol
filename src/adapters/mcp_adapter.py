@@ -71,11 +71,15 @@ class MCPAdapter(BaseProtocolAdapter):
                     arguments = function_call["arguments"]
             except Exception:
                 arguments = {"raw_arguments": function_call.get("arguments", "")}
+        elif "parameters" in function_call:
+            # Handle parameters field as well
+            arguments = function_call.get("parameters", {})
         
-        # Map to NIS format
+        # Map to NIS format with action at top level
         nis_message = {
             "protocol": "nis",
             "timestamp": time.time(),
+            "action": function_call.get("name", "unknown_action"),  # Action at top level
             "source_protocol": "mcp",
             "original_message": mcp_message,
             "payload": {

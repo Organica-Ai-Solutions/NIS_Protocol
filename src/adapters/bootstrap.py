@@ -8,10 +8,10 @@ import json
 import os
 from typing import Dict, Any, Optional
 
-from src.agents.coordination.coordinator_agent import CoordinatorAgent
-from .mcp_adapter import MCPAdapter
-from .acp_adapter import ACPAdapter
-from .a2a_adapter import A2AAdapter
+from agents.coordination.coordinator_agent import CoordinatorAgent
+from adapters.mcp_adapter import MCPAdapter
+from adapters.acp_adapter import ACPAdapter
+from adapters.a2a_adapter import A2AAdapter
 
 
 def load_config(config_path: str) -> Dict[str, Any]:
