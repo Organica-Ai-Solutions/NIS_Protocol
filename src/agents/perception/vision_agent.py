@@ -4,12 +4,20 @@ Vision Agent
 Processes visual inputs such as images, video streams, or UI interactions.
 Analogous to the visual cortex in the brain. Implements YOLO-based object detection
 and OpenCV for image processing.
+
+Enhanced Features (v3):
+- Complete self-audit integration with real-time integrity monitoring
+- Mathematical validation of vision operations with evidence-based metrics
+- Comprehensive integrity oversight for all vision outputs
+- Auto-correction capabilities for vision-related communications
 """
 
 from typing import Dict, Any, List, Optional, Tuple, Union
 import time
 import numpy as np
 import os
+import logging
+from collections import defaultdict
 
 try:
     import cv2
@@ -20,6 +28,14 @@ except ImportError:
 
 from src.core.registry import NISAgent, NISLayer, NISRegistry
 from src.emotion.emotional_state import EmotionalState, EmotionalDimension
+
+# Integrity metrics for actual calculations
+from src.utils.integrity_metrics import (
+    calculate_confidence, create_default_confidence_factors, ConfidenceFactors
+)
+
+# Self-audit capabilities for real-time integrity monitoring
+from src.utils.self_audit import self_audit_engine, ViolationType, IntegrityViolation
 
 
 class YOLOModel:
@@ -230,7 +246,8 @@ class VisionAgent(NISAgent):
         description: str = "Processes visual inputs and identifies objects using YOLO",
         emotional_state: Optional[EmotionalState] = None,
         yolo_model_path: Optional[str] = None,
-        confidence_threshold: float = 0.5
+        confidence_threshold: float = 0.5,
+        enable_self_audit: bool = True
     ):
         """
         Initialize the Vision Agent.
@@ -241,6 +258,7 @@ class VisionAgent(NISAgent):
             emotional_state: Initial emotional state
             yolo_model_path: Path to YOLO model weights
             confidence_threshold: Minimum confidence for object detection
+            enable_self_audit: Whether to enable real-time integrity monitoring
         """
         super().__init__(agent_id, description, emotional_state)
         
@@ -259,10 +277,32 @@ class VisionAgent(NISAgent):
         self.max_image_size = (1024, 1024)  # Max dimensions for processing
         self.supported_formats = ['.jpg', '.jpeg', '.png', '.bmp', '.tiff']
         
+        # Initialize detection history for tracking and analysis
+        self.detection_history = []
+        
+        # Set up self-audit integration
+        self.enable_self_audit = enable_self_audit
+        self.integrity_monitoring_enabled = enable_self_audit
+        self.integrity_metrics = {
+            'monitoring_start_time': time.time(),
+            'total_outputs_monitored': 0,
+            'total_violations_detected': 0,
+            'auto_corrections_applied': 0,
+            'average_integrity_score': 100.0
+        }
+        
+        # Initialize confidence factors for mathematical validation
+        self.confidence_factors = create_default_confidence_factors()
+        
+        # Set up enhanced logging
+        if not hasattr(self, 'logger'):
+            self.logger = logging.getLogger(f"nis_vision_agent_{agent_id}")
+            self.logger.setLevel(logging.INFO)
+        
         # Register with NIS system
         NISRegistry.register_agent(self)
         
-        self.logger.info(f"Vision Agent '{agent_id}' initialized with OpenCV available: {CV2_AVAILABLE}")
+        self.logger.info(f"Vision Agent '{agent_id}' initialized with OpenCV available: {CV2_AVAILABLE}, self-audit: {enable_self_audit}")
     
     def process(self, message: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -646,3 +686,298 @@ class VisionAgent(NISAgent):
     def __del__(self):
         """Clean up resources when the agent is destroyed."""
         self._stop_streaming() 
+    
+    # ==================== SELF-AUDIT CAPABILITIES ====================
+    
+    def audit_vision_output(self, output_text: str, operation: str = "", context: str = "") -> Dict[str, Any]:
+        """
+        Perform real-time integrity audit on vision operation outputs.
+        
+        Args:
+            output_text: Text output to audit
+            operation: Vision operation type (detect, process_image, analyze, etc.)
+            context: Additional context for the audit
+            
+        Returns:
+            Audit results with violations and integrity score
+        """
+        if not self.enable_self_audit:
+            return {'integrity_score': 100.0, 'violations': [], 'total_violations': 0}
+        
+        self.logger.info(f"Performing self-audit on vision output for operation: {operation}")
+        
+        # Use proven audit engine
+        audit_context = f"vision:{operation}:{context}" if context else f"vision:{operation}"
+        violations = self_audit_engine.audit_text(output_text, audit_context)
+        integrity_score = self_audit_engine.get_integrity_score(output_text)
+        
+        # Log violations for vision-specific analysis
+        if violations:
+            self.logger.warning(f"Detected {len(violations)} integrity violations in vision output")
+            for violation in violations:
+                self.logger.warning(f"  - {violation.severity}: {violation.text} -> {violation.suggested_replacement}")
+        
+        return {
+            'violations': violations,
+            'integrity_score': integrity_score,
+            'total_violations': len(violations),
+            'violation_breakdown': self._categorize_vision_violations(violations),
+            'operation': operation,
+            'audit_timestamp': time.time()
+        }
+    
+    def auto_correct_vision_output(self, output_text: str, operation: str = "") -> Dict[str, Any]:
+        """
+        Automatically correct integrity violations in vision outputs.
+        
+        Args:
+            output_text: Text to correct
+            operation: Vision operation type
+            
+        Returns:
+            Corrected output with audit details
+        """
+        if not self.enable_self_audit:
+            return {'corrected_text': output_text, 'violations_fixed': [], 'improvement': 0}
+        
+        self.logger.info(f"Performing self-correction on vision output for operation: {operation}")
+        
+        corrected_text, violations = self_audit_engine.auto_correct_text(output_text)
+        
+        # Calculate improvement metrics with mathematical validation
+        original_score = self_audit_engine.get_integrity_score(output_text)
+        corrected_score = self_audit_engine.get_integrity_score(corrected_text)
+        improvement = calculate_confidence(corrected_score - original_score, self.confidence_factors)
+        
+        # Update integrity metrics
+        if hasattr(self, 'integrity_metrics'):
+            self.integrity_metrics['auto_corrections_applied'] += len(violations)
+        
+        return {
+            'original_text': output_text,
+            'corrected_text': corrected_text,
+            'violations_fixed': violations,
+            'original_integrity_score': original_score,
+            'corrected_integrity_score': corrected_score,
+            'improvement': improvement,
+            'operation': operation,
+            'correction_timestamp': time.time()
+        }
+    
+    def analyze_vision_integrity_trends(self, time_window: int = 3600) -> Dict[str, Any]:
+        """
+        Analyze vision operation integrity trends for self-improvement.
+        
+        Args:
+            time_window: Time window in seconds to analyze
+            
+        Returns:
+            Vision integrity trend analysis with mathematical validation
+        """
+        if not self.enable_self_audit:
+            return {'integrity_status': 'MONITORING_DISABLED'}
+        
+        self.logger.info(f"Analyzing vision integrity trends over {time_window} seconds")
+        
+        # Get integrity report from audit engine
+        integrity_report = self_audit_engine.generate_integrity_report()
+        
+        # Calculate vision-specific metrics
+        vision_metrics = {
+            'opencv_available': CV2_AVAILABLE,
+            'yolo_model_loaded': bool(self.yolo_model),
+            'detection_history_length': len(getattr(self, 'detection_history', [])),
+            'video_streaming_active': getattr(self, 'is_streaming', False),
+            'supported_formats_count': len(self.supported_formats)
+        }
+        
+        # Generate vision-specific recommendations
+        recommendations = self._generate_vision_integrity_recommendations(
+            integrity_report, vision_metrics
+        )
+        
+        return {
+            'integrity_status': integrity_report['integrity_status'],
+            'total_violations': integrity_report['total_violations'],
+            'vision_metrics': vision_metrics,
+            'integrity_trend': self._calculate_vision_integrity_trend(),
+            'recommendations': recommendations,
+            'analysis_timestamp': time.time()
+        }
+    
+    def get_vision_integrity_report(self) -> Dict[str, Any]:
+        """Generate comprehensive vision integrity report"""
+        if not self.enable_self_audit:
+            return {'status': 'SELF_AUDIT_DISABLED'}
+        
+        # Get basic integrity report
+        base_report = self_audit_engine.generate_integrity_report()
+        
+        # Add vision-specific metrics
+        vision_report = {
+            'vision_agent_id': self.agent_id,
+            'monitoring_enabled': self.integrity_monitoring_enabled,
+            'vision_capabilities': {
+                'opencv_available': CV2_AVAILABLE,
+                'yolo_model_configured': bool(self.yolo_model),
+                'video_streaming_supported': True,
+                'max_image_size': self.max_image_size,
+                'supported_formats': len(self.supported_formats)
+            },
+            'processing_status': {
+                'streaming_active': getattr(self, 'is_streaming', False),
+                'detection_history_entries': len(getattr(self, 'detection_history', []))
+            },
+            'integrity_metrics': getattr(self, 'integrity_metrics', {}),
+            'base_integrity_report': base_report,
+            'report_timestamp': time.time()
+        }
+        
+        return vision_report
+    
+    def validate_vision_configuration(self) -> Dict[str, Any]:
+        """Validate vision system configuration for integrity"""
+        validation_results = {
+            'valid': True,
+            'warnings': [],
+            'recommendations': []
+        }
+        
+        # Check OpenCV availability
+        if not CV2_AVAILABLE:
+            validation_results['valid'] = False
+            validation_results['warnings'].append("OpenCV (cv2) is not available - vision functionality severely limited")
+            validation_results['recommendations'].append("Install OpenCV: pip install opencv-python")
+        
+        # Check YOLO model configuration
+        if not self.yolo_model:
+            validation_results['warnings'].append("YOLO model not configured - object detection unavailable")
+            validation_results['recommendations'].append("Configure YOLO model path for object detection capabilities")
+        
+        # Check image size configuration
+        if self.max_image_size[0] > 2048 or self.max_image_size[1] > 2048:
+            validation_results['warnings'].append("Maximum image size is very large - may impact performance")
+            validation_results['recommendations'].append("Consider reducing max_image_size for better performance")
+        
+        # Check supported formats
+        if len(self.supported_formats) < 3:
+            validation_results['warnings'].append("Limited image format support configured")
+            validation_results['recommendations'].append("Consider adding more supported image formats")
+        
+        return validation_results
+    
+    def _monitor_vision_output_integrity(self, output_text: str, operation: str = "") -> str:
+        """
+        Internal method to monitor and potentially correct vision output integrity.
+        
+        Args:
+            output_text: Output to monitor
+            operation: Vision operation type
+            
+        Returns:
+            Potentially corrected output
+        """
+        if not getattr(self, 'integrity_monitoring_enabled', False):
+            return output_text
+        
+        # Perform audit
+        audit_result = self.audit_vision_output(output_text, operation)
+        
+        # Update monitoring metrics
+        if hasattr(self, 'integrity_metrics'):
+            self.integrity_metrics['total_outputs_monitored'] += 1
+            self.integrity_metrics['total_violations_detected'] += audit_result['total_violations']
+        
+        # Auto-correct if violations detected
+        if audit_result['violations']:
+            correction_result = self.auto_correct_vision_output(output_text, operation)
+            
+            self.logger.info(f"Auto-corrected vision output: {len(audit_result['violations'])} violations fixed")
+            
+            return correction_result['corrected_text']
+        
+        return output_text
+    
+    def _categorize_vision_violations(self, violations: List[IntegrityViolation]) -> Dict[str, int]:
+        """Categorize integrity violations specific to vision operations"""
+        categories = defaultdict(int)
+        
+        for violation in violations:
+            categories[violation.violation_type.value] += 1
+        
+        return dict(categories)
+    
+    def _generate_vision_integrity_recommendations(self, integrity_report: Dict[str, Any], vision_metrics: Dict[str, Any]) -> List[str]:
+        """Generate vision-specific integrity improvement recommendations"""
+        recommendations = []
+        
+        if integrity_report.get('total_violations', 0) > 5:
+            recommendations.append("Consider implementing more rigorous vision output validation")
+        
+        if not vision_metrics.get('opencv_available', False):
+            recommendations.append("Install OpenCV for full vision processing capabilities")
+        
+        if not vision_metrics.get('yolo_model_loaded', False):
+            recommendations.append("Configure YOLO model for object detection capabilities")
+        
+        if vision_metrics.get('detection_history_length', 0) > 90:
+            recommendations.append("Detection history approaching capacity - consider implementing cleanup")
+        
+        if vision_metrics.get('video_streaming_active', False):
+            recommendations.append("Video streaming is active - monitor resource usage and performance")
+        
+        if len(recommendations) == 0:
+            recommendations.append("Vision processing integrity status is excellent - maintain current practices")
+        
+        return recommendations
+    
+    def _calculate_vision_integrity_trend(self) -> Dict[str, Any]:
+        """Calculate vision integrity trends with mathematical validation"""
+        if not hasattr(self, 'integrity_metrics'):
+            return {'trend': 'INSUFFICIENT_DATA'}
+        
+        monitoring_time = time.time() - self.integrity_metrics.get('monitoring_start_time', time.time())
+        total_outputs = self.integrity_metrics.get('total_outputs_monitored', 0)
+        total_violations = self.integrity_metrics.get('total_violations_detected', 0)
+        
+        if total_outputs == 0:
+            return {'trend': 'NO_OUTPUTS_MONITORED'}
+        
+        violation_rate = total_violations / total_outputs
+        violations_per_hour = (total_violations / monitoring_time) * 3600 if monitoring_time > 0 else 0
+        
+        # Calculate trend with mathematical validation
+        trend_score = calculate_confidence(1.0 - violation_rate, self.confidence_factors)
+        
+        return {
+            'trend': 'IMPROVING' if trend_score > 0.8 else 'STABLE' if trend_score > 0.6 else 'NEEDS_ATTENTION',
+            'violation_rate': violation_rate,
+            'violations_per_hour': violations_per_hour,
+            'trend_score': trend_score,
+            'monitoring_duration_hours': monitoring_time / 3600,
+            'detection_analysis': self._analyze_detection_patterns()
+        }
+    
+    def _analyze_detection_patterns(self) -> Dict[str, Any]:
+        """Analyze detection patterns for integrity assessment"""
+        if not hasattr(self, 'detection_history') or not self.detection_history:
+            return {'pattern_status': 'NO_DETECTION_HISTORY'}
+        
+        recent_detections = self.detection_history[-10:] if len(self.detection_history) >= 10 else self.detection_history
+        
+        # Count detection types
+        detection_types = defaultdict(int)
+        total_detections = 0
+        
+        for entry in recent_detections:
+            for detection in entry.get('detections', []):
+                detection_type = detection.get('type', 'unknown')
+                detection_types[detection_type] += 1
+                total_detections += 1
+        
+        return {
+            'pattern_status': 'NORMAL' if total_detections > 0 else 'NO_RECENT_DETECTIONS',
+            'total_recent_detections': total_detections,
+            'detection_type_distribution': dict(detection_types),
+            'analysis_timestamp': time.time()
+        } 

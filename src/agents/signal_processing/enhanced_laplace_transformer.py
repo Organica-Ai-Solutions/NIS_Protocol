@@ -891,6 +891,324 @@ def test_enhanced_laplace_transformer():
     
     return transformer, results, summary
 
+# ==================== COMPREHENSIVE SELF-AUDIT CAPABILITIES ====================
+
+def audit_laplace_output(self, output_text: str, operation: str = "", context: str = "") -> Dict[str, Any]:
+    """
+    Perform real-time integrity audit on Laplace transform outputs.
+    
+    Args:
+        output_text: Text output to audit
+        operation: Laplace operation type (transform, compress, analyze, etc.)
+        context: Additional context for the audit
+        
+    Returns:
+        Audit results with violations and integrity score
+    """
+    if not self.enable_self_audit:
+        return {'integrity_score': 100.0, 'violations': [], 'total_violations': 0}
+    
+    self.logger.info(f"Performing self-audit on Laplace transform output for operation: {operation}")
+    
+    # Use proven audit engine
+    audit_context = f"laplace_transform:{operation}:{context}" if context else f"laplace_transform:{operation}"
+    violations = self_audit_engine.audit_text(output_text, audit_context)
+    integrity_score = self_audit_engine.get_integrity_score(output_text)
+    
+    # Log violations for Laplace transform-specific analysis
+    if violations:
+        self.logger.warning(f"Detected {len(violations)} integrity violations in Laplace transform output")
+        for violation in violations:
+            self.logger.warning(f"  - {violation.severity}: {violation.text} -> {violation.suggested_replacement}")
+    
+    return {
+        'violations': violations,
+        'integrity_score': integrity_score,
+        'total_violations': len(violations),
+        'violation_breakdown': self._categorize_laplace_violations(violations),
+        'operation': operation,
+        'audit_timestamp': time.time()
+    }
+
+def auto_correct_laplace_output(self, output_text: str, operation: str = "") -> Dict[str, Any]:
+    """
+    Automatically correct integrity violations in Laplace transform outputs.
+    
+    Args:
+        output_text: Text to correct
+        operation: Laplace operation type
+        
+    Returns:
+        Corrected output with audit details
+    """
+    if not self.enable_self_audit:
+        return {'corrected_text': output_text, 'violations_fixed': [], 'improvement': 0}
+    
+    self.logger.info(f"Performing self-correction on Laplace transform output for operation: {operation}")
+    
+    corrected_text, violations = self_audit_engine.auto_correct_text(output_text)
+    
+    # Calculate improvement metrics with mathematical validation
+    original_score = self_audit_engine.get_integrity_score(output_text)
+    corrected_score = self_audit_engine.get_integrity_score(corrected_text)
+    improvement = calculate_confidence(corrected_score - original_score, self.confidence_factors)
+    
+    return {
+        'original_text': output_text,
+        'corrected_text': corrected_text,
+        'violations_fixed': violations,
+        'original_integrity_score': original_score,
+        'corrected_integrity_score': corrected_score,
+        'improvement': improvement,
+        'operation': operation,
+        'correction_timestamp': time.time()
+    }
+
+def analyze_laplace_integrity_trends(self, time_window: int = 3600) -> Dict[str, Any]:
+    """
+    Analyze Laplace transform integrity trends for self-improvement.
+    
+    Args:
+        time_window: Time window in seconds to analyze
+        
+    Returns:
+        Laplace transform integrity trend analysis with mathematical validation
+    """
+    if not self.enable_self_audit:
+        return {'integrity_status': 'MONITORING_DISABLED'}
+    
+    self.logger.info(f"Analyzing Laplace transform integrity trends over {time_window} seconds")
+    
+    # Get integrity report from audit engine
+    integrity_report = self_audit_engine.generate_integrity_report()
+    
+    # Calculate Laplace transform-specific metrics
+    laplace_metrics = {
+        'max_frequency': self.max_frequency,
+        'num_points': self.num_points,
+        'sigma_range': self.sigma_range,
+        'omega_max': self.omega_max,
+        'processing_history_length': len(self.processing_history),
+        'compression_history_length': len(self.compression_history),
+        'pole_threshold': self.pole_threshold,
+        'zero_threshold': self.zero_threshold
+    }
+    
+    # Generate Laplace transform-specific recommendations
+    recommendations = self._generate_laplace_integrity_recommendations(
+        integrity_report, laplace_metrics
+    )
+    
+    return {
+        'integrity_status': integrity_report['integrity_status'],
+        'total_violations': integrity_report['total_violations'],
+        'laplace_metrics': laplace_metrics,
+        'integrity_trend': self._calculate_laplace_integrity_trend(),
+        'recommendations': recommendations,
+        'analysis_timestamp': time.time()
+    }
+
+def get_laplace_integrity_report(self) -> Dict[str, Any]:
+    """Generate comprehensive Laplace transform integrity report"""
+    if not self.enable_self_audit:
+        return {'status': 'SELF_AUDIT_DISABLED'}
+    
+    # Get basic integrity report
+    base_report = self_audit_engine.generate_integrity_report()
+    
+    # Add Laplace transform-specific metrics
+    laplace_report = {
+        'laplace_agent_id': self.agent_id,
+        'monitoring_enabled': self.enable_self_audit,
+        'laplace_capabilities': {
+            'max_frequency': self.max_frequency,
+            'num_points': self.num_points,
+            's_grid_size': len(self.s_grid),
+            'sigma_range': self.sigma_range,
+            'omega_max': self.omega_max,
+            'supports_unilateral': True,
+            'supports_bilateral': True,
+            'supports_numerical': True,
+            'supports_compression': True
+        },
+        'processing_statistics': {
+            'transforms_computed': len(self.processing_history),
+            'compressions_performed': len(self.compression_history),
+            'pole_threshold': self.pole_threshold,
+            'zero_threshold': self.zero_threshold,
+            'convergence_tolerance': self.convergence_tolerance
+        },
+        'base_integrity_report': base_report,
+        'report_timestamp': time.time()
+    }
+    
+    return laplace_report
+
+def validate_laplace_configuration(self) -> Dict[str, Any]:
+    """Validate Laplace transform configuration for integrity"""
+    validation_results = {
+        'valid': True,
+        'warnings': [],
+        'recommendations': []
+    }
+    
+    # Check frequency range
+    if self.max_frequency <= 0:
+        validation_results['valid'] = False
+        validation_results['warnings'].append("Invalid max frequency - must be positive")
+        validation_results['recommendations'].append("Set max_frequency to a positive value (e.g., 1000.0)")
+    
+    # Check number of points
+    if self.num_points < 256:
+        validation_results['warnings'].append("Low number of points - may affect transform accuracy")
+        validation_results['recommendations'].append("Consider increasing num_points to at least 1024")
+    
+    # Check sigma range
+    if self.sigma_range[0] >= self.sigma_range[1]:
+        validation_results['valid'] = False
+        validation_results['warnings'].append("Invalid sigma range - minimum must be less than maximum")
+        validation_results['recommendations'].append("Set sigma_range with min < max (e.g., (-20.0, 20.0))")
+    
+    # Check thresholds
+    if self.pole_threshold <= 0 or self.zero_threshold <= 0:
+        validation_results['warnings'].append("Invalid pole/zero thresholds - must be positive")
+        validation_results['recommendations'].append("Set pole_threshold and zero_threshold to small positive values")
+    
+    # Check convergence tolerance
+    if self.convergence_tolerance >= 1e-3:
+        validation_results['warnings'].append("Convergence tolerance is too large - may affect accuracy")
+        validation_results['recommendations'].append("Set convergence_tolerance to a smaller value (e.g., 1e-8)")
+    
+    return validation_results
+
+def _monitor_laplace_output_integrity(self, output_text: str, operation: str = "") -> str:
+    """
+    Internal method to monitor and potentially correct Laplace transform output integrity.
+    
+    Args:
+        output_text: Output to monitor
+        operation: Laplace operation type
+        
+    Returns:
+        Potentially corrected output
+    """
+    if not getattr(self, 'enable_self_audit', False):
+        return output_text
+    
+    # Perform audit
+    audit_result = self.audit_laplace_output(output_text, operation)
+    
+    # Auto-correct if violations detected
+    if audit_result['violations']:
+        correction_result = self.auto_correct_laplace_output(output_text, operation)
+        
+        self.logger.info(f"Auto-corrected Laplace transform output: {len(audit_result['violations'])} violations fixed")
+        
+        return correction_result['corrected_text']
+    
+    return output_text
+
+def _categorize_laplace_violations(self, violations: List['IntegrityViolation']) -> Dict[str, int]:
+    """Categorize integrity violations specific to Laplace transform operations"""
+    from collections import defaultdict
+    categories = defaultdict(int)
+    
+    for violation in violations:
+        categories[violation.violation_type.value] += 1
+    
+    return dict(categories)
+
+def _generate_laplace_integrity_recommendations(self, integrity_report: Dict[str, Any], laplace_metrics: Dict[str, Any]) -> List[str]:
+    """Generate Laplace transform-specific integrity improvement recommendations"""
+    recommendations = []
+    
+    if integrity_report.get('total_violations', 0) > 5:
+        recommendations.append("Consider implementing more rigorous Laplace transform output validation")
+    
+    if laplace_metrics.get('processing_history_length', 0) > 1000:
+        recommendations.append("Processing history is large - consider implementing cleanup or archival")
+    
+    if laplace_metrics.get('num_points', 0) < 1024:
+        recommendations.append("Consider increasing num_points for better transform accuracy")
+    
+    if laplace_metrics.get('pole_threshold', 0) > 1e-3:
+        recommendations.append("Pole threshold is large - may miss significant poles")
+    
+    if laplace_metrics.get('zero_threshold', 0) > 1e-3:
+        recommendations.append("Zero threshold is large - may miss significant zeros")
+    
+    if len(recommendations) == 0:
+        recommendations.append("Laplace transform integrity status is excellent - maintain current practices")
+    
+    return recommendations
+
+def _calculate_laplace_integrity_trend(self) -> Dict[str, Any]:
+    """Calculate Laplace transform integrity trends with mathematical validation"""
+    if not hasattr(self, 'processing_history'):
+        return {'trend': 'INSUFFICIENT_DATA'}
+    
+    processing_count = len(self.processing_history)
+    compression_count = len(self.compression_history)
+    
+    if processing_count == 0:
+        return {'trend': 'NO_PROCESSING_HISTORY'}
+    
+    # Calculate processing performance trend
+    recent_transforms = self.processing_history[-10:] if processing_count >= 10 else self.processing_history
+    
+    if recent_transforms:
+        avg_snr = np.mean([t.signal_to_noise_ratio for t in recent_transforms])
+        avg_processing_time = np.mean([t.processing_time for t in recent_transforms])
+        
+        # Calculate trend with mathematical validation
+        trend_score = calculate_confidence(min(avg_snr / 30.0, 1.0), self.confidence_factors)
+        
+        return {
+            'trend': 'IMPROVING' if trend_score > 0.8 else 'STABLE' if trend_score > 0.6 else 'NEEDS_ATTENTION',
+            'avg_snr_db': avg_snr,
+            'avg_processing_time': avg_processing_time,
+            'trend_score': trend_score,
+            'transforms_analyzed': len(recent_transforms),
+            'compression_analysis': self._analyze_compression_patterns()
+        }
+    
+    return {'trend': 'NO_RECENT_DATA'}
+
+def _analyze_compression_patterns(self) -> Dict[str, Any]:
+    """Analyze compression patterns for integrity assessment"""
+    if not hasattr(self, 'compression_history') or not self.compression_history:
+        return {'pattern_status': 'NO_COMPRESSION_HISTORY'}
+    
+    recent_compressions = self.compression_history[-10:] if len(self.compression_history) >= 10 else self.compression_history
+    
+    if recent_compressions:
+        avg_ratio = np.mean([c.compression_ratio for c in recent_compressions])
+        avg_error = np.mean([c.reconstruction_error for c in recent_compressions])
+        avg_memory_reduction = np.mean([c.memory_reduction for c in recent_compressions])
+        
+        return {
+            'pattern_status': 'NORMAL' if len(recent_compressions) > 0 else 'NO_RECENT_COMPRESSIONS',
+            'avg_compression_ratio': avg_ratio,
+            'avg_reconstruction_error': avg_error,
+            'avg_memory_reduction': avg_memory_reduction,
+            'compressions_analyzed': len(recent_compressions),
+            'analysis_timestamp': time.time()
+        }
+    
+    return {'pattern_status': 'NO_COMPRESSION_DATA'}
+
+# Bind the methods to the EnhancedLaplaceTransformer class
+EnhancedLaplaceTransformer.audit_laplace_output = audit_laplace_output
+EnhancedLaplaceTransformer.auto_correct_laplace_output = auto_correct_laplace_output
+EnhancedLaplaceTransformer.analyze_laplace_integrity_trends = analyze_laplace_integrity_trends
+EnhancedLaplaceTransformer.get_laplace_integrity_report = get_laplace_integrity_report
+EnhancedLaplaceTransformer.validate_laplace_configuration = validate_laplace_configuration
+EnhancedLaplaceTransformer._monitor_laplace_output_integrity = _monitor_laplace_output_integrity
+EnhancedLaplaceTransformer._categorize_laplace_violations = _categorize_laplace_violations
+EnhancedLaplaceTransformer._generate_laplace_integrity_recommendations = _generate_laplace_integrity_recommendations
+EnhancedLaplaceTransformer._calculate_laplace_integrity_trend = _calculate_laplace_integrity_trend
+EnhancedLaplaceTransformer._analyze_compression_patterns = _analyze_compression_patterns
+
 
 if __name__ == "__main__":
     transformer, results, summary = test_enhanced_laplace_transformer() 

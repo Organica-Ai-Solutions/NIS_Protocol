@@ -2,6 +2,12 @@
 Neuroplasticity Agent
 
 Implements neuroplasticity mechanisms for learning and memory adaptation.
+
+Enhanced Features (v3):
+- Complete self-audit integration with real-time integrity monitoring
+- Mathematical validation of neuroplasticity operations with evidence-based metrics
+- Comprehensive integrity oversight for all learning outputs
+- Auto-correction capabilities for neuroplasticity-related communications
 """
 
 from typing import Dict, Any, List, Optional, Tuple, Set
@@ -10,10 +16,19 @@ import os
 import json
 import random
 import numpy as np
+import logging
 
 from src.core.registry import NISAgent, NISLayer
 from src.emotion.emotional_state import EmotionalState
 from src.agents.memory.enhanced_memory_agent import EnhancedMemoryAgent, MemoryType
+
+# Integrity metrics for actual calculations
+from src.utils.integrity_metrics import (
+    calculate_confidence, create_default_confidence_factors, ConfidenceFactors
+)
+
+# Self-audit capabilities for real-time integrity monitoring
+from src.utils.self_audit import self_audit_engine, ViolationType, IntegrityViolation
 
 class NeuroplasticityAgent(NISAgent):
     """
@@ -31,7 +46,8 @@ class NeuroplasticityAgent(NISAgent):
         learning_rate: float = 0.1,
         decay_rate: float = 0.01,
         consolidation_interval: int = 3600,  # 1 hour
-        connection_threshold: float = 0.3
+        connection_threshold: float = 0.3,
+        enable_self_audit: bool = True
     ):
         """
         Initialize the neuroplasticity agent.
@@ -44,6 +60,7 @@ class NeuroplasticityAgent(NISAgent):
             decay_rate: Rate at which unused connections weaken (0-1)
             consolidation_interval: Seconds between consolidation events
             connection_threshold: Minimum strength for a connection to persist
+            enable_self_audit: Whether to enable real-time integrity monitoring
         """
         super().__init__(agent_id, NISLayer.LEARNING, "Implements neuroplasticity mechanisms")
         self.memory_agent = memory_agent
@@ -63,9 +80,31 @@ class NeuroplasticityAgent(NISAgent):
         self.last_consolidation = time.time()
         self.consolidation_interval = consolidation_interval
         
-        # Load existing connection data if available
-        if storage_path:
-            self._load_connection_data()
+        # Initialize emotional state
+        self.emotional_state = EmotionalState()
+        
+        # Set up logging
+        self.logger = logging.getLogger(f"nis_neuroplasticity_{agent_id}")
+        
+        # Set up self-audit integration
+        self.enable_self_audit = enable_self_audit
+        self.integrity_monitoring_enabled = enable_self_audit
+        self.integrity_metrics = {
+            'monitoring_start_time': time.time(),
+            'total_outputs_monitored': 0,
+            'total_violations_detected': 0,
+            'auto_corrections_applied': 0,
+            'average_integrity_score': 100.0
+        }
+        
+        # Initialize confidence factors for mathematical validation
+        self.confidence_factors = create_default_confidence_factors()
+        
+        # Load existing connections if storage path is provided
+        if self.storage_path:
+            self._load_connections()
+        
+        self.logger.info(f"Neuroplasticity Agent initialized with self-audit: {enable_self_audit}")
     
     def process(self, message: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -499,3 +538,282 @@ class NeuroplasticityAgent(NISAgent):
                 activation_strength=spread_strength*0.5, 
                 depth=depth-1
             )
+    
+    # ==================== SELF-AUDIT CAPABILITIES ====================
+    
+    def audit_neuroplasticity_output(self, output_text: str, operation: str = "", context: str = "") -> Dict[str, Any]:
+        """
+        Perform real-time integrity audit on neuroplasticity operation outputs.
+        
+        Args:
+            output_text: Text output to audit
+            operation: Neuroplasticity operation type (strengthen, weaken, consolidate, etc.)
+            context: Additional context for the audit
+            
+        Returns:
+            Audit results with violations and integrity score
+        """
+        if not self.enable_self_audit:
+            return {'integrity_score': 100.0, 'violations': [], 'total_violations': 0}
+        
+        self.logger.info(f"Performing self-audit on neuroplasticity output for operation: {operation}")
+        
+        # Use proven audit engine
+        audit_context = f"neuroplasticity:{operation}:{context}" if context else f"neuroplasticity:{operation}"
+        violations = self_audit_engine.audit_text(output_text, audit_context)
+        integrity_score = self_audit_engine.get_integrity_score(output_text)
+        
+        # Log violations for neuroplasticity-specific analysis
+        if violations:
+            self.logger.warning(f"Detected {len(violations)} integrity violations in neuroplasticity output")
+            for violation in violations:
+                self.logger.warning(f"  - {violation.severity}: {violation.text} -> {violation.suggested_replacement}")
+        
+        return {
+            'violations': violations,
+            'integrity_score': integrity_score,
+            'total_violations': len(violations),
+            'violation_breakdown': self._categorize_neuroplasticity_violations(violations),
+            'operation': operation,
+            'audit_timestamp': time.time()
+        }
+    
+    def auto_correct_neuroplasticity_output(self, output_text: str, operation: str = "") -> Dict[str, Any]:
+        """
+        Automatically correct integrity violations in neuroplasticity outputs.
+        
+        Args:
+            output_text: Text to correct
+            operation: Neuroplasticity operation type
+            
+        Returns:
+            Corrected output with audit details
+        """
+        if not self.enable_self_audit:
+            return {'corrected_text': output_text, 'violations_fixed': [], 'improvement': 0}
+        
+        self.logger.info(f"Performing self-correction on neuroplasticity output for operation: {operation}")
+        
+        corrected_text, violations = self_audit_engine.auto_correct_text(output_text)
+        
+        # Calculate improvement metrics with mathematical validation
+        original_score = self_audit_engine.get_integrity_score(output_text)
+        corrected_score = self_audit_engine.get_integrity_score(corrected_text)
+        improvement = calculate_confidence(corrected_score - original_score, self.confidence_factors)
+        
+        # Update integrity metrics
+        if hasattr(self, 'integrity_metrics'):
+            self.integrity_metrics['auto_corrections_applied'] += len(violations)
+        
+        return {
+            'original_text': output_text,
+            'corrected_text': corrected_text,
+            'violations_fixed': violations,
+            'original_integrity_score': original_score,
+            'corrected_integrity_score': corrected_score,
+            'improvement': improvement,
+            'operation': operation,
+            'correction_timestamp': time.time()
+        }
+    
+    def analyze_neuroplasticity_integrity_trends(self, time_window: int = 3600) -> Dict[str, Any]:
+        """
+        Analyze neuroplasticity operation integrity trends for self-improvement.
+        
+        Args:
+            time_window: Time window in seconds to analyze
+            
+        Returns:
+            Neuroplasticity integrity trend analysis with mathematical validation
+        """
+        if not self.enable_self_audit:
+            return {'integrity_status': 'MONITORING_DISABLED'}
+        
+        self.logger.info(f"Analyzing neuroplasticity integrity trends over {time_window} seconds")
+        
+        # Get integrity report from audit engine
+        integrity_report = self_audit_engine.generate_integrity_report()
+        
+        # Calculate neuroplasticity-specific metrics
+        plasticity_metrics = {
+            'total_connections': len(self.connection_strengths),
+            'strong_connections': len([s for s in self.connection_strengths.values() if s > 0.7]),
+            'weak_connections': len([s for s in self.connection_strengths.values() if s < 0.3]),
+            'recent_activations': len(self.recent_activations),
+            'learning_rate': self.learning_rate,
+            'decay_rate': self.decay_rate,
+            'time_since_consolidation': time.time() - self.last_consolidation
+        }
+        
+        # Generate neuroplasticity-specific recommendations
+        recommendations = self._generate_neuroplasticity_integrity_recommendations(
+            integrity_report, plasticity_metrics
+        )
+        
+        return {
+            'integrity_status': integrity_report['integrity_status'],
+            'total_violations': integrity_report['total_violations'],
+            'plasticity_metrics': plasticity_metrics,
+            'integrity_trend': self._calculate_neuroplasticity_integrity_trend(),
+            'recommendations': recommendations,
+            'analysis_timestamp': time.time()
+        }
+    
+    def enable_real_time_neuroplasticity_monitoring(self) -> bool:
+        """
+        Enable continuous integrity monitoring for all neuroplasticity operations.
+        
+        Returns:
+            Success status
+        """
+        self.logger.info("Enabling real-time neuroplasticity integrity monitoring")
+        
+        # Set flag for monitoring
+        self.integrity_monitoring_enabled = True
+        
+        # Initialize monitoring metrics if not already done
+        if not hasattr(self, 'integrity_metrics'):
+            self.integrity_metrics = {
+                'monitoring_start_time': time.time(),
+                'total_outputs_monitored': 0,
+                'total_violations_detected': 0,
+                'auto_corrections_applied': 0,
+                'average_integrity_score': 100.0
+            }
+        
+        return True
+    
+    def _monitor_neuroplasticity_output_integrity(self, output_text: str, operation: str = "") -> str:
+        """
+        Internal method to monitor and potentially correct neuroplasticity output integrity.
+        
+        Args:
+            output_text: Output to monitor
+            operation: Neuroplasticity operation type
+            
+        Returns:
+            Potentially corrected output
+        """
+        if not getattr(self, 'integrity_monitoring_enabled', False):
+            return output_text
+        
+        # Perform audit
+        audit_result = self.audit_neuroplasticity_output(output_text, operation)
+        
+        # Update monitoring metrics
+        if hasattr(self, 'integrity_metrics'):
+            self.integrity_metrics['total_outputs_monitored'] += 1
+            self.integrity_metrics['total_violations_detected'] += audit_result['total_violations']
+        
+        # Auto-correct if violations detected
+        if audit_result['violations']:
+            correction_result = self.auto_correct_neuroplasticity_output(output_text, operation)
+            
+            self.logger.info(f"Auto-corrected neuroplasticity output: {len(audit_result['violations'])} violations fixed")
+            
+            return correction_result['corrected_text']
+        
+        return output_text
+    
+    def _categorize_neuroplasticity_violations(self, violations: List[IntegrityViolation]) -> Dict[str, int]:
+        """Categorize integrity violations specific to neuroplasticity operations"""
+        from collections import defaultdict
+        categories = defaultdict(int)
+        
+        for violation in violations:
+            categories[violation.violation_type.value] += 1
+        
+        return dict(categories)
+    
+    def _generate_neuroplasticity_integrity_recommendations(self, integrity_report: Dict[str, Any], 
+                                                          plasticity_metrics: Dict[str, Any]) -> List[str]:
+        """Generate neuroplasticity-specific integrity recommendations"""
+        recommendations = []
+        
+        if integrity_report.get('total_violations', 0) > 0:
+            recommendations.append('Review neuroplasticity operation outputs for integrity compliance')
+        
+        if plasticity_metrics.get('weak_connections', 0) > plasticity_metrics.get('strong_connections', 0):
+            recommendations.append('Consider adjusting learning rate to strengthen important connections')
+        
+        if plasticity_metrics.get('time_since_consolidation', 0) > self.consolidation_interval:
+            recommendations.append('Trigger memory consolidation to optimize connection strengths')
+        
+        if plasticity_metrics.get('recent_activations', 0) == 0:
+            recommendations.append('Monitor for memory activation patterns to guide neuroplasticity')
+        
+        recommendations.append('Maintain evidence-based neuroplasticity operation descriptions')
+        
+        return recommendations
+    
+    def _calculate_neuroplasticity_integrity_trend(self) -> str:
+        """Calculate neuroplasticity integrity trend over time"""
+        if not hasattr(self, 'integrity_metrics'):
+            return 'INSUFFICIENT_DATA'
+        
+        # Simple trend calculation based on recent performance
+        total_monitored = self.integrity_metrics.get('total_outputs_monitored', 0)
+        total_violations = self.integrity_metrics.get('total_violations_detected', 0)
+        
+        if total_monitored == 0:
+            return 'NO_DATA'
+        
+        violation_rate = total_violations / total_monitored
+        
+        if violation_rate == 0:
+            return 'EXCELLENT'
+        elif violation_rate < 0.1:
+            return 'GOOD'
+        elif violation_rate < 0.2:
+            return 'NEEDS_IMPROVEMENT'
+        else:
+            return 'CRITICAL'
+    
+    def get_neuroplasticity_integrity_report(self) -> Dict[str, Any]:
+        """Generate comprehensive neuroplasticity integrity report"""
+        if not self.enable_self_audit:
+            return {'status': 'SELF_AUDIT_DISABLED'}
+        
+        # Get basic integrity report
+        base_report = self_audit_engine.generate_integrity_report()
+        
+        # Add neuroplasticity-specific metrics
+        plasticity_report = {
+            'neuroplasticity_agent_id': self.agent_id,
+            'monitoring_enabled': self.integrity_monitoring_enabled,
+            'connection_status': {
+                'total_connections': len(self.connection_strengths),
+                'strong_connections': len([s for s in self.connection_strengths.values() if s > 0.7]),
+                'weak_connections': len([s for s in self.connection_strengths.values() if s < 0.3]),
+                'connection_threshold': self.connection_threshold
+            },
+            'learning_parameters': {
+                'learning_rate': self.learning_rate,
+                'decay_rate': self.decay_rate,
+                'consolidation_interval': self.consolidation_interval
+            },
+            'recent_activity': {
+                'recent_activations_count': len(self.recent_activations),
+                'time_since_consolidation': time.time() - self.last_consolidation
+            },
+            'integrity_metrics': getattr(self, 'integrity_metrics', {}),
+            'base_integrity_report': base_report,
+            'report_timestamp': time.time()
+        }
+        
+        return plasticity_report
+    
+    def _load_connections(self) -> None:
+        """Load existing connection data from storage"""
+        if not self.storage_path:
+            return
+        
+        try:
+            connections_file = os.path.join(self.storage_path, "connections.json")
+            if os.path.exists(connections_file):
+                with open(connections_file, 'r') as f:
+                    self.connection_strengths = json.load(f)
+                self.logger.info(f"Loaded {len(self.connection_strengths)} connections from storage")
+        except Exception as e:
+            self.logger.error(f"Failed to load connections: {e}")
+            self.connection_strengths = {}

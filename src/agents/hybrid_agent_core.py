@@ -4,6 +4,12 @@ Hybrid Agent Core - Complete Laplace→KAN→PINN→LLM Scientific Pipeline (V3 
 This module implements the complete hybrid agent architecture with full
 scientific validation pipeline including PINN physics constraint enforcement.
 
+Enhanced Features (v3):
+- Complete self-audit integration with real-time integrity monitoring
+- Mathematical validation of hybrid processing operations with evidence-based metrics
+- Comprehensive integrity oversight for all hybrid agent outputs
+- Auto-correction capabilities for hybrid processing communications
+
 Architecture Flow:
 [Raw Input] → [Laplace Transform] → [KAN Symbolic] → [PINN Validation] → [LLM Integration] → [Output]
 
@@ -19,6 +25,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from abc import ABC, abstractmethod
 import time
+from collections import defaultdict
 
 from .signal_processing.laplace_processor import LaplaceSignalProcessor, LaplaceTransform, LaplaceTransformType
 from .physics.pinn_physics_agent import PINNPhysicsAgent, PINNValidationResult
@@ -28,6 +35,14 @@ from .reasoning.kan_reasoning_agent import (
 )
 from ..core.agent import NISAgent, NISLayer
 from ..core.symbolic_bridge import SymbolicBridge, SymbolicExtractionResult
+
+# Integrity metrics for actual calculations
+from src.utils.integrity_metrics import (
+    calculate_confidence, create_default_confidence_factors, ConfidenceFactors
+)
+
+# Self-audit capabilities for real-time integrity monitoring
+from src.utils.self_audit import self_audit_engine, ViolationType, IntegrityViolation
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -777,3 +792,321 @@ EnhancedScientificPipeline = CompleteScientificPipeline
 MetaCognitiveProcessor = CompleteMeTaCognitiveProcessor
 CuriosityEngine = CompleteCuriosityEngine
 ValidationAgent = CompleteValidationAgent
+
+# ==================== COMPREHENSIVE SELF-AUDIT CAPABILITIES FOR HYBRID AGENTS ====================
+
+def audit_hybrid_agent_output(self, output_text: str, operation: str = "", context: str = "") -> Dict[str, Any]:
+    """
+    Perform real-time integrity audit on hybrid agent outputs.
+    
+    Args:
+        output_text: Text output to audit
+        operation: Hybrid operation type (process_complete, validate, reason, etc.)
+        context: Additional context for the audit
+        
+    Returns:
+        Audit results with violations and integrity score
+    """
+    enable_audit = getattr(self, 'enable_self_audit', True)
+    if not enable_audit:
+        return {'integrity_score': 100.0, 'violations': [], 'total_violations': 0}
+    
+    logger.info(f"Performing self-audit on hybrid agent output for operation: {operation}")
+    
+    # Use proven audit engine
+    audit_context = f"hybrid_agent:{operation}:{context}" if context else f"hybrid_agent:{operation}"
+    violations = self_audit_engine.audit_text(output_text, audit_context)
+    integrity_score = self_audit_engine.get_integrity_score(output_text)
+    
+    # Log violations for hybrid agent-specific analysis
+    if violations:
+        logger.warning(f"Detected {len(violations)} integrity violations in hybrid agent output")
+        for violation in violations:
+            logger.warning(f"  - {violation.severity}: {violation.text} -> {violation.suggested_replacement}")
+    
+    return {
+        'violations': violations,
+        'integrity_score': integrity_score,
+        'total_violations': len(violations),
+        'violation_breakdown': self._categorize_hybrid_violations(violations),
+        'operation': operation,
+        'audit_timestamp': time.time()
+    }
+
+def auto_correct_hybrid_agent_output(self, output_text: str, operation: str = "") -> Dict[str, Any]:
+    """
+    Automatically correct integrity violations in hybrid agent outputs.
+    
+    Args:
+        output_text: Text to correct
+        operation: Hybrid operation type
+        
+    Returns:
+        Corrected output with audit details
+    """
+    enable_audit = getattr(self, 'enable_self_audit', True)
+    if not enable_audit:
+        return {'corrected_text': output_text, 'violations_fixed': [], 'improvement': 0}
+    
+    logger.info(f"Performing self-correction on hybrid agent output for operation: {operation}")
+    
+    corrected_text, violations = self_audit_engine.auto_correct_text(output_text)
+    
+    # Calculate improvement metrics with mathematical validation
+    original_score = self_audit_engine.get_integrity_score(output_text)
+    corrected_score = self_audit_engine.get_integrity_score(corrected_text)
+    
+    confidence_factors = getattr(self, 'confidence_factors', create_default_confidence_factors())
+    improvement = calculate_confidence(corrected_score - original_score, confidence_factors)
+    
+    return {
+        'original_text': output_text,
+        'corrected_text': corrected_text,
+        'violations_fixed': violations,
+        'original_integrity_score': original_score,
+        'corrected_integrity_score': corrected_score,
+        'improvement': improvement,
+        'operation': operation,
+        'correction_timestamp': time.time()
+    }
+
+def analyze_hybrid_agent_integrity_trends(self, time_window: int = 3600) -> Dict[str, Any]:
+    """
+    Analyze hybrid agent integrity trends for self-improvement.
+    
+    Args:
+        time_window: Time window in seconds to analyze
+        
+    Returns:
+        Hybrid agent integrity trend analysis with mathematical validation
+    """
+    enable_audit = getattr(self, 'enable_self_audit', True)
+    if not enable_audit:
+        return {'integrity_status': 'MONITORING_DISABLED'}
+    
+    logger.info(f"Analyzing hybrid agent integrity trends over {time_window} seconds")
+    
+    # Get integrity report from audit engine
+    integrity_report = self_audit_engine.generate_integrity_report()
+    
+    # Calculate hybrid agent-specific metrics
+    hybrid_metrics = {
+        'agent_type': type(self).__name__,
+        'llm_provider': getattr(self, 'llm_provider', 'unknown'),
+        'laplace_processor_configured': hasattr(self, 'laplace_processor'),
+        'kan_network_configured': hasattr(self, 'kan_network'),
+        'pinn_agent_configured': hasattr(self, 'pinn_agent'),
+        'symbolic_bridge_configured': hasattr(self, 'symbolic_bridge'),
+        'processing_layers_active': [layer.value for layer in ProcessingLayer],
+        'pipeline_stats': getattr(self, 'pipeline_stats', {}),
+        'validation_stats': getattr(self, 'validation_stats', {})
+    }
+    
+    # Generate hybrid agent-specific recommendations
+    recommendations = self._generate_hybrid_integrity_recommendations(
+        integrity_report, hybrid_metrics
+    )
+    
+    return {
+        'integrity_status': integrity_report['integrity_status'],
+        'total_violations': integrity_report['total_violations'],
+        'hybrid_metrics': hybrid_metrics,
+        'integrity_trend': self._calculate_hybrid_integrity_trend(),
+        'recommendations': recommendations,
+        'analysis_timestamp': time.time()
+    }
+
+def get_hybrid_agent_integrity_report(self) -> Dict[str, Any]:
+    """Generate comprehensive hybrid agent integrity report"""
+    enable_audit = getattr(self, 'enable_self_audit', True)
+    if not enable_audit:
+        return {'status': 'SELF_AUDIT_DISABLED'}
+    
+    # Get basic integrity report
+    base_report = self_audit_engine.generate_integrity_report()
+    
+    # Add hybrid agent-specific metrics
+    hybrid_report = {
+        'hybrid_agent_id': getattr(self, 'agent_id', 'unknown'),
+        'hybrid_agent_type': type(self).__name__,
+        'monitoring_enabled': enable_audit,
+        'hybrid_capabilities': {
+            'scientific_pipeline': True,
+            'laplace_transform_processing': hasattr(self, 'laplace_processor'),
+            'kan_symbolic_reasoning': hasattr(self, 'kan_network'),
+            'pinn_physics_validation': hasattr(self, 'pinn_agent'),
+            'llm_integration': hasattr(self, 'llm_provider'),
+            'symbolic_bridge': hasattr(self, 'symbolic_bridge'),
+            'complete_pipeline': all([
+                hasattr(self, 'laplace_processor'),
+                hasattr(self, 'kan_network'),
+                hasattr(self, 'pinn_agent')
+            ])
+        },
+        'configuration_status': {
+            'llm_provider': str(getattr(self, 'llm_provider', 'not_configured')),
+            'processing_layers_configured': len([layer for layer in ProcessingLayer if hasattr(self, f"{layer.value}_processor") or hasattr(self, f"{layer.value}_agent")]),
+            'pipeline_configuration': getattr(self, 'pipeline_config', {}),
+            'validation_configuration': getattr(self, 'validation_config', {})
+        },
+        'processing_statistics': {
+            'pipeline_stats': getattr(self, 'pipeline_stats', {}),
+            'validation_stats': getattr(self, 'validation_stats', {}),
+            'performance_metrics': getattr(self, 'performance_metrics', {})
+        },
+        'base_integrity_report': base_report,
+        'report_timestamp': time.time()
+    }
+    
+    return hybrid_report
+
+def validate_hybrid_agent_configuration(self) -> Dict[str, Any]:
+    """Validate hybrid agent configuration for integrity"""
+    validation_results = {
+        'valid': True,
+        'warnings': [],
+        'recommendations': []
+    }
+    
+    # Check core components
+    if not hasattr(self, 'laplace_processor'):
+        validation_results['warnings'].append("Laplace processor not configured - missing signal processing capability")
+        validation_results['recommendations'].append("Initialize Laplace processor for signal transformation")
+    
+    if not hasattr(self, 'kan_network'):
+        validation_results['warnings'].append("KAN network not configured - missing symbolic reasoning capability")
+        validation_results['recommendations'].append("Initialize KAN network for symbolic function extraction")
+    
+    if not hasattr(self, 'pinn_agent'):
+        validation_results['warnings'].append("PINN agent not configured - missing physics validation capability")
+        validation_results['recommendations'].append("Initialize PINN agent for physics constraint validation")
+    
+    # Check LLM provider
+    llm_provider = getattr(self, 'llm_provider', None)
+    if not llm_provider:
+        validation_results['warnings'].append("LLM provider not configured - limited natural language capabilities")
+        validation_results['recommendations'].append("Configure LLM provider for enhanced language processing")
+    
+    # Check pipeline configuration
+    pipeline_config = getattr(self, 'pipeline_config', {})
+    if not pipeline_config:
+        validation_results['warnings'].append("Pipeline configuration empty - may impact processing flow")
+        validation_results['recommendations'].append("Configure pipeline parameters for optimal processing")
+    
+    # Check performance metrics
+    performance_metrics = getattr(self, 'performance_metrics', {})
+    if performance_metrics:
+        physics_compliance = performance_metrics.get('physics_compliance', 0.0)
+        if physics_compliance < 0.8:
+            validation_results['warnings'].append(f"Low physics compliance: {physics_compliance:.2f}")
+            validation_results['recommendations'].append("Improve physics validation parameters or training")
+        
+        processing_time = performance_metrics.get('average_processing_time', 0.0)
+        if processing_time > 10.0:
+            validation_results['warnings'].append(f"High processing time: {processing_time:.2f}s")
+            validation_results['recommendations'].append("Optimize pipeline components for better performance")
+    
+    return validation_results
+
+def _categorize_hybrid_violations(self, violations: List[IntegrityViolation]) -> Dict[str, int]:
+    """Categorize integrity violations specific to hybrid agent operations"""
+    categories = defaultdict(int)
+    
+    for violation in violations:
+        categories[violation.violation_type.value] += 1
+    
+    return dict(categories)
+
+def _generate_hybrid_integrity_recommendations(self, integrity_report: Dict[str, Any], hybrid_metrics: Dict[str, Any]) -> List[str]:
+    """Generate hybrid agent-specific integrity improvement recommendations"""
+    recommendations = []
+    
+    if integrity_report.get('total_violations', 0) > 5:
+        recommendations.append("Consider implementing more rigorous hybrid agent output validation")
+    
+    if not hybrid_metrics.get('laplace_processor_configured', False):
+        recommendations.append("Configure Laplace processor for signal transformation capabilities")
+    
+    if not hybrid_metrics.get('kan_network_configured', False):
+        recommendations.append("Configure KAN network for symbolic reasoning capabilities")
+    
+    if not hybrid_metrics.get('pinn_agent_configured', False):
+        recommendations.append("Configure PINN agent for physics validation capabilities")
+    
+    if not hybrid_metrics.get('symbolic_bridge_configured', False):
+        recommendations.append("Configure symbolic bridge for enhanced symbolic processing")
+    
+    pipeline_stats = hybrid_metrics.get('pipeline_stats', {})
+    if pipeline_stats:
+        success_rate = pipeline_stats.get('success_rate', 0.0)
+        if success_rate < 0.8:
+            recommendations.append("Low pipeline success rate - investigate and optimize processing components")
+        
+        physics_compliance = pipeline_stats.get('physics_compliance', 0.0)
+        if physics_compliance < 0.8:
+            recommendations.append("Low physics compliance - enhance PINN validation parameters")
+    
+    if hybrid_metrics.get('agent_type') == 'CompleteHybridAgent':
+        recommendations.append("Complete hybrid agent detected - ensure all pipeline components are optimally configured")
+    
+    if len(recommendations) == 0:
+        recommendations.append("Hybrid agent integrity status is excellent - maintain current practices")
+    
+    return recommendations
+
+def _calculate_hybrid_integrity_trend(self) -> Dict[str, Any]:
+    """Calculate hybrid agent integrity trends with mathematical validation"""
+    pipeline_stats = getattr(self, 'pipeline_stats', {})
+    
+    if not pipeline_stats:
+        return {'trend': 'INSUFFICIENT_DATA'}
+    
+    success_rate = pipeline_stats.get('success_rate', 0.0)
+    physics_compliance = pipeline_stats.get('physics_compliance', 0.0)
+    processing_efficiency = pipeline_stats.get('processing_efficiency', 0.0)
+    
+    # Calculate trend with mathematical validation
+    confidence_factors = getattr(self, 'confidence_factors', create_default_confidence_factors())
+    trend_score = calculate_confidence(
+        (success_rate * 0.4 + physics_compliance * 0.4 + processing_efficiency * 0.2), 
+        confidence_factors
+    )
+    
+    return {
+        'trend': 'IMPROVING' if trend_score > 0.8 else 'STABLE' if trend_score > 0.6 else 'NEEDS_ATTENTION',
+        'success_rate': success_rate,
+        'physics_compliance': physics_compliance,
+        'processing_efficiency': processing_efficiency,
+        'trend_score': trend_score,
+        'hybrid_analysis': self._analyze_hybrid_patterns()
+    }
+
+def _analyze_hybrid_patterns(self) -> Dict[str, Any]:
+    """Analyze hybrid agent patterns for integrity assessment"""
+    pipeline_stats = getattr(self, 'pipeline_stats', {})
+    validation_stats = getattr(self, 'validation_stats', {})
+    
+    return {
+        'pattern_status': 'NORMAL' if pipeline_stats else 'NO_PIPELINE_STATS',
+        'pipeline_components': {
+            'laplace_active': hasattr(self, 'laplace_processor'),
+            'kan_active': hasattr(self, 'kan_network'),
+            'pinn_active': hasattr(self, 'pinn_agent'),
+            'llm_active': hasattr(self, 'llm_provider')
+        },
+        'pipeline_statistics': pipeline_stats,
+        'validation_statistics': validation_stats,
+        'analysis_timestamp': time.time()
+    }
+
+# Bind the methods to all hybrid agent classes
+for hybrid_class in [CompleteHybridAgent, CompleteMeTaCognitiveProcessor, CompleteCuriosityEngine, CompleteValidationAgent]:
+    hybrid_class.audit_hybrid_agent_output = audit_hybrid_agent_output
+    hybrid_class.auto_correct_hybrid_agent_output = auto_correct_hybrid_agent_output
+    hybrid_class.analyze_hybrid_agent_integrity_trends = analyze_hybrid_agent_integrity_trends
+    hybrid_class.get_hybrid_agent_integrity_report = get_hybrid_agent_integrity_report
+    hybrid_class.validate_hybrid_agent_configuration = validate_hybrid_agent_configuration
+    hybrid_class._categorize_hybrid_violations = _categorize_hybrid_violations
+    hybrid_class._generate_hybrid_integrity_recommendations = _generate_hybrid_integrity_recommendations
+    hybrid_class._calculate_hybrid_integrity_trend = _calculate_hybrid_integrity_trend
+    hybrid_class._analyze_hybrid_patterns = _analyze_hybrid_patterns
