@@ -30,12 +30,16 @@
         <div class="container">
             <h2>Installation</h2>
             <p>
-                The NIS Protocol is available as a Python package that can be installed using pip:
+                The NIS Protocol v3.0 is available as a Python package from TestPyPI:
             </p>
             
             <div class="code-block">
-                <pre>pip install nis-protocol</pre>
+                <pre>pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ nis-protocol-v3</pre>
             </div>
+            
+            <p>
+                <strong>Note:</strong> This installs from TestPyPI. For production use, the package will be available on PyPI with <code>pip install nis-protocol-v3</code>
+            </p>
             
             <p>
                 Alternatively, you can clone the repository directly from GitHub:

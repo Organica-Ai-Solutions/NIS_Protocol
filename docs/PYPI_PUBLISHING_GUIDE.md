@@ -132,17 +132,17 @@ python -c "import core.agent; print('Success!')"
 ## 🔗 Package URLs
 
 ### **PyPI Test**
-- **Package**: https://test.pypi.org/project/nis-protocol/
+- **Package**: https://test.pypi.org/project/nis-protocol-v3/
 - **Installation**: 
   ```bash
-  pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ nis-protocol
+  pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ nis-protocol-v3
   ```
 
 ### **Production PyPI**
-- **Package**: https://pypi.org/project/nis-protocol/
+- **Package**: https://pypi.org/project/nis-protocol-v3/
 - **Installation**:
   ```bash
-  pip install nis-protocol
+  pip install nis-protocol-v3
   ```
 
 ## 🎯 Version Strategy
