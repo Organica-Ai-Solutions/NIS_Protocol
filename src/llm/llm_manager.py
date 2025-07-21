@@ -2,10 +2,12 @@
 NIS Protocol LLM Manager
 
 This module provides centralized management of LLM providers and caching.
+Enhanced to read configuration from environment variables.
 """
 
 import json
 import os
+import sys
 from typing import Dict, Any, Optional, Type, List
 import aiohttp
 import asyncio
@@ -14,6 +16,17 @@ import logging
 
 from .base_llm_provider import BaseLLMProvider, LLMResponse, LLMMessage
 
+# Import env_config with error handling for different execution contexts
+try:
+    from ..utils.env_config import env_config
+except ImportError:
+    try:
+        from src.utils.env_config import env_config
+    except ImportError:
+        # Fallback for testing/standalone execution
+        sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+        from utils.env_config import env_config
+
 class LLMManager:
     """Manager for LLM providers and caching."""
     
@@ -21,20 +34,22 @@ class LLMManager:
         """Initialize the LLM manager.
         
         Args:
-            config_path: Path to LLM configuration file
+            config_path: Path to LLM configuration file (deprecated - now uses environment variables)
         """
         self.logger = logging.getLogger("llm_manager")
         
-        # Load configuration
-        if config_path is None:
-            config_path = os.path.join(
-                os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
-                "config",
-                "llm_config.json"
-            )
+        # Load configuration from environment variables
+        self.config = env_config.get_llm_config()
         
-        with open(config_path) as f:
-            self.config = json.load(f)
+        # If config_path is provided, try to merge with JSON config (for backward compatibility)
+        if config_path and os.path.exists(config_path):
+            try:
+                with open(config_path) as f:
+                    json_config = json.load(f)
+                    self.logger.info(f"Merging JSON config from {config_path} with environment configuration")
+                    self._merge_configs(json_config)
+            except Exception as e:
+                self.logger.warning(f"Failed to load JSON config from {config_path}: {e}")
         
         # Initialize provider registry with lazy loading
         self.provider_registry: Dict[str, Type[BaseLLMProvider]] = {}
@@ -51,6 +66,28 @@ class LLMManager:
             )
         else:
             self.cache = None
+            
+        self.logger.info("LLM Manager initialized with environment-based configuration")
+    
+    def _merge_configs(self, json_config: Dict[str, Any]):
+        """Merge JSON configuration with environment configuration.
+        
+        Environment variables take precedence over JSON configuration.
+        
+        Args:
+            json_config: Configuration loaded from JSON file
+        """
+        # Only merge if API keys are not set in environment
+        for provider_name, provider_config in json_config.get("providers", {}).items():
+            if provider_name in self.config["providers"]:
+                env_provider = self.config["providers"][provider_name]
+                
+                # If API key is not set in environment, use JSON config
+                if not env_provider.get("api_key") and provider_config.get("api_key"):
+                    if provider_config["api_key"] not in ["YOUR_API_KEY_HERE", "YOUR_OPENAI_API_KEY", "YOUR_ANTHROPIC_API_KEY", "YOUR_DEEPSEEK_API_KEY"]:
+                        env_provider["api_key"] = provider_config["api_key"]
+                        env_provider["enabled"] = provider_config.get("enabled", False)
+                        self.logger.info(f"Using API key from JSON config for {provider_name}")
     
     def _register_available_providers(self):
         """Register available LLM providers with lazy loading."""
@@ -107,6 +144,10 @@ class LLMManager:
         
         provider_config = self.config["providers"][provider_name]
         
+        # Check if provider is enabled
+        if not provider_config.get("enabled", False):
+            return False
+        
         # Check for API key (not needed for local providers like BitNet or mock)
         if provider_name in ["bitnet", "mock"]:
             # For local providers, just check if enabled
@@ -115,7 +156,7 @@ class LLMManager:
             # For API providers, check for API key and enabled status
             api_key = provider_config.get("api_key", "")
             return (api_key and 
-                   api_key not in ["YOUR_API_KEY_HERE", "YOUR_OPENAI_API_KEY", "YOUR_ANTHROPIC_API_KEY", "YOUR_DEEPSEEK_API_KEY"] and 
+                   api_key not in ["YOUR_API_KEY_HERE", "your_openai_api_key_here", "your_anthropic_api_key_here", "your_deepseek_api_key_here"] and 
                    provider_config.get("enabled", False))
     
     def get_provider(self, provider_name: Optional[str] = None) -> BaseLLMProvider:
@@ -160,7 +201,7 @@ class LLMManager:
         if requested_provider and self.is_provider_configured(requested_provider):
             return requested_provider
         
-        # Try default provider
+        # Try default provider from environment
         default_provider = self.config.get("agent_llm_config", {}).get("default_provider")
         if default_provider and self.is_provider_configured(default_provider):
             return default_provider
@@ -185,27 +226,77 @@ class LLMManager:
                 configured.append(provider_name)
         return configured
     
-    def get_agent_llm(self, agent_type: str) -> BaseLLMProvider:
-        """Get LLM provider for an agent type.
+    def get_provider_for_cognitive_function(self, function: str) -> str:
+        """Get the best provider for a specific cognitive function.
         
         Args:
-            agent_type: Type of agent (e.g., "perception_agent")
+            function: The cognitive function name
             
         Returns:
-            Configured LLM provider for the agent
-            
-        Raises:
-            ValueError: If agent type not found in config
+            Provider name to use for this function
         """
-        if agent_type not in self.config["agent_llm_config"]:
-            raise ValueError(f"No LLM configuration for agent type: {agent_type}")
+        cognitive_config = self.config.get("agent_llm_config", {}).get("cognitive_functions", {})
+        function_config = cognitive_config.get(function, {})
         
-        agent_config = self.config["agent_llm_config"][agent_type]
-        requested_provider = agent_config.get("provider")
+        # Try primary provider
+        primary_provider = function_config.get("primary_provider")
+        if primary_provider and self.is_provider_configured(primary_provider):
+            return primary_provider
         
-        # Pass the requested provider, which may be None (will trigger fallback logic)
-        return self.get_provider(requested_provider)
+        # Try fallback providers
+        fallback_providers = function_config.get("fallback_providers", [])
+        for provider in fallback_providers:
+            if provider != "mock" and self.is_provider_configured(provider):
+                return provider
+        
+        # Use general resolution
+        return self._resolve_provider()
     
+    def get_cognitive_config(self, function: str) -> Dict[str, Any]:
+        """Get configuration for a specific cognitive function.
+        
+        Args:
+            function: The cognitive function name
+            
+        Returns:
+            Configuration dictionary for the function
+        """
+        cognitive_config = self.config.get("agent_llm_config", {}).get("cognitive_functions", {})
+        return cognitive_config.get(function, {})
+
+    async def generate_with_function(
+        self,
+        messages: List[LLMMessage],
+        function: str,
+        **kwargs
+    ) -> LLMResponse:
+        """Generate response using the optimal provider for a cognitive function.
+        
+        Args:
+            messages: List of messages for the conversation
+            function: The cognitive function to use
+            **kwargs: Additional parameters
+            
+        Returns:
+            LLM response
+        """
+        provider_name = self.get_provider_for_cognitive_function(function)
+        provider = self.get_provider(provider_name)
+        
+        # Get function-specific configuration
+        function_config = self.get_cognitive_config(function)
+        
+        # Override parameters with function-specific settings
+        temperature = kwargs.get("temperature", function_config.get("temperature", 0.7))
+        max_tokens = kwargs.get("max_tokens", function_config.get("max_tokens", 2048))
+        
+        return await provider.generate(
+            messages=messages,
+            temperature=temperature,
+            max_tokens=max_tokens,
+            **kwargs
+        )
+
     async def generate_with_cache(
         self,
         provider: BaseLLMProvider,

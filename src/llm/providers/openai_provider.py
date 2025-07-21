@@ -2,13 +2,16 @@
 NIS Protocol OpenAI LLM Provider
 
 This module implements the OpenAI API integration for the NIS Protocol.
+Enhanced to support environment variables for configuration.
 """
 
 import aiohttp
 import json
+import os
 from typing import Dict, Any, List, Optional, Union
 import tiktoken
 import logging
+import asyncio
 
 from ..base_llm_provider import BaseLLMProvider, LLMResponse, LLMMessage, LLMRole
 
@@ -23,9 +26,13 @@ class OpenAIProvider(BaseLLMProvider):
         """
         super().__init__(config)
         
-        self.api_key = config["api_key"]
-        self.api_base = config.get("api_base", "https://api.openai.com/v1")
-        self.organization = config.get("organization")
+        # Support both direct config and environment variables
+        self.api_key = config.get("api_key") or os.getenv("OPENAI_API_KEY")
+        self.api_base = config.get("api_base") or os.getenv("OPENAI_API_BASE", "https://api.openai.com/v1")
+        self.organization = config.get("organization") or os.getenv("OPENAI_ORGANIZATION")
+        
+        if not self.api_key or self.api_key in ["YOUR_OPENAI_API_KEY", "your_openai_api_key_here"]:
+            raise ValueError("OpenAI API key is required. Set OPENAI_API_KEY environment variable or provide in config.")
         
         # Initialize tokenizer based on model
         try:
@@ -38,6 +45,14 @@ class OpenAIProvider(BaseLLMProvider):
         
         # Initialize session
         self.session = None
+        
+    def __del__(self):
+        """Cleanup aiohttp session."""
+        if self.session and not self.session.closed:
+            try:
+                asyncio.get_event_loop().create_task(self.session.close())
+            except:
+                pass
     
     async def _ensure_session(self):
         """Ensure aiohttp session exists."""
