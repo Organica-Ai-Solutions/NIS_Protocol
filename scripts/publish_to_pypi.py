@@ -65,9 +65,9 @@ def verify_installation(test=True):
     run_command("python -m venv temp_test_env")
     
     if test:
-        install_cmd = "temp_test_env/bin/pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ nis-protocol"
+        install_cmd = "temp_test_env/bin/pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ nis-protocol-v3"
     else:
-        install_cmd = "temp_test_env/bin/pip install nis-protocol"
+        install_cmd = "temp_test_env/bin/pip install nis-protocol-v3"
     
     try:
         run_command(install_cmd)
@@ -126,7 +126,7 @@ def main():
         try:
             upload_to_testpypi()
             print("✅ Successfully uploaded to PyPI test!")
-            print("🔗 View at: https://test.pypi.org/project/nis-protocol/")
+            print("🔗 View at: https://test.pypi.org/project/nis-protocol-v3/")
             
             if args.verify:
                 verify_installation(test=True)
@@ -142,7 +142,7 @@ def main():
         try:
             upload_to_pypi()
             print("✅ Successfully uploaded to production PyPI!")
-            print("🔗 View at: https://pypi.org/project/nis-protocol/")
+            print("🔗 View at: https://pypi.org/project/nis-protocol-v3/")
             
             if args.verify:
                 verify_installation(test=False)
@@ -155,9 +155,9 @@ def main():
     # Provide usage instructions
     print("\n📦 Installation instructions:")
     if args.test:
-        print("pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ nis-protocol")
+        print("pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ nis-protocol-v3")
     if args.prod:
-        print("pip install nis-protocol")
+        print("pip install nis-protocol-v3")
 
 
 if __name__ == "__main__":
