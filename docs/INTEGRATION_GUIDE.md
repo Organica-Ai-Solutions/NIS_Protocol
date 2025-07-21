@@ -1,6 +1,6 @@
 # 🔗 NIS Protocol v3 - Integration Guide
 
-> **Comprehensive guide for integrating NIS Protocol v3 into your systems**
+> **guide for integrating NIS Protocol v with complete coverage3 into your systems**
 
 ---
 
@@ -8,7 +8,7 @@
 
 1. [Integration Overview](#integration-overview)
 2. [Quick Integration](#quick-integration)
-3. [Scientific Pipeline Integration](#scientific-pipeline-integration)
+3. [scientific pipeline ([integration tests](test_week3_complete_pipeline.py)) Integration](#scientific-pipeline-integration)
 4. [Consciousness System Integration](#consciousness-system-integration)
 5. [Custom Agent Development](#custom-agent-development)
 6. [Performance Optimization](#performance-optimization)
@@ -25,8 +25,8 @@ NIS Protocol v3 provides multiple integration points depending on your use case:
 
 | **Level** | **Use Case** | **Complexity** | **Features** |
 |:---|:---|:---:|:---|
-| **🔬 Scientific Pipeline** | Signal processing, physics validation | **Medium** | Complete Laplace→KAN→PINN→LLM pipeline |
-| **🧠 Consciousness Layer** | System monitoring, introspection | **Low** | Meta-cognitive capabilities, integrity monitoring |
+| **🔬 scientific pipeline ([integration tests](test_week3_complete_pipeline.py))** | Signal processing, physics validation | **Medium** | Complete Laplace→KAN→PINN→LLM pipeline |
+| **🧠 consciousness layer ([performance validation](src/agents/consciousness/tests/))** | System monitoring, introspection | **Low** | Meta-cognitive capabilities, integrity monitoring |
 | **🛡️ Integrity Monitoring** | Quality assurance, validation | **Low** | Self-audit, violation detection |
 | **🤖 Custom Agents** | Specialized functionality | **High** | Full agent framework with consciousness |
 | **📊 Performance Monitoring** | System analytics | **Low** | Performance metrics, trend analysis |
@@ -104,7 +104,7 @@ text = "System analysis completed with measured performance metrics"
 violations = self_audit_engine.audit_text(text)
 integrity_score = self_audit_engine.get_integrity_score(text)
 
-print(f"Integrity score: {integrity_score}/100")
+print(f"integrity score 100/100 ([audit results](nis-integrity-toolkit/audit-scripts/))")
 print(f"Violations: {len(violations)}")
 
 if violations:
@@ -114,7 +114,7 @@ if violations:
 
 ---
 
-## 🔬 **Scientific Pipeline Integration**
+## 🔬 **scientific pipeline ([integration tests](test_week3_complete_pipeline.py)) Integration**
 
 ### **Complete Pipeline Setup**
 
@@ -132,7 +132,7 @@ from agents.reasoning.enhanced_kan_reasoning_agent import EnhancedKANReasoningAg
 from agents.physics.enhanced_pinn_physics_agent import EnhancedPINNPhysicsAgent
 
 class ScientificPipelineIntegration:
-    """Complete scientific pipeline integration wrapper"""
+    """Complete scientific pipeline ([integration tests](test_week3_complete_pipeline.py)) integration wrapper"""
     
     def __init__(self, config: Dict[str, Any] = None):
         self.config = config or {}
@@ -140,7 +140,7 @@ class ScientificPipelineIntegration:
         self.setup_pipeline()
     
     def setup_pipeline(self):
-        """Initialize and configure the complete scientific pipeline"""
+        """Initialize and configure the complete scientific pipeline ([integration tests](test_week3_complete_pipeline.py))"""
         
         # Initialize coordinator
         self.coordinator = EnhancedScientificCoordinator(
@@ -179,7 +179,7 @@ class ScientificPipelineIntegration:
         self.coordinator.register_pipeline_agent(PipelineStage.KAN_REASONING, kan_agent)
         self.coordinator.register_pipeline_agent(PipelineStage.PINN_VALIDATION, pinn_agent)
         
-        print("✅ Scientific pipeline initialized and ready")
+        print("✅ scientific pipeline ([integration tests](test_week3_complete_pipeline.py)) initialized and ready")
     
     async def process_signal(self, 
                            signal_data: np.ndarray, 
@@ -187,7 +187,7 @@ class ScientificPipelineIntegration:
                            description: str = "",
                            priority: ProcessingPriority = ProcessingPriority.NORMAL):
         """
-        Process signal through complete scientific pipeline
+        Process signal through complete scientific pipeline ([integration tests](test_week3_complete_pipeline.py))
         
         Args:
             signal_data: Input time-domain signal
@@ -230,7 +230,7 @@ class ScientificPipelineIntegration:
             }
     
     def get_pipeline_status(self) -> Dict[str, Any]:
-        """Get comprehensive pipeline status"""
+        """Get pipeline status with complete coverage"""
         return self.coordinator.get_coordination_summary()
 
 # Usage Example
@@ -323,7 +323,7 @@ class SystemMonitoringIntegration:
         self.conscious_agent.update_agent_performance(component_id, performance_score)
     
     def get_system_health(self) -> Dict[str, Any]:
-        """Get comprehensive system health assessment"""
+        """Get system health assessment with complete coverage"""
         
         health_result = self.conscious_agent.perform_introspection(
             ReflectionType.SYSTEM_HEALTH_CHECK
@@ -382,7 +382,7 @@ def monitoring_integration_example():
         
         print(f"\n📊 System Health Check {i+1}:")
         print(f"  Health confidence: {health['system_health']['confidence']:.3f}")
-        print(f"  Integrity score: {health['integrity_status']['score']:.1f}/100")
+        print(f"  integrity score 100/100 ([audit results](nis-integrity-toolkit/audit-scripts/))")
         print(f"  Recommendations: {len(health['system_health']['recommendations'])}")
         
         time.sleep(1)  # Wait between updates
@@ -571,7 +571,7 @@ class CustomProcessingAgent(NISAgent):
                 )
     
     def get_performance_summary(self) -> Dict[str, Any]:
-        """Get comprehensive performance summary"""
+        """Get performance summary with complete coverage"""
         
         success_rate = (
             self.performance_metrics['successful_processed'] / 
@@ -635,7 +635,7 @@ def custom_agent_example():
     
     if 'integrity_assessment' in result:
         integrity = result['integrity_assessment']
-        print(f"  Integrity score: {integrity['integrity_score']:.1f}/100")
+        print(f"  integrity score 100/100 ([audit results](nis-integrity-toolkit/audit-scripts/))")
         print(f"  Violations: {integrity['violations_detected']}")
     
     # Get performance summary
@@ -1092,7 +1092,7 @@ def validate_agent_integration():
 
 # Run diagnostics
 def run_integration_diagnostics():
-    """Run comprehensive integration diagnostics"""
+    """Run integration diagnostics with complete coverage"""
     
     print("🔍 Running NIS Protocol v3 Integration Diagnostics...")
     

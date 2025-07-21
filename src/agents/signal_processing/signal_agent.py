@@ -6,6 +6,12 @@ domain processing for the NIS Protocol V3.0. It integrates with KAN reasoning an
 cognitive wave fields to provide enhanced temporal pattern recognition and signal
 compression capabilities.
 
+Enhanced Features (v3):
+- Complete self-audit integration with real-time integrity monitoring
+- Mathematical validation of signal processing operations with evidence-based metrics
+- Comprehensive integrity oversight for all signal processing outputs
+- Auto-correction capabilities for signal processing-related communications
+
 Key Features:
 - Real-time signal analysis and filtering
 - Integration with cognitive wave field dynamics
@@ -29,6 +35,14 @@ import time
 from collections import defaultdict, deque
 
 from ...core.agent import NISAgent, NISLayer
+
+# Integrity metrics for actual calculations
+from src.utils.integrity_metrics import (
+    calculate_confidence, create_default_confidence_factors, ConfidenceFactors
+)
+
+# Self-audit capabilities for real-time integrity monitoring
+from src.utils.self_audit import self_audit_engine, ViolationType, IntegrityViolation
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -202,7 +216,8 @@ class SignalProcessingAgent(NISAgent):
         agent_id: str = "signal_processor_001",
         description: str = "Advanced signal processing and analysis agent",
         sampling_rate: float = 1000.0,
-        buffer_size: int = 8192
+        buffer_size: int = 8192,
+        enable_self_audit: bool = True
     ):
         super().__init__(agent_id, NISLayer.PERCEPTION, description)
         
@@ -246,10 +261,24 @@ class SignalProcessingAgent(NISAgent):
             "processing_latency": 0.0
         }
         
+        # Set up self-audit integration
+        self.enable_self_audit = enable_self_audit
+        self.integrity_monitoring_enabled = enable_self_audit
+        self.integrity_metrics = {
+            'monitoring_start_time': time.time(),
+            'total_outputs_monitored': 0,
+            'total_violations_detected': 0,
+            'auto_corrections_applied': 0,
+            'average_integrity_score': 100.0
+        }
+        
+        # Initialize confidence factors for mathematical validation
+        self.confidence_factors = create_default_confidence_factors()
+        
         # Initialize signal processing filters
         self._initialize_filters()
         
-        self.logger.info(f"Initialized SignalProcessingAgent with {sampling_rate}Hz sampling")
+        self.logger.info(f"Signal Processing Agent '{agent_id}' initialized with self-audit: {enable_self_audit}")
     
     def _initialize_filters(self):
         """Initialize adaptive signal processing filters."""
@@ -721,6 +750,316 @@ def test_signal_agent():
     print(f"   Buffer utilization: {status['buffer_utilization']:.1%}")
     
     print("✅ SignalProcessingAgent test completed")
+
+# ==================== SELF-AUDIT CAPABILITIES ====================
+
+def audit_signal_output(self, output_text: str, operation: str = "", context: str = "") -> Dict[str, Any]:
+    """
+    Perform real-time integrity audit on signal processing outputs.
+    
+    Args:
+        output_text: Text output to audit
+        operation: Signal processing operation type (filter, transform, analyze, etc.)
+        context: Additional context for the audit
+        
+    Returns:
+        Audit results with violations and integrity score
+    """
+    if not self.enable_self_audit:
+        return {'integrity_score': 100.0, 'violations': [], 'total_violations': 0}
+    
+    self.logger.info(f"Performing self-audit on signal processing output for operation: {operation}")
+    
+    # Use proven audit engine
+    audit_context = f"signal_processing:{operation}:{context}" if context else f"signal_processing:{operation}"
+    violations = self_audit_engine.audit_text(output_text, audit_context)
+    integrity_score = self_audit_engine.get_integrity_score(output_text)
+    
+    # Log violations for signal processing-specific analysis
+    if violations:
+        self.logger.warning(f"Detected {len(violations)} integrity violations in signal processing output")
+        for violation in violations:
+            self.logger.warning(f"  - {violation.severity}: {violation.text} -> {violation.suggested_replacement}")
+    
+    return {
+        'violations': violations,
+        'integrity_score': integrity_score,
+        'total_violations': len(violations),
+        'violation_breakdown': self._categorize_signal_violations(violations),
+        'operation': operation,
+        'audit_timestamp': time.time()
+    }
+
+def auto_correct_signal_output(self, output_text: str, operation: str = "") -> Dict[str, Any]:
+    """
+    Automatically correct integrity violations in signal processing outputs.
+    
+    Args:
+        output_text: Text to correct
+        operation: Signal processing operation type
+        
+    Returns:
+        Corrected output with audit details
+    """
+    if not self.enable_self_audit:
+        return {'corrected_text': output_text, 'violations_fixed': [], 'improvement': 0}
+    
+    self.logger.info(f"Performing self-correction on signal processing output for operation: {operation}")
+    
+    corrected_text, violations = self_audit_engine.auto_correct_text(output_text)
+    
+    # Calculate improvement metrics with mathematical validation
+    original_score = self_audit_engine.get_integrity_score(output_text)
+    corrected_score = self_audit_engine.get_integrity_score(corrected_text)
+    improvement = calculate_confidence(corrected_score - original_score, self.confidence_factors)
+    
+    # Update integrity metrics
+    if hasattr(self, 'integrity_metrics'):
+        self.integrity_metrics['auto_corrections_applied'] += len(violations)
+    
+    return {
+        'original_text': output_text,
+        'corrected_text': corrected_text,
+        'violations_fixed': violations,
+        'original_integrity_score': original_score,
+        'corrected_integrity_score': corrected_score,
+        'improvement': improvement,
+        'operation': operation,
+        'correction_timestamp': time.time()
+    }
+
+def analyze_signal_integrity_trends(self, time_window: int = 3600) -> Dict[str, Any]:
+    """
+    Analyze signal processing integrity trends for self-improvement.
+    
+    Args:
+        time_window: Time window in seconds to analyze
+        
+    Returns:
+        Signal processing integrity trend analysis with mathematical validation
+    """
+    if not self.enable_self_audit:
+        return {'integrity_status': 'MONITORING_DISABLED'}
+    
+    self.logger.info(f"Analyzing signal processing integrity trends over {time_window} seconds")
+    
+    # Get integrity report from audit engine
+    integrity_report = self_audit_engine.generate_integrity_report()
+    
+    # Calculate signal processing-specific metrics
+    signal_metrics = {
+        'sampling_rate': self.sampling_rate,
+        'buffer_size': self.buffer_size,
+        'buffer_utilization': len(self.signal_buffer) / self.buffer_size,
+        'patterns_detected': len(self.detected_patterns),
+        'processing_stats': self.processing_stats,
+        'kan_processor_active': bool(self.kan_processor),
+        'wave_integrator_active': bool(self.wave_integrator)
+    }
+    
+    # Generate signal processing-specific recommendations
+    recommendations = self._generate_signal_integrity_recommendations(
+        integrity_report, signal_metrics
+    )
+    
+    return {
+        'integrity_status': integrity_report['integrity_status'],
+        'total_violations': integrity_report['total_violations'],
+        'signal_metrics': signal_metrics,
+        'integrity_trend': self._calculate_signal_integrity_trend(),
+        'recommendations': recommendations,
+        'analysis_timestamp': time.time()
+    }
+
+def get_signal_integrity_report(self) -> Dict[str, Any]:
+    """Generate comprehensive signal processing integrity report"""
+    if not self.enable_self_audit:
+        return {'status': 'SELF_AUDIT_DISABLED'}
+    
+    # Get basic integrity report
+    base_report = self_audit_engine.generate_integrity_report()
+    
+    # Add signal processing-specific metrics
+    signal_report = {
+        'signal_agent_id': self.agent_id,
+        'monitoring_enabled': self.integrity_monitoring_enabled,
+        'signal_processing_capabilities': {
+            'sampling_rate': self.sampling_rate,
+            'buffer_size': self.buffer_size,
+            'window_size': self.window_size,
+            'frequency_resolution': self.frequency_resolution,
+            'kan_processor_configured': bool(self.kan_processor),
+            'wave_integrator_configured': bool(self.wave_integrator)
+        },
+        'processing_status': {
+            'signals_processed': self.processing_stats.get('signals_processed', 0),
+            'patterns_detected': self.processing_stats.get('patterns_detected', 0),
+            'buffer_utilization': len(self.signal_buffer) / self.buffer_size,
+            'average_snr': self.processing_stats.get('average_snr', 0.0)
+        },
+        'integrity_metrics': getattr(self, 'integrity_metrics', {}),
+        'base_integrity_report': base_report,
+        'report_timestamp': time.time()
+    }
+    
+    return signal_report
+
+def validate_signal_configuration(self) -> Dict[str, Any]:
+    """Validate signal processing configuration for integrity"""
+    validation_results = {
+        'valid': True,
+        'warnings': [],
+        'recommendations': []
+    }
+    
+    # Check sampling rate
+    if self.sampling_rate <= 0:
+        validation_results['valid'] = False
+        validation_results['warnings'].append("Invalid sampling rate - must be positive")
+        validation_results['recommendations'].append("Set sampling rate to a positive value (e.g., 1000.0)")
+    
+    # Check buffer size
+    if self.buffer_size < 1024:
+        validation_results['warnings'].append("Buffer size is very small - may impact signal processing quality")
+        validation_results['recommendations'].append("Consider increasing buffer size to at least 4096")
+    
+    # Check window size vs buffer size
+    if self.window_size >= self.buffer_size:
+        validation_results['warnings'].append("Window size is too large relative to buffer size")
+        validation_results['recommendations'].append("Ensure window_size < buffer_size for proper windowing")
+    
+    # Check threshold values
+    if self.noise_threshold >= self.signal_threshold:
+        validation_results['warnings'].append("Noise threshold is not less than signal threshold")
+        validation_results['recommendations'].append("Set noise_threshold < signal_threshold for proper filtering")
+    
+    return validation_results
+
+def _monitor_signal_output_integrity(self, output_text: str, operation: str = "") -> str:
+    """
+    Internal method to monitor and potentially correct signal processing output integrity.
+    
+    Args:
+        output_text: Output to monitor
+        operation: Signal processing operation type
+        
+    Returns:
+        Potentially corrected output
+    """
+    if not getattr(self, 'integrity_monitoring_enabled', False):
+        return output_text
+    
+    # Perform audit
+    audit_result = self.audit_signal_output(output_text, operation)
+    
+    # Update monitoring metrics
+    if hasattr(self, 'integrity_metrics'):
+        self.integrity_metrics['total_outputs_monitored'] += 1
+        self.integrity_metrics['total_violations_detected'] += audit_result['total_violations']
+    
+    # Auto-correct if violations detected
+    if audit_result['violations']:
+        correction_result = self.auto_correct_signal_output(output_text, operation)
+        
+        self.logger.info(f"Auto-corrected signal processing output: {len(audit_result['violations'])} violations fixed")
+        
+        return correction_result['corrected_text']
+    
+    return output_text
+
+def _categorize_signal_violations(self, violations: List[IntegrityViolation]) -> Dict[str, int]:
+    """Categorize integrity violations specific to signal processing operations"""
+    categories = defaultdict(int)
+    
+    for violation in violations:
+        categories[violation.violation_type.value] += 1
+    
+    return dict(categories)
+
+def _generate_signal_integrity_recommendations(self, integrity_report: Dict[str, Any], signal_metrics: Dict[str, Any]) -> List[str]:
+    """Generate signal processing-specific integrity improvement recommendations"""
+    recommendations = []
+    
+    if integrity_report.get('total_violations', 0) > 5:
+        recommendations.append("Consider implementing more rigorous signal processing output validation")
+    
+    if signal_metrics.get('buffer_utilization', 0) > 0.9:
+        recommendations.append("Signal buffer approaching capacity - consider increasing buffer size")
+    
+    if signal_metrics.get('processing_stats', {}).get('average_snr', 0) < 10:
+        recommendations.append("Signal-to-noise ratio is low - consider improving noise filtering")
+    
+    if not signal_metrics.get('kan_processor_active', False):
+        recommendations.append("KAN processor not active - missing advanced pattern recognition capabilities")
+    
+    if not signal_metrics.get('wave_integrator_active', False):
+        recommendations.append("Wave integrator not active - missing cognitive wave field integration")
+    
+    if len(recommendations) == 0:
+        recommendations.append("Signal processing integrity status is excellent - maintain current practices")
+    
+    return recommendations
+
+def _calculate_signal_integrity_trend(self) -> Dict[str, Any]:
+    """Calculate signal processing integrity trends with mathematical validation"""
+    if not hasattr(self, 'integrity_metrics'):
+        return {'trend': 'INSUFFICIENT_DATA'}
+    
+    monitoring_time = time.time() - self.integrity_metrics.get('monitoring_start_time', time.time())
+    total_outputs = self.integrity_metrics.get('total_outputs_monitored', 0)
+    total_violations = self.integrity_metrics.get('total_violations_detected', 0)
+    
+    if total_outputs == 0:
+        return {'trend': 'NO_OUTPUTS_MONITORED'}
+    
+    violation_rate = total_violations / total_outputs
+    violations_per_hour = (total_violations / monitoring_time) * 3600 if monitoring_time > 0 else 0
+    
+    # Calculate trend with mathematical validation
+    trend_score = calculate_confidence(1.0 - violation_rate, self.confidence_factors)
+    
+    return {
+        'trend': 'IMPROVING' if trend_score > 0.8 else 'STABLE' if trend_score > 0.6 else 'NEEDS_ATTENTION',
+        'violation_rate': violation_rate,
+        'violations_per_hour': violations_per_hour,
+        'trend_score': trend_score,
+        'monitoring_duration_hours': monitoring_time / 3600,
+        'signal_analysis': self._analyze_signal_processing_patterns()
+    }
+
+def _analyze_signal_processing_patterns(self) -> Dict[str, Any]:
+    """Analyze signal processing patterns for integrity assessment"""
+    if not hasattr(self, 'processing_stats') or not self.processing_stats:
+        return {'pattern_status': 'NO_PROCESSING_STATS'}
+    
+    # Analyze processing performance
+    signals_processed = self.processing_stats.get('signals_processed', 0)
+    patterns_detected = self.processing_stats.get('patterns_detected', 0)
+    avg_snr = self.processing_stats.get('average_snr', 0.0)
+    
+    pattern_detection_rate = patterns_detected / signals_processed if signals_processed > 0 else 0
+    
+    return {
+        'pattern_status': 'NORMAL' if signals_processed > 0 else 'NO_SIGNALS_PROCESSED',
+        'signals_processed': signals_processed,
+        'patterns_detected': patterns_detected,
+        'pattern_detection_rate': pattern_detection_rate,
+        'average_snr': avg_snr,
+        'buffer_utilization': len(self.signal_buffer) / self.buffer_size,
+        'analysis_timestamp': time.time()
+    }
+
+# Bind the methods to the SignalProcessingAgent class
+SignalProcessingAgent.audit_signal_output = audit_signal_output
+SignalProcessingAgent.auto_correct_signal_output = auto_correct_signal_output  
+SignalProcessingAgent.analyze_signal_integrity_trends = analyze_signal_integrity_trends
+SignalProcessingAgent.get_signal_integrity_report = get_signal_integrity_report
+SignalProcessingAgent.validate_signal_configuration = validate_signal_configuration
+SignalProcessingAgent._monitor_signal_output_integrity = _monitor_signal_output_integrity
+SignalProcessingAgent._categorize_signal_violations = _categorize_signal_violations
+SignalProcessingAgent._generate_signal_integrity_recommendations = _generate_signal_integrity_recommendations
+SignalProcessingAgent._calculate_signal_integrity_trend = _calculate_signal_integrity_trend
+SignalProcessingAgent._analyze_signal_processing_patterns = _analyze_signal_processing_patterns
 
 if __name__ == "__main__":
     test_signal_agent() 

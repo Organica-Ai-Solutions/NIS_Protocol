@@ -1,0 +1,242 @@
+{
+    "infrastructure_version": "v3.0",
+    "last_updated": "2025-01-19",
+    "description": "Enhanced Kafka/Redis infrastructure configuration with self-audit integration",
+    
+    "message_streaming": {
+        "provider": "kafka",
+        "bootstrap_servers": ["localhost:9092"],
+        "backup_servers": ["localhost:9093", "localhost:9094"],
+        "topics": {
+            "consciousness_events": "nis-consciousness",
+            "goal_events": "nis-goals",
+            "simulation_events": "nis-simulation", 
+            "alignment_events": "nis-alignment",
+            "memory_events": "nis-memory",
+            "coordination": "nis-coordination",
+            "system_health": "nis-system-health",
+            "audit_alerts": "nis-audit-alerts",
+            "performance": "nis-performance"
+        },
+        "consumer_groups": {
+            "agi_processors": "agi-processors",
+            "monitors": "agi-monitors",
+            "analytics": "agi-analytics",
+            "infrastructure": "infrastructure-health",
+            "audit": "infrastructure-audit"
+        },
+        "options": {
+            "max_retries": 3,
+            "retry_backoff": 1.0,
+            "batch_size": 100,
+            "enable_self_audit": true,
+            "timeout": 10.0,
+            "circuit_breaker": {
+                "failure_threshold": 5,
+                "timeout": 60,
+                "half_open_timeout": 30
+            },
+            "producer_settings": {
+                "acks": "all",
+                "retries": 3,
+                "max_in_flight_requests_per_connection": 5,
+                "enable_idempotence": true,
+                "compression_type": "snappy"
+            },
+            "consumer_settings": {
+                "auto_offset_reset": "latest",
+                "enable_auto_commit": true,
+                "auto_commit_interval_ms": 1000,
+                "session_timeout_ms": 30000,
+                "heartbeat_interval_ms": 3000
+            }
+        }
+    },
+    
+    "memory_cache": {
+        "provider": "redis",
+        "host": "localhost", 
+        "port": 6379,
+        "db": 0,
+        "password": null,
+        "cluster": {
+            "enabled": false,
+            "nodes": ["localhost:7000", "localhost:7001", "localhost:7002"]
+        },
+        "options": {
+            "max_memory": "512mb",
+            "eviction_policy": "allkeys-lru",
+            "enable_self_audit": true,
+            "socket_timeout": 5,
+            "socket_connect_timeout": 5,
+            "retry_on_timeout": true,
+            "circuit_breaker": {
+                "failure_threshold": 3,
+                "timeout": 30,
+                "half_open_timeout": 15
+            }
+        },
+        "namespace_ttls": {
+            "consciousness": 1800,
+            "memory": 3600,
+            "simulation": 7200,
+            "alignment": 3600,
+            "goals": 1800,
+            "coordination": 900,
+            "performance": 600,
+            "audit": 86400,
+            "system": 300
+        },
+        "cache_strategies": {
+            "consciousness": "LRU",
+            "memory": "TTL",
+            "simulation": "LRU",
+            "alignment": "TTL",
+            "goals": "LFU",
+            "coordination": "TTL",
+            "performance": "TTL",
+            "audit": "TTL",
+            "system": "LRU"
+        }
+    },
+    
+    "coordination": {
+        "enable_self_audit": true,
+        "health_check_interval": 30.0,
+        "auto_recovery": true,
+        "performance_tracking": true,
+        "message_routing": true,
+        "load_balancing": true,
+        "failover": {
+            "enabled": true,
+            "max_failover_attempts": 3,
+            "failover_delay": 5.0
+        },
+        "monitoring": {
+            "metrics_collection_interval": 60.0,
+            "health_check_timeout": 5.0,
+            "performance_alert_threshold": 0.1
+        }
+    },
+    
+    "self_audit": {
+        "enabled": true,
+        "audit_threshold": 75.0,
+        "auto_correction": true,
+        "violation_tracking": {
+            "max_violations": 100,
+            "violation_retention_hours": 24
+        },
+        "audit_intervals": {
+            "infrastructure": 300,
+            "messages": 60,
+            "cache": 120,
+            "agents": 180
+        },
+        "integrity_reporting": {
+            "enabled": true,
+            "report_interval": 3600,
+            "alert_on_low_score": true,
+            "minimum_score_threshold": 70.0
+        }
+    },
+    
+    "performance": {
+        "metrics_collection": true,
+        "latency_tracking": true,
+        "throughput_monitoring": true,
+        "error_rate_tracking": true,
+        "memory_usage_tracking": true,
+        "thresholds": {
+            "max_latency_ms": 1000,
+            "max_error_rate": 0.05,
+            "max_memory_usage_percent": 80,
+            "min_throughput_ops_per_sec": 100
+        },
+        "optimization": {
+            "auto_scaling": false,
+            "batch_optimization": true,
+            "connection_pooling": true,
+            "cache_warming": true
+        }
+    },
+    
+    "security": {
+        "encryption": {
+            "in_transit": true,
+            "at_rest": false,
+            "tls_version": "1.2"
+        },
+        "authentication": {
+            "enabled": false,
+            "method": "SASL_PLAINTEXT",
+            "username": null,
+            "password": null
+        },
+        "authorization": {
+            "enabled": false,
+            "acl_enabled": false
+        },
+        "audit_logging": {
+            "enabled": true,
+            "log_level": "INFO",
+            "include_payload": false
+        }
+    },
+    
+    "deployment": {
+        "environment": "development",
+        "service_discovery": {
+            "enabled": false,
+            "consul_url": "http://localhost:8500"
+        },
+        "containerization": {
+            "docker_compose": true,
+            "kubernetes": false,
+            "helm_charts": false
+        },
+        "scaling": {
+            "kafka_partitions": 3,
+            "kafka_replication_factor": 1,
+            "redis_cluster_nodes": 3,
+            "consumer_instances": 2
+        }
+    },
+    
+    "development": {
+        "mock_mode": {
+            "enabled": false,
+            "kafka_mock": true,
+            "redis_mock": true
+        },
+        "testing": {
+            "integration_tests": true,
+            "performance_tests": true,
+            "chaos_testing": false
+        },
+        "debugging": {
+            "verbose_logging": false,
+            "trace_messages": false,
+            "profile_performance": false
+        }
+    },
+    
+    "compatibility": {
+        "langchain_integration": true,
+        "langgraph_integration": true,
+        "mcp_protocol": true,
+        "a2a_protocol": true,
+        "backward_compatibility": true
+    },
+    
+    "agent_defaults": {
+        "enable_messaging": true,
+        "enable_caching": true,
+        "enable_self_audit": true,
+        "enable_performance_tracking": true,
+        "health_check_interval": 60.0,
+        "message_batch_size": 10,
+        "cache_ttl": 3600,
+        "auto_recovery": true
+    }
+} 
