@@ -1,220 +1,140 @@
-# NIS Protocol v2.0 Documentation
+# 📚 NIS Protocol v3 Documentation
 
-## 🧠 **Complete AGI System Documentation**
+## 🎯 **Essential V3 Documentation Hub**
 
-Welcome to the comprehensive documentation for **NIS Protocol v2.0** - the neural-inspired AGI system with consciousness, autonomous goals, and planetary-scale cognitive intelligence.
-
-## 📚 **Core Documentation**
-
-### **🚀 System Overview**
-- **[AGI System Overview](AGI_SYSTEM_OVERVIEW.md)** - Complete AGI capabilities and architecture
-- **[Tech Stack Integration](TECH_STACK_INTEGRATION.md)** - Kafka, Redis, LangGraph, LangChain integration
-- **[Development Roadmap](NIS_Protocol_v2_Roadmap.md)** - 18-month plan to compete with major AGI companies
-
-### **📖 Getting Started**
-- **[Quick Start Guide](Quick_Start_Guide.md)** - Rapid setup and first steps
-- **[Implementation Guide](Implementation_Guide.md)** - Detailed implementation instructions
-- **[API Reference](API_Reference.md)** - Complete API documentation
-
-### **🔬 Research & Architecture**
-- **[NIS Protocol Whitepaper](NIS_Protocol_Whitepaper.md)** - Complete technical whitepaper
-- **[Architecture Documentation](architecture/)** - Neural hierarchy and system design
-- **[Memory System](memory_system/)** - Enhanced memory with consolidation
-- **[Emotional State System](emotional_state_system/)** - Emotional processing integration
-
-## 🧠 **AGI v2.0 Modules**
-
-### **🎯 Consciousness Module**
-**Location**: `src/agents/consciousness/`
-
-- **MetaCognitiveProcessor**: Self-reflection and cognitive analysis
-- **IntrospectionManager**: System-wide agent monitoring ([health tracking](src/infrastructure/integration_coordinator.py))
-- **ConsciousAgent**: Main consciousness coordination
-
-**Features:**
-- Real-time bias detection
-- Performance optimization
-- Meta-cognitive scoring
-- Cognitive health monitoring ([health tracking](src/infrastructure/integration_coordinator.py))
-
-### **🎯 Autonomous Goals Module**
-**Location**: `src/agents/goals/`
-
-- **GoalGenerationAgent**: Creates 6 types of autonomous goals
-- **CuriosityEngine**: Knowledge-driven exploration
-- **GoalPriorityManager**: Dynamic goal prioritization
-
-**Goal Types:**
-1. Exploration, 2. Learning, 3. Problem-solving
-4. Optimization, 5. Creativity, 6. Maintenance
-
-### **🎮 Simulation Module**
-**Location**: `src/agents/simulation/`
-
-- **ScenarioSimulator**: Decision scenario modeling
-- **OutcomePredictor**: ML-based prediction
-- **RiskAssessor**: Comprehensive risk assessment
-
-**Capabilities:**
-- What-if analysis
-- Predictive modeling
-- Risk mitigation strategies
-
-### **⚖️ Alignment Module**
-**Location**: `src/agents/alignment/`
-
-- **EthicalReasoner**: Multi-framework ethical evaluation
-- **ValueAlignment**: Human value alignment
-- **SafetyMonitor**: Real-time safety constraints
-
-**Ethical Frameworks:**
-- Utilitarian, Deontological, Virtue Ethics
-- Cultural sensitivity and indigenous rights
-
-### **💾 Enhanced Memory Module**
-**Location**: `src/agents/memory/`
-
-- **LTMConsolidator**: Biologically-inspired memory processing
-- **MemoryPruner**: Intelligent memory cleanup
-- **PatternExtractor**: Comprehensive pattern recognition
-
-## 🔄 **Tech Stack Integration**
-
-### **Event Streaming (Kafka)**
-- `nis-consciousness`: Meta-cognitive events
-- `nis-goals`: Goal generation and priorities
-- `nis-simulation`: Scenario results and predictions  
-- `nis-alignment`: Ethical evaluations and safety
-- `nis-memory`: Memory consolidation and patterns
-
-### **Intelligent Caching (Redis)**
-- Cognitive analysis (30min TTL)
-- Pattern recognition (2hr TTL)
-- Agent performance (1hr TTL)
-- Memory consolidation (24hr TTL)
-
-### **Workflow Orchestration (LangGraph)**
-- Meta-cognitive processing workflows
-- Bias detection pipelines
-- Goal validation flows
-- Ethical reasoning chains
-
-### **LLM Integration (LangChain)**
-- Cognitive analysis chains
-- Bias detection prompts
-- Cultural sensitivity evaluation
-- Natural language reasoning
-
-## 🌟 **Unique Positioning**
-
-### **🎯 Multi-Domain Cognitive Intelligence**
-✅ Heritage preservation → Environmental conservation → Space exploration  
-✅ Indigenous rights protection and multi-framework ethical reasoning  
-✅ Planetary-scale applications from Earth to Mars and beyond
-
-### **🌍 Universal Architecture**
-✅ Starting with archaeological heritage, expanding to all domains  
-✅ Cultural intelligence foundation scaling to interplanetary applications  
-✅ Cognitive architecture designed for terrestrial and extraterrestrial environments
-
-### **🧠 Biologically-Inspired Innovation**
-✅ Structured cognitive architecture vs pure statistical generation  
-✅ Meta-cognitive self-reflection and bias detection capabilities  
-✅ Real-time adaptation without requiring model retraining
-
-## 🌟 **Multi-Domain Expansion Vision**
-
-### **🏛️ Phase 1: Archaeological Heritage Foundation (Current)**
-- **Cultural Intelligence**: Indigenous rights protection and multi-framework ethics
-- **Site Discovery**: AI-powered analysis of satellite imagery and historical texts
-- **Heritage Preservation**: Community-centered approaches and cultural sensitivity
-- **Documentation**: Comprehensive digital archives with cultural intelligence
-
-### **🌍 Phase 2: Environmental & Climate Intelligence (2025)**
-- **Ecosystem monitoring ([health tracking](src/infrastructure/integration_coordinator.py))**: Multi-agent biodiversity protection and conservation
-- **Weather Intelligence**: Real-time climate analysis and predictive modeling
-- **Satellite Cognition**: Autonomous orbital monitoring with decision-making
-- **Disaster Response**: Intelligent early warning and coordination systems
-
-### **🚀 Phase 3: Space Exploration (2026-2027)**
-- **Mars Rovers**: Autonomous exploration with human-like reasoning
-- **Orbital Intelligence**: Satellites that think, adapt, and coordinate
-- **Deep Space**: Cognitive systems for long-duration missions
-- **Scientific Discovery**: AI that understands context, ethics, and methodology
-
-### **🏗️ Phase 4: Terraforming & Planetary Engineering (2028+)**
-- **Terraforming Operations**: Autonomous systems for planetary transformation
-- **Biosphere Management**: Intelligent ecosystem design for new worlds
-- **Interplanetary Cities**: Cognitive infrastructure for multi-planetary civilization
-- **Life Support Intelligence**: Adaptive systems with consciousness and learning
-
-## 📊 **Performance Metrics**
-
-### **Consciousness Metrics**
-- Meta-cognitive score (0-1)
-- Introspection depth assessment
-- Bias detection rate
-- Cognitive efficiency optimization
-
-### **Goal Generation Metrics**  
-- Autonomy level measurement
-- Goal diversity analysis
-- Priority accuracy tracking
-- Completion rate monitoring ([health tracking](src/infrastructure/integration_coordinator.py))
-
-### **Alignment Metrics**
-- Ethical consistency evaluation
-- Cultural sensitivity scoring
-- Safety compliance checking
-- Value alignment assessment
-
-## 🚀 **Quick Start Commands**
-
-```bash
-# Install dependencies
-pip install -r requirements.txt
-pip install -r requirements_tech_stack.txt
-
-# Start infrastructure
-docker-compose up -d kafka redis
-
-# Test AGI components
-python examples/agi_evolution_demo.py
-python examples/tech_stack_integration_demo.py
-
-# Run consciousness cycle
-python -c "from src.agents.consciousness import ConsciousAgent; agent = ConsciousAgent('test', 'Test consciousness')"
-```
-
-## 🤝 **Contributing to AGI Development**
-
-### **Priority Areas**
-1. **🧠 Consciousness**: Enhance meta-cognitive processing
-2. **🎯 Goals**: Improve curiosity engines and exploration
-3. **🎮 Simulation**: Comprehensive scenario modeling
-4. **⚖️ Alignment**: Multi-cultural ethical frameworks
-5. **💾 Memory**: Biologically-inspired consolidation
-
-### **Development Process**
-1. Fork repository and create feature branch
-2. Implement AGI capabilities following TODO guides
-3. Test with complete tech stack integration
-4. Include consciousness-driven test scenarios
-5. Submit pull request with detailed capability descriptions
-
-## 📞 **Support & Community**
-
-- **GitHub Issues**: Bug reports and feature requests
-- **Discussions**: Community questions and ideas
-- **Documentation**: Comprehensive guides and references
-- **Examples**: Working demonstrations and tutorials
+Welcome to the core documentation for **NIS Protocol v3** - the scientific AI system with Laplace → KAN → PINN → LLM pipeline, consciousness layer, and integrity monitoring.
 
 ---
 
-## 🌟 **Vision Statement**
+## 🚀 **Getting Started**
 
-*"NIS Protocol v2.0 represents the future of AGI: not just intelligent, but conscious, ethical, and culturally aware. We're building AGI that doesn't just process information—it truly understands, reflects, and acts with purpose and wisdom."*
+### **Quick Access**
+- **[Getting Started Guide](GETTING_STARTED.md)** - implemented setup and implementation guide
+- **[Quick Start Guide](Quick_Start_Guide.md)** - Fast track to basic usage  
+- **[API Reference](API_Reference.md)** - implemented API documentation
 
-**Ready to contribute to the future of AGI?** 🧠✨
+---
 
-[🚀 Get Started](../examples/agi_evolution_demo.py) | [🔬 Research](NIS_Protocol_v2_Roadmap.md) | [💬 Community](https://github.com/yourusername/NIS-Protocol/discussions) 
+## 🔧 **Core V3 Documentation**
+
+### **🧠 System Architecture**
+- **[Integration Guide](INTEGRATION_GUIDE.md)** - System integration patterns and implementations
+- **[Agent Master Inventory](NIS_V3_AGENT_MASTER_INVENTORY.md)** - implemented catalog of v3 agents
+- **[Mathematical Visualization Guide](v3_MATHEMATICAL_VISUALIZATION_GUIDE.md)** - V3 mathematical foundations
+
+### **⚡ Infrastructure & Integration**
+- **[Enhanced Kafka Redis Integration](ENHANCED_KAFKA_REDIS_INTEGRATION_GUIDE.md)** - Infrastructure setup and configuration
+- **[Multi-Provider LLM Guide](MULTI_PROVIDER_LLM_GUIDE.md)** - LLM integration and management
+- **[Web Search Integration](web_search_integration.md)** - Web search capabilities
+
+### **📖 Technical References**
+- **[Whitepaper (PDF)](finalwhitepaper.pdf)** - implemented technical specification
+- **[Whitepaper (HTML)](NIS_Protocol_Whitepaper.html)** - Web-readable technical documentation
+
+---
+
+## 🌐 **Web Documentation**
+
+### **Interactive Guides**
+- **[Main Index](index.html)** - Web-based documentation hub
+- **[Architecture Overview](architecture.html)** - Visual system architecture
+- **[FAQ](faq.html)** - Frequently asked questions
+- **[Emotional State System](emotional_state.html)** - Consciousness documentation
+
+### **Detailed Sections**
+- **[Architecture Details](architecture/)** - In-depth architectural documentation
+- **[Examples](examples/)** - Implementation examples and use cases
+- **[Getting Started Web](getting_started/)** - Web-based getting started guide
+- **[Memory System](memory_system/)** - Memory architecture documentation
+- **[Emotional State System](emotional_state_system/)** - Consciousness system details
+
+---
+
+## 🛠️ **For Developers**
+
+### **Implementation Guides**
+1. **Setup**: Start with [Getting Started Guide](GETTING_STARTED.md)
+2. **Integration**: Follow [Integration Guide](INTEGRATION_GUIDE.md)
+3. **Infrastructure**: Configure with [Kafka Redis Guide](ENHANCED_KAFKA_REDIS_INTEGRATION_GUIDE.md)
+4. **LLM Setup**: Implement with [Multi-Provider LLM Guide](MULTI_PROVIDER_LLM_GUIDE.md)
+
+### **Reference Materials**
+- **[API Reference](API_Reference.md)** - implemented function and class documentation
+- **[Agent Inventory](NIS_V3_AGENT_MASTER_INVENTORY.md)** - All available agents and capabilities
+- **[Technical Whitepaper](finalwhitepaper.pdf)** - Mathematical and algorithmic foundations
+
+---
+
+## 📊 **Documentation Structure**
+
+```
+docs/
+├── 📘 Core Guides
+│   ├── GETTING_STARTED.md          # implemented setup guide
+│   ├── Quick_Start_Guide.md        # Quick implementation
+│   ├── INTEGRATION_GUIDE.md        # Integration patterns
+│   └── API_Reference.md            # API documentation
+├── 🔧 Technical Guides  
+│   ├── ENHANCED_KAFKA_REDIS_INTEGRATION_GUIDE.md
+│   ├── MULTI_PROVIDER_LLM_GUIDE.md
+│   ├── web_search_integration.md
+│   └── v3_MATHEMATICAL_VISUALIZATION_GUIDE.md
+├── 📖 Reference Materials
+│   ├── NIS_V3_AGENT_MASTER_INVENTORY.md
+│   ├── finalwhitepaper.pdf
+│   └── NIS_Protocol_Whitepaper.html
+├── 🌐 Web Documentation
+│   ├── index.html
+│   ├── architecture.html
+│   ├── faq.html
+│   └── emotional_state.html
+└── 📁 Detailed Sections
+    ├── architecture/
+    ├── examples/
+    ├── getting_started/
+    ├── memory_system/
+    └── emotional_state_system/
+```
+
+---
+
+## 🎯 **Documentation Philosophy**
+
+This documentation focuses on **essential v3 implementation guidance** with:
+
+### ✅ **What's Included**
+- **Core Implementation**: Essential setup and integration guides
+- **Technical References**: API documentation and agent catalogs  
+- **Infrastructure**: Required system configuration guides
+- **Mathematical Foundations**: V3 algorithmic documentation
+
+### 🗂️ **Archive Location**
+Process summaries, audit reports, and implementation status files have been moved to:
+- **`docs/archive_summaries/`** - Historical development documentation
+
+---
+
+## 🚀 **Quick Navigation**
+
+### **New to NIS Protocol v3?**
+1. Read [Getting Started Guide](GETTING_STARTED.md)
+2. Try [Quick Start Guide](Quick_Start_Guide.md)  
+3. Explore [Examples](examples/)
+
+### **Implementing Integration?**
+1. Review [Integration Guide](INTEGRATION_GUIDE.md)
+2. Configure [Infrastructure](ENHANCED_KAFKA_REDIS_INTEGRATION_GUIDE.md)
+3. Set up [LLM Providers](MULTI_PROVIDER_LLM_GUIDE.md)
+
+### **Need Technical Details?**
+1. Check [API Reference](API_Reference.md)
+2. Browse [Agent Inventory](NIS_V3_AGENT_MASTER_INVENTORY.md)
+3. Read [Technical Whitepaper](finalwhitepaper.pdf)
+
+---
+
+## 📝 **Documentation Maintenance**
+
+This documentation is focused on **active v3 implementation needs**. For historical development information, see the archive folder.
+
+**Last Updated**: Documentation cleanup completed - essential v3 docs only 

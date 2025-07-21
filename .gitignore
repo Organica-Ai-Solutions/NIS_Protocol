@@ -152,3 +152,5 @@ recovery_codes.txt
 .env.local
 *.key
 *.token 
+# Archived documentation summaries
+docs/archive_summaries/
