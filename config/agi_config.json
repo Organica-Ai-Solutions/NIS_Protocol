@@ -99,12 +99,27 @@
                 "simulation_events": "nis-simulation", 
                 "alignment_events": "nis-alignment",
                 "memory_events": "nis-memory",
-                "coordination": "nis-coordination"
+                "coordination": "nis-coordination",
+                "system_health": "nis-system-health",
+                "audit_alerts": "nis-audit-alerts",
+                "performance": "nis-performance"
             },
             "consumer_groups": {
                 "agi_processors": "agi-processors",
                 "monitors": "agi-monitors",
-                "analytics": "agi-analytics"
+                "analytics": "agi-analytics",
+                "infrastructure": "infrastructure-health",
+                "audit": "infrastructure-audit"
+            },
+            "options": {
+                "max_retries": 3,
+                "retry_backoff": 1.0,
+                "batch_size": 100,
+                "enable_self_audit": true,
+                "circuit_breaker": {
+                    "failure_threshold": 5,
+                    "timeout": 60
+                }
             }
         },
         "memory_cache": {
@@ -114,7 +129,34 @@
             "db": 0,
             "memory_ttl": 3600,
             "pattern_cache_ttl": 7200,
-            "consciousness_cache_ttl": 1800
+            "consciousness_cache_ttl": 1800,
+            "options": {
+                "max_memory": "512mb",
+                "eviction_policy": "allkeys-lru",
+                "enable_self_audit": true,
+                "circuit_breaker": {
+                    "failure_threshold": 3,
+                    "timeout": 30
+                }
+            },
+            "namespace_ttls": {
+                "consciousness": 1800,
+                "memory": 3600,
+                "simulation": 7200,
+                "alignment": 3600,
+                "goals": 1800,
+                "coordination": 900,
+                "performance": 600,
+                "audit": 86400,
+                "system": 300
+            }
+        },
+        "coordination": {
+            "enable_self_audit": true,
+            "health_check_interval": 30.0,
+            "auto_recovery": true,
+            "performance_tracking": true,
+            "message_routing": true
         },
         "workflow_orchestration": {
             "provider": "langgraph",

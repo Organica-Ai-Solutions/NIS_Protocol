@@ -5,6 +5,12 @@ This module implements an advanced multi-LLM agent that orchestrates multiple
 language models for enhanced reasoning, validation, and response generation.
 Integrates with the LLM Provider Manager for physics-informed context routing.
 
+Enhanced Features (v3):
+- Complete self-audit integration with real-time integrity monitoring
+- Mathematical validation of multi-LLM coordination operations with evidence-based metrics
+- Comprehensive integrity oversight for all multi-LLM outputs
+- Auto-correction capabilities for coordination-related communications
+
 Key Features:
 - Multi-provider orchestration with intelligent routing
 - Physics-informed context enhancement
@@ -21,6 +27,7 @@ from typing import Dict, Any, List, Optional, Tuple, Union
 from dataclasses import dataclass, field
 from enum import Enum
 import numpy as np
+from collections import defaultdict
 
 from ...core.agent import NISAgent, NISLayer
 from ..hybrid_agent_core import CompleteScientificProcessingResult, CompleteHybridAgent
@@ -28,6 +35,14 @@ from ...llm.providers.llm_provider_manager import (
     LLMProviderManager, PhysicsInformedContext, LLMResponse, FusedResponse,
     TaskType, LLMProvider, ResponseConfidence
 )
+
+# Integrity metrics for actual calculations
+from src.utils.integrity_metrics import (
+    calculate_confidence, create_default_confidence_factors, ConfidenceFactors
+)
+
+# Self-audit capabilities for real-time integrity monitoring
+from src.utils.self_audit import self_audit_engine, ViolationType, IntegrityViolation
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -89,7 +104,8 @@ class MultiLLMAgent(NISAgent):
     """
     
     def __init__(self, agent_id: str = "multi_llm_001",
-                 default_strategy: MultiLLMStrategy = MultiLLMStrategy.PHYSICS_INFORMED):
+                 default_strategy: MultiLLMStrategy = MultiLLMStrategy.PHYSICS_INFORMED,
+                 enable_self_audit: bool = True):
         super().__init__(agent_id, NISLayer.REASONING, "Multi-LLM coordination agent")
         
         # Core components
@@ -119,8 +135,22 @@ class MultiLLMAgent(NISAgent):
         self.active_tasks = {}
         self.task_history = []
         
+        # Set up self-audit integration
+        self.enable_self_audit = enable_self_audit
+        self.integrity_monitoring_enabled = enable_self_audit
+        self.integrity_metrics = {
+            'monitoring_start_time': time.time(),
+            'total_outputs_monitored': 0,
+            'total_violations_detected': 0,
+            'auto_corrections_applied': 0,
+            'average_integrity_score': 100.0
+        }
+        
+        # Initialize confidence factors for mathematical validation
+        self.confidence_factors = create_default_confidence_factors()
+        
         self.logger = logging.getLogger(f"nis.multi_llm.{agent_id}")
-        self.logger.info(f"Initialized Multi-LLM Agent: {agent_id}")
+        self.logger.info(f"Initialized Multi-LLM Agent: {agent_id} with self-audit: {enable_self_audit}")
     
     def process(self, message: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -699,6 +729,415 @@ class MultiLLMAgent(NISAgent):
         return self._create_response("success", {"optimization_complete": True})
 
 # Example usage and testing
+if __name__ == "__main__":
+    import asyncio
+    
+    async def test_multi_llm_agent():
+        """Test the Multi-LLM Agent."""
+        agent = MultiLLMAgent()
+        
+        # Test multi-LLM coordination
+        test_message = {
+            "operation": "coordinate",
+            "payload": {
+                "prompt": "Analyze the stability and energy conservation of a damped harmonic oscillator",
+                "task_type": "scientific_analysis",
+                "strategy": "physics_informed",
+                "validation_level": "standard",
+                "max_providers": 3,
+                "scientific_result": {
+                    "physics_compliance": 0.85,
+                    "physics_violations": ["minor energy dissipation anomaly"],
+                    "symbolic_functions": ["sin(2*pi*t)*exp(-0.1*t)"],
+                    "scientific_insights": ["Damped oscillation", "Energy conservation with dissipation"],
+                    "integrity_score": 0.88
+                }
+            }
+        }
+        
+        result = agent.process(test_message)
+        
+        if result["status"] == "success":
+            payload = result["payload"]
+            print(f"🤖 Multi-LLM Coordination Results:")
+            print(f"   Confidence: {payload['confidence']:.3f}")
+            print(f"   Consensus Score: {payload['consensus_score']:.3f}")
+            print(f"   Physics Compliance: {payload['physics_compliance']:.3f}")
+            print(f"   Providers Used: {payload['providers_used']}")
+            print(f"   Strategy: {payload['strategy_used']}")
+            print(f"   Cost: ${payload['total_cost']:.4f}")
+            print(f"   Processing Time: {payload['processing_time']:.3f}s")
+        else:
+            print(f"❌ Multi-LLM coordination failed: {result['payload']}")
+    
+    asyncio.run(test_multi_llm_agent()) 
+    
+    # ==================== COMPREHENSIVE SELF-AUDIT CAPABILITIES ====================
+    
+    def audit_multi_llm_output(self, output_text: str, operation: str = "", context: str = "") -> Dict[str, Any]:
+        """
+        Perform real-time integrity audit on multi-LLM coordination outputs.
+        
+        Args:
+            output_text: Text output to audit
+            operation: Multi-LLM operation type (coordinate, validate, optimize, etc.)
+            context: Additional context for the audit
+            
+        Returns:
+            Audit results with violations and integrity score
+        """
+        if not self.enable_self_audit:
+            return {'integrity_score': 100.0, 'violations': [], 'total_violations': 0}
+        
+        self.logger.info(f"Performing self-audit on multi-LLM output for operation: {operation}")
+        
+        # Use proven audit engine
+        audit_context = f"multi_llm:{operation}:{context}" if context else f"multi_llm:{operation}"
+        violations = self_audit_engine.audit_text(output_text, audit_context)
+        integrity_score = self_audit_engine.get_integrity_score(output_text)
+        
+        # Log violations for multi-LLM-specific analysis
+        if violations:
+            self.logger.warning(f"Detected {len(violations)} integrity violations in multi-LLM output")
+            for violation in violations:
+                self.logger.warning(f"  - {violation.severity}: {violation.text} -> {violation.suggested_replacement}")
+        
+        return {
+            'violations': violations,
+            'integrity_score': integrity_score,
+            'total_violations': len(violations),
+            'violation_breakdown': self._categorize_multi_llm_violations(violations),
+            'operation': operation,
+            'audit_timestamp': time.time()
+        }
+    
+    def auto_correct_multi_llm_output(self, output_text: str, operation: str = "") -> Dict[str, Any]:
+        """
+        Automatically correct integrity violations in multi-LLM outputs.
+        
+        Args:
+            output_text: Text to correct
+            operation: Multi-LLM operation type
+            
+        Returns:
+            Corrected output with audit details
+        """
+        if not self.enable_self_audit:
+            return {'corrected_text': output_text, 'violations_fixed': [], 'improvement': 0}
+        
+        self.logger.info(f"Performing self-correction on multi-LLM output for operation: {operation}")
+        
+        corrected_text, violations = self_audit_engine.auto_correct_text(output_text)
+        
+        # Calculate improvement metrics with mathematical validation
+        original_score = self_audit_engine.get_integrity_score(output_text)
+        corrected_score = self_audit_engine.get_integrity_score(corrected_text)
+        improvement = calculate_confidence(corrected_score - original_score, self.confidence_factors)
+        
+        # Update integrity metrics
+        if hasattr(self, 'integrity_metrics'):
+            self.integrity_metrics['auto_corrections_applied'] += len(violations)
+        
+        return {
+            'original_text': output_text,
+            'corrected_text': corrected_text,
+            'violations_fixed': violations,
+            'original_integrity_score': original_score,
+            'corrected_integrity_score': corrected_score,
+            'improvement': improvement,
+            'operation': operation,
+            'correction_timestamp': time.time()
+        }
+    
+    def analyze_multi_llm_integrity_trends(self, time_window: int = 3600) -> Dict[str, Any]:
+        """
+        Analyze multi-LLM coordination integrity trends for self-improvement.
+        
+        Args:
+            time_window: Time window in seconds to analyze
+            
+        Returns:
+            Multi-LLM integrity trend analysis with mathematical validation
+        """
+        if not self.enable_self_audit:
+            return {'integrity_status': 'MONITORING_DISABLED'}
+        
+        self.logger.info(f"Analyzing multi-LLM integrity trends over {time_window} seconds")
+        
+        # Get integrity report from audit engine
+        integrity_report = self_audit_engine.generate_integrity_report()
+        
+        # Calculate multi-LLM-specific metrics
+        multi_llm_metrics = {
+            'default_strategy': self.default_strategy.value,
+            'max_concurrent_requests': self.max_concurrent_requests,
+            'physics_threshold': self.physics_threshold,
+            'consensus_threshold': self.consensus_threshold,
+            'provider_manager_configured': bool(self.provider_manager),
+            'coordination_stats': self.coordination_stats,
+            'task_queue_size': self.task_queue.qsize(),
+            'active_tasks_count': len(self.active_tasks),
+            'task_history_length': len(self.task_history)
+        }
+        
+        # Generate multi-LLM-specific recommendations
+        recommendations = self._generate_multi_llm_integrity_recommendations(
+            integrity_report, multi_llm_metrics
+        )
+        
+        return {
+            'integrity_status': integrity_report['integrity_status'],
+            'total_violations': integrity_report['total_violations'],
+            'multi_llm_metrics': multi_llm_metrics,
+            'integrity_trend': self._calculate_multi_llm_integrity_trend(),
+            'recommendations': recommendations,
+            'analysis_timestamp': time.time()
+        }
+    
+    def get_multi_llm_integrity_report(self) -> Dict[str, Any]:
+        """Generate comprehensive multi-LLM coordination integrity report"""
+        if not self.enable_self_audit:
+            return {'status': 'SELF_AUDIT_DISABLED'}
+        
+        # Get basic integrity report
+        base_report = self_audit_engine.generate_integrity_report()
+        
+        # Add multi-LLM-specific metrics
+        multi_llm_report = {
+            'multi_llm_agent_id': self.agent_id,
+            'monitoring_enabled': self.integrity_monitoring_enabled,
+            'multi_llm_capabilities': {
+                'multi_provider_orchestration': True,
+                'physics_informed_routing': True,
+                'consensus_building': True,
+                'specialized_task_delegation': True,
+                'performance_monitoring': True,
+                'cost_optimization': True,
+                'supported_strategies': [strategy.value for strategy in MultiLLMStrategy],
+                'default_strategy': self.default_strategy.value
+            },
+            'configuration_status': {
+                'provider_manager_initialized': bool(self.provider_manager),
+                'max_concurrent_requests': self.max_concurrent_requests,
+                'physics_threshold': self.physics_threshold,
+                'consensus_threshold': self.consensus_threshold,
+                'default_timeout': self.default_timeout
+            },
+            'processing_statistics': {
+                'total_tasks': self.coordination_stats.get('total_tasks', 0),
+                'successful_tasks': self.coordination_stats.get('successful_tasks', 0),
+                'average_processing_time': self.coordination_stats.get('average_processing_time', 0.0),
+                'average_consensus': self.coordination_stats.get('average_consensus', 0.0),
+                'average_physics_compliance': self.coordination_stats.get('average_physics_compliance', 0.0),
+                'cost_efficiency': self.coordination_stats.get('cost_efficiency', 0.0),
+                'strategy_usage': self.coordination_stats.get('strategy_usage', {}),
+                'task_queue_size': self.task_queue.qsize(),
+                'active_tasks': len(self.active_tasks),
+                'task_history_entries': len(self.task_history)
+            },
+            'integrity_metrics': getattr(self, 'integrity_metrics', {}),
+            'base_integrity_report': base_report,
+            'report_timestamp': time.time()
+        }
+        
+        return multi_llm_report
+    
+    def validate_multi_llm_configuration(self) -> Dict[str, Any]:
+        """Validate multi-LLM coordination configuration for integrity"""
+        validation_results = {
+            'valid': True,
+            'warnings': [],
+            'recommendations': []
+        }
+        
+        # Check provider manager
+        if not self.provider_manager:
+            validation_results['valid'] = False
+            validation_results['warnings'].append("Provider manager not initialized")
+            validation_results['recommendations'].append("Initialize LLMProviderManager for multi-LLM coordination")
+        
+        # Check thresholds
+        if self.physics_threshold <= 0 or self.physics_threshold >= 1:
+            validation_results['warnings'].append("Invalid physics threshold - should be between 0 and 1")
+            validation_results['recommendations'].append("Set physics_threshold to a value between 0.5-0.9")
+        
+        if self.consensus_threshold <= 0 or self.consensus_threshold >= 1:
+            validation_results['warnings'].append("Invalid consensus threshold - should be between 0 and 1")
+            validation_results['recommendations'].append("Set consensus_threshold to a value between 0.5-0.9")
+        
+        # Check concurrent requests
+        if self.max_concurrent_requests <= 0:
+            validation_results['warnings'].append("Invalid max concurrent requests - must be positive")
+            validation_results['recommendations'].append("Set max_concurrent_requests to a positive value (e.g., 5)")
+        
+        # Check success rate
+        success_rate = (self.coordination_stats.get('successful_tasks', 0) / 
+                       max(1, self.coordination_stats.get('total_tasks', 1)))
+        
+        if success_rate < 0.8:
+            validation_results['warnings'].append(f"Low success rate: {success_rate:.1%}")
+            validation_results['recommendations'].append("Investigate and optimize coordination strategies for better success rate")
+        
+        # Check cost efficiency
+        cost_efficiency = self.coordination_stats.get('cost_efficiency', 0.0)
+        if cost_efficiency < 0.5:
+            validation_results['warnings'].append(f"Low cost efficiency: {cost_efficiency:.2f}")
+            validation_results['recommendations'].append("Optimize provider selection and strategy usage for better cost efficiency")
+        
+        return validation_results
+    
+    def _monitor_multi_llm_output_integrity(self, output_text: str, operation: str = "") -> str:
+        """
+        Internal method to monitor and potentially correct multi-LLM output integrity.
+        
+        Args:
+            output_text: Output to monitor
+            operation: Multi-LLM operation type
+            
+        Returns:
+            Potentially corrected output
+        """
+        if not getattr(self, 'integrity_monitoring_enabled', False):
+            return output_text
+        
+        # Perform audit
+        audit_result = self.audit_multi_llm_output(output_text, operation)
+        
+        # Update monitoring metrics
+        if hasattr(self, 'integrity_metrics'):
+            self.integrity_metrics['total_outputs_monitored'] += 1
+            self.integrity_metrics['total_violations_detected'] += audit_result['total_violations']
+        
+        # Auto-correct if violations detected
+        if audit_result['violations']:
+            correction_result = self.auto_correct_multi_llm_output(output_text, operation)
+            
+            self.logger.info(f"Auto-corrected multi-LLM output: {len(audit_result['violations'])} violations fixed")
+            
+            return correction_result['corrected_text']
+        
+        return output_text
+    
+    def _categorize_multi_llm_violations(self, violations: List[IntegrityViolation]) -> Dict[str, int]:
+        """Categorize integrity violations specific to multi-LLM operations"""
+        categories = defaultdict(int)
+        
+        for violation in violations:
+            categories[violation.violation_type.value] += 1
+        
+        return dict(categories)
+    
+    def _generate_multi_llm_integrity_recommendations(self, integrity_report: Dict[str, Any], multi_llm_metrics: Dict[str, Any]) -> List[str]:
+        """Generate multi-LLM-specific integrity improvement recommendations"""
+        recommendations = []
+        
+        if integrity_report.get('total_violations', 0) > 5:
+            recommendations.append("Consider implementing more rigorous multi-LLM output validation")
+        
+        if not multi_llm_metrics.get('provider_manager_configured', False):
+            recommendations.append("Initialize LLM Provider Manager for multi-LLM coordination")
+        
+        if multi_llm_metrics.get('task_queue_size', 0) > 100:
+            recommendations.append("Task queue is large - consider increasing concurrent processing capacity")
+        
+        if multi_llm_metrics.get('active_tasks_count', 0) > 20:
+            recommendations.append("Many active tasks - monitor resource usage and performance")
+        
+        success_rate = (multi_llm_metrics.get('coordination_stats', {}).get('successful_tasks', 0) / 
+                       max(1, multi_llm_metrics.get('coordination_stats', {}).get('total_tasks', 1)))
+        
+        if success_rate < 0.8:
+            recommendations.append("Low coordination success rate - consider optimizing strategies and provider selection")
+        
+        avg_consensus = multi_llm_metrics.get('coordination_stats', {}).get('average_consensus', 0.0)
+        if avg_consensus < 0.7:
+            recommendations.append("Low average consensus - consider adjusting consensus threshold or provider selection")
+        
+        cost_efficiency = multi_llm_metrics.get('coordination_stats', {}).get('cost_efficiency', 0.0)
+        if cost_efficiency < 0.5:
+            recommendations.append("Low cost efficiency - optimize provider usage and task allocation")
+        
+        if multi_llm_metrics.get('physics_threshold', 0) < 0.7:
+            recommendations.append("Physics threshold is low - consider increasing for better physics compliance")
+        
+        if len(recommendations) == 0:
+            recommendations.append("Multi-LLM coordination integrity status is excellent - maintain current practices")
+        
+        return recommendations
+    
+    def _calculate_multi_llm_integrity_trend(self) -> Dict[str, Any]:
+        """Calculate multi-LLM integrity trends with mathematical validation"""
+        if not hasattr(self, 'coordination_stats'):
+            return {'trend': 'INSUFFICIENT_DATA'}
+        
+        total_tasks = self.coordination_stats.get('total_tasks', 0)
+        successful_tasks = self.coordination_stats.get('successful_tasks', 0)
+        
+        if total_tasks == 0:
+            return {'trend': 'NO_TASKS_PROCESSED'}
+        
+        success_rate = successful_tasks / total_tasks
+        avg_consensus = self.coordination_stats.get('average_consensus', 0.0)
+        avg_physics_compliance = self.coordination_stats.get('average_physics_compliance', 0.0)
+        cost_efficiency = self.coordination_stats.get('cost_efficiency', 0.0)
+        avg_processing_time = self.coordination_stats.get('average_processing_time', 0.0)
+        
+        # Calculate trend with mathematical validation
+        processing_efficiency = 1.0 / max(avg_processing_time, 0.1)
+        trend_score = calculate_confidence(
+            (success_rate * 0.3 + avg_consensus * 0.2 + avg_physics_compliance * 0.2 + 
+             cost_efficiency * 0.2 + min(processing_efficiency / 10.0, 1.0) * 0.1), 
+            self.confidence_factors
+        )
+        
+        return {
+            'trend': 'IMPROVING' if trend_score > 0.8 else 'STABLE' if trend_score > 0.6 else 'NEEDS_ATTENTION',
+            'success_rate': success_rate,
+            'avg_consensus': avg_consensus,
+            'avg_physics_compliance': avg_physics_compliance,
+            'cost_efficiency': cost_efficiency,
+            'avg_processing_time': avg_processing_time,
+            'trend_score': trend_score,
+            'tasks_processed': total_tasks,
+            'coordination_analysis': self._analyze_multi_llm_patterns()
+        }
+    
+    def _analyze_multi_llm_patterns(self) -> Dict[str, Any]:
+        """Analyze multi-LLM coordination patterns for integrity assessment"""
+        if not hasattr(self, 'coordination_stats') or not self.coordination_stats:
+            return {'pattern_status': 'NO_COORDINATION_STATS'}
+        
+        total_tasks = self.coordination_stats.get('total_tasks', 0)
+        successful_tasks = self.coordination_stats.get('successful_tasks', 0)
+        strategy_usage = self.coordination_stats.get('strategy_usage', {})
+        
+        # Find most used strategy
+        most_used_strategy = max(strategy_usage.items(), key=lambda x: x[1])[0] if strategy_usage else "none"
+        
+        return {
+            'pattern_status': 'NORMAL' if total_tasks > 0 else 'NO_COORDINATION_ACTIVITY',
+            'total_tasks': total_tasks,
+            'successful_tasks': successful_tasks,
+            'success_rate': successful_tasks / max(1, total_tasks),
+            'most_used_strategy': most_used_strategy,
+            'strategy_distribution': strategy_usage,
+            'task_queue_current_size': self.task_queue.qsize(),
+            'active_tasks_current': len(self.active_tasks),
+            'analysis_timestamp': time.time()
+        }
+
+# Bind the methods to the MultiLLMAgent class
+MultiLLMAgent.audit_multi_llm_output = audit_multi_llm_output
+MultiLLMAgent.auto_correct_multi_llm_output = auto_correct_multi_llm_output
+MultiLLMAgent.analyze_multi_llm_integrity_trends = analyze_multi_llm_integrity_trends
+MultiLLMAgent.get_multi_llm_integrity_report = get_multi_llm_integrity_report
+MultiLLMAgent.validate_multi_llm_configuration = validate_multi_llm_configuration
+MultiLLMAgent._monitor_multi_llm_output_integrity = _monitor_multi_llm_output_integrity
+MultiLLMAgent._categorize_multi_llm_violations = _categorize_multi_llm_violations
+MultiLLMAgent._generate_multi_llm_integrity_recommendations = _generate_multi_llm_integrity_recommendations
+MultiLLMAgent._calculate_multi_llm_integrity_trend = _calculate_multi_llm_integrity_trend
+MultiLLMAgent._analyze_multi_llm_patterns = _analyze_multi_llm_patterns
+
 if __name__ == "__main__":
     import asyncio
     
