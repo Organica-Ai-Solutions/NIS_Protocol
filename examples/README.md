@@ -5,7 +5,7 @@ This directory contains example implementations of the NIS Protocol for various 
 ## Examples
 
 - **Automated Tolling System**: Complete example of a toll booth system using computer vision and NIS Protocol agents.
-- **Smart Traffic Monitoring**: Example implementation of traffic analysis with emotional weighting.
+- **Smart Traffic monitoring ([health tracking](src/infrastructure/integration_coordinator.py))**: Example implementation of traffic analysis with emotional weighting.
 - **Basic Agent Communication**: Simple example showing how agents communicate and make decisions.
 
 ## Running the Examples

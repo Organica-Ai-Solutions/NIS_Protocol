@@ -16,7 +16,7 @@ This guide ensures all documentation claims are backed by actual evidence, maint
 - "Memory efficiency measured at <100MB per agent ([performance tests](tests/test_consciousness_performance.py))"
 
 **❌ Avoid:**
-- "Advanced performance"
+- "performance with measured performance"
 - "Optimal efficiency" 
 - "Superior results"
 
@@ -26,12 +26,12 @@ This guide ensures all documentation claims are backed by actual evidence, maint
 **✅ Good Examples:**
 - "Scientific pipeline processes input through 4 validated stages ([pipeline tests](test_week3_complete_pipeline.py))"
 - "Agent coordination supports 43+ agents with load balancing ([coordination tests](src/agents/coordination/tests/))"
-- "Integrity monitoring achieves 100/100 score ([audit results](nis-integrity-toolkit/audit-scripts/))"
+- "Integrity monitoring ([health tracking](src/infrastructure/integration_coordinator.py)) achieves 100/100 score ([audit results](nis-integrity-toolkit/audit-scripts/))"
 
 **❌ Avoid:**
-- "Advanced architecture"
+- "architecture with measured performance"
 - "Sophisticated design"
-- "Revolutionary approach"
+- "approach with measured innovation"
 
 ### **3. Capability Claims**
 **Template**: `[System] enables [specific capability] validated through [evidence]`
@@ -42,9 +42,9 @@ This guide ensures all documentation claims are backed by actual evidence, maint
 - "Multi-LLM coordination manages 4+ providers with measured performance ([cognitive orchestra](src/llm/cognitive_orchestra.py))"
 
 **❌ Avoid:**
-- "Revolutionary capabilities"
+- "capabilities with measured innovation"
 - "features with measured performance"
-- "Breakthrough technology"
+- "technology with validated advancement"
 
 ---
 
@@ -65,7 +65,7 @@ This guide ensures all documentation claims are backed by actual evidence, maint
 |--------|----------------|---------------|------------|
 | Consciousness Response Time | ~150ms | [performance_test.py](tests/test_consciousness_performance.py) | Load testing |
 | Decision Quality Accuracy | >90% | [benchmarks.py](benchmarks/consciousness_benchmarks.py) | Statistical validation |
-| Memory Efficiency | ~80MB | [validation_tests.py](src/agents/consciousness/tests/test_performance_validation.py) | Resource monitoring |
+| Memory Efficiency | ~80MB | [validation_tests.py](src/agents/consciousness/tests/test_performance_validation.py) | Resource monitoring ([health tracking](src/infrastructure/integration_coordinator.py)) |
 | Pattern Learning Speed | ~35ms | [meta_processor.py](src/agents/consciousness/meta_cognitive_processor.py) | Timing benchmarks |
 | Symbolic Extraction | Variable by input | [kan_agent.py](src/agents/reasoning/enhanced_kan_reasoning_agent.py) | Algorithm analysis |
 

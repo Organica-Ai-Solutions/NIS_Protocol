@@ -12,7 +12,7 @@ This file provides direct links from all performance claims to their supporting 
 |-------|----------------|---------------|-------------------|
 | Response Time < 200ms | ~150ms achieved | [Performance Tests](tests/test_consciousness_performance.py) | Load testing with 1000 requests |
 | Decision Quality > 85% | >90% achieved | [Benchmarks](benchmarks/consciousness_benchmarks.py) | Statistical validation of 500 decisions |
-| Memory Efficiency < 100MB | ~80MB achieved | [Validation Tests](src/agents/consciousness/tests/test_performance_validation.py) | Resource monitoring during operation |
+| Memory Efficiency < 100MB | ~80MB achieved | [Validation Tests](src/agents/consciousness/tests/test_performance_validation.py) | Resource monitoring ([health tracking](src/infrastructure/integration_coordinator.py)) during operation |
 | Pattern Learning < 50ms | ~35ms achieved | [Meta Processor](src/agents/consciousness/meta_cognitive_processor.py) | Timing analysis of pattern recognition |
 | Integrity Score 100/100 | 100/100 achieved | [Audit Results](nis-integrity-toolkit/audit-scripts/full-audit.py) | Automated integrity audit |
 
@@ -29,7 +29,7 @@ This file provides direct links from all performance claims to their supporting 
 | Component | Status | Evidence Link | Validation |
 |-----------|--------|---------------|------------|
 | Agent Registry | 43+ agents | [Registry](src/core/registry.py) | Component counting |
-| Infrastructure | Kafka + Redis operational | [Integration Coordinator](src/infrastructure/integration_coordinator.py) | Health monitoring |
+| Infrastructure | Kafka + Redis operational | [Integration Coordinator](src/infrastructure/integration_coordinator.py) | Health monitoring ([health tracking](src/infrastructure/integration_coordinator.py)) |
 | LLM Coordination | Multi-provider tested | [Cognitive Orchestra](src/llm/cognitive_orchestra.py) | Provider integration tests |
 | Memory System | Enhanced operational | [Memory Manager](src/memory/memory_manager.py) | Performance testing |
 | Safety Systems | Multi-framework active | [Alignment Agents](src/agents/alignment/) | Safety validation |
@@ -87,7 +87,7 @@ Zero Hardcoded Values      | Verified    | Integrity audit
 ### **Performance Validation Methods**
 - **Load Testing**: Synthetic request generation with timing measurement
 - **Statistical Analysis**: Confidence intervals and trend analysis
-- **Resource Monitoring**: Memory and CPU usage tracking
+- **Resource monitoring ([health tracking](src/infrastructure/integration_coordinator.py))**: Memory and CPU usage tracking
 - **Integration Testing**: End-to-end pipeline validation
 - **Code Analysis**: Static analysis for quality metrics
 

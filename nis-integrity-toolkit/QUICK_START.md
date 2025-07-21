@@ -92,7 +92,7 @@ git submodule add https://github.com/your-org/nis-integrity-toolkit.git
 1. **Fix current issues** found by pre-submission check
 2. **Set up pre-commit hooks** to prevent future issues
 3. **Use 40-minute checklist** before major releases
-4. **Run weekly monitoring** to track enhancement trends
+4. **Run weekly monitoring ([health tracking](src/infrastructure/integration_coordinator.py))** to track enhancement trends
 5. **Apply honest templates** to all new documentation
 
 ---

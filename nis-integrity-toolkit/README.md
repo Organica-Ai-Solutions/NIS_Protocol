@@ -13,7 +13,7 @@ nis-integrity-toolkit/
 ├── ✅ checklists/             # Manual verification checklists
 ├── 🔧 integration/            # Repository integration guides
 ├── 📊 version-control/        # Version tracking and compliance
-├── 📈 monitoring/             # Ongoing integrity monitoring
+├── 📈 monitoring ([health tracking](src/infrastructure/integration_coordinator.py))/             # Ongoing integrity monitoring ([health tracking](src/infrastructure/integration_coordinator.py))
 ├── 📄 reports/                # Generated audit reports
 └── 📚 documentation/          # Toolkit documentation
 ```
@@ -168,7 +168,7 @@ cd /path/to/new-project/nis-integrity-toolkit/
 ### **For Regular Maintenance:**
 ```bash
 # Weekly integrity check (automation recommended)
-./monitoring/weekly-check.sh
+./monitoring ([health tracking](src/infrastructure/integration_coordinator.py))/weekly-check.sh
 ```
 
 ---

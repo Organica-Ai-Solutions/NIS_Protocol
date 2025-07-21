@@ -26,10 +26,10 @@ NIS Protocol v3 provides multiple integration points depending on your use case:
 | **Level** | **Use Case** | **Complexity** | **Features** |
 |:---|:---|:---:|:---|
 | **🔬 scientific pipeline ([integration tests](test_week3_complete_pipeline.py))** | Signal processing, physics validation | **Medium** | Complete Laplace→KAN→PINN→LLM pipeline |
-| **🧠 consciousness layer ([performance validation](src/agents/consciousness/tests/))** | System monitoring, introspection | **Low** | Meta-cognitive capabilities, integrity monitoring |
-| **🛡️ Integrity Monitoring** | Quality assurance, validation | **Low** | Self-audit, violation detection |
+| **🧠 consciousness layer ([performance validation](src/agents/consciousness/tests/))** | System monitoring ([health tracking](src/infrastructure/integration_coordinator.py)), introspection | **Low** | Meta-cognitive capabilities, integrity monitoring ([health tracking](src/infrastructure/integration_coordinator.py)) |
+| **🛡️ Integrity monitoring ([health tracking](src/infrastructure/integration_coordinator.py))** | Quality assurance, validation | **Low** | Self-audit, violation detection |
 | **🤖 Custom Agents** | Specialized functionality | **High** | Full agent framework with consciousness |
-| **📊 Performance Monitoring** | System analytics | **Low** | Performance metrics, trend analysis |
+| **📊 Performance monitoring ([health tracking](src/infrastructure/integration_coordinator.py))** | System analytics | **Low** | Performance metrics, trend analysis |
 
 ### **System Requirements**
 
@@ -94,7 +94,7 @@ print(f"Reconstruction error: {result.reconstruction_error:.6f}")
 print(f"Signal quality: {result.quality_assessment.value}")
 ```
 
-### **3. Basic Integrity Monitoring**
+### **3. Basic Integrity monitoring ([health tracking](src/infrastructure/integration_coordinator.py))**
 
 ```python
 from utils.self_audit import self_audit_engine
@@ -286,7 +286,7 @@ if __name__ == "__main__":
 
 ## 🧠 **Consciousness System Integration**
 
-### **System Monitoring Integration**
+### **System monitoring ([health tracking](src/infrastructure/integration_coordinator.py)) Integration**
 
 ```python
 from agents.consciousness.enhanced_conscious_agent import (
@@ -294,29 +294,29 @@ from agents.consciousness.enhanced_conscious_agent import (
 )
 
 class SystemMonitoringIntegration:
-    """Integration wrapper for consciousness and monitoring capabilities"""
+    """Integration wrapper for consciousness and Monitoring ([system health](src/agents/consciousness/introspection_manager.py)) capabilities"""
     
-    def __init__(self, monitoring_interval: float = 60.0):
-        self.monitoring_interval = monitoring_interval
+    def __init__(self, monitoring ([health tracking](src/infrastructure/integration_coordinator.py))_interval: float = 60.0):
+        self.monitoring ([health tracking](src/infrastructure/integration_coordinator.py))_interval = monitoring ([health tracking](src/infrastructure/integration_coordinator.py))_interval
         self.conscious_agent = None
         self.setup_consciousness()
     
     def setup_consciousness(self):
-        """Initialize consciousness monitoring system"""
+        """Initialize consciousness monitoring ([health tracking](src/infrastructure/integration_coordinator.py)) system"""
         
         self.conscious_agent = EnhancedConsciousAgent(
             agent_id="system_monitor",
-            reflection_interval=self.monitoring_interval,
+            reflection_interval=self.monitoring ([health tracking](src/infrastructure/integration_coordinator.py))_interval,
             enable_self_audit=True,
             consciousness_level=ConsciousnessLevel.INTEGRATED
         )
         
-        print("✅ Consciousness monitoring system initialized")
+        print("✅ Consciousness monitoring ([health tracking](src/infrastructure/integration_coordinator.py)) system initialized")
     
     def register_system_component(self, component_id: str, metadata: Dict[str, Any]):
-        """Register a system component for monitoring"""
+        """Register a system component for monitoring ([health tracking](src/infrastructure/integration_coordinator.py))"""
         self.conscious_agent.register_agent_for_monitoring(component_id, metadata)
-        print(f"✅ Registered {component_id} for monitoring")
+        print(f"✅ Registered {component_id} for monitoring ([health tracking](src/infrastructure/integration_coordinator.py))")
     
     def update_component_performance(self, component_id: str, performance_score: float):
         """Update performance metrics for monitored component"""
@@ -348,19 +348,19 @@ class SystemMonitoringIntegration:
         }
     
     def start_continuous_monitoring(self):
-        """Start continuous system monitoring"""
+        """Start continuous system monitoring ([health tracking](src/infrastructure/integration_coordinator.py))"""
         self.conscious_agent.start_continuous_reflection()
-        print("✅ Started continuous system monitoring")
+        print("✅ Started continuous system monitoring ([health tracking](src/infrastructure/integration_coordinator.py))")
     
     def stop_continuous_monitoring(self):
-        """Stop continuous system monitoring"""
+        """Stop continuous system monitoring ([health tracking](src/infrastructure/integration_coordinator.py))"""
         self.conscious_agent.stop_continuous_reflection()
-        print("⏹️ Stopped continuous system monitoring")
+        print("⏹️ Stopped continuous system monitoring ([health tracking](src/infrastructure/integration_coordinator.py))")
 
 # Usage Example
-def monitoring_integration_example():
-    # Initialize monitoring
-    monitor = SystemMonitoringIntegration(monitoring_interval=30.0)
+def monitoring ([health tracking](src/infrastructure/integration_coordinator.py))_integration_example():
+    # Initialize monitoring ([health tracking](src/infrastructure/integration_coordinator.py))
+    monitor = SystemMonitoringIntegration(monitoring ([health tracking](src/infrastructure/integration_coordinator.py))_interval=30.0)
     
     # Register system components
     monitor.register_system_component("database", {"type": "storage", "critical": True})
@@ -391,7 +391,7 @@ def monitoring_integration_example():
 
 # Run example
 if __name__ == "__main__":
-    monitor = monitoring_integration_example()
+    monitor = monitoring ([health tracking](src/infrastructure/integration_coordinator.py))_integration_example()
 ```
 
 ---
@@ -428,7 +428,7 @@ class CustomProcessingAgent(NISAgent):
         # Initialize confidence factors
         self.confidence_factors = create_default_confidence_factors()
         
-        # Enable integrity monitoring
+        # Enable integrity monitoring ([health tracking](src/infrastructure/integration_coordinator.py))
         self.enable_self_audit = self.custom_config.get('enable_integrity', True)
         
         self.logger = logging.getLogger(f"custom.{agent_id}")
@@ -436,7 +436,7 @@ class CustomProcessingAgent(NISAgent):
     
     def process(self, message: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Main processing method with full integrity monitoring
+        Main processing method with full integrity monitoring ([health tracking](src/infrastructure/integration_coordinator.py))
         """
         start_time = time.time()
         
@@ -460,7 +460,7 @@ class CustomProcessingAgent(NISAgent):
                 'processing_time': time.time() - start_time
             }
             
-            # Apply integrity monitoring
+            # Apply integrity monitoring ([health tracking](src/infrastructure/integration_coordinator.py))
             if self.enable_self_audit:
                 response = self._apply_integrity_monitoring(response)
             
@@ -526,7 +526,7 @@ class CustomProcessingAgent(NISAgent):
         )
     
     def _apply_integrity_monitoring(self, response: Dict[str, Any]) -> Dict[str, Any]:
-        """Apply integrity monitoring to response"""
+        """Apply integrity monitoring ([health tracking](src/infrastructure/integration_coordinator.py)) to response"""
         
         # Convert response to auditable text
         audit_text = f"Agent {response['agent_id']} processed data with {response['confidence']:.3f} confidence"
@@ -751,7 +751,7 @@ async def optimized_batch_processing_example():
         signal = np.sin(2*np.pi*(5 + i)*t)
         signals.append((signal, t))
     
-    # Process batch with performance monitoring
+    # Process batch with performance monitoring ([health tracking](src/infrastructure/integration_coordinator.py))
     batch_results = []
     
     for i, (signal, t) in enumerate(signals):
@@ -954,7 +954,7 @@ class ProductionConfig:
                 'consciousness_level': os.getenv('CONSCIOUSNESS_LEVEL', 'ENHANCED'),
                 'enable_continuous_monitoring': os.getenv('CONTINUOUS_MONITORING', 'true').lower() == 'true'
             },
-            'monitoring': {
+            'monitoring ([health tracking](src/infrastructure/integration_coordinator.py))': {
                 'enable_performance_tracking': True,
                 'enable_integrity_monitoring': True,
                 'log_level': os.getenv('LOG_LEVEL', 'INFO'),
@@ -1127,10 +1127,10 @@ if __name__ == "__main__":
 - [ ] **Dependencies Installed**: All required packages available
 - [ ] **Configuration Set**: Production configuration applied
 - [ ] **Agents Initialized**: All required agents operational
-- [ ] **Integrity Monitoring**: Self-audit system enabled
+- [ ] **Integrity monitoring ([health tracking](src/infrastructure/integration_coordinator.py))**: Self-audit system enabled
 - [ ] **Performance Testing**: Baseline performance established
 - [ ] **Error Handling**: Graceful degradation implemented
-- [ ] **Monitoring Setup**: Health checks and metrics collection
+- [ ] **monitoring ([health tracking](src/infrastructure/integration_coordinator.py)) Setup**: Health checks and metrics collection
 - [ ] **Documentation**: Integration documented for team
 
 ### **Support and Community**

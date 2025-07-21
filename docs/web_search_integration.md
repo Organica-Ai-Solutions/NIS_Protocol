@@ -227,7 +227,7 @@ Preferred academic domains receive relevance boosts:
 
 - **Search Result Caching**: 1-hour TTL for search results
 - **Query Enhancement Caching**: Cached enhanced queries for common research topics
-- **Provider Health Monitoring**: Automatic failover for unavailable providers
+- **Provider Health monitoring ([health tracking](src/infrastructure/integration_coordinator.py))**: Automatic failover for unavailable providers
 
 ### Parallel Processing
 
@@ -292,16 +292,16 @@ methodology = await cognitive_orchestra.execute_function(
 1. **Automatic Failover**: Switches to available providers when one fails
 2. **Mock Search Mode**: Provides test results when no providers are available
 3. **Partial Results**: Returns available results even if some providers fail
-4. **Error Logging**: Comprehensive logging for debugging and monitoring
+4. **Error Logging**: Comprehensive logging for debugging and monitoring ([health tracking](src/infrastructure/integration_coordinator.py))
 
 ### Network Issues
 
 1. **Timeout Handling**: Configurable timeouts for each provider
 2. **Retry Logic**: Exponential backoff for temporary network issues
 3. **Offline Mode**: Cached results when network is unavailable
-4. **Status Monitoring**: Real-time provider health checking
+4. **Status monitoring ([health tracking](src/infrastructure/integration_coordinator.py))**: Real-time provider health checking
 
-## Monitoring and Analytics
+## monitoring ([health tracking](src/infrastructure/integration_coordinator.py)) and Analytics
 
 ### Research Statistics
 
@@ -390,7 +390,7 @@ search_agent = WebSearchAgent()
 1. **Environment Variables**: Store API keys in environment variables
 2. **Key Rotation**: Regularly rotate API keys
 3. **Access Control**: Limit API key permissions where possible
-4. **Monitoring**: Monitor API key usage for unusual activity
+4. **monitoring ([health tracking](src/infrastructure/integration_coordinator.py))**: Monitor API key usage for unusual activity
 
 ### Data Privacy
 

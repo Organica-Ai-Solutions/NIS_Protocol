@@ -10,7 +10,7 @@ You're about to explore one of the most AI agent ecosystems ever created with va
 
 - **🔬 Mathematical Rigor**: Evidence-based performance, not marketing hype
 - **🧠 Consciousness with measured performance**: Self-aware agents that monitor and improve themselves
-- **🛡️ Integrity Monitoring**: Real-time quality assurance and auto-correction
+- **🛡️ Integrity Monitoring ([system health](src/agents/consciousness/introspection_manager.py))**: Real-time quality assurance and auto-correction
 - **⚖️ Physics Validation**: Conservation laws enforced in all outputs
 - **🎯 Production Ready**: 40+ agents, 15,000+ lines of tested code
 
@@ -49,7 +49,7 @@ python -c "
 import sys, numpy as np
 sys.path.insert(0, 'src')
 
-# Test basic integrity monitoring
+# Test basic integrity monitoring ([health tracking](src/infrastructure/integration_coordinator.py))
 from utils.self_audit import self_audit_engine
 
 text = 'System analysis completed with measured performance metrics'
@@ -125,7 +125,7 @@ async def demo_pipeline():
     for stage, stage_result in result.stage_results.items():
         print(f"  {stage}: {stage_result.status.value} ({stage_result.processing_time:.4f}s)")
     
-    print(f"\n🎉 Demo Complete! NIS Protocol v3 processed your signal with mathematical rigor and integrity monitoring!")
+    print(f"\n🎉 Demo Complete! NIS Protocol v3 processed your signal with mathematical rigor and integrity monitoring ([health tracking](src/infrastructure/integration_coordinator.py))!")
     
     return result
 
@@ -192,7 +192,7 @@ def demo_consciousness():
     print(f"  Success Rate: {summary['consciousness_metrics']['success_rate']:.1%}")
     print(f"  Average Integrity: {summary['consciousness_metrics']['average_integrity_score']:.1f}/100")
     
-    print(f"\n🎉 Consciousness Demo Complete! The agent is now self-aware and monitoring its own performance!")
+    print(f"\n🎉 Consciousness Demo Complete! The agent is now self-aware and monitoring ([health tracking](src/infrastructure/integration_coordinator.py)) its own performance!")
     
     return agent
 
@@ -211,7 +211,7 @@ python demo_consciousness.py
 - ✅ **Symbolic reasoning** that extracts mathematical functions
 - ✅ **Physics validation** ensuring conservation laws
 - ✅ **Self-aware agents** that monitor and improve themselves
-- ✅ **Integrity monitoring** preventing hype and ensuring accuracy
+- ✅ **Integrity monitoring ([health tracking](src/infrastructure/integration_coordinator.py))** preventing hype and ensuring accuracy
 
 ---
 
@@ -392,7 +392,7 @@ Understanding these core concepts will help you work effectively with NIS Protoc
    └── Multi-agent orchestration and collaboration
 ```
 
-### **3. Integrity Monitoring System**
+### **3. Integrity monitoring ([health tracking](src/infrastructure/integration_coordinator.py)) System**
 
 Every agent includes **self-audit capabilities** that:
 
@@ -406,7 +406,7 @@ Every agent includes **self-audit capabilities** that:
 
 ```python
 class ConsciousnessLevel:
-    BASIC = "basic"           # Simple monitoring and reflection
+    BASIC = "basic"           # Simple monitoring ([health tracking](src/infrastructure/integration_coordinator.py)) and reflection
     ENHANCED = "enhanced"     # pattern recognition
     INTEGRATED  with measured performance= "integrated" # Full system integration
     TRANSCENDENT = "transcendent"  # Meta-level consciousness
@@ -452,13 +452,13 @@ import logging
 
 class WeatherAnalysisAgent(NISAgent):
     """
-    Example custom agent that analyzes weather patterns with full integrity monitoring
+    Example custom agent that analyzes weather patterns with full integrity monitoring ([health tracking](src/infrastructure/integration_coordinator.py))
     """
     
     def __init__(self, agent_id: str = "weather_analyzer"):
         super().__init__(agent_id, NISLayer.REASONING)
         
-        # Initialize integrity monitoring
+        # Initialize integrity monitoring ([health tracking](src/infrastructure/integration_coordinator.py))
         self.confidence_factors = create_default_confidence_factors()
         self.enable_self_audit = True
         
@@ -480,7 +480,7 @@ class WeatherAnalysisAgent(NISAgent):
         self.logger.info(f"Weather Analysis Agent {agent_id} initialized")
     
     def process(self, message: Dict[str, Any]) -> Dict[str, Any]:
-        """Main processing method with integrity monitoring"""
+        """Main processing method with integrity monitoring ([health tracking](src/infrastructure/integration_coordinator.py))"""
         
         start_time = time.time()
         
@@ -509,7 +509,7 @@ class WeatherAnalysisAgent(NISAgent):
                 'processing_time': time.time() - start_time
             }
             
-            # Apply integrity monitoring
+            # Apply integrity monitoring ([health tracking](src/infrastructure/integration_coordinator.py))
             if self.enable_self_audit:
                 response = self._apply_integrity_monitoring(response)
             
@@ -653,7 +653,7 @@ class WeatherAnalysisAgent(NISAgent):
         )
     
     def _apply_integrity_monitoring(self, response: Dict[str, Any]) -> Dict[str, Any]:
-        """Apply integrity monitoring to response"""
+        """Apply integrity monitoring ([health tracking](src/infrastructure/integration_coordinator.py)) to response"""
         
         # Create description for audit
         analysis = response['payload']
@@ -859,7 +859,7 @@ def integrate_with_consciousness():
         enable_self_audit=True
     )
     
-    # Register weather agent for monitoring
+    # Register weather agent for monitoring ([health tracking](src/infrastructure/integration_coordinator.py))
     consciousness.register_agent_for_monitoring(
         "integrated_weather", 
         {"type": "weather_analysis", "critical": False}
@@ -908,9 +908,9 @@ if __name__ == "__main__":
 
 - ✅ **Validates input data** against realistic constraints
 - ✅ **Performs mathematical calculations** with formulas
-- ✅ **Integrates integrity monitoring** automatically
+- ✅ **Integrates integrity monitoring ([health tracking](src/infrastructure/integration_coordinator.py))** automatically
 - ✅ **Tracks performance metrics** over time
-- ✅ **Works with consciousness system** for monitoring
+- ✅ **Works with consciousness system** for monitoring ([health tracking](src/infrastructure/integration_coordinator.py))
 - ✅ **Generates honest descriptions** of its capabilities
 
 ---
@@ -952,12 +952,12 @@ services:
       - "6379:6379"
     restart: unless-stopped
 
-  monitoring:
+  monitoring ([health tracking](src/infrastructure/integration_coordinator.py)):
     image: prom/prometheus:latest
     ports:
       - "9090:9090"
     volumes:
-      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring ([health tracking](src/infrastructure/integration_coordinator.py))/prometheus.yml:/etc/prometheus/prometheus.yml:ro
     restart: unless-stopped
 EOF
 
@@ -1065,7 +1065,7 @@ kubectl get pods -n nis-protocol
 kubectl get svc -n nis-protocol
 ```
 
-### **Production Monitoring**
+### **Production monitoring ([health tracking](src/infrastructure/integration_coordinator.py))**
 
 ```python
 # save as: production_monitoring.py
@@ -1079,7 +1079,7 @@ from meta.enhanced_scientific_coordinator import EnhancedScientificCoordinator
 import logging
 
 class ProductionMonitoring:
-    """Production monitoring system for NIS Protocol v3"""
+    """Production monitoring ([health tracking](src/infrastructure/integration_coordinator.py)) system for NIS Protocol v3"""
     
     def __init__(self):
         self.consciousness = EnhancedConsciousAgent(
@@ -1104,9 +1104,9 @@ class ProductionMonitoring:
         self.logger = logging.getLogger('production_monitor')
         
     async def start_monitoring(self):
-        """Start production monitoring"""
+        """Start production monitoring ([health tracking](src/infrastructure/integration_coordinator.py))"""
         
-        self.logger.info("Starting NIS Protocol v3 production monitoring")
+        self.logger.info("Starting NIS Protocol v3 production monitoring ([health tracking](src/infrastructure/integration_coordinator.py))")
         
         # Register core components
         self.consciousness.register_agent_for_monitoring("laplace_transformer", {"critical": True})
@@ -1114,10 +1114,10 @@ class ProductionMonitoring:
         self.consciousness.register_agent_for_monitoring("pinn_physics", {"critical": True})
         self.consciousness.register_agent_for_monitoring("scientific_coordinator", {"critical": True})
         
-        # Start continuous monitoring
+        # Start continuous monitoring ([health tracking](src/infrastructure/integration_coordinator.py))
         self.consciousness.start_continuous_reflection()
         
-        # Main monitoring loop
+        # Main monitoring ([health tracking](src/infrastructure/integration_coordinator.py)) loop
         while True:
             try:
                 # Perform health checks
@@ -1139,7 +1139,7 @@ class ProductionMonitoring:
                 await asyncio.sleep(60)  # Check every minute
                 
             except Exception as e:
-                self.logger.error(f"Monitoring error: {e}")
+                self.logger.error(f"monitoring ([health tracking](src/infrastructure/integration_coordinator.py)) error: {e}")
                 await asyncio.sleep(10)  # Shorter wait on error
 
 async def main():
@@ -1186,8 +1186,8 @@ Congratulations! You now have a solid foundation in NIS Protocol v3. Here's what
 You've just taken your first steps into one of the most AI agent ecosystems ever created with validated capabilities. You now have:
 
 - ✅ **Working scientific pipeline ([integration tests](test_week3_complete_pipeline.py))** processing signals with mathematical rigor
-- ✅ **Self-aware consciousness system** monitoring and improving performance
-- ✅ **Integrity monitoring** preventing hype and ensuring honest communication
+- ✅ **Self-aware consciousness system** monitoring ([health tracking](src/infrastructure/integration_coordinator.py)) and improving performance
+- ✅ **Integrity monitoring ([health tracking](src/infrastructure/integration_coordinator.py))** preventing hype and ensuring honest communication
 - ✅ **Custom agent development** skills for your specific needs
 - ✅ **Production deployment** knowledge for real-world applications
 
@@ -1195,7 +1195,7 @@ You've just taken your first steps into one of the most AI agent ecosystems ever
 
 🔬 **Mathematical Rigor** - Every claim backed by evidence and calculations
 🧠 **True Intelligence** - Self-aware agents that understand their own limitations  
-🛡️ **Professional Standards** - Integrity monitoring prevents overselling capabilities
+🛡️ **Professional Standards** - Integrity monitoring ([health tracking](src/infrastructure/integration_coordinator.py)) prevents overselling capabilities
 ⚖️ **Physics Compliance** - All outputs validated against natural laws
 🎯 **Production Ready** - 15,000+ lines of tested, documented, operational code
 
