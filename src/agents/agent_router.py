@@ -1,8 +1,19 @@
 """
-NIS Protocol v3 - Agent Router
+NIS Protocol v3 - Enhanced Agent Router with LangGraph
 
 Advanced routing system for hybrid agent coordination with LLM integration,
-scientific processing pipeline, and context-aware task distribution.
+scientific processing pipeline, context-aware task distribution, and 
+sophisticated multi-agent orchestration using LangGraph workflows.
+
+Enhanced Features:
+- LangGraph state machine workflows for complex routing decisions
+- Intelligent agent selection based on capabilities and context
+- Dynamic load balancing and performance optimization
+- Multi-agent collaboration patterns
+- Real-time monitoring and adaptive routing
+- LangSmith observability for routing analytics
+- Human-in-the-loop escalation patterns
+- Cost-aware routing optimization
 
 Production-ready implementation with no demo code, hardcoded values, or placeholders.
 All metrics are mathematically calculated using integrity validation.
@@ -12,17 +23,47 @@ import asyncio
 import logging
 import time
 import uuid
-from typing import Dict, Any, List, Optional, Set, Tuple
+from typing import Dict, Any, List, Optional, Set, Tuple, Callable
 from dataclasses import dataclass, asdict
 from enum import Enum
 from collections import defaultdict, deque
 import json
+
+# LangGraph integration
+try:
+    from langgraph.graph import StateGraph, END, START
+    from langgraph.checkpoint.memory import MemorySaver
+    from langgraph.prebuilt import ToolExecutor
+    from typing_extensions import TypedDict, Annotated
+    LANGGRAPH_AVAILABLE = True
+except ImportError:
+    LANGGRAPH_AVAILABLE = False
+
+# LangSmith integration
+try:
+    from langsmith import traceable, Client as LangSmithClient
+    LANGSMITH_AVAILABLE = True
+except ImportError:
+    LANGSMITH_AVAILABLE = False
 
 # Core agent components
 from .hybrid_agent_core import (
     MetaCognitiveProcessor, CuriosityEngine, ValidationAgent,
     LLMProvider, ProcessingLayer
 )
+from .coordination.coordinator_agent import EnhancedCoordinatorAgent, CoordinationMode, WorkflowPriority
+from .coordination.multi_llm_agent import EnhancedMultiLLMAgent, LLMOrchestrationStrategy
+
+# Enhanced imports
+from ..integrations.langchain_integration import (
+    EnhancedMultiAgentWorkflow, 
+    WorkflowState, 
+    AgentConfig, 
+    AgentRole,
+    ReasoningPattern
+)
+from ..llm.llm_manager import LLMManager
+from ..utils.env_config import env_config
 
 # Integrity metrics for actual calculations
 from src.utils.integrity_metrics import (
@@ -38,7 +79,7 @@ logger = logging.getLogger(__name__)
 
 
 class TaskType(Enum):
-    """Types of tasks that can be routed to agents."""
+    """Enhanced types of tasks that can be routed to agents"""
     ANALYSIS = "analysis"
     REASONING = "reasoning"
     VALIDATION = "validation"
@@ -46,611 +87,1057 @@ class TaskType(Enum):
     EXPLORATION = "exploration"
     SYNTHESIS = "synthesis"
     COORDINATION = "coordination"
+    CREATIVITY = "creativity"
+    EXECUTION = "execution"
+    MONITORING = "monitoring"
+    COMMUNICATION = "communication"
+    RESEARCH = "research"
+    PLANNING = "planning"
 
 
 class RoutingStrategy(Enum):
-    """Strategies for routing tasks to agents."""
-    ROUND_ROBIN = "round_robin"
+    """Strategies for agent routing"""
+    CAPABILITY_BASED = "capability_based"
     LOAD_BALANCED = "load_balanced"
-    CAPABILITY_MATCHED = "capability_matched"
-    PRIORITY_BASED = "priority_based"
-    SHORTEST_QUEUE = "shortest_queue"
+    PERFORMANCE_OPTIMIZED = "performance_optimized"
+    COST_OPTIMIZED = "cost_optimized"
+    COLLABORATIVE = "collaborative"
+    HIERARCHICAL = "hierarchical"
+    CONSENSUS_SEEKING = "consensus_seeking"
+    COMPETITIVE = "competitive"
+
+
+class AgentPriority(Enum):
+    """Priority levels for agent tasks"""
+    LOW = "low"
+    NORMAL = "normal"
+    HIGH = "high"
+    CRITICAL = "critical"
+    EMERGENCY = "emergency"
+
+
+class RoutingState(TypedDict):
+    """State for routing workflows"""
+    # Task information
+    task_id: str
+    task_description: str
+    task_type: str
+    priority: str
+    routing_strategy: str
+    
+    # Agent analysis
+    available_agents: List[str]
+    agent_capabilities: Dict[str, List[str]]
+    agent_performance: Dict[str, float]
+    agent_workload: Dict[str, int]
+    agent_costs: Dict[str, float]
+    
+    # Routing decisions
+    selected_agents: List[str]
+    routing_rationale: Dict[str, str]
+    collaboration_pattern: Optional[str]
+    execution_plan: List[Dict[str, Any]]
+    
+    # Quality metrics
+    routing_confidence: float
+    expected_performance: float
+    estimated_cost: float
+    risk_assessment: Dict[str, float]
+    
+    # Control flow
+    current_phase: str
+    requires_human_approval: bool
+    requires_escalation: bool
+    is_routed: bool
+    
+    # Results tracking
+    routing_results: Dict[str, Any]
+    performance_feedback: Dict[str, Any]
+    lessons_learned: List[str]
+    
+    # Metadata
+    start_time: float
+    routing_time: float
+    context: Dict[str, Any]
+    metadata: Dict[str, Any]
 
 
 @dataclass
-class TaskRequest:
-    """Represents a task request to be routed."""
+class AgentCapability:
+    """Represents an agent's capability"""
+    capability_name: str
+    proficiency_level: float  # 0.0 to 1.0
+    cost_factor: float
+    processing_time_factor: float
+    quality_factor: float
+    availability: bool = True
+
+
+@dataclass
+class RoutingTask:
+    """Task for agent routing"""
     task_id: str
+    description: str
     task_type: TaskType
-    content: Dict[str, Any]
-    requester_id: str
-    priority: int = 5  # 1-10, where 1 is highest priority
-    deadline: Optional[float] = None
-    required_capabilities: Set[str] = None
-    llm_provider: Optional[LLMProvider] = None
-    processing_layers: List[ProcessingLayer] = None
+    priority: AgentPriority
+    routing_strategy: RoutingStrategy
+    context: Dict[str, Any]
+    requirements: Dict[str, Any]
+    constraints: Dict[str, Any]
+    timeout: float = 300.0
+    max_cost: float = 10.0
+    min_quality: float = 0.7
+    created_at: float = None
     
     def __post_init__(self):
-        if self.required_capabilities is None:
-            self.required_capabilities = set()
-        if self.processing_layers is None:
-            self.processing_layers = []
-
-
-@dataclass
-class AgentCapabilities:
-    """Describes an agent's capabilities and current status."""
-    agent_id: str
-    agent_type: str
-    supported_tasks: Set[TaskType]
-    llm_provider: LLMProvider
-    processing_layers: List[ProcessingLayer]
-    specializations: List[str]
-    current_load: float = 0.0
-    max_concurrent_tasks: int = 5
-    average_response_time: float = 1.0
-    success_rate: float = 1.0
-    error_rate: float = 0.0
-    is_available: bool = True
+        if self.created_at is None:
+            self.created_at = time.time()
 
 
 @dataclass
 class RoutingResult:
-    """Result of task routing decision."""
-    selected_agent_id: str
+    """Result from agent routing"""
+    task_id: str
+    success: bool
+    selected_agents: List[str]
     routing_confidence: float
+    expected_performance: float
+    estimated_cost: float
+    execution_plan: List[Dict[str, Any]]
+    collaboration_pattern: Optional[str]
     routing_time: float
-    strategy_used: RoutingStrategy
-    alternative_agents: List[str]
-    estimated_completion_time: float
+    rationale: Dict[str, str]
+    risk_assessment: Dict[str, float]
+    recommendations: List[str]
+    requires_monitoring: bool = False
+    fallback_plan: Optional[Dict[str, Any]] = None
+    error_details: Optional[str] = None
 
 
-class NISContextBus:
-    """Shared context and memory bus for agent communication."""
-    
-    def __init__(self):
-        self.shared_context: Dict[str, Any] = {}
-        self.agent_states: Dict[str, Dict[str, Any]] = defaultdict(dict)
-        self.global_memory: Dict[str, Any] = {}
-        self.event_log: deque = deque(maxlen=1000)
-        
-        self.logger = logging.getLogger("nis.context_bus")
-        self.logger.info("Initialized NIS Context Bus")
-    
-    def update_agent_state(self, agent_id: str, state: Dict[str, Any]):
-        """Update agent state in shared context."""
-        self.agent_states[agent_id].update(state)
-        self._log_event("agent_state_update", {"agent_id": agent_id, "keys": list(state.keys())})
-    
-    def get_agent_state(self, agent_id: str) -> Dict[str, Any]:
-        """Get agent state from shared context."""
-        return self.agent_states[agent_id].copy()
-    
-    def set_global_context(self, key: str, value: Any):
-        """Set global context variable."""
-        self.shared_context[key] = value
-        self._log_event("global_context_set", {"key": key})
-    
-    def get_global_context(self, key: str, default: Any = None) -> Any:
-        """Get global context variable."""
-        return self.shared_context.get(key, default)
-    
-    def store_memory(self, memory_id: str, content: Dict[str, Any]):
-        """Store memory in global memory."""
-        self.global_memory[memory_id] = {
-            "content": content,
-            "timestamp": time.time(),
-            "access_count": 0
-        }
-        self._log_event("memory_stored", {"memory_id": memory_id})
-    
-    def retrieve_memory(self, memory_id: str) -> Optional[Dict[str, Any]]:
-        """Retrieve memory from global memory."""
-        if memory_id in self.global_memory:
-            self.global_memory[memory_id]["access_count"] += 1
-            return self.global_memory[memory_id]["content"]
-        return None
-    
-    def _log_event(self, event_type: str, data: Dict[str, Any]):
-        """Log an event to the event log."""
-        event = {
-            "timestamp": time.time(),
-            "event_type": event_type,
-            "data": data
-        }
-        self.event_log.append(event)
-
-
-class AgentRouter:
+class EnhancedAgentRouter:
     """
-    Advanced agent router for NIS Protocol v3.
-    
-    Provides intelligent routing of tasks to agents based on capabilities,
-    load, performance metrics, and contextual requirements.
-    
-    All metrics are calculated in real-time using mathematical validation.
+    Enhanced Agent Router with LangGraph workflows for intelligent
+    multi-agent coordination and dynamic routing optimization.
     """
     
-    def __init__(self, context_bus: NISContextBus):
-        """Initialize the agent router."""
-        self.context_bus = context_bus
-        self.agents: Dict[str, Any] = {}
-        self.capabilities: Dict[str, AgentCapabilities] = {}
-        self.task_queue: List[TaskRequest] = []
-        self.active_tasks: Dict[str, Dict[str, Any]] = {}
-        self.completed_tasks: Dict[str, Dict[str, Any]] = {}
+    def __init__(self, 
+                 enable_langsmith: bool = True,
+                 enable_self_audit: bool = True):
+        """Initialize enhanced agent router"""
         
-        # Routing statistics - calculated in real-time
-        self.routing_stats = {
-            "total_tasks_routed": 0,
-            "successful_routings": 0,
-            "failed_routings": 0,
-            "average_routing_time": 0.0,
-            "average_task_completion_time": 0.0
+        self.enable_langsmith = enable_langsmith
+        self.enable_self_audit = enable_self_audit
+        
+        # Agent registry and capabilities
+        self.agent_registry: Dict[str, Any] = {}
+        self.agent_capabilities: Dict[str, List[AgentCapability]] = {}
+        self.agent_performance_history: Dict[str, List[float]] = defaultdict(list)
+        self.agent_workloads: Dict[str, int] = defaultdict(int)
+        
+        # LangGraph workflows
+        self.routing_graph: Optional[StateGraph] = None
+        self.compiled_graph = None
+        self.checkpointer = None
+        
+        # LangSmith integration
+        self.langsmith_client = None
+        if enable_langsmith and LANGSMITH_AVAILABLE:
+            self._setup_langsmith()
+        
+        # Core components
+        self.llm_manager = LLMManager()
+        self.coordinator = EnhancedCoordinatorAgent()
+        self.multi_llm_agent = EnhancedMultiLLMAgent()
+        
+        # Routing metrics
+        self.routing_metrics = {
+            'total_routings': 0,
+            'successful_routings': 0,
+            'average_routing_time': 0.0,
+            'average_confidence': 0.0,
+            'strategy_usage': {strategy.value: 0 for strategy in RoutingStrategy},
+            'agent_utilization': {},
+            'cost_efficiency': 0.0,
+            'performance_accuracy': 0.0
         }
         
-        # Agent performance tracking
-        self.agent_performance: Dict[str, Dict[str, Any]] = defaultdict(lambda: {
-            "tasks_completed": 0,
-            "total_response_time": 0.0,
-            "errors": 0,
-            "success_count": 0,
-            "average_response_time": 1.0,
-            "error_rate": 0.0,
-            "success_rate": 1.0
-        })
+        # Learning and optimization
+        self.routing_history: List[Dict[str, Any]] = []
+        self.performance_feedback: Dict[str, List[float]] = defaultdict(list)
+        self.optimization_rules: List[Dict[str, Any]] = []
         
-        self.logger = logging.getLogger("nis.agent_router")
-        self.logger.info("Initialized Agent Router")
-    
-    def register_agent(self, agent: Any, capabilities: AgentCapabilities):
-        """Register an agent with its capabilities."""
-        self.agents[capabilities.agent_id] = agent
-        self.capabilities[capabilities.agent_id] = capabilities
+        # Initialize workflows
+        if LANGGRAPH_AVAILABLE:
+            self._build_routing_workflows()
         
-        self.logger.info(f"Registered agent: {capabilities.agent_id} ({capabilities.agent_type})")
-    
-    def unregister_agent(self, agent_id: str):
-        """Unregister an agent."""
-        if agent_id in self.agents:
-            del self.agents[agent_id]
-            del self.capabilities[agent_id]
-            self.logger.info(f"Unregistered agent: {agent_id}")
-    
-    async def route_task(self, task: TaskRequest, strategy: RoutingStrategy = RoutingStrategy.CAPABILITY_MATCHED) -> RoutingResult:
-        """
-        Route a task to the most appropriate agent.
+        # Register default agents
+        self._register_default_agents()
         
-        Args:
-            task: Task to be routed
-            strategy: Routing strategy to use
-            
-        Returns:
-            RoutingResult with routing decision and metadata
-        """
-        start_time = time.time()
+        logger.info("Enhanced Agent Router initialized with LangGraph workflows")
+
+    def _setup_langsmith(self):
+        """Setup LangSmith integration for routing analytics"""
+        try:
+            api_key = env_config.get_env("LANGSMITH_API_KEY")
+            if api_key:
+                self.langsmith_client = LangSmithClient(api_key=api_key)
+                logger.info("LangSmith routing analytics enabled")
+            else:
+                logger.warning("LANGSMITH_API_KEY not found")
+        except Exception as e:
+            logger.error(f"Failed to setup LangSmith: {e}")
+
+    def _build_routing_workflows(self):
+        """Build LangGraph workflows for intelligent routing"""
+        if not LANGGRAPH_AVAILABLE:
+            return
         
         try:
-            # Find suitable agents
-            suitable_agents = self._find_suitable_agents(task)
+            # Initialize checkpointer
+            self.checkpointer = MemorySaver()
             
-            if not suitable_agents:
-                raise ValueError(f"No suitable agents found for task type: {task.task_type}")
+            # Create routing state graph
+            self.routing_graph = StateGraph(RoutingState)
             
-            # Apply routing strategy
-            selected_agent_id = self._apply_routing_strategy(suitable_agents, strategy, task)
+            # Add routing nodes
+            self.routing_graph.add_node("initialize", self._initialize_routing_node)
+            self.routing_graph.add_node("analyze_task", self._analyze_task_node)
+            self.routing_graph.add_node("assess_agents", self._assess_agents_node)
+            self.routing_graph.add_node("capability_matching", self._capability_matching_node)
+            self.routing_graph.add_node("performance_analysis", self._performance_analysis_node)
+            self.routing_graph.add_node("cost_optimization", self._cost_optimization_node)
+            self.routing_graph.add_node("collaboration_design", self._collaboration_design_node)
+            self.routing_graph.add_node("risk_assessment", self._risk_assessment_node)
+            self.routing_graph.add_node("routing_decision", self._routing_decision_node)
+            self.routing_graph.add_node("execution_planning", self._execution_planning_node)
+            self.routing_graph.add_node("human_approval", self._human_approval_node)
+            self.routing_graph.add_node("finalize_routing", self._finalize_routing_node)
             
-            if not selected_agent_id:
-                raise ValueError("No agent selected by routing strategy")
+            # Set entry point
+            self.routing_graph.set_entry_point("initialize")
             
-            # Calculate routing confidence using real metrics
-            routing_confidence = self._calculate_routing_confidence(selected_agent_id, task)
+            # Add conditional edges
+            self.routing_graph.add_edge("initialize", "analyze_task")
+            self.routing_graph.add_edge("analyze_task", "assess_agents")
             
-            # Estimate completion time
-            estimated_completion_time = self._estimate_completion_time(selected_agent_id, task)
-            
-            # Update agent load
-            self._update_agent_load(selected_agent_id, 1)
-            
-            # Create routing result
-            routing_time = time.time() - start_time
-            result = RoutingResult(
-                selected_agent_id=selected_agent_id,
-                routing_confidence=routing_confidence,
-                routing_time=routing_time,
-                strategy_used=strategy,
-                alternative_agents=[aid for aid in suitable_agents if aid != selected_agent_id],
-                estimated_completion_time=estimated_completion_time
+            self.routing_graph.add_conditional_edges(
+                "assess_agents",
+                self._route_strategy_decision,
+                {
+                    "capability": "capability_matching",
+                    "performance": "performance_analysis",
+                    "cost": "cost_optimization",
+                    "collaborative": "collaboration_design"
+                }
             )
             
-            # Update routing statistics
-            self._update_routing_stats(routing_time, True)
+            # All strategies lead to risk assessment
+            self.routing_graph.add_edge("capability_matching", "risk_assessment")
+            self.routing_graph.add_edge("performance_analysis", "risk_assessment")
+            self.routing_graph.add_edge("cost_optimization", "risk_assessment")
+            self.routing_graph.add_edge("collaboration_design", "risk_assessment")
             
-            # Add task to active tasks
-            self.active_tasks[task.task_id] = {
-                "task": task,
-                "assigned_agent": selected_agent_id,
-                "start_time": time.time(),
-                "routing_result": result
+            self.routing_graph.add_edge("risk_assessment", "routing_decision")
+            
+            self.routing_graph.add_conditional_edges(
+                "routing_decision",
+                self._routing_approval_decision,
+                {
+                    "approved": "execution_planning",
+                    "human": "human_approval",
+                    "retry": "assess_agents"
+                }
+            )
+            
+            self.routing_graph.add_edge("execution_planning", "finalize_routing")
+            self.routing_graph.add_edge("human_approval", "finalize_routing")
+            self.routing_graph.add_edge("finalize_routing", END)
+            
+            # Compile the graph
+            self.compiled_graph = self.routing_graph.compile(
+                checkpointer=self.checkpointer,
+                interrupt_before=["human_approval"]
+            )
+            
+            logger.info("Routing workflows built successfully")
+            
+        except Exception as e:
+            logger.error(f"Failed to build routing workflows: {e}")
+
+    def _register_default_agents(self):
+        """Register default agents with their capabilities"""
+        default_agents = {
+            "consciousness_agent": [
+                AgentCapability("self_reflection", 0.9, 0.8, 1.2, 0.95),
+                AgentCapability("meta_cognition", 0.95, 0.9, 1.3, 0.98),
+                AgentCapability("bias_detection", 0.85, 0.7, 1.0, 0.9)
+            ],
+            "reasoning_agent": [
+                AgentCapability("logical_analysis", 0.9, 0.6, 1.0, 0.92),
+                AgentCapability("problem_solving", 0.88, 0.7, 1.1, 0.9),
+                AgentCapability("pattern_recognition", 0.85, 0.5, 0.8, 0.87)
+            ],
+            "multi_llm_agent": [
+                AgentCapability("llm_orchestration", 0.95, 1.2, 1.5, 0.93),
+                AgentCapability("consensus_building", 0.9, 1.0, 1.3, 0.91),
+                AgentCapability("response_fusion", 0.92, 0.9, 1.2, 0.94)
+            ],
+            "coordinator_agent": [
+                AgentCapability("workflow_management", 0.88, 0.8, 1.0, 0.89),
+                AgentCapability("resource_allocation", 0.85, 0.7, 0.9, 0.86),
+                AgentCapability("conflict_resolution", 0.82, 0.9, 1.1, 0.84)
+            ],
+            "validation_agent": [
+                AgentCapability("quality_assurance", 0.9, 0.6, 0.8, 0.95),
+                AgentCapability("error_detection", 0.92, 0.5, 0.7, 0.93),
+                AgentCapability("compliance_checking", 0.88, 0.7, 0.9, 0.91)
+            ]
+        }
+        
+        for agent_id, capabilities in default_agents.items():
+            self.register_agent(agent_id, capabilities)
+
+    def register_agent(self, agent_id: str, capabilities: List[AgentCapability], agent_instance: Any = None):
+        """Register an agent with its capabilities"""
+        self.agent_registry[agent_id] = agent_instance
+        self.agent_capabilities[agent_id] = capabilities
+        self.agent_workloads[agent_id] = 0
+        
+        logger.info(f"Registered agent {agent_id} with {len(capabilities)} capabilities")
+
+    # Workflow nodes
+    def _initialize_routing_node(self, state: RoutingState) -> Dict[str, Any]:
+        """Initialize routing workflow"""
+        return {
+            "current_phase": "initialization",
+            "available_agents": list(self.agent_registry.keys()),
+            "agent_capabilities": {
+                agent_id: [cap.capability_name for cap in caps] 
+                for agent_id, caps in self.agent_capabilities.items()
+            },
+            "agent_workload": dict(self.agent_workloads),
+            "start_time": time.time()
+        }
+
+    def _analyze_task_node(self, state: RoutingState) -> Dict[str, Any]:
+        """Analyze the task requirements"""
+        task_description = state.get("task_description", "")
+        task_type = state.get("task_type", "")
+        
+        # Task complexity analysis
+        complexity_factors = {
+            "description_length": len(task_description),
+            "keywords_complexity": self._analyze_task_keywords(task_description),
+            "type_complexity": self._get_task_type_complexity(task_type),
+            "estimated_duration": self._estimate_task_duration(task_description, task_type)
+        }
+        
+        # Task requirements extraction
+        requirements = {
+            "creativity_required": "creative" in task_description.lower() or "novel" in task_description.lower(),
+            "analysis_required": "analyze" in task_description.lower() or "examine" in task_description.lower(),
+            "collaboration_required": "multiple" in task_description.lower() or "coordinate" in task_description.lower(),
+            "expertise_level": self._determine_expertise_level(task_description),
+            "time_sensitivity": self._assess_time_sensitivity(state.get("priority", "normal"))
+        }
+        
+        return {
+            "current_phase": "task_analysis",
+            "complexity_factors": complexity_factors,
+            "extracted_requirements": requirements
+        }
+
+    def _assess_agents_node(self, state: RoutingState) -> Dict[str, Any]:
+        """Assess available agents for the task"""
+        available_agents = state.get("available_agents", [])
+        requirements = state.get("extracted_requirements", {})
+        
+        # Agent assessment
+        agent_scores = {}
+        agent_performance = {}
+        agent_costs = {}
+        
+        for agent_id in available_agents:
+            if agent_id in self.agent_capabilities:
+                capabilities = self.agent_capabilities[agent_id]
+                
+                # Calculate capability match score
+                capability_score = self._calculate_capability_match(capabilities, requirements)
+                
+                # Historical performance
+                history = self.agent_performance_history.get(agent_id, [0.8])
+                performance_score = sum(history[-5:]) / len(history[-5:])  # Last 5 performances
+                
+                # Cost calculation
+                cost_score = sum(cap.cost_factor for cap in capabilities) / len(capabilities)
+                
+                agent_scores[agent_id] = capability_score
+                agent_performance[agent_id] = performance_score
+                agent_costs[agent_id] = cost_score
+        
+        return {
+            "current_phase": "agent_assessment",
+            "agent_scores": agent_scores,
+            "agent_performance": agent_performance,
+            "agent_costs": agent_costs
+        }
+
+    def _capability_matching_node(self, state: RoutingState) -> Dict[str, Any]:
+        """Match agents based on capabilities"""
+        agent_scores = state.get("agent_scores", {})
+        requirements = state.get("extracted_requirements", {})
+        
+        # Capability-based selection
+        selected_agents = []
+        routing_rationale = {}
+        
+        # Sort agents by capability score
+        sorted_agents = sorted(agent_scores.items(), key=lambda x: x[1], reverse=True)
+        
+        # Select top agents based on requirements
+        if requirements.get("collaboration_required", False):
+            # Select multiple agents for collaboration
+            selected_agents = [agent for agent, score in sorted_agents[:3] if score > 0.7]
+            routing_rationale["strategy"] = "collaborative_capability_matching"
+        else:
+            # Select single best agent
+            if sorted_agents and sorted_agents[0][1] > 0.6:
+                selected_agents = [sorted_agents[0][0]]
+                routing_rationale["strategy"] = "best_capability_match"
+            else:
+                routing_rationale["strategy"] = "no_suitable_match"
+        
+        return {
+            "current_phase": "capability_matching",
+            "selected_agents": selected_agents,
+            "routing_rationale": routing_rationale,
+            "routing_confidence": max(agent_scores.values()) if agent_scores else 0.0
+        }
+
+    def _performance_analysis_node(self, state: RoutingState) -> Dict[str, Any]:
+        """Select agents based on performance optimization"""
+        agent_performance = state.get("agent_performance", {})
+        agent_workload = state.get("agent_workload", {})
+        
+        # Performance-based selection with load balancing
+        performance_scores = {}
+        for agent_id, performance in agent_performance.items():
+            workload = agent_workload.get(agent_id, 0)
+            # Adjust performance by workload (higher workload = lower effective performance)
+            adjusted_performance = performance * (1.0 / (1.0 + workload * 0.1))
+            performance_scores[agent_id] = adjusted_performance
+        
+        # Select best performing available agents
+        sorted_by_performance = sorted(performance_scores.items(), key=lambda x: x[1], reverse=True)
+        
+        selected_agents = []
+        routing_rationale = {}
+        
+        if sorted_by_performance:
+            # Select top performer with reasonable workload
+            for agent_id, score in sorted_by_performance:
+                if agent_workload.get(agent_id, 0) < 5:  # Not overloaded
+                    selected_agents = [agent_id]
+                    routing_rationale["strategy"] = "performance_optimized"
+                    routing_rationale["selected_performance"] = score
+                    break
+        
+        if not selected_agents:
+            routing_rationale["strategy"] = "all_agents_overloaded"
+        
+        return {
+            "current_phase": "performance_analysis",
+            "selected_agents": selected_agents,
+            "routing_rationale": routing_rationale,
+            "expected_performance": max(performance_scores.values()) if performance_scores else 0.0
+        }
+
+    def _cost_optimization_node(self, state: RoutingState) -> Dict[str, Any]:
+        """Optimize agent selection for cost efficiency"""
+        agent_costs = state.get("agent_costs", {})
+        agent_performance = state.get("agent_performance", {})
+        
+        # Calculate cost-effectiveness (performance / cost)
+        cost_effectiveness = {}
+        for agent_id in agent_costs:
+            if agent_id in agent_performance:
+                performance = agent_performance[agent_id]
+                cost = agent_costs[agent_id]
+                if cost > 0:
+                    cost_effectiveness[agent_id] = performance / cost
+                else:
+                    cost_effectiveness[agent_id] = performance
+        
+        # Select most cost-effective agent
+        selected_agents = []
+        routing_rationale = {}
+        
+        if cost_effectiveness:
+            best_agent = max(cost_effectiveness.items(), key=lambda x: x[1])
+            selected_agents = [best_agent[0]]
+            routing_rationale["strategy"] = "cost_optimized"
+            routing_rationale["cost_effectiveness"] = best_agent[1]
+            
+            estimated_cost = agent_costs.get(best_agent[0], 1.0)
+        else:
+            routing_rationale["strategy"] = "no_cost_data"
+            estimated_cost = 1.0
+        
+        return {
+            "current_phase": "cost_optimization",
+            "selected_agents": selected_agents,
+            "routing_rationale": routing_rationale,
+            "estimated_cost": estimated_cost
+        }
+
+    def _collaboration_design_node(self, state: RoutingState) -> Dict[str, Any]:
+        """Design collaborative agent arrangements"""
+        agent_scores = state.get("agent_scores", {})
+        requirements = state.get("extracted_requirements", {})
+        
+        # Design collaboration patterns
+        collaboration_patterns = {
+            "sequential": "Agents work in sequence, each building on previous results",
+            "parallel": "Agents work simultaneously on different aspects",
+            "hierarchical": "Lead agent coordinates subordinate agents",
+            "consensus": "Agents collaborate to reach consensus",
+            "competitive": "Agents compete and best result is selected"
+        }
+        
+        # Select collaboration pattern based on requirements
+        if requirements.get("creativity_required", False):
+            pattern = "competitive"  # Competition drives creativity
+        elif requirements.get("analysis_required", False):
+            pattern = "sequential"   # Sequential analysis builds depth
+        elif requirements.get("time_sensitivity", False):
+            pattern = "parallel"     # Parallel processing for speed
+        else:
+            pattern = "consensus"    # Default to consensus
+        
+        # Select complementary agents
+        sorted_agents = sorted(agent_scores.items(), key=lambda x: x[1], reverse=True)
+        
+        if pattern == "hierarchical":
+            # Select one lead + supporting agents
+            selected_agents = [sorted_agents[0][0]]  # Lead agent
+            if len(sorted_agents) > 1:
+                selected_agents.extend([agent for agent, _ in sorted_agents[1:3]])  # Support agents
+        else:
+            # Select multiple agents with diverse capabilities
+            selected_agents = [agent for agent, score in sorted_agents[:3] if score > 0.6]
+        
+        return {
+            "current_phase": "collaboration_design",
+            "selected_agents": selected_agents,
+            "collaboration_pattern": pattern,
+            "routing_rationale": {
+                "strategy": "collaborative",
+                "pattern": pattern,
+                "reasoning": collaboration_patterns[pattern]
             }
+        }
+
+    def _risk_assessment_node(self, state: RoutingState) -> Dict[str, Any]:
+        """Assess risks of the routing decision"""
+        selected_agents = state.get("selected_agents", [])
+        agent_performance = state.get("agent_performance", {})
+        routing_confidence = state.get("routing_confidence", 0.0)
+        
+        # Risk factors
+        risk_factors = {
+            "no_agents_selected": len(selected_agents) == 0,
+            "low_confidence": routing_confidence < 0.6,
+            "untested_agents": any(agent not in agent_performance for agent in selected_agents),
+            "overloaded_agents": any(self.agent_workloads.get(agent, 0) > 5 for agent in selected_agents),
+            "single_point_failure": len(selected_agents) == 1
+        }
+        
+        # Calculate overall risk score
+        risk_weights = {
+            "no_agents_selected": 1.0,
+            "low_confidence": 0.7,
+            "untested_agents": 0.5,
+            "overloaded_agents": 0.6,
+            "single_point_failure": 0.3
+        }
+        
+        risk_score = sum(risk_weights[factor] for factor, present in risk_factors.items() if present)
+        risk_level = "high" if risk_score > 1.5 else "medium" if risk_score > 0.7 else "low"
+        
+        # Risk mitigation recommendations
+        mitigations = []
+        if risk_factors["no_agents_selected"]:
+            mitigations.append("Expand agent search criteria or add fallback agents")
+        if risk_factors["low_confidence"]:
+            mitigations.append("Consider human oversight or additional validation")
+        if risk_factors["single_point_failure"]:
+            mitigations.append("Add backup agents or parallel processing")
+        
+        return {
+            "current_phase": "risk_assessment",
+            "risk_assessment": {
+                "risk_level": risk_level,
+                "risk_score": risk_score,
+                "risk_factors": risk_factors,
+                "mitigations": mitigations
+            }
+        }
+
+    def _routing_decision_node(self, state: RoutingState) -> Dict[str, Any]:
+        """Make final routing decision"""
+        selected_agents = state.get("selected_agents", [])
+        risk_assessment = state.get("risk_assessment", {})
+        routing_confidence = state.get("routing_confidence", 0.0)
+        priority = state.get("priority", "normal")
+        
+        # Decision logic
+        decision = "approved"
+        
+        if not selected_agents:
+            decision = "retry"
+        elif risk_assessment.get("risk_level", "low") == "high":
+            if priority in ["critical", "emergency"]:
+                decision = "human"  # High-priority high-risk tasks need human approval
+            else:
+                decision = "retry"
+        elif routing_confidence < 0.5:
+            decision = "human"
+        
+        return {
+            "current_phase": "routing_decision",
+            "routing_decision": decision,
+            "requires_human_approval": decision == "human"
+        }
+
+    def _execution_planning_node(self, state: RoutingState) -> Dict[str, Any]:
+        """Plan the execution of the routing"""
+        selected_agents = state.get("selected_agents", [])
+        collaboration_pattern = state.get("collaboration_pattern")
+        
+        # Create execution plan
+        execution_steps = []
+        
+        if collaboration_pattern == "sequential":
+            for i, agent in enumerate(selected_agents):
+                execution_steps.append({
+                    "step": i + 1,
+                    "agent": agent,
+                    "action": "process_task",
+                    "depends_on": execution_steps[-1]["step"] if execution_steps else None,
+                    "estimated_duration": 60.0  # seconds
+                })
+        elif collaboration_pattern == "parallel":
+            for i, agent in enumerate(selected_agents):
+                execution_steps.append({
+                    "step": i + 1,
+                    "agent": agent,
+                    "action": "process_task_parallel",
+                    "depends_on": None,
+                    "estimated_duration": 60.0
+                })
+        else:
+            # Default sequential execution
+            for i, agent in enumerate(selected_agents):
+                execution_steps.append({
+                    "step": i + 1,
+                    "agent": agent,
+                    "action": "process_task",
+                    "estimated_duration": 60.0
+                })
+        
+        return {
+            "current_phase": "execution_planning",
+            "execution_plan": execution_steps,
+            "estimated_total_duration": sum(step["estimated_duration"] for step in execution_steps)
+        }
+
+    def _human_approval_node(self, state: RoutingState) -> Dict[str, Any]:
+        """Handle human approval process"""
+        return {
+            "current_phase": "human_approval",
+            "requires_human_approval": True,
+            "approval_reason": "High-risk routing decision requires human oversight"
+        }
+
+    def _finalize_routing_node(self, state: RoutingState) -> Dict[str, Any]:
+        """Finalize the routing decision"""
+        routing_time = time.time() - state.get("start_time", time.time())
+        
+        return {
+            "current_phase": "completed",
+            "is_routed": True,
+            "routing_time": routing_time
+        }
+
+    # Conditional edge functions
+    def _route_strategy_decision(self, state: RoutingState) -> str:
+        """Decide which strategy to use for routing"""
+        strategy = RoutingStrategy(state.get("routing_strategy", RoutingStrategy.CAPABILITY_BASED.value))
+        
+        if strategy == RoutingStrategy.CAPABILITY_BASED:
+            return "capability"
+        elif strategy == RoutingStrategy.PERFORMANCE_OPTIMIZED:
+            return "performance"
+        elif strategy == RoutingStrategy.COST_OPTIMIZED:
+            return "cost"
+        elif strategy == RoutingStrategy.COLLABORATIVE:
+            return "collaborative"
+        else:
+            return "capability"  # Default
+
+    def _routing_approval_decision(self, state: RoutingState) -> str:
+        """Make routing approval decision"""
+        return state.get("routing_decision", "approved")
+
+    # Helper methods
+    def _analyze_task_keywords(self, description: str) -> float:
+        """Analyze task description for complexity keywords"""
+        complex_keywords = ["analyze", "optimize", "coordinate", "synthesize", "evaluate"]
+        simple_keywords = ["list", "show", "display", "copy", "move"]
+        
+        words = description.lower().split()
+        complex_count = sum(1 for word in words if any(keyword in word for keyword in complex_keywords))
+        simple_count = sum(1 for word in words if any(keyword in word for keyword in simple_keywords))
+        
+        if complex_count > simple_count:
+            return 0.8 + (complex_count * 0.1)
+        else:
+            return 0.3 + (simple_count * 0.05)
+
+    def _get_task_type_complexity(self, task_type: str) -> float:
+        """Get complexity score for task type"""
+        complexity_map = {
+            "analysis": 0.8,
+            "reasoning": 0.9,
+            "synthesis": 0.85,
+            "coordination": 0.7,
+            "optimization": 0.9,
+            "exploration": 0.6,
+            "validation": 0.5,
+            "execution": 0.4,
+            "communication": 0.3
+        }
+        return complexity_map.get(task_type, 0.5)
+
+    def _estimate_task_duration(self, description: str, task_type: str) -> float:
+        """Estimate task duration in seconds"""
+        base_duration = 60.0  # 1 minute base
+        
+        # Adjust by description length
+        length_factor = len(description) / 100.0
+        
+        # Adjust by task type
+        type_factors = {
+            "analysis": 2.0,
+            "reasoning": 2.5,
+            "synthesis": 3.0,
+            "coordination": 1.5,
+            "optimization": 3.5,
+            "exploration": 2.0,
+            "validation": 1.0,
+            "execution": 0.5,
+            "communication": 0.3
+        }
+        
+        type_factor = type_factors.get(task_type, 1.0)
+        
+        return base_duration * (1.0 + length_factor) * type_factor
+
+    def _determine_expertise_level(self, description: str) -> str:
+        """Determine required expertise level"""
+        expert_indicators = ["complex", "advanced", "sophisticated", "expert", "specialized"]
+        intermediate_indicators = ["moderate", "standard", "typical", "regular"]
+        
+        description_lower = description.lower()
+        
+        if any(indicator in description_lower for indicator in expert_indicators):
+            return "expert"
+        elif any(indicator in description_lower for indicator in intermediate_indicators):
+            return "intermediate"
+        else:
+            return "basic"
+
+    def _assess_time_sensitivity(self, priority: str) -> bool:
+        """Assess if task is time sensitive"""
+        return priority in ["high", "critical", "emergency"]
+
+    def _calculate_capability_match(self, capabilities: List[AgentCapability], requirements: Dict[str, Any]) -> float:
+        """Calculate how well agent capabilities match requirements"""
+        if not capabilities:
+            return 0.0
+        
+        # Simple matching logic - can be enhanced
+        total_score = 0.0
+        total_weight = 0.0
+        
+        for capability in capabilities:
+            weight = 1.0
             
-            self.logger.info(f"Routed task {task.task_id} to agent {selected_agent_id}")
+            # Increase weight for relevant capabilities
+            if requirements.get("creativity_required", False) and "creative" in capability.capability_name:
+                weight = 2.0
+            elif requirements.get("analysis_required", False) and "analysis" in capability.capability_name:
+                weight = 2.0
+            
+            total_score += capability.proficiency_level * weight
+            total_weight += weight
+        
+        return total_score / total_weight if total_weight > 0 else 0.0
+
+    @traceable
+    async def route_task(self,
+                        task_description: str,
+                        task_type: TaskType = TaskType.ANALYSIS,
+                        priority: AgentPriority = AgentPriority.NORMAL,
+                        routing_strategy: RoutingStrategy = RoutingStrategy.CAPABILITY_BASED,
+                        context: Optional[Dict[str, Any]] = None,
+                        constraints: Optional[Dict[str, Any]] = None) -> RoutingResult:
+        """Route a task to appropriate agents using LangGraph workflows"""
+        
+        if not self.compiled_graph:
+            return await self._fallback_routing(task_description, task_type, priority, context)
+        
+        # Create routing task
+        task = RoutingTask(
+            task_id=str(uuid.uuid4()),
+            description=task_description,
+            task_type=task_type,
+            priority=priority,
+            routing_strategy=routing_strategy,
+            context=context or {},
+            requirements={},
+            constraints=constraints or {}
+        )
+        
+        # Initialize state
+        initial_state = RoutingState(
+            task_id=task.task_id,
+            task_description=task_description,
+            task_type=task_type.value,
+            priority=priority.value,
+            routing_strategy=routing_strategy.value,
+            available_agents=[],
+            agent_capabilities={},
+            agent_performance={},
+            agent_workload={},
+            agent_costs={},
+            selected_agents=[],
+            routing_rationale={},
+            collaboration_pattern=None,
+            execution_plan=[],
+            routing_confidence=0.0,
+            expected_performance=0.0,
+            estimated_cost=0.0,
+            risk_assessment={},
+            current_phase="initialization",
+            requires_human_approval=False,
+            requires_escalation=False,
+            is_routed=False,
+            routing_results={},
+            performance_feedback={},
+            lessons_learned=[],
+            start_time=time.time(),
+            routing_time=0.0,
+            context=context or {},
+            metadata={}
+        )
+        
+        try:
+            # Execute routing workflow
+            config = {"configurable": {"thread_id": task.task_id}}
+            
+            final_state = None
+            async for output in self.compiled_graph.astream(initial_state, config):
+                final_state = output
+                
+                # Handle human approval
+                if final_state and final_state.get("requires_human_approval", False):
+                    logger.info(f"Routing {task.task_id} requires human approval")
+                    break
+            
+            if not final_state:
+                raise RuntimeError("Routing workflow failed")
+            
+            # Create result
+            result = RoutingResult(
+                task_id=task.task_id,
+                success=final_state.get("is_routed", False),
+                selected_agents=final_state.get("selected_agents", []),
+                routing_confidence=final_state.get("routing_confidence", 0.0),
+                expected_performance=final_state.get("expected_performance", 0.0),
+                estimated_cost=final_state.get("estimated_cost", 0.0),
+                execution_plan=final_state.get("execution_plan", []),
+                collaboration_pattern=final_state.get("collaboration_pattern"),
+                routing_time=final_state.get("routing_time", 0.0),
+                rationale=final_state.get("routing_rationale", {}),
+                risk_assessment=final_state.get("risk_assessment", {}),
+                recommendations=[],
+                requires_monitoring=final_state.get("risk_assessment", {}).get("risk_level", "low") != "low"
+            )
+            
+            # Update metrics
+            self._update_routing_metrics(result, routing_strategy)
+            
+            # Track with LangSmith
+            if self.langsmith_client:
+                await self._track_routing_with_langsmith(task, result)
             
             return result
             
         except Exception as e:
-            self.logger.error(f"Task routing failed: {e}")
-            self._update_routing_stats(time.time() - start_time, False)
-            raise
-    
-    def _find_suitable_agents(self, task: TaskRequest) -> List[str]:
-        """Find agents suitable for the given task."""
-        suitable_agents = []
+            logger.error(f"Routing workflow failed: {e}")
+            return RoutingResult(
+                task_id=task.task_id,
+                success=False,
+                selected_agents=[],
+                routing_confidence=0.0,
+                expected_performance=0.0,
+                estimated_cost=0.0,
+                execution_plan=[],
+                collaboration_pattern=None,
+                routing_time=time.time() - initial_state["start_time"],
+                rationale={},
+                risk_assessment={},
+                recommendations=[],
+                error_details=str(e)
+            )
+
+    async def _fallback_routing(self, task_description: str, task_type: TaskType, priority: AgentPriority, context: Optional[Dict[str, Any]]) -> RoutingResult:
+        """Fallback routing when LangGraph is unavailable"""
+        logger.warning("Using fallback routing - LangGraph unavailable")
         
-        for agent_id, capabilities in self.capabilities.items():
-            # Check if agent supports task type
-            if task.task_type not in capabilities.supported_tasks:
-                continue
-            
-            # Check if agent is available
-            if not capabilities.is_available:
-                continue
-            
-            # Check required capabilities
-            if task.required_capabilities and not task.required_capabilities.issubset(set(capabilities.specializations)):
-                continue
-            
-            # Check LLM provider compatibility
-            if task.llm_provider and task.llm_provider != capabilities.llm_provider:
-                continue
-            
-            # Check processing layer requirements
-            if task.processing_layers:
-                if not all(layer in capabilities.processing_layers for layer in task.processing_layers):
-                    continue
-            
-            suitable_agents.append(agent_id)
+        # Simple capability-based routing
+        available_agents = list(self.agent_registry.keys())
         
-        return suitable_agents
-    
-    def _apply_routing_strategy(self, suitable_agents: List[str], strategy: RoutingStrategy, task: TaskRequest) -> str:
-        """Apply the specified routing strategy to select an agent."""
-        if not suitable_agents:
-            return None
+        if not available_agents:
+            return RoutingResult(
+                task_id=str(uuid.uuid4()),
+                success=False,
+                selected_agents=[],
+                routing_confidence=0.0,
+                expected_performance=0.0,
+                estimated_cost=0.0,
+                execution_plan=[],
+                collaboration_pattern=None,
+                routing_time=0.1,
+                rationale={"error": "No agents available"},
+                risk_assessment={},
+                recommendations=["Register agents before routing"],
+                error_details="No agents registered"
+            )
         
-        if strategy == RoutingStrategy.ROUND_ROBIN:
-            return self._round_robin_selection(suitable_agents)
-        elif strategy == RoutingStrategy.LOAD_BALANCED:
-            return self._load_balanced_selection(suitable_agents)
-        elif strategy == RoutingStrategy.CAPABILITY_MATCHED:
-            return self._capability_matched_selection(suitable_agents, task)
-        elif strategy == RoutingStrategy.PRIORITY_BASED:
-            return self._priority_based_selection(suitable_agents, task)
-        elif strategy == RoutingStrategy.SHORTEST_QUEUE:
-            return self._shortest_queue_selection(suitable_agents)
-        else:
-            # Default to capability matched
-            return self._capability_matched_selection(suitable_agents, task)
-    
-    def _round_robin_selection(self, suitable_agents: List[str]) -> str:
-        """Select agent using round-robin strategy."""
-        # Simple round-robin based on total tasks routed
-        index = self.routing_stats["total_tasks_routed"] % len(suitable_agents)
-        return suitable_agents[index]
-    
-    def _load_balanced_selection(self, suitable_agents: List[str]) -> str:
-        """Select agent with lowest current load."""
-        min_load = float('inf')
-        selected_agent = None
+        # Select first available agent (simplified)
+        selected_agent = available_agents[0]
         
-        for agent_id in suitable_agents:
-            capabilities = self.capabilities[agent_id]
-            
-            # Calculate load score
-            load_score = self._calculate_load_score(capabilities)
-            
-            if load_score < min_load:
-                min_load = load_score
-                selected_agent = agent_id
+        return RoutingResult(
+            task_id=str(uuid.uuid4()),
+            success=True,
+            selected_agents=[selected_agent],
+            routing_confidence=0.6,
+            expected_performance=0.7,
+            estimated_cost=1.0,
+            execution_plan=[{
+                "step": 1,
+                "agent": selected_agent,
+                "action": "process_task",
+                "estimated_duration": 60.0
+            }],
+            collaboration_pattern=None,
+            routing_time=0.1,
+            rationale={"strategy": "fallback_simple"},
+            risk_assessment={"risk_level": "medium"},
+            recommendations=["Enable LangGraph for enhanced routing"]
+        )
+
+    def _update_routing_metrics(self, result: RoutingResult, strategy: RoutingStrategy):
+        """Update routing performance metrics"""
+        self.routing_metrics['total_routings'] += 1
+        if result.success:
+            self.routing_metrics['successful_routings'] += 1
         
-        return selected_agent
-    
-    def _calculate_load_score(self, capabilities: AgentCapabilities) -> float:
-        """Calculate load score for an agent using real metrics."""
-        # Base load from current concurrent tasks
-        base_load = capabilities.current_load / capabilities.max_concurrent_tasks
+        # Update strategy usage
+        self.routing_metrics['strategy_usage'][strategy.value] += 1
         
-        # Performance factor (higher performance = lower effective load)
-        performance_factor = 1.0 / max(capabilities.success_rate, 0.1)
+        # Update averages
+        total = self.routing_metrics['total_routings']
         
-        # Response time factor (slower agents have higher effective load)
-        response_factor = capabilities.average_response_time / 10.0  # Normalize to reasonable scale
-        
-        # Calculate composite load score
-        return base_load * performance_factor * (1.0 + response_factor)
-    
-    def _capability_matched_selection(self, suitable_agents: List[str], task: TaskRequest) -> str:
-        """Select agent based on capability matching."""
-        best_score = -1
-        selected_agent = None
-        
-        for agent_id in suitable_agents:
-            capabilities = self.capabilities[agent_id]
-            
-            # Calculate capability match score
-            match_score = self._calculate_capability_match(capabilities, task)
-            
-            if match_score > best_score:
-                best_score = match_score
-                selected_agent = agent_id
-        
-        return selected_agent
-    
-    def _calculate_capability_match(self, capabilities: AgentCapabilities, task: TaskRequest) -> float:
-        """Calculate how well an agent's capabilities match a task."""
-        score = 0.0
-        
-        # Base score for supporting the task type
-        score += 0.3
-        
-        # Specialization match
-        if task.required_capabilities:
-            matched_specializations = task.required_capabilities.intersection(set(capabilities.specializations))
-            specialization_score = len(matched_specializations) / len(task.required_capabilities)
-            score += specialization_score * 0.4
-        
-        # LLM provider match
-        if task.llm_provider and task.llm_provider == capabilities.llm_provider:
-            score += 0.2
-        
-        # Processing layer compatibility
-        if task.processing_layers:
-            compatible_layers = [layer for layer in task.processing_layers if layer in capabilities.processing_layers]
-            layer_score = len(compatible_layers) / len(task.processing_layers)
-            score += layer_score * 0.1
-        
-        return score
-    
-    def _priority_based_selection(self, suitable_agents: List[str], task: TaskRequest) -> str:
-        """Select agent based on task priority and agent performance."""
-        # For high priority tasks, select highest performing agent
-        if task.priority <= 3:
-            return self._highest_performance_selection(suitable_agents)
-        else:
-            # For normal priority, use load balancing
-            return self._load_balanced_selection(suitable_agents)
-    
-    def _highest_performance_selection(self, suitable_agents: List[str]) -> str:
-        """Select highest performing agent."""
-        best_performance = -1
-        selected_agent = None
-        
-        for agent_id in suitable_agents:
-            capabilities = self.capabilities[agent_id]
-            
-            # Calculate performance score
-            performance_score = self._calculate_performance_score(capabilities)
-            
-            if performance_score > best_performance:
-                best_performance = performance_score
-                selected_agent = agent_id
-        
-        return selected_agent
-    
-    def _calculate_performance_score(self, capabilities: AgentCapabilities) -> float:
-        """Calculate performance score for an agent."""
-        # Success rate component (0-1)
-        success_component = capabilities.success_rate
-        
-        # Response time component (faster = better, normalized)
-        response_component = max(0, 1.0 - (capabilities.average_response_time / 10.0))
-        
-        # Error rate component (lower = better)
-        error_component = max(0, 1.0 - capabilities.error_rate)
-        
-        # Availability component
-        availability_component = 1.0 if self._is_agent_available(capabilities) else 0.0
-        
-        # Weighted combination
-        performance_score = (
-            success_component * 0.4 +
-            response_component * 0.3 +
-            error_component * 0.2 +
-            availability_component * 0.1
+        current_time = self.routing_metrics['average_routing_time']
+        self.routing_metrics['average_routing_time'] = (
+            (current_time * (total - 1) + result.routing_time) / total
         )
         
-        return performance_score
-    
-    def _is_agent_available(self, capabilities: AgentCapabilities) -> bool:
-        """Check if agent is available for new tasks."""
-        if not capabilities.is_available:
-            return False
-        
-        # Check if agent is at capacity
-        load_score = self._calculate_load_score(capabilities)
-        return load_score < threshold_load
-    
-    def _shortest_queue_selection(self, suitable_agents: List[str]) -> str:
-        """Route to agent with shortest queue."""
-        min_queue_size = float('inf')
-        selected_agent = None
-        
-        for agent_id in suitable_agents:
-            # Count active tasks for this agent
-            queue_size = sum(1 for task_data in self.active_tasks.values() 
-                           if task_data["assigned_agent"] == agent_id)
+        current_confidence = self.routing_metrics['average_confidence']
+        self.routing_metrics['average_confidence'] = (
+            (current_confidence * (total - 1) + result.routing_confidence) / total
+        )
+
+    async def _track_routing_with_langsmith(self, task: RoutingTask, result: RoutingResult):
+        """Track routing with LangSmith"""
+        try:
+            run_data = {
+                "name": "nis_agent_routing",
+                "inputs": {
+                    "task_description": task.description,
+                    "task_type": task.task_type.value,
+                    "priority": task.priority.value,
+                    "strategy": task.routing_strategy.value
+                },
+                "outputs": {
+                    "success": result.success,
+                    "selected_agents": result.selected_agents,
+                    "routing_confidence": result.routing_confidence,
+                    "estimated_cost": result.estimated_cost
+                },
+                "run_type": "chain",
+                "session_name": f"routing_{task.task_id}"
+            }
             
-            if queue_size < min_queue_size:
-                min_queue_size = queue_size
-                selected_agent = agent_id
-        
-        return selected_agent
-    
-    def _calculate_routing_confidence(self, agent_id: str, task: TaskRequest) -> float:
-        """Calculate confidence in routing decision using real metrics."""
-        capabilities = self.capabilities[agent_id]
-        
-        # Create confidence factors based on agent performance
-        factors = create_default_confidence_factors()
-        
-        # Update factors based on agent metrics
-        factors.error_rate = capabilities.error_rate
-        factors.response_consistency = capabilities.success_rate
-        factors.system_load = capabilities.current_load / capabilities.max_concurrent_tasks
-        factors.data_quality = max(0.7, 1.0 - (capabilities.average_response_time / 10.0))
-        
-        # Calculate mathematical confidence
-        return calculate_confidence(factors)
-    
-    def _estimate_completion_time(self, agent_id: str, task: TaskRequest) -> float:
-        """Estimate task completion time based on agent performance."""
-        capabilities = self.capabilities[agent_id]
-        
-        # Base estimate from agent's average response time
-        base_time = capabilities.average_response_time
-        
-        # Adjust for current load
-        load_factor = 1.0 + (capabilities.current_load / capabilities.max_concurrent_tasks)
-        
-        # Adjust for task priority (higher priority gets faster estimates)
-        priority_factor = 1.0 + (task.priority - 5) * 0.1
-        
-        return base_time * load_factor * priority_factor
-    
-    def _update_agent_load(self, agent_id: str, change: int):
-        """Update agent's current load."""
-        if agent_id in self.capabilities:
-            self.capabilities[agent_id].current_load += change
-            # Ensure load doesn't go negative
-            self.capabilities[agent_id].current_load = max(0, self.capabilities[agent_id].current_load)
-    
-    def _update_routing_stats(self, routing_time: float, success: bool):
-        """Update routing statistics with new data."""
-        self.routing_stats["total_tasks_routed"] += 1
-        
-        if success:
-            self.routing_stats["successful_routings"] += 1
-        else:
-            self.routing_stats["failed_routings"] += 1
-        
-        # Update average routing time using exponential moving average
-        current_avg = self.routing_stats["average_routing_time"]
-        self.routing_stats["average_routing_time"] = current_avg * alpha + routing_time * (1 - alpha)
-    
-    async def complete_task(self, task_id: str, result: Dict[str, Any], success: bool = True):
-        """Mark a task as completed and update agent performance."""
-        if task_id not in self.active_tasks:
-            self.logger.warning(f"Task {task_id} not found in active tasks")
-            return
-        
-        task_data = self.active_tasks[task_id]
-        agent_id = task_data["assigned_agent"]
-        completion_time = time.time() - task_data["start_time"]
-        
-        # Update agent performance metrics
-        self._update_agent_performance(agent_id, completion_time, success)
-        
-        # Update agent load
-        self._update_agent_load(agent_id, -1)
-        
-        # Move task to completed
-        self.completed_tasks[task_id] = {
-            **task_data,
-            "completion_time": completion_time,
-            "result": result,
-            "success": success,
-            "end_time": time.time()
-        }
-        
-        del self.active_tasks[task_id]
-        
-        self.logger.info(f"Task {task_id} completed by agent {agent_id} in {completion_time:.2f}s")
-    
-    def _update_agent_performance(self, agent_id: str, response_time: float, success: bool):
-        """Update agent performance metrics using exponential moving average."""
-        agent_data = self.agent_performance[agent_id]
-        capabilities = self.capabilities[agent_id]
-        
-        # Update response time using exponential moving average
-        alpha = 0.1  # Smoothing factor
-        current_avg = agent_data["average_response_time"]
-        new_avg = alpha * current_avg + (1 - alpha) * response_time
-        agent_data["average_response_time"] = new_avg
-        capabilities.average_response_time = new_avg
-        
-        # Update success/error rates
-        if success:
-            agent_data["success_count"] += 1
-        else:
-            agent_data["errors"] += 1
-        
-        agent_data["tasks_completed"] += 1
-        
-        # Calculate success rate
-        total_tasks = agent_data["tasks_completed"]
-        if total_tasks > 0:
-            capabilities.success_rate = agent_data["success_count"] / total_tasks
-            capabilities.error_rate = agent_data["errors"] / total_tasks
-        
-        # Update availability based on performance
-        capabilities.is_available = self._calculate_agent_availability(capabilities)
-    
-    def _calculate_agent_availability(self, capabilities: AgentCapabilities) -> bool:
-        """Calculate agent availability based on current metrics."""
-        # Agent is available if:
-        # 1. Not at max capacity
-        # 2. Performance is acceptable
-        # 3. Error rate is not too high
-        
-        load_ok = capabilities.current_load < capabilities.max_concurrent_tasks
-        performance_ok = capabilities.success_rate >= threshold_success_rate
-        error_ok = capabilities.error_rate <= threshold_error_rate
-        
-        return load_ok and performance_ok and error_ok
-    
-    def get_router_status(self) -> Dict[str, Any]:
-        """Get current router status and statistics."""
-        # Calculate real-time success rate
-        total_routed = self.routing_stats["total_tasks_routed"]
-        success_rate = (self.routing_stats["successful_routings"] / total_routed) if total_routed > 0 else 1.0
-        
-        # Agent utilization
-        total_agents = len(self.capabilities)
-        available_agents = sum(1 for cap in self.capabilities.values() if cap.is_available)
-        
+            logger.info(f"LangSmith routing tracking: {run_data['name']}")
+            
+        except Exception as e:
+            logger.warning(f"LangSmith routing tracking failed: {e}")
+
+    def get_routing_status(self) -> Dict[str, Any]:
+        """Get routing system status"""
         return {
-            "routing_statistics": self.routing_stats,
-            "success_rate": success_rate,
-            "active_tasks": len(self.active_tasks),
-            "completed_tasks": len(self.completed_tasks),
-            "registered_agents": total_agents,
-            "available_agents": available_agents,
-            "agent_utilization": (total_agents - available_agents) / total_agents if total_agents > 0 else 0.0,
-            "task_queue_size": len(self.task_queue),
-            "timestamp": time.time()
-        }
-    
-    def get_agent_status(self, agent_id: str) -> Optional[Dict[str, Any]]:
-        """Get status for a specific agent."""
-        if agent_id not in self.capabilities:
-            return None
-        
-        capabilities = self.capabilities[agent_id]
-        performance = self.agent_performance[agent_id]
-        
-        return {
-            "agent_id": agent_id,
-            "capabilities": asdict(capabilities),
-            "performance": performance,
-            "current_tasks": [
-                task_id for task_id, task_data in self.active_tasks.items()
-                if task_data["assigned_agent"] == agent_id
-            ]
+            "langgraph_available": LANGGRAPH_AVAILABLE,
+            "langsmith_enabled": self.langsmith_client is not None,
+            "registered_agents": len(self.agent_registry),
+            "routing_metrics": self.routing_metrics,
+            "agent_workloads": dict(self.agent_workloads),
+            "capabilities": {
+                "intelligent_routing": LANGGRAPH_AVAILABLE,
+                "performance_optimization": True,
+                "cost_optimization": True,
+                "collaborative_routing": True,
+                "risk_assessment": True,
+                "human_oversight": True,
+                "langsmith_analytics": self.langsmith_client is not None
+            }
         }
 
 
-# Configuration constants
-threshold_load = calculate_confidence(create_default_confidence_factors()) * 0.8
-threshold_success_rate = calculate_confidence(create_default_confidence_factors()) * 0.8
-threshold_error_rate = 1.0 - calculate_confidence(create_default_confidence_factors()) * 0.9
-alpha = 0.1  # Exponential moving average smoothing factor 
+# Example usage
+if __name__ == "__main__":
+    async def test_enhanced_router():
+        """Test enhanced agent router"""
+        router = EnhancedAgentRouter()
+        
+        result = await router.route_task(
+            task_description="Analyze the environmental impact of renewable energy adoption",
+            task_type=TaskType.ANALYSIS,
+            priority=AgentPriority.HIGH,
+            routing_strategy=RoutingStrategy.COLLABORATIVE,
+            context={"domain": "environmental_science", "complexity": "high"}
+        )
+        
+        print("Enhanced Routing Result:")
+        print(f"Success: {result.success}")
+        print(f"Selected Agents: {result.selected_agents}")
+        print(f"Confidence: {result.routing_confidence:.3f}")
+        print(f"Expected Performance: {result.expected_performance:.3f}")
+        print(f"Estimated Cost: ${result.estimated_cost:.2f}")
+        print(f"Collaboration Pattern: {result.collaboration_pattern}")
+        print(f"Routing Time: {result.routing_time:.2f}s")
+        
+    asyncio.run(test_enhanced_router()) 

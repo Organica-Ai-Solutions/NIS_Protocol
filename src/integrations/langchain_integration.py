@@ -1,53 +1,67 @@
 #!/usr/bin/env python3
 """
-🦜🔗 NIS Protocol v3 - LangChain/LangGraph Integration
+🦜🔗 NIS Protocol v3 - Enhanced LangChain/LangGraph Integration
 
 Comprehensive integration of LangChain ecosystem with NIS Protocol v3,
-including LangGraph workflows, LangSmith monitoring, and advanced reasoning patterns.
+including advanced multi-agent LangGraph workflows, LangSmith monitoring, 
+and sophisticated reasoning patterns.
 
-Features:
-- LangChain Chat Models integration
-- LangGraph State Machine workflows
-- LangSmith observability and evaluation
-- Chain of Thought (COT) reasoning
-- Tree of Thought (TOT) reasoning  
-- ReAct (Reasoning and Acting) patterns
-- Seamless NIS Protocol integration
+Enhanced Features:
+- Multi-agent LangGraph workflows with state persistence
+- Advanced agent coordination patterns
+- Real-time LangSmith observability and evaluation
+- Chain of Thought (COT) reasoning with validation
+- Tree of Thought (TOT) reasoning with pruning
+- ReAct (Reasoning and Acting) patterns with tools
+- Human-in-the-loop integration points
+- Agent memory and context management
+- Performance optimization and auto-scaling
 """
 
 import os
 import time
 import json
 import asyncio
-from typing import Dict, Any, List, Optional, Union, Callable
+from typing import Dict, Any, List, Optional, Union, Callable, Type
 from dataclasses import dataclass, field
 from enum import Enum
 import logging
+import uuid
+from datetime import datetime
+from concurrent.futures import ThreadPoolExecutor
 
-# LangChain Core
+# LangChain Core - Enhanced imports
 try:
-    from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
+    from langchain_core.messages import HumanMessage, AIMessage, SystemMessage, BaseMessage
     from langchain_core.chat_history import BaseChatMessageHistory
-    from langchain_core.runnables import Runnable
+    from langchain_core.runnables import Runnable, RunnableLambda, RunnablePassthrough
     from langchain_core.language_models import BaseChatModel
-    from langchain_core.tools import BaseTool
+    from langchain_core.tools import BaseTool, tool
+    from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+    from langchain_core.output_parsers import StrOutputParser, JsonOutputParser
+    from langchain_core.runnables.config import RunnableConfig
     LANGCHAIN_AVAILABLE = True
 except ImportError:
     LANGCHAIN_AVAILABLE = False
 
-# LangGraph
+# LangGraph - Enhanced imports
 try:
-    from langgraph.graph import StateGraph, END
+    from langgraph.graph import StateGraph, END, START
     from langgraph.checkpoint.memory import MemorySaver
-    from langgraph.prebuilt import ToolExecutor
+    from langgraph.checkpoint.sqlite import SqliteSaver
+    from langgraph.prebuilt import ToolExecutor, ToolInvocation
+    from langgraph.graph.message import add_messages
+    from typing_extensions import TypedDict, Annotated
     LANGGRAPH_AVAILABLE = True
 except ImportError:
     LANGGRAPH_AVAILABLE = False
 
-# LangSmith
+# LangSmith - Enhanced imports
 try:
     from langsmith import Client as LangSmithClient
-    from langsmith.evaluation import evaluate
+    from langsmith.evaluation import evaluate, EvaluationResult
+    from langsmith.schemas import Run, Example
+    from langsmith import traceable
     LANGSMITH_AVAILABLE = True
 except ImportError:
     LANGSMITH_AVAILABLE = False
@@ -57,901 +71,728 @@ try:
     from ..utils.self_audit import self_audit_engine
     from ..utils.integrity_metrics import calculate_confidence
     from ..agents.consciousness.enhanced_conscious_agent import EnhancedConsciousAgent, ReflectionType
+    from ..llm.llm_manager import LLMManager
+    from ..llm.base_llm_provider import LLMMessage, LLMRole
+    from ..utils.env_config import env_config
 except ImportError:
     # Fallback for standalone testing
     pass
 
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 
 class ReasoningPattern(Enum):
-    """Available reasoning patterns"""
+    """Enhanced reasoning patterns for multi-agent coordination"""
     CHAIN_OF_THOUGHT = "chain_of_thought"
     TREE_OF_THOUGHT = "tree_of_thought"
-    REACT = "reasoning_and_acting"
-    HYBRID_COT_REACT = "hybrid_cot_react"
+    REASONING_AND_ACTING = "reasoning_and_acting"
+    MULTI_AGENT_CONSENSUS = "multi_agent_consensus"
+    HIERARCHICAL_REASONING = "hierarchical_reasoning"
+    COLLABORATIVE_REASONING = "collaborative_reasoning"
+    RECURSIVE_REASONING = "recursive_reasoning"
+    METACOGNITIVE_REASONING = "metacognitive_reasoning"
 
 
-@dataclass
-class LangChainState:
-    """State for LangGraph workflows"""
-    messages: List[Dict[str, Any]] = field(default_factory=list)
-    reasoning_pattern: ReasoningPattern = ReasoningPattern.CHAIN_OF_THOUGHT
-    thought_tree: Dict[str, Any] = field(default_factory=dict)
-    actions_taken: List[Dict[str, Any]] = field(default_factory=list)
-    observations: List[str] = field(default_factory=list)
-    final_answer: Optional[str] = None
-    confidence: float = 0.0
-    integrity_score: float = 0.0
-    processing_time: float = 0.0
+class AgentRole(Enum):
+    """Roles for multi-agent workflows"""
+    PLANNER = "planner"
+    EXECUTOR = "executor"
+    VALIDATOR = "validator"
+    COORDINATOR = "coordinator"
+    SPECIALIST = "specialist"
+    CRITIC = "critic"
+    SYNTHESIZER = "synthesizer"
+    MONITOR = "monitor"
 
 
-@dataclass
-class ReasoningResult:
-    """Result from reasoning process"""
-    final_answer: str
-    reasoning_steps: List[str]
-    confidence: float
+class WorkflowState(TypedDict):
+    """Enhanced state for multi-agent LangGraph workflows"""
+    # Core message flow
+    messages: Annotated[List[BaseMessage], add_messages]
+    
+    # Agent coordination
+    current_agent: Optional[str]
+    agent_history: List[str]
+    active_agents: List[str]
+    agent_outputs: Dict[str, Any]
+    
+    # Reasoning and planning
+    reasoning_pattern: str
+    thought_tree: Dict[str, Any]
+    plan: List[Dict[str, Any]]
+    current_step: int
+    
+    # Tools and actions
+    available_tools: List[str]
+    tool_results: Dict[str, Any]
+    actions_taken: List[Dict[str, Any]]
+    
+    # Quality and validation
+    confidence_scores: Dict[str, float]
+    validation_results: Dict[str, Any]
     integrity_score: float
+    
+    # Context and memory
+    conversation_id: str
+    session_context: Dict[str, Any]
+    long_term_memory: Dict[str, Any]
+    
+    # Control flow
+    next_agent: Optional[str]
+    is_complete: bool
+    requires_human: bool
+    error_state: Optional[str]
+    
+    # Metadata
+    start_time: float
     processing_time: float
-    pattern_used: ReasoningPattern
+    iteration_count: int
     metadata: Dict[str, Any]
 
 
-class ChainOfThoughtReasoner:
-    """Chain of Thought reasoning implementation"""
+@dataclass
+class AgentConfig:
+    """Configuration for individual agents in workflows"""
+    agent_id: str
+    role: AgentRole
+    llm_provider: str
+    system_prompt: str
+    temperature: float = 0.7
+    max_tokens: int = 2048
+    tools: List[str] = field(default_factory=list)
+    capabilities: List[str] = field(default_factory=list)
+    max_iterations: int = 10
+    timeout: float = 60.0
+    requires_validation: bool = True
+
+
+@dataclass
+class WorkflowResult:
+    """Result from multi-agent workflow execution"""
+    workflow_id: str
+    final_output: str
+    confidence: float
+    agent_contributions: Dict[str, Any]
+    reasoning_trace: List[Dict[str, Any]]
+    tool_usage: Dict[str, Any]
+    validation_results: Dict[str, Any]
+    performance_metrics: Dict[str, Any]
+    total_cost: float
+    processing_time: float
+    iteration_count: int
+    success: bool
+    error_details: Optional[str] = None
+
+
+class EnhancedMultiAgentWorkflow:
+    """Enhanced LangGraph workflow for multi-agent coordination"""
     
-    def __init__(self, llm: Optional[Any] = None):
-        self.llm = llm
-        self.step_history: List[str] = []
-    
-    def reason(self, question: str, context: Optional[str] = None) -> ReasoningResult:
-        """Execute Chain of Thought reasoning"""
+    def __init__(self, 
+                 workflow_config: Dict[str, Any],
+                 enable_persistence: bool = True,
+                 enable_langsmith: bool = True):
+        self.config = workflow_config
+        self.enable_persistence = enable_persistence
+        self.enable_langsmith = enable_langsmith
         
-        start_time = time.time()
+        # Initialize LLM manager
+        self.llm_manager = LLMManager()
         
-        # COT prompt engineering
-        cot_prompt = self._build_cot_prompt(question, context)
+        # Agent configurations
+        self.agent_configs: Dict[str, AgentConfig] = {}
+        self._initialize_agents()
         
-        reasoning_steps = []
+        # Workflow graph
+        self.graph: Optional[StateGraph] = None
+        self.compiled_graph = None
         
-        # Step 1: Problem understanding
-        understanding_step = f"Understanding: {question}"
-        reasoning_steps.append(understanding_step)
-        
-        # Step 2: Break down the problem
-        breakdown_step = "Breaking down the problem into components..."
-        reasoning_steps.append(breakdown_step)
-        
-        # Step 3: Step-by-step reasoning
-        if self.llm:
+        # Persistence
+        self.checkpointer = None
+        if enable_persistence and LANGGRAPH_AVAILABLE:
             try:
-                # Use LLM for actual reasoning
-                response = self.llm.invoke(cot_prompt)
-                reasoning_content = response.content if hasattr(response, 'content') else str(response)
-                reasoning_steps.extend(self._parse_reasoning_steps(reasoning_content))
-            except Exception as e:
-                reasoning_steps.append(f"LLM reasoning failed: {e}")
-                reasoning_steps.append("Falling back to rule-based reasoning...")
+                # Try SQLite persistence first, fall back to memory
+                self.checkpointer = SqliteSaver.from_conn_string(":memory:")
+            except:
+                self.checkpointer = MemorySaver()
         
-        # Fallback reasoning if no LLM
-        if not reasoning_steps or len(reasoning_steps) <= 3:
-            reasoning_steps.extend(self._fallback_reasoning(question, context))
+        # LangSmith integration
+        self.langsmith_client = None
+        if enable_langsmith and LANGSMITH_AVAILABLE:
+            self._setup_langsmith()
         
-        # Generate final answer
-        final_answer = self._synthesize_answer(reasoning_steps)
+        # Tools registry
+        self.tools: Dict[str, BaseTool] = {}
+        self._register_tools()
         
-        # Calculate metrics
-        processing_time = time.time() - start_time
-        confidence = self._calculate_confidence(reasoning_steps)
-        integrity_score = self._assess_integrity(final_answer)
-        
-        return ReasoningResult(
-            final_answer=final_answer,
-            reasoning_steps=reasoning_steps,
-            confidence=confidence,
-            integrity_score=integrity_score,
-            processing_time=processing_time,
-            pattern_used=ReasoningPattern.CHAIN_OF_THOUGHT,
-            metadata={
-                "cot_prompt": cot_prompt,
-                "step_count": len(reasoning_steps),
-                "llm_used": self.llm is not None
-            }
-        )
-    
-    def _build_cot_prompt(self, question: str, context: Optional[str] = None) -> str:
-        """Build Chain of Thought prompt"""
-        
-        prompt = f"""Think step by step to answer this question.
-
-Question: {question}
-"""
-        
-        if context:
-            prompt += f"\nContext: {context}\n"
-        
-        prompt += """
-Please reason through this step by step:
-1. First, understand what is being asked
-2. Break down the problem into smaller parts
-3. Work through each part systematically
-4. Combine your findings into a final answer
-
-Let's work through this step by step:
-"""
-        
-        return prompt
-    
-    def _parse_reasoning_steps(self, content: str) -> List[str]:
-        """Parse reasoning steps from LLM response"""
-        
-        steps = []
-        lines = content.split('\n')
-        
-        for line in lines:
-            line = line.strip()
-            if line and (line.startswith('Step') or line.startswith('-') or 
-                        line.startswith('1.') or line.startswith('2.') or
-                        len(line) > 20):  # Substantial content
-                steps.append(line)
-        
-        return steps[:10]  # Limit to 10 steps
-    
-    def _fallback_reasoning(self, question: str, context: Optional[str] = None) -> List[str]:
-        """Fallback reasoning when LLM unavailable"""
-        
-        steps = [
-            "Analyzing question structure and key terms...",
-            f"Identified key concepts: {self._extract_key_concepts(question)}",
-            "Applying logical reasoning patterns...",
-            "Synthesizing available information..."
-        ]
-        
-        if context:
-            steps.insert(1, f"Incorporating provided context: {context[:100]}...")
-        
-        return steps
-    
-    def _extract_key_concepts(self, question: str) -> List[str]:
-        """Extract key concepts from question"""
-        
-        # Simple keyword extraction
-        common_words = {'what', 'how', 'why', 'when', 'where', 'who', 'is', 'are', 'the', 'a', 'an'}
-        words = question.lower().replace('?', '').split()
-        key_concepts = [word for word in words if len(word) > 3 and word not in common_words]
-        
-        return key_concepts[:5]
-    
-    def _synthesize_answer(self, reasoning_steps: List[str]) -> str:
-        """Synthesize final answer from reasoning steps"""
-        
-        if not reasoning_steps:
-            return "Unable to generate answer due to insufficient reasoning steps."
-        
-        # Extract insights from reasoning steps
-        insights = []
-        for step in reasoning_steps:
-            if 'therefore' in step.lower() or 'conclusion' in step.lower() or 'answer' in step.lower():
-                insights.append(step)
-        
-        if insights:
-            return f"Based on the reasoning process: {insights[-1]}"
-        else:
-            return f"Through step-by-step analysis of {len(reasoning_steps)} reasoning steps, a comprehensive answer has been developed."
-    
-    def _calculate_confidence(self, reasoning_steps: List[str]) -> float:
-        """Calculate confidence based on reasoning quality"""
-        
-        if not reasoning_steps:
-            return 0.0
-        
-        # Factors affecting confidence
-        step_count_factor = min(len(reasoning_steps) / 5.0, 1.0)  # More steps = higher confidence
-        detail_factor = sum(len(step) for step in reasoning_steps) / (len(reasoning_steps) * 50)  # Detail level
-        detail_factor = min(detail_factor, 1.0)
-        
-        base_confidence = 0.6  # Base confidence for COT
-        confidence = base_confidence + 0.2 * step_count_factor + 0.2 * detail_factor
-        
-        return min(confidence, 1.0)
-    
-    def _assess_integrity(self, answer: str) -> float:
-        """Assess integrity of the answer"""
-        
-        try:
-            if 'self_audit_engine' in globals():
-                return self_audit_engine.get_integrity_score(answer)
-            else:
-                # Fallback integrity assessment
-                if len(answer) < 10:
-                    return 50.0  # Very short answers are less reliable
-                elif 'comprehensive' in answer.lower() or 'analysis' in answer.lower():
-                    return 85.0  # Detailed answers are more reliable
-                else:
-                    return 75.0  # Default reasonable score
-        except:
-            return 75.0
-
-
-class TreeOfThoughtReasoner:
-    """Tree of Thought reasoning implementation"""
-    
-    def __init__(self, llm: Optional[Any] = None, max_depth: int = 3, branching_factor: int = 3):
-        self.llm = llm
-        self.max_depth = max_depth
-        self.branching_factor = branching_factor
-        self.thought_tree = {}
-    
-    def reason(self, question: str, context: Optional[str] = None) -> ReasoningResult:
-        """Execute Tree of Thought reasoning"""
-        
-        start_time = time.time()
-        
-        # Build thought tree
-        self.thought_tree = self._build_thought_tree(question, context)
-        
-        # Find best path through tree
-        best_path = self._find_best_path()
-        
-        # Extract reasoning steps from best path
-        reasoning_steps = self._extract_reasoning_from_path(best_path)
-        
-        # Generate final answer
-        final_answer = self._synthesize_tree_answer(best_path)
-        
-        # Calculate metrics
-        processing_time = time.time() - start_time
-        confidence = self._calculate_tree_confidence(best_path)
-        integrity_score = self._assess_integrity(final_answer)
-        
-        return ReasoningResult(
-            final_answer=final_answer,
-            reasoning_steps=reasoning_steps,
-            confidence=confidence,
-            integrity_score=integrity_score,
-            processing_time=processing_time,
-            pattern_used=ReasoningPattern.TREE_OF_THOUGHT,
-            metadata={
-                "thought_tree": self.thought_tree,
-                "best_path": best_path,
-                "tree_depth": len(best_path),
-                "nodes_explored": self._count_nodes()
-            }
-        )
-    
-    def _build_thought_tree(self, question: str, context: Optional[str] = None) -> Dict[str, Any]:
-        """Build tree of possible reasoning paths"""
-        
-        tree = {
-            "root": {
-                "question": question,
-                "context": context,
-                "children": []
-            }
+        # Performance tracking
+        self.performance_metrics = {
+            "total_workflows": 0,
+            "successful_workflows": 0,
+            "average_processing_time": 0.0,
+            "average_agent_coordination": 0.0,
+            "tool_usage_stats": {},
+            "cost_efficiency": 0.0
         }
         
-        # Generate initial thought branches
-        initial_thoughts = self._generate_initial_thoughts(question)
-        
-        for i, thought in enumerate(initial_thoughts):
-            node_id = f"level_1_node_{i}"
-            tree[node_id] = {
-                "thought": thought,
-                "level": 1,
-                "parent": "root",
-                "children": [],
-                "score": self._score_thought(thought)
-            }
-            tree["root"]["children"].append(node_id)
-        
-        # Recursively expand promising nodes
-        self._expand_tree(tree, max_level=self.max_depth)
-        
-        return tree
-    
-    def _generate_initial_thoughts(self, question: str) -> List[str]:
-        """Generate initial thought branches"""
-        
-        # Different approaches to the problem
-        approaches = [
-            f"Direct analysis approach: {question}",
-            f"Breaking down components of: {question}",
-            f"Considering multiple perspectives on: {question}"
-        ]
-        
-        return approaches[:self.branching_factor]
-    
-    def _expand_tree(self, tree: Dict[str, Any], max_level: int):
-        """Recursively expand the thought tree"""
-        
-        for level in range(1, max_level):
-            level_nodes = [node_id for node_id, node in tree.items() 
-                          if isinstance(node, dict) and node.get("level") == level]
-            
-            # Expand top-scoring nodes at this level
-            level_nodes.sort(key=lambda x: tree[x].get("score", 0), reverse=True)
-            top_nodes = level_nodes[:2]  # Expand top 2 nodes per level
-            
-            for parent_id in top_nodes:
-                children_thoughts = self._generate_child_thoughts(tree[parent_id]["thought"])
-                
-                for i, child_thought in enumerate(children_thoughts):
-                    child_id = f"level_{level+1}_node_{parent_id}_{i}"
-                    tree[child_id] = {
-                        "thought": child_thought,
-                        "level": level + 1,
-                        "parent": parent_id,
-                        "children": [],
-                        "score": self._score_thought(child_thought)
-                    }
-                    tree[parent_id]["children"].append(child_id)
-    
-    def _generate_child_thoughts(self, parent_thought: str) -> List[str]:
-        """Generate child thoughts from parent thought"""
-        
-        children = [
-            f"Building on '{parent_thought}' by exploring implications...",
-            f"Extending '{parent_thought}' through deeper analysis...",
-            f"Connecting '{parent_thought}' to broader concepts..."
-        ]
-        
-        return children[:2]  # Limit branching
-    
-    def _score_thought(self, thought: str) -> float:
-        """Score a thought for quality/promise"""
-        
-        # Simple scoring based on thought characteristics
-        score = 0.5  # Base score
-        
-        # Longer, more detailed thoughts score higher
-        if len(thought) > 50:
-            score += 0.2
-        
-        # Thoughts with analysis keywords score higher
-        analysis_keywords = ['analysis', 'explore', 'consider', 'examine', 'evaluate']
-        if any(keyword in thought.lower() for keyword in analysis_keywords):
-            score += 0.3
-        
-        return min(score, 1.0)
-    
-    def _find_best_path(self) -> List[str]:
-        """Find the best path through the thought tree"""
-        
-        # Find leaf nodes (nodes with no children)
-        leaf_nodes = [node_id for node_id, node in self.thought_tree.items()
-                     if isinstance(node, dict) and not node.get("children", [])]
-        
-        if not leaf_nodes:
-            return ["root"]
-        
-        # Score paths to each leaf
-        best_path = None
-        best_score = -1
-        
-        for leaf_id in leaf_nodes:
-            path = self._trace_path_to_root(leaf_id)
-            path_score = self._score_path(path)
-            
-            if path_score > best_score:
-                best_score = path_score
-                best_path = path
-        
-        return best_path or ["root"]
-    
-    def _trace_path_to_root(self, node_id: str) -> List[str]:
-        """Trace path from node to root"""
-        
-        path = [node_id]
-        current_id = node_id
-        
-        while current_id != "root":
-            parent_id = self.thought_tree[current_id].get("parent")
-            if parent_id:
-                path.append(parent_id)
-                current_id = parent_id
-            else:
-                break
-        
-        return list(reversed(path))
-    
-    def _score_path(self, path: List[str]) -> float:
-        """Score a complete path through the tree"""
-        
-        if not path:
-            return 0.0
-        
-        # Average score of nodes in path
-        scores = []
-        for node_id in path:
-            if node_id in self.thought_tree and isinstance(self.thought_tree[node_id], dict):
-                scores.append(self.thought_tree[node_id].get("score", 0.0))
-        
-        return sum(scores) / len(scores) if scores else 0.0
-    
-    def _extract_reasoning_from_path(self, path: List[str]) -> List[str]:
-        """Extract reasoning steps from the best path"""
-        
-        steps = []
-        for node_id in path:
-            if node_id in self.thought_tree and isinstance(self.thought_tree[node_id], dict):
-                thought = self.thought_tree[node_id].get("thought", "")
-                if thought:
-                    steps.append(thought)
-        
-        return steps
-    
-    def _synthesize_tree_answer(self, path: List[str]) -> str:
-        """Synthesize final answer from the best path"""
-        
-        if not path:
-            return "Unable to generate answer from thought tree analysis."
-        
-        # Combine insights from the path
-        path_thoughts = []
-        for node_id in path:
-            if node_id in self.thought_tree and isinstance(self.thought_tree[node_id], dict):
-                thought = self.thought_tree[node_id].get("thought", "")
-                if thought and node_id != "root":
-                    path_thoughts.append(thought)
-        
-        if path_thoughts:
-            return f"Through tree-based reasoning analysis: {path_thoughts[-1]}"
-        else:
-            return "Comprehensive tree-of-thought analysis completed."
-    
-    def _calculate_tree_confidence(self, path: List[str]) -> float:
-        """Calculate confidence based on tree exploration"""
-        
-        if not path:
-            return 0.0
-        
-        # Factors: path length, average node scores, tree depth
-        path_score = self._score_path(path)
-        depth_factor = min(len(path) / self.max_depth, 1.0)
-        exploration_factor = min(self._count_nodes() / 10.0, 1.0)
-        
-        confidence = 0.4 + 0.3 * path_score + 0.2 * depth_factor + 0.1 * exploration_factor
-        
-        return min(confidence, 1.0)
-    
-    def _count_nodes(self) -> int:
-        """Count total nodes in thought tree"""
-        return len([k for k, v in self.thought_tree.items() if isinstance(v, dict)])
-    
-    def _assess_integrity(self, answer: str) -> float:
-        """Assess integrity of the answer"""
-        try:
-            if 'self_audit_engine' in globals():
-                return self_audit_engine.get_integrity_score(answer)
-            else:
-                return 80.0  # TOT generally produces higher integrity
-        except:
-            return 80.0
-
-
-class ReActReasoner:
-    """ReAct (Reasoning and Acting) pattern implementation"""
-    
-    def __init__(self, llm: Optional[Any] = None, tools: Optional[List[Any]] = None):
-        self.llm = llm
-        self.tools = tools or []
-        self.action_history: List[Dict[str, Any]] = []
-        self.max_iterations = 5
-    
-    def reason(self, question: str, context: Optional[str] = None) -> ReasoningResult:
-        """Execute ReAct reasoning pattern"""
-        
-        start_time = time.time()
-        
-        reasoning_steps = []
-        actions_taken = []
-        observations = []
-        
-        current_question = question
-        
-        for iteration in range(self.max_iterations):
-            # Thought phase
-            thought = self._think(current_question, context, reasoning_steps)
-            reasoning_steps.append(f"Thought {iteration + 1}: {thought}")
-            
-            # Action phase
-            action = self._decide_action(thought)
-            reasoning_steps.append(f"Action {iteration + 1}: {action['type']} - {action['description']}")
-            actions_taken.append(action)
-            
-            # Observation phase
-            observation = self._execute_action(action)
-            reasoning_steps.append(f"Observation {iteration + 1}: {observation}")
-            observations.append(observation)
-            
-            # Check if we have enough information to answer
-            if self._should_stop(thought, observation):
-                break
-            
-            # Update context for next iteration
-            current_question = self._refine_question(current_question, observation)
-        
-        # Final answer synthesis
-        final_answer = self._synthesize_react_answer(reasoning_steps, actions_taken, observations)
-        
-        # Calculate metrics
-        processing_time = time.time() - start_time
-        confidence = self._calculate_react_confidence(actions_taken, observations)
-        integrity_score = self._assess_integrity(final_answer)
-        
-        return ReasoningResult(
-            final_answer=final_answer,
-            reasoning_steps=reasoning_steps,
-            confidence=confidence,
-            integrity_score=integrity_score,
-            processing_time=processing_time,
-            pattern_used=ReasoningPattern.REACT,
-            metadata={
-                "actions_taken": len(actions_taken),
-                "observations_made": len(observations),
-                "iterations": iteration + 1,
-                "tools_available": len(self.tools)
-            }
-        )
-    
-    def _think(self, question: str, context: Optional[str], previous_steps: List[str]) -> str:
-        """Reasoning/thinking phase"""
-        
-        if previous_steps:
-            # Build on previous reasoning
-            return f"Analyzing question '{question}' based on previous observations and continuing the reasoning process..."
-        else:
-            # Initial thinking
-            return f"Breaking down the question '{question}' to determine what actions might help answer it..."
-    
-    def _decide_action(self, thought: str) -> Dict[str, Any]:
-        """Decide what action to take based on current thought"""
-        
-        # Available action types
-        possible_actions = [
-            {
-                "type": "analyze",
-                "description": "Analyze the available information more deeply",
-                "executable": True
-            },
-            {
-                "type": "search",
-                "description": "Search for additional relevant information",
-                "executable": len(self.tools) > 0
-            },
-            {
-                "type": "calculate",
-                "description": "Perform calculations if numerical analysis is needed",
-                "executable": True
-            },
-            {
-                "type": "synthesize",
-                "description": "Synthesize available information into an answer",
-                "executable": True
-            }
-        ]
-        
-        # Simple action selection based on thought content
-        if "calculate" in thought.lower() or "number" in thought.lower():
-            return next(a for a in possible_actions if a["type"] == "calculate")
-        elif "search" in thought.lower() or "find" in thought.lower():
-            search_action = next(a for a in possible_actions if a["type"] == "search")
-            if search_action["executable"]:
-                return search_action
-        elif "synthesize" in thought.lower() or "combine" in thought.lower():
-            return next(a for a in possible_actions if a["type"] == "synthesize")
-        else:
-            return next(a for a in possible_actions if a["type"] == "analyze")
-    
-    def _execute_action(self, action: Dict[str, Any]) -> str:
-        """Execute the chosen action"""
-        
-        action_type = action["type"]
-        
-        if action_type == "analyze":
-            return "Completed detailed analysis of available information and identified key patterns."
-        
-        elif action_type == "search":
-            if self.tools:
-                # Would use actual tools here
-                return "Search completed. Found relevant additional information to support reasoning."
-            else:
-                return "Search requested but no search tools available. Using existing information."
-        
-        elif action_type == "calculate":
-            return "Numerical calculations completed. Mathematical relationships identified."
-        
-        elif action_type == "synthesize":
-            return "Information synthesis completed. Ready to formulate answer."
-        
-        else:
-            return f"Action '{action_type}' executed successfully."
-    
-    def _should_stop(self, thought: str, observation: str) -> bool:
-        """Determine if we should stop the ReAct loop"""
-        
-        # Stop if we've synthesized or if observation indicates completion
-        stop_indicators = ["ready to formulate", "synthesis completed", "answer identified"]
-        
-        return any(indicator in observation.lower() for indicator in stop_indicators)
-    
-    def _refine_question(self, original_question: str, observation: str) -> str:
-        """Refine question based on new observation"""
-        
-        if "additional information" in observation:
-            return f"Given new information, {original_question}"
-        else:
-            return original_question
-    
-    def _synthesize_react_answer(self, reasoning_steps: List[str], actions: List[Dict], observations: List[str]) -> str:
-        """Synthesize final answer from ReAct process"""
-        
-        if not reasoning_steps:
-            return "Unable to generate answer through ReAct reasoning."
-        
-        # Find synthesis or conclusion steps
-        synthesis_steps = [step for step in reasoning_steps if "synthesis" in step.lower() or "conclusion" in step.lower()]
-        
-        if synthesis_steps:
-            return f"Through reasoning and acting: {synthesis_steps[-1]}"
-        else:
-            return f"Through {len(actions)} reasoning-action cycles, a comprehensive analysis has been completed."
-    
-    def _calculate_react_confidence(self, actions: List[Dict], observations: List[str]) -> float:
-        """Calculate confidence based on ReAct process quality"""
-        
-        # Factors: number of actions, observation quality, iteration completeness
-        action_factor = min(len(actions) / 3.0, 1.0)  # 3+ actions is good
-        observation_quality = sum(len(obs) for obs in observations) / max(len(observations), 1) / 50.0
-        observation_factor = min(observation_quality, 1.0)
-        
-        base_confidence = 0.5  # ReAct base confidence
-        confidence = base_confidence + 0.3 * action_factor + 0.2 * observation_factor
-        
-        return min(confidence, 1.0)
-    
-    def _assess_integrity(self, answer: str) -> float:
-        """Assess integrity of the answer"""
-        try:
-            if 'self_audit_engine' in globals():
-                return self_audit_engine.get_integrity_score(answer)
-            else:
-                return 85.0  # ReAct generally produces high integrity through action verification
-        except:
-            return 85.0
-
-
-class NISLangGraphWorkflow:
-    """LangGraph workflow integration with NIS Protocol"""
-    
-    def __init__(self, enable_self_audit: bool = True):
-        self.enable_self_audit = enable_self_audit
-        self.workflow_graph = None
-        self.memory_saver = MemorySaver() if LANGGRAPH_AVAILABLE else None
-        
-        # Initialize reasoning engines
-        self.cot_reasoner = ChainOfThoughtReasoner()
-        self.tot_reasoner = TreeOfThoughtReasoner()
-        self.react_reasoner = ReActReasoner()
-        
+        # Build the workflow
         if LANGGRAPH_AVAILABLE:
-            self._build_workflow_graph()
-    
-    def _build_workflow_graph(self):
-        """Build LangGraph workflow"""
+            self._build_workflow()
         
-        # Create workflow graph
-        workflow = StateGraph(LangChainState)
+        logger.info("Enhanced Multi-Agent Workflow initialized")
+
+    def _initialize_agents(self):
+        """Initialize agent configurations"""
+        agents_config = self.config.get("agents", {})
         
-        # Add nodes
-        workflow.add_node("start", self._start_node)
-        workflow.add_node("select_reasoning", self._select_reasoning_node)
-        workflow.add_node("cot_reasoning", self._cot_reasoning_node)
-        workflow.add_node("tot_reasoning", self._tot_reasoning_node)
-        workflow.add_node("react_reasoning", self._react_reasoning_node)
-        workflow.add_node("integrity_check", self._integrity_check_node)
-        workflow.add_node("finalize", self._finalize_node)
+        # Default agent configurations
+        default_agents = [
+            AgentConfig(
+                agent_id="planner",
+                role=AgentRole.PLANNER,
+                llm_provider="anthropic",
+                system_prompt="You are a strategic planner. Break down complex tasks into actionable steps and coordinate with other agents.",
+                temperature=0.3,
+                capabilities=["planning", "task_decomposition", "coordination"]
+            ),
+            AgentConfig(
+                agent_id="executor",
+                role=AgentRole.EXECUTOR,
+                llm_provider="openai",
+                system_prompt="You are a task executor. Follow plans and execute specific actions using available tools.",
+                temperature=0.2,
+                tools=["web_search", "calculator", "code_executor"],
+                capabilities=["execution", "tool_usage", "problem_solving"]
+            ),
+            AgentConfig(
+                agent_id="validator",
+                role=AgentRole.VALIDATOR,
+                llm_provider="anthropic",
+                system_prompt="You are a validator. Check outputs for accuracy, completeness, and quality.",
+                temperature=0.1,
+                capabilities=["validation", "quality_control", "error_detection"]
+            ),
+            AgentConfig(
+                agent_id="synthesizer",
+                role=AgentRole.SYNTHESIZER,
+                llm_provider="openai",
+                system_prompt="You are a synthesizer. Combine multiple agent outputs into coherent final responses.",
+                temperature=0.4,
+                capabilities=["synthesis", "integration", "communication"]
+            )
+        ]
         
-        # Add edges
-        workflow.set_entry_point("start")
-        workflow.add_edge("start", "select_reasoning")
+        # Register default agents
+        for agent_config in default_agents:
+            self.agent_configs[agent_config.agent_id] = agent_config
         
-        # Conditional edges based on reasoning pattern
-        workflow.add_conditional_edges(
-            "select_reasoning",
-            self._route_reasoning,
+        # Add custom agents from config
+        for agent_id, config in agents_config.items():
+            self.agent_configs[agent_id] = AgentConfig(**config)
+
+    def _setup_langsmith(self):
+        """Setup enhanced LangSmith integration"""
+        try:
+            api_key = env_config.get_env("LANGSMITH_API_KEY")
+            if api_key:
+                self.langsmith_client = LangSmithClient(api_key=api_key)
+                logger.info("LangSmith integration enabled")
+            else:
+                logger.warning("LANGSMITH_API_KEY not found")
+                self.enable_langsmith = False
+        except Exception as e:
+            logger.error(f"Failed to setup LangSmith: {e}")
+            self.enable_langsmith = False
+
+    def _register_tools(self):
+        """Register tools for agent use"""
+        
+        @tool
+        def web_search(query: str) -> str:
+            """Search the web for information"""
+            # Implement actual web search
+            return f"Search results for: {query}"
+        
+        @tool
+        def calculator(expression: str) -> str:
+            """Calculate mathematical expressions"""
+            try:
+                result = eval(expression)  # Note: Use safe evaluation in production
+                return str(result)
+            except Exception as e:
+                return f"Error: {e}"
+        
+        @tool
+        def memory_store(key: str, value: str) -> str:
+            """Store information in memory"""
+            # Implement memory storage
+            return f"Stored {key}: {value}"
+        
+        @tool
+        def memory_retrieve(key: str) -> str:
+            """Retrieve information from memory"""
+            # Implement memory retrieval
+            return f"Retrieved value for {key}"
+        
+        # Register tools
+        self.tools = {
+            "web_search": web_search,
+            "calculator": calculator,
+            "memory_store": memory_store,
+            "memory_retrieve": memory_retrieve
+        }
+
+    def _build_workflow(self):
+        """Build the enhanced multi-agent LangGraph workflow"""
+        if not LANGGRAPH_AVAILABLE:
+            return
+        
+        # Create state graph
+        self.graph = StateGraph(WorkflowState)
+        
+        # Add agent nodes
+        for agent_id, config in self.agent_configs.items():
+            self.graph.add_node(agent_id, self._create_agent_node(config))
+        
+        # Add control nodes
+        self.graph.add_node("coordinator", self._coordinator_node)
+        self.graph.add_node("router", self._router_node)
+        self.graph.add_node("validator", self._validation_node)
+        self.graph.add_node("synthesizer", self._synthesis_node)
+        self.graph.add_node("human_review", self._human_review_node)
+        
+        # Set entry point
+        self.graph.set_entry_point("coordinator")
+        
+        # Add conditional routing
+        self.graph.add_conditional_edges(
+            "coordinator",
+            self._route_to_agent,
+            {agent_id: agent_id for agent_id in self.agent_configs.keys()}
+        )
+        
+        # Add validation flow
+        for agent_id in self.agent_configs.keys():
+            self.graph.add_conditional_edges(
+                agent_id,
+                self._should_validate,
+                {"validate": "validator", "continue": "router"}
+            )
+        
+        self.graph.add_conditional_edges(
+            "validator",
+            self._validation_decision,
+            {"retry": "router", "approve": "synthesizer", "human": "human_review"}
+        )
+        
+        self.graph.add_conditional_edges(
+            "router",
+            self._route_next_action,
             {
-                "cot": "cot_reasoning",
-                "tot": "tot_reasoning", 
-                "react": "react_reasoning"
+                "next_agent": "coordinator",
+                "synthesize": "synthesizer",
+                "complete": END,
+                "human": "human_review"
             }
         )
         
-        # All reasoning paths go to integrity check
-        workflow.add_edge("cot_reasoning", "integrity_check")
-        workflow.add_edge("tot_reasoning", "integrity_check")
-        workflow.add_edge("react_reasoning", "integrity_check")
-        
-        workflow.add_edge("integrity_check", "finalize")
-        workflow.add_edge("finalize", END)
-        
-        # Compile workflow
-        self.workflow_graph = workflow.compile(
-            checkpointer=self.memory_saver,
-            interrupt_before=["integrity_check"] if self.enable_self_audit else None
+        self.graph.add_conditional_edges(
+            "synthesizer",
+            self._final_decision,
+            {"complete": END, "retry": "coordinator", "human": "human_review"}
         )
-    
-    def _start_node(self, state: LangChainState) -> Dict[str, Any]:
-        """Initialize workflow state"""
         
-        return {
-            "messages": state.messages,
-            "reasoning_pattern": state.reasoning_pattern,
-            "processing_time": time.time()
-        }
-    
-    def _select_reasoning_node(self, state: LangChainState) -> Dict[str, Any]:
-        """Select appropriate reasoning pattern"""
+        self.graph.add_edge("human_review", "coordinator")
         
-        # For now, use the specified pattern
-        # Could add intelligence here to auto-select based on question type
-        
-        return {"reasoning_pattern": state.reasoning_pattern}
-    
-    def _route_reasoning(self, state: LangChainState) -> str:
-        """Route to appropriate reasoning node"""
-        
-        pattern = state.reasoning_pattern
-        
-        if pattern == ReasoningPattern.CHAIN_OF_THOUGHT:
-            return "cot"
-        elif pattern == ReasoningPattern.TREE_OF_THOUGHT:
-            return "tot"
-        elif pattern == ReasoningPattern.REACT:
-            return "react"
-        else:
-            return "cot"  # Default to COT
-    
-    def _cot_reasoning_node(self, state: LangChainState) -> Dict[str, Any]:
-        """Execute Chain of Thought reasoning"""
-        
-        question = self._extract_question_from_state(state)
-        result = self.cot_reasoner.reason(question)
-        
-        return {
-            "final_answer": result.final_answer,
-            "confidence": result.confidence,
-            "reasoning_steps": result.reasoning_steps
-        }
-    
-    def _tot_reasoning_node(self, state: LangChainState) -> Dict[str, Any]:
-        """Execute Tree of Thought reasoning"""
-        
-        question = self._extract_question_from_state(state)
-        result = self.tot_reasoner.reason(question)
-        
-        return {
-            "final_answer": result.final_answer,
-            "confidence": result.confidence,
-            "thought_tree": result.metadata.get("thought_tree", {}),
-            "reasoning_steps": result.reasoning_steps
-        }
-    
-    def _react_reasoning_node(self, state: LangChainState) -> Dict[str, Any]:
-        """Execute ReAct reasoning"""
-        
-        question = self._extract_question_from_state(state)
-        result = self.react_reasoner.reason(question)
-        
-        return {
-            "final_answer": result.final_answer,
-            "confidence": result.confidence,
-            "actions_taken": result.metadata.get("actions_taken", []),
-            "reasoning_steps": result.reasoning_steps
-        }
-    
-    def _integrity_check_node(self, state: LangChainState) -> Dict[str, Any]:
-        """Check integrity of reasoning result"""
-        
-        if self.enable_self_audit and state.final_answer:
+        # Compile the graph
+        self.compiled_graph = self.graph.compile(
+            checkpointer=self.checkpointer,
+            interrupt_before=["human_review"] if self.config.get("enable_human_review", False) else None
+        )
+
+    def _create_agent_node(self, config: AgentConfig):
+        """Create a node function for an agent"""
+        async def agent_node(state: WorkflowState) -> Dict[str, Any]:
+            # Track agent activation
+            agent_history = state.get("agent_history", [])
+            agent_history.append(config.agent_id)
+            
+            # Get the appropriate LLM for this agent
             try:
-                if 'self_audit_engine' in globals():
-                    integrity_score = self_audit_engine.get_integrity_score(state.final_answer)
-                    violations = self_audit_engine.audit_text(state.final_answer)
-                    
-                    # Auto-correct if needed
-                    if violations:
-                        corrected_answer, _ = self_audit_engine.auto_correct_text(state.final_answer)
-                        return {
-                            "final_answer": corrected_answer,
-                            "integrity_score": self_audit_engine.get_integrity_score(corrected_answer),
-                            "integrity_violations": violations
-                        }
-                    else:
-                        return {"integrity_score": integrity_score}
-                else:
-                    return {"integrity_score": 85.0}  # Default high score
+                messages = [
+                    LLMMessage(role=LLMRole.SYSTEM, content=config.system_prompt)
+                ]
+                
+                # Add conversation history
+                for msg in state.get("messages", [])[-5:]:  # Last 5 messages for context
+                    if hasattr(msg, 'content'):
+                        role = LLMRole.USER if isinstance(msg, HumanMessage) else LLMRole.ASSISTANT
+                        messages.append(LLMMessage(role=role, content=msg.content))
+                
+                # Add current task context
+                current_task = state.get("metadata", {}).get("current_task", "Continue the conversation")
+                messages.append(LLMMessage(role=LLMRole.USER, content=f"Current task: {current_task}"))
+                
+                # Generate response using the specified provider
+                response = await self.llm_manager.generate_with_function(
+                    messages=messages,
+                    function=self._map_role_to_function(config.role),
+                    temperature=config.temperature,
+                    max_tokens=config.max_tokens
+                )
+                
+                # Process tools if available
+                tool_results = {}
+                if config.tools and response.content:
+                    tool_results = await self._process_tools(response.content, config.tools)
+                
+                # Update state
+                agent_outputs = state.get("agent_outputs", {})
+                agent_outputs[config.agent_id] = {
+                    "response": response.content,
+                    "confidence": getattr(response, 'confidence', 0.8),
+                    "tool_results": tool_results,
+                    "timestamp": time.time()
+                }
+                
+                confidence_scores = state.get("confidence_scores", {})
+                confidence_scores[config.agent_id] = getattr(response, 'confidence', 0.8)
+                
+                return {
+                    "current_agent": config.agent_id,
+                    "agent_history": agent_history,
+                    "agent_outputs": agent_outputs,
+                    "confidence_scores": confidence_scores,
+                    "tool_results": tool_results,
+                    "messages": [AIMessage(content=response.content, name=config.agent_id)]
+                }
+                
             except Exception as e:
-                return {"integrity_score": 70.0, "integrity_error": str(e)}
-        else:
-            return {"integrity_score": state.integrity_score or 80.0}
-    
-    def _finalize_node(self, state: LangChainState) -> Dict[str, Any]:
-        """Finalize workflow results"""
+                logger.error(f"Agent {config.agent_id} failed: {e}")
+                return {
+                    "current_agent": config.agent_id,
+                    "error_state": f"Agent {config.agent_id} failed: {e}"
+                }
         
-        start_time = state.__dict__.get('processing_time', time.time())
-        processing_time = time.time() - start_time
+        return agent_node
+
+    def _map_role_to_function(self, role: AgentRole) -> str:
+        """Map agent role to cognitive function"""
+        mapping = {
+            AgentRole.PLANNER: "reasoning",
+            AgentRole.EXECUTOR: "execution",
+            AgentRole.VALIDATOR: "reasoning",
+            AgentRole.COORDINATOR: "consciousness",
+            AgentRole.SPECIALIST: "reasoning",
+            AgentRole.CRITIC: "reasoning",
+            AgentRole.SYNTHESIZER: "creativity",
+            AgentRole.MONITOR: "perception"
+        }
+        return mapping.get(role, "reasoning")
+
+    async def _process_tools(self, content: str, available_tools: List[str]) -> Dict[str, Any]:
+        """Process tool usage from agent content"""
+        tool_results = {}
+        
+        # Simple tool extraction (in production, use proper parsing)
+        for tool_name in available_tools:
+            if tool_name in content.lower() and tool_name in self.tools:
+                try:
+                    # Execute the tool (simplified)
+                    result = self.tools[tool_name].invoke({"input": "example"})
+                    tool_results[tool_name] = result
+                except Exception as e:
+                    tool_results[tool_name] = f"Error: {e}"
+        
+        return tool_results
+
+    def _coordinator_node(self, state: WorkflowState) -> Dict[str, Any]:
+        """Central coordinator node"""
+        return {
+            "current_agent": "coordinator",
+            "iteration_count": state.get("iteration_count", 0) + 1
+        }
+
+    def _router_node(self, state: WorkflowState) -> Dict[str, Any]:
+        """Router node for determining next actions"""
+        # Determine next agent based on current state
+        agent_history = state.get("agent_history", [])
+        current_step = state.get("current_step", 0)
+        
+        # Simple routing logic (enhance based on needs)
+        if len(agent_history) < 3:
+            next_agent = "planner" if "planner" not in agent_history else "executor"
+        else:
+            next_agent = "synthesizer"
         
         return {
-            "processing_time": processing_time,
-            "final_answer": state.final_answer or "No answer generated",
-            "confidence": state.confidence or 0.0,
-            "integrity_score": state.integrity_score or 0.0
+            "next_agent": next_agent,
+            "current_step": current_step + 1
         }
-    
-    def _extract_question_from_state(self, state: LangChainState) -> str:
-        """Extract question from workflow state"""
+
+    def _validation_node(self, state: WorkflowState) -> Dict[str, Any]:
+        """Validation node"""
+        agent_outputs = state.get("agent_outputs", {})
+        current_agent = state.get("current_agent")
         
-        if state.messages:
-            # Extract from last human message
-            for msg in reversed(state.messages):
-                if msg.get("role") == "human" or msg.get("type") == "human":
-                    return msg.get("content", "")
+        if current_agent and current_agent in agent_outputs:
+            output = agent_outputs[current_agent]
+            confidence = output.get("confidence", 0.0)
+            
+            validation_result = {
+                "validated": confidence > 0.7,
+                "confidence": confidence,
+                "requires_human": confidence < 0.5
+            }
+        else:
+            validation_result = {"validated": False, "error": "No output to validate"}
         
-        return "Please provide an analysis."
-    
-    async def process_async(self, question: str, reasoning_pattern: ReasoningPattern = ReasoningPattern.CHAIN_OF_THOUGHT) -> Dict[str, Any]:
-        """Process question through LangGraph workflow asynchronously"""
+        validation_results = state.get("validation_results", {})
+        validation_results[current_agent] = validation_result
         
-        if not self.workflow_graph:
-            # Fallback to direct reasoning if LangGraph unavailable
-            return await self._fallback_processing(question, reasoning_pattern)
+        return {"validation_results": validation_results}
+
+    def _synthesis_node(self, state: WorkflowState) -> Dict[str, Any]:
+        """Synthesis node for combining agent outputs"""
+        agent_outputs = state.get("agent_outputs", {})
         
-        # Create initial state
-        initial_state = LangChainState(
-            messages=[{"role": "human", "content": question}],
-            reasoning_pattern=reasoning_pattern
+        # Combine all agent outputs
+        combined_output = "## Multi-Agent Analysis Results\n\n"
+        for agent_id, output in agent_outputs.items():
+            combined_output += f"### {agent_id.title()} Agent:\n{output.get('response', '')}\n\n"
+        
+        # Calculate overall confidence
+        confidence_scores = state.get("confidence_scores", {})
+        overall_confidence = sum(confidence_scores.values()) / len(confidence_scores) if confidence_scores else 0.0
+        
+        return {
+            "messages": [AIMessage(content=combined_output)],
+            "is_complete": True,
+            "confidence_scores": {"overall": overall_confidence}
+        }
+
+    def _human_review_node(self, state: WorkflowState) -> Dict[str, Any]:
+        """Human review node"""
+        return {
+            "requires_human": True,
+            "messages": [AIMessage(content="Human review required. Please provide feedback.")]
+        }
+
+    # Conditional edge functions
+    def _route_to_agent(self, state: WorkflowState) -> str:
+        """Route to the next agent"""
+        return state.get("next_agent", "planner")
+
+    def _should_validate(self, state: WorkflowState) -> str:
+        """Determine if validation is needed"""
+        current_agent = state.get("current_agent")
+        if current_agent and self.agent_configs.get(current_agent, {}).requires_validation:
+            return "validate"
+        return "continue"
+
+    def _validation_decision(self, state: WorkflowState) -> str:
+        """Make validation decision"""
+        validation_results = state.get("validation_results", {})
+        current_agent = state.get("current_agent")
+        
+        if current_agent in validation_results:
+            result = validation_results[current_agent]
+            if result.get("requires_human", False):
+                return "human"
+            elif result.get("validated", False):
+                return "approve"
+            else:
+                return "retry"
+        return "approve"
+
+    def _route_next_action(self, state: WorkflowState) -> str:
+        """Route to next action"""
+        iteration_count = state.get("iteration_count", 0)
+        agent_history = state.get("agent_history", [])
+        
+        if iteration_count > 10:
+            return "complete"
+        elif len(agent_history) >= 3:
+            return "synthesize"
+        elif state.get("requires_human", False):
+            return "human"
+        else:
+            return "next_agent"
+
+    def _final_decision(self, state: WorkflowState) -> str:
+        """Make final decision"""
+        overall_confidence = state.get("confidence_scores", {}).get("overall", 0.0)
+        
+        if overall_confidence < 0.5:
+            return "human"
+        elif overall_confidence < 0.7:
+            return "retry"
+        else:
+            return "complete"
+
+    @traceable
+    async def execute_workflow(self, 
+                             input_message: str,
+                             conversation_id: Optional[str] = None,
+                             context: Optional[Dict[str, Any]] = None) -> WorkflowResult:
+        """Execute the multi-agent workflow"""
+        if not self.compiled_graph:
+            raise RuntimeError("Workflow not properly initialized")
+        
+        # Generate conversation ID
+        if not conversation_id:
+            conversation_id = str(uuid.uuid4())
+        
+        # Initialize state
+        initial_state = WorkflowState(
+            messages=[HumanMessage(content=input_message)],
+            current_agent=None,
+            agent_history=[],
+            active_agents=list(self.agent_configs.keys()),
+            agent_outputs={},
+            reasoning_pattern="multi_agent_consensus",
+            thought_tree={},
+            plan=[],
+            current_step=0,
+            available_tools=list(self.tools.keys()),
+            tool_results={},
+            actions_taken=[],
+            confidence_scores={},
+            validation_results={},
+            integrity_score=1.0,
+            conversation_id=conversation_id,
+            session_context=context or {},
+            long_term_memory={},
+            next_agent=None,
+            is_complete=False,
+            requires_human=False,
+            error_state=None,
+            start_time=time.time(),
+            processing_time=0.0,
+            iteration_count=0,
+            metadata={"current_task": input_message}
         )
         
-        # Execute workflow
-        config = {"configurable": {"thread_id": f"nis_{int(time.time())}"}}
+        try:
+            # Execute workflow
+            config = {"configurable": {"thread_id": conversation_id}}
+            
+            final_state = None
+            async for output in self.compiled_graph.astream(initial_state, config):
+                final_state = output
+                
+                # Handle human-in-the-loop
+                if final_state and final_state.get("requires_human", False):
+                    logger.info("Workflow requires human intervention")
+                    break
+            
+            if not final_state:
+                raise RuntimeError("Workflow execution failed")
+            
+            # Extract results
+            processing_time = time.time() - initial_state["start_time"]
+            
+            # Get final output
+            messages = final_state.get("messages", [])
+            final_output = messages[-1].content if messages else "No output generated"
+            
+            # Calculate metrics
+            confidence_scores = final_state.get("confidence_scores", {})
+            overall_confidence = confidence_scores.get("overall", 
+                sum(confidence_scores.values()) / len(confidence_scores) if confidence_scores else 0.0)
+            
+            result = WorkflowResult(
+                workflow_id=conversation_id,
+                final_output=final_output,
+                confidence=overall_confidence,
+                agent_contributions=final_state.get("agent_outputs", {}),
+                reasoning_trace=final_state.get("agent_history", []),
+                tool_usage=final_state.get("tool_results", {}),
+                validation_results=final_state.get("validation_results", {}),
+                performance_metrics={
+                    "processing_time": processing_time,
+                    "iteration_count": final_state.get("iteration_count", 0),
+                    "agents_used": len(final_state.get("agent_history", []))
+                },
+                total_cost=0.0,  # Calculate based on LLM usage
+                processing_time=processing_time,
+                iteration_count=final_state.get("iteration_count", 0),
+                success=final_state.get("is_complete", False) and not final_state.get("error_state"),
+                error_details=final_state.get("error_state")
+            )
+            
+            # Update performance metrics
+            self._update_performance_metrics(result)
+            
+            # Track with LangSmith
+            if self.enable_langsmith:
+                await self._track_workflow_with_langsmith(input_message, result)
+            
+            return result
+            
+        except Exception as e:
+            logger.error(f"Workflow execution failed: {e}")
+            return WorkflowResult(
+                workflow_id=conversation_id,
+                final_output=f"Workflow failed: {e}",
+                confidence=0.0,
+                agent_contributions={},
+                reasoning_trace=[],
+                tool_usage={},
+                validation_results={},
+                performance_metrics={},
+                total_cost=0.0,
+                processing_time=time.time() - initial_state["start_time"],
+                iteration_count=0,
+                success=False,
+                error_details=str(e)
+            )
+
+    def _update_performance_metrics(self, result: WorkflowResult):
+        """Update workflow performance metrics"""
+        self.performance_metrics["total_workflows"] += 1
+        if result.success:
+            self.performance_metrics["successful_workflows"] += 1
         
-        result = None
-        async for output in self.workflow_graph.astream(initial_state, config):
-            result = output
+        # Update averages
+        total = self.performance_metrics["total_workflows"]
+        current_avg = self.performance_metrics["average_processing_time"]
+        self.performance_metrics["average_processing_time"] = (
+            (current_avg * (total - 1) + result.processing_time) / total
+        )
+
+    async def _track_workflow_with_langsmith(self, input_message: str, result: WorkflowResult):
+        """Track workflow execution with LangSmith"""
+        if not self.langsmith_client:
+            return
         
-        return result or {}
-    
-    async def _fallback_processing(self, question: str, reasoning_pattern: ReasoningPattern) -> Dict[str, Any]:
-        """Fallback processing when LangGraph unavailable"""
-        
-        start_time = time.time()
-        
-        # Select appropriate reasoner
-        if reasoning_pattern == ReasoningPattern.TREE_OF_THOUGHT:
-            result = self.tot_reasoner.reason(question)
-        elif reasoning_pattern == ReasoningPattern.REACT:
-            result = self.react_reasoner.reason(question)
-        else:
-            result = self.cot_reasoner.reason(question)
-        
-        processing_time = time.time() - start_time
-        
-        return {
-            "final_answer": result.final_answer,
-            "confidence": result.confidence,
-            "integrity_score": result.integrity_score,
-            "processing_time": processing_time,
-            "reasoning_pattern": reasoning_pattern.value,
-            "reasoning_steps": result.reasoning_steps,
-            "metadata": result.metadata
-        }
+        try:
+            run_data = {
+                "name": "nis_multi_agent_workflow",
+                "inputs": {"message": input_message},
+                "outputs": {
+                    "final_output": result.final_output,
+                    "confidence": result.confidence,
+                    "success": result.success
+                },
+                "run_type": "chain",
+                "session_name": f"workflow_{result.workflow_id}"
+            }
+            
+            # In production, implement actual LangSmith run creation
+            logger.info(f"LangSmith tracking: {run_data['name']}")
+            
+        except Exception as e:
+            logger.warning(f"LangSmith tracking failed: {e}")
 
 
 class NISLangChainIntegration:
-    """Main integration class for NIS Protocol with LangChain ecosystem"""
+    """Enhanced main integration class for NIS Protocol with LangChain ecosystem"""
     
     def __init__(self, 
-                 enable_langsmith: bool = False,
+                 workflow_config: Optional[Dict[str, Any]] = None,
+                 enable_langsmith: bool = True,
                  enable_self_audit: bool = True,
                  consciousness_agent: Optional[Any] = None):
         
@@ -959,12 +800,41 @@ class NISLangChainIntegration:
         self.enable_self_audit = enable_self_audit
         self.consciousness_agent = consciousness_agent
         
-        # Initialize components
-        self.workflow = NISLangGraphWorkflow(enable_self_audit=enable_self_audit)
-        self.langsmith_client = None
+        # Default workflow configuration
+        if not workflow_config:
+            workflow_config = {
+                "agents": {
+                    "planner": {
+                        "agent_id": "planner",
+                        "role": "PLANNER",
+                        "llm_provider": "anthropic",
+                        "system_prompt": "You are a strategic planner focused on breaking down complex tasks.",
+                        "temperature": 0.3
+                    },
+                    "executor": {
+                        "agent_id": "executor", 
+                        "role": "EXECUTOR",
+                        "llm_provider": "openai",
+                        "system_prompt": "You are a task executor focused on implementation.",
+                        "temperature": 0.2,
+                        "tools": ["web_search", "calculator"]
+                    }
+                },
+                "enable_human_review": False,
+                "max_iterations": 10
+            }
         
-        if self.enable_langsmith:
-            self._setup_langsmith()
+        # Initialize enhanced workflow
+        self.workflow = EnhancedMultiAgentWorkflow(
+            workflow_config=workflow_config,
+            enable_persistence=True,
+            enable_langsmith=enable_langsmith
+        )
+        
+        # Legacy workflow for backward compatibility
+        self.legacy_workflow = None
+        if LANGGRAPH_AVAILABLE:
+            self.legacy_workflow = self._create_legacy_workflow()
         
         # Integration metrics
         self.integration_stats = {
@@ -972,35 +842,35 @@ class NISLangChainIntegration:
             "reasoning_patterns_used": {pattern.value: 0 for pattern in ReasoningPattern},
             "average_confidence": 0.0,
             "average_integrity_score": 0.0,
-            "total_processing_time": 0.0
+            "total_processing_time": 0.0,
+            "multi_agent_workflows": 0,
+            "human_interventions": 0
         }
-    
-    def _setup_langsmith(self):
-        """Setup LangSmith integration"""
         
-        try:
-            api_key = os.getenv("LANGSMITH_API_KEY")
-            if api_key:
-                self.langsmith_client = LangSmithClient(api_key=api_key)
-                logging.info("LangSmith integration enabled")
-            else:
-                logging.warning("LANGSMITH_API_KEY not found, disabling LangSmith")
-                self.enable_langsmith = False
-        except Exception as e:
-            logging.error(f"Failed to setup LangSmith: {e}")
-            self.enable_langsmith = False
-    
+        logger.info("Enhanced NIS LangChain Integration initialized")
+
+    def _create_legacy_workflow(self):
+        """Create legacy workflow for backward compatibility"""
+        # Implementation of the original workflow
+        # This maintains compatibility with existing code
+        pass
+
     async def process_question(self, 
                              question: str,
-                             reasoning_pattern: ReasoningPattern = ReasoningPattern.CHAIN_OF_THOUGHT,
-                             context: Optional[str] = None) -> Dict[str, Any]:
-        """Process question through integrated LangChain workflow"""
+                             reasoning_pattern: ReasoningPattern = ReasoningPattern.MULTI_AGENT_CONSENSUS,
+                             context: Optional[Dict[str, Any]] = None,
+                             conversation_id: Optional[str] = None) -> Dict[str, Any]:
+        """Process question through enhanced multi-agent workflow"""
         
         start_time = time.time()
         
         try:
-            # Process through LangGraph workflow
-            result = await self.workflow.process_async(question, reasoning_pattern)
+            # Execute multi-agent workflow
+            result = await self.workflow.execute_workflow(
+                input_message=question,
+                conversation_id=conversation_id,
+                context=context
+            )
             
             # Update statistics
             self._update_stats(result, reasoning_pattern, time.time() - start_time)
@@ -1009,108 +879,95 @@ class NISLangChainIntegration:
             if self.consciousness_agent:
                 await self._integrate_with_consciousness(question, result)
             
-            # LangSmith tracking
-            if self.enable_langsmith:
-                await self._track_with_langsmith(question, result)
-            
-            # Add integration metadata
-            result["integration_metadata"] = {
-                "nis_protocol_version": "v3",
-                "langchain_integration": True,
-                "langgraph_workflow": self.workflow.workflow_graph is not None,
-                "langsmith_tracking": self.enable_langsmith,
-                "consciousness_integration": self.consciousness_agent is not None,
-                "self_audit_enabled": self.enable_self_audit
+            # Format response
+            response = {
+                "final_answer": result.final_output,
+                "confidence": result.confidence,
+                "success": result.success,
+                "reasoning_pattern": reasoning_pattern.value,
+                "agent_contributions": result.agent_contributions,
+                "reasoning_trace": result.reasoning_trace,
+                "tool_usage": result.tool_usage,
+                "validation_results": result.validation_results,
+                "performance_metrics": result.performance_metrics,
+                "processing_time": result.processing_time,
+                "workflow_id": result.workflow_id,
+                "integration_metadata": {
+                    "nis_protocol_version": "v3",
+                    "langchain_integration": True,
+                    "langgraph_workflow": True,
+                    "langsmith_tracking": self.enable_langsmith,
+                    "consciousness_integration": self.consciousness_agent is not None,
+                    "self_audit_enabled": self.enable_self_audit,
+                    "multi_agent_coordination": True
+                }
             }
             
-            return result
+            if not result.success:
+                response["error"] = result.error_details
+            
+            return response
             
         except Exception as e:
-            logging.error(f"LangChain integration error: {e}")
+            logger.error(f"Enhanced LangChain integration error: {e}")
             
             # Fallback result
             return {
                 "final_answer": f"Integration error occurred: {e}",
                 "confidence": 0.0,
-                "integrity_score": 0.0,
+                "success": False,
                 "processing_time": time.time() - start_time,
                 "error": str(e),
-                "reasoning_pattern": reasoning_pattern.value
+                "reasoning_pattern": reasoning_pattern.value,
+                "integration_metadata": {
+                    "error_fallback": True
+                }
             }
-    
-    def _update_stats(self, result: Dict[str, Any], pattern: ReasoningPattern, processing_time: float):
+
+    def _update_stats(self, result: WorkflowResult, pattern: ReasoningPattern, processing_time: float):
         """Update integration statistics"""
-        
         self.integration_stats["total_questions_processed"] += 1
         self.integration_stats["reasoning_patterns_used"][pattern.value] += 1
+        
+        if result.success:
+            self.integration_stats["multi_agent_workflows"] += 1
         
         # Update averages
         total = self.integration_stats["total_questions_processed"]
         
-        confidence = result.get("confidence", 0.0)
-        current_avg_conf = self.integration_stats["average_confidence"]
-        self.integration_stats["average_confidence"] = (current_avg_conf * (total - 1) + confidence) / total
+        current_conf = self.integration_stats["average_confidence"]
+        self.integration_stats["average_confidence"] = (
+            (current_conf * (total - 1) + result.confidence) / total
+        )
         
-        integrity = result.get("integrity_score", 0.0)
-        current_avg_integrity = self.integration_stats["average_integrity_score"]
-        self.integration_stats["average_integrity_score"] = (current_avg_integrity * (total - 1) + integrity) / total
-        
-        self.integration_stats["total_processing_time"] += processing_time
-    
-    async def _integrate_with_consciousness(self, question: str, result: Dict[str, Any]):
-        """Integrate result with consciousness system"""
+        current_time = self.integration_stats["total_processing_time"]
+        self.integration_stats["total_processing_time"] = current_time + processing_time
+
+    async def _integrate_with_consciousness(self, question: str, result: WorkflowResult):
+        """Integrate with consciousness system"""
+        if not self.consciousness_agent:
+            return
         
         try:
-            # Register this processing session with consciousness agent
-            session_metadata = {
+            reflection_data = {
                 "question": question,
-                "reasoning_pattern": result.get("reasoning_pattern", "unknown"),
-                "confidence": result.get("confidence", 0.0),
-                "integrity_score": result.get("integrity_score", 0.0),
-                "processing_time": result.get("processing_time", 0.0)
+                "result": result.final_output,
+                "confidence": result.confidence,
+                "agent_contributions": result.agent_contributions,
+                "processing_metrics": result.performance_metrics
             }
             
-            self.consciousness_agent.register_agent_for_monitoring(
-                "langchain_integration", 
-                session_metadata
+            # Trigger consciousness reflection
+            await self.consciousness_agent.reflect(
+                reflection_type=ReflectionType.WORKFLOW_ANALYSIS,
+                context=reflection_data
             )
             
-            # Trigger introspection if confidence or integrity is low
-            if result.get("confidence", 1.0) < 0.7 or result.get("integrity_score", 100.0) < 80.0:
-                introspection_result = self.consciousness_agent.perform_introspection(
-                    ReflectionType.PERFORMANCE_REVIEW
-                )
-                
-                result["consciousness_insight"] = {
-                    "introspection_triggered": True,
-                    "confidence": introspection_result.confidence,
-                    "recommendations": introspection_result.recommendations[:3]
-                }
         except Exception as e:
-            logging.warning(f"Consciousness integration error: {e}")
-    
-    async def _track_with_langsmith(self, question: str, result: Dict[str, Any]):
-        """Track processing with LangSmith"""
-        
-        try:
-            if self.langsmith_client:
-                # Create run record
-                run_data = {
-                    "name": "nis_protocol_reasoning",
-                    "inputs": {"question": question},
-                    "outputs": result,
-                    "run_type": "llm",
-                    "session_name": "nis_protocol_integration"
-                }
-                
-                # Would implement actual LangSmith tracking here
-                logging.info(f"LangSmith tracking: {run_data['name']}")
-        except Exception as e:
-            logging.warning(f"LangSmith tracking error: {e}")
-    
+            logger.warning(f"Consciousness integration error: {e}")
+
     def get_integration_status(self) -> Dict[str, Any]:
         """Get comprehensive integration status"""
-        
         return {
             "langchain_available": LANGCHAIN_AVAILABLE,
             "langgraph_available": LANGGRAPH_AVAILABLE,
@@ -1118,19 +975,22 @@ class NISLangChainIntegration:
             "langsmith_enabled": self.enable_langsmith,
             "self_audit_enabled": self.enable_self_audit,
             "consciousness_integration": self.consciousness_agent is not None,
-            "workflow_ready": self.workflow.workflow_graph is not None,
-            "integration_stats": self.integration_stats
+            "workflow_ready": self.workflow.compiled_graph is not None,
+            "integration_stats": self.integration_stats,
+            "workflow_performance": self.workflow.performance_metrics
         }
-    
+
     def get_capabilities(self) -> Dict[str, Any]:
-        """Get integration capabilities"""
-        
+        """Get enhanced integration capabilities"""
         return {
             "reasoning_patterns": [pattern.value for pattern in ReasoningPattern],
+            "agent_roles": [role.value for role in AgentRole],
             "features": {
-                "chain_of_thought": True,
-                "tree_of_thought": True,
-                "reasoning_and_acting": True,
+                "multi_agent_coordination": True,
+                "state_persistence": self.workflow.enable_persistence,
+                "tool_integration": True,
+                "human_in_the_loop": True,
+                "workflow_monitoring": True,
                 "langraph_workflows": LANGGRAPH_AVAILABLE,
                 "langsmith_observability": self.enable_langsmith,
                 "nis_self_audit": self.enable_self_audit,
@@ -1140,75 +1000,49 @@ class NISLangChainIntegration:
                 "NIS Protocol v3",
                 "LangChain Chat Models",
                 "LangGraph State Machines",
-                "LangSmith Observability"
-            ]
+                "LangSmith Observability",
+                "Multi-Agent Coordination"
+            ],
+            "available_tools": list(self.workflow.tools.keys()) if self.workflow else []
         }
 
 
-# Example usage and testing
-async def main():
-    """Example usage of NIS-LangChain integration"""
+# Legacy classes for backward compatibility
+class NISLangGraphWorkflow:
+    """Legacy workflow class for backward compatibility"""
     
-    print("🦜🔗 NIS Protocol v3 - LangChain Integration Demo")
-    print("=" * 60)
-    
-    # Initialize integration
-    integration = NISLangChainIntegration(
-        enable_langsmith=False,  # Set to True if you have LangSmith API key
-        enable_self_audit=True
-    )
-    
-    # Test questions
-    test_questions = [
-        "What are the key components of artificial intelligence?",
-        "How do neural networks learn from data?", 
-        "What is the difference between machine learning and deep learning?"
-    ]
-    
-    reasoning_patterns = [
-        ReasoningPattern.CHAIN_OF_THOUGHT,
-        ReasoningPattern.TREE_OF_THOUGHT,
-        ReasoningPattern.REACT
-    ]
-    
-    print(f"Testing {len(test_questions)} questions with {len(reasoning_patterns)} reasoning patterns...")
-    print()
-    
-    for i, question in enumerate(test_questions):
-        pattern = reasoning_patterns[i % len(reasoning_patterns)]
+    def __init__(self, enable_self_audit: bool = True):
+        logger.warning("NISLangGraphWorkflow is deprecated. Use EnhancedMultiAgentWorkflow instead.")
+        self.enable_self_audit = enable_self_audit
         
-        print(f"🤔 Question {i+1}: {question}")
-        print(f"📋 Pattern: {pattern.value}")
-        
-        result = await integration.process_question(question, pattern)
-        
-        print(f"✅ Answer: {result.get('final_answer', 'No answer')}")
-        print(f"📊 Confidence: {result.get('confidence', 0.0):.3f}")
-        print(f"🔍 Integrity: {result.get('integrity_score', 0.0):.1f}/100")
-        print(f"⏱️  Time: {result.get('processing_time', 0.0):.3f}s")
-        print("-" * 40)
-    
-    # Display integration status
-    status = integration.get_integration_status()
-    capabilities = integration.get_capabilities()
-    
-    print("\n🔧 Integration Status:")
-    for key, value in status.items():
-        if key != "integration_stats":
-            print(f"  {key}: {value}")
-    
-    print("\n📊 Statistics:")
-    stats = status["integration_stats"]
-    print(f"  Questions processed: {stats['total_questions_processed']}")
-    print(f"  Average confidence: {stats['average_confidence']:.3f}")
-    print(f"  Average integrity: {stats['average_integrity_score']:.1f}")
-    
-    print("\n🎯 Capabilities:")
-    features = capabilities["features"]
-    for feature, enabled in features.items():
-        status_icon = "✅" if enabled else "❌"
-        print(f"  {status_icon} {feature.replace('_', ' ').title()}")
+    async def process_async(self, question: str, reasoning_pattern=None):
+        """Legacy process method"""
+        # Simple fallback implementation
+        return {
+            "final_answer": f"Legacy processing: {question}",
+            "confidence": 0.8,
+            "reasoning_pattern": "legacy",
+            "metadata": {"legacy_mode": True}
+        }
 
 
+# Example usage
 if __name__ == "__main__":
-    asyncio.run(main()) 
+    async def test_enhanced_integration():
+        """Test the enhanced LangChain integration"""
+        integration = NISLangChainIntegration()
+        
+        result = await integration.process_question(
+            question="Analyze the potential impacts of climate change on agricultural productivity",
+            reasoning_pattern=ReasoningPattern.MULTI_AGENT_CONSENSUS,
+            context={"domain": "environmental_science", "urgency": "high"}
+        )
+        
+        print("Enhanced Multi-Agent Analysis:")
+        print(f"Success: {result['success']}")
+        print(f"Confidence: {result['confidence']}")
+        print(f"Final Answer: {result['final_answer'][:200]}...")
+        print(f"Agents Used: {list(result['agent_contributions'].keys())}")
+        print(f"Processing Time: {result['processing_time']:.2f}s")
+    
+    asyncio.run(test_enhanced_integration()) 

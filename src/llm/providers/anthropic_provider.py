@@ -2,13 +2,16 @@
 NIS Protocol Anthropic Claude LLM Provider
 
 This module implements the Anthropic Claude API integration for the NIS Protocol.
+Enhanced to support environment variables for configuration.
 """
 
 import aiohttp
 import json
+import os
 from typing import Dict, Any, List, Optional, Union
 import tiktoken
 import logging
+import asyncio
 
 from ..base_llm_provider import BaseLLMProvider, LLMResponse, LLMMessage, LLMRole
 
@@ -23,9 +26,13 @@ class AnthropicProvider(BaseLLMProvider):
         """
         super().__init__(config)
         
-        self.api_key = config["api_key"]
-        self.api_base = config.get("api_base", "https://api.anthropic.com/v1")
-        self.anthropic_version = config.get("version", "2023-06-01")
+        # Support both direct config and environment variables
+        self.api_key = config.get("api_key") or os.getenv("ANTHROPIC_API_KEY")
+        self.api_base = config.get("api_base") or os.getenv("ANTHROPIC_API_BASE", "https://api.anthropic.com/v1")
+        self.anthropic_version = config.get("version") or os.getenv("ANTHROPIC_VERSION", "2023-06-01")
+        
+        if not self.api_key or self.api_key in ["YOUR_ANTHROPIC_API_KEY", "your_anthropic_api_key_here"]:
+            raise ValueError("Anthropic API key is required. Set ANTHROPIC_API_KEY environment variable or provide in config.")
         
         # Use tiktoken for approximate token counting (Claude uses similar tokenization)
         try:
@@ -38,6 +45,14 @@ class AnthropicProvider(BaseLLMProvider):
         
         # Initialize session
         self.session = None
+        
+    def __del__(self):
+        """Cleanup aiohttp session."""
+        if self.session and not self.session.closed:
+            try:
+                asyncio.get_event_loop().create_task(self.session.close())
+            except:
+                pass
     
     async def _ensure_session(self):
         """Ensure aiohttp session exists."""

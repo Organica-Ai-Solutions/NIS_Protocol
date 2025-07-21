@@ -1,31 +1,28 @@
 """
-Enhanced Reasoning Agent with KAN Integration
-Enhanced with actual metric calculations instead of hardcoded values
+NIS Protocol Enhanced Reasoning Agent
 
-This module provides advanced reasoning capabilities using Kolmogorov-Arnold Networks
-for interpretable function approximation and symbolic reasoning.
-
-Enhanced Features (v3):
-- Complete self-audit integration with real-time integrity monitoring
-- Mathematical validation of reasoning operations with evidence-based metrics
-- Comprehensive integrity oversight for all KAN reasoning outputs
-- Auto-correction capabilities for reasoning-related communications
+Advanced reasoning agent implementing multiple reasoning patterns
+including ReAct, Chain of Thought (CoT), and Tree of Thought (ToT).
+Enhanced with environment-based LLM configuration.
 """
 
-import numpy as np
-import torch
-import torch.nn as nn
+import asyncio
+import json
 import logging
-from typing import Dict, Any, List, Optional, Tuple, Union
+import time
+from typing import Dict, Any, List, Optional, Tuple, Union, Callable
 from dataclasses import dataclass, field
 from enum import Enum
-import json
-import time
-from collections import defaultdict
+import numpy as np
+from concurrent.futures import ThreadPoolExecutor
 
-# Integrity metrics for actual calculations
-from src.utils.integrity_metrics import (
+from ...llm.llm_manager import LLMManager
+from ...llm.base_llm_provider import LLMMessage, LLMRole
+from ...memory.memory_manager import MemoryManager
+from ...utils.env_config import env_config
+from ...utils.integrity_metrics import (
     calculate_confidence, create_default_confidence_factors,
+    calculate_physics_compliance, create_mock_validation_result,
     ConfidenceFactors
 )
 

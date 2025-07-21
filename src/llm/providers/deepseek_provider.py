@@ -2,13 +2,16 @@
 NIS Protocol Deepseek LLM Provider
 
 This module implements the Deepseek API integration for the NIS Protocol.
+Enhanced to support environment variables for configuration.
 """
 
 import aiohttp
 import json
+import os
 from typing import Dict, Any, List, Optional, Union
 import tiktoken
 import logging
+import asyncio
 
 from ..base_llm_provider import BaseLLMProvider, LLMResponse, LLMMessage, LLMRole
 
@@ -23,13 +26,26 @@ class DeepseekProvider(BaseLLMProvider):
         """
         super().__init__(config)
         
-        self.api_key = config["api_key"]
-        self.api_base = config.get("api_base", "https://api.deepseek.com/v1")
+        # Support both direct config and environment variables
+        self.api_key = config.get("api_key") or os.getenv("DEEPSEEK_API_KEY")
+        self.api_base = config.get("api_base") or os.getenv("DEEPSEEK_API_BASE", "https://api.deepseek.com/v1")
+        
+        if not self.api_key or self.api_key in ["YOUR_DEEPSEEK_API_KEY", "your_deepseek_api_key_here"]:
+            raise ValueError("DeepSeek API key is required. Set DEEPSEEK_API_KEY environment variable or provide in config.")
+        
         self.encoding = tiktoken.encoding_for_model(self.model)
         self.logger = logging.getLogger("deepseek_provider")
         
         # Initialize session
         self.session = None
+        
+    def __del__(self):
+        """Cleanup aiohttp session."""
+        if self.session and not self.session.closed:
+            try:
+                asyncio.get_event_loop().create_task(self.session.close())
+            except:
+                pass
     
     async def _ensure_session(self):
         """Ensure aiohttp session exists."""

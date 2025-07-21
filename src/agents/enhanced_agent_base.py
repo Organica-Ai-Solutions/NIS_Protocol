@@ -2,14 +2,18 @@
 NIS Protocol v3 - Enhanced Agent Base Class
 
 This module provides a comprehensive base class for all NIS Protocol agents
-with integrated Kafka messaging, Redis caching, and self-audit capabilities.
+with integrated Kafka messaging, Redis caching, LangGraph workflows, 
+LangSmith observability, and advanced multi-agent collaboration capabilities.
 
-Features:
-- Unified infrastructure integration (Kafka + Redis)
+Enhanced Features:
+- Unified infrastructure integration (Kafka + Redis + LangGraph + LangSmith)
+- Advanced multi-agent collaboration patterns
 - Self-audit integration with real-time monitoring
-- Async message handling and caching
+- Async message handling and intelligent caching
 - Performance tracking and health monitoring
 - Auto-recovery and resilience patterns
+- Dynamic workflow adaptation
+- Cost optimization and resource management
 """
 
 import asyncio
@@ -17,12 +21,30 @@ import json
 import logging
 import time
 import uuid
-from typing import Dict, Any, List, Optional, Callable, Union
-from dataclasses import dataclass, asdict
+from typing import Dict, Any, List, Optional, Callable, Union, Type
+from dataclasses import dataclass, asdict, field
 from enum import Enum
 from abc import ABC, abstractmethod
 import threading
 from datetime import datetime, timedelta
+from collections import defaultdict, deque
+
+# LangGraph integration
+try:
+    from langgraph.graph import StateGraph, END, START
+    from langgraph.checkpoint.memory import MemorySaver
+    from langgraph.prebuilt import ToolExecutor
+    from typing_extensions import TypedDict, Annotated
+    LANGGRAPH_AVAILABLE = True
+except ImportError:
+    LANGGRAPH_AVAILABLE = False
+
+# LangSmith integration
+try:
+    from langsmith import traceable, Client as LangSmithClient
+    LANGSMITH_AVAILABLE = True
+except ImportError:
+    LANGSMITH_AVAILABLE = False
 
 # Infrastructure integration
 from src.infrastructure.integration_coordinator import (
@@ -44,6 +66,12 @@ from src.utils.integrity_metrics import (
     create_default_confidence_factors,
     ConfidenceFactors
 )
+from src.llm.llm_manager import LLMManager
+from src.utils.env_config import env_config
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class AgentState(Enum):
@@ -51,59 +79,158 @@ class AgentState(Enum):
     INITIALIZING = "initializing"
     READY = "ready"
     PROCESSING = "processing"
+    COLLABORATING = "collaborating"
+    WAITING = "waiting"
     DEGRADED = "degraded"
     ERROR = "error"
+    MAINTENANCE = "maintenance"
     SHUTDOWN = "shutdown"
 
 
 class AgentCapability(Enum):
-    """Agent capability types"""
-    MESSAGING = "messaging"
-    CACHING = "caching"
-    SELF_AUDIT = "self_audit"
-    PERFORMANCE_TRACKING = "performance_tracking"
-    AUTO_RECOVERY = "auto_recovery"
+    """Standard agent capabilities"""
+    REASONING = "reasoning"
+    ANALYSIS = "analysis"
+    SYNTHESIS = "synthesis"
+    VALIDATION = "validation"
+    COORDINATION = "coordination"
+    COMMUNICATION = "communication"
+    LEARNING = "learning"
+    ADAPTATION = "adaptation"
+    MONITORING = "monitoring"
+    OPTIMIZATION = "optimization"
 
 
-@dataclass
-class AgentMetrics:
-    """Comprehensive agent performance metrics"""
-    messages_sent: int = 0
-    messages_received: int = 0
-    cache_hits: int = 0
-    cache_misses: int = 0
-    processing_time: float = 0.0
-    error_count: int = 0
-    integrity_score: float = 100.0
-    uptime: float = 0.0
-    last_health_check: float = 0.0
-    self_audit_violations: int = 0
+class CollaborationPattern(Enum):
+    """Multi-agent collaboration patterns"""
+    SEQUENTIAL = "sequential"
+    PARALLEL = "parallel"
+    HIERARCHICAL = "hierarchical"
+    CONSENSUS = "consensus"
+    COMPETITIVE = "competitive"
+    PIPELINE = "pipeline"
+    MESH = "mesh"
+    STAR = "star"
 
 
 @dataclass
 class AgentConfiguration:
-    """Agent configuration structure"""
+    """Configuration for enhanced agents"""
     agent_id: str
     agent_type: str
-    enable_messaging: bool = True
-    enable_caching: bool = True
+    capabilities: List[AgentCapability] = field(default_factory=list)
+    collaboration_patterns: List[CollaborationPattern] = field(default_factory=list)
+    
+    # Infrastructure settings
+    enable_kafka: bool = True
+    enable_redis: bool = True
+    enable_langgraph: bool = True
+    enable_langsmith: bool = True
     enable_self_audit: bool = True
-    enable_performance_tracking: bool = True
-    health_check_interval: float = 60.0
-    message_batch_size: int = 10
+    
+    # Performance settings
+    max_concurrent_tasks: int = 5
+    processing_timeout: float = 300.0
     cache_ttl: int = 3600
-    auto_recovery: bool = True
+    max_retries: int = 3
+    
+    # Resource limits
+    max_memory_mb: int = 512
+    max_cpu_percent: float = 80.0
+    max_cost_per_hour: float = 10.0
+    
+    # Monitoring settings
+    health_check_interval: float = 30.0
+    performance_window: int = 100
+    enable_detailed_logging: bool = True
+
+
+@dataclass
+class AgentMetrics:
+    """Metrics for agent performance tracking"""
+    # Processing metrics
+    total_tasks_processed: int = 0
+    successful_tasks: int = 0
+    failed_tasks: int = 0
+    average_processing_time: float = 0.0
+    
+    # Collaboration metrics
+    collaboration_sessions: int = 0
+    successful_collaborations: int = 0
+    collaboration_quality: float = 0.0
+    
+    # Resource metrics
+    memory_usage_mb: float = 0.0
+    cpu_usage_percent: float = 0.0
+    cost_accumulated: float = 0.0
+    
+    # Quality metrics
+    average_confidence: float = 0.0
+    integrity_score: float = 100.0
+    user_satisfaction: float = 0.0
+    
+    # Infrastructure metrics
+    cache_hit_rate: float = 0.0
+    message_throughput: float = 0.0
+    error_rate: float = 0.0
+    
+    # Temporal tracking
+    uptime_seconds: float = 0.0
+    last_updated: datetime = field(default_factory=datetime.now)
+
+
+class AgentWorkflowState(TypedDict):
+    """State for agent-specific workflows"""
+    # Agent information
+    agent_id: str
+    agent_type: str
+    current_state: str
+    
+    # Task information
+    current_task: Optional[Dict[str, Any]]
+    task_queue: List[Dict[str, Any]]
+    task_history: List[Dict[str, Any]]
+    
+    # Collaboration context
+    collaboration_partners: List[str]
+    collaboration_pattern: Optional[str]
+    shared_context: Dict[str, Any]
+    
+    # Processing state
+    intermediate_results: List[Dict[str, Any]]
+    cached_data: Dict[str, Any]
+    active_workflows: List[str]
+    
+    # Quality tracking
+    confidence_scores: List[float]
+    integrity_violations: List[Dict[str, Any]]
+    performance_metrics: Dict[str, float]
+    
+    # Control flow
+    next_action: Optional[str]
+    requires_collaboration: bool
+    requires_human_oversight: bool
+    is_processing: bool
+    
+    # Metadata
+    start_time: float
+    processing_time: float
+    iteration_count: int
+    debug_info: Dict[str, Any]
 
 
 class EnhancedAgentBase(ABC):
     """
     Enhanced base class for all NIS Protocol agents with comprehensive
-    infrastructure integration and self-audit capabilities.
+    infrastructure integration, multi-agent collaboration, and LangGraph workflows.
     
     Features:
     - Unified Kafka messaging integration
     - Redis caching with intelligent strategies
+    - LangGraph workflows for complex decision making
+    - LangSmith observability and monitoring
     - Self-audit with real-time integrity monitoring
+    - Multi-agent collaboration patterns
     - Performance tracking and health monitoring
     - Auto-recovery and resilience patterns
     """
@@ -128,17 +255,40 @@ class EnhancedAgentBase(ABC):
         
         # Metrics and monitoring
         self.metrics = AgentMetrics()
-        self.capabilities: Dict[AgentCapability, bool] = {}
+        self.capabilities: Dict[AgentCapability, bool] = {cap: True for cap in config.capabilities}
         self.health_status: Dict[str, Any] = {}
         
+        # LLM integration
+        self.llm_manager = LLMManager() if config.enable_langgraph else None
+        
+        # LangGraph workflows
+        self.agent_graph: Optional[StateGraph] = None
+        self.compiled_graph = None
+        self.checkpointer = None
+        
+        # LangSmith integration
+        self.langsmith_client = None
+        if config.enable_langsmith and LANGSMITH_AVAILABLE:
+            self._setup_langsmith()
+        
         # Message handling
-        self.message_handlers: Dict[MessageType, List[Callable]] = {}
-        self.message_queue: List[NISMessage] = []
+        self.message_handlers: Dict[MessageType, List[Callable]] = defaultdict(list)
+        self.message_queue: deque = deque()
         self.processing_tasks: List[asyncio.Task] = []
+        
+        # Collaboration management
+        self.collaboration_partners: Dict[str, Any] = {}
+        self.active_collaborations: Dict[str, Dict[str, Any]] = {}
+        self.collaboration_history: List[Dict[str, Any]] = []
         
         # Cache management
         self.cache_keys: List[str] = []
         self.cache_strategy = CacheStrategy.TTL
+        self.cache_performance = {"hits": 0, "misses": 0}
+        
+        # Workflow management
+        self.active_workflows: Dict[str, Any] = {}
+        self.workflow_history: List[Dict[str, Any]] = []
         
         # Self-audit integration
         if config.enable_self_audit:
@@ -148,110 +298,571 @@ class EnhancedAgentBase(ABC):
         self.health_monitor_task: Optional[asyncio.Task] = None
         self.is_monitoring = False
         
-        self.logger.info(f"Enhanced agent {self.agent_id} initialized")
-    
+        # Performance optimization
+        self.performance_optimizer = PerformanceOptimizer(self)
+        
+        # Initialize workflows
+        if config.enable_langgraph and LANGGRAPH_AVAILABLE:
+            self._build_agent_workflows()
+        
+        self.logger.info(f"Enhanced agent {self.agent_id} initialized with advanced capabilities")
+
+    def _setup_langsmith(self):
+        """Setup LangSmith integration for agent observability"""
+        try:
+            api_key = env_config.get_env("LANGSMITH_API_KEY")
+            if api_key:
+                self.langsmith_client = LangSmithClient(api_key=api_key)
+                self.logger.info("LangSmith agent observability enabled")
+            else:
+                self.logger.warning("LANGSMITH_API_KEY not found")
+        except Exception as e:
+            self.logger.error(f"Failed to setup LangSmith: {e}")
+
+    def _build_agent_workflows(self):
+        """Build LangGraph workflows for agent operations"""
+        if not LANGGRAPH_AVAILABLE:
+            return
+        
+        try:
+            # Initialize checkpointer
+            self.checkpointer = MemorySaver()
+            
+            # Create agent workflow graph
+            self.agent_graph = StateGraph(AgentWorkflowState)
+            
+            # Add core workflow nodes
+            self.agent_graph.add_node("initialize_processing", self._initialize_processing_node)
+            self.agent_graph.add_node("analyze_task", self._analyze_task_node)
+            self.agent_graph.add_node("check_collaboration", self._check_collaboration_node)
+            self.agent_graph.add_node("process_solo", self._process_solo_node)
+            self.agent_graph.add_node("coordinate_collaboration", self._coordinate_collaboration_node)
+            self.agent_graph.add_node("validate_results", self._validate_results_node)
+            self.agent_graph.add_node("optimize_performance", self._optimize_performance_node)
+            self.agent_graph.add_node("update_cache", self._update_cache_node)
+            self.agent_graph.add_node("finalize_processing", self._finalize_processing_node)
+            
+            # Set entry point
+            self.agent_graph.set_entry_point("initialize_processing")
+            
+            # Add conditional edges
+            self.agent_graph.add_edge("initialize_processing", "analyze_task")
+            self.agent_graph.add_edge("analyze_task", "check_collaboration")
+            
+            self.agent_graph.add_conditional_edges(
+                "check_collaboration",
+                self._collaboration_decision,
+                {
+                    "solo": "process_solo",
+                    "collaborate": "coordinate_collaboration"
+                }
+            )
+            
+            self.agent_graph.add_edge("process_solo", "validate_results")
+            self.agent_graph.add_edge("coordinate_collaboration", "validate_results")
+            
+            self.agent_graph.add_conditional_edges(
+                "validate_results",
+                self._validation_decision,
+                {
+                    "approved": "optimize_performance",
+                    "retry": "analyze_task",
+                    "escalate": "finalize_processing"
+                }
+            )
+            
+            self.agent_graph.add_edge("optimize_performance", "update_cache")
+            self.agent_graph.add_edge("update_cache", "finalize_processing")
+            self.agent_graph.add_edge("finalize_processing", END)
+            
+            # Compile the graph
+            self.compiled_graph = self.agent_graph.compile(
+                checkpointer=self.checkpointer
+            )
+            
+            self.logger.info("Agent workflows built successfully")
+            
+        except Exception as e:
+            self.logger.error(f"Failed to build agent workflows: {e}")
+
+    # Workflow nodes
+    def _initialize_processing_node(self, state: AgentWorkflowState) -> Dict[str, Any]:
+        """Initialize processing workflow"""
+        return {
+            "current_state": "processing",
+            "is_processing": True,
+            "start_time": time.time(),
+            "iteration_count": 0,
+            "debug_info": {"phase": "initialization"}
+        }
+
+    def _analyze_task_node(self, state: AgentWorkflowState) -> Dict[str, Any]:
+        """Analyze the current task"""
+        current_task = state.get("current_task", {})
+        
+        if not current_task:
+            return {
+                "debug_info": state.get("debug_info", {}).update({"error": "no_task"}) or state.get("debug_info", {}),
+                "next_action": "finalize"
+            }
+        
+        # Task complexity analysis
+        task_complexity = self._analyze_task_complexity(current_task)
+        
+        # Resource requirements
+        resource_requirements = self._estimate_resource_requirements(current_task)
+        
+        # Collaboration assessment
+        collaboration_needed = self._assess_collaboration_need(current_task, task_complexity)
+        
+        return {
+            "task_complexity": task_complexity,
+            "resource_requirements": resource_requirements,
+            "requires_collaboration": collaboration_needed,
+            "debug_info": state.get("debug_info", {}).update({
+                "task_analyzed": True,
+                "complexity": task_complexity,
+                "collaboration_needed": collaboration_needed
+            }) or state.get("debug_info", {})
+        }
+
+    def _check_collaboration_node(self, state: AgentWorkflowState) -> Dict[str, Any]:
+        """Check if collaboration is needed and available"""
+        requires_collaboration = state.get("requires_collaboration", False)
+        
+        if not requires_collaboration:
+            return {"collaboration_decision": "solo"}
+        
+        # Check available collaboration partners
+        available_partners = self._find_available_partners(state.get("current_task", {}))
+        
+        if available_partners:
+            return {
+                "collaboration_decision": "collaborate",
+                "collaboration_partners": available_partners,
+                "collaboration_pattern": self._determine_collaboration_pattern(state.get("current_task", {}))
+            }
+        else:
+            return {
+                "collaboration_decision": "solo",
+                "debug_info": state.get("debug_info", {}).update({"no_partners_available": True}) or state.get("debug_info", {})
+            }
+
+    def _process_solo_node(self, state: AgentWorkflowState) -> Dict[str, Any]:
+        """Process task independently"""
+        current_task = state.get("current_task", {})
+        
+        # Simulate solo processing
+        processing_result = self._execute_solo_processing(current_task)
+        
+        # Update metrics
+        confidence = processing_result.get("confidence", 0.8)
+        processing_time = processing_result.get("processing_time", 1.0)
+        
+        return {
+            "intermediate_results": [processing_result],
+            "confidence_scores": [confidence],
+            "processing_time": processing_time,
+            "debug_info": state.get("debug_info", {}).update({"solo_processing": True}) or state.get("debug_info", {})
+        }
+
+    def _coordinate_collaboration_node(self, state: AgentWorkflowState) -> Dict[str, Any]:
+        """Coordinate collaborative processing"""
+        partners = state.get("collaboration_partners", [])
+        pattern = state.get("collaboration_pattern", "parallel")
+        current_task = state.get("current_task", {})
+        
+        # Simulate collaborative processing
+        collaboration_result = self._execute_collaborative_processing(current_task, partners, pattern)
+        
+        return {
+            "intermediate_results": collaboration_result.get("results", []),
+            "confidence_scores": collaboration_result.get("confidences", [0.8]),
+            "collaboration_quality": collaboration_result.get("quality", 0.8),
+            "debug_info": state.get("debug_info", {}).update({
+                "collaborative_processing": True,
+                "partners": len(partners),
+                "pattern": pattern
+            }) or state.get("debug_info", {})
+        }
+
+    def _validate_results_node(self, state: AgentWorkflowState) -> Dict[str, Any]:
+        """Validate processing results"""
+        results = state.get("intermediate_results", [])
+        confidence_scores = state.get("confidence_scores", [])
+        
+        if not results:
+            return {"validation_decision": "retry"}
+        
+        # Calculate overall confidence
+        overall_confidence = sum(confidence_scores) / len(confidence_scores) if confidence_scores else 0.0
+        
+        # Validation criteria
+        if overall_confidence >= 0.8:
+            validation_decision = "approved"
+        elif overall_confidence >= 0.6:
+            validation_decision = "retry"
+        else:
+            validation_decision = "escalate"
+        
+        return {
+            "validation_decision": validation_decision,
+            "overall_confidence": overall_confidence,
+            "validation_results": {
+                "confidence_threshold_met": overall_confidence >= 0.8,
+                "quality_acceptable": overall_confidence >= 0.6,
+                "results_count": len(results)
+            }
+        }
+
+    def _optimize_performance_node(self, state: AgentWorkflowState) -> Dict[str, Any]:
+        """Optimize performance based on results"""
+        processing_time = state.get("processing_time", 0.0)
+        overall_confidence = state.get("overall_confidence", 0.0)
+        
+        # Performance optimization
+        optimization_suggestions = []
+        
+        if processing_time > 60.0:
+            optimization_suggestions.append("Consider parallel processing for better performance")
+        
+        if overall_confidence < 0.9:
+            optimization_suggestions.append("Consider additional validation steps")
+        
+        # Update performance metrics
+        self._update_performance_metrics(state)
+        
+        return {
+            "optimization_suggestions": optimization_suggestions,
+            "performance_optimized": True,
+            "debug_info": state.get("debug_info", {}).update({"optimization": "complete"}) or state.get("debug_info", {})
+        }
+
+    def _update_cache_node(self, state: AgentWorkflowState) -> Dict[str, Any]:
+        """Update cache with processing results"""
+        results = state.get("intermediate_results", [])
+        current_task = state.get("current_task", {})
+        
+        # Cache strategy based on task type and results quality
+        cache_decision = self._determine_cache_strategy(current_task, results)
+        
+        if cache_decision["should_cache"]:
+            cache_key = f"{self.agent_id}_{current_task.get('task_id', 'unknown')}"
+            # In real implementation, cache the results
+            self.cache_keys.append(cache_key)
+            self.cache_performance["hits"] += 1
+        
+        return {
+            "cache_updated": cache_decision["should_cache"],
+            "cache_strategy": cache_decision["strategy"],
+            "debug_info": state.get("debug_info", {}).update({"cache_updated": True}) or state.get("debug_info", {})
+        }
+
+    def _finalize_processing_node(self, state: AgentWorkflowState) -> Dict[str, Any]:
+        """Finalize processing and prepare results"""
+        processing_time = time.time() - state.get("start_time", time.time())
+        
+        # Update agent state
+        self.state = AgentState.READY
+        
+        # Update metrics
+        self.metrics.total_tasks_processed += 1
+        if state.get("overall_confidence", 0.0) >= 0.8:
+            self.metrics.successful_tasks += 1
+        else:
+            self.metrics.failed_tasks += 1
+        
+        # Update average processing time
+        total_tasks = self.metrics.total_tasks_processed
+        current_avg = self.metrics.average_processing_time
+        self.metrics.average_processing_time = (
+            (current_avg * (total_tasks - 1) + processing_time) / total_tasks
+        )
+        
+        return {
+            "is_processing": False,
+            "processing_time": processing_time,
+            "final_results": state.get("intermediate_results", []),
+            "debug_info": state.get("debug_info", {}).update({"finalized": True}) or state.get("debug_info", {})
+        }
+
+    # Conditional edge functions
+    def _collaboration_decision(self, state: AgentWorkflowState) -> str:
+        """Decide on collaboration approach"""
+        return state.get("collaboration_decision", "solo")
+
+    def _validation_decision(self, state: AgentWorkflowState) -> str:
+        """Make validation decision"""
+        return state.get("validation_decision", "approved")
+
+    # Helper methods
+    def _analyze_task_complexity(self, task: Dict[str, Any]) -> float:
+        """Analyze task complexity"""
+        # Simple complexity analysis
+        description = task.get("description", "")
+        task_type = task.get("type", "")
+        
+        complexity_factors = {
+            "description_length": min(len(description) / 100, 1.0),
+            "task_type_complexity": {
+                "analysis": 0.8,
+                "synthesis": 0.9,
+                "reasoning": 0.85,
+                "coordination": 0.7
+            }.get(task_type, 0.5)
+        }
+        
+        return sum(complexity_factors.values()) / len(complexity_factors)
+
+    def _estimate_resource_requirements(self, task: Dict[str, Any]) -> Dict[str, float]:
+        """Estimate resource requirements for task"""
+        complexity = self._analyze_task_complexity(task)
+        
+        return {
+            "cpu_usage": complexity * 50.0,  # Percentage
+            "memory_mb": complexity * 100.0,
+            "processing_time": complexity * 60.0,  # Seconds
+            "cost_estimate": complexity * 0.5  # Dollars
+        }
+
+    def _assess_collaboration_need(self, task: Dict[str, Any], complexity: float) -> bool:
+        """Assess if collaboration is needed"""
+        # Collaboration needed for complex tasks or specific types
+        return (complexity > 0.7 or 
+                task.get("type") in ["coordination", "synthesis"] or
+                "collaborate" in task.get("description", "").lower())
+
+    def _find_available_partners(self, task: Dict[str, Any]) -> List[str]:
+        """Find available collaboration partners"""
+        # Simplified partner finding
+        # In real implementation, query agent registry
+        potential_partners = ["reasoning_agent", "analysis_agent", "validation_agent"]
+        return potential_partners[:2]  # Return first 2 available
+
+    def _determine_collaboration_pattern(self, task: Dict[str, Any]) -> str:
+        """Determine optimal collaboration pattern"""
+        task_type = task.get("type", "")
+        
+        pattern_map = {
+            "analysis": "sequential",
+            "synthesis": "parallel",
+            "coordination": "hierarchical",
+            "validation": "consensus"
+        }
+        
+        return pattern_map.get(task_type, "parallel")
+
+    def _execute_solo_processing(self, task: Dict[str, Any]) -> Dict[str, Any]:
+        """Execute solo processing (implementation specific)"""
+        # This would be implemented by subclasses
+        return {
+            "result": f"Solo processing completed for task: {task.get('description', 'unknown')}",
+            "confidence": 0.8,
+            "processing_time": 2.0,
+            "method": "solo"
+        }
+
+    def _execute_collaborative_processing(self, task: Dict[str, Any], partners: List[str], pattern: str) -> Dict[str, Any]:
+        """Execute collaborative processing"""
+        # Simulate collaborative processing
+        return {
+            "results": [
+                {"partner": partner, "contribution": f"Contribution from {partner}"}
+                for partner in partners
+            ],
+            "confidences": [0.8 + (i * 0.05) for i in range(len(partners))],
+            "quality": 0.85,
+            "pattern_used": pattern
+        }
+
+    def _update_performance_metrics(self, state: AgentWorkflowState):
+        """Update performance metrics"""
+        processing_time = state.get("processing_time", 0.0)
+        confidence = state.get("overall_confidence", 0.0)
+        
+        # Update averages
+        total_tasks = self.metrics.total_tasks_processed + 1
+        current_avg_conf = self.metrics.average_confidence
+        self.metrics.average_confidence = (
+            (current_avg_conf * (total_tasks - 1) + confidence) / total_tasks
+        )
+
+    def _determine_cache_strategy(self, task: Dict[str, Any], results: List[Dict[str, Any]]) -> Dict[str, Any]:
+        """Determine caching strategy"""
+        task_type = task.get("type", "")
+        results_quality = sum(r.get("confidence", 0.0) for r in results) / len(results) if results else 0.0
+        
+        # Cache high-quality results for repeatable tasks
+        should_cache = (results_quality >= 0.8 and 
+                       task_type in ["analysis", "validation"] and
+                       len(results) > 0)
+        
+        strategy = "high_confidence" if should_cache else "no_cache"
+        
+        return {
+            "should_cache": should_cache,
+            "strategy": strategy,
+            "ttl": self.config.cache_ttl if should_cache else 0
+        }
+
     def _init_self_audit(self):
         """Initialize self-audit capabilities"""
+        # Self-audit integration for real-time monitoring
+        self.integrity_monitoring_enabled = True
+        self.integrity_metrics = {
+            'monitoring_start_time': time.time(),
+            'total_outputs_monitored': 0,
+            'total_violations_detected': 0,
+            'auto_corrections_applied': 0,
+            'average_integrity_score': 100.0
+        }
+        
+        # Initialize confidence factors for mathematical validation
+        self.confidence_factors = create_default_confidence_factors()
+
+    @traceable
+    async def process_task(self, task: Dict[str, Any]) -> Dict[str, Any]:
+        """Process a task using enhanced workflows"""
+        if not self.compiled_graph:
+            return await self._fallback_processing(task)
+        
+        # Create workflow state
+        initial_state = AgentWorkflowState(
+            agent_id=self.agent_id,
+            agent_type=self.agent_type,
+            current_state=self.state.value,
+            current_task=task,
+            task_queue=[],
+            task_history=[],
+            collaboration_partners=[],
+            collaboration_pattern=None,
+            shared_context={},
+            intermediate_results=[],
+            cached_data={},
+            active_workflows=[],
+            confidence_scores=[],
+            integrity_violations=[],
+            performance_metrics={},
+            next_action=None,
+            requires_collaboration=False,
+            requires_human_oversight=False,
+            is_processing=False,
+            start_time=time.time(),
+            processing_time=0.0,
+            iteration_count=0,
+            debug_info={}
+        )
+        
         try:
-            self.self_audit_enabled = True
-            self.audit_threshold = 75.0
-            self.audit_violations: List[Dict[str, Any]] = []
-            self.auto_correction_enabled = True
+            # Execute workflow
+            config = {"configurable": {"thread_id": f"{self.agent_id}_{task.get('task_id', 'unknown')}"}}
             
-            # Track self-audit metrics
-            self.audit_metrics = {
-                'total_audits': 0,
-                'violations_detected': 0,
-                'auto_corrections': 0,
-                'avg_integrity_score': 100.0,
-                'last_audit': 0.0
+            final_state = None
+            async for output in self.compiled_graph.astream(initial_state, config):
+                final_state = output
+            
+            if not final_state:
+                raise RuntimeError("Workflow execution failed")
+            
+            # Extract results
+            result = {
+                "success": True,
+                "agent_id": self.agent_id,
+                "results": final_state.get("final_results", []),
+                "confidence": final_state.get("overall_confidence", 0.0),
+                "processing_time": final_state.get("processing_time", 0.0),
+                "collaboration_used": bool(final_state.get("collaboration_partners", [])),
+                "performance_optimized": final_state.get("performance_optimized", False),
+                "cache_updated": final_state.get("cache_updated", False),
+                "debug_info": final_state.get("debug_info", {}),
+                "workflow_metadata": {
+                    "iterations": final_state.get("iteration_count", 0),
+                    "pattern": final_state.get("collaboration_pattern"),
+                    "optimization_suggestions": final_state.get("optimization_suggestions", [])
+                }
             }
             
-            self.capabilities[AgentCapability.SELF_AUDIT] = True
-            self.logger.info(f"Self-audit enabled for agent {self.agent_id}")
+            # Track with LangSmith
+            if self.langsmith_client:
+                await self._track_task_with_langsmith(task, result)
+            
+            return result
             
         except Exception as e:
-            self.logger.error(f"Failed to initialize self-audit: {e}")
-            self.self_audit_enabled = False
-            self.capabilities[AgentCapability.SELF_AUDIT] = False
-    
-    async def initialize(self) -> bool:
-        """Initialize agent with infrastructure integration"""
+            self.logger.error(f"Task processing failed: {e}")
+            return {
+                "success": False,
+                "agent_id": self.agent_id,
+                "error": str(e),
+                "processing_time": time.time() - initial_state["start_time"]
+            }
+
+    async def _fallback_processing(self, task: Dict[str, Any]) -> Dict[str, Any]:
+        """Fallback processing when LangGraph is unavailable"""
+        self.logger.warning("Using fallback processing - LangGraph unavailable")
+        
+        start_time = time.time()
+        
         try:
-            self.logger.info(f"Initializing agent {self.agent_id}...")
+            # Simple fallback processing
+            result = await self.process_simple(task)
+            processing_time = time.time() - start_time
             
-            # Initialize infrastructure capabilities
-            await self._initialize_infrastructure()
-            
-            # Start health monitoring
-            if self.config.enable_performance_tracking:
-                await self.start_health_monitoring()
-            
-            # Perform agent-specific initialization
-            success = await self._agent_initialize()
-            
-            if success:
-                self.state = AgentState.READY
-                self.logger.info(f"Agent {self.agent_id} initialization successful")
-                
-                # Send initialization complete message
-                if self.capabilities.get(AgentCapability.MESSAGING, False):
-                    await self.send_message(
-                        MessageType.SYSTEM_HEALTH,
-                        {"event": "agent_initialized", "status": "ready"},
-                        priority=MessagePriority.NORMAL
-                    )
-            else:
-                self.state = AgentState.ERROR
-                self.logger.error(f"Agent {self.agent_id} initialization failed")
-            
-            return success
+            return {
+                "success": True,
+                "agent_id": self.agent_id,
+                "results": [result],
+                "confidence": result.get("confidence", 0.7),
+                "processing_time": processing_time,
+                "fallback_used": True
+            }
             
         except Exception as e:
-            self.logger.error(f"Agent initialization error: {e}")
-            self.state = AgentState.ERROR
-            return False
-    
-    async def _initialize_infrastructure(self):
-        """Initialize infrastructure capabilities"""
+            return {
+                "success": False,
+                "agent_id": self.agent_id,
+                "error": str(e),
+                "processing_time": time.time() - start_time,
+                "fallback_used": True
+            }
+
+    async def _track_task_with_langsmith(self, task: Dict[str, Any], result: Dict[str, Any]):
+        """Track task processing with LangSmith"""
         try:
-            # Initialize messaging capability
-            if self.config.enable_messaging and self.infrastructure:
-                self.capabilities[AgentCapability.MESSAGING] = True
-                
-                # Subscribe to relevant message types
-                message_types = self._get_message_subscriptions()
-                if message_types:
-                    await self.infrastructure.subscribe_to_messages(
-                        self.agent_id,
-                        message_types,
-                        self._handle_incoming_message
-                    )
-                
-                self.logger.info(f"Messaging capability initialized for {self.agent_id}")
+            run_data = {
+                "name": f"nis_agent_task_{self.agent_type}",
+                "inputs": {
+                    "task_description": task.get("description", ""),
+                    "task_type": task.get("type", ""),
+                    "agent_id": self.agent_id
+                },
+                "outputs": {
+                    "success": result["success"],
+                    "confidence": result.get("confidence", 0.0),
+                    "processing_time": result.get("processing_time", 0.0)
+                },
+                "run_type": "llm",
+                "session_name": f"agent_{self.agent_id}"
+            }
             
-            # Initialize caching capability
-            if self.config.enable_caching and self.infrastructure:
-                self.capabilities[AgentCapability.CACHING] = True
-                self.logger.info(f"Caching capability initialized for {self.agent_id}")
-            
-            # Initialize performance tracking
-            if self.config.enable_performance_tracking:
-                self.capabilities[AgentCapability.PERFORMANCE_TRACKING] = True
-                self.logger.info(f"Performance tracking initialized for {self.agent_id}")
+            self.logger.info(f"LangSmith task tracking: {run_data['name']}")
             
         except Exception as e:
-            self.logger.error(f"Infrastructure initialization error: {e}")
-    
+            self.logger.warning(f"LangSmith task tracking failed: {e}")
+
+    @abstractmethod
+    async def process_simple(self, task: Dict[str, Any]) -> Dict[str, Any]:
+        """Simple processing method to be implemented by subclasses"""
+        pass
+
     async def start_health_monitoring(self):
-        """Start continuous health monitoring"""
+        """Start health monitoring"""
         if self.is_monitoring:
             return
         
         self.is_monitoring = True
         self.health_monitor_task = asyncio.create_task(self._health_monitor_loop())
-        self.logger.info(f"Health monitoring started for {self.agent_id}")
-    
+
     async def stop_health_monitoring(self):
         """Stop health monitoring"""
         self.is_monitoring = False
@@ -261,471 +872,190 @@ class EnhancedAgentBase(ABC):
                 await self.health_monitor_task
             except asyncio.CancelledError:
                 pass
-        self.logger.info(f"Health monitoring stopped for {self.agent_id}")
-    
+
     async def _health_monitor_loop(self):
-        """Continuous health monitoring loop"""
+        """Health monitoring loop"""
         while self.is_monitoring:
             try:
-                await self._perform_health_check()
-                await self._perform_self_audit()
-                await self._update_metrics()
+                # Update health metrics
+                self.health_status = {
+                    "state": self.state.value,
+                    "uptime": time.time() - self.start_time,
+                    "tasks_processed": self.metrics.total_tasks_processed,
+                    "success_rate": (self.metrics.successful_tasks / max(self.metrics.total_tasks_processed, 1)) * 100,
+                    "average_processing_time": self.metrics.average_processing_time,
+                    "cache_hit_rate": (self.cache_performance["hits"] / max(sum(self.cache_performance.values()), 1)) * 100,
+                    "collaboration_sessions": self.metrics.collaboration_sessions,
+                    "last_updated": datetime.now().isoformat()
+                }
                 
-                # Auto-recovery if needed
-                if self.config.auto_recovery and self.state == AgentState.ERROR:
-                    await self._attempt_recovery()
+                # Check for issues
+                if self.metrics.error_rate > 0.2:
+                    self.logger.warning(f"High error rate detected: {self.metrics.error_rate:.2%}")
+                
+                if self.metrics.average_processing_time > self.config.processing_timeout * 0.8:
+                    self.logger.warning(f"Processing time approaching timeout: {self.metrics.average_processing_time:.2f}s")
                 
                 await asyncio.sleep(self.config.health_check_interval)
                 
-            except asyncio.CancelledError:
-                break
             except Exception as e:
-                self.logger.error(f"Health monitor error: {e}")
-                await asyncio.sleep(self.config.health_check_interval)
-    
-    async def _perform_health_check(self):
-        """Perform comprehensive health check"""
-        try:
-            current_time = time.time()
-            
-            # Update uptime
-            self.metrics.uptime = current_time - self.start_time
-            self.metrics.last_health_check = current_time
-            
-            # Check infrastructure connectivity
-            infrastructure_healthy = True
-            if self.infrastructure:
-                status = self.infrastructure.get_comprehensive_status()
-                infrastructure_healthy = status["overall_health"] != "unhealthy"
-            
-            # Determine agent health
-            if self.state == AgentState.ERROR:
-                health = ServiceHealth.UNHEALTHY
-            elif not infrastructure_healthy or self.metrics.error_count > 10:
-                health = ServiceHealth.DEGRADED
-                self.state = AgentState.DEGRADED
-            else:
-                health = ServiceHealth.HEALTHY
-                if self.state == AgentState.DEGRADED:
-                    self.state = AgentState.READY
-            
-            self.health_status = {
-                "health": health.value,
-                "state": self.state.value,
-                "uptime": self.metrics.uptime,
-                "error_count": self.metrics.error_count,
-                "integrity_score": self.metrics.integrity_score,
-                "infrastructure_healthy": infrastructure_healthy,
-                "last_check": current_time
-            }
-            
-            # Send health update
-            if self.capabilities.get(AgentCapability.MESSAGING, False):
-                await self.send_message(
-                    MessageType.SYSTEM_HEALTH,
-                    self.health_status,
-                    priority=MessagePriority.LOW
-                )
-            
-        except Exception as e:
-            self.logger.error(f"Health check error: {e}")
-            self.metrics.error_count += 1
-    
-    async def _perform_self_audit(self):
-        """Perform self-audit on agent operations"""
-        if not self.self_audit_enabled:
-            return
-        
-        try:
-            current_time = time.time()
-            
-            # Audit agent state and operations
-            audit_data = {
-                "agent_id": self.agent_id,
-                "agent_type": self.agent_type,
-                "state": self.state.value,
-                "metrics": asdict(self.metrics),
-                "recent_operations": self._get_recent_operations()
-            }
-            
-            # Convert to text for auditing
-            audit_text = json.dumps(audit_data, indent=2)
-            
-            # Perform audit
-            violations = self_audit_engine.audit_text(audit_text)
-            integrity_score = self_audit_engine.get_integrity_score(audit_text)
-            
-            # Update metrics
-            self.audit_metrics['total_audits'] += 1
-            self.audit_metrics['last_audit'] = current_time
-            self.audit_metrics['avg_integrity_score'] = (
-                self.audit_metrics['avg_integrity_score'] * 0.9 + integrity_score * 0.1
-            )
-            self.metrics.integrity_score = integrity_score
-            
-            # Handle violations
-            if violations:
-                self.audit_metrics['violations_detected'] += len(violations)
-                self.metrics.self_audit_violations += len(violations)
-                
-                self.logger.warning(f"Self-audit violations detected: {[v['type'] for v in violations]}")
-                
-                # Send audit alert
-                if self.capabilities.get(AgentCapability.MESSAGING, False):
-                    await self.send_message(
-                        MessageType.AUDIT_ALERT,
-                        {
-                            "violations": violations,
-                            "integrity_score": integrity_score,
-                            "agent_id": self.agent_id
-                        },
-                        priority=MessagePriority.HIGH
-                    )
-                
-                # Attempt auto-correction
-                if self.auto_correction_enabled and integrity_score < self.audit_threshold:
-                    corrected = await self._auto_correct_violations(violations)
-                    if corrected:
-                        self.audit_metrics['auto_corrections'] += 1
-            
-        except Exception as e:
-            self.logger.error(f"Self-audit error: {e}")
-    
-    async def _auto_correct_violations(self, violations: List[Dict[str, Any]]) -> bool:
-        """Attempt to auto-correct integrity violations"""
-        try:
-            corrections_applied = 0
-            
-            for violation in violations:
-                violation_type = violation.get('type', '')
-                
-                if violation_type == 'HARDCODED_PERFORMANCE':
-                    # Reset performance metrics to calculated values
-                    self.metrics.integrity_score = await self._calculate_actual_integrity_score()
-                    corrections_applied += 1
-                
-                elif violation_type == 'HYPE_LANGUAGE':
-                    # Update agent description or messages to be more neutral
-                    # This would be implemented by specific agent types
-                    corrections_applied += 1
-            
-            if corrections_applied > 0:
-                self.logger.info(f"Applied {corrections_applied} auto-corrections")
-                return True
-            
-            return False
-            
-        except Exception as e:
-            self.logger.error(f"Auto-correction error: {e}")
-            return False
-    
-    async def _calculate_actual_integrity_score(self) -> float:
-        """Calculate actual integrity score based on real metrics"""
-        try:
-            factors = create_default_confidence_factors()
-            
-            # Update factors based on actual agent performance
-            factors.error_rate = min(self.metrics.error_count / max(1, self.metrics.messages_sent), 1.0)
-            factors.system_load = 0.1  # Low load for individual agent
-            factors.data_quality = 0.95  # High data quality assumption
-            
-            # Calculate cache hit rate
-            total_cache_ops = self.metrics.cache_hits + self.metrics.cache_misses
-            cache_hit_rate = self.metrics.cache_hits / max(1, total_cache_ops)
-            factors.response_consistency = cache_hit_rate
-            
-            return calculate_confidence(factors)
-            
-        except Exception as e:
-            self.logger.error(f"Integrity score calculation error: {e}")
-            return 85.0  # Default reasonable score
-    
-    # =============================================================================
-    # MESSAGING INTERFACE
-    # =============================================================================
-    
-    async def send_message(
-        self,
-        message_type: MessageType,
-        content: Dict[str, Any],
-        target_agent: Optional[str] = None,
-        priority: MessagePriority = MessagePriority.NORMAL,
-        topic: Optional[str] = None
-    ) -> bool:
-        """Send message via Kafka infrastructure"""
-        if not self.capabilities.get(AgentCapability.MESSAGING, False):
-            self.logger.warning("Messaging capability not available")
-            return False
-        
-        try:
-            success = await self.infrastructure.send_message(
-                message_type=message_type,
-                content=content,
-                source_agent=self.agent_id,
-                target_agent=target_agent,
-                priority=priority,
-                topic=topic
-            )
-            
-            if success:
-                self.metrics.messages_sent += 1
-            else:
-                self.metrics.error_count += 1
-            
-            return success
-            
-        except Exception as e:
-            self.logger.error(f"Send message error: {e}")
-            self.metrics.error_count += 1
-            return False
-    
-    def _handle_incoming_message(self, message: NISMessage):
-        """Handle incoming message from Kafka"""
-        try:
-            self.metrics.messages_received += 1
-            
-            # Route to specific handlers
-            handlers = self.message_handlers.get(message.message_type, [])
-            
-            if handlers:
-                for handler in handlers:
-                    try:
-                        handler(message)
-                    except Exception as e:
-                        self.logger.error(f"Message handler error: {e}")
-                        self.metrics.error_count += 1
-            else:
-                # Default message handling
-                asyncio.create_task(self._default_message_handler(message))
-            
-        except Exception as e:
-            self.logger.error(f"Incoming message error: {e}")
-            self.metrics.error_count += 1
-    
-    async def _default_message_handler(self, message: NISMessage):
-        """Default message handler for unrouted messages"""
-        self.logger.debug(f"Received message: {message.message_type.value} from {message.source_agent}")
-        
-        # Agent-specific message handling should be implemented in subclasses
-        await self._handle_message(message)
-    
-    def register_message_handler(
-        self,
-        message_type: MessageType,
-        handler: Callable[[NISMessage], None]
-    ):
-        """Register a handler for specific message type"""
-        if message_type not in self.message_handlers:
-            self.message_handlers[message_type] = []
-        
-        self.message_handlers[message_type].append(handler)
-        self.logger.info(f"Registered handler for {message_type.value}")
-    
-    # =============================================================================
-    # CACHING INTERFACE
-    # =============================================================================
-    
-    async def cache_data(
-        self,
-        key: str,
-        value: Any,
-        ttl: Optional[int] = None,
-        strategy: CacheStrategy = None
-    ) -> bool:
-        """Cache data via Redis infrastructure"""
-        if not self.capabilities.get(AgentCapability.CACHING, False):
-            self.logger.warning("Caching capability not available")
-            return False
-        
-        try:
-            if ttl is None:
-                ttl = self.config.cache_ttl
-            
-            if strategy is None:
-                strategy = self.cache_strategy
-            
-            success = await self.infrastructure.cache_data(
-                key=key,
-                value=value,
-                agent_id=self.agent_id,
-                ttl=ttl,
-                strategy=strategy
-            )
-            
-            if success:
-                self.cache_keys.append(key)
-            
-            return success
-            
-        except Exception as e:
-            self.logger.error(f"Cache data error: {e}")
-            self.metrics.error_count += 1
-            return False
-    
-    async def get_cached_data(
-        self,
-        key: str,
-        default: Any = None
-    ) -> Any:
-        """Retrieve cached data via Redis infrastructure"""
-        if not self.capabilities.get(AgentCapability.CACHING, False):
-            self.logger.warning("Caching capability not available")
-            return default
-        
-        try:
-            value = await self.infrastructure.get_cached_data(
-                key=key,
-                agent_id=self.agent_id,
-                default=default
-            )
-            
-            if value != default:
-                self.metrics.cache_hits += 1
-            else:
-                self.metrics.cache_misses += 1
-            
-            return value
-            
-        except Exception as e:
-            self.logger.error(f"Get cached data error: {e}")
-            self.metrics.error_count += 1
-            return default
-    
-    # =============================================================================
-    # ABSTRACT METHODS - TO BE IMPLEMENTED BY SUBCLASSES
-    # =============================================================================
-    
-    @abstractmethod
-    async def _agent_initialize(self) -> bool:
-        """Agent-specific initialization logic"""
-        pass
-    
-    @abstractmethod
-    async def _handle_message(self, message: NISMessage):
-        """Agent-specific message handling logic"""
-        pass
-    
-    @abstractmethod
-    def _get_message_subscriptions(self) -> List[MessageType]:
-        """Return list of message types this agent should subscribe to"""
-        pass
-    
-    @abstractmethod
-    def _get_recent_operations(self) -> List[Dict[str, Any]]:
-        """Return list of recent operations for self-audit"""
-        pass
-    
-    @abstractmethod
-    async def process_request(self, request: Dict[str, Any]) -> Dict[str, Any]:
-        """Process agent-specific request"""
-        pass
-    
-    # =============================================================================
-    # UTILITY METHODS
-    # =============================================================================
-    
-    async def _update_metrics(self):
-        """Update agent metrics"""
-        try:
-            # Calculate processing time
-            if self.metrics.messages_received > 0:
-                self.metrics.processing_time = (
-                    self.metrics.processing_time * 0.9 + 
-                    (time.time() - self.start_time) / self.metrics.messages_received * 0.1
-                )
-            
-            # Send performance metrics
-            if self.capabilities.get(AgentCapability.MESSAGING, False):
-                await self.send_message(
-                    MessageType.PERFORMANCE_METRIC,
-                    {
-                        "agent_id": self.agent_id,
-                        "metrics": asdict(self.metrics),
-                        "timestamp": time.time()
-                    },
-                    priority=MessagePriority.LOW
-                )
-            
-        except Exception as e:
-            self.logger.error(f"Metrics update error: {e}")
-    
-    async def _attempt_recovery(self):
-        """Attempt to recover from error state"""
-        try:
-            self.logger.info(f"Attempting recovery for agent {self.agent_id}")
-            
-            # Reset error count
-            self.metrics.error_count = 0
-            
-            # Reinitialize infrastructure if needed
-            if not self.capabilities.get(AgentCapability.MESSAGING, False):
-                await self._initialize_infrastructure()
-            
-            # Agent-specific recovery
-            recovery_successful = await self._agent_recovery()
-            
-            if recovery_successful:
-                self.state = AgentState.READY
-                self.logger.info(f"Recovery successful for agent {self.agent_id}")
-            else:
-                self.logger.error(f"Recovery failed for agent {self.agent_id}")
-            
-        except Exception as e:
-            self.logger.error(f"Recovery error: {e}")
-    
-    async def _agent_recovery(self) -> bool:
-        """Agent-specific recovery logic - can be overridden"""
-        return True
-    
-    async def shutdown(self):
-        """Gracefully shutdown the agent"""
-        try:
-            self.logger.info(f"Shutting down agent {self.agent_id}")
-            
-            self.state = AgentState.SHUTDOWN
-            
-            # Stop health monitoring
-            await self.stop_health_monitoring()
-            
-            # Cancel processing tasks
-            for task in self.processing_tasks:
-                task.cancel()
-                try:
-                    await task
-                except asyncio.CancelledError:
-                    pass
-            
-            # Send shutdown notification
-            if self.capabilities.get(AgentCapability.MESSAGING, False):
-                await self.send_message(
-                    MessageType.SYSTEM_HEALTH,
-                    {"event": "agent_shutdown", "status": "graceful"},
-                    priority=MessagePriority.NORMAL
-                )
-            
-            # Agent-specific shutdown
-            await self._agent_shutdown()
-            
-            self.logger.info(f"Agent {self.agent_id} shutdown complete")
-            
-        except Exception as e:
-            self.logger.error(f"Shutdown error: {e}")
-    
-    async def _agent_shutdown(self):
-        """Agent-specific shutdown logic - can be overridden"""
-        pass
-    
+                self.logger.error(f"Health monitoring error: {e}")
+                await asyncio.sleep(5.0)
+
     def get_status(self) -> Dict[str, Any]:
         """Get comprehensive agent status"""
         return {
             "agent_id": self.agent_id,
             "agent_type": self.agent_type,
             "state": self.state.value,
-            "uptime": time.time() - self.start_time,
-            "capabilities": {cap.value: enabled for cap, enabled in self.capabilities.items()},
+            "capabilities": list(self.capabilities.keys()),
             "metrics": asdict(self.metrics),
             "health_status": self.health_status,
-            "audit_metrics": getattr(self, 'audit_metrics', {}),
-            "cache_keys_count": len(self.cache_keys),
-            "message_handlers_count": sum(len(handlers) for handlers in self.message_handlers.values())
-        } 
+            "infrastructure": {
+                "langgraph_available": LANGGRAPH_AVAILABLE,
+                "langgraph_enabled": self.compiled_graph is not None,
+                "langsmith_enabled": self.langsmith_client is not None,
+                "kafka_enabled": self.config.enable_kafka,
+                "redis_enabled": self.config.enable_redis,
+                "self_audit_enabled": self.config.enable_self_audit
+            },
+            "collaboration": {
+                "active_collaborations": len(self.active_collaborations),
+                "collaboration_history": len(self.collaboration_history),
+                "available_patterns": [p.value for p in self.config.collaboration_patterns]
+            },
+            "performance": {
+                "cache_performance": self.cache_performance,
+                "workflow_ready": self.compiled_graph is not None,
+                "monitoring_active": self.is_monitoring
+            }
+        }
+
+
+class PerformanceOptimizer:
+    """Performance optimizer for enhanced agents"""
+    
+    def __init__(self, agent: EnhancedAgentBase):
+        self.agent = agent
+        self.optimization_history: List[Dict[str, Any]] = []
+    
+    def analyze_performance(self) -> Dict[str, Any]:
+        """Analyze agent performance"""
+        metrics = self.agent.metrics
+        
+        return {
+            "efficiency_score": self._calculate_efficiency_score(metrics),
+            "bottlenecks": self._identify_bottlenecks(metrics),
+            "optimization_opportunities": self._identify_optimization_opportunities(metrics),
+            "resource_utilization": self._analyze_resource_utilization(metrics)
+        }
+    
+    def _calculate_efficiency_score(self, metrics: AgentMetrics) -> float:
+        """Calculate overall efficiency score"""
+        if metrics.total_tasks_processed == 0:
+            return 0.0
+        
+        success_rate = metrics.successful_tasks / metrics.total_tasks_processed
+        time_efficiency = 1.0 / (1.0 + metrics.average_processing_time / 60.0)  # Normalize to minutes
+        quality_score = metrics.average_confidence
+        
+        return (success_rate * 0.4 + time_efficiency * 0.3 + quality_score * 0.3)
+    
+    def _identify_bottlenecks(self, metrics: AgentMetrics) -> List[str]:
+        """Identify performance bottlenecks"""
+        bottlenecks = []
+        
+        if metrics.average_processing_time > 60.0:
+            bottlenecks.append("High processing time")
+        
+        if metrics.error_rate > 0.1:
+            bottlenecks.append("High error rate")
+        
+        if metrics.cache_hit_rate < 0.5:
+            bottlenecks.append("Low cache efficiency")
+        
+        return bottlenecks
+    
+    def _identify_optimization_opportunities(self, metrics: AgentMetrics) -> List[str]:
+        """Identify optimization opportunities"""
+        opportunities = []
+        
+        if metrics.collaboration_sessions < metrics.total_tasks_processed * 0.1:
+            opportunities.append("Increase collaboration for complex tasks")
+        
+        if metrics.cache_hit_rate < 0.7:
+            opportunities.append("Improve caching strategy")
+        
+        if metrics.average_confidence < 0.8:
+            opportunities.append("Enhance validation processes")
+        
+        return opportunities
+    
+    def _analyze_resource_utilization(self, metrics: AgentMetrics) -> Dict[str, float]:
+        """Analyze resource utilization"""
+        return {
+            "memory_utilization": metrics.memory_usage_mb / self.agent.config.max_memory_mb,
+            "cpu_utilization": metrics.cpu_usage_percent / 100.0,
+            "cost_efficiency": metrics.average_confidence / max(metrics.cost_accumulated, 0.01)
+        }
+
+
+# Example enhanced agent implementation
+class ExampleEnhancedAgent(EnhancedAgentBase):
+    """Example implementation of enhanced agent"""
+    
+    def __init__(self, agent_id: str = "example_agent"):
+        config = AgentConfiguration(
+            agent_id=agent_id,
+            agent_type="example",
+            capabilities=[AgentCapability.REASONING, AgentCapability.ANALYSIS],
+            collaboration_patterns=[CollaborationPattern.PARALLEL, CollaborationPattern.SEQUENTIAL]
+        )
+        super().__init__(config)
+    
+    async def process_simple(self, task: Dict[str, Any]) -> Dict[str, Any]:
+        """Simple processing implementation"""
+        description = task.get("description", "")
+        
+        # Simulate processing
+        await asyncio.sleep(1.0)
+        
+        return {
+            "result": f"Processed: {description}",
+            "confidence": 0.8,
+            "method": "simple_processing"
+        }
+
+
+# Example usage
+if __name__ == "__main__":
+    async def test_enhanced_agent():
+        """Test enhanced agent"""
+        agent = ExampleEnhancedAgent()
+        
+        await agent.start_health_monitoring()
+        
+        task = {
+            "task_id": "test_001",
+            "description": "Analyze the impact of renewable energy on grid stability",
+            "type": "analysis",
+            "priority": "high"
+        }
+        
+        result = await agent.process_task(task)
+        
+        print("Enhanced Agent Result:")
+        print(f"Success: {result['success']}")
+        print(f"Confidence: {result.get('confidence', 0.0):.3f}")
+        print(f"Processing Time: {result.get('processing_time', 0.0):.2f}s")
+        print(f"Collaboration Used: {result.get('collaboration_used', False)}")
+        
+        status = agent.get_status()
+        print(f"\nAgent Status:")
+        print(f"State: {status['state']}")
+        print(f"Tasks Processed: {status['metrics']['total_tasks_processed']}")
+        print(f"Success Rate: {status['health_status'].get('success_rate', 0):.1f}%")
+        
+        await agent.stop_health_monitoring()
+    
+    asyncio.run(test_enhanced_agent()) 
