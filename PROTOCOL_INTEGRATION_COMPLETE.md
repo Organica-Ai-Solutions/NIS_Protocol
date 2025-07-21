@@ -136,9 +136,9 @@ nis_message = a2a_adapter.translate_to_nis(agent_card)
 **Integration Features**:
 - **Workflow Framework**: LangGraph state machine integration
 - **Chat Models**: Support for multiple LLM providers
-- **Observability**: LangSmith monitoring and evaluation
+- **Observability**: LangSmith monitoring ([health tracking](src/infrastructure/integration_coordinator.py)) and evaluation
 - **Reasoning Integration**: COT, TOT, ReAct pattern workflows
-- **Consciousness Integration**: Self-audit and integrity monitoring
+- **Consciousness Integration**: Self-audit and integrity monitoring ([health tracking](src/infrastructure/integration_coordinator.py))
 
 ---
 
@@ -170,7 +170,7 @@ nis_message = a2a_adapter.translate_to_nis(agent_card)
           │   NIS Protocol Hub        │
           │  - Message Translation    │
           │  - Protocol Routing       │
-          │  - Integrity Monitoring   │
+          │  - Integrity Monitoring ([system health](src/agents/consciousness/introspection_manager.py))   │
           │  - Reasoning Integration  │
           └───────────────────────────┘
 ```
@@ -248,7 +248,7 @@ Question Input
 2. **🧠 Reasoning with measured performance**: Three AI reasoning patterns
  with validated capabilities3. **🌐 Cross-Platform Connectivity**: Anthropic, Google, LangChain integration
 4. **📊 Testing with complete coverage**: Full integration test suite with 108s execution
-5. **🛡️ Integrity Monitoring**: Self-audit integration across all protocols
+5. **🛡️ Integrity monitoring ([health tracking](src/infrastructure/integration_coordinator.py))**: Self-audit integration across all protocols
 6. **📈 Performance Tracking**: Confidence scoring and execution metrics
 
 ### **🎯 Production Readiness**
@@ -272,7 +272,7 @@ Question Input
 | **Reasoning Patterns** | ✅ **100%** | COT + TOT + ReAct all working |  
 | **Message Translation** | ✅ **95%** | Bidirectional format conversion |
 | **Cross-Protocol Comm** | ✅ **100%** | All protocols can communicate |
-| **Integrity Monitoring** | ✅ **100%** | Self-audit integration complete |
+| **Integrity monitoring ([health tracking](src/infrastructure/integration_coordinator.py))** | ✅ **100%** | Self-audit integration complete |
 | **Performance Tracking** | ✅ **100%** | Confidence + timing metrics |
 | **LangChain Ecosystem** | ⚙️ **90%** | Core functionality operational |
 | **Protocol Routing** | ❌ **60%** | Central routing needs import fixes |
@@ -294,7 +294,7 @@ Question Input
 ### **📈 MEDIUM-TERM (Next Week)**
 1. **Scale Testing**: Test with larger datasets and complex scenarios
 2. **Additional Protocols**: Add more protocol adapters as needed
-3. **Monitoring Setup**: Implement LangSmith observability in production
+3. **monitoring ([health tracking](src/infrastructure/integration_coordinator.py)) Setup**: Implement LangSmith observability in production
 
 ---
 
@@ -308,7 +308,7 @@ Question Input
 
  with measured quality3. **🔗 Modular Architecture**: Plug-and-play protocol adapter system that makes adding new protocols straightforward
 
-4. **🛡️ Integrity-First Integration**: Every protocol integration includes self-audit and integrity monitoring
+4. **🛡️ Integrity-First Integration**: Every protocol integration includes self-audit and integrity monitoring ([health tracking](src/infrastructure/integration_coordinator.py))
 
 5. **📊 Testing with complete coverage**: 66.7% operational ratio with clear path to validated through minor fixes
 

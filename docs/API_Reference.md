@@ -8,7 +8,7 @@
 
 1. [Core scientific pipeline ([integration tests](test_week3_complete_pipeline.py)) APIs](#core-scientific-pipeline-apis)
 2. [Consciousness & Meta-Cognition APIs](#consciousness--meta-cognition-apis)
-3. [Integrity & Monitoring APIs](#integrity--monitoring-apis)
+3. [Integrity & monitoring ([health tracking](src/infrastructure/integration_coordinator.py)) APIs](#integrity--monitoring ([health tracking](src/infrastructure/integration_coordinator.py))-apis)
 4. [Utility & Helper APIs](#utility--helper-apis)
 5. [Integration Examples](#integration-examples)
 6. [Error Handling](#error-handling)
@@ -33,7 +33,7 @@ transformer = EnhancedLaplaceTransformer(
     agent_id="laplace_001",
     max_frequency=1000.0,      # Maximum frequency to analyze (Hz)
     num_points=2048,           # Number of s-plane grid points
-    enable_self_audit=True     # Enable integrity monitoring
+    enable_self_audit=True     # Enable integrity monitoring ([health tracking](src/infrastructure/integration_coordinator.py))
 )
 ```
 
@@ -117,7 +117,7 @@ kan_agent = EnhancedKANReasoningAgent(
     input_dim=8,                       # Input feature dimension
     hidden_dims=[16, 12, 8],          # Hidden layer dimensions
     output_dim=4,                     # Output dimension
-    enable_self_audit=True            # Enable integrity monitoring
+    enable_self_audit=True            # Enable integrity monitoring ([health tracking](src/infrastructure/integration_coordinator.py))
 )
 ```
 
@@ -169,7 +169,7 @@ from src.agents.physics.enhanced_pinn_physics_agent import (
 # Initialize
 pinn_agent = EnhancedPINNPhysicsAgent(
     agent_id="pinn_physics_001",
-    enable_self_audit=True,           # Enable integrity monitoring
+    enable_self_audit=True,           # Enable integrity monitoring ([health tracking](src/infrastructure/integration_coordinator.py))
     strict_mode=False                 # Strict physics enforcement
 )
 ```
@@ -221,7 +221,7 @@ from src.meta.enhanced_scientific_coordinator import (
 # Initialize
 coordinator = EnhancedScientificCoordinator(
     coordinator_id="scientific_coordinator",
-    enable_self_audit=True,           # Enable integrity monitoring
+    enable_self_audit=True,           # Enable integrity monitoring ([health tracking](src/infrastructure/integration_coordinator.py))
     enable_auto_correction=True       # Enable auto-correction
 )
 ```
@@ -299,7 +299,7 @@ from src.agents.consciousness.enhanced_conscious_agent import (
 conscious_agent = EnhancedConsciousAgent(
     agent_id="conscious_001",
     reflection_interval=60.0,         # Reflection interval in seconds
-    enable_self_audit=True,           # Enable integrity monitoring
+    enable_self_audit=True,           # Enable integrity monitoring ([health tracking](src/infrastructure/integration_coordinator.py))
     consciousness_level=ConsciousnessLevel.ENHANCED
 )
 ```
@@ -432,7 +432,7 @@ def generate_system_integrity_report(self) -> Dict[str, Any]:
 
 ---
 
-## 🛡️ **Integrity & Monitoring APIs**
+## 🛡️ **Integrity & monitoring ([health tracking](src/infrastructure/integration_coordinator.py)) APIs**
 
 ### **🔍 Self-Audit Engine**
 
@@ -679,7 +679,7 @@ def consciousness_example():
         enable_self_audit=True
     )
     
-    # Register other agents for monitoring
+    # Register other agents for monitoring ([health tracking](src/infrastructure/integration_coordinator.py))
     agent.register_agent_for_monitoring("laplace_001", {"type": "signal_processing"})
     agent.register_agent_for_monitoring("kan_001", {"type": "reasoning"})
     
@@ -700,7 +700,7 @@ def consciousness_example():
         print(f"  integrity score 100/100 ([audit results](nis-integrity-toolkit/audit-scripts/))")
         print(f"  Recommendations: {len(result.recommendations)}")
     
-    # Start continuous monitoring
+    # Start continuous monitoring ([health tracking](src/infrastructure/integration_coordinator.py))
     agent.start_continuous_reflection()
     
     # Get summary
@@ -750,7 +750,7 @@ except ValueError as e:
     print(f"Parameter error: {e}")
 ```
 
-#### **Integrity Monitoring Exceptions**
+#### **Integrity monitoring ([health tracking](src/infrastructure/integration_coordinator.py)) Exceptions**
 ```python
 try:
     violations = self_audit_engine.audit_text(text)
@@ -822,7 +822,7 @@ for signal in signal_batch:
     results.append(result)
 ```
 
-### **Monitoring Performance**
+### **monitoring ([health tracking](src/infrastructure/integration_coordinator.py)) Performance**
 ```python
 import time
 

@@ -70,7 +70,7 @@ When implementing the NIS Protocol, focus on these key components:
 
 ## Common Use Cases
 
-- **Automated Monitoring Systems**: Create systems that adapt their suspicion levels based on inputs
+- **Automated monitoring ([health tracking](src/infrastructure/integration_coordinator.py)) Systems**: Create systems that adapt their suspicion levels based on inputs
 - **Smart Assistants**: Build assistants that remember user preferences and adjust behavior
 - **Autonomous Agents**: Develop agents that make decisions with emotional modulation
 

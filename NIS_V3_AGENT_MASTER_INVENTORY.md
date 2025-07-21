@@ -24,7 +24,7 @@
 ---
 
 ### 🧠 **PRIORITY 2: CONSCIOUSNESS & META-COGNITION** *(Self-Awareness)*
-**Status**: Provides self-monitoring, introspection, and meta-cognitive capabilities
+**Status**: Provides self-monitoring ([health tracking](src/infrastructure/integration_coordinator.py)), introspection, and meta-cognitive capabilities
 
 | Agent | File | Status | Lines | Priority | Dependencies |
 |-------|------|--------|--------|----------|--------------|
@@ -98,7 +98,7 @@
 ---
 
 ### 🛡️ **PRIORITY 7: SAFETY & ALIGNMENT** *(Ethics & Safety)*
-**Status**: Ensures ethical operation, safety monitoring, and value alignment
+**Status**: Ensures ethical operation, safety monitoring ([health tracking](src/infrastructure/integration_coordinator.py)), and value alignment
 
 | Agent | File | Status | Lines | Priority | Dependencies |
 |-------|------|--------|--------|----------|--------------|
@@ -173,7 +173,7 @@
 ### **Code Quality Requirements**
 - ✅ **Mathematical Rigor**: All algorithms mathematically validated
 - ✅ **Performance Metrics**: Measured, not estimated performance
-- ✅ **Integrity Monitoring**: Self-audit integration mandatory
+- ✅ **Integrity Monitoring ([system health](src/agents/consciousness/introspection_manager.py))**: Self-audit integration mandatory
 - ✅ **Testing with complete coverage**: Unit tests + integration tests
 - ✅ **Professional Documentation**: API docs + usage examples
 

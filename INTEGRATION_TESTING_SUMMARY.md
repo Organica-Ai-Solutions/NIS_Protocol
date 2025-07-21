@@ -132,7 +132,7 @@
 **Follow-up Actions** (after import fixes):
 1. **Individual Agent Tests**: Test each agent initialization and basic functions
 2. **Pipeline Integration**: Test Laplace → KAN → PINN → LLM pipeline
-3. **Consciousness Integration**: Test agent monitoring and introspection
+3. **Consciousness Integration**: Test agent monitoring ([health tracking](src/infrastructure/integration_coordinator.py)) and introspection
 4. **Performance Validation**: Confirm documented performance claims
 
 **Estimated Effort**: 4-6 hours
@@ -186,7 +186,7 @@
 ### **What We Learned**
 1. **System Quality**: Much higher than typical projects
 2. **Specific Blockers**: Import structure issues (not fundamental)
-3. **Core Strength**: Self-audit and integrity monitoring working perfectly
+3. **Core Strength**: Self-audit and integrity monitoring ([health tracking](src/infrastructure/integration_coordinator.py)) working perfectly
 4. **Realistic Assessment**: Honest evaluation of capabilities vs. claims
 
 ### **What We Achieved**

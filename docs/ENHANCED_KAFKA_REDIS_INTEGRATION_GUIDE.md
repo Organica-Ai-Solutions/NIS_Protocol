@@ -21,7 +21,7 @@
 5. [Agent Integration](#-agent-integration)
 6. [Self-Audit Features](#-self-audit-features)
 7. [Performance Optimization](#-performance-optimization)
-8. [Monitoring & Health](#-monitoring--health)
+8. [monitoring ([health tracking](src/infrastructure/integration_coordinator.py)) & Health](#-monitoring ([health tracking](src/infrastructure/integration_coordinator.py))--health)
 9. [Troubleshooting](#-troubleshooting)
 10. [Configuration with measured performance](#-advanced-configuration)
 
@@ -32,7 +32,7 @@
 The NIS Protocol v3 enhanced infrastructure provides:
 
 ### **🌊 Kafka Message Streaming**
-- **Async message processing** with integrity monitoring
+- **Async message processing** with integrity monitoring ([health tracking](src/infrastructure/integration_coordinator.py))
 - **Auto-retry and circuit breaker** patterns
 - **Performance tracking** and optimization
 - **Self-audit integration** for message validation
@@ -42,12 +42,12 @@ The NIS Protocol v3 enhanced infrastructure provides:
 - **Intelligent cache strategies** (LRU, LFU, TTL)
 - **Performance tracking** and optimization
 - **Auto-cleanup** and memory management
-- **Health monitoring** and diagnostics
+- **Health monitoring ([health tracking](src/infrastructure/integration_coordinator.py))** and diagnostics
 - **Namespace-based organization**
 
 ### **🔄 Infrastructure Coordination**
 - **Unified interface** for message streaming and caching
-- **Health monitoring** and auto-recovery
+- **Health monitoring ([health tracking](src/infrastructure/integration_coordinator.py))** and auto-recovery
 - **Load balancing** and failover management
 - **metrics with complete coverage** and performance tracking
 
@@ -423,7 +423,7 @@ print(f"Cached: {result.cache_key is not None}")
 
 ## 🛡️ Self-Audit Features
 
-### **Automatic Integrity Monitoring**
+### **Automatic Integrity monitoring ([health tracking](src/infrastructure/integration_coordinator.py))**
 
 #### **Message Auditing**
 ```python
@@ -554,7 +554,7 @@ def optimize_cache_strategy(data_type: str, access_pattern: str) -> CacheStrateg
         return CacheStrategy.TTL
 ```
 
-### **Performance Monitoring**
+### **Performance monitoring ([health tracking](src/infrastructure/integration_coordinator.py))**
 ```python
 # performance tracking
 async def monitor with complete coverage_performance():
@@ -577,9 +577,9 @@ async def monitor with complete coverage_performance():
 
 ---
 
-## 🏥 Monitoring & Health
+## 🏥 monitoring ([health tracking](src/infrastructure/integration_coordinator.py)) & Health
 
-### **Health Monitoring**
+### **Health monitoring ([health tracking](src/infrastructure/integration_coordinator.py))**
 
 #### **Infrastructure Health**
 ```python

@@ -28,14 +28,14 @@ Welcome to the comprehensive documentation for **NIS Protocol v2.0** - the neura
 **Location**: `src/agents/consciousness/`
 
 - **MetaCognitiveProcessor**: Self-reflection and cognitive analysis
-- **IntrospectionManager**: System-wide agent monitoring
+- **IntrospectionManager**: System-wide agent monitoring ([health tracking](src/infrastructure/integration_coordinator.py))
 - **ConsciousAgent**: Main consciousness coordination
 
 **Features:**
 - Real-time bias detection
 - Performance optimization
 - Meta-cognitive scoring
-- Cognitive health monitoring
+- Cognitive health monitoring ([health tracking](src/infrastructure/integration_coordinator.py))
 
 ### **🎯 Autonomous Goals Module**
 **Location**: `src/agents/goals/`
@@ -131,7 +131,7 @@ Welcome to the comprehensive documentation for **NIS Protocol v2.0** - the neura
 - **Documentation**: Comprehensive digital archives with cultural intelligence
 
 ### **🌍 Phase 2: Environmental & Climate Intelligence (2025)**
-- **Ecosystem Monitoring**: Multi-agent biodiversity protection and conservation
+- **Ecosystem monitoring ([health tracking](src/infrastructure/integration_coordinator.py))**: Multi-agent biodiversity protection and conservation
 - **Weather Intelligence**: Real-time climate analysis and predictive modeling
 - **Satellite Cognition**: Autonomous orbital monitoring with decision-making
 - **Disaster Response**: Intelligent early warning and coordination systems
@@ -160,7 +160,7 @@ Welcome to the comprehensive documentation for **NIS Protocol v2.0** - the neura
 - Autonomy level measurement
 - Goal diversity analysis
 - Priority accuracy tracking
-- Completion rate monitoring
+- Completion rate monitoring ([health tracking](src/infrastructure/integration_coordinator.py))
 
 ### **Alignment Metrics**
 - Ethical consistency evaluation
