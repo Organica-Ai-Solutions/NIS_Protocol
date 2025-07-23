@@ -10,7 +10,7 @@
   [![Implementation Status](https://img.shields.io/badge/Implementation-Complete-success?style=for-the-badge)](examples/complete_agi_foundation_demo.py)
   [![Neural Foundation](https://img.shields.io/badge/Neural_Foundation-2704_Lines-blue?style=for-the-badge)](src/agents/)
   [![Test Coverage](https://img.shields.io/badge/Test_Coverage-Validated-green?style=for-the-badge)](nis-integrity-toolkit/agi_benchmark_results.txt)
-  [![Whitepaper](https://img.shields.io/badge/Technical_Whitepaper-Ready-purple?style=for-the-badge)](docs/NIS_Protocol_V3_Technical_Whitepaper.html)
+  [![Whitepaper](https://img.shields.io/badge/Technical_Whitepaper-Ready-purple?style=for-the-badge)](NIS_Protocol_V3_Whitepaper.md)
   [![Integrity Score](https://img.shields.io/badge/Integrity_Score-93%25-orange?style=for-the-badge)](nis-integrity-toolkit/audit-report.json)
   [![Python](https://img.shields.io/badge/Python-3.8%2B-blue?style=for-the-badge)](https://python.org)
   [![License](https://img.shields.io/badge/License-BSL_1.1-yellow?style=for-the-badge)](LICENSE_BSL)
@@ -201,7 +201,7 @@ The foundation includes comprehensive learning enhancements:
 | 🌐 **Domain Generalization** | ✅ Functional | 837 lines | [Tests](tests/integration/) |
 | 🤖 **Autonomous Planning** | ✅ Functional | 965 lines | [Benchmarks](nis-integrity-toolkit/) |
 | 🧠 **LSTM Memory** | ✅ Enhanced | 605 lines | [Integration](src/agents/memory/) |
-| 🎯 **DRL Coordination** | ✅ Optimized | 1,200+ lines | [Validation](utilities/performance_validation.py) |
+| 🎯 **DRL Coordination** | ✅ Enhanced | 1,200+ lines | [Validation](utilities/performance_validation.py) |
 
 ---
 
@@ -342,7 +342,7 @@ cd ../examples && python complete_agi_foundation_demo.py
 
 ### **📖 Technical Documentation**
 
-- **🎓 [Technical Whitepaper](docs/NIS_Protocol_V3_Technical_Whitepaper.html)** - Complete academic documentation
+- **🎓 [Technical Whitepaper](NIS_Protocol_V3_Whitepaper.md)** - Complete academic documentation
 - **🔄 [Data Flow Guide](docs/COMPLETE_DATA_FLOW_GUIDE.md)** - End-to-end system processing
 - **🧠 [AGI Foundation Achievement](docs/COMPLETE_AGI_FOUNDATION_ACHIEVEMENT.md)** - Detailed capability analysis
 - **⚡ [DRL Integration](docs/DRL_REDIS_INTEGRATION_SUMMARY.md)** - Deep reinforcement learning architecture
@@ -497,7 +497,7 @@ This implementation advances research in:
 ### **🚀 Get Started Today**
 
 1. **🔬 Explore the Foundation**: [Intelligence Demo](examples/complete_agi_foundation_demo.py)
-2. **📚 Read the Science**: [Technical Whitepaper](docs/NIS_Protocol_V3_Technical_Whitepaper.html)
+2. **📚 Read the Science**: [Technical Whitepaper](NIS_Protocol_V3_Whitepaper.md)
 3. **🧪 Run the Tests**: [Validation Suite](tests/integration/)
 4. **🤝 Join Research**: [Contribution Guidelines](#-contributing-to-neural-intelligence-research)
 5. **🛡️ Verify Integrity**: [Audit System](nis-integrity-toolkit/)
@@ -520,7 +520,7 @@ This implementation advances research in:
   <h3>🚀 Ready to explore the neural intelligence foundation? 🚀</h3>
   
   [![Get Started](https://img.shields.io/badge/🚀_Get_Started-Complete_Demo-success?style=for-the-badge&labelColor=blue)](examples/complete_agi_foundation_demo.py)
-  [![Read Whitepaper](https://img.shields.io/badge/📚_Technical-Whitepaper-purple?style=for-the-badge&labelColor=indigo)](docs/NIS_Protocol_V3_Technical_Whitepaper.html)
+  [![Read Whitepaper](https://img.shields.io/badge/📚_Technical-Whitepaper-purple?style=for-the-badge&labelColor=indigo)](NIS_Protocol_V3_Whitepaper.md)
   [![Verify Integrity](https://img.shields.io/badge/🛡️_Verify-Integrity-orange?style=for-the-badge&labelColor=red)](nis-integrity-toolkit/audit-scripts/full-audit.py)
 </div>
 

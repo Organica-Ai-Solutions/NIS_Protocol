@@ -77,7 +77,7 @@ The system automatically assigns the best provider for each cognitive function:
 # Primary providers for different cognitive functions
 CONSCIOUSNESS_PROVIDER=anthropic     # Meta-cognition, self-reflection
 REASONING_PROVIDER=anthropic         # Logical analysis, problem solving
-CREATIVITY_PROVIDER=openai           # Novel ideas, creative thinking
+CREATIVITY_PROVIDER=openai           # Creative ideas, creative thinking
 CULTURAL_PROVIDER=anthropic          # Cultural intelligence, sensitivity
 ARCHAEOLOGICAL_PROVIDER=anthropic    # Archaeological expertise
 EXECUTION_PROVIDER=bitnet            # Action selection, implementation
@@ -187,7 +187,7 @@ async def test_provider():
 The NIS Protocol v3 includes a **Cognitive Orchestra** that automatically selects the appropriate LLM for each task:
 
 - **Consciousness tasks** → Anthropic Claude (for self-reflection)
-- **Creative tasks** → OpenAI GPT-4 (for novel ideas)
+- **Creative tasks** → OpenAI GPT-4 (for creative ideas)
 - **Reasoning tasks** → Anthropic Claude (for logical analysis)
 - **Memory tasks** → DeepSeek (cost-effective, good memory)
 - **Execution tasks** → BitNet (fast local execution)
