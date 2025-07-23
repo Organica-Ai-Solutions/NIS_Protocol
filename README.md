@@ -113,12 +113,7 @@ The NIS Protocol v3 implements a comprehensive 4-stage scientific processing pip
 
 ---
 
-## 🧠 **ENHANCED LEARNING ARCHITECTURE**
 
-<div align="center">
-  <img src="assets/images/v3_mathematical_foundation/WAVE.PNG" alt="Neural Wave Processing" width="800"/>
-  <p><em>Neural wave processing and temporal pattern recognition</em></p>
-</div>
 
 ### **🔗 LSTM + DRL Enhanced Intelligence**
 
