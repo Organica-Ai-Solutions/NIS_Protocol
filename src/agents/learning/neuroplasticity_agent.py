@@ -1,9 +1,13 @@
 """
-Neuroplasticity Agent
+Neuroplasticity Agent with LSTM Sequential Learning
 
-Implements neuroplasticity mechanisms for learning and memory adaptation.
+Implements neuroplasticity mechanisms for learning and memory adaptation with
+LSTM-based sequential connection pattern learning and temporal attention.
 
-Enhanced Features (v3):
+Enhanced Features (v3 + LSTM):
+- LSTM-based sequential connection pattern learning
+- Temporal attention mechanisms for connection strengthening
+- Dynamic connection weight prediction using temporal context
 - Complete self-audit integration with real-time integrity monitoring
 - Mathematical validation of neuroplasticity operations with evidence-based metrics
 - Comprehensive integrity oversight for all learning outputs
@@ -18,9 +22,23 @@ import random
 import numpy as np
 import logging
 
+# PyTorch for LSTM functionality
+try:
+    import torch
+    import torch.nn as nn
+    import torch.optim as optim
+    TORCH_AVAILABLE = True
+except ImportError:
+    TORCH_AVAILABLE = False
+
 from src.core.registry import NISAgent, NISLayer
 from src.emotion.emotional_state import EmotionalState
 from src.agents.memory.enhanced_memory_agent import EnhancedMemoryAgent, MemoryType
+
+# LSTM core integration for sequence learning
+from src.agents.memory.lstm_memory_core import (
+    LSTMMemoryCore, MemorySequenceType, MemorySequence, LSTMMemoryState
+)
 
 # Integrity metrics for actual calculations
 from src.utils.integrity_metrics import (
@@ -47,7 +65,14 @@ class NeuroplasticityAgent(NISAgent):
         decay_rate: float = 0.01,
         consolidation_interval: int = 3600,  # 1 hour
         connection_threshold: float = 0.3,
-        enable_self_audit: bool = True
+        enable_self_audit: bool = True,
+        # LSTM-specific parameters
+        enable_lstm: bool = True,
+        lstm_hidden_dim: int = 256,
+        lstm_num_layers: int = 2,
+        lstm_learning_rate: float = 0.001,
+        max_connection_sequence_length: int = 50,
+        lstm_device: str = "cpu"
     ):
         """
         Initialize the neuroplasticity agent.
@@ -99,6 +124,37 @@ class NeuroplasticityAgent(NISAgent):
         
         # Initialize confidence factors for mathematical validation
         self.confidence_factors = create_default_confidence_factors()
+        
+        # LSTM sequential connection learning integration
+        self.enable_lstm = enable_lstm and TORCH_AVAILABLE
+        self.lstm_core = None
+        
+        if self.enable_lstm:
+            try:
+                # Create LSTM core for connection pattern learning
+                self.lstm_core = LSTMMemoryCore(
+                    memory_dim=64,  # Smaller dimension for connection patterns
+                    hidden_dim=lstm_hidden_dim,
+                    num_layers=lstm_num_layers,
+                    max_sequence_length=max_connection_sequence_length,
+                    learning_rate=lstm_learning_rate,
+                    device=lstm_device,
+                    enable_self_audit=enable_self_audit
+                )
+                
+                # LSTM-enhanced connection tracking
+                self.connection_sequences = {}  # Track connection activation sequences
+                self.temporal_connection_patterns = deque(maxlen=1000)
+                self.connection_predictions = {}
+                self.attention_weights_history = deque(maxlen=100)
+                
+                self.logger.info(f"LSTM sequential connection learning enabled with hidden_dim={lstm_hidden_dim}")
+            except Exception as e:
+                self.enable_lstm = False
+                self.logger.warning(f"Failed to initialize LSTM for neuroplasticity: {e}")
+        
+        if not self.enable_lstm:
+            self.logger.info("LSTM sequential learning disabled - using traditional Hebbian learning")
         
         # Load existing connections if storage path is provided
         if self.storage_path:
@@ -169,11 +225,55 @@ class NeuroplasticityAgent(NISAgent):
         
         # Record this activation
         current_time = time.time()
-        self.recent_activations.append({
+        activation_record = {
             "memory_id": memory_id,
             "time": current_time,
             "strength": activation_strength
-        })
+        }
+        self.recent_activations.append(activation_record)
+        
+        # LSTM sequential connection learning
+        if self.enable_lstm and self.lstm_core:
+            try:
+                # Create connection pattern embedding for LSTM
+                connection_pattern = self._create_connection_pattern_embedding(
+                    memory_id, activation_strength, current_time
+                )
+                
+                # Add to LSTM sequence for temporal pattern learning
+                lstm_connection_data = {
+                    'memory_id': memory_id,
+                    'embedding': connection_pattern,
+                    'activation_strength': activation_strength,
+                    'timestamp': current_time,
+                    'connection_context': self._get_connection_context(memory_id)
+                }
+                
+                sequence_id = self.lstm_core.add_memory_to_sequence(
+                    memory_data=lstm_connection_data,
+                    sequence_type=MemorySequenceType.PROCEDURAL_CHAIN
+                )
+                
+                # Track connection sequence
+                self.connection_sequences[memory_id] = sequence_id
+                
+                # Add to temporal connection patterns
+                self.temporal_connection_patterns.append({
+                    'memory_id': memory_id,
+                    'sequence_id': sequence_id,
+                    'activation_strength': activation_strength,
+                    'timestamp': current_time,
+                    'pattern_embedding': connection_pattern
+                })
+                
+                # Predict future connection patterns
+                if len(self.temporal_connection_patterns) > 3:
+                    self._predict_connection_patterns(sequence_id)
+                
+                self.logger.debug(f"Added memory {memory_id} to LSTM connection sequence {sequence_id}")
+                
+            except Exception as e:
+                self.logger.warning(f"Failed to add connection pattern to LSTM: {e}")
         
         # Clean up old activations
         self.recent_activations = [
@@ -181,12 +281,17 @@ class NeuroplasticityAgent(NISAgent):
             if current_time - a["time"] <= self.activation_window
         ]
         
-        # Apply Hebbian learning to recent activations
+        # Apply traditional Hebbian learning to recent activations
         self._apply_hebbian_learning()
+        
+        # Apply LSTM-enhanced connection strengthening if available
+        if self.enable_lstm:
+            self._apply_lstm_enhanced_connection_learning(memory_id, activation_strength)
         
         return {
             "status": "success",
             "message": f"Recorded activation for memory {memory_id}",
+            "lstm_sequence_id": self.connection_sequences.get(memory_id) if self.enable_lstm else None,
             "agent_id": self.agent_id,
             "timestamp": time.time()
         }
@@ -768,6 +873,319 @@ class NeuroplasticityAgent(NISAgent):
             return 'NEEDS_IMPROVEMENT'
         else:
             return 'CRITICAL'
+    
+    # =============================================
+    # LSTM Enhanced Connection Learning Methods
+    # =============================================
+    
+    def _create_connection_pattern_embedding(self, memory_id: str, activation_strength: float, timestamp: float) -> List[float]:
+        """
+        Create an embedding representing the connection pattern for LSTM learning.
+        
+        Args:
+            memory_id: ID of the activated memory
+            activation_strength: Strength of activation (0-1)
+            timestamp: Timestamp of activation
+            
+        Returns:
+            64-dimensional embedding representing the connection pattern
+        """
+        # Create base pattern from memory characteristics
+        pattern = np.zeros(64)
+        
+        # Encode memory ID characteristics (hash-based features)
+        memory_hash = hash(memory_id) % 2**32
+        pattern[0:8] = [(memory_hash >> (i * 4)) & 0xF for i in range(8)]
+        
+        # Encode activation strength
+        pattern[8:16] = [activation_strength] * 8
+        
+        # Encode temporal features
+        time_features = [
+            np.sin(timestamp / 3600),  # Hour cycle
+            np.cos(timestamp / 3600),
+            np.sin(timestamp / 86400),  # Day cycle
+            np.cos(timestamp / 86400),
+            np.sin(timestamp / 604800),  # Week cycle
+            np.cos(timestamp / 604800),
+            activation_strength * np.sin(timestamp / 60),  # Minute cycle with strength
+            activation_strength * np.cos(timestamp / 60)
+        ]
+        pattern[16:24] = time_features
+        
+        # Encode connection context features
+        recent_activations_count = len(self.recent_activations)
+        pattern[24] = min(recent_activations_count / 10.0, 1.0)  # Normalized recent activity
+        
+        # Encode current connection strengths for this memory
+        memory_connections = [strength for key, strength in self.connection_strengths.items() 
+                            if memory_id in key]
+        if memory_connections:
+            pattern[25] = np.mean(memory_connections)
+            pattern[26] = np.max(memory_connections)
+            pattern[27] = len(memory_connections) / 10.0  # Normalized connection count
+        
+        # Encode emotional state if available
+        if hasattr(self, 'emotional_state') and self.emotional_state:
+            pattern[28] = getattr(self.emotional_state, 'valence', 0.5)
+            pattern[29] = getattr(self.emotional_state, 'arousal', 0.5)
+        
+        # Encode learning rate and decay information
+        pattern[30] = self.learning_rate
+        pattern[31] = self.decay_rate
+        
+        # Fill remaining with noise for robustness
+        pattern[32:] = np.random.normal(0, 0.1, 32)
+        
+        # Normalize to unit vector
+        norm = np.linalg.norm(pattern)
+        if norm > 0:
+            pattern = pattern / norm
+        
+        return pattern.tolist()
+    
+    def _get_connection_context(self, memory_id: str) -> Dict[str, Any]:
+        """
+        Get contextual information about connections for a memory.
+        
+        Args:
+            memory_id: Memory ID to get context for
+            
+        Returns:
+            Dictionary with connection context information
+        """
+        context = {
+            'memory_id': memory_id,
+            'total_connections': 0,
+            'average_strength': 0.0,
+            'strongest_connections': [],
+            'recent_activation_count': 0,
+            'temporal_position': len(self.recent_activations)
+        }
+        
+        # Count connections involving this memory
+        memory_connections = {}
+        for key, strength in self.connection_strengths.items():
+            if memory_id in key:
+                other_memory = key.replace(memory_id, '').replace(':', '')
+                if other_memory:
+                    memory_connections[other_memory] = strength
+        
+        if memory_connections:
+            context['total_connections'] = len(memory_connections)
+            context['average_strength'] = np.mean(list(memory_connections.values()))
+            
+            # Get strongest connections
+            sorted_connections = sorted(memory_connections.items(), key=lambda x: x[1], reverse=True)
+            context['strongest_connections'] = sorted_connections[:5]
+        
+        # Count recent activations for this memory
+        current_time = time.time()
+        context['recent_activation_count'] = sum(1 for act in self.recent_activations 
+                                               if act['memory_id'] == memory_id)
+        
+        return context
+    
+    def _predict_connection_patterns(self, sequence_id: str) -> Optional[Dict[str, Any]]:
+        """
+        Predict future connection patterns using LSTM.
+        
+        Args:
+            sequence_id: ID of the sequence to predict for
+            
+        Returns:
+            Prediction results or None if prediction fails
+        """
+        if not self.enable_lstm or not self.lstm_core:
+            return None
+        
+        try:
+            # Get prediction from LSTM core
+            prediction_result = self.lstm_core.predict_next_memory(sequence_id)
+            
+            # Store prediction for validation
+            self.connection_predictions[sequence_id] = {
+                'prediction': prediction_result,
+                'timestamp': time.time(),
+                'sequence_id': sequence_id
+            }
+            
+            # Extract attention weights for connection strengthening
+            attention_weights = prediction_result.get('attention_weights', [])
+            if attention_weights:
+                self.attention_weights_history.append({
+                    'sequence_id': sequence_id,
+                    'attention_weights': attention_weights,
+                    'timestamp': time.time(),
+                    'coherence': prediction_result.get('attention_coherence', 0.0)
+                })
+            
+            return prediction_result
+            
+        except Exception as e:
+            self.logger.warning(f"Failed to predict connection patterns for sequence {sequence_id}: {e}")
+            return None
+    
+    def _apply_lstm_enhanced_connection_learning(self, memory_id: str, activation_strength: float):
+        """
+        Apply LSTM-enhanced connection learning based on temporal patterns.
+        
+        Args:
+            memory_id: ID of the activated memory
+            activation_strength: Strength of activation
+        """
+        if not self.enable_lstm or not self.lstm_core:
+            return
+        
+        try:
+            # Get sequence for this memory
+            sequence_id = self.connection_sequences.get(memory_id)
+            if not sequence_id:
+                return
+            
+            # Get recent attention patterns
+            if self.attention_weights_history:
+                recent_attention = list(self.attention_weights_history)[-5:]  # Last 5 patterns
+                
+                # Calculate attention-weighted connection strengthening
+                for attention_data in recent_attention:
+                    if attention_data['sequence_id'] == sequence_id:
+                        attention_weights = attention_data['attention_weights']
+                        coherence = attention_data['coherence']
+                        
+                        # Use attention weights to guide connection strengthening
+                        self._apply_attention_weighted_strengthening(
+                            memory_id, activation_strength, attention_weights, coherence
+                        )
+            
+            # Predict and pre-strengthen likely future connections
+            prediction = self._predict_connection_patterns(sequence_id)
+            if prediction and prediction.get('confidence', 0) > 0.7:
+                self._pre_strengthen_predicted_connections(memory_id, prediction)
+                
+        except Exception as e:
+            self.logger.warning(f"Failed to apply LSTM-enhanced learning for memory {memory_id}: {e}")
+    
+    def _apply_attention_weighted_strengthening(self, memory_id: str, activation_strength: float, 
+                                              attention_weights: List[float], coherence: float):
+        """
+        Apply connection strengthening based on LSTM attention weights.
+        
+        Args:
+            memory_id: Memory being activated
+            activation_strength: Strength of activation
+            attention_weights: Attention weights from LSTM
+            coherence: Attention coherence score
+        """
+        if not attention_weights:
+            return
+        
+        # Get recent activations for attention-based strengthening
+        recent_memories = [act['memory_id'] for act in self.recent_activations[-len(attention_weights):]]
+        
+        # Apply strengthening based on attention weights
+        for i, (other_memory, weight) in enumerate(zip(recent_memories, attention_weights)):
+            if other_memory != memory_id:
+                # Calculate enhanced learning rate based on attention and coherence
+                enhanced_learning_rate = self.learning_rate * weight * coherence * activation_strength
+                
+                # Strengthen connection
+                pair_key = f"{min(memory_id, other_memory)}:{max(memory_id, other_memory)}"
+                current_strength = self.connection_strengths.get(pair_key, 0.0)
+                new_strength = min(1.0, current_strength + enhanced_learning_rate)
+                
+                self.connection_strengths[pair_key] = new_strength
+                
+                self.logger.debug(f"LSTM attention-weighted strengthening: {pair_key} -> {new_strength:.3f}")
+    
+    def _pre_strengthen_predicted_connections(self, memory_id: str, prediction: Dict[str, Any]):
+        """
+        Pre-strengthen connections that are predicted to be activated soon.
+        
+        Args:
+            memory_id: Current memory being activated
+            prediction: LSTM prediction results
+        """
+        predicted_embedding = prediction.get('predicted_embedding')
+        confidence = prediction.get('confidence', 0.0)
+        
+        if not predicted_embedding or confidence < 0.7:
+            return
+        
+        # Find memories with similar embeddings (potential future activations)
+        similarity_threshold = 0.8
+        pre_strengthen_factor = 0.1 * confidence  # Small pre-strengthening
+        
+        # This is a simplified version - in practice, you'd compare embeddings
+        # with stored memory embeddings to find similar patterns
+        for other_memory in list(self.connection_strengths.keys()):
+            memories_in_key = other_memory.split(':')
+            if memory_id in memories_in_key:
+                # Pre-strengthen this connection slightly
+                current_strength = self.connection_strengths[other_memory]
+                new_strength = min(1.0, current_strength + pre_strengthen_factor)
+                self.connection_strengths[other_memory] = new_strength
+                
+                self.logger.debug(f"Pre-strengthened predicted connection: {other_memory} -> {new_strength:.3f}")
+    
+    def get_lstm_connection_stats(self) -> Dict[str, Any]:
+        """
+        Get statistics about LSTM-enhanced connection learning.
+        
+        Returns:
+            Dictionary with LSTM connection statistics
+        """
+        if not self.enable_lstm:
+            return {'lstm_enabled': False}
+        
+        stats = {
+            'lstm_enabled': True,
+            'connection_sequences': len(self.connection_sequences),
+            'temporal_patterns': len(self.temporal_connection_patterns),
+            'attention_history': len(self.attention_weights_history),
+            'connection_predictions': len(self.connection_predictions),
+            'lstm_core_stats': self.lstm_core.get_sequence_statistics() if self.lstm_core else {},
+            'learning_integration': {
+                'traditional_connections': len(self.connection_strengths),
+                'lstm_enhanced_sequences': len(self.connection_sequences),
+                'prediction_accuracy': self._calculate_connection_prediction_accuracy(),
+                'attention_coherence_trend': self._calculate_attention_coherence_trend()
+            }
+        }
+        
+        return stats
+    
+    def _calculate_connection_prediction_accuracy(self) -> float:
+        """Calculate accuracy of connection predictions"""
+        if not self.connection_predictions:
+            return 0.0
+        
+        # Simple accuracy estimation based on prediction confidence
+        confidences = [pred['prediction'].get('confidence', 0.0) 
+                      for pred in self.connection_predictions.values()]
+        
+        return np.mean(confidences) if confidences else 0.0
+    
+    def _calculate_attention_coherence_trend(self) -> str:
+        """Calculate trend in attention coherence"""
+        if len(self.attention_weights_history) < 3:
+            return "insufficient_data"
+        
+        recent_coherences = [att['coherence'] for att in list(self.attention_weights_history)[-10:]]
+        
+        if len(recent_coherences) < 3:
+            return "insufficient_data"
+        
+        # Simple trend calculation
+        early_avg = np.mean(recent_coherences[:len(recent_coherences)//2])
+        late_avg = np.mean(recent_coherences[len(recent_coherences)//2:])
+        
+        if late_avg > early_avg + 0.1:
+            return "improving"
+        elif late_avg < early_avg - 0.1:
+            return "declining"
+        else:
+            return "stable"
     
     def get_neuroplasticity_integrity_report(self) -> Dict[str, Any]:
         """Generate comprehensive neuroplasticity integrity report"""

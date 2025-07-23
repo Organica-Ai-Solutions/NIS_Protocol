@@ -1,10 +1,14 @@
 """
-Enhanced Memory Agent
+Enhanced Memory Agent with LSTM Temporal Modeling
 
-Advanced memory management including semantic search, memory organization, and forgetting.
+Advanced memory management including semantic search, memory organization, forgetting,
+and LSTM-based temporal sequence modeling for enhanced memory prediction and consolidation.
 Inspired by memory systems in cognitive architectures and neuroscience.
 
-Enhanced Features (v3):
+Enhanced Features (v3 + LSTM):
+- LSTM-based temporal sequence modeling for memory patterns
+- Attention mechanisms for selective memory retrieval and prediction
+- Dynamic working memory management with temporal context
 - Complete self-audit integration with real-time integrity monitoring
 - Mathematical validation of memory operations with evidence-based metrics
 - Comprehensive integrity oversight for all memory outputs
@@ -21,10 +25,24 @@ from collections import deque, defaultdict
 import numpy as np
 import math
 
+# PyTorch for LSTM functionality
+try:
+    import torch
+    import torch.nn as nn
+    import torch.optim as optim
+    TORCH_AVAILABLE = True
+except ImportError:
+    TORCH_AVAILABLE = False
+
 from src.core.registry import NISAgent, NISLayer, NISRegistry
 from src.emotion.emotional_state import EmotionalState, EmotionalDimension
 from src.memory.vector_store import VectorStore
 from src.memory.embedding_utils import get_embedding_provider, EmbeddingProvider
+
+# LSTM core integration
+from src.agents.memory.lstm_memory_core import (
+    LSTMMemoryCore, MemorySequenceType, MemorySequence, LSTMMemoryState
+)
 
 # Integrity metrics for actual calculations
 from src.utils.integrity_metrics import (
@@ -45,21 +63,23 @@ class MemoryType:
 
 class EnhancedMemoryAgent(NISAgent):
     """
-    Enhanced agent for advanced memory management with semantic search.
+    Enhanced agent for advanced memory management with LSTM temporal modeling.
     
     Features:
+    - LSTM-based temporal sequence modeling for memory patterns
+    - Attention mechanisms for selective memory retrieval and prediction
     - Semantic search using vector embeddings
     - Memory organization by themes and types
-    - Memory consolidation and forgetting
-    - Importance-based retention
-    - Time-based decay for relevance
-    - Query by similarity, time, or metadata
+    - Memory consolidation and forgetting with temporal context
+    - Importance-based retention with sequence learning
+    - Time-based decay for relevance with LSTM prediction
+    - Query by similarity, time, sequence patterns, or metadata
     """
     
     def __init__(
         self,
         agent_id: str = "memory",
-        description: str = "Enhanced memory system with semantic search capabilities",
+        description: str = "Enhanced memory system with LSTM temporal modeling and semantic search",
         emotional_state: Optional[EmotionalState] = None,
         storage_path: Optional[str] = None,
         embedding_provider: Optional[EmbeddingProvider] = None,
@@ -70,7 +90,14 @@ class EnhancedMemoryAgent(NISAgent):
         consolidation_interval: int = 3600,  # 1 hour
         forgetting_factor: float = 0.05,
         enable_logging: bool = True,
-        enable_self_audit: bool = True
+        enable_self_audit: bool = True,
+        # LSTM-specific parameters
+        enable_lstm: bool = True,
+        lstm_hidden_dim: int = 512,
+        lstm_num_layers: int = 2,
+        lstm_learning_rate: float = 0.001,
+        max_sequence_length: int = 100,
+        lstm_device: str = "cpu"
     ):
         """
         Initialize the enhanced memory agent.
@@ -133,6 +160,37 @@ class EnhancedMemoryAgent(NISAgent):
         self.consolidation_interval = consolidation_interval
         self.forgetting_factor = forgetting_factor
         self.last_consolidation = time.time()
+        
+        # LSTM temporal modeling integration
+        self.enable_lstm = enable_lstm and TORCH_AVAILABLE
+        self.lstm_core = None
+        
+        if self.enable_lstm:
+            try:
+                self.lstm_core = LSTMMemoryCore(
+                    memory_dim=vector_dimensions,
+                    hidden_dim=lstm_hidden_dim,
+                    num_layers=lstm_num_layers,
+                    max_sequence_length=max_sequence_length,
+                    learning_rate=lstm_learning_rate,
+                    device=lstm_device,
+                    enable_self_audit=enable_self_audit
+                )
+                
+                # LSTM-enhanced working memory
+                self.temporal_working_memory = deque(maxlen=working_memory_limit * 2)  # Larger for sequences
+                self.active_memory_sequences = {}
+                self.sequence_predictions = {}
+                
+                if enable_logging:
+                    self.logger.info(f"LSTM temporal modeling enabled with hidden_dim={lstm_hidden_dim}")
+            except Exception as e:
+                self.enable_lstm = False
+                if enable_logging:
+                    self.logger.warning(f"Failed to initialize LSTM core: {e}")
+        
+        if not self.enable_lstm and enable_logging:
+            self.logger.info("LSTM temporal modeling disabled - using traditional memory management")
         
         # Set up logging
         self.enable_logging = enable_logging
@@ -217,6 +275,15 @@ class EnhancedMemoryAgent(NISAgent):
                 result = self._manual_consolidate()
             elif operation == "stats":
                 result = self._get_stats()
+            # LSTM-enhanced operations
+            elif operation == "predict_next":
+                result = self._predict_next_memory(message)
+            elif operation == "predict_sequence":
+                result = self._predict_memory_sequence(message)
+            elif operation == "lstm_stats":
+                result = self._get_lstm_stats()
+            elif operation == "temporal_context":
+                result = self._get_temporal_context(message)
             else:
                 result = {
                     "status": "error",
@@ -403,6 +470,56 @@ class EnhancedMemoryAgent(NISAgent):
         
         # Store in short-term memory
         self.short_term.append(memory)
+        
+        # LSTM temporal sequence learning integration
+        if self.enable_lstm and self.lstm_core and memory["embedding_available"]:
+            try:
+                # Determine sequence type based on memory type and source
+                if memory_type == MemoryType.EPISODIC:
+                    sequence_type = MemorySequenceType.EPISODIC_SEQUENCE
+                elif memory_type == MemoryType.SEMANTIC:
+                    sequence_type = MemorySequenceType.SEMANTIC_PATTERN
+                elif memory_type == MemoryType.PROCEDURAL:
+                    sequence_type = MemorySequenceType.PROCEDURAL_CHAIN
+                else:
+                    sequence_type = MemorySequenceType.CONTEXTUAL_FLOW
+                
+                # Add memory to LSTM sequence for temporal learning
+                lstm_memory_data = {
+                    'memory_id': memory_id,
+                    'embedding': embedding.tolist() if hasattr(embedding, 'tolist') else embedding,
+                    'importance': importance,
+                    'timestamp': timestamp,
+                    'memory_type': memory_type,
+                    'source_agent': source_agent,
+                    'themes': themes
+                }
+                
+                sequence_id = self.lstm_core.add_memory_to_sequence(
+                    memory_data=lstm_memory_data,
+                    sequence_type=sequence_type
+                )
+                
+                # Track sequence for this memory
+                memory["lstm_sequence_id"] = sequence_id
+                self.active_memory_sequences[memory_id] = sequence_id
+                
+                # Add to temporal working memory for LSTM context
+                if add_to_working or importance > 0.6:
+                    self.temporal_working_memory.append({
+                        'memory_id': memory_id,
+                        'sequence_id': sequence_id,
+                        'embedding': embedding.tolist() if hasattr(embedding, 'tolist') else embedding,
+                        'importance': importance,
+                        'timestamp': timestamp
+                    })
+                
+                if self.enable_logging:
+                    self.logger.debug(f"Added memory {memory_id} to LSTM sequence {sequence_id}")
+                    
+            except Exception as e:
+                if self.enable_logging:
+                    self.logger.warning(f"Failed to add memory {memory_id} to LSTM sequence: {e}")
         
         # Add to working memory if requested
         if add_to_working:
@@ -1373,4 +1490,390 @@ class EnhancedMemoryAgent(NISAgent):
             'report_timestamp': time.time()
         }
         
-        return memory_report 
+        return memory_report
+    
+    # =====================
+    # LSTM-Enhanced Methods
+    # =====================
+    
+    def _predict_next_memory(self, message: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Predict the next memory in a sequence using LSTM.
+        
+        Args:
+            message: Message with prediction parameters
+                'sequence_id': Optional specific sequence ID
+                'memory_id': Memory ID to predict from
+                'context': Optional context for prediction
+                
+        Returns:
+            Prediction result with attention weights and confidence
+        """
+        if not self.enable_lstm or not self.lstm_core:
+            return {
+                "status": "error",
+                "error": "LSTM temporal modeling not available",
+                "agent_id": self.agent_id,
+                "timestamp": time.time()
+            }
+        
+        # Get sequence ID
+        sequence_id = message.get("sequence_id")
+        memory_id = message.get("memory_id")
+        context = message.get("context", {})
+        
+        # Find sequence if memory_id provided
+        if not sequence_id and memory_id:
+            sequence_id = self.active_memory_sequences.get(memory_id)
+        
+        # If still no sequence, use most recent active sequence
+        if not sequence_id:
+            if self.active_memory_sequences:
+                # Get most recently accessed sequence
+                latest_memory = max(self.active_memory_sequences.items(), 
+                                  key=lambda x: self._get_memory_timestamp(x[0]))
+                sequence_id = latest_memory[1]
+            else:
+                return {
+                    "status": "error",
+                    "error": "No active memory sequences found for prediction",
+                    "agent_id": self.agent_id,
+                    "timestamp": time.time()
+                }
+        
+        try:
+            # Get prediction from LSTM core
+            prediction_result = self.lstm_core.predict_next_memory(sequence_id, context)
+            
+            # Store prediction for validation
+            self.sequence_predictions[sequence_id] = {
+                'prediction': prediction_result,
+                'timestamp': time.time(),
+                'context': context
+            }
+            
+            return {
+                "status": "success",
+                "sequence_id": sequence_id,
+                "prediction": {
+                    "predicted_embedding": prediction_result.get("predicted_embedding"),
+                    "confidence": prediction_result.get("confidence", 0.0),
+                    "attention_weights": prediction_result.get("attention_weights", []),
+                    "attention_coherence": prediction_result.get("attention_coherence", 0.0),
+                    "temporal_position": prediction_result.get("temporal_position", 0),
+                },
+                "lstm_metadata": prediction_result.get("processing_metadata", {}),
+                "agent_id": self.agent_id,
+                "timestamp": time.time()
+            }
+            
+        except Exception as e:
+            if self.enable_logging:
+                self.logger.error(f"Failed to predict next memory for sequence {sequence_id}: {e}")
+            
+            return {
+                "status": "error",
+                "error": f"Prediction failed: {str(e)}",
+                "sequence_id": sequence_id,
+                "agent_id": self.agent_id,
+                "timestamp": time.time()
+            }
+    
+    def _predict_memory_sequence(self, message: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Predict multiple memories in a sequence.
+        
+        Args:
+            message: Message with sequence prediction parameters
+                'sequence_id': Sequence to predict for
+                'prediction_length': Number of memories to predict (default: 3)
+                'context': Optional context for prediction
+                
+        Returns:
+            Sequence of predictions with confidence scores
+        """
+        if not self.enable_lstm or not self.lstm_core:
+            return {
+                "status": "error",
+                "error": "LSTM temporal modeling not available",
+                "agent_id": self.agent_id,
+                "timestamp": time.time()
+            }
+        
+        sequence_id = message.get("sequence_id")
+        prediction_length = message.get("prediction_length", 3)
+        context = message.get("context", {})
+        
+        if not sequence_id:
+            return {
+                "status": "error",
+                "error": "sequence_id required for sequence prediction",
+                "agent_id": self.agent_id,
+                "timestamp": time.time()
+            }
+        
+        try:
+            predictions = []
+            current_sequence_id = sequence_id
+            
+            # Generate sequence of predictions
+            for i in range(prediction_length):
+                prediction_result = self.lstm_core.predict_next_memory(current_sequence_id, context)
+                
+                predictions.append({
+                    "step": i + 1,
+                    "predicted_embedding": prediction_result.get("predicted_embedding"),
+                    "confidence": prediction_result.get("confidence", 0.0),
+                    "attention_weights": prediction_result.get("attention_weights", []),
+                    "attention_coherence": prediction_result.get("attention_coherence", 0.0)
+                })
+                
+                # Update context for next prediction
+                context["previous_prediction"] = prediction_result
+            
+            # Calculate overall sequence confidence
+            overall_confidence = np.mean([p["confidence"] for p in predictions])
+            overall_coherence = np.mean([p["attention_coherence"] for p in predictions])
+            
+            return {
+                "status": "success",
+                "sequence_id": sequence_id,
+                "prediction_length": prediction_length,
+                "predictions": predictions,
+                "overall_confidence": float(overall_confidence),
+                "overall_coherence": float(overall_coherence),
+                "agent_id": self.agent_id,
+                "timestamp": time.time()
+            }
+            
+        except Exception as e:
+            if self.enable_logging:
+                self.logger.error(f"Failed to predict memory sequence {sequence_id}: {e}")
+            
+            return {
+                "status": "error",
+                "error": f"Sequence prediction failed: {str(e)}",
+                "sequence_id": sequence_id,
+                "agent_id": self.agent_id,
+                "timestamp": time.time()
+            }
+    
+    def _get_lstm_stats(self) -> Dict[str, Any]:
+        """
+        Get LSTM performance statistics and metrics.
+        
+        Returns:
+            Comprehensive LSTM statistics
+        """
+        if not self.enable_lstm or not self.lstm_core:
+            return {
+                "status": "error",
+                "error": "LSTM temporal modeling not available",
+                "agent_id": self.agent_id,
+                "timestamp": time.time()
+            }
+        
+        try:
+            # Get core LSTM statistics
+            lstm_stats = self.lstm_core.get_sequence_statistics()
+            
+            # Add agent-specific LSTM metrics
+            agent_lstm_stats = {
+                "lstm_enabled": self.enable_lstm,
+                "active_sequences": len(self.active_memory_sequences),
+                "temporal_working_memory_size": len(self.temporal_working_memory) if hasattr(self, 'temporal_working_memory') else 0,
+                "prediction_cache_size": len(self.sequence_predictions) if hasattr(self, 'sequence_predictions') else 0,
+                "memory_types_with_sequences": self._count_sequences_by_type(),
+                "lstm_integration_performance": {
+                    "total_memories_in_sequences": sum(1 for _ in self.active_memory_sequences),
+                    "average_sequence_age": self._calculate_average_sequence_age(),
+                    "prediction_accuracy_trend": self._calculate_prediction_accuracy_trend()
+                }
+            }
+            
+            # Combine statistics
+            combined_stats = {
+                "status": "success",
+                "lstm_core_stats": lstm_stats,
+                "agent_lstm_stats": agent_lstm_stats,
+                "integration_health": "good" if lstm_stats.get("total_sequences", 0) > 0 else "initializing",
+                "agent_id": self.agent_id,
+                "timestamp": time.time()
+            }
+            
+            return combined_stats
+            
+        except Exception as e:
+            if self.enable_logging:
+                self.logger.error(f"Failed to get LSTM stats: {e}")
+            
+            return {
+                "status": "error",
+                "error": f"Failed to retrieve LSTM stats: {str(e)}",
+                "agent_id": self.agent_id,
+                "timestamp": time.time()
+            }
+    
+    def _get_temporal_context(self, message: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Get temporal context for memory operations using LSTM.
+        
+        Args:
+            message: Message with context parameters
+                'memory_id': Memory to get context for
+                'context_window': Size of context window (default: 5)
+                
+        Returns:
+            Temporal context information
+        """
+        if not self.enable_lstm or not self.lstm_core:
+            return {
+                "status": "error",
+                "error": "LSTM temporal modeling not available",
+                "agent_id": self.agent_id,
+                "timestamp": time.time()
+            }
+        
+        memory_id = message.get("memory_id")
+        context_window = message.get("context_window", 5)
+        
+        if not memory_id:
+            return {
+                "status": "error",
+                "error": "memory_id required for temporal context",
+                "agent_id": self.agent_id,
+                "timestamp": time.time()
+            }
+        
+        try:
+            # Get sequence for memory
+            sequence_id = self.active_memory_sequences.get(memory_id)
+            if not sequence_id:
+                return {
+                    "status": "error",
+                    "error": f"No sequence found for memory {memory_id}",
+                    "agent_id": self.agent_id,
+                    "timestamp": time.time()
+                }
+            
+            # Get temporal context from working memory
+            temporal_context = []
+            current_time = time.time()
+            
+            # Get recent memories from temporal working memory
+            for entry in list(self.temporal_working_memory)[-context_window:]:
+                if entry.get("sequence_id") == sequence_id:
+                    temporal_context.append({
+                        "memory_id": entry["memory_id"],
+                        "importance": entry["importance"],
+                        "timestamp": entry["timestamp"],
+                        "time_since": current_time - entry["timestamp"],
+                        "relative_position": len(temporal_context)
+                    })
+            
+            # Get prediction if available
+            prediction = self.sequence_predictions.get(sequence_id)
+            
+            return {
+                "status": "success",
+                "memory_id": memory_id,
+                "sequence_id": sequence_id,
+                "temporal_context": temporal_context,
+                "context_window_size": len(temporal_context),
+                "recent_prediction": prediction,
+                "context_coherence": self._calculate_context_coherence(temporal_context),
+                "agent_id": self.agent_id,
+                "timestamp": time.time()
+            }
+            
+        except Exception as e:
+            if self.enable_logging:
+                self.logger.error(f"Failed to get temporal context for memory {memory_id}: {e}")
+            
+            return {
+                "status": "error",
+                "error": f"Failed to get temporal context: {str(e)}",
+                "memory_id": memory_id,
+                "agent_id": self.agent_id,
+                "timestamp": time.time()
+            }
+    
+    # Helper methods for LSTM integration
+    
+    def _get_memory_timestamp(self, memory_id: str) -> float:
+        """Get timestamp for a memory ID"""
+        # Search in short-term memory
+        for memory in self.short_term:
+            if memory.get("memory_id") == memory_id:
+                return memory.get("timestamp", 0.0)
+        
+        # Search in working memory
+        for memory in self.working_memory:
+            if memory.get("memory_id") == memory_id:
+                return memory.get("timestamp", 0.0)
+        
+        return 0.0
+    
+    def _count_sequences_by_type(self) -> Dict[str, int]:
+        """Count active sequences by memory type"""
+        if not hasattr(self, 'lstm_core') or not self.lstm_core:
+            return {}
+        
+        type_counts = defaultdict(int)
+        for sequence in self.lstm_core.memory_sequences.values():
+            type_counts[sequence.sequence_type.value] += 1
+        
+        return dict(type_counts)
+    
+    def _calculate_average_sequence_age(self) -> float:
+        """Calculate average age of active sequences"""
+        if not hasattr(self, 'lstm_core') or not self.lstm_core:
+            return 0.0
+        
+        current_time = time.time()
+        ages = []
+        
+        for sequence in self.lstm_core.memory_sequences.values():
+            if sequence.temporal_order:
+                first_timestamp = min(sequence.temporal_order)
+                age = current_time - first_timestamp
+                ages.append(age)
+        
+        return np.mean(ages) if ages else 0.0
+    
+    def _calculate_prediction_accuracy_trend(self) -> str:
+        """Calculate trend in prediction accuracy"""
+        if not hasattr(self, 'lstm_core') or not self.lstm_core:
+            return "no_data"
+        
+        recent_accuracy = list(self.lstm_core.prediction_accuracy)[-10:] if self.lstm_core.prediction_accuracy else []
+        
+        if len(recent_accuracy) < 3:
+            return "insufficient_data"
+        
+        # Simple trend calculation
+        early_avg = np.mean(recent_accuracy[:len(recent_accuracy)//2])
+        late_avg = np.mean(recent_accuracy[len(recent_accuracy)//2:])
+        
+        if late_avg > early_avg + 0.05:
+            return "improving"
+        elif late_avg < early_avg - 0.05:
+            return "declining"
+        else:
+            return "stable"
+    
+    def _calculate_context_coherence(self, temporal_context: List[Dict[str, Any]]) -> float:
+        """Calculate coherence of temporal context"""
+        if len(temporal_context) < 2:
+            return 1.0
+        
+        # Simple coherence based on temporal ordering and importance
+        importance_values = [ctx["importance"] for ctx in temporal_context]
+        time_gaps = [temporal_context[i+1]["time_since"] - temporal_context[i]["time_since"] 
+                    for i in range(len(temporal_context)-1)]
+        
+        # Coherence is higher when importance is consistent and time gaps are regular
+        importance_coherence = 1.0 - np.std(importance_values)
+        temporal_coherence = 1.0 - (np.std(time_gaps) / max(np.mean(time_gaps), 1.0)) if time_gaps else 1.0
+        
+        return (importance_coherence + temporal_coherence) / 2.0 
