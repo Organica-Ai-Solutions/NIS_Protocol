@@ -111,8 +111,8 @@ COGNITIVE_HARMONY_THRESHOLD=0.7
   FALLBACK_TO_MOCK=true
   ```
 
-### For Research/Advanced Use
-- **Primary:** Anthropic Claude (best reasoning and consciousness)
+### For Research/Specialized Use
+- **Primary:** Anthropic Claude (reasoning and consciousness)
 - **Secondary:** OpenAI GPT-4 (creativity and perception)
 - **Cost-effective:** DeepSeek (memory and execution)
 
@@ -184,11 +184,11 @@ async def test_provider():
 
 ## Cognitive Orchestra
 
-The NIS Protocol v3 includes a **Cognitive Orchestra** that automatically selects the best LLM for each task:
+The NIS Protocol v3 includes a **Cognitive Orchestra** that automatically selects the appropriate LLM for each task:
 
-- **Consciousness tasks** → Anthropic Claude (best for self-reflection)
-- **Creative tasks** → OpenAI GPT-4 (best for novel ideas)
-- **Reasoning tasks** → Anthropic Claude (best for logical analysis)
+- **Consciousness tasks** → Anthropic Claude (for self-reflection)
+- **Creative tasks** → OpenAI GPT-4 (for novel ideas)
+- **Reasoning tasks** → Anthropic Claude (for logical analysis)
 - **Memory tasks** → DeepSeek (cost-effective, good memory)
 - **Execution tasks** → BitNet (fast local execution)
 
