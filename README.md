@@ -13,7 +13,7 @@
   [![Whitepaper](https://img.shields.io/badge/Technical_Whitepaper-Ready-purple?style=for-the-badge)](docs/NIS_Protocol_V3_Technical_Whitepaper.html)
   [![Integrity Score](https://img.shields.io/badge/Integrity_Score-93%25-orange?style=for-the-badge)](nis-integrity-toolkit/audit-report.json)
   [![Python](https://img.shields.io/badge/Python-3.8%2B-blue?style=for-the-badge)](https://python.org)
-  [![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
+  [![License](https://img.shields.io/badge/License-BSL_1.1-yellow?style=for-the-badge)](LICENSE_BSL)
 </div>
 
 ---
@@ -457,9 +457,24 @@ The NIS Protocol v3 foundation enables research toward:
 
 ## 📄 **LICENSING & ATTRIBUTION**
 
-### **📜 MIT License**
+### **📜 Business Source License (BSL 1.1)**
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+**🌍 Free for Research, Education & Open Source**
+- ✅ **Educational use** - Students, researchers, academic institutions
+- ✅ **Personal projects** - Individual experimentation and learning  
+- ✅ **Open source projects** - Non-commercial community contributions
+- ✅ **Research & development** - Scientific and academic research
+
+**🏢 Commercial License Required**
+- 💼 **Production environments** - Business operations and services
+- 🏭 **Commercial products** - Revenue-generating applications
+- ☁️ **SaaS offerings** - Hosted services for customers
+- 🤝 **Enterprise deployments** - Large-scale business use
+
+**⏰ Automatic Transition**
+On January 1, 2029, this work automatically becomes MIT licensed for all uses.
+
+📄 **License Details:** [LICENSE_BSL](LICENSE_BSL) | 💼 **Commercial Licensing:** diego@organicaai.com
 
 ### **🙏 Research Acknowledgments**
 
