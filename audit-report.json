@@ -1,116 +1,16 @@
 {
-  "audit_timestamp": "2025-07-23T17:24:12.695574",
+  "audit_timestamp": "2025-07-23T17:57:53.926270",
   "project_path": ".",
   "issues": [
     {
-      "type": "documentation_hype",
-      "description": "Unsubstantiated advanced claim in COMMERCIAL_LICENSE.md",
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in NIS_Protocol_V3_Whitepaper.md: processing",
       "details": {
-        "file": "COMMERCIAL_LICENSE.md",
-        "term": "improvement"
+        "file": "NIS_Protocol_V3_Whitepaper.md",
+        "claim": "processing"
       },
-      "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.785539"
-    },
-    {
-      "type": "documentation_hype",
-      "description": "Unsubstantiated perfection claim in README.md",
-      "details": {
-        "file": "README.md",
-        "term": "optimized"
-      },
-      "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.792812"
-    },
-    {
-      "type": "documentation_hype",
-      "description": "Unsubstantiated multi-agent system claim in V4_V5_V6_STRATEGIC_SUMMARY.md",
-      "details": {
-        "file": "V4_V5_V6_STRATEGIC_SUMMARY.md",
-        "term": "general intelligence"
-      },
-      "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.797285"
-    },
-    {
-      "type": "documentation_hype",
-      "description": "Unsubstantiated advanced claim in V4_V5_V6_STRATEGIC_SUMMARY.md",
-      "details": {
-        "file": "V4_V5_V6_STRATEGIC_SUMMARY.md",
-        "term": "improvement"
-      },
-      "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.797361"
-    },
-    {
-      "type": "documentation_hype",
-      "description": "Unsubstantiated advanced claim in V4_V5_V6_STRATEGIC_SUMMARY.md",
-      "details": {
-        "file": "V4_V5_V6_STRATEGIC_SUMMARY.md",
-        "term": "novel"
-      },
-      "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.797370"
-    },
-    {
-      "type": "documentation_hype",
-      "description": "Unsubstantiated advanced claim in COMPLETE_DATA_FLOW_GUIDE.md",
-      "details": {
-        "file": "docs/COMPLETE_DATA_FLOW_GUIDE.md",
-        "term": "improvement"
-      },
-      "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.815905"
-    },
-    {
-      "type": "documentation_hype",
-      "description": "Unsubstantiated perfection claim in COMPLETE_DATA_FLOW_GUIDE.md",
-      "details": {
-        "file": "docs/COMPLETE_DATA_FLOW_GUIDE.md",
-        "term": "optimized"
-      },
-      "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.816781"
-    },
-    {
-      "type": "documentation_hype",
-      "description": "Unsubstantiated advanced claim in LLM_SETUP_GUIDE.md",
-      "details": {
-        "file": "docs/LLM_SETUP_GUIDE.md",
-        "term": "novel"
-      },
-      "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.822646"
-    },
-    {
-      "type": "documentation_hype",
-      "description": "Unsubstantiated advanced claim in API_Reference.md",
-      "details": {
-        "file": "docs/API_Reference.md",
-        "term": "improvement"
-      },
-      "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.829086"
-    },
-    {
-      "type": "documentation_hype",
-      "description": "Unsubstantiated advanced claim in DRL_REDIS_INTEGRATION_SUMMARY.md",
-      "details": {
-        "file": "docs/DRL_REDIS_INTEGRATION_SUMMARY.md",
-        "term": "improvement"
-      },
-      "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.837204"
-    },
-    {
-      "type": "documentation_hype",
-      "description": "Unsubstantiated perfection claim in DRL_REDIS_INTEGRATION_SUMMARY.md",
-      "details": {
-        "file": "docs/DRL_REDIS_INTEGRATION_SUMMARY.md",
-        "term": "optimized"
-      },
-      "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.837728"
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-23T17:57:54.062056"
     },
     {
       "type": "unverified_claim",
@@ -120,7 +20,7 @@
         "claim": "Monitoring"
       },
       "severity": "MEDIUM",
-      "timestamp": "2025-07-23T17:24:12.839219"
+      "timestamp": "2025-07-23T17:57:54.115763"
     },
     {
       "type": "unverified_claim",
@@ -130,57 +30,7 @@
         "claim": "monitoring"
       },
       "severity": "MEDIUM",
-      "timestamp": "2025-07-23T17:24:12.839229"
-    },
-    {
-      "type": "documentation_hype",
-      "description": "Unsubstantiated perfection claim in ENHANCED_KAFKA_REDIS_INTEGRATION_GUIDE.md",
-      "details": {
-        "file": "docs/ENHANCED_KAFKA_REDIS_INTEGRATION_GUIDE.md",
-        "term": "optimized"
-      },
-      "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.842448"
-    },
-    {
-      "type": "documentation_hype",
-      "description": "Unsubstantiated multi-agent system claim in V4_V5_V6_IMPLEMENTATION_TRACKER.md",
-      "details": {
-        "file": "docs/V4_V5_V6_IMPLEMENTATION_TRACKER.md",
-        "term": "general intelligence"
-      },
-      "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.850810"
-    },
-    {
-      "type": "documentation_hype",
-      "description": "Unsubstantiated advanced claim in V4_V5_V6_IMPLEMENTATION_TRACKER.md",
-      "details": {
-        "file": "docs/V4_V5_V6_IMPLEMENTATION_TRACKER.md",
-        "term": "improvement"
-      },
-      "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.851039"
-    },
-    {
-      "type": "documentation_hype",
-      "description": "Unsubstantiated advanced claim in V4_V5_V6_IMPLEMENTATION_TRACKER.md",
-      "details": {
-        "file": "docs/V4_V5_V6_IMPLEMENTATION_TRACKER.md",
-        "term": "novel"
-      },
-      "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.851089"
-    },
-    {
-      "type": "documentation_hype",
-      "description": "Unsubstantiated interpretability claim in V4_V5_V6_IMPLEMENTATION_TRACKER.md",
-      "details": {
-        "file": "docs/V4_V5_V6_IMPLEMENTATION_TRACKER.md",
-        "term": "95%+"
-      },
-      "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.852386"
+      "timestamp": "2025-07-23T17:57:54.115835"
     },
     {
       "type": "unverified_claim",
@@ -193,7 +43,7 @@
         ]
       },
       "severity": "MEDIUM",
-      "timestamp": "2025-07-23T17:24:12.853453"
+      "timestamp": "2025-07-23T17:57:54.137208"
     },
     {
       "type": "unverified_claim",
@@ -203,57 +53,7 @@
         "claim": "processing"
       },
       "severity": "MEDIUM",
-      "timestamp": "2025-07-23T17:24:12.854180"
-    },
-    {
-      "type": "documentation_hype",
-      "description": "Unsubstantiated KAN interpretability claim in GETTING_STARTED.md",
-      "details": {
-        "file": "docs/GETTING_STARTED.md",
-        "term": "self-aware"
-      },
-      "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.856800"
-    },
-    {
-      "type": "documentation_hype",
-      "description": "Unsubstantiated multi-agent system claim in GETTING_STARTED.md",
-      "details": {
-        "file": "docs/GETTING_STARTED.md",
-        "term": "general intelligence"
-      },
-      "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.858553"
-    },
-    {
-      "type": "documentation_hype",
-      "description": "Unsubstantiated multi-agent system claim in NIS_Protocol_V3_Technical_Whitepaper.md",
-      "details": {
-        "file": "docs/NIS_Protocol_V3_Technical_Whitepaper.md",
-        "term": "multi-agent system"
-      },
-      "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.874547"
-    },
-    {
-      "type": "documentation_hype",
-      "description": "Unsubstantiated multi-agent system claim in NIS_Protocol_V3_Technical_Whitepaper.md",
-      "details": {
-        "file": "docs/NIS_Protocol_V3_Technical_Whitepaper.md",
-        "term": "general intelligence"
-      },
-      "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.875092"
-    },
-    {
-      "type": "documentation_hype",
-      "description": "Unsubstantiated advanced claim in NIS_Protocol_V3_Technical_Whitepaper.md",
-      "details": {
-        "file": "docs/NIS_Protocol_V3_Technical_Whitepaper.md",
-        "term": "improvement"
-      },
-      "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.875468"
+      "timestamp": "2025-07-23T17:57:54.138950"
     },
     {
       "type": "unverified_claim",
@@ -263,7 +63,7 @@
         "claim": "processing"
       },
       "severity": "MEDIUM",
-      "timestamp": "2025-07-23T17:24:12.881430"
+      "timestamp": "2025-07-23T17:57:54.167409"
     },
     {
       "type": "documentation_hype",
@@ -273,7 +73,7 @@
         "term": "self-aware"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.882638"
+      "timestamp": "2025-07-23T17:57:54.168416"
     },
     {
       "type": "documentation_hype",
@@ -283,17 +83,7 @@
         "term": "general intelligence"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.884145"
-    },
-    {
-      "type": "documentation_hype",
-      "description": "Unsubstantiated advanced claim in COMPLETE_AGI_FOUNDATION_ACHIEVEMENT.md",
-      "details": {
-        "file": "docs/COMPLETE_AGI_FOUNDATION_ACHIEVEMENT.md",
-        "term": "advanced"
-      },
-      "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.884240"
+      "timestamp": "2025-07-23T17:57:54.168698"
     },
     {
       "type": "documentation_hype",
@@ -303,7 +93,7 @@
         "term": "improvement"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.884264"
+      "timestamp": "2025-07-23T17:57:54.168781"
     },
     {
       "type": "documentation_hype",
@@ -313,17 +103,7 @@
         "term": "novel"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.884292"
-    },
-    {
-      "type": "documentation_hype",
-      "description": "Unsubstantiated quantum claim in COMPLETE_AGI_FOUNDATION_ACHIEVEMENT.md",
-      "details": {
-        "file": "docs/COMPLETE_AGI_FOUNDATION_ACHIEVEMENT.md",
-        "term": "quantum computing"
-      },
-      "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.885956"
+      "timestamp": "2025-07-23T17:57:54.168809"
     },
     {
       "type": "documentation_hype",
@@ -333,7 +113,7 @@
         "term": "improvement"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.889825"
+      "timestamp": "2025-07-23T17:57:54.173000"
     },
     {
       "type": "documentation_hype",
@@ -343,7 +123,7 @@
         "term": "optimized"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.890209"
+      "timestamp": "2025-07-23T17:57:54.173486"
     },
     {
       "type": "unverified_claim",
@@ -353,7 +133,7 @@
         "claim": "monitoring"
       },
       "severity": "MEDIUM",
-      "timestamp": "2025-07-23T17:24:12.891388"
+      "timestamp": "2025-07-23T17:57:54.174893"
     },
     {
       "type": "documentation_hype",
@@ -363,7 +143,7 @@
         "term": "general intelligence"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.894172"
+      "timestamp": "2025-07-23T17:57:54.176151"
     },
     {
       "type": "documentation_hype",
@@ -373,7 +153,7 @@
         "term": "improvement"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.894614"
+      "timestamp": "2025-07-23T17:57:54.176407"
     },
     {
       "type": "documentation_hype",
@@ -383,7 +163,7 @@
         "term": "novel"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.894665"
+      "timestamp": "2025-07-23T17:57:54.176456"
     },
     {
       "type": "documentation_hype",
@@ -393,7 +173,7 @@
         "term": "optimized"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.895271"
+      "timestamp": "2025-07-23T17:57:54.177378"
     },
     {
       "type": "documentation_hype",
@@ -403,7 +183,7 @@
         "term": "95%+"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.896210"
+      "timestamp": "2025-07-23T17:57:54.178664"
     },
     {
       "type": "unverified_claim",
@@ -413,7 +193,7 @@
         "claim": "Processing"
       },
       "severity": "MEDIUM",
-      "timestamp": "2025-07-23T17:24:12.898881"
+      "timestamp": "2025-07-23T17:57:54.180883"
     },
     {
       "type": "documentation_hype",
@@ -423,7 +203,7 @@
         "term": "self-aware"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.905019"
+      "timestamp": "2025-07-23T17:57:54.187698"
     },
     {
       "type": "documentation_hype",
@@ -433,7 +213,7 @@
         "term": "general intelligence"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.905322"
+      "timestamp": "2025-07-23T17:57:54.188243"
     },
     {
       "type": "documentation_hype",
@@ -443,7 +223,7 @@
         "term": "improvement"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.916813"
+      "timestamp": "2025-07-23T17:57:54.199158"
     },
     {
       "type": "documentation_hype",
@@ -453,7 +233,7 @@
         "term": "optimized"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.918571"
+      "timestamp": "2025-07-23T17:57:54.200552"
     },
     {
       "type": "documentation_hype",
@@ -463,87 +243,7 @@
         "term": "improvement"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.927591"
-    },
-    {
-      "type": "documentation_hype",
-      "description": "Unsubstantiated KAN interpretability claim in full_audit_detailed.txt",
-      "details": {
-        "file": "full_audit_detailed.txt",
-        "term": "KAN interpretability"
-      },
-      "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.955406"
-    },
-    {
-      "type": "documentation_hype",
-      "description": "Unsubstantiated multi-agent system claim in full_audit_detailed.txt",
-      "details": {
-        "file": "full_audit_detailed.txt",
-        "term": "multi-agent system"
-      },
-      "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.956020"
-    },
-    {
-      "type": "documentation_hype",
-      "description": "Unsubstantiated multi-agent system claim in full_audit_detailed.txt",
-      "details": {
-        "file": "full_audit_detailed.txt",
-        "term": "advanced multi-agent system"
-      },
-      "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.956114"
-    },
-    {
-      "type": "documentation_hype",
-      "description": "Unsubstantiated multi-agent system claim in full_audit_detailed.txt",
-      "details": {
-        "file": "full_audit_detailed.txt",
-        "term": "general intelligence"
-      },
-      "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.956190"
-    },
-    {
-      "type": "documentation_hype",
-      "description": "Unsubstantiated advanced claim in full_audit_detailed.txt",
-      "details": {
-        "file": "full_audit_detailed.txt",
-        "term": "advanced"
-      },
-      "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.956199"
-    },
-    {
-      "type": "documentation_hype",
-      "description": "Unsubstantiated advanced claim in full_audit_detailed.txt",
-      "details": {
-        "file": "full_audit_detailed.txt",
-        "term": "improvement"
-      },
-      "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.956301"
-    },
-    {
-      "type": "documentation_hype",
-      "description": "Unsubstantiated perfection claim in full_audit_detailed.txt",
-      "details": {
-        "file": "full_audit_detailed.txt",
-        "term": "optimized"
-      },
-      "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.956836"
-    },
-    {
-      "type": "documentation_hype",
-      "description": "Unsubstantiated quantum claim in full_audit_detailed.txt",
-      "details": {
-        "file": "full_audit_detailed.txt",
-        "term": "quantum computing"
-      },
-      "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.957165"
+      "timestamp": "2025-07-23T17:57:54.209741"
     },
     {
       "type": "documentation_hype",
@@ -553,7 +253,7 @@
         "term": "improvement"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.966607"
+      "timestamp": "2025-07-23T17:57:54.235557"
     },
     {
       "type": "documentation_hype",
@@ -563,17 +263,7 @@
         "term": "novel"
       },
       "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.966660"
-    },
-    {
-      "type": "documentation_hype",
-      "description": "Unsubstantiated quantum claim in agi_benchmark_results.txt",
-      "details": {
-        "file": "nis-integrity-toolkit/agi_benchmark_results.txt",
-        "term": "quantum computing"
-      },
-      "severity": "HIGH",
-      "timestamp": "2025-07-23T17:24:12.967622"
+      "timestamp": "2025-07-23T17:57:54.235688"
     },
     {
       "type": "incomplete_implementation",
@@ -583,7 +273,7 @@
         "count": 4
       },
       "severity": "MEDIUM",
-      "timestamp": "2025-07-23T17:24:13.085825"
+      "timestamp": "2025-07-23T17:57:54.328929"
     },
     {
       "type": "incomplete_implementation",
@@ -593,7 +283,7 @@
         "count": 1
       },
       "severity": "MEDIUM",
-      "timestamp": "2025-07-23T17:24:13.197614"
+      "timestamp": "2025-07-23T17:57:54.416244"
     },
     {
       "type": "complex_dependencies",
@@ -605,18 +295,7 @@
         ]
       },
       "severity": "MEDIUM",
-      "timestamp": "2025-07-23T17:24:13.285737"
-    },
-    {
-      "type": "marketing_hype",
-      "description": "Marketing language in README.md: 'optimized' appears 1 times",
-      "details": {
-        "file": "README.md",
-        "term": "optimized",
-        "count": 1
-      },
-      "severity": "LOW",
-      "timestamp": "2025-07-23T17:24:13.410471"
+      "timestamp": "2025-07-23T17:57:54.519100"
     },
     {
       "type": "marketing_hype",
@@ -627,23 +306,23 @@
         "count": 2
       },
       "severity": "LOW",
-      "timestamp": "2025-07-23T17:24:13.414682"
+      "timestamp": "2025-07-23T17:57:54.623715"
     }
   ],
   "metrics": {
     "claimed_services": 0,
     "actual_services": 0,
     "service_directories": 20,
-    "total_hype_instances": 3,
-    "high_issues": 50,
-    "medium_issues": 10,
-    "low_issues": 2
+    "total_hype_instances": 2,
+    "high_issues": 18,
+    "medium_issues": 11,
+    "low_issues": 1
   },
   "recommendations": [
     {
       "priority": "HIGH",
       "action": "Replace hardcoded performance metrics with actual calculations",
-      "reason": "Found 50 high-severity issues that damage credibility"
+      "reason": "Found 18 high-severity issues that damage credibility"
     },
     {
       "priority": "MEDIUM",

@@ -585,12 +585,12 @@ class PINNValidationResult:
     validation_confidence: float
     auto_correction_applied: bool
     corrected_function: Optional[sp.Expr]
-    correction_improvement: float
+    correction_enhancement: float
     constraint_evaluations: Dict[str, float]
     physics_law_scores: Dict[PhysicsLaw, float]
     numerical_stability: float
     physics_recommendations: List[str]
-    improvement_suggestions: List[str]
+    enhancement_suggestions: List[str]
 ```
 
 ---

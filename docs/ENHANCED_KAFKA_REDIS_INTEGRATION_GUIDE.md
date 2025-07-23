@@ -2,7 +2,7 @@
 ## NIS Protocol v3 - Production-Ready Infrastructure
 
 <div align="center">
-  <p><em>guide to Kafka message streaming and Redis caching integration with self with implemented coverage-audit capabilities</em></p>
+  <p><em>Implementation guide to Kafka message streaming and Redis caching integration with self-audit capabilities</em></p>
   
   [![Infrastructure](https://img.shields.io/badge/Infrastructure-Production%20Ready-brightgreen)](https://github.com)
   [![Kafka](https://img.shields.io/badge/Kafka-Enhanced%20Streaming-orange)](https://github.com)
@@ -511,7 +511,7 @@ kafka_manager = NISKafkaManager(
 
 #### **Consumer Optimization**
 ```python
-# Optimized consumer settings
+# Enhanced consumer settings
 consumer_config = {
     "fetch_min_bytes": 1024,
     "fetch_max_wait_ms": 500,

@@ -220,7 +220,7 @@
   - Estimated: 2 weeks
 
 ### **🎯 v5.0 Success Criteria**
-- [ ] Novel insight generation rate >0.75 (expert evaluation)
+- [ ] Insight generation rate >0.75 (expert evaluation)
 - [ ] Cross-agent entanglement stability >0.80
 - [ ] Decision accuracy >0.85 on complex tasks
 - [ ] Collapse efficiency <500ms for decisions
@@ -338,11 +338,11 @@
   - Estimated: 3 weeks
 
 ### **🎯 v6.0 Success Criteria**
-- [ ] +20% performance improvement over 10 evolution cycles
+- [ ] +20% performance enhancement over 10 evolution cycles
 - [ ] Memory usage <8GB peak under all conditions
 - [ ] Boot time <30s from cold start
 - [ ] Response latency <1s per agent action
-- [ ] Integrity audit compliance >95%
+- [ ] Integrity audit compliance (measured by audit results)
 - [ ] 100% offline capability (no internet dependency)
 
 ---
@@ -365,7 +365,7 @@
 
 #### **v5 → v6 Dependencies**
 - 🔄 **SEED emergence validation** (v5 success required)
-- 🔄 **Multi-agent entanglement stability** (v5 proof needed)
+- 🔄 **Agent entanglement stability** (v5 proof needed)
 - ⚠️ **Resource constraint algorithms** (intensive research)
 - ⚠️ **Local optimization techniques** (performance critical)
 
@@ -491,5 +491,5 @@
 
 <div align="center">
   <sub>Implementation Tracker v1.0 • Tactical Planning • 2025-2027 Development</sub><br/>
-  <sub>From concept to code, from research to reality - the path to emergent general intelligence</sub>
+  <sub>From concept to code, from research to reality - the path to emergent neural intelligence</sub>
 </div> 
