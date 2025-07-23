@@ -54,6 +54,17 @@ from .hybrid_agent_core import (
 from .coordination.coordinator_agent import EnhancedCoordinatorAgent, CoordinationMode, WorkflowPriority
 from .coordination.multi_llm_agent import EnhancedMultiLLMAgent, LLMOrchestrationStrategy
 
+# DRL foundation integration
+from .drl.drl_foundation import (
+    DRLCoordinationAgent, DRLAction, DRLTask, DRLAgent, 
+    NISCoordinationEnvironment, DRLPolicyNetwork
+)
+
+# NEW: Enhanced DRL Router integration
+from .coordination.drl_enhanced_router import (
+    DRLEnhancedRouter, AgentRoutingAction, RoutingState as DRLRoutingState
+)
+
 # Enhanced imports
 from ..integrations.langchain_integration import (
     EnhancedMultiAgentWorkflow, 
@@ -64,6 +75,9 @@ from ..integrations.langchain_integration import (
 )
 from ..llm.llm_manager import LLMManager
 from ..utils.env_config import env_config
+
+# Infrastructure integration for DRL caching
+from ..infrastructure.integration_coordinator import InfrastructureCoordinator
 
 # Integrity metrics for actual calculations
 from src.utils.integrity_metrics import (
@@ -222,17 +236,61 @@ class EnhancedAgentRouter:
     
     def __init__(self, 
                  enable_langsmith: bool = True,
-                 enable_self_audit: bool = True):
-        """Initialize enhanced agent router"""
+                 enable_self_audit: bool = True,
+                 enable_drl: bool = True,
+                 enable_enhanced_drl: bool = True,
+                 drl_model_path: Optional[str] = None,
+                 infrastructure_coordinator: Optional[InfrastructureCoordinator] = None):
+        """Initialize enhanced agent router with DRL capabilities"""
         
         self.enable_langsmith = enable_langsmith
         self.enable_self_audit = enable_self_audit
+        self.enable_drl = enable_drl
+        self.enable_enhanced_drl = enable_enhanced_drl
+        self.infrastructure = infrastructure_coordinator
         
         # Agent registry and capabilities
         self.agent_registry: Dict[str, Any] = {}
         self.agent_capabilities: Dict[str, List[AgentCapability]] = {}
         self.agent_performance_history: Dict[str, List[float]] = defaultdict(list)
         self.agent_workloads: Dict[str, int] = defaultdict(int)
+        
+        # Legacy DRL integration (maintained for backward compatibility)
+        self.drl_coordinator = None
+        self.drl_environment = None
+        self.drl_routing_enabled = False
+        
+        # NEW: Enhanced DRL Router integration
+        self.enhanced_drl_router = None
+        self.enhanced_drl_enabled = False
+        
+        if self.enable_drl:
+            try:
+                self.drl_coordinator = DRLCoordinationAgent(
+                    agent_id="router_drl_coordinator",
+                    description="DRL coordinator for intelligent agent routing",
+                    enable_training=True,
+                    model_save_path=drl_model_path,
+                    enable_self_audit=enable_self_audit
+                )
+                self.drl_routing_enabled = True
+                logger.info("Legacy DRL-enhanced routing enabled")
+            except Exception as e:
+                logger.warning(f"Failed to initialize legacy DRL routing: {e}")
+                self.drl_routing_enabled = False
+        
+        # Initialize Enhanced DRL Router
+        if self.enable_enhanced_drl:
+            try:
+                self.enhanced_drl_router = DRLEnhancedRouter(
+                    infrastructure_coordinator=self.infrastructure,
+                    enable_self_audit=enable_self_audit
+                )
+                self.enhanced_drl_enabled = True
+                logger.info("Enhanced DRL Router initialized successfully")
+            except Exception as e:
+                logger.warning(f"Failed to initialize Enhanced DRL Router: {e}")
+                self.enhanced_drl_enabled = False
         
         # LangGraph workflows
         self.routing_graph: Optional[StateGraph] = None
@@ -265,6 +323,16 @@ class EnhancedAgentRouter:
         self.routing_history: List[Dict[str, Any]] = []
         self.performance_feedback: Dict[str, List[float]] = defaultdict(list)
         self.optimization_rules: List[Dict[str, Any]] = []
+        
+        # DRL performance tracking
+        if self.drl_routing_enabled:
+            self.drl_routing_stats = {
+                'total_drl_routings': 0,
+                'successful_drl_routings': 0,
+                'average_drl_confidence': 0.0,
+                'drl_vs_traditional_performance': 0.0,
+                'drl_training_episodes': 0
+            }
         
         # Initialize workflows
         if LANGGRAPH_AVAILABLE:
@@ -1097,9 +1165,548 @@ class EnhancedAgentRouter:
         except Exception as e:
             logger.warning(f"LangSmith routing tracking failed: {e}")
 
+    async def route_task_with_drl(self, 
+                                task_description: str,
+                                task_type: TaskType,
+                                priority: AgentPriority = AgentPriority.NORMAL,
+                                available_agents: Optional[List[str]] = None,
+                                context: Optional[Dict[str, Any]] = None) -> RoutingResult:
+        """
+        Route a task using DRL-enhanced intelligent agent selection.
+        
+        Args:
+            task_description: Description of the task to route
+            task_type: Type of task being routed
+            priority: Priority level of the task
+            available_agents: List of available agent IDs (optional)
+            context: Additional context for routing
+            
+        Returns:
+            Enhanced routing result with DRL decision information
+        """
+        start_time = time.time()
+        
+        # NEW: Use Enhanced DRL Router if available (preferred)
+        if self.enhanced_drl_enabled and self.enhanced_drl_router:
+            try:
+                # Prepare enhanced task structure
+                enhanced_task = {
+                    "task_id": f"route_{int(time.time() * 1000)}",
+                    "description": task_description,
+                    "type": task_type.value,
+                    "priority": self._priority_to_float(priority),
+                    "complexity": self._estimate_task_complexity(task_description, task_type),
+                    "estimated_duration": self._estimate_task_duration(task_description),
+                    "context": context or {}
+                }
+                
+                # Prepare system context for enhanced DRL
+                system_context = {
+                    "available_agents": available_agents or list(self.agent_registry.keys()),
+                    "agent_performance": dict(self.agent_performance_history),
+                    "agent_workloads": dict(self.agent_workloads),
+                    "cpu_usage": context.get("cpu_usage", 0.5),
+                    "memory_usage": context.get("memory_usage", 0.5),
+                    "network_usage": context.get("network_usage", 0.3),
+                    "recent_performance": self._calculate_recent_performance()
+                }
+                
+                # Get enhanced DRL routing decision
+                enhanced_drl_result = await self.enhanced_drl_router.route_task_with_drl(
+                    enhanced_task, system_context
+                )
+                
+                if enhanced_drl_result.get("selected_agents"):
+                    # Convert enhanced DRL decision to routing result
+                    routing_result = self._convert_enhanced_drl_to_routing_result(
+                        enhanced_drl_result, enhanced_task, start_time
+                    )
+                    
+                    logger.info(f"Enhanced DRL routing successful: {enhanced_drl_result['action']} -> {enhanced_drl_result['selected_agents']}")
+                    return routing_result
+                else:
+                    logger.warning("Enhanced DRL routing returned no agents, falling back")
+                    
+            except Exception as e:
+                logger.error(f"Enhanced DRL routing error: {e}")
+        
+        # LEGACY: Use legacy DRL if enhanced is not available
+        elif self.drl_routing_enabled and self.drl_coordinator:
+            try:
+                # Prepare DRL coordination message
+                drl_message = {
+                    "operation": "coordinate",
+                    "task_description": task_description,
+                    "task_type": task_type.value,
+                    "priority": self._priority_to_float(priority),
+                    "complexity": self._estimate_task_complexity(task_description, task_type),
+                    "available_agents": available_agents or list(self.agent_registry.keys()),
+                    "resource_requirements": self._estimate_resource_requirements(task_description),
+                    "context": context or {}
+                }
+                
+                # Get DRL coordination decision
+                drl_result = self.drl_coordinator.process(drl_message)
+                
+                # Update DRL stats
+                self.drl_routing_stats['total_drl_routings'] += 1
+                
+                if drl_result.get("status") == "success":
+                    # Convert DRL decision to routing result
+                    routing_result = self._convert_drl_to_routing_result(
+                        drl_result, task_description, task_type, start_time
+                    )
+                    
+                    self.drl_routing_stats['successful_drl_routings'] += 1
+                    
+                    # Update confidence average
+                    confidence = routing_result.routing_confidence
+                    total_routings = self.drl_routing_stats['total_drl_routings']
+                    current_avg = self.drl_routing_stats['average_drl_confidence']
+                    self.drl_routing_stats['average_drl_confidence'] = (
+                        (current_avg * (total_routings - 1) + confidence) / total_routings
+                    )
+                    
+                    logger.info(f"Legacy DRL routing successful for task: {task_description[:50]}...")
+                    return routing_result
+                
+                else:
+                    logger.warning(f"Legacy DRL routing failed: {drl_result.get('error', 'Unknown error')}")
+                    
+            except Exception as e:
+                logger.error(f"Legacy DRL routing error: {e}")
+        
+        # Fallback to traditional routing
+        logger.info("Using traditional routing fallback")
+        return await self._fallback_traditional_routing(
+            task_description, task_type, priority, available_agents, context, start_time
+        )
+    
+    def _priority_to_float(self, priority: AgentPriority) -> float:
+        """Convert priority enum to float for DRL"""
+        priority_map = {
+            AgentPriority.LOW: 0.2,
+            AgentPriority.NORMAL: 0.5,
+            AgentPriority.HIGH: 0.8,
+            AgentPriority.CRITICAL: 1.0
+        }
+        return priority_map.get(priority, 0.5)
+    
+    def _estimate_task_duration(self, task_description: str) -> float:
+        """Estimate task duration for enhanced DRL"""
+        # Simple heuristic based on task description length and keywords
+        base_duration = len(task_description) / 50  # Base on description length
+        
+        # Adjust based on complexity keywords
+        complex_keywords = ['analyze', 'research', 'comprehensive', 'detailed', 'multi-step']
+        simple_keywords = ['simple', 'quick', 'basic', 'summary']
+        
+        complexity_factor = 1.0
+        for keyword in complex_keywords:
+            if keyword in task_description.lower():
+                complexity_factor += 0.3
+        
+        for keyword in simple_keywords:
+            if keyword in task_description.lower():
+                complexity_factor -= 0.2
+        
+        return max(0.1, min(10.0, base_duration * complexity_factor))
+    
+    def _calculate_recent_performance(self) -> float:
+        """Calculate recent system performance for enhanced DRL"""
+        if not self.routing_history:
+            return 0.7  # Default performance
+        
+        # Calculate average success rate from recent routing history
+        recent_routings = self.routing_history[-20:]  # Last 20 routings
+        successful_routings = [r for r in recent_routings if r.get('success', False)]
+        
+        if not recent_routings:
+            return 0.7
+        
+        success_rate = len(successful_routings) / len(recent_routings)
+        
+        # Also consider average confidence from recent routings
+        avg_confidence = sum(r.get('confidence', 0.5) for r in recent_routings) / len(recent_routings)
+        
+        # Combine success rate and confidence
+        return (success_rate * 0.7 + avg_confidence * 0.3)
+    
+    def _convert_enhanced_drl_to_routing_result(self, 
+                                              drl_result: Dict[str, Any], 
+                                              task: Dict[str, Any], 
+                                              start_time: float) -> RoutingResult:
+        """Convert enhanced DRL decision to standard routing result"""
+        
+        routing_time = time.time() - start_time
+        
+        # Extract DRL decision information
+        selected_agents = drl_result.get('selected_agents', [])
+        confidence = drl_result.get('confidence', 0.5)
+        estimated_value = drl_result.get('estimated_value', 0.5)
+        routing_strategy = drl_result.get('routing_strategy', 'unknown')
+        drl_action = drl_result.get('action', 'unknown')
+        
+        # Create execution plan based on DRL action
+        execution_plan = []
+        if drl_action == "select_single_specialist":
+            execution_plan = [
+                {
+                    "phase": "specialist_execution",
+                    "agents": selected_agents,
+                    "strategy": "single_expert",
+                    "parallel": False
+                }
+            ]
+        elif drl_action == "select_multi_agent_team":
+            execution_plan = [
+                {
+                    "phase": "collaborative_execution", 
+                    "agents": selected_agents,
+                    "strategy": "team_collaboration",
+                    "parallel": True
+                }
+            ]
+        elif drl_action == "load_balance_distribute":
+            execution_plan = [
+                {
+                    "phase": "distributed_execution",
+                    "agents": selected_agents,
+                    "strategy": "load_balanced",
+                    "parallel": True
+                }
+            ]
+        else:
+            execution_plan = [
+                {
+                    "phase": "adaptive_execution",
+                    "agents": selected_agents, 
+                    "strategy": "drl_optimized",
+                    "parallel": len(selected_agents) > 1
+                }
+            ]
+        
+        # Estimate cost based on selected agents and complexity
+        estimated_cost = len(selected_agents) * task.get('complexity', 0.5) * 0.1
+        
+        # Create routing rationale
+        rationale = {
+            "method": "enhanced_drl",
+            "action": drl_action,
+            "strategy": routing_strategy,
+            "confidence": confidence,
+            "reasoning": f"DRL policy selected {len(selected_agents)} agents using {drl_action} strategy"
+        }
+        
+        # Risk assessment based on DRL confidence and agent selection
+        risk_assessment = {
+            "confidence_risk": max(0.0, 1.0 - confidence),
+            "agent_availability_risk": 0.1 * len(selected_agents),  # More agents = slightly higher coordination risk
+            "overall_risk": max(0.0, 1.0 - confidence) * 0.7 + 0.1 * len(selected_agents) * 0.3
+        }
+        
+        # Recommendations based on DRL decision
+        recommendations = []
+        if confidence < 0.7:
+            recommendations.append("Monitor task execution closely due to lower confidence")
+        if len(selected_agents) > 3:
+            recommendations.append("Ensure proper coordination among multiple agents")
+        if risk_assessment["overall_risk"] > 0.5:
+            recommendations.append("Consider fallback plans due to elevated risk")
+        
+        recommendations.append(f"DRL optimized routing using {drl_action} strategy")
+        
+        return RoutingResult(
+            task_id=task.get('task_id', f"task_{int(time.time())}"),
+            success=True,
+            selected_agents=selected_agents,
+            routing_confidence=confidence,
+            expected_performance=estimated_value,
+            estimated_cost=estimated_cost,
+            execution_plan=execution_plan,
+            collaboration_pattern=drl_action,
+            routing_time=routing_time,
+            rationale=rationale,
+            risk_assessment=risk_assessment,
+            recommendations=recommendations,
+            requires_monitoring=confidence < 0.7 or len(selected_agents) > 2
+        )
+    
+    async def provide_routing_feedback(self, 
+                                     task_id: str, 
+                                     routing_outcome: Dict[str, Any]) -> None:
+        """Provide feedback to DRL routing systems for learning"""
+        
+        # Provide feedback to Enhanced DRL Router if available
+        if self.enhanced_drl_enabled and self.enhanced_drl_router:
+            try:
+                await self.enhanced_drl_router.process_task_outcome(task_id, routing_outcome)
+                logger.debug(f"Provided feedback to enhanced DRL router for task {task_id}")
+            except Exception as e:
+                logger.error(f"Failed to provide feedback to enhanced DRL router: {e}")
+        
+        # Also provide feedback to legacy DRL if available (for backward compatibility)
+        if self.drl_routing_enabled and self.drl_coordinator:
+            try:
+                # Convert outcome for legacy DRL format
+                legacy_outcome = {
+                    "status": "success" if routing_outcome.get("success", False) else "failure",
+                    "performance": routing_outcome.get("quality_score", 0.5),
+                    "efficiency": routing_outcome.get("resource_efficiency", 0.5),
+                    "cost": routing_outcome.get("total_cost", 0.1)
+                }
+                
+                # Legacy DRL feedback (if it has a feedback method)
+                if hasattr(self.drl_coordinator, 'process_feedback'):
+                    self.drl_coordinator.process_feedback(task_id, legacy_outcome)
+                
+                logger.debug(f"Provided feedback to legacy DRL coordinator for task {task_id}")
+            except Exception as e:
+                logger.error(f"Failed to provide feedback to legacy DRL coordinator: {e}")
+        
+        # Update routing history for performance tracking
+        self.routing_history.append({
+            "task_id": task_id,
+            "timestamp": time.time(),
+            "success": routing_outcome.get("success", False),
+            "confidence": routing_outcome.get("confidence", 0.5),
+            "quality_score": routing_outcome.get("quality_score", 0.5),
+            "response_time": routing_outcome.get("response_time", 1.0),
+            "selected_agents": routing_outcome.get("selected_agents", [])
+        })
+        
+        # Keep routing history manageable
+        if len(self.routing_history) > 1000:
+            self.routing_history = self.routing_history[-500:]  # Keep last 500
+    
+    def get_enhanced_routing_status(self) -> Dict[str, Any]:
+        """Get enhanced routing system status including DRL components"""
+        
+        status = {
+            "enhanced_drl_enabled": self.enhanced_drl_enabled,
+            "legacy_drl_enabled": self.drl_routing_enabled,
+            "routing_mode": "enhanced_drl" if self.enhanced_drl_enabled else "legacy_drl" if self.drl_routing_enabled else "traditional",
+            "agent_registry_size": len(self.agent_registry),
+            "routing_history_length": len(self.routing_history)
+        }
+        
+        # Add enhanced DRL router metrics if available
+        if self.enhanced_drl_enabled and self.enhanced_drl_router:
+            try:
+                enhanced_metrics = self.enhanced_drl_router.get_performance_metrics()
+                status["enhanced_drl_metrics"] = enhanced_metrics
+            except Exception as e:
+                status["enhanced_drl_error"] = str(e)
+        
+        # Add legacy DRL metrics if available
+        if self.drl_routing_enabled and hasattr(self, 'drl_routing_stats'):
+            status["legacy_drl_metrics"] = getattr(self, 'drl_routing_stats', {})
+        
+        # Add recent performance
+        if self.routing_history:
+            recent_routings = self.routing_history[-10:]  # Last 10
+            status["recent_performance"] = {
+                "success_rate": sum(1 for r in recent_routings if r.get("success", False)) / len(recent_routings),
+                "average_confidence": sum(r.get("confidence", 0.5) for r in recent_routings) / len(recent_routings),
+                "average_quality": sum(r.get("quality_score", 0.5) for r in recent_routings) / len(recent_routings),
+                "average_response_time": sum(r.get("response_time", 1.0) for r in recent_routings) / len(recent_routings)
+            }
+        
+        return status
+    
+    def _estimate_task_complexity(self, task_description: str, task_type: TaskType) -> float:
+        """Estimate task complexity for DRL input"""
+        # Simple complexity estimation based on description length and task type
+        base_complexity = min(len(task_description) / 500.0, 1.0)  # Normalize by length
+        
+        # Task type complexity factors
+        type_complexity = {
+            TaskType.SIMPLE: 0.2,
+            TaskType.ANALYSIS: 0.6,
+            TaskType.SYNTHESIS: 0.8,
+            TaskType.COORDINATION: 0.7,
+            TaskType.OPTIMIZATION: 0.9
+        }
+        
+        task_factor = type_complexity.get(task_type, 0.5)
+        
+        # Combine factors
+        final_complexity = (base_complexity * 0.4 + task_factor * 0.6)
+        return min(max(final_complexity, 0.1), 1.0)
+    
+    def _estimate_resource_requirements(self, task_description: str) -> Dict[str, float]:
+        """Estimate resource requirements for DRL"""
+        # Simple resource estimation
+        desc_length = len(task_description)
+        
+        cpu_requirement = min(desc_length / 1000.0, 0.8)
+        memory_requirement = min(desc_length / 2000.0, 0.6)
+        network_requirement = 0.3 if "search" in task_description.lower() else 0.1
+        
+        return {
+            "cpu": cpu_requirement,
+            "memory": memory_requirement,
+            "network": network_requirement
+        }
+    
+    def _convert_drl_to_routing_result(self, 
+                                     drl_result: Dict[str, Any], 
+                                     task_description: str, 
+                                     task_type: TaskType, 
+                                     start_time: float) -> RoutingResult:
+        """Convert DRL coordination result to routing result"""
+        
+        coordination_action = drl_result.get("coordination_action", "select_agent")
+        confidence = drl_result.get("confidence", 0.5)
+        
+        # Extract selected agents from DRL result
+        selected_agents = []
+        if coordination_action == "select_agent":
+            selected_agent = drl_result.get("selected_agent", "agent_0")
+            selected_agents = [selected_agent]
+        elif coordination_action == "route_task":
+            routing_decision = drl_result.get("routing_decision", {})
+            target_agent = routing_decision.get("target_agent", "agent_0")
+            selected_agents = [target_agent]
+        elif coordination_action == "coordinate_multi_agent":
+            # For multi-agent coordination, select multiple agents
+            selected_agents = ["agent_0", "agent_1"]  # Simplified
+        else:
+            selected_agents = ["agent_0"]  # Default fallback
+        
+        # Calculate routing metrics
+        routing_time = time.time() - start_time
+        
+        # Estimate performance and cost based on DRL confidence
+        expected_performance = confidence * 0.8 + 0.2  # Scale to reasonable range
+        estimated_cost = len(selected_agents) * 10.0 * (1.0 - confidence + 0.5)
+        
+        # Determine collaboration pattern
+        collaboration_pattern = "multi_agent" if len(selected_agents) > 1 else "single_agent"
+        
+        # Create routing result
+        return RoutingResult(
+            success=True,
+            task_id=f"drl_task_{int(time.time())}", 
+            selected_agents=selected_agents,
+            routing_confidence=confidence,
+            routing_strategy=RoutingStrategy.INTELLIGENT,
+            expected_performance=expected_performance,
+            estimated_cost=estimated_cost,
+            routing_time=routing_time,
+            collaboration_pattern=collaboration_pattern,
+            fallback_agents=[],
+            risk_assessment={
+                "failure_probability": 1.0 - confidence,
+                "resource_risk": "low" if confidence > 0.7 else "medium",
+                "time_risk": "low"
+            },
+            optimization_metadata={
+                "drl_enhanced": True,
+                "coordination_action": coordination_action,
+                "drl_confidence": confidence,
+                "routing_method": "drl_intelligent"
+            }
+        )
+    
+    async def _fallback_traditional_routing(self, 
+                                          task_description: str, 
+                                          task_type: TaskType, 
+                                          priority: AgentPriority,
+                                          available_agents: Optional[List[str]], 
+                                          context: Optional[Dict[str, Any]], 
+                                          start_time: float) -> RoutingResult:
+        """Fallback to traditional rule-based routing"""
+        
+        # Simple rule-based agent selection
+        if not available_agents:
+            available_agents = list(self.agent_registry.keys())
+        
+        if not available_agents:
+            # No agents available
+            return RoutingResult(
+                success=False,
+                task_id=f"fallback_task_{int(time.time())}",
+                selected_agents=[],
+                routing_confidence=0.0,
+                routing_strategy=RoutingStrategy.RANDOM,
+                expected_performance=0.0,
+                estimated_cost=0.0,
+                routing_time=time.time() - start_time,
+                collaboration_pattern="none",
+                fallback_agents=[],
+                risk_assessment={"failure_probability": 1.0},
+                optimization_metadata={"routing_method": "fallback_traditional"}
+            )
+        
+        # Simple agent selection (first available)
+        selected_agent = available_agents[0]
+        
+        return RoutingResult(
+            success=True,
+            task_id=f"traditional_task_{int(time.time())}",
+            selected_agents=[selected_agent],
+            routing_confidence=0.6,  # Moderate confidence for rule-based
+            routing_strategy=RoutingStrategy.RANDOM,
+            expected_performance=0.7,
+            estimated_cost=15.0,
+            routing_time=time.time() - start_time,
+            collaboration_pattern="single_agent",
+            fallback_agents=available_agents[1:3] if len(available_agents) > 1 else [],
+            risk_assessment={"failure_probability": 0.3},
+            optimization_metadata={"routing_method": "traditional_rule_based"}
+        )
+    
+    async def train_drl_router(self, num_episodes: int = 50) -> Dict[str, Any]:
+        """
+        Train the DRL routing model.
+        
+        Args:
+            num_episodes: Number of training episodes
+            
+        Returns:
+            Training results
+        """
+        if not self.drl_routing_enabled or not self.drl_coordinator:
+            return {
+                "status": "error",
+                "error": "DRL routing not available",
+                "timestamp": time.time()
+            }
+        
+        try:
+            # Train the DRL coordinator
+            training_result = self.drl_coordinator.process({
+                "operation": "train",
+                "num_episodes": num_episodes
+            })
+            
+            if training_result.get("status") == "success":
+                self.drl_routing_stats['drl_training_episodes'] += num_episodes
+                
+                logger.info(f"DRL router training completed: {num_episodes} episodes")
+                
+                return {
+                    "status": "success",
+                    "episodes_trained": num_episodes,
+                    "training_result": training_result,
+                    "drl_stats": self.drl_routing_stats,
+                    "timestamp": time.time()
+                }
+            else:
+                return training_result
+                
+        except Exception as e:
+            logger.error(f"DRL router training failed: {e}")
+            return {
+                "status": "error",
+                "error": f"Training failed: {str(e)}",
+                "timestamp": time.time()
+            }
+
     def get_routing_status(self) -> Dict[str, Any]:
         """Get routing system status"""
-        return {
+        status = {
             "langgraph_available": LANGGRAPH_AVAILABLE,
             "langsmith_enabled": self.langsmith_client is not None,
             "registered_agents": len(self.agent_registry),
@@ -1107,6 +1714,7 @@ class EnhancedAgentRouter:
             "agent_workloads": dict(self.agent_workloads),
             "capabilities": {
                 "intelligent_routing": LANGGRAPH_AVAILABLE,
+                "drl_enhanced_routing": self.drl_routing_enabled,
                 "performance_optimization": True,
                 "cost_optimization": True,
                 "collaborative_routing": True,
@@ -1115,6 +1723,13 @@ class EnhancedAgentRouter:
                 "langsmith_analytics": self.langsmith_client is not None
             }
         }
+        
+        # Add DRL-specific status if enabled
+        if self.drl_routing_enabled:
+            status["drl_routing_stats"] = self.drl_routing_stats
+            status["drl_coordinator_available"] = self.drl_coordinator is not None
+        
+        return status
 
 
 # Example usage
