@@ -90,7 +90,7 @@
 | **Agent Router** | `agent_router.py` | 🔄 **NEEDS REVIEW** | ? | **P6.1** | Core Agent |
 | **Hybrid Agent Core** | `hybrid_agent_core.py` | 🔄 **NEEDS REVIEW** | ? | **P6.2** | All Agents |
 | **Communication Agent** | `communication/communication_agent.py` | 🔄 **NEEDS REVIEW** | ? | **P6.3** | Communication |
-| **Coordinator Agent** | `coordination/coordinator_agent.py` | 🔄 **NEEDS REVIEW** | ? | **P6.4** | Multi-Agent |
+| **Coordinator Agent** | `coordination/coordinator_agent.py` | 🔄 **NEEDS REVIEW** | ? | **P6.4** | Agent Coordination |
 | **Multi-LLM Agent** | `coordination/multi_llm_agent.py` | 🔄 **NEEDS REVIEW** | ? | **P6.5** | LLM Providers |
 
 **Estimated Total**: 5 agents, ~1,500 lines

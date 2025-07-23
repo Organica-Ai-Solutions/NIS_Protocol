@@ -2,7 +2,7 @@
 
 ## 🎯 **Three-Version Evolution Overview**
 
-### **v4.0: Paragraph-Based AGI Core (2025 Q2)**
+### **v4.0: Paragraph-Based Intelligence Core (2025 Q2)**
 **🧠 Paradigm Shift**: Token → Paragraph cognition  
 **🔧 Core Tech**: Enhanced KAN networks for semantic chunks  
 **🎯 Applications**: Scientific documents, archaeology, space data  
@@ -16,8 +16,8 @@
 **💰 Investment**: ~$1M, 9-month development  
 **📊 Success Metric**: 75% novel insights validated by experts  
 
-### **v6.0: Local Emergent AGI (2027 Q1)**
-**🔬 Paradigm Shift**: Cloud → Local AGI (≤8GB RAM)  
+### **v6.0: Local Emergent Intelligence (2027 Q1)**
+**🔬 Paradigm Shift**: Cloud → Local Intelligence (≤8GB RAM)  
 **🔧 Core Tech**: Self-evolution, uncertainty planning, multi-modal fusion  
 **🎯 Applications**: Autonomous systems, edge intelligence, space exploration  
 **💰 Investment**: ~$2M, 12-month development  
@@ -36,7 +36,7 @@
 ### **Strategic Value (v5-v6)**
 - **Reference Architecture**: Showcase AI implementation on AWS
 - **Edge Computing**: v6 aligns with AWS IoT/Greengrass strategy
-- **Enterprise Market**: Joint go-to-market for AGI solutions
+- **Enterprise Market**: Joint go-to-market for intelligence solutions
 - **Innovation Leadership**: Co-develop next-generation AI infrastructure
 
 ---
@@ -52,7 +52,7 @@
 1. **Implementation** combining KAN networks with coordination systems
 2. **Physics-informed validation** (technical validation approach)
 3. **Paragraph-based cognition** (structured processing units)
-4. **Local AGI capability** (edge computing implementation)
+4. **Local intelligence capability** (edge computing implementation)
 5. **Production-ready foundation** (not just research)
 
 ---
@@ -86,7 +86,7 @@
 - **Physics Validation**: Ensures output validity  
 - **Paragraph Cognition**: Human-like thinking units
 - **SEED Emergence**: Novel cognitive architecture
-- **Local AGI**: Resource-efficient intelligence
+- **Local Intelligence**: Resource-efficient processing
 
 ### **Market Position**
 - **Implementation Focus**: Paragraph-based AI processing
@@ -99,10 +99,10 @@
 
 ## 🔮 **Success Scenarios**
 
-### **Best Case (Breakthrough Success)**
+### **Best Case (Strong Success)**
 - **v4**: Becomes standard for scientific AI processing
 - **v5**: Demonstrates true emergent intelligence 
-- **v6**: First commercially viable local AGI
+- **v6**: First commercially viable local intelligence system
 - **Outcome**: $100M+ valuation, industry transformation
 
 ### **Expected Case (Strong Success)**
@@ -113,7 +113,7 @@
 
 ### **Worst Case (Learning Success)**
 - **v4**: Technical validation but limited adoption
-- **v5**: Research breakthrough but implementation challenges
+- **v5**: Research progress but implementation challenges
 - **v6**: Prototype success but scaling difficulties  
 - **Outcome**: $10M+ valuation, pivot to specialized applications
 

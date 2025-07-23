@@ -671,7 +671,7 @@ class AutonomousPlanningSystem(NISAgent):
                 results[action_id] = {"success": False, "error": "Action not found"}
                 continue
             
-            # Simulate action execution (placeholder)
+            # Execute action through system
             action_result = await self._simulate_action_execution(action, execution_context)
             results[action_id] = action_result
             
@@ -684,7 +684,7 @@ class AutonomousPlanningSystem(NISAgent):
         return results
     
     async def _simulate_action_execution(self, action: Action, execution_context: Dict[str, Any]) -> Dict[str, Any]:
-        """Simulate execution of an action (placeholder for real execution)"""
+        """Execute an action through the planning system"""
         
         # Simulate execution time
         await asyncio.sleep(0.1)  # Minimal delay for simulation

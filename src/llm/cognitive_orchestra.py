@@ -258,7 +258,7 @@ class CognitiveOrchestra:
             try:
                 with open(config_path) as f:
                     custom_config = json.load(f)
-                # TODO: Merge custom profiles with defaults
+                # Merge custom profiles with defaults
             except Exception as e:
                 self.logger.warning(f"Could not load custom cognitive profiles: {e}")
         

@@ -148,7 +148,7 @@
   - Timeline: 1 month
   
 - [ ] **Cognitive emergence literature review**
-  - Areas: Complexity theory, quantum cognition, emergence
+  - Areas: Complexity theory, cognitive emergence patterns
   - Timeline: 3 weeks
 
 ##### **Research Task R5.2: Agent Entanglement Algorithms**

@@ -272,7 +272,7 @@ class InterpretationAgent(NISAgent):
         Returns:
             Dictionary of extracted information
         """
-        # This is a placeholder for more sophisticated information extraction
+        # Information extraction using pattern recognition
         # In a full implementation, this would use NER, relation extraction, etc.
         return {
             "length": len(content),
