@@ -23,7 +23,7 @@
 7. [Performance Optimization](#-performance-optimization)
 8. [monitoring ([health tracking](src/infrastructure/integration_coordinator.py)) & Health](#-monitoring ([health tracking](src/infrastructure/integration_coordinator.py))--health)
 9. [Troubleshooting](#-troubleshooting)
-10. [Configuration with measured performance](#-advanced-configuration)
+10. [Configuration with measured performance](#-configuration)
 
 ---
 

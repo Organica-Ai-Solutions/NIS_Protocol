@@ -1377,3 +1377,79 @@ class OutcomePredictor:
             'archaeological_factors_count': len(self.archaeological_factors),
             'analysis_timestamp': time.time()
         } 
+
+    def _calculate_density_weight(self) -> float:
+        """Calculate artifact density weight based on historical project outcomes"""
+        if not hasattr(self, 'prediction_history') or len(self.prediction_history) == 0:
+            return 0.6  # Initial reasonable default
+        
+        # Calculate from historical success correlations
+        density_impact = sum(1 for p in self.prediction_history[-20:] 
+                           if p.get('features', {}).get('artifact_density', 0.5) > 0.7 and 
+                              p.get('actual_outcome', 0.5) > 0.7) / min(20, len(self.prediction_history))
+        return min(0.8, max(0.4, density_impact + 0.2))
+    
+    def _calculate_preservation_weight(self) -> float:
+        """Calculate preservation conditions weight based on project patterns"""
+        if not hasattr(self, 'prediction_history') or len(self.prediction_history) == 0:
+            return 0.75  # Initial reasonable default
+        
+        # Higher weight if preservation strongly correlates with success
+        preservation_correlation = self._calculate_feature_correlation('preservation_conditions')
+        return min(0.9, max(0.5, preservation_correlation + 0.3))
+    
+    def _calculate_expertise_weight(self) -> float:
+        """Calculate team expertise weight based on project outcomes"""
+        if not hasattr(self, 'prediction_history') or len(self.prediction_history) == 0:
+            return 0.8  # Initial reasonable default
+        
+        expertise_correlation = self._calculate_feature_correlation('team_expertise')
+        return min(0.95, max(0.6, expertise_correlation + 0.4))
+    
+    def _calculate_weather_weight(self) -> float:
+        """Calculate weather dependency weight based on seasonal patterns"""
+        if not hasattr(self, 'prediction_history') or len(self.prediction_history) == 0:
+            return 0.5  # Initial reasonable default
+        
+        weather_correlation = self._calculate_feature_correlation('weather_dependency')
+        return min(0.7, max(0.3, weather_correlation + 0.2))
+    
+    def _calculate_community_weight(self) -> float:
+        """Calculate community support weight based on stakeholder engagement patterns"""
+        if not hasattr(self, 'prediction_history') or len(self.prediction_history) == 0:
+            return 0.85  # Initial reasonable default
+        
+        community_correlation = self._calculate_feature_correlation('community_support')
+        return min(0.95, max(0.7, community_correlation + 0.3))
+    
+    def _calculate_compliance_weight(self) -> float:
+        """Calculate regulatory compliance weight based on regulatory success patterns"""
+        if not hasattr(self, 'prediction_history') or len(self.prediction_history) == 0:
+            return 0.9  # Initial reasonable default
+        
+        compliance_correlation = self._calculate_feature_correlation('regulatory_compliance')
+        return min(0.98, max(0.8, compliance_correlation + 0.4))
+    
+    def _calculate_feature_correlation(self, feature_name: str) -> float:
+        """Calculate correlation between a feature and project success"""
+        if not hasattr(self, 'prediction_history') or len(self.prediction_history) < 5:
+            return 0.5  # Neutral correlation with insufficient data
+        
+        feature_values = []
+        outcomes = []
+        
+        for record in self.prediction_history[-20:]:  # Use recent history
+            if 'features' in record and feature_name in record['features'] and 'actual_outcome' in record:
+                feature_values.append(record['features'][feature_name])
+                outcomes.append(record['actual_outcome'])
+        
+        if len(feature_values) < 3:
+            return 0.5
+        
+        # Simple correlation calculation
+        try:
+            import numpy as np
+            correlation = np.corrcoef(feature_values, outcomes)[0, 1]
+            return max(0.0, min(1.0, correlation)) if not np.isnan(correlation) else 0.5
+        except:
+            return 0.5 

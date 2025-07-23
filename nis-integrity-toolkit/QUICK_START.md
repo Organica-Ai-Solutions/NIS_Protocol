@@ -38,7 +38,7 @@ transparency = 0.973
 
 # ✅ AFTER  
 consciousness_level = calculate_consciousness_level(data)
-transparency = measure_interpretability(model, test_data)
+transparency = measure_transparency(model, test_data)
 ```
 
 #### **Fix #2: Remove Hype Language**

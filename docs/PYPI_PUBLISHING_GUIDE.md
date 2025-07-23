@@ -256,4 +256,4 @@ integration = NISLangChainIntegration()
 
 ---
 
-**NIS Protocol v3.0** - Advanced Multi-Agent System with LangGraph/LangSmith Integration 🚀 
+**NIS Protocol v3.0** - Agent Coordination System with LangGraph/LangSmith Integration 🚀 

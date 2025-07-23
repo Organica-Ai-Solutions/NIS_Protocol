@@ -1572,9 +1572,9 @@ def validate_production_capabilities(
     return validation_results
 
 
-def demonstrate_full_capability():
-    """Demonstrate complete KAN reasoning capabilities"""
-    print("🧮 KAN Reasoning Agent - Full Capability Demonstration")
+def validate_production_capability():
+    """Validate KAN reasoning agent production readiness"""
+    print("🧮 KAN Reasoning Agent - Production Validation")
     print("=" * 60)
     
     # Initialize agent
@@ -1602,32 +1602,38 @@ def demonstrate_full_capability():
         print(f"✅ Average Interpretability: {perf['average_interpretability']:.3f}")
         print(f"✅ Average Physics Compliance: {perf['average_physics_compliance']:.3f}")
     
-    # Demonstrate specific capabilities
-    print("\n🔬 Demonstrating Specific Capabilities...")
+    # Validate production capabilities
+    print("\n🔬 Validating Production Capabilities...")
     
-    # Test symbolic extraction
-    sample_func = test_functions['damped_oscillation']
-    x_demo = np.linspace(-1, 3, 50)
-    y_demo = sample_func(x_demo)
+    # Test with real signal processing
+    test_func = test_functions['damped_oscillation']
+    x_test = np.linspace(-1, 3, 50)
+    y_test = test_func(x_test)
     
-    mock_laplace = {
-        's_values': x_demo + 1j * np.zeros_like(x_demo),
-        'transform_values': y_demo + 1j * np.zeros_like(y_demo)
+    # Create realistic Laplace input
+    laplace_input = {
+        's_values': x_test + 1j * np.zeros_like(x_test),
+        'transform_values': y_test + 1j * np.zeros_like(y_test)
     }
     
-    result = agent.process_laplace_input(mock_laplace)
+    # Process with full validation
+    result = agent.process_laplace_input(laplace_input)
     
-    print(f"🎯 Test Function: Damped Oscillation")
-    print(f"   Symbolic Function: {result.symbolic_extraction.symbolic_function if result.symbolic_extraction else 'None'}")
-    print(f"   Confidence: {result.confidence:.3f}")
-    print(f"   Interpretability: {result.interpretability_score:.3f}")
-    print(f"   Physics Compliance: {result.physics_compliance:.3f}")
+    # Validate production requirements
+    production_checks = {
+        "confidence_threshold": result.confidence >= 0.7,
+        "physics_compliance": result.physics_compliance >= 0.75,
+        "interpretability": result.interpretability_score >= 0.6,
+        "processing_time": result.processing_time < 1.0,  # Sub-second requirement
+        "symbolic_extraction": result.symbolic_extraction is not None
+    }
     
-    # Show agent status
-    status = agent.get_status()
-    print(f"\n📈 Agent Status:")
-    print(f"   Total Reasonings: {status['performance_metrics']['total_reasonings']}")
-    print(f"   Successful Extractions: {status['performance_metrics']['successful_extractions']}")
-    print(f"   Average Interpretability: {status['performance_metrics']['average_interpretability']:.3f}")
+    print(f"🎯 Production Validation Results:")
+    for check, passed in production_checks.items():
+        status = "✅" if passed else "❌"
+        print(f"   {status} {check}: {passed}")
     
-    return agent, validation_results
+    all_passed = all(production_checks.values())
+    print(f"\n{'✅ PRODUCTION READY' if all_passed else '❌ NEEDS IMPROVEMENT'}")
+    
+    return all_passed

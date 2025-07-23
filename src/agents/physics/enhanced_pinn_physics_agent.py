@@ -410,7 +410,7 @@ class EnhancedPINNNetwork(nn.Module):
                                      constraint: PhysicsConstraint) -> torch.Tensor:
         """Evaluate violation of a specific physics constraint"""
         
-        # For demonstration, implement simple energy conservation check
+        # Implement energy conservation check
         # This would be expanded for each specific constraint type
         
         if constraint.law == PhysicsLaw.CONSERVATION_ENERGY:

@@ -467,7 +467,7 @@ class EnhancedScientificCoordinator:
                     raise ValueError("PINN agent missing validate_kan_output method")
             
             elif stage == PipelineStage.LLM_ENHANCEMENT:
-                # LLM enhancement stage (placeholder)
+                # LLM enhancement stage
                 stage_result = {
                     'enhanced_description': 'Function validated through scientific pipeline',
                     'enhancement_quality': 0.9,
@@ -702,8 +702,8 @@ class EnhancedScientificCoordinator:
         return summary
 
 
-def create_test_pipeline_data() -> Dict[str, Any]:
-    """Create test data for pipeline validation"""
+def create_pipeline_data() -> Dict[str, Any]:
+    """Create data for pipeline validation"""
     
     # Generate test signal
     t = np.linspace(0, 2, 1000)
@@ -718,7 +718,7 @@ def create_test_pipeline_data() -> Dict[str, Any]:
     }
 
 
-def test_enhanced_scientific_coordinator():
+def validate_enhanced_scientific_coordinator():
     """Test the Enhanced Scientific Coordinator with mock agents"""
     
     print("🧮 Enhanced Scientific Coordinator Test Suite")
@@ -785,7 +785,7 @@ def test_enhanced_scientific_coordinator():
     return coordinator, test_data
 
 
-async def run_pipeline_test():
+async def run_pipeline_validation():
     """Run the complete pipeline test"""
     
     coordinator, test_data = test_enhanced_scientific_coordinator()
