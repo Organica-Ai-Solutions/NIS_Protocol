@@ -21,6 +21,11 @@
 ## 🌟 **NEURAL INTELLIGENCE SYNTHESIS FOUNDATION**
 
 <div align="center">
+  <img src="assets/images/v1_v2_v3_evolution_fixed.png" alt="Evolution from v1 to v3" width="900"/>
+  <p><em>Evolution of the NIS Protocol from concept to complete AGI foundation</em></p>
+</div>
+
+<div align="center">
   <img src="assets/images/v3_mathematical_foundation/v3map.png" alt="NIS Protocol v3 Architecture Map" width="900"/>
   <p><em>Architectural overview of the NIS Protocol v3 Neural Intelligence Foundation</em></p>
 </div>
@@ -399,11 +404,6 @@ git commit -m "Evidence-based enhancement with validation"
 ---
 
 ## 🏆 **COMPARISON TO OTHER AI SYSTEMS**
-
-<div align="center">
-  <img src="assets/images/v1_v2_v3_evolution_fixed.png" alt="Evolution from v1 to v3" width="800"/>
-  <p><em>Evolution of the NIS Protocol from concept to complete AGI foundation</em></p>
-</div>
 
 ### **🥇 Unique Neural Intelligence Advantages**
 
