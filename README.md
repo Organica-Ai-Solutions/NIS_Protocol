@@ -317,6 +317,11 @@ cd ../examples && python complete_agi_foundation_demo.py
 ## 🌍 **REAL-WORLD APPLICATIONS**
 
 <div align="center">
+  <img src="assets/images/nis_implementations_versions.png" alt="NIS Protocol Implementations Across Versions" width="900"/>
+  <p><em>Implementation evolution across different versions and applications</em></p>
+</div>
+
+<div align="center">
   <img src="assets/images/usesExamples.png" alt="NIS Protocol Use Cases" width="900"/>
   <p><em>Real-world applications across multiple domains and industries</em></p>
 </div>
@@ -396,7 +401,7 @@ git commit -m "Evidence-based enhancement with validation"
 ## 🏆 **COMPARISON TO OTHER AI SYSTEMS**
 
 <div align="center">
-  <img src="assets/images/v1vsv2.png" alt="Evolution from v1 to v3" width="800"/>
+  <img src="assets/images/v1_v2_v3_evolution_fixed.png" alt="Evolution from v1 to v3" width="800"/>
   <p><em>Evolution of the NIS Protocol from concept to complete AGI foundation</em></p>
 </div>
 
