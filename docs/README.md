@@ -2,13 +2,14 @@
 
 Welcome to the comprehensive documentation for the **Neuro-Inspired System (NIS) Protocol** - a revolutionary framework for building adaptive, biologically-inspired AI systems.
 
-### Quick Navigation
-| **I want to...** | **Go to** | **Time** |
-|:---|:---|:---:|
-| See it work immediately | [Getting Started Demo](GETTING_STARTED.md#5-minute-demo) | 5 min |
-| Understand the architecture | [System Architecture](ARCHITECTURE.md) | 15 min |
-| Integrate into my project | [Integration Guide](INTEGRATION_GUIDE.md) | 30 min |
-| Deploy in production | [Getting Started - Production](GETTING_STARTED.md#production-deployment) | 60 min |
+### ⚡ Quick Navigation
+| **I want to...** | **Go to** | **Time** | **Status** |
+|:---|:---|:---:|:---:|
+| **Get it running NOW** | [⚡ Quick Start](QUICK_START.md) | 5 min | ✅ READY |
+| **Learn how to use it** | [🎮 How to Use](HOW_TO_USE.md) | 15 min | ✅ READY |
+| **See working examples** | [🎯 Getting Started](GETTING_STARTED.md) | 30 min | ✅ READY |
+| **Understand the science** | [🔬 Architecture Guide](docs/README.md) | 45 min | ✅ READY |
+| **Deploy in production** | [🚀 Integration Guide](INTEGRATION_GUIDE.md) | 60 min | ✅ READY |
 
 ## 📊 Visual Documentation
 
