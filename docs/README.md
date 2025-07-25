@@ -1,19 +1,8 @@
-# 📚 NIS Protocol v3 Documentation
+# 📚 NIS Protocol Documentation Hub
 
-## 🎯 **Complete Documentation Hub**
+Welcome to the comprehensive documentation for the **Neuro-Inspired System (NIS) Protocol** - a revolutionary framework for building adaptive, biologically-inspired AI systems.
 
-Welcome to the comprehensive documentation for **NIS Protocol v3** - the neural intelligence system with Laplace → KAN → PINN → LLM pipeline, consciousness monitoring, and integrity validation.
-
----
-
-## 🚀 **Getting Started**
-
-### **New to NIS Protocol?**
-- **[📖 Getting Started Guide](GETTING_STARTED.md)** - Complete setup and implementation guide
-- **[⚡ Quick Start Guide](Quick_Start_Guide.md)** - Fast track to basic usage  
-- **[🔧 API Reference](API_Reference.md)** - Complete API documentation
-
-### **Quick Navigation**
+### Quick Navigation
 | **I want to...** | **Go to** | **Time** |
 |:---|:---|:---:|
 | See it work immediately | [Getting Started Demo](GETTING_STARTED.md#5-minute-demo) | 5 min |
@@ -21,9 +10,16 @@ Welcome to the comprehensive documentation for **NIS Protocol v3** - the neural 
 | Integrate into my project | [Integration Guide](INTEGRATION_GUIDE.md) | 30 min |
 | Deploy in production | [Getting Started - Production](GETTING_STARTED.md#production-deployment) | 60 min |
 
----
+## 📊 Visual Documentation
 
-## 🏗️ **Core System Documentation**
+📁 **[Complete Diagrams Collection](diagrams/README.md)** - All visual documentation in one organized location:
+- **System Architecture** - Interactive Mermaid diagrams and system overviews
+- **Mathematical Foundation** - KAN, Laplace, PINN visualizations
+- **Protocol Diagrams** - First contact and communication protocols
+- **Evolution Charts** - V1→V2→V3 progression and future roadmap
+- **Performance Analytics** - Benchmarking and analysis visualizations
+
+## 🏗️ Architecture & Design
 
 ### **🧠 Architecture & Design**
 - **[🏗️ System Architecture](ARCHITECTURE.md)** - Complete technical architecture
