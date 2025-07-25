@@ -2,6 +2,8 @@
 ## Neural Intelligence Architecture Framework
 
 <div align="center">
+  <img src="assets/images_organized/nis-protocol-logov1.png" alt="NIS Protocol v3 Logo" width="400"/>
+  
   <h2>🎯 <strong>NEURAL INTELLIGENCE ARCHITECTURE</strong></h2>
   <p><em>2,704 lines of validated neural intelligence code • Three core intelligence systems • Evidence-based implementation</em></p>
   
@@ -541,7 +543,10 @@ This implementation advances research in:
 
 ## 🌟 **JOIN THE NEURAL INTELLIGENCE REVOLUTION**
 
-
+<div align="center">
+  <img src="assets/images_organized/externalprotocolslogos.png" alt="Integration with Leading AI Protocols" width="800"/>
+  <p><em>Integration with leading AI and research protocols</em></p>
+</div>
 
 ### **🚀 Get Started Today**
 
