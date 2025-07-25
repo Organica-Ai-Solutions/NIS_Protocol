@@ -15,7 +15,7 @@ Welcome to the comprehensive documentation for the **Neuro-Inspired System (NIS)
 
 ## 📊 Visual Documentation
 
-📁 **[Interactive Mermaid Diagrams](mermaid_diagrams/README.md)** - 7 comprehensive interactive diagrams:
+📁 **[Interactive Mermaid Diagrams](diagrams/README.md)** - 7 comprehensive interactive diagrams:
 - **System Flow** - Complete dataflow, memory architecture, LLM integration
 - **Agent Hierarchy** - Communication patterns and coordination
 - **Pipeline Diagrams** - Laplace→KAN→PINN scientific processing
