@@ -19,7 +19,7 @@ This Commercial License Agreement grants you the right to use the NIS Protocol i
 
 ### **License Scope**
 - **Product:** NIS Protocol (all components and dependencies)
-- **Version Coverage:** All versions 4.0 and later
+- **Version Coverage:** All versions and implementations
 - **Geographic Scope:** Worldwide
 - **Term:** Annual renewable license
 
@@ -157,5 +157,4 @@ For unique requirements not covered by standard tiers:
 
 *This document is a template. Actual license terms will be customized based on your specific requirements and use case.*
 
-**Torres Family Technology Trust**  
 **Organica AI Solutions** 
