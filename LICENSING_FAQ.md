@@ -161,4 +161,4 @@ We believe in:
 ---
 
 *Last Updated: January 2025*
-*Torres Family Technology Trust* 
+*Organica AI Solutions* 

@@ -4,7 +4,7 @@
 # Converts repository from MIT to Dual License (MIT + BSL)
 
 echo "🚀 Implementing NIS Protocol License Transition..."
-echo "From MIT License to Dual License (MIT v3.x + BSL v4.x+)"
+echo "Implementing Business Source License (BSL) for NIS Protocol (all versions)"
 echo
 
 # Backup current LICENSE
@@ -33,7 +33,7 @@ cat >> README_LICENSE_SECTION.tmp << 'EOF'
 The NIS Protocol uses a dual licensing approach:
 
 - **🆓 v3.x and Earlier**: MIT License - Free for all uses
-- **🏢 v4.x and Later**: Business Source License (BSL) - Commercial use requires licensing
+- **🏢 All Versions**: Business Source License (BSL) - Commercial use requires licensing
 
 ### **For Researchers & Developers:**
 - Full access to all code for research, education, and personal use
@@ -41,7 +41,7 @@ The NIS Protocol uses a dual licensing approach:
 - Contribute to the open source community
 
 ### **For Commercial Users:**
-- Companies with >$1M annual revenue require commercial license for v4+
+- Companies with >$1M annual revenue require commercial license for commercial use
 - [Get Commercial License](COMMERCIAL_LICENSE_AGREEMENT.md)
 - Contact: diego@organicaai.com
 
@@ -50,7 +50,7 @@ To ensure sustainable development while maintaining open source principles. We w
 
 **Current Status:**
 - **v3.x**: Production-ready, MIT licensed, 75,359+ lines of AGI foundation code
-- **v4.x**: In development, BSL licensed, enhanced AWS integration and enterprise features
+- **v3.x**: Current version, BSL licensed, production-ready with full feature set
 
 For commercial licensing inquiries: **diego@organicaai.com**
 
@@ -72,7 +72,7 @@ echo "✅ README.md updated with licensing information"
 # Create git tags for version separation
 echo "🏷️ Creating git tags for license transition..."
 git tag -a v3.9.9 -m "Final MIT-licensed version of NIS Protocol"
-git tag -a v4.0.0-bsl -m "First BSL-licensed version - enhanced enterprise features"
+git tag -a v3.0.0-bsl -m "BSL-licensed version - production-ready with full feature set"
 
 # Create .github/LICENSE_NOTICE.md for pull request template
 mkdir -p .github
@@ -84,18 +84,18 @@ cat > .github/LICENSE_NOTICE.md << 'EOF'
 By contributing to this repository, you agree that:
 
 1. **For v3.x branches**: Contributions are MIT licensed
-2. **For v4.x+ branches**: Contributions are BSL licensed
+2. **For current branches**: Contributions are BSL licensed
 3. You have the right to make the contribution
 4. Your contribution may be included in commercial licensing agreements
 
 ## Current Licensing Status
 
-- **v3.x and earlier**: MIT License
-- **v4.x and later**: Business Source License 1.1
+- **All versions**: Business Source License 1.1
+- **After 2029**: Will become MIT License
 
 ## Commercial Use
 
-If you represent a company with >$1M annual revenue and want to use v4.x+ commercially, please contact diego@organicaai.com for licensing terms.
+If you represent a company with >$1M annual revenue and want to use NIS Protocol commercially, please contact diego@organicaai.com for licensing terms.
 EOF
 
 echo "✅ Created GitHub license notice"
@@ -147,7 +147,7 @@ echo "✅ Created commercial license inquiry template"
 if [ -f "setup.py" ]; then
     echo "📦 Updating setup.py with dual license info..."
     # Add note about dual licensing
-    sed -i 's/license="MIT"/license="MIT (v3.x), BSL 1.1 (v4.x+)"/g' setup.py
+    sed -i 's/license="MIT"/license="BSL 1.1"/g' setup.py
 fi
 
 # Create legal disclaimer file
@@ -156,14 +156,14 @@ cat > LEGAL_DISCLAIMER.md << 'EOF'
 
 ## Licensing
 
-The Neural Intelligence Synthesis (NIS) Protocol is dual-licensed:
+The Neural Intelligence Synthesis (NIS) Protocol is licensed under:
 
-- **v3.x and earlier**: MIT License
-- **v4.x and later**: Business Source License 1.1
+- **All versions**: Business Source License 1.1
+- **After 2029**: Will become MIT License
 
 ## Commercial Use Notice
 
-Commercial use of v4.x+ by entities with annual revenue >$1M requires a commercial license agreement. Contact diego@organicaai.com for licensing terms.
+Commercial use of NIS Protocol by entities with annual revenue >$1M requires a commercial license agreement. Contact diego@organicaai.com for licensing terms.
 
 ## Warranty Disclaimer
 
@@ -187,7 +187,7 @@ echo "🎉 License transition implementation complete!"
 echo
 echo "📋 Summary of changes:"
 echo "  ✅ LICENSE renamed to LICENSE_MIT (for v3.x)"
-echo "  ✅ LICENSE_BSL created (for v4.x+)"
+echo "  ✅ LICENSE_BSL created (current version)"
 echo "  ✅ README.md updated with licensing section"
 echo "  ✅ Commercial license agreement template created"
 echo "  ✅ Legal implementation guide created"
