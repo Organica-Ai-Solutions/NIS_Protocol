@@ -338,7 +338,7 @@
   - Estimated: 3 weeks
 
 ### **🎯 v6.0 Success Criteria**
-- [ ] +20% performance enhancement over 10 evolution cycles
+- [ ] Measured performance enhancement over evolution cycles
 - [ ] Memory usage <8GB peak under all conditions
 - [ ] Boot time <30s from cold start
 - [ ] Response latency <1s per agent action

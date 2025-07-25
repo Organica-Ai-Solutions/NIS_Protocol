@@ -1152,6 +1152,106 @@ if __name__ == "__main__":
 
 ---
 
+## 🛠️ **Troubleshooting**
+
+### **Common Installation Issues**
+
+#### **Import Errors**
+```bash
+# If you get import errors, ensure you're in the project directory
+cd NIS_Protocol
+export PYTHONPATH="${PYTHONPATH}:$(pwd)/src"
+
+# Or add to your script
+import sys
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
+```
+
+#### **Missing Dependencies**
+```bash
+# Install all optional dependencies
+pip install -r requirements.txt
+pip install torch torchvision transformers gym
+pip install kafka-python redis langchain langgraph
+
+# For development
+pip install -r requirements-dev.txt
+```
+
+#### **Memory Issues**
+If you encounter memory issues with large models:
+```python
+# Use smaller batch sizes
+config = {
+    "batch_size": 16,  # Reduce from default
+    "max_sequence_length": 512  # Reduce from 1024
+}
+
+# Or enable gradient checkpointing
+torch.utils.checkpoint.checkpoint_sequential()
+```
+
+### **Performance Optimization**
+
+#### **GPU Acceleration**
+```python
+# Check for GPU availability
+import torch
+print(f"GPU available: {torch.cuda.is_available()}")
+print(f"GPU count: {torch.cuda.device_count()}")
+
+# Enable GPU for scientific pipeline
+config = {
+    "device": "cuda" if torch.cuda.is_available() else "cpu",
+    "enable_gpu_acceleration": True
+}
+```
+
+#### **Memory Management**
+```python
+# Enable memory optimization
+import torch
+torch.backends.cudnn.benchmark = True
+torch.backends.cudnn.deterministic = False
+
+# Clear GPU cache periodically
+if torch.cuda.is_available():
+    torch.cuda.empty_cache()
+```
+
+### **Getting Help**
+
+#### **Documentation Resources**
+- **[Technical Architecture](ARCHITECTURE.md)** - Detailed system design
+- **[API Reference](API_Reference.md)** - Complete function documentation
+- **[Integration Guide](INTEGRATION_GUIDE.md)** - Implementation patterns
+
+#### **Community & Support**
+- **[GitHub Issues](https://github.com/Organica-Ai-Solutions/NIS_Protocol/issues)** - Bug reports and feature requests
+- **[Discussions](https://github.com/Organica-Ai-Solutions/NIS_Protocol/discussions)** - Community Q&A
+- **[Contributing Guide](../CONTRIBUTING.md)** - How to contribute
+
+#### **Debugging Tips**
+```python
+# Enable detailed logging
+import logging
+logging.basicConfig(level=logging.DEBUG)
+
+# Run integrity checks
+from src.utils.self_audit import self_audit_engine
+result = self_audit_engine.run_basic_checks()
+print(f"System integrity: {result}")
+
+# Check system health
+from src.infrastructure.integration_coordinator import InfrastructureCoordinator
+coordinator = InfrastructureCoordinator()
+health = coordinator.get_system_health()
+print(f"Infrastructure health: {health}")
+```
+
+---
+
 ## 📚 **Next Steps**
 
 Congratulations! You now have a solid foundation in NIS Protocol v3. Here's what to explore next:

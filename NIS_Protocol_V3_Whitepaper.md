@@ -405,9 +405,9 @@ The implementation provides a solid foundation for continued intelligence resear
 - Integrity Audit System: `nis-integrity-toolkit/audit-scripts/`
 
 ### Technical Documentation
-- Complete Data Flow Guide: `docs/COMPLETE_DATA_FLOW_GUIDE.md`
-- Intelligence Foundation Achievement: `docs/COMPLETE_AGI_FOUNDATION_ACHIEVEMENT.md`
-- DRL Integration Summary: `docs/DRL_REDIS_INTEGRATION_SUMMARY.md`
+- Data Flow Guide: `docs/DATA_FLOW_GUIDE.md`
+- Intelligence Foundation Achievement: `docs/AGI_FOUNDATION_ACHIEVEMENT.md`
+- DRL Integration: `docs/ARCHITECTURE.md#infrastructure-layer`
 
 ---
 
