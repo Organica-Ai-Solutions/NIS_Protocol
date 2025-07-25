@@ -10,15 +10,23 @@ Welcome to the comprehensive documentation for the **Neuro-Inspired System (NIS)
 | **See working examples** | [🎯 Getting Started](GETTING_STARTED.md) | 30 min | ✅ READY |
 | **Understand the science** | [🔬 Architecture Guide](docs/README.md) | 45 min | ✅ READY |
 | **Deploy in production** | [🚀 Integration Guide](INTEGRATION_GUIDE.md) | 60 min | ✅ READY |
+| **Integrate with your app** | [🔧 Integration Examples](INTEGRATION_EXAMPLES.md) | 45 min | ✨ NEW |
+| **Fix issues & optimize** | [🛠️ Troubleshooting Guide](TROUBLESHOOTING_GUIDE.md) | 30 min | ✨ NEW |
 
 ## 📊 Visual Documentation
 
-📁 **[Complete Diagrams Collection](diagrams/README.md)** - All visual documentation in one organized location:
-- **System Architecture** - Interactive Mermaid diagrams and system overviews
-- **Mathematical Foundation** - KAN, Laplace, PINN visualizations
-- **Protocol Diagrams** - First contact and communication protocols
-- **Evolution Charts** - V1→V2→V3 progression and future roadmap
+📁 **[Interactive Mermaid Diagrams](mermaid_diagrams/README.md)** - 7 comprehensive interactive diagrams:
+- **System Flow** - Complete dataflow, memory architecture, LLM integration
+- **Agent Hierarchy** - Communication patterns and coordination
+- **Pipeline Diagrams** - Laplace→KAN→PINN scientific processing
+- **Error Handling** - ✨ NEW: Crisis detection and recovery flows
+- **Consciousness Monitoring** - ✨ NEW: Self-awareness and confidence tracking
+
+📁 **[Static Images & Charts](../assets/images_organized/)** - Visual assets organized by category:
+- **Mathematical Foundation** - KAN, Laplace, PINN visualizations  
+- **System Screenshots** - Architecture overviews and evolution charts
 - **Performance Analytics** - Benchmarking and analysis visualizations
+- **Logos & Branding** - Protocol logos and external integrations
 
 ## 🏗️ Architecture & Design
 
@@ -27,6 +35,10 @@ Welcome to the comprehensive documentation for the **Neuro-Inspired System (NIS)
 - **[🔄 Data Flow Guide](DATA_FLOW_GUIDE.md)** - End-to-end data processing  
 - **[🧠 AGI Foundation Achievement](AGI_FOUNDATION_ACHIEVEMENT.md)** - Neural intelligence capabilities
 - **[📊 Agent Master Inventory](NIS_V3_AGENT_MASTER_INVENTORY.md)** - Complete catalog of agents
+
+### **🔧 Development & Integration**
+- **[🚀 Integration Examples](INTEGRATION_EXAMPLES.md)** - ✨ NEW: FastAPI, Django, Jupyter, Streamlit
+- **[🛠️ Troubleshooting Guide](TROUBLESHOOTING_GUIDE.md)** - ✨ NEW: Common issues, diagnostics, recovery
 
 ### **⚡ Infrastructure & Integration**
 - **[🔗 Integration Guide](INTEGRATION_GUIDE.md)** - System integration patterns
