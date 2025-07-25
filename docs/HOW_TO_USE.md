@@ -337,7 +337,7 @@ else:
 4. 📈 Monitor and optimize
 
 ### **Researcher Path**
-1. 📊 Explore [Mathematical Foundation](../docs/diagrams/mathematical_foundation/)
+1. 📊 Explore [Mathematical Foundation](../assets/images_organized/mathematical_visuals/)
 2. ⚛️ Study physics validation
 3. 🧠 Experiment with consciousness
 4. 📝 Contribute to research

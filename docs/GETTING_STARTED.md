@@ -268,7 +268,7 @@ python utilities/test_self_audit_agents.py  # Check agent health
 
 ### **See It In Action**
 - 🎮 **[Examples Gallery](examples/README.md)** - 15+ working examples
-- 🎥 **[Visual Documentation](docs/diagrams/README.md)** - Diagrams and flowcharts
+- 🎥 **[Visual Documentation](diagrams/README.md)** - Interactive diagrams and flowcharts
 - 🧪 **[Benchmarks](benchmarks/README.md)** - Performance metrics and validation
 
 ### **Get Help**
