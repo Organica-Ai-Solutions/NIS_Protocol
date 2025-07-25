@@ -2,7 +2,7 @@
 ## Neural Intelligence Architecture Framework
 
 <div align="center">
-  <img src="assets/images/v3_mathematical_foundation/nivv3 logo.png" alt="NIS Protocol v3 - Neural Intelligence Foundation" width="800"/>
+  <img src="docs/diagrams/mathematical_foundation/nivv3 logo.png" alt="NIS Protocol v3 - Neural Intelligence Foundation" width="800"/>
   
   <h2>🎯 <strong>NEURAL INTELLIGENCE ARCHITECTURE</strong></h2>
   <p><em>2,704 lines of validated neural intelligence code • Three core intelligence systems • Evidence-based implementation</em></p>
@@ -21,12 +21,12 @@
 ## 🌟 **NEURAL INTELLIGENCE SYNTHESIS FOUNDATION**
 
 <div align="center">
-  <img src="assets/images/v1_v2_v3_evolution_fixed.png" alt="Evolution from v1 to v3" width="900"/>
+  <img src="docs/diagrams/evolution/v1_v2_v3_evolution_fixed.png" alt="Evolution from v1 to v3" width="900"/>
   <p><em>Evolution of the NIS Protocol from concept to complete AGI foundation</em></p>
 </div>
 
 <div align="center">
-  <img src="assets/images/v3_mathematical_foundation/v3map.png" alt="NIS Protocol v3 Architecture Map" width="900"/>
+  <img src="docs/diagrams/mathematical_foundation/v3map.png" alt="NIS Protocol v3 Architecture Map" width="900"/>
   <p><em>Architectural overview of the NIS Protocol v3 Neural Intelligence Foundation</em></p>
 </div>
 
@@ -62,7 +62,7 @@ The **Neural Intelligence Synthesis (NIS) Protocol v3** implements foundational 
 ## 🔬 **MATHEMATICAL FOUNDATION: Why KAN Networks Matter**
 
 <div align="center">
-  <img src="assets/images/v3_mathematical_foundation/whyKanMatters.png" alt="Why KAN Networks Matter for Intelligence" width="800"/>
+  <img src="docs/diagrams/mathematical_foundation/whyKanMatters.png" alt="Why KAN Networks Matter for Intelligence" width="800"/>
   <p><em>KAN Networks provide spline-based function approximation with mathematical traceability</em></p>
 </div>
 
@@ -71,18 +71,18 @@ The **Neural Intelligence Synthesis (NIS) Protocol v3** implements foundational 
 <table>
 <tr>
 <td width="50%" align="center">
-  <img src="assets/images/v3_mathematical_foundation/mlp.png" alt="Traditional MLP Limitations" width="400"/>
+  <img src="docs/diagrams/mathematical_foundation/mlp.png" alt="Traditional MLP Limitations" width="400"/>
   <p><strong>Traditional MLP</strong><br>Black box processing<br>Limited mathematical transparency</p>
 </td>
 <td width="50%" align="center">
-  <img src="assets/images/v3_mathematical_foundation/kan.png" alt="KAN Network Intelligence" width="400"/>
+  <img src="docs/diagrams/mathematical_foundation/kan.png" alt="KAN Network Intelligence" width="400"/>
   <p><strong>KAN Networks</strong><br>Spline-based functions<br>Physics-informed processing</p>
 </td>
 </tr>
 </table>
 
 <div align="center">
-  <img src="assets/images/v3_mathematical_foundation/see_the_difference.png" alt="See the Mathematical Difference" width="800"/>
+  <img src="docs/diagrams/mathematical_foundation/see_the_difference.png" alt="See the Mathematical Difference" width="800"/>
   <p><em>Visual comparison: Traditional approaches vs. NIS Protocol v3 mathematical foundation</em></p>
 </div>
 
@@ -91,14 +91,14 @@ The **Neural Intelligence Synthesis (NIS) Protocol v3** implements foundational 
 ## ⚡ **SCIENTIFIC PIPELINE: Laplace → KAN → PINN → LLM**
 
 <div align="center">
-  <img src="assets/images/v3_mathematical_foundation/laplace+kan.png" alt="Laplace Transform + KAN Integration" width="800"/>
+  <img src="docs/diagrams/mathematical_foundation/laplace+kan.png" alt="Laplace Transform + KAN Integration" width="800"/>
   <p><em>Laplace Transform integration with KAN networks for temporal intelligence</em></p>
 </div>
 
 ### **🔬 Physics-Informed Intelligence Pipeline**
 
 <div align="center">
-  <img src="assets/images/v3_mathematical_foundation/laplace+pinn.png" alt="Laplace + PINN Physics Validation" width="800"/>
+  <img src="docs/diagrams/mathematical_foundation/laplace+pinn.png" alt="Laplace + PINN Physics Validation" width="800"/>
   <p><em>Physics-Informed Neural Networks (PINN) ensure scientific validity</em></p>
 </div>
 
@@ -213,7 +213,7 @@ print(f"Confidence: {response.confidence}")
 ## 🚀 **SYSTEM ARCHITECTURE**
 
 <div align="center">
-  <img src="assets/images/diagram-nis-core agents v2.png" alt="NIS Core Agents Architecture" width="900"/>
+  <img src="docs/diagrams/system_architecture/diagram-nis-core agents v2.png" alt="NIS Core Agents Architecture" width="900"/>
   <p><em>Multi-agent architecture with enhanced coordination</em></p>
 </div>
 
@@ -244,7 +244,7 @@ print(f"Confidence: {response.confidence}")
 ## 📊 **PERFORMANCE SURFACE VISUALIZATION**
 
 <div align="center">
-  <img src="assets/images/v3_mathematical_foundation/Regular MLP Surface Map.png" alt="Performance Surface Analysis" width="800"/>
+  <img src="docs/diagrams/mathematical_foundation/Regular MLP Surface Map.png" alt="Performance Surface Analysis" width="800"/>
   <p><em>Performance surface analysis showing optimization landscapes</em></p>
 </div>
 
@@ -347,7 +347,7 @@ print(f"Plan: {len(result['actions'])} steps")
 ## 🔬 **SCIENTIFIC VALIDATION & INTEGRITY**
 
 <div align="center">
-  <img src="assets/images/heatmap.png" alt="Performance Heatmap Analysis" width="800"/>
+  <img src="docs/diagrams/performance/heatmap.png" alt="Performance Heatmap Analysis" width="800"/>
   <p><em>Performance heatmap showing system optimization and validation results</em></p>
 </div>
 
@@ -379,12 +379,12 @@ cd ../examples && python complete_agi_foundation_demo.py
 ## 🌍 **REAL-WORLD APPLICATIONS**
 
 <div align="center">
-  <img src="assets/images/nis_implementations_versions.png" alt="NIS Protocol Implementations Across Versions" width="900"/>
+  <img src="docs/diagrams/system_architecture/nis_implementations_versions.png" alt="NIS Protocol Implementations Across Versions" width="900"/>
   <p><em>Implementation evolution across different versions and applications</em></p>
 </div>
 
 <div align="center">
-  <img src="assets/images/usesExamples.png" alt="NIS Protocol Use Cases" width="900"/>
+  <img src="docs/diagrams/system_architecture/usesExamples.png" alt="NIS Protocol Use Cases" width="900"/>
   <p><em>Real-world applications across multiple domains and industries</em></p>
 </div>
 
@@ -547,7 +547,7 @@ This implementation advances research in:
 ## 🌟 **JOIN THE NEURAL INTELLIGENCE REVOLUTION**
 
 <div align="center">
-  <img src="assets/images/externalprotocolslogos.png" alt="External Protocol Integration" width="800"/>
+  <img src="docs/diagrams/protocols/externalprotocolslogos.png" alt="External Protocol Integration" width="800"/>
   <p><em>Integration with leading AI and research protocols</em></p>
 </div>
 
