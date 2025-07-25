@@ -153,6 +153,63 @@ The foundation includes comprehensive learning enhancements:
 
 ---
 
+## 📋 **Installation & Getting Started**
+
+### **Prerequisites**
+- Python 3.8+ (3.9+ recommended for optimal performance)
+- Git for repository cloning
+- 8GB+ RAM for full pipeline processing
+- Optional: Redis and Kafka for distributed processing
+
+### **Quick Installation**
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/Organica-Ai-Solutions/NIS_Protocol.git
+cd NIS_Protocol
+
+# 2. Install core dependencies
+pip install -r requirements.txt
+
+# 3. Install deep learning dependencies
+pip install torch torchvision transformers
+
+# 4. Verify installation
+python utilities/final_100_test.py
+```
+
+### **Getting Started**
+
+**5-Minute Demo** - Experience the neural intelligence foundation:
+
+```bash
+# Run the complete demonstration
+cd examples
+python complete_agi_foundation_demo.py
+```
+
+**For detailed setup instructions**, see our [Complete Getting Started Guide](docs/GETTING_STARTED.md).
+
+### **Basic Usage**
+
+```python
+from src.cognitive_agents.cognitive_system import CognitiveSystem
+
+# Initialize the cognitive system
+cognitive_system = CognitiveSystem()
+
+# Process input through neural intelligence pipeline
+response = cognitive_system.process_input(
+    text="Analyze this data for patterns",
+    generate_speech=False
+)
+
+print(f"Response: {response.response_text}")
+print(f"Confidence: {response.confidence}")
+```
+
+---
+
 ## 🚀 **SYSTEM ARCHITECTURE**
 
 <div align="center">
