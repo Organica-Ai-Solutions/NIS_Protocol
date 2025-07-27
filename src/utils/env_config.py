@@ -110,11 +110,17 @@ class EnvironmentConfig:
         Returns:
             Dictionary containing LLM configuration
         """
+        # Get API keys
+        openai_key = self.get_env("OPENAI_API_KEY", "")
+        anthropic_key = self.get_env("ANTHROPIC_API_KEY", "")
+        deepseek_key = self.get_env("DEEPSEEK_API_KEY", "")
+        bitnet_enabled = self.get_bool("BITNET_ENABLED", False)
+        
         config = {
             "providers": {
                 "openai": {
-                    "enabled": self.get_bool("OPENAI_ENABLED", False),
-                    "api_key": self.get_env("OPENAI_API_KEY", ""),
+                    "enabled": self.get_bool("OPENAI_ENABLED", bool(openai_key)),
+                    "api_key": openai_key,
                     "api_base": self.get_env("OPENAI_API_BASE", "https://api.openai.com/v1"),
                     "organization": self.get_env("OPENAI_ORGANIZATION", ""),
                     "models": {
@@ -135,8 +141,8 @@ class EnvironmentConfig:
                     }
                 },
                 "anthropic": {
-                    "enabled": self.get_bool("ANTHROPIC_ENABLED", False),
-                    "api_key": self.get_env("ANTHROPIC_API_KEY", ""),
+                    "enabled": self.get_bool("ANTHROPIC_ENABLED", bool(anthropic_key)),
+                    "api_key": anthropic_key,
                     "api_base": self.get_env("ANTHROPIC_API_BASE", "https://api.anthropic.com/v1"),
                     "version": self.get_env("ANTHROPIC_VERSION", "2023-06-01"),
                     "models": {
@@ -148,8 +154,8 @@ class EnvironmentConfig:
                     }
                 },
                 "deepseek": {
-                    "enabled": self.get_bool("DEEPSEEK_ENABLED", False),
-                    "api_key": self.get_env("DEEPSEEK_API_KEY", ""),
+                    "enabled": self.get_bool("DEEPSEEK_ENABLED", bool(deepseek_key)),
+                    "api_key": deepseek_key,
                     "api_base": self.get_env("DEEPSEEK_API_BASE", "https://api.deepseek.com/v1"),
                     "models": {
                         "chat": {

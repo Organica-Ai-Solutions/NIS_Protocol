@@ -34,7 +34,7 @@ except ImportError:
     SocketIO = None
 
 # NIS Protocol components
-from ..agents.consciousness.conscious_agent import EnhancedConsciousAgent
+from ..agents.consciousness.enhanced_conscious_agent import EnhancedConsciousAgent
 from ..agents.consciousness.introspection_manager import IntrospectionManager
 from ..agents.consciousness.meta_cognitive_processor import MetaCognitiveProcessor
 from ..infrastructure.integration_coordinator import InfrastructureCoordinator

@@ -1,0 +1,269 @@
+# NIS Protocol v3 - Docker ignore file
+# This file excludes unnecessary files from Docker build context
+
+# Git files
+.git
+.gitignore
+.gitattributes
+
+# Documentation
+README.md
+*.md
+docs/
+assets/
+DRONE_PROJECT_OVERVIEW.md
+NIS_DRONE_HARDWARE_PLAN.md
+NIS_DRONE_PROJECT_PLAN.md
+DOCUMENTATION_VALIDATION_REPORT.md
+MEETING_READY_SUMMARY.md
+
+# Docker files
+Dockerfile
+docker-compose*.yml
+.dockerignore
+
+# CI/CD and development files
+.github/
+.vscode/
+.idea/
+.cursor/
+.cursorrules
+
+# Environment files
+.env
+.env.*
+
+# Logs and temporary files
+logs/
+*.log
+*.tmp
+.cache/
+cache/
+
+# Data directories (mounted as volumes)
+data/
+models/checkpoints/
+models/trained/
+
+# Python cache and build files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.conda/
+
+# Testing and coverage files
+.coverage
+.pytest_cache/
+.tox/
+.nox/
+htmlcov/
+.coverage.*
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# poetry
+poetry.lock
+
+# PEP 582
+__pypackages__/
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# Control scripts (not needed in container)
+start.sh
+stop.sh
+reset.sh
+
+# Audit and utility files
+audit-report.json
+utilities/audit-report.json
+nis-integrity-toolkit/audit-report.json
+
+# Benchmarks (can be large)
+benchmarks/benchmark_results.json
+
+# Node.js (if any frontend components)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Windows
+desktop.ini
+
+# IDE files
+*.swp
+*.swo
+*~
+
+# Configuration backups
+*.bak
+*.backup
+*.orig
+
+# Monitoring data (too large for container)
+monitoring/grafana/data/
+monitoring/prometheus/data/
+
+# License files (keep only essential ones)
+LICENSE_BSL
+COMMERCIAL_LICENSE.md
+LICENSING_FAQ.md
+implement_licensing.sh
+update_pypi_token.sh
+
+# Templates and examples (not needed for runtime)
+templates/
+getting_started/
+emotional_state/
+memory_system/
+
+# Test files and results
+tests/integration/*report*.json
+tests/test_*.py
+
+# Package files
+setup.py
+setup_repo.sh
+
+# Archive files
+*.zip
+*.tar.gz
+*.rar
+
+# Database files (should be in volumes)
+*.db
+*.sqlite
+*.sqlite3
+
+# Redis dump files
+dump.rdb
+
+# Kafka logs
+kafka-logs/
+
+# Temporary Python files
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.so
+
+# PyCharm
+.idea/
+
+# VS Code
+.vscode/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.vim
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# macOS
+.AppleDouble
+.LSOverride
+
+# Icon must end with two \r
+Icon
+
+# Thumbnails
+._*
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.TemporaryItems
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk 

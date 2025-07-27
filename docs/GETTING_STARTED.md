@@ -11,45 +11,129 @@ The **Neural Intelligence Synthesis (NIS) Protocol** is a production-ready frame
 
 ## ⚡ **5-Minute Demo**
 
-### **Quick Start (Copy & Paste)**
+### **🐳 Quick Start with Docker (Recommended)**
+```bash
+# 1. Clone the repository
+git clone https://github.com/Organica-Ai-Solutions/NIS_Protocol.git
+cd NIS_Protocol
+
+# 2. 🔑 Configure your LLM API keys (REQUIRED)
+cat > .env << EOF
+# 🔑 LLM Provider API Keys (REQUIRED - get at least one)
+OPENAI_API_KEY=your_openai_api_key_here
+ANTHROPIC_API_KEY=your_anthropic_api_key_here
+DEEPSEEK_API_KEY=your_deepseek_api_key_here
+GOOGLE_API_KEY=your_google_api_key_here
+
+# Infrastructure (Docker defaults)
+DATABASE_URL=postgresql://nis_user:nis_password_2025@postgres:5432/nis_protocol_v3
+KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+REDIS_HOST=redis
+REDIS_PORT=6379
+NIS_ENV=development
+LOG_LEVEL=INFO
+EOF
+
+# Edit with your actual API keys
+nano .env  # or: code .env, vim .env, etc.
+
+# 🔗 Get your API keys from:
+# • OpenAI: https://platform.openai.com/api-keys
+# • Anthropic: https://console.anthropic.com/
+# • DeepSeek: https://platform.deepseek.com/
+# • Google: https://makersuite.google.com/app/apikey
+
+# 3. Deploy complete infrastructure
+./start.sh
+
+# 4. Test the system (in another terminal)
+curl http://localhost/health
+curl -X POST http://localhost/process \
+  -H "Content-Type: application/json" \
+  -d '{"text": "Analyze this data for patterns"}'
+
+# 5. Expected URLs:
+# 🌐 Main API: http://localhost/
+# 📊 Dashboard: http://localhost/dashboard/
+# 📖 Docs: http://localhost/docs
+```
+
+> **⚠️ Important**: The system requires at least one LLM provider API key to function. We recommend starting with OpenAI or Anthropic.
+
+### **📋 Manual Setup (Developers)**
+<details>
+<summary>Click to expand manual installation</summary>
+
 ```bash
 # 1. Clone and setup
 git clone https://github.com/Organica-Ai-Solutions/NIS_Protocol.git
 cd NIS_Protocol
 pip install -r requirements.txt
 
-# 2. Run the demo
-python examples/complete_agi_foundation_demo.py
+# 2. Configure external services (PostgreSQL, Kafka, Redis)
+# See DOCKER_README.md for service configuration
 
-# 3. Expected Output:
-# ✅ Goal Adaptation System: ACTIVE
-# ✅ Domain Generalization: ACTIVE  
-# ✅ Autonomous Planning: ACTIVE
-# 🎯 NIS Protocol v3: READY
+# 3. Run the demo
+python examples/complete_agi_foundation_demo.py
 ```
+
+</details>
 
 ### **What You'll See**
+
+**🐳 Docker Deployment:**
 ```
-🧠 Neural Intelligence Synthesis (NIS) Protocol v3 Demo
-════════════════════════════════════════════════════════
-📊 Loading Goal Adaptation System...        ✅ LOADED (902 lines)
-🌐 Loading Domain Generalization Engine...  ✅ LOADED (837 lines)  
-🎯 Loading Autonomous Planning System...     ✅ LOADED (965 lines)
+[NIS-V3] Starting NIS Protocol v3 Complete System...
+[SUCCESS] Docker and Docker Compose are available
+[SUCCESS] All required directories are ready
+[NIS-V3] Starting core infrastructure services...
+[SUCCESS] PostgreSQL is ready
+[SUCCESS] Redis is ready
+[SUCCESS] Core infrastructure is ready
+[NIS-V3] Starting NIS Protocol v3 application...
+[SUCCESS] NIS Protocol v3 application started successfully
+[SUCCESS] Reverse proxy started successfully
 
-🎯 Processing Test Input: "Analyze this data for patterns"
-
-🔄 Laplace Transform → Frequency Analysis Complete
-🧠 KAN Reasoning → Symbolic Function Extracted  
-⚛️ PINN Validation → Physics Constraints Satisfied
-🤖 LLM Integration → Natural Language Response Generated
-
-Response: "Pattern detected: Linear growth with 95% confidence.
-Recommendation: Continue monitoring for trend stability."
-Confidence: 0.89
-Processing Time: 0.34 seconds
-
-🎉 NIS Protocol Demo Complete!
+🌐 Service URLs:
+  • Main API:          http://localhost/
+  • API Documentation: http://localhost/docs
+  • Health Check:      http://localhost/health
+  • Monitoring:        http://localhost/dashboard/
 ```
+
+**🧪 API Testing:**
+```bash
+$ curl http://localhost/health
+{
+  "status": "healthy",
+  "uptime": 45.2,
+  "components": {
+    "cognitive_system": "healthy",
+    "infrastructure": "healthy", 
+    "consciousness": "healthy",
+    "dashboard": "healthy"
+  }
+}
+
+$ curl -X POST http://localhost/process -H "Content-Type: application/json" \
+  -d '{"text": "Analyze this data for patterns"}'
+{
+  "response_text": "Pattern detected: Linear growth with 95% confidence.",
+  "confidence": 0.89,
+  "processing_time": 0.34,
+  "agent_insights": {
+    "laplace_analysis": "Frequency domain analysis complete",
+    "kan_reasoning": "Symbolic function extracted", 
+    "pinn_validation": "Physics constraints satisfied"
+  },
+  "consciousness_state": {
+    "awareness_level": 0.85,
+    "meta_cognitive_state": "active"
+  }
+}
+```
+
+**🎉 Complete AGI Infrastructure Ready!**
 
 ## 🏗️ **Architecture Overview**
 

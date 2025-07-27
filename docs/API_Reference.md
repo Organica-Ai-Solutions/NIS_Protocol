@@ -1,18 +1,334 @@
-# 🔗 NIS Protocol v3 - implemented API Reference
+# 🔗 NIS Protocol v3 - Complete API Reference
 
-> **API documentation for all production with implemented coverage-ready agents and systems**
+> **Comprehensive API documentation for Docker-deployed NIS Protocol v3 with full agent and model integration**
 
 ---
 
 ## 📋 **Table of Contents**
 
-1. [Core scientific pipeline ([integration tests](test_week3_complete_pipeline.py)) APIs](#core-scientific-pipeline-apis)
-2. [Consciousness & Meta-Cognition APIs](#consciousness--meta-cognition-apis)
-3. [Integrity & monitoring ([health tracking](src/infrastructure/integration_coordinator.py)) APIs](#integrity--monitoring ([health tracking](src/infrastructure/integration_coordinator.py))-apis)
-4. [Utility & Helper APIs](#utility--helper-apis)
-5. [Integration Examples](#integration-examples)
-6. [Error Handling](#error-handling)
-7. [Performance Guidelines](#performance-guidelines)
+1. [🐳 **REST API (Primary Interface)**](#-rest-api-primary-interface)
+2. [🧠 **Agent Connection APIs**](#-agent-connection-apis)
+3. [🎼 **Model Orchestration APIs**](#-model-orchestration-apis)
+4. [🔬 **Core Scientific Pipeline APIs**](#-core-scientific-pipeline-apis)
+5. [💭 **Consciousness & Meta-Cognition APIs**](#-consciousness--meta-cognition-apis)
+6. [🛡️ **Monitoring & Health APIs**](#️-monitoring--health-apis)
+7. [🐍 **Python Integration APIs**](#-python-integration-apis)
+8. [📝 **Examples & Integration**](#-examples--integration)
+
+---
+
+## 🐳 **REST API (Primary Interface)**
+
+**Base URL**: `http://localhost/` (after `./start.sh`)
+
+> **⚠️ Prerequisites**: Configure your LLM provider API keys in `.env` file before starting. See [Getting Started Guide](GETTING_STARTED.md#quick-start-with-docker-recommended) for setup instructions.
+
+### **🔍 Health & Status**
+
+#### **GET `/health`**
+System health check and component status.
+
+```bash
+curl http://localhost/health
+```
+
+**Response:**
+```json
+{
+  "status": "healthy",
+  "uptime": 123.45,
+  "components": {
+    "cognitive_system": "healthy",
+    "infrastructure": "healthy",
+    "consciousness": "healthy",
+    "dashboard": "healthy"
+  },
+  "metrics": {
+    "uptime_seconds": 123.45,
+    "memory_usage_mb": 2048.0,
+    "active_agents": 8,
+    "response_time_ms": 12.5
+  }
+}
+```
+
+#### **GET `/consciousness/status`**
+Consciousness agent status and awareness level.
+
+```bash
+curl http://localhost/consciousness/status
+```
+
+**Response:**
+```json
+{
+  "agent_status": "active",
+  "awareness_level": 0.85,
+  "meta_cognitive_processes": [
+    "introspection",
+    "self_reflection", 
+    "performance_monitoring"
+  ],
+  "last_update": 1705123456,
+  "processing_queue_size": 3
+}
+```
+
+#### **GET `/infrastructure/status`**
+Infrastructure component health and performance.
+
+```bash
+curl http://localhost/infrastructure/status
+```
+
+**Response:**
+```json
+{
+  "kafka": "connected",
+  "redis": "connected",
+  "postgresql": "connected",
+  "message_queue_size": 12,
+  "cache_hit_ratio": 0.95,
+  "active_topics": ["nis-consciousness", "nis-goals", "nis-coordination"],
+  "performance_metrics": {
+    "latency_ms": 12.5,
+    "throughput_ops_per_sec": 150,
+    "error_rate": 0.001
+  }
+}
+```
+
+#### **GET `/metrics`**
+Comprehensive system metrics.
+
+```bash
+curl http://localhost/metrics
+```
+
+### **🧠 Intelligence Processing**
+
+#### **POST `/process`**
+Primary intelligence processing endpoint.
+
+```bash
+curl -X POST http://localhost/process \
+  -H "Content-Type: application/json" \
+  -d '{
+    "text": "Analyze quantum consciousness in AI systems",
+    "generate_speech": false,
+    "context": {
+      "operation": "comprehensive_analysis",
+      "depth": "deep",
+      "include_consciousness": true,
+      "enable_physics_validation": true
+    }
+  }'
+```
+
+**Request Schema:**
+```json
+{
+  "text": "string (required)",
+  "generate_speech": "boolean (optional, default: false)",
+  "context": {
+    "operation": "string (optional)",
+    "depth": "string (optional: shallow|medium|deep)",
+    "include_consciousness": "boolean (optional)",
+    "enable_physics_validation": "boolean (optional)",
+    "agent_preferences": "array (optional)",
+    "model_preferences": "object (optional)"
+  }
+}
+```
+
+**Response Schema:**
+```json
+{
+  "response_text": "string",
+  "confidence": "number (0-1)",
+  "processing_time": "number (seconds)",
+  "agent_insights": {
+    "goal_adaptation": "object",
+    "domain_generalization": "object", 
+    "autonomous_planning": "object",
+    "kan_reasoning": "object",
+    "pinn_validation": "object",
+    "laplace_analysis": "object"
+  },
+  "consciousness_state": {
+    "awareness_level": "number (0-1)",
+    "meta_cognitive_state": "string",
+    "introspection_score": "number (0-1)",
+    "ethical_evaluation": "object"
+  },
+  "model_usage": {
+    "primary_model": "string",
+    "fallback_used": "boolean",
+    "total_tokens": "number",
+    "cost_estimate": "number"
+  }
+}
+```
+
+### **🎯 Specialized Intelligence Operations**
+
+#### **POST `/process` - Goal Generation**
+Generate autonomous goals and objectives.
+
+```bash
+curl -X POST http://localhost/process \
+  -H "Content-Type: application/json" \
+  -d '{
+    "text": "Generate research goals for quantum AI",
+    "context": {
+      "operation": "goal_generation",
+      "domain": "research", 
+      "time_horizon": "6_months",
+      "priority": "high"
+    }
+  }'
+```
+
+#### **POST `/process` - Domain Transfer**
+Cross-domain knowledge transfer and analogical reasoning.
+
+```bash
+curl -X POST http://localhost/process \
+  -H "Content-Type: application/json" \
+  -d '{
+    "text": "Apply physics principles to biological systems",
+    "context": {
+      "operation": "domain_transfer",
+      "source_domain": "physics",
+      "target_domain": "biology",
+      "concepts": ["energy_conservation", "force_dynamics"]
+    }
+  }'
+```
+
+#### **POST `/process` - Strategic Planning**
+Multi-step strategic planning with resource optimization.
+
+```bash
+curl -X POST http://localhost/process \
+  -H "Content-Type: application/json" \
+  -d '{
+    "text": "Create comprehensive AI safety research plan",
+    "context": {
+      "operation": "strategic_planning",
+      "goal": "ai_safety_research",
+      "resources": ["team_of_5", "12_month_timeline"],
+      "constraints": ["budget_limited", "ethical_compliance"]
+    }
+  }'
+```
+
+### **🔧 Administration**
+
+#### **POST `/admin/restart`**
+Restart system services (requires admin access).
+
+```bash
+curl -X POST http://localhost/admin/restart \
+  -H "Content-Type: application/json" \
+  -d '{
+    "services": ["infrastructure", "agents"],
+    "force": false
+  }'
+```
+
+---
+
+## 🧠 **Agent Connection APIs**
+
+### **Agent Coordination Patterns**
+
+#### **Direct Agent Communication**
+Use the `/process` endpoint with specific agent targeting:
+
+```bash
+# Target specific agents in sequence
+curl -X POST http://localhost/process \
+  -H "Content-Type: application/json" \
+  -d '{
+    "text": "Research quantum consciousness",
+    "context": {
+      "operation": "agent_coordination",
+      "coordination_mode": "sequential",
+      "agent_chain": [
+        "consciousness",
+        "domain_generalization", 
+        "kan_reasoning",
+        "planning"
+      ]
+    }
+  }'
+```
+
+#### **Parallel Agent Processing**
+Execute multiple agents in parallel:
+
+```bash
+curl -X POST http://localhost/process \
+  -H "Content-Type: application/json" \
+  -d '{
+    "text": "Analyze AI consciousness from multiple perspectives",
+    "context": {
+      "operation": "parallel_analysis",
+      "coordination_mode": "parallel",
+      "agents": {
+        "consciousness": {"depth": "deep"},
+        "physics": {"validation_level": "strict"},
+        "reasoning": {"analysis_type": "structural"}
+      }
+    }
+  }'
+```
+
+---
+
+## 🎼 **Model Orchestration APIs**
+
+### **Multi-Model Processing**
+
+#### **Cognitive Function Assignment**
+Route different cognitive functions to specialized models:
+
+```bash
+curl -X POST http://localhost/process \
+  -H "Content-Type: application/json" \
+  -d '{
+    "text": "Analyze ethical implications of quantum AI",
+    "context": {
+      "operation": "multi_model_analysis",
+      "cognitive_functions": {
+        "reasoning": {"model": "gpt-4", "temperature": 0.3},
+        "creativity": {"model": "claude-3-opus", "temperature": 0.8},
+        "consciousness": {"model": "claude-3-opus", "temperature": 0.7},
+        "ethics": {"model": "gpt-4", "temperature": 0.4}
+      }
+    }
+  }'
+```
+
+#### **Model Performance Optimization**
+Request optimal model selection based on criteria:
+
+```bash
+curl -X POST http://localhost/process \
+  -H "Content-Type: application/json" \
+  -d '{
+    "text": "Complex mathematical proof",
+    "context": {
+      "operation": "optimized_processing",
+      "optimization_criteria": {
+        "priority": "quality",
+        "max_latency": 10.0,
+        "budget_constraint": 0.25
+      }
+    }
+  }'
+```
 
 ---
 

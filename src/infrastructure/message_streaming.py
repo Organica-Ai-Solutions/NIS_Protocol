@@ -131,7 +131,7 @@ class NISKafkaManager:
         config: Optional[Dict[str, Any]] = None
     ):
         """Initialize the enhanced Kafka manager"""
-        self.bootstrap_servers = bootstrap_servers or ["localhost:9092"]
+        self.bootstrap_servers = bootstrap_servers or ["kafka:9092"]
         self.enable_self_audit = enable_self_audit
         self.max_retries = max_retries
         self.retry_backoff = retry_backoff
@@ -190,9 +190,7 @@ class NISKafkaManager:
             self.producer = AIOKafkaProducer(
                 bootstrap_servers=self.bootstrap_servers,
                 value_serializer=lambda x: json.dumps(x).encode('utf-8'),
-                retry_backoff_ms=int(self.retry_backoff * 1000),
-                retries=self.max_retries,
-                batch_size=self.batch_size
+                retry_backoff_ms=int(self.retry_backoff * 1000)
             )
             await self.producer.start()
             

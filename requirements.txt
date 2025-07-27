@@ -8,7 +8,6 @@ accelerate>=0.24.0
 peft>=0.6.0
 
 # Quantization and Optimization
-bitsandbytes>=0.41.0
 optimum>=1.14.0
 
 # Hugging Face Hub
@@ -35,11 +34,7 @@ tqdm>=4.65.0
 
 # Model Specific
 einops>=0.7.0
-flash-attn>=2.3.0  # For efficient attention (if supported)
 
 # Quantization Libraries
-auto-gptq>=0.4.0
-gptqmodel>=0.3.0
 
 # BitNet specific (if available)
-bitnet-pytorch  # Custom implementation if needed 

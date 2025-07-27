@@ -13,11 +13,55 @@
 
 ## Overview
 
-The NIS Protocol implements a multi-layered, event-driven architecture that combines traditional AI processing with physics-informed validation and distributed infrastructure. The system is designed around three core pillars:
+The NIS Protocol v3 implements a containerized, multi-layered, event-driven architecture that combines traditional AI processing with physics-informed validation and production-ready distributed infrastructure. The system is designed around four core pillars:
 
-1. **Scientific Validation Pipeline**: Laplace→KAN→PINN processing
-2. **Multi-Agent Coordination**: Layered cognitive architecture with specialized agents
-3. **Production Infrastructure**: Kafka/Redis-based distributed processing
+1. **🐳 Containerized Deployment**: Complete Docker infrastructure with one-command deployment
+2. **🔬 Scientific Validation Pipeline**: Laplace→KAN→PINN→LLM processing
+3. **🤖 Multi-Agent Coordination**: Consciousness-aware cognitive architecture with specialized agents
+4. **🏗️ Production Infrastructure**: Kafka/Redis/PostgreSQL/Nginx-based distributed processing
+
+## 🐳 **Docker Infrastructure Architecture**
+
+```mermaid
+graph TB
+    subgraph "External Access"
+        U[Users] --> N[Nginx :80]
+        D[Developers] --> G[Grafana :3000]
+    end
+    
+    subgraph "Application Layer"
+        N --> A[NIS App :8000]
+        A --> M[Dashboard :5000]
+    end
+    
+    subgraph "Data Layer"
+        A --> K[Kafka :9092]
+        A --> R[Redis :6379] 
+        A --> P[PostgreSQL :5432]
+    end
+    
+    subgraph "Infrastructure"
+        K --> Z[Zookeeper :2181]
+        G --> PR[Prometheus :9090]
+    end
+    
+    subgraph "Optional Monitoring"
+        KU[Kafka UI :8080]
+        RC[Redis Commander :8081]
+    end
+```
+
+### **🚀 Deployment Architecture**
+
+| **Component** | **Container** | **Purpose** | **Scale** |
+|---------------|---------------|-------------|-----------|
+| **Nginx** | `nis-nginx` | Reverse proxy, load balancing | 1 replica |
+| **NIS App** | `nis-main-app` | Core AGI processing, consciousness | Scalable |
+| **PostgreSQL** | `nis-postgres` | Persistent data, agent states | 1 primary |
+| **Kafka** | `nis-kafka` | Message streaming, agent coordination | 3 partitions |
+| **Redis** | `nis-redis` | Memory cache, shared state | LRU eviction |
+| **Zookeeper** | `nis-zookeeper` | Kafka coordination | 1 replica |
+| **Grafana** | `nis-grafana` | Monitoring dashboards | Optional |
 
 ## Core Architectural Principles
 
@@ -31,12 +75,64 @@ Agents communicate through Kafka message streams, enabling:
 - Fault tolerance
 - Real-time monitoring
 
-### 3. **Layered Cognitive Architecture**
-The system follows a hierarchical processing model:
-```
-Consciousness Layer ← Learning Layer ← Action Layer ← Coordination Layer
-                                                              ↑
-Perception Layer → Interpretation Layer → Reasoning Layer → Memory Layer → Physics Layer
+### 3. **Consciousness-Aware Cognitive Architecture**
+The system follows a consciousness-integrated hierarchical processing model:
+
+```mermaid
+graph TB
+    subgraph "Consciousness Layer"
+        CA[Conscious Agent]
+        MCP[Meta-Cognitive Processor]
+        IM[Introspection Manager]
+    end
+    
+    subgraph "Coordination Layer"
+        AR[Agent Router]
+        CC[Coordination Controller]
+        DRL[DRL Enhanced Router]
+    end
+    
+    subgraph "Intelligence Layer"
+        GA[Goal Adaptation]
+        DG[Domain Generalization]
+        AP[Autonomous Planning]
+        KR[KAN Reasoning]
+        PP[PINN Physics]
+        LP[Laplace Processor]
+    end
+    
+    subgraph "Memory & Learning"
+        MA[Memory Agent]
+        LA[Learning Agent]
+        NP[Neuroplasticity Agent]
+    end
+    
+    subgraph "Infrastructure Integration"
+        K[Kafka Messages]
+        R[Redis Cache]
+        P[PostgreSQL DB]
+        LLM[Multi-LLM Orchestra]
+    end
+    
+    CA --> AR
+    AR --> GA
+    AR --> DG
+    AR --> AP
+    AR --> KR
+    AR --> PP
+    AR --> LP
+    
+    GA <--> MA
+    DG <--> LA
+    AP <--> NP
+    
+    MCP --> IM
+    CA --> MCP
+    
+    All --> K
+    All --> R
+    All --> P
+    All --> LLM
 ```
 
 ### 4. **Self-Monitoring and Integrity**

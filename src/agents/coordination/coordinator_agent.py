@@ -28,12 +28,21 @@ from dataclasses import dataclass, field
 from enum import Enum
 import logging
 
+# Import TypedDict with fallback
+try:
+    from typing_extensions import TypedDict, Annotated
+except ImportError:
+    from typing import TypedDict
+    try:
+        from typing_extensions import Annotated
+    except ImportError:
+        Annotated = None
+
 # LangGraph integration
 try:
     from langgraph.graph import StateGraph, END, START
     from langgraph.checkpoint.memory import MemorySaver
     from langgraph.prebuilt import ToolExecutor
-    from typing_extensions import TypedDict, Annotated
     LANGGRAPH_AVAILABLE = True
 except ImportError:
     LANGGRAPH_AVAILABLE = False
@@ -45,7 +54,7 @@ try:
 except ImportError:
     LANGSMITH_AVAILABLE = False
 
-from core.agent import NISAgent, NISLayer
+from src.core.agent import NISAgent, NISLayer
 
 # Enhanced imports
 from ..enhanced_agent_base import EnhancedAgentBase, AgentConfiguration, AgentState

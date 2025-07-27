@@ -9,10 +9,10 @@ import time
 import requests
 from typing import Dict, Any, List, Optional, Union
 
-from .base_adapter import BaseProtocolAdapter
+from .base_adapter import BaseAdapter
 
 
-class A2AAdapter(BaseProtocolAdapter):
+class A2AAdapter(BaseAdapter):
     """Adapter for Google's Agent2Agent Protocol (A2A).
     
     This adapter translates between NIS Protocol and A2A, allowing NIS agents

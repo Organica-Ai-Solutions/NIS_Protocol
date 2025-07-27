@@ -13,8 +13,8 @@ import asyncio
 import logging
 from enum import Enum
 
-from core.agent import NISAgent, NISLayer
-from adapters.base_adapter import BaseProtocolAdapter
+from src.core.agent import NISAgent, NISLayer
+from src.adapters.base_adapter import BaseAdapter
 
 class ProtocolPriority(Enum):
     """Priority levels for protocol message handling"""
@@ -43,7 +43,7 @@ class MetaProtocolCoordinator:
     """
     
     def __init__(self):
-        self.protocol_adapters: Dict[str, BaseProtocolAdapter] = {}
+        self.protocol_adapters: Dict[str, BaseAdapter] = {}
         self.metrics: Dict[str, ProtocolMetrics] = {}
         self.active_conversations: Dict[str, Dict[str, Any]] = {}
         self.emotional_context: Dict[str, Dict[str, float]] = {}
@@ -54,7 +54,7 @@ class MetaProtocolCoordinator:
     def register_protocol(
         self,
         protocol_name: str,
-        adapter: BaseProtocolAdapter,
+        adapter: BaseAdapter,
         priority: ProtocolPriority = ProtocolPriority.NORMAL
     ) -> None:
         """Register a new protocol adapter.

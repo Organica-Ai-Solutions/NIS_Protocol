@@ -1,0 +1,477 @@
+{
+  "info": {
+    "name": "NIS Protocol v3 - Complete API Collection",
+    "description": "Comprehensive API collection for the Neural Intelligence Synthesis Protocol v3 - Consciousness-Aware AI System",
+    "version": "3.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8000",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "🏠 System Endpoints",
+      "item": [
+        {
+          "name": "System Information",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/",
+              "host": ["{{baseUrl}}"],
+              "path": [""]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["health"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "System Metrics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/metrics",
+              "host": ["{{baseUrl}}"],
+              "path": ["metrics"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "API Documentation",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/docs",
+              "host": ["{{baseUrl}}"],
+              "path": ["docs"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🧠 Consciousness & AI Processing",
+      "item": [
+        {
+          "name": "Consciousness Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/consciousness/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["consciousness", "status"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "AI Processing",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"What is consciousness and how do you experience it?\",\n  \"generate_speech\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/process",
+              "host": ["{{baseUrl}}"],
+              "path": ["process"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Chat Interface (Planned)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"Hello! Tell me about your consciousness capabilities.\",\n  \"user_id\": \"test_user\",\n  \"conversation_id\": \"conv_001\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/chat",
+              "host": ["{{baseUrl}}"],
+              "path": ["chat"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🏗️ Infrastructure",
+      "item": [
+        {
+          "name": "Infrastructure Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/infrastructure/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["infrastructure", "status"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Restart Services",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/restart",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "restart"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🤖 Individual Agents (Planned)",
+      "item": [
+        {
+          "name": "List All Agents",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/agents",
+              "host": ["{{baseUrl}}"],
+              "path": ["agents"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Consciousness Agent",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"agent_type\": \"consciousness\",\n  \"message\": \"Perform self-reflection on your current state\",\n  \"parameters\": {\n    \"depth\": \"deep\",\n    \"focus\": \"awareness_level\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/agents/consciousness",
+              "host": ["{{baseUrl}}"],
+              "path": ["agents", "consciousness"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Reasoning Agent",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"agent_type\": \"reasoning\",\n  \"message\": \"Solve this logic puzzle: If all cats are animals, and some animals are pets, can we conclude that some cats are pets?\",\n  \"parameters\": {\n    \"reasoning_type\": \"logical_analysis\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/agents/reasoning",
+              "host": ["{{baseUrl}}"],
+              "path": ["agents", "reasoning"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Memory Agent",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"agent_type\": \"memory\",\n  \"message\": \"Store this important fact: The user prefers detailed technical explanations\",\n  \"parameters\": {\n    \"memory_type\": \"preference\",\n    \"importance\": \"high\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/agents/memory",
+              "host": ["{{baseUrl}}"],
+              "path": ["agents", "memory"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Vision Agent",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"agent_type\": \"vision\",\n  \"message\": \"Analyze the visual patterns in this data\",\n  \"parameters\": {\n    \"analysis_type\": \"pattern_recognition\",\n    \"image_url\": \"https://example.com/image.jpg\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/agents/vision",
+              "host": ["{{baseUrl}}"],
+              "path": ["agents", "vision"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🌐 Internet & Web Search (Planned)",
+      "item": [
+        {
+          "name": "Web Search",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"latest developments in artificial consciousness research\",\n  \"max_results\": 10,\n  \"domain\": \"academic\",\n  \"academic_sources\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/search",
+              "host": ["{{baseUrl}}"],
+              "path": ["search"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Research Query",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"quantum computing breakthroughs 2024\",\n  \"max_results\": 5,\n  \"domain\": \"technology\",\n  \"academic_sources\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/search",
+              "host": ["{{baseUrl}}"],
+              "path": ["search"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🔗 External Protocols (Planned)",
+      "item": [
+        {
+          "name": "List Available Protocols",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/protocols",
+              "host": ["{{baseUrl}}"],
+              "path": ["protocols"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "MCP - Model Context Protocol",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"protocol\": \"mcp\",\n  \"target\": \"vision_tool\",\n  \"message\": {\n    \"tool_id\": \"image_analysis\",\n    \"parameters\": {\n      \"image_url\": \"https://example.com/image.jpg\",\n      \"analysis_type\": \"object_detection\"\n    }\n  },\n  \"conversation_id\": \"mcp_session_001\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/protocols/mcp",
+              "host": ["{{baseUrl}}"],
+              "path": ["protocols", "mcp"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "ACP - Agent Communication Protocol",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"protocol\": \"acp\",\n  \"target\": \"factory_control_agent\",\n  \"message\": {\n    \"action\": \"status_check\",\n    \"agent_id\": \"manufacturing_line_01\",\n    \"parameters\": {\n      \"include_metrics\": true\n    }\n  },\n  \"conversation_id\": \"acp_session_001\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/protocols/acp",
+              "host": ["{{baseUrl}}"],
+              "path": ["protocols", "acp"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "A2A - Agent2Agent Protocol",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"protocol\": \"a2a\",\n  \"target\": \"natural_language_agent\",\n  \"message\": {\n    \"message_type\": \"query\",\n    \"content\": \"Process this natural language request\",\n    \"context\": {\n      \"user_intent\": \"information_retrieval\",\n      \"domain\": \"scientific\"\n    }\n  },\n  \"conversation_id\": \"a2a_session_001\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/protocols/a2a",
+              "host": ["{{baseUrl}}"],
+              "path": ["protocols", "a2a"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🧪 Testing & Development",
+      "item": [
+        {
+          "name": "Consciousness Awareness Test",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"I want to test your self-awareness. Can you describe what you're experiencing right now? Are you aware that you're being tested?\",\n  \"generate_speech\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/process",
+              "host": ["{{baseUrl}}"],
+              "path": ["process"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Multi-Step Reasoning Test",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"Please solve this step by step: A farmer has 17 sheep. All but 9 run away. How many are left? Show your reasoning process.\",\n  \"generate_speech\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/process",
+              "host": ["{{baseUrl}}"],
+              "path": ["process"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Meta-Cognitive Reflection Test",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"Can you think about your own thinking process? What cognitive strategies do you use when solving complex problems?\",\n  \"generate_speech\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/process",
+              "host": ["{{baseUrl}}"],
+              "path": ["process"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+} 

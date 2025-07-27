@@ -1,0 +1,278 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: nis-postgres
+    environment:
+      POSTGRES_DB: nis_protocol_v3
+      POSTGRES_USER: nis_user
+      POSTGRES_PASSWORD: nis_password_2025
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./config/postgres_init:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    networks:
+      - nis-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nis_user -d nis_protocol_v3"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Zookeeper (required for Kafka)
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.0
+    container_name: nis-zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    volumes:
+      - zookeeper_data:/var/lib/zookeeper/data
+      - zookeeper_logs:/var/lib/zookeeper/log
+    networks:
+      - nis-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "echo", "ruok", "|", "nc", "localhost", "2181"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Kafka Message Streaming
+  kafka:
+    image: confluentinc/cp-kafka:7.4.0
+    container_name: nis-kafka
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_NUM_PARTITIONS: 3
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 1
+      # NIS Protocol specific topics
+      KAFKA_CREATE_TOPICS: >
+        nis-consciousness:3:1,
+        nis-goals:3:1,
+        nis-simulation:3:1,
+        nis-alignment:3:1,
+        nis-memory:3:1,
+        nis-coordination:3:1,
+        nis-system-health:3:1,
+        nis-audit-alerts:3:1,
+        nis-performance:3:1
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    networks:
+      - nis-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9092"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Redis Cache and Memory
+  redis:
+    image: redis:7-alpine
+    container_name: nis-redis
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+      - ./config/redis.conf:/usr/local/etc/redis/redis.conf
+    ports:
+      - "6379:6379"
+    networks:
+      - nis-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Main NIS Protocol v3 Application (Step 3 - Full System)
+  nis-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.step3
+    container_name: nis-main-app
+    depends_on:
+      - postgres
+      - kafka
+      - redis
+    environment:
+      # 🔑 LLM Provider API Keys (REQUIRED)
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY}
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY}
+      BITNET_API_KEY: ${BITNET_API_KEY}
+      # Database
+      DATABASE_URL: postgresql://nis_user:nis_password_2025@postgres:5432/nis_protocol_v3
+      # Kafka
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      KAFKA_TOPICS_PREFIX: nis-
+      # Redis
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_DB: 0
+      # Application
+      PYTHONPATH: /app
+      NIS_ENV: ${NIS_ENV:-production}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      # API Configuration
+      API_HOST: 0.0.0.0
+      API_PORT: 8000
+      DASHBOARD_PORT: 5000
+    volumes:
+      - ./logs:/app/logs
+      - ./data:/app/data
+      - ./models:/app/models
+      - ./config:/app/config
+    ports:
+      - "8000:8000"
+      - "5000:5000"
+    networks:
+      - nis-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: nis-nginx
+    depends_on:
+      - nis-app
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./static:/usr/share/nginx/html/static:ro
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - nis-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Kafka UI (Optional - for development/monitoring)
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: nis-kafka-ui
+    depends_on:
+      - kafka
+    environment:
+      KAFKA_CLUSTERS_0_NAME: nis-cluster
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+    ports:
+      - "8080:8080"
+    networks:
+      - nis-network
+    restart: unless-stopped
+    profiles:
+      - monitoring
+
+  # Redis Commander (Optional - for development/monitoring)
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: nis-redis-commander
+    depends_on:
+      - redis
+    environment:
+      REDIS_HOSTS: local:redis:6379
+    ports:
+      - "8081:8081"
+    networks:
+      - nis-network
+    restart: unless-stopped
+    profiles:
+      - monitoring
+
+  # System Monitoring (Prometheus - Optional)
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: nis-prometheus
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    ports:
+      - "9090:9090"
+    networks:
+      - nis-network
+    restart: unless-stopped
+    profiles:
+      - monitoring
+
+  # Grafana Dashboard (Optional)
+  grafana:
+    image: grafana/grafana:latest
+    container_name: nis-grafana
+    depends_on:
+      - prometheus
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: nis_admin_2025
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+    ports:
+      - "3000:3000"
+    networks:
+      - nis-network
+    restart: unless-stopped
+    profiles:
+      - monitoring
+
+# Named volumes for persistent data
+volumes:
+  postgres_data:
+    driver: local
+  kafka_data:
+    driver: local
+  zookeeper_data:
+    driver: local
+  zookeeper_logs:
+    driver: local
+  redis_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+
+# Network configuration
+networks:
+  nis-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.25.0.0/16 
