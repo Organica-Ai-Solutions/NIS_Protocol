@@ -23,6 +23,16 @@ import time
 import json
 import asyncio
 from typing import Dict, Any, List, Optional, Union, Callable, Type
+
+# Import TypedDict with fallback
+try:
+    from typing_extensions import TypedDict, Annotated
+except ImportError:
+    from typing import TypedDict
+    try:
+        from typing_extensions import Annotated
+    except ImportError:
+        Annotated = None
 from dataclasses import dataclass, field
 from enum import Enum
 import logging
@@ -55,6 +65,12 @@ try:
     LANGGRAPH_AVAILABLE = True
 except ImportError:
     LANGGRAPH_AVAILABLE = False
+    # Fallback when LangGraph is not available
+    def add_messages(left, right):
+        """Fallback implementation when LangGraph is not available"""
+        if isinstance(left, list) and isinstance(right, list):
+            return left + right
+        return [left, right] if not isinstance(left, list) else left + [right]
 
 # LangSmith - Enhanced imports
 try:

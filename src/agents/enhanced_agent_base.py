@@ -29,12 +29,21 @@ import threading
 from datetime import datetime, timedelta
 from collections import defaultdict, deque
 
+# Always import TypedDict
+try:
+    from typing_extensions import TypedDict, Annotated
+except ImportError:
+    from typing import TypedDict
+    try:
+        from typing_extensions import Annotated
+    except ImportError:
+        Annotated = None
+
 # LangGraph integration
 try:
     from langgraph.graph import StateGraph, END, START
     from langgraph.checkpoint.memory import MemorySaver
     from langgraph.prebuilt import ToolExecutor
-    from typing_extensions import TypedDict, Annotated
     LANGGRAPH_AVAILABLE = True
 except ImportError:
     LANGGRAPH_AVAILABLE = False

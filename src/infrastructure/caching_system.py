@@ -127,7 +127,7 @@ class NISRedisManager:
     
     def __init__(
         self,
-        host: str = "localhost",
+        host: str = "redis",
         port: int = 6379,
         db: int = 0,
         password: Optional[str] = None,

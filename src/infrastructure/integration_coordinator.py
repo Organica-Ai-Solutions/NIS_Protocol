@@ -185,7 +185,7 @@ class InfrastructureCoordinator:
         """Initialize Kafka manager"""
         try:
             self.kafka_manager = NISKafkaManager(
-                bootstrap_servers=self.kafka_config.get("bootstrap_servers", ["localhost:9092"]),
+                bootstrap_servers=self.kafka_config.get("bootstrap_servers", ["kafka:9092"]),
                 enable_self_audit=self.enable_self_audit,
                 **self.kafka_config.get("options", {})
             )
@@ -228,7 +228,7 @@ class InfrastructureCoordinator:
         """Initialize Redis manager"""
         try:
             self.redis_manager = NISRedisManager(
-                host=self.redis_config.get("host", "localhost"),
+                host=self.redis_config.get("host", "redis"),
                 port=self.redis_config.get("port", 6379),
                 db=self.redis_config.get("db", 0),
                 enable_self_audit=self.enable_self_audit,

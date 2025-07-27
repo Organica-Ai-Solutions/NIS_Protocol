@@ -1,26 +1,85 @@
-# 🏗️ NIS Protocol Complete System Architecture
-## 📋 **Migration Assessment Overview**
+# 🏗️ NIS Protocol v3 - Containerized System Architecture
+## 📋 **Docker Infrastructure Overview**
 
-**Purpose**: Complete system architecture for migration assessment and technical evaluation  
-**Scope**: Full NIS Protocol infrastructure, data flow, and component dependencies  
-**Target**: Enterprise migration planning and infrastructure assessment
+**Purpose**: Complete containerized system architecture with one-command deployment  
+**Scope**: Full Docker infrastructure, agent coordination, and multi-model orchestration  
+**Target**: Production deployment and enterprise scaling
 
 ---
 
-## 🎯 **Complete System Architecture Diagram**
+## 🐳 **Docker Infrastructure Architecture**
 
 ```mermaid
 graph TB
-    subgraph "Client Layer"
-        WEB[Web Interface<br/>🌐 Frontend Dashboard]
-        API[REST API<br/>📡 External Integrations]
-        CLI[Command Line<br/>⌨️ Developer Tools]
+    subgraph "External Access Layer"
+        U[Users<br/>🌐 Web/API Access]
+        D[Developers<br/>🛠️ Monitoring Tools]
+        A[Admins<br/>⚙️ System Management]
     end
 
-    subgraph "Application Gateway"
-        LB[Load Balancer<br/>⚖️ Traffic Distribution]
-        AUTH[Authentication<br/>🔐 Security Layer]
-        RATE[Rate Limiting<br/>🚦 Traffic Control]
+    subgraph "Reverse Proxy & Load Balancing"
+        N[Nginx Container<br/>📡 Reverse Proxy<br/>Port: 80/443]
+        N --> |Rate Limiting| RL[Rate Limiting<br/>🚦 Traffic Control]
+        N --> |Security Headers| SH[Security Headers<br/>🛡️ Protection]
+    end
+
+    subgraph "Application Container Layer"
+        NA[NIS Main App<br/>🧠 AGI Processing<br/>Port: 8000]
+        DB[Dashboard<br/>📊 Real-time Monitoring<br/>Port: 5000]
+        API[REST API<br/>📡 Neural Intelligence API]
+    end
+
+    subgraph "Data Persistence Layer"
+        PG[PostgreSQL<br/>🗄️ Agent States & Data<br/>Port: 5432]
+        R[Redis<br/>💾 Memory Cache<br/>Port: 6379]
+        K[Kafka<br/>📨 Message Streaming<br/>Port: 9092]
+        Z[Zookeeper<br/>🏛️ Kafka Coordination<br/>Port: 2181]
+    end
+
+    subgraph "Optional Monitoring Layer"
+        G[Grafana<br/>📈 Advanced Monitoring<br/>Port: 3000]
+        PR[Prometheus<br/>📊 Metrics Collection<br/>Port: 9090]
+        KU[Kafka UI<br/>🔥 Message Queue Management<br/>Port: 8080]
+        RC[Redis Commander<br/>💾 Cache Management<br/>Port: 8081]
+    end
+
+    U --> N
+    D --> G
+    A --> KU
+    A --> RC
+    
+    N --> NA
+    N --> DB
+    NA --> API
+    
+    NA --> PG
+    NA --> R
+    NA --> K
+    K --> Z
+    
+    G --> PR
+    PR --> NA
+    
+    style N fill:#ff9999
+    style NA fill:#99ccff
+    style PG fill:#99ff99
+    style K fill:#ffcc99
+```
+
+## 🧠 **Consciousness-Aware Agent Architecture**
+
+```mermaid
+graph TB
+    subgraph "Consciousness Layer"
+        CA[Conscious Agent<br/>🧠 Meta-Cognitive Processing]
+        MCP[Meta-Cognitive Processor<br/>🤔 Self-Reflection]
+        IM[Introspection Manager<br/>👁️ Self-Monitoring]
+    end
+
+    subgraph "Coordination & Routing"
+        AR[Agent Router<br/>🎯 Intelligent Routing]
+        CC[Coordination Controller<br/>🤝 Multi-Agent Sync]
+        DRL[DRL Enhanced Router<br/>🎮 Learning-Based Routing]
     end
 
     subgraph "Core NIS Intelligence Pipeline"

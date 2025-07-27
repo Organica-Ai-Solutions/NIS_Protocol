@@ -9,10 +9,10 @@ import time
 import requests
 from typing import Dict, Any, List, Optional
 
-from .base_adapter import BaseProtocolAdapter
+from .base_adapter import BaseAdapter
 
 
-class MCPAdapter(BaseProtocolAdapter):
+class MCPAdapter(BaseAdapter):
     """Adapter for the Model Context Protocol (MCP).
     
     This adapter translates between NIS Protocol and MCP, allowing NIS agents

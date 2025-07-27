@@ -5,8 +5,8 @@
     
     "message_streaming": {
         "provider": "kafka",
-        "bootstrap_servers": ["localhost:9092"],
-        "backup_servers": ["localhost:9093", "localhost:9094"],
+        "bootstrap_servers": ["kafka:9092"],
+        "backup_servers": ["kafka:9093", "kafka:9094"],
         "topics": {
             "consciousness_events": "nis-consciousness",
             "goal_events": "nis-goals",
@@ -55,13 +55,13 @@
     
     "memory_cache": {
         "provider": "redis",
-        "host": "localhost", 
+        "host": "redis", 
         "port": 6379,
         "db": 0,
         "password": null,
         "cluster": {
             "enabled": false,
-            "nodes": ["localhost:7000", "localhost:7001", "localhost:7002"]
+            "nodes": ["redis:7000", "redis:7001", "redis:7002"]
         },
         "options": {
             "max_memory": "512mb",
@@ -188,7 +188,7 @@
         "environment": "development",
         "service_discovery": {
             "enabled": false,
-            "consul_url": "http://localhost:8500"
+            "consul_url": "http://consul:8500"
         },
         "containerization": {
             "docker_compose": true,

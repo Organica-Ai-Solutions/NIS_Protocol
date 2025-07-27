@@ -9,10 +9,10 @@ import time
 import requests
 from typing import Dict, Any, List, Optional, Union
 
-from .base_adapter import BaseProtocolAdapter
+from .base_adapter import BaseAdapter
 
 
-class ACPAdapter(BaseProtocolAdapter):
+class ACPAdapter(BaseAdapter):
     """Adapter for IBM's Agent Communication Protocol (ACP).
     
     This adapter translates between NIS Protocol and ACP, allowing NIS agents

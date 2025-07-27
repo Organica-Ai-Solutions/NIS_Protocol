@@ -1,7 +1,22 @@
 from typing import Dict, List, Optional, Tuple
 import numpy as np
-import sounddevice as sd
-from bark import SAMPLE_RATE, generate_audio, preload_models
+
+# Optional audio dependencies
+try:
+    import sounddevice as sd
+    SOUNDDEVICE_AVAILABLE = True
+except ImportError:
+    sd = None
+    SOUNDDEVICE_AVAILABLE = False
+
+try:
+    from bark import SAMPLE_RATE, generate_audio, preload_models
+    BARK_AVAILABLE = True
+except ImportError:
+    SAMPLE_RATE = 22050  # Default sample rate
+    generate_audio = None
+    preload_models = None
+    BARK_AVAILABLE = False
 from dataclasses import dataclass, field
 from datetime import datetime
 from collections import deque
@@ -22,8 +37,9 @@ class CommunicationAgent:
         default_voice_preset: str = "v2/en_speaker_6",
         sample_rate: int = SAMPLE_RATE
     ):
-        # Initialize Bark
-        preload_models()
+        # Initialize Bark if available
+        if BARK_AVAILABLE and preload_models:
+            preload_models()
         
         self.history_size = history_size
         self.conversation_history = deque(maxlen=history_size)
@@ -66,13 +82,17 @@ class CommunicationAgent:
         elif not selected_preset:
             selected_preset = self.default_voice_preset
             
-        # Generate audio
-        audio = generate_audio(
-            text,
-            history_prompt=selected_preset,
-            text_temp=self.audio_params["waveform_temp"],
-            waveform_temp=self.audio_params["waveform_temp"]
-        )
+        # Generate audio if available
+        if BARK_AVAILABLE and generate_audio:
+            audio = generate_audio(
+                text,
+                history_prompt=selected_preset,
+                text_temp=self.audio_params["waveform_temp"],
+                waveform_temp=self.audio_params["waveform_temp"]
+            )
+        else:
+            # Return empty array if audio generation not available
+            audio = np.array([])
         
         return audio
     
@@ -86,8 +106,9 @@ class CommunicationAgent:
         """Generate and play speech."""
         audio = self.generate_speech(text, voice_preset, emotional_state)
         
-        # Play audio
-        sd.play(audio, samplerate=self.sample_rate, blocking=blocking)
+        # Play audio if available
+        if SOUNDDEVICE_AVAILABLE and sd and len(audio) > 0:
+            sd.play(audio, samplerate=self.sample_rate, blocking=blocking)
         
         # Add to conversation history
         sentiment = None

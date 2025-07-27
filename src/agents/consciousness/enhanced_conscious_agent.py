@@ -15,6 +15,7 @@ Enhanced Features:
 
 import time
 import logging
+import asyncio
 import numpy as np
 from typing import Dict, Any, List, Optional, Tuple, Union
 from dataclasses import dataclass, field
@@ -108,7 +109,11 @@ class EnhancedConsciousAgent(NISAgent):
                  enable_self_audit: bool = True,
                  consciousness_level: ConsciousnessLevel = ConsciousnessLevel.ENHANCED):
         
-        super().__init__(agent_id, NISLayer.REASONING)
+        super().__init__(
+            agent_id, 
+            NISLayer.REASONING, 
+            "Enhanced consciousness agent with meta-cognitive capabilities and self-reflection"
+        )
         
         self.reflection_interval = reflection_interval
         self.enable_self_audit = enable_self_audit
@@ -146,6 +151,42 @@ class EnhancedConsciousAgent(NISAgent):
         
         self.logger = logging.getLogger(f"nis.consciousness.{agent_id}")
         self.logger.info(f"Enhanced Conscious Agent initialized: {consciousness_level.value} level")
+    
+    async def initialize(self) -> bool:
+        """Async initialization for the Enhanced Conscious Agent.
+        
+        Returns:
+            bool: True if initialization successful, False otherwise
+        """
+        try:
+            self.logger.info("Starting async initialization of Enhanced Conscious Agent...")
+            
+            # Initialize memory manager
+            if hasattr(self.memory_manager, 'initialize'):
+                if hasattr(self.memory_manager.initialize, '__call__'):
+                    if asyncio.iscoroutinefunction(self.memory_manager.initialize):
+                        await self.memory_manager.initialize()
+                    else:
+                        self.memory_manager.initialize()
+            
+            # Start continuous reflection if enabled
+            if self.consciousness_level in [ConsciousnessLevel.ENHANCED, ConsciousnessLevel.INTEGRATED, ConsciousnessLevel.TRANSCENDENT]:
+                self.start_continuous_reflection()
+            
+            # Initialize consciousness state
+            self.consciousness_state.update({
+                'system_awareness_level': 0.75,
+                'meta_cognitive_depth': 0.6,
+                'consciousness_stability': 1.0,
+                'initialization_timestamp': time.time()
+            })
+            
+            self.logger.info("Enhanced Conscious Agent async initialization completed successfully")
+            return True
+            
+        except Exception as e:
+            self.logger.error(f"Failed to initialize Enhanced Conscious Agent: {e}")
+            return False
     
     def perform_introspection(self, 
                             reflection_type: ReflectionType,

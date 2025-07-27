@@ -1,4 +1,62 @@
-# 🔧 NIS Protocol Troubleshooting Guide
+# 🔧 NIS Protocol v3 Troubleshooting Guide
+
+## 🔑 **API Key Issues (Most Common)**
+
+### **❌ "No API key provided" or LLM connection errors**
+
+**🔍 Symptoms:**
+- System starts but fails on `/process` requests
+- Error messages about missing API keys
+- LLM provider authentication failures
+
+**✅ Solution:**
+```bash
+# 1. Check if .env file exists
+ls -la .env
+
+# 2. Verify API keys are set
+cat .env | grep API_KEY
+
+# 3. Create/fix .env file
+cat > .env << EOF
+OPENAI_API_KEY=your_actual_openai_key_here
+ANTHROPIC_API_KEY=your_actual_anthropic_key_here
+DEEPSEEK_API_KEY=your_actual_deepseek_key_here
+GOOGLE_API_KEY=your_actual_google_key_here
+EOF
+
+# 4. Restart the system
+./stop.sh
+./start.sh
+```
+
+**🔗 Get API keys from:**
+- **OpenAI**: https://platform.openai.com/api-keys
+- **Anthropic**: https://console.anthropic.com/
+- **DeepSeek**: https://platform.deepseek.com/
+- **Google**: https://makersuite.google.com/app/apikey
+
+### **❌ "Invalid API key" errors**
+
+**🔍 Check API key validity:**
+```bash
+# Test OpenAI key
+curl https://api.openai.com/v1/models \
+  -H "Authorization: Bearer $OPENAI_API_KEY"
+
+# Test Anthropic key
+curl https://api.anthropic.com/v1/messages \
+  -H "x-api-key: $ANTHROPIC_API_KEY" \
+  -H "Content-Type: application/json"
+```
+
+**✅ Solutions:**
+1. **Regenerate keys** from provider website
+2. **Check key format** (no extra spaces/characters)
+3. **Verify billing** is set up with provider
+4. **Check rate limits** - you might be hitting usage limits
+
+---
 
 ## 🎯 **Quick Diagnostics**
 
