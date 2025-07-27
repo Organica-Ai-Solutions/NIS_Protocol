@@ -103,11 +103,11 @@ services:
       timeout: 10s
       retries: 3
 
-  # Main NIS Protocol v3 Application (Step 3 - Full System)
+  # Main NIS Protocol v3.1 Application (Enhanced - Full System)
   nis-app:
     build:
       context: .
-      dockerfile: Dockerfile.step3
+      dockerfile: Dockerfile
     container_name: nis-main-app
     depends_on:
       - postgres

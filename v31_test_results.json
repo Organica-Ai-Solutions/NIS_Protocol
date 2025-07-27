@@ -1,0 +1,312 @@
+{
+  "summary": {
+    "total_tests": 34,
+    "passed_tests": 3,
+    "success_rate": 0.08823529411764706,
+    "test_time": 0.21463418006896973,
+    "timestamp": 1753599329.111803
+  },
+  "detailed_results": {
+    "core": {
+      "GET /": {
+        "success": true,
+        "status_code": 200,
+        "response_time": 0.01194,
+        "data": {
+          "system": "NIS Protocol v3",
+          "version": "3.0.0-step3",
+          "status": "operational",
+          "uptime_seconds": 136.91470289230347,
+          "cognitive_system": "unavailable",
+          "infrastructure": "unavailable",
+          "consciousness": "unavailable",
+          "message": "Step 3: Full infrastructure + consciousness",
+          "endpoints": [
+            "/",
+            "/health",
+            "/process",
+            "/chat",
+            "/consciousness/status",
+            "/infrastructure/status",
+            "/metrics",
+            "/docs"
+          ]
+        },
+        "error": null
+      },
+      "GET /health": {
+        "success": true,
+        "status_code": 200,
+        "response_time": 0.00546,
+        "data": {
+          "status": "healthy",
+          "uptime": 136.9215476512909,
+          "components": {
+            "api": "healthy",
+            "cognitive_system": "unavailable",
+            "infrastructure": "unavailable",
+            "consciousness": "unavailable"
+          },
+          "metrics": {
+            "uptime_seconds": 136.9215476512909,
+            "memory_usage_mb": 0.0,
+            "active_agents": 0.0,
+            "response_time_ms": 0.0
+          },
+          "message": "Step 3 system healthy!"
+        },
+        "error": null
+      }
+    },
+    "conversational": {
+      "POST /chat": {
+        "success": true,
+        "status_code": 200,
+        "response_time": 0.006908,
+        "data": {
+          "response": "Hello v31_tester! I'm running in Step 3 mode with full infrastructure. You said: 'Hello! I'm testing the v3.1 enhanced chat system.'",
+          "user_id": "v31_tester",
+          "timestamp": 1753599329.033651,
+          "confidence": 0.7,
+          "consciousness_state": null
+        },
+        "error": null
+      },
+      "POST /chat/contextual": {
+        "success": false,
+        "status_code": 404,
+        "response_time": 0.00514,
+        "data": null,
+        "error": "{\"detail\":\"Not Found\"}"
+      }
+    },
+    "internet": {
+      "POST /internet/search": {
+        "success": false,
+        "status_code": 404,
+        "response_time": 0.004259,
+        "data": null,
+        "error": "{\"detail\":\"Not Found\"}"
+      },
+      "POST /internet/fetch-url": {
+        "success": false,
+        "status_code": 404,
+        "response_time": 0.004232,
+        "data": null,
+        "error": "{\"detail\":\"Not Found\"}"
+      },
+      "POST /internet/fact-check": {
+        "success": false,
+        "status_code": 404,
+        "response_time": 0.004274,
+        "data": null,
+        "error": "{\"detail\":\"Not Found\"}"
+      },
+      "GET /internet/status": {
+        "success": false,
+        "status_code": 404,
+        "response_time": 0.003935,
+        "data": null,
+        "error": "{\"detail\":\"Not Found\"}"
+      }
+    },
+    "tools": {
+      "GET /tool/list": {
+        "success": false,
+        "status_code": 404,
+        "response_time": 0.003929,
+        "data": null,
+        "error": "{\"detail\":\"Not Found\"}"
+      },
+      "POST /tool/execute": {
+        "success": false,
+        "status_code": 404,
+        "response_time": 0.004423,
+        "data": null,
+        "error": "{\"detail\":\"Not Found\"}"
+      },
+      "POST /tool/register": {
+        "success": false,
+        "status_code": 404,
+        "response_time": 0.003555,
+        "data": null,
+        "error": "{\"detail\":\"Not Found\"}"
+      },
+      "POST /tool/test": {
+        "success": false,
+        "status_code": 404,
+        "response_time": 0.00505,
+        "data": null,
+        "error": "{\"detail\":\"Not Found\"}"
+      }
+    },
+    "agents": {
+      "POST /agent/create": {
+        "success": false,
+        "status_code": 404,
+        "response_time": 0.005049,
+        "data": null,
+        "error": "{\"detail\":\"Not Found\"}"
+      },
+      "GET /agent/list": {
+        "success": false,
+        "status_code": 404,
+        "response_time": 0.003518,
+        "data": null,
+        "error": "{\"detail\":\"Not Found\"}"
+      }
+    },
+    "models": {
+      "GET /models": {
+        "success": false,
+        "status_code": 404,
+        "response_time": 0.003949,
+        "data": null,
+        "error": "{\"detail\":\"Not Found\"}"
+      },
+      "POST /models/load": {
+        "success": false,
+        "status_code": 404,
+        "response_time": 0.004274,
+        "data": null,
+        "error": "{\"detail\":\"Not Found\"}"
+      },
+      "GET /models/status": {
+        "success": false,
+        "status_code": 404,
+        "response_time": 0.004437,
+        "data": null,
+        "error": "{\"detail\":\"Not Found\"}"
+      },
+      "POST /models/evaluate": {
+        "success": false,
+        "status_code": 404,
+        "response_time": 0.003698,
+        "data": null,
+        "error": "{\"detail\":\"Not Found\"}"
+      }
+    },
+    "memory": {
+      "POST /memory/store": {
+        "success": false,
+        "status_code": 404,
+        "response_time": 0.004434,
+        "data": null,
+        "error": "{\"detail\":\"Not Found\"}"
+      },
+      "POST /memory/query": {
+        "success": false,
+        "status_code": 404,
+        "response_time": 0.004668,
+        "data": null,
+        "error": "{\"detail\":\"Not Found\"}"
+      },
+      "DELETE /memory/clear": {
+        "success": false,
+        "status_code": 404,
+        "response_time": 0.004168,
+        "data": null,
+        "error": "{\"detail\":\"Not Found\"}"
+      }
+    },
+    "reasoning": {
+      "POST /reason/plan": {
+        "success": false,
+        "status_code": 404,
+        "response_time": 0.016666,
+        "data": null,
+        "error": "{\"detail\":\"Not Found\"}"
+      },
+      "POST /reason/validate": {
+        "success": false,
+        "status_code": 404,
+        "response_time": 0.00488,
+        "data": null,
+        "error": "{\"detail\":\"Not Found\"}"
+      },
+      "POST /reason/simulate": {
+        "success": false,
+        "status_code": 404,
+        "response_time": 0.004225,
+        "data": null,
+        "error": "{\"detail\":\"Not Found\"}"
+      },
+      "GET /reason/status": {
+        "success": false,
+        "status_code": 404,
+        "response_time": 0.004842,
+        "data": null,
+        "error": "{\"detail\":\"Not Found\"}"
+      }
+    },
+    "monitoring": {
+      "GET /logs": {
+        "success": false,
+        "status_code": 404,
+        "response_time": 0.004666,
+        "data": null,
+        "error": "{\"detail\":\"Not Found\"}"
+      },
+      "GET /dashboard/realtime": {
+        "success": false,
+        "status_code": 404,
+        "response_time": 0.00468,
+        "data": null,
+        "error": "{\"detail\":\"Not Found\"}"
+      },
+      "GET /metrics/latency": {
+        "success": false,
+        "status_code": 404,
+        "response_time": 0.005186,
+        "data": null,
+        "error": "{\"detail\":\"Not Found\"}"
+      }
+    },
+    "developer": {
+      "POST /config/reload": {
+        "success": false,
+        "status_code": 404,
+        "response_time": 0.004818,
+        "data": null,
+        "error": "{\"detail\":\"Not Found\"}"
+      },
+      "POST /sandbox/execute": {
+        "success": false,
+        "status_code": 404,
+        "response_time": 0.004754,
+        "data": null,
+        "error": "{\"detail\":\"Not Found\"}"
+      }
+    },
+    "experimental": {
+      "POST /kan/predict": {
+        "success": false,
+        "status_code": 404,
+        "response_time": 0.004982,
+        "data": null,
+        "error": "{\"detail\":\"Not Found\"}"
+      },
+      "POST /pinn/verify": {
+        "success": false,
+        "status_code": 404,
+        "response_time": 0.005134,
+        "data": null,
+        "error": "{\"detail\":\"Not Found\"}"
+      },
+      "POST /laplace/transform": {
+        "success": false,
+        "status_code": 404,
+        "response_time": 0.003741,
+        "data": null,
+        "error": "{\"detail\":\"Not Found\"}"
+      },
+      "POST /a2a/connect": {
+        "success": false,
+        "status_code": 404,
+        "response_time": 0.004458,
+        "data": null,
+        "error": "{\"detail\":\"Not Found\"}"
+      }
+    }
+  }
+}
