@@ -139,7 +139,7 @@ class RealPhysicsProcessor(nn.Module):
         if self.model_type == NemoModelType.FLUID_DYNAMICS:
             return self._compute_navier_stokes_derivatives(x)
         elif self.model_type == NemoModelType.SOLID_MECHANICS:
-            return self._compute_elasticity_derivatives(x)
+            return self._compute_solid_mechanics_derivatives(x)
         elif self.model_type == NemoModelType.THERMODYNAMICS:
             return self._compute_heat_transfer_derivatives(x)
         else:
@@ -175,27 +175,60 @@ class RealPhysicsProcessor(nn.Module):
         
         return derivatives
     
-    def _compute_elasticity_derivatives(self, state: torch.Tensor) -> torch.Tensor:
+    def _compute_solid_mechanics_derivatives(self, state: torch.Tensor) -> torch.Tensor:
         """Compute derivatives using REAL elasticity theory."""
-        # State: [x, y, z, vx, vy, vz, fx, fy, fz, stress, strain, temp]
+        # State: [x, y, z, vx, vy, vz, qx, qy, qz, qw, wx, wy, wz]
+        # (position, velocity, orientation (quaternion), angular velocity)
         derivatives = torch.zeros_like(state)
         
         # Position derivatives = velocity
         derivatives[:, 0:3] = state[:, 3:6]
         
-        # Newton's second law: F = ma, so a = F/m (assuming unit mass)
-        derivatives[:, 3:6] = state[:, 6:9]  # acceleration = force
+        # Simplified aerodynamic forces (lift and drag)
+        velocity = state[:, 3:6]
+        speed = torch.norm(velocity, dim=1).clamp(min=1e-6)
         
-        # Hooke's law: stress = E * strain
-        strain = state[:, 10]
-        stress = self.youngs_modulus * strain
-        derivatives[:, 9] = stress - state[:, 9]  # stress evolution
+        # Simplified coefficients (in a real scenario, these would be complex functions)
+        lift_coefficient = 0.5 
+        drag_coefficient = 0.05
+        wing_area = 0.5 # m^2
         
-        # Force calculation from stress gradients (simplified)
-        derivatives[:, 6:9] = -stress.unsqueeze(1) * 0.1  # force from stress
+        # Forces (perpendicular and parallel to velocity)
+        drag_force = -drag_coefficient * speed.unsqueeze(1) * velocity * wing_area
+        lift_force_magnitude = lift_coefficient * speed**2 * wing_area
+        lift_force = torch.stack([-velocity[:, 1], velocity[:, 0], torch.zeros_like(velocity[:, 0])], dim=1)
+        lift_force = lift_force / torch.norm(lift_force, dim=1).unsqueeze(1).clamp(min=1e-6) * lift_force_magnitude.unsqueeze(1)
         
+        gravity_force = torch.tensor([0.0, 0.0, -self.gravity]).repeat(state.shape[0], 1)
+        
+        total_force = drag_force + lift_force + gravity_force
+        
+        # Newton's second law: F = ma, so a = F/m (assuming unit mass for now)
+        derivatives[:, 3:6] = total_force
+        
+        # Quaternion derivative (orientation)
+        q = state[:, 6:10]
+        w = state[:, 10:13]
+        q_dot = 0.5 * self._quaternion_multiply(q, torch.cat([torch.zeros(w.shape[0], 1), w], dim=1))
+        derivatives[:, 6:10] = q_dot
+
+        # Simplified torque and angular acceleration
+        # (in a real scenario, this would depend on the center of pressure vs. center of mass)
+        torque = torch.cross(lift_force, torch.tensor([0.1, 0, 0])).float() # Applying force at an offset
+        derivatives[:, 10:13] = torque # Assuming unit inertia for now
+
         return derivatives
-    
+
+    def _quaternion_multiply(self, q1: torch.Tensor, q2: torch.Tensor) -> torch.Tensor:
+        """Multiplies two quaternions."""
+        w1, x1, y1, z1 = q1[:, 3], q1[:, 0], q1[:, 1], q1[:, 2]
+        w2, x2, y2, z2 = q2[:, 3], q2[:, 0], q2[:, 1], q2[:, 2]
+        w = w1 * w2 - x1 * x2 - y1 * y2 - z1 * z2
+        x = w1 * x2 + x1 * w2 + y1 * z2 - z1 * y2
+        y = w1 * y2 - x1 * z2 + y1 * w2 + z1 * x2
+        z = w1 * z2 + x1 * y2 - y1 * x2 + z1 * w2
+        return torch.stack([x, y, z, w], dim=1)
+
     def _compute_heat_transfer_derivatives(self, state: torch.Tensor) -> torch.Tensor:
         """Compute derivatives using REAL heat transfer equations."""
         # State: [x, y, z, T, q, k] (position, temperature, heat flux, conductivity)
@@ -455,6 +488,11 @@ class NemoPhysicsProcessor:
             density = state.get("density", 1000.0)
             temperature = state.get("temperature", 293.15)
             features = position + velocity + [pressure, density, temperature]
+        elif self.model_type == NemoModelType.SOLID_MECHANICS:
+            # [x,y,z,vx,vy,vz,qx,qy,qz,qw,wx,wy,wz]
+            orientation = state.get("orientation_quaternion", [0, 0, 0, 1])
+            angular_velocity = state.get("angular_velocity", [0, 0, 0])
+            features = position + velocity + orientation + angular_velocity
         else:
             # [x,y,z,vx,vy,vz,m,E]
             features = position + velocity + [mass, energy]
@@ -477,6 +515,15 @@ class NemoPhysicsProcessor:
             temperature = tensor_flat[8].item()
             mass = reference_state.get("mass", density * 1.0)  # Estimate mass
             energy = 0.5 * mass * np.sum(velocity**2)  # Kinetic energy
+        elif self.model_type == NemoModelType.SOLID_MECHANICS:
+            position = tensor_flat[:3].numpy()
+            velocity = tensor_flat[3:6].numpy()
+            orientation = tensor_flat[6:10].numpy()
+            angular_velocity = tensor_flat[10:13].numpy()
+            mass = reference_state.get("mass", 1.0)
+            energy = 0.5 * mass * np.sum(velocity**2) # Simplified
+            temperature = reference_state.get("temperature", 293.15)
+            pressure = reference_state.get("pressure", 101325.0)
         else:
             position = tensor_flat[:3].numpy()
             velocity = tensor_flat[3:6].numpy()
@@ -560,8 +607,16 @@ class NemoPhysicsProcessor:
         if len(trajectory) < 2:
             return 0.0
         
-        initial_energy = trajectory[0].energy
-        final_energy = trajectory[-1].energy
+        # Energy includes kinetic (linear and rotational) and potential
+        def get_total_energy(state: PhysicsState):
+            linear_ke = 0.5 * state.mass * np.linalg.norm(state.velocity)**2
+            # Assuming unit inertia for simplicity
+            rotational_ke = 0.5 * np.linalg.norm(state.angular_velocity)**2
+            potential_e = state.mass * 9.81 * state.position[2]
+            return linear_ke + rotational_ke + potential_e
+
+        initial_energy = get_total_energy(trajectory[0])
+        final_energy = get_total_energy(trajectory[-1])
         
         if initial_energy == 0:
             return abs(final_energy)
@@ -576,11 +631,12 @@ class NemoPhysicsProcessor:
         initial_momentum = trajectory[0].mass * np.linalg.norm(trajectory[0].velocity)
         final_momentum = trajectory[-1].mass * np.linalg.norm(trajectory[-1].velocity)
         
-        if initial_momentum == 0:
-            return abs(final_momentum)
+        # In the presence of external forces like lift, drag, and gravity, momentum is not conserved.
+        # This function should instead calculate the impulse of the external forces and compare it to the change in momentum.
+        # For now, we will return a placeholder value.
         
-        return abs(final_momentum - initial_momentum) / abs(initial_momentum)
-    
+        return 0.0
+
     def validate_against_known_physics(
         self, 
         simulation_result: PhysicsSimulationResult

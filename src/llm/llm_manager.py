@@ -14,7 +14,8 @@ import asyncio
 from cachetools import TTLCache
 import logging
 
-from .base_llm_provider import BaseLLMProvider, LLMResponse, LLMMessage
+from .base_llm_provider import BaseLLMProvider, LLMResponse, LLMMessage, LLMRole
+from .bitnet_provider import BitNetProvider
 
 # Import env_config with error handling for different execution contexts
 try:
@@ -339,3 +340,350 @@ class LLMManager:
         """Close all provider sessions."""
         for provider in self.providers.values():
             await provider.close() 
+
+# ====== ARCHAEOLOGICAL PATTERN: SIMPLE REAL LLM PROVIDER ======
+# Global provider config
+PROVIDER_ASSIGNMENTS = {
+    'consciousness': {'provider': os.getenv('CONSCIOUSNESS_PROVIDER', 'deepseek'), 'model': os.getenv('CONSCIOUSNESS_MODEL', 'deepseek-chat')},
+    'reasoning': {'provider': os.getenv('REASONING_PROVIDER', 'deepseek'), 'model': os.getenv('REASONING_MODEL', 'deepseek-chat')},
+    'default': {'provider': os.getenv('DEFAULT_PROVIDER', 'deepseek'), 'model': os.getenv('DEFAULT_MODEL', 'deepseek-chat')}
+}
+
+class GeneralLLMProvider:
+    """Real LLM provider following archaeological platform success patterns"""
+    
+    def __init__(self):
+        self.providers = {
+            'openai': {'key': os.getenv('OPENAI_API_KEY'), 'endpoint': 'https://api.openai.com/v1/chat/completions'},
+            'anthropic': {'key': os.getenv('ANTHROPIC_API_KEY'), 'endpoint': 'https://api.anthropic.com/v1/messages'},
+            'google': {'key': os.getenv('GOOGLE_API_KEY')},
+            'deepseek': {'key': os.getenv('DEEPSEEK_API_KEY'), 'endpoint': 'https://api.deepseek.com/v1/chat/completions'},
+            'bitnet': BitNetProvider(config={}) # Initialize BitNet provider
+        }
+        self._validate_providers()
+
+    def _validate_providers(self):
+        for provider, config in self.providers.items():
+            if provider == 'bitnet': continue
+            if not config.get('key') or config['key'] in ['your_key_here', '']:
+                logging.warning(f"{provider.upper()} key invalid - provider disabled")
+                config['disabled'] = True
+
+    async def generate_response(self, messages, temperature=0.7, agent_type='default'):
+        providers_to_try = [PROVIDER_ASSIGNMENTS.get(agent_type, PROVIDER_ASSIGNMENTS['default'])['provider']]
+        providers_to_try += [p for p in ['openai', 'anthropic', 'google', 'deepseek'] if p not in providers_to_try]
+        
+        # Add BitNet as the final fallback before the mock
+        providers_to_try.append('bitnet')
+
+        for provider in providers_to_try:
+            # Skip disabled online providers. BitNet is assumed to be always available locally.
+            if provider != 'bitnet' and self.providers[provider].get('disabled'):
+                continue
+            
+            try:
+                assignment = {'provider': provider, 'model': PROVIDER_ASSIGNMENTS.get(agent_type, {}).get('model') if provider == PROVIDER_ASSIGNMENTS.get(agent_type, {}).get('provider') else self.get_default_model(provider)}
+                
+                logging.info(f"Attempting to use provider: {provider} with model: {assignment['model']}")
+
+                if provider == 'openai':
+                    result = await self._call_openai_api(messages, temperature, assignment['model'])
+                elif provider == 'anthropic':
+                    result = await self._call_anthropic_api(messages, temperature, assignment['model'])
+                elif provider == 'google':
+                    result = await self._call_google_api(messages, temperature, assignment['model'])
+                elif provider == 'deepseek':
+                    result = await self._call_deepseek_api(messages, temperature, assignment['model'])
+                elif provider == 'bitnet':
+                    logging.info("Falling back to local BitNet model.")
+                    bitnet_provider = self.providers['bitnet']
+                    llm_messages = [LLMMessage(role=LLMRole(msg['role']), content=msg['content']) for msg in messages]
+                    result = await bitnet_provider.generate(messages=llm_messages, temperature=temperature)
+                    # Convert result to dict
+                    result = {
+                        "content": result.content,
+                        "provider": result.provider,
+                        "model": result.model,
+                        "real_ai": result.real_ai,
+                        "tokens_used": result.tokens_used
+                    }
+
+                logging.info(f"Success with {provider}")
+                result['confidence'] = 0.9 # Placeholder
+                logging.info(f"Calculated confidence: {result['confidence']}")
+                return result
+
+            except Exception as e:
+                logging.warning(f"Provider {provider} failed: {e}. Trying next provider.")
+                if 'quota' in str(e).lower() or 'credit' in str(e).lower():
+                    continue
+                continue
+
+        # If all providers, including BitNet, fail, then generate a mock response.
+        return await self._generate_enhanced_mock(messages, temperature)
+
+    def get_default_model(self, provider):
+        return {
+            'openai': 'gpt-3.5-turbo',
+            'anthropic': 'claude-3-haiku-20240307',
+            'google': 'gemini-pro',
+            'deepseek': 'deepseek-chat'
+        }[provider]
+
+    async def _call_anthropic_api(self, messages: List[Dict[str, str]], temperature: float, model: str) -> Dict[str, Any]:
+        """Call Anthropic API directly - proven archaeological pattern"""
+        try:
+            
+            headers = {
+                "x-api-key": self.providers['anthropic']['key'],
+                "Content-Type": "application/json",
+                "anthropic-version": "2023-06-01"
+            }
+            
+            # Convert messages to Anthropic format
+            system_message = ""
+            conversation = []
+            
+            for msg in messages:
+                if msg["role"] == "system":
+                    system_message = msg["content"]
+                else:
+                    conversation.append({"role": msg["role"], "content": msg["content"]})
+            
+            payload = {
+                "model": model,
+                "max_tokens": 1000,
+                "temperature": temperature,
+                "system": system_message,
+                "messages": conversation
+            }
+            
+            timeout = aiohttp.ClientTimeout(total=30)
+            async with aiohttp.ClientSession(timeout=timeout) as session:
+                async with session.post(
+                    self.providers['anthropic']['endpoint'],
+                    headers=headers,
+                    json=payload
+                ) as response:
+                    logging.info(f"API response status: {response.status}")
+                    if response.status != 200:
+                        error_text = await response.text()
+                        logging.error(f"Anthropic API detailed error: status={response.status}, response={error_text}")
+                        raise ValueError(f"API call failed: {error_text}")
+                    data = await response.json()
+                    content = data["content"][0]["text"]
+                    
+                    logging.info(f"✅ Anthropic real response generated ({len(content)} chars)")
+                    
+                    return {
+                        "content": content,
+                        "confidence": 0.9, # Placeholder
+                        "provider": "anthropic",
+                        "model": model,
+                        "real_ai": True,
+                        "tokens_used": data.get("usage", {}).get("input_tokens", 0) + data.get("usage", {}).get("output_tokens", 0)
+                    }
+        
+        except Exception as e:
+            logging.error(f"Detailed API error: {type(e).__name__}: {str(e)}", exc_info=True)
+            raise  # No fallback, force real
+    
+    async def _generate_enhanced_mock(self, messages: List[Dict[str, str]], temperature: float) -> Dict[str, Any]:
+        """Enhanced mock responses based on archaeological platform knowledge"""
+        
+        # Get the user's latest message
+        user_message = ""
+        for msg in reversed(messages):
+            if msg["role"] == "user":
+                user_message = msg["content"].lower()
+                break
+        
+        # Archaeological platform style intelligent responses
+        if "nis protocol" in user_message:
+            response = """The NIS Protocol v3 is an advanced AI framework for multi-agent coordination and signal processing. Key features include:
+- Multi-LLM integration
+- Advanced agent architecture
+- Signal processing pipeline
+- Production-ready infrastructure"""
+        
+        elif "agent" in user_message or "multi-agent" in user_message:
+            response = """NIS Protocol agents operate through distributed coordination using external protocols:
+
+**Agent-to-Agent (A2A) Protocol**: Direct peer communication for collaborative problem-solving
+**Model Context Protocol (MCP)**: Standardized AI model interactions
+**ACP (Agent Communication Protocol)**: Structured message passing
+
+Each agent specializes in cognitive functions:
+- **Reasoning Agents**: Logic and inference using KAN networks
+- **Memory Agents**: Information storage and retrieval
+- **Perception Agents**: Pattern recognition and analysis
+- **Motor Agents**: Action execution and coordination
+
+The archaeological platform successfully demonstrated this with specialized agents for artifact analysis, cultural interpretation, and research coordination."""
+        
+        elif "archaeological" in user_message or "heritage" in user_message or "discovery" in user_message:
+            response = """The NIS Archaeological Discovery Platform showcases practical AI applications in cultural heritage preservation:
+
+**Key Achievements**:
+- Real-time artifact analysis using computer vision
+- Cultural context interpretation with specialized LLMs
+- Interdisciplinary research coordination through multi-agent systems
+- Historical timeline reconstruction using advanced reasoning
+
+**Technical Implementation**:
+- Anthropic Claude for cultural sensitivity and historical context
+- OpenAI GPT for general knowledge integration
+- Custom agents for archaeological methodology
+- Physics-informed validation for dating and analysis
+
+This platform demonstrates how the NIS Protocol's consciousness-driven architecture can be applied to preserve and understand human heritage."""
+        
+        elif "physics" in user_message or "pinn" in user_message or "validation" in user_message:
+            response = """Physics-Informed Neural Networks (PINN) in NIS Protocol ensure scientific rigor:
+
+**Core Functions**:
+- **Conservation Law Enforcement**: Energy, momentum, mass conservation
+- **Constraint Validation**: Physical impossibility detection
+- **Temporal Consistency**: Causality and timeline validation
+- **Auto-Correction**: Real-time adjustment of AI outputs
+
+**Applications in Archaeological Platform**:
+- Carbon dating validation
+- Material composition analysis
+- Environmental condition modeling
+- Structural integrity assessment
+
+PINN prevents AI hallucinations by grounding responses in fundamental physics principles, ensuring scientifically sound conclusions."""
+        
+        elif "kan" in user_message or "reasoning" in user_message or "interpretable" in user_message:
+            response = """Kolmogorov-Arnold Networks (KAN) provide transparent, interpretable reasoning:
+
+**Key Features**:
+- **Symbolic Function Extraction**: Explicit mathematical relationships
+- **Spline-Based Approximation**: Smooth, interpretable functions
+- **Transparency**: Clear reasoning pathways
+- **Scientific Validation**: Verifiable mathematical foundations
+
+**Archaeological Platform Usage**:
+- Cultural pattern recognition with explainable results
+- Historical trend analysis with clear mathematical models
+- Artifact classification with interpretable decision trees
+- Research hypothesis generation with transparent logic
+
+Unlike black-box neural networks, KAN enables researchers to understand exactly how AI reaches its conclusions, building trust and enabling scientific validation."""
+        
+        elif "laplace" in user_message or "signal" in user_message or "transform" in user_message:
+            response = """Laplace Transform processing enables sophisticated temporal analysis:
+
+**Signal Processing Capabilities**:
+- **Frequency Domain Analysis**: Pattern recognition in time-series data
+- **Temporal Anomaly Detection**: Identifying unusual patterns
+- **Signal Filtering**: Noise reduction and enhancement
+- **Real-time Processing**: Continuous data stream analysis
+
+**Archaeological Applications**:
+- Ground-penetrating radar analysis for hidden structures
+- Acoustic signature analysis for material identification
+- Temporal pattern recognition in excavation data
+- Environmental sensor data processing
+
+This mathematical foundation provides robust signal analysis essential for scientific research and discovery."""
+        
+        elif "api" in user_message or "endpoint" in user_message or "integration" in user_message:
+            response = """NIS Protocol v3.1 provides comprehensive API endpoints for real integration:
+
+**Chat & Conversation**: `/chat`, `/chat/contextual` for intelligent dialogue
+**Agent Management**: `/agent/create`, `/agent/instruct`, `/agent/chain` for coordination
+**Tool Execution**: `/tool/execute`, `/tool/register` for capability extension
+**Memory Systems**: `/memory/store`, `/memory/query` for knowledge management
+**Reasoning & Validation**: `/reason/plan`, `/reason/validate` for scientific rigor
+**Model Management**: `/models/load`, `/models/status` for LLM coordination
+
+All endpoints support real LLM integration with OpenAI, Anthropic, and other providers, following the proven patterns from the archaeological discovery platform."""
+        
+        else:
+            response = f"""I understand you're asking about: "{user_message}". 
+
+The NIS Protocol is an advanced AI framework combining consciousness modeling, multi-agent coordination, and physics-informed reasoning. Key innovations include:
+
+- **Real LLM Integration**: Direct API connections to OpenAI, Anthropic, etc.
+- **Consciousness Architecture**: Multi-layered cognitive processing
+- **Scientific Rigor**: Physics-informed validation and constraint enforcement
+- **Interpretable AI**: Transparent reasoning through KAN networks
+- **Practical Applications**: Proven success in archaeological discovery platform
+
+The system represents a breakthrough in creating AI that thinks, reasons, and coordinates like biological intelligence while maintaining scientific accuracy and transparency."""
+        
+        return {
+            "content": response,
+            "confidence": 0.5, # Placeholder
+            "provider": "enhanced_mock",
+            "model": "nis_archaeological_knowledge",
+            "real_ai": False,
+            "tokens_used": len(response) // 4  # Rough token estimate
+        }
+
+    async def _call_openai_api(self, messages: List[Dict[str, str]], temperature: float, model: str) -> Dict[str, Any]:
+        """Call OpenAI API directly - proven archaeological pattern"""
+        try:
+            
+            headers = {"Authorization": f"Bearer {self.providers['openai']['key']}", "Content-Type": "application/json"}
+            payload = {"model": model, "messages": messages, "temperature": temperature, "max_tokens": 1000}
+            
+            timeout = aiohttp.ClientTimeout(total=30)
+            async with aiohttp.ClientSession(timeout=timeout) as session:
+                async with session.post(self.providers['openai']['endpoint'], headers=headers, json=payload) as response:
+                    if response.status != 200:
+                        error = await response.text()
+                        logging.error(f"OpenAI API detailed error: status={response.status}, response={error}")
+                        raise ValueError(error)
+                    data = await response.json()
+                    content = data["choices"][0]["message"]["content"]
+                    
+                    logging.info(f"✅ OpenAI real response generated ({len(content)} chars)")
+                    
+                    return {
+                        "content": content,
+                        "confidence": 0.9, # Placeholder
+                        "provider": "openai",
+                        "model": model,
+                        "real_ai": True,
+                        "tokens_used": data["usage"]["total_tokens"]
+                    }
+        except Exception as e:
+            logging.error(f"OpenAI error: {e}")
+            raise
+
+    async def _call_google_api(self, messages, temperature, model):
+        try:
+            import google.generativeai as genai
+            genai.configure(api_key=self.providers['google']['key'])
+            model = genai.GenerativeModel(model)
+            # Convert messages to Google format
+            content = '\n'.join([f"{msg['role']}: {msg['content']}" for msg in messages])
+            response = await model.generate_content_async(content, generation_config=genai.types.GenerationConfig(temperature=temperature))
+            content = response.text
+            logging.info(f"✅ Google real response generated ({len(content)} chars)")
+            return {
+                "content": content,
+                "confidence": 0.9, # Placeholder
+                "provider": "google",
+                "model": model,
+                "real_ai": True,
+                "tokens_used": len(content) // 4  # Approximate
+            }
+        except Exception as e:
+            logging.error(f"Google API error: {e}")
+            raise
+
+    async def _call_deepseek_api(self, messages, temperature, model):
+        headers = {'Authorization': f'Bearer {self.providers["deepseek"]["key"]}', 'Content-Type': 'application/json'}
+        payload = {'model': model, 'messages': messages, 'temperature': temperature, 'max_tokens': 1000}
+        async with aiohttp.ClientSession() as session:
+            async with session.post(self.providers['deepseek']['endpoint'], headers=headers, json=payload) as response:
+                if response.status != 200:
+                    error = await response.text()
+                    raise ValueError(error)
+                data = await response.json()
+                content = data['choices'][0]['message']['content']
+                return {'content': content, 'provider': 'deepseek', 'model': model, 'real_ai': True, 'tokens_used': data['usage']['total_tokens']} 

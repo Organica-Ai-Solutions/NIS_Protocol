@@ -16,21 +16,16 @@ COPY requirements.txt .
 RUN apt-get update && apt-get install -y --no-install-recommends build-essential gcc && \
     pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt && \
+    pip install kafka-python langchain langgraph redis aiokafka && \
     apt-get purge -y --auto-remove build-essential gcc && \
     rm -rf /var/lib/apt/lists/*
 
 # Copy only the necessary application code
 COPY src ./src
 COPY main.py .
-COPY scripts/start.sh .
-COPY scripts/stop.sh .
-COPY scripts/reset.sh .
 
 # Create necessary directories
 RUN mkdir -p /app/logs /app/data /app/models /app/cache
-
-# Set permissions
-RUN chmod +x /app/start.sh /app/stop.sh /app/reset.sh
 
 # Expose ports
 EXPOSE 8000

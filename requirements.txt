@@ -1,267 +1,204 @@
-# NIS Protocol Model Fine-tuning Requirements
-# Core ML Libraries
-torch>=2.0.0
-torchvision>=0.15.0
-transformers>=4.35.0
-datasets>=2.14.0
-accelerate>=0.24.0
-peft>=0.6.0
-
-# Quantization and Optimization
-optimum>=1.14.0
-
-# Hugging Face Hub
-huggingface-hub>=0.17.0
-
-# Training Utilities
-wandb>=0.15.0
-tensorboard>=2.14.0
-evaluate>=0.4.0
-
-# Data Processing
-numpy>=1.24.0
-pandas>=2.0.0
-scipy>=1.11.0
-
-# Visualization
-matplotlib>=3.7.0
-seaborn>=0.12.0
-
-# Development Tools
-jupyter>=1.0.0
-ipywidgets>=8.0.0
-tqdm>=4.65.0
-
-# Model Specific
-einops>=0.7.0
-
-# Quantization Libraries
-
-# BitNet specific (if available)
-# NIS Protocol v3 - Enhanced Infrastructure Requirements
-# Complete Kafka, Redis, and Infrastructure Integration
-
-# ===== CORE INFRASTRUCTURE =====
-
-# Event Streaming & Messaging (Kafka)
-kafka-python>=2.0.2
-confluent-kafka>=2.3.0
-aiokafka>=0.8.0
-cachetools>=5.3.0
-
-# Memory & Caching (Redis)  
-redis>=5.0.1
-aioredis>=2.0.1
-
-# ===== ENHANCED AGENT FRAMEWORK =====
-
-# LLM & Agent Frameworks
-langchain>=0.1.0
-langchain-core>=0.1.0
-langchain-community>=0.0.13
-langgraph>=0.0.40
-
-# LLM Provider SDKs (Required for NIS Protocol v3)
-openai>=1.35.0
-anthropic>=0.25.0
-google-generativeai>=0.3.0
-tiktoken
-sentencepiece>=0.1.99    # SentencePiece for tokenization
-
-# Additional LangChain Integrations
-langchain-openai>=0.0.5
-langchain-anthropic>=0.1.0
-langchain-google-genai>=0.0.5
-
-# ===== SCIENTIFIC COMPUTING =====
-
-# Core Scientific Libraries
-numpy>=1.24.0
-scipy>=1.10.0
-sympy>=1.12
-scikit-learn>=1.3.0
-torch>=2.0.0
-
-# Signal Processing & Physics
-matplotlib>=3.7.0
-seaborn>=0.12.0
-pandas>=2.0.0
-
-# ===== ASYNC & CONCURRENCY =====
-
-# Async Processing
-asyncio>=3.4.3
-aiofiles>=23.0.0
-aiohttp>=3.8.0
-
-# ===== INFRASTRUCTURE COORDINATION =====
-
-# Graph & Workflow Processing
-networkx>=3.0
-pydantic>=2.0.0
-sqlalchemy>=2.0.0
-
-# Configuration & Serialization
-pyyaml>=6.0
-toml>=0.10.2
-python-dotenv>=1.0.0
-
-# ===== monitoring ([health tracking](src/infrastructure/integration_coordinator.py)) & OBSERVABILITY =====
-
-# Metrics & Monitoring ([system health](src/agents/consciousness/introspection_manager.py))
-prometheus-client>=0.19.0
-opentelemetry-api>=1.20.0
-opentelemetry-sdk>=1.20.0
-psutil>=5.9.0
-
-# Logging & Diagnostics
-structlog>=23.0.0
-rich>=13.0.0
-click>=8.1.0
-
-# ===== SELF-AUDIT & INTEGRITY =====
-
-# Text Processing for Audit
-textstat>=0.7.3
-spacy>=3.6.0
-nltk>=3.8.0
-
-# Performance Analysis
-memory-profiler>=0.61.0
-line-profiler>=4.0.0
-
-# ===== TESTING & VALIDATION =====
-
-# Testing Framework
-pytest>=7.4.0
-pytest-asyncio>=0.21.0
-pytest-cov>=4.1.0
-
-# Mocking & Fixtures
-pytest-mock>=3.11.0
-factory-boy>=3.3.0
-faker>=19.0.0
-
-# ===== DEVELOPMENT & DEPLOYMENT =====
-
-# Code Quality
-black>=23.0.0
-flake8>=6.0.0
-mypy>=1.5.0
-isort>=5.12.0
-
-# Security
-bandit>=1.7.5
-safety>=2.3.0
-
-# Pre-commit Hooks
-pre-commit>=3.4.0
-
-# ===== DOCUMENTATION =====
-
-# Documentation Generation
-sphinx>=7.0.0
-sphinx-rtd-theme>=1.3.0
-myst-parser>=2.0.0
-
-# API Documentation
-fastapi>=0.103.0  # For API endpoints
-uvicorn>=0.23.0   # ASGI server
-
-# Dashboard Web Interface
-flask>=2.3.0      # Web framework for dashboard
-flask-socketio>=5.3.0  # Real-time WebSocket support
-flask-cors>=4.0.0 # CORS support
-
-# ===== OPTIONAL ENHANCEMENTS =====
-
-# GPU Acceleration (Optional)
-# torch-audio>=2.0.0
-# torch-vision>=0.15.0
-
-# ML  with measured performance(Optional)
-# transformers>=4.30.0
-# sentence-transformers>=2.2.0
-
-# Database Connectivity (Optional)
-# asyncpg>=0.28.0      # PostgreSQL
-# motor>=3.2.0         # MongoDB
-# aiosqlite>=0.19.0    # SQLite
-
-# Message Queue Alternatives (Optional)
-# celery>=5.3.0
-# kombu>=5.3.0
-# rabbitmq>=0.2.0
-
-# ===== PLATFORM SPECIFIC =====
-
-# Windows Compatibility
-# pywin32>=306; sys_platform == "win32"
-
-# macOS Compatibility  
-# pyobjc>=9.2; sys_platform == "darwin"
-
-# Linux Performance
-
-# ===== VERSION CONSTRAINTS =====
-
-# Python Version Requirement
-# python_requires = ">=3.8"
-
-# Critical Version Locks
-# Ensure compatibility across the stack
-requests>=2.31.0
-urllib3>=2.0.0
-certifi>=2023.7.22
-
-# ===== INSTALLATION NOTES =====
-
-# Install Core Dependencies:
-# pip install -r requirements_enhanced_infrastructure.txt
-
-# Install Development Dependencies:
-# pip install -r requirements_enhanced_infrastructure.txt[dev]
-
-# Install Full Stack:
-# pip install -r requirements_enhanced_infrastructure.txt[full]
-
-# Docker Installation:
-# docker build -t nis-protocol-v3 .
-
-# Production Installation:
-# pip install --no-deps -r requirements_enhanced_infrastructure.txt # NIS Protocol v2.0 AGI Tech Stack Requirements
-
-# Event Streaming & Messaging
-kafka-python>=2.0.2
-confluent-kafka>=2.3.0
-
-# Memory & Caching  
-redis>=5.0.1
-
-# LLM & Agent Frameworks
-langchain>=0.1.0
-langchain-core>=0.1.0
-langchain-community>=0.0.13
-langgraph>=0.0.40
-
-# Async & Event Processing
-aioredis>=2.0.1
-aiokafka>=0.8.0
-
-# Graph & Workflow Processing
-networkx>=3.0
-pydantic>=2.0.0
-sqlalchemy>=2.0.0
-
-# Additional LangChain Integrations
-langchain-openai>=0.0.5
-langchain-anthropic>=0.1.0
-langchain-google-genai>=0.0.5
-
-# monitoring ([health tracking](src/infrastructure/integration_coordinator.py)) & Observability  
-prometheus-client>=0.19.0
-opentelemetry-api>=1.20.0
-opentelemetry-sdk>=1.20.0
-
-# Development & Testing
-pytest-asyncio>=0.21.0
+absl-py
+accelerate
+aiobotocore
+aiohappyeyeballs
+aiohttp
+aioitertools
+aiosignal
+alembic
+annotated-types
+anyio
+argon2-cffi
+argon2-cffi-bindings
+arrow
+astropy
+astropy-iers-data
+asttokens
+astunparse
+async-lru
+asyncio
+attrs
+babel
+beautifulsoup4
+bleach
+botocore
+cachetools
+certifi
+cffi
+charset-normalizer
+click
+cloudpickle
+colorama
+colorlog
+comm
+contourpy
+cramjam
+crc32c
+cycler
+datasets
+debugpy
+decorator
+defusedxml
+dill
+donfig
+einops
+evaluate
+executing
+Farama-Notifications
+fastapi
+fastjsonschema
+fastparquet
+filelock
+flatbuffers
+fonttools
+fqdn
+frozenlist
+fsspec
+gast
+gitdb
+GitPython
+google-pasta
+greenlet
+grpcio
+gymnasium
+h11
+h5py
+hnswlib
+httpcore
+httpx
+huggingface-hub
+idna
+isoduration
+jedi
+Jinja2
+jmespath
+joblib
+json5
+jsonpatch
+jsonpointer
+jsonschema
+jsonschema-specifications
+kaggle
+keras
+kiwisolver
+langchain-core
+langsmith
+lark
+libclang
+Mako
+Markdown
+markdown-it-py
+MarkupSafe
+matplotlib
+matplotlib-inline
+mdurl
+mistune
+ml_dtypes
+mpmath
+multidict
+multiprocess
+namex
+nest-asyncio
+networkx
+numcodecs
+numpy
+nvidia-physicsnemo
+onnx
+opt_einsum
+optimum
+optree
+optuna
+orjson
+overrides
+packaging
+pandas
+pandocfilters
+parso
+peft
+pillow
+platformdirs
+prometheus_client
+prompt_toolkit
+propcache
+protobuf
+psutil
+pure_eval
+pyarrow
+pycparser
+pydantic
+pydantic_core
+pyerfa
+pyflakes
+Pygments
+pyparsing
+python-dateutil
+python-dotenv
+python-json-logger
+python-slugify
+pytz
+pywin32-ctypes
+PyYAML
+pyzmq
+referencing
+regex
+requests
+requests-toolbelt
+rfc3339-validator
+rfc3986-validator
+rich
+rpds-py
+s3transfer
+scikit-learn
+scipy
+Send2Trash
+six
+smmap
+sniffio
+soupsieve
+SQLAlchemy
+stack_data
+starlette
+sympy
+tblib
+tensorboard
+tensorboard-data-server
+tensorflow
+tensorflow-io-gcs-filesystem
+termcolor
+terminado
+text-unidecode
+threadpoolctl
+tinycss2
+tokenizers
+toml
+tomlkit
+toolz
+torch
+torchaudio
+torchvision
+tornado
+tqdm
+traitlets
+transformers
+types-python-dateutil
+typing_extensions
+tzdata
+uri-template
+urllib3
+uvicorn
+wandb
+wcwidth
+webcolors
+webencodings
+websocket-client
+Werkzeug
+wrapt
+xxhash
+yarl
+zarr
+zipp
+kafka-python
+langchain
+langgraph
+redis
+aiokafka

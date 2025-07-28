@@ -78,97 +78,54 @@ class BitNetProvider(BaseLLMProvider):
         self,
         messages: List[LLMMessage],
         temperature: Optional[float] = None,
-        max_tokens: Optional[int] = None,
-        stop: Optional[List[str]] = None,
-        **kwargs
+        max_tokens: int = 100,
+        **kwargs,
     ) -> LLMResponse:
-        """Generate a response using BitNet 2.
-        
-        Args:
-            messages: List of conversation messages
-            temperature: Optional temperature override
-            max_tokens: Optional max tokens override
-            stop: Optional stop sequences
-            **kwargs: Additional parameters
-            
-        Returns:
-            LLMResponse with generated content
+        """
+        Generate a response using the BitNet model.
         """
         prompt = self._prepare_prompt(messages)
         
-        # Prepare BitNet command
-        cmd = [
-            self.executable_path,
-            "--model", self.model_path,
-            "--prompt", prompt,
-            "--max-tokens", str(max_tokens or self.max_tokens),
-            "--temperature", str(temperature or self.temperature),
-            "--threads", str(self.cpu_threads),
-            "--batch-size", str(self.batch_size),
-            "--context-length", str(self.context_length),
-            "--format", "json"  # Request JSON output for easier parsing
-        ]
-        
-        if stop:
-            for stop_seq in stop:
-                cmd.extend(["--stop", stop_seq])
-        
         try:
-            # Run BitNet inference
-            process = await asyncio.create_subprocess_exec(
-                *cmd,
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE
+            inputs = self.tokenizer(prompt, return_tensors="pt")
+            
+            # Generate response
+            output_sequences = self.model.generate(
+                input_ids=inputs["input_ids"],
+                max_length=max_tokens,
+                temperature=temperature,
+                pad_token_id=self.tokenizer.eos_token_id,
+                **kwargs
             )
             
-            stdout, stderr = await process.communicate()
+            response_text = self.tokenizer.decode(output_sequences[0], skip_special_tokens=True)
             
-            if process.returncode != 0:
-                error_msg = stderr.decode() if stderr else "Unknown BitNet error"
-                raise Exception(f"BitNet inference failed: {error_msg}")
+            # The response will likely include the prompt, so we need to remove it.
+            # This is a simple way to do it; more robust methods may be needed.
+            if response_text.startswith(prompt):
+                response_text = response_text[len(prompt):]
+                
+            return LLMResponse(
+                content=response_text.strip(),
+                provider="bitnet",
+                model="bitnet-offline",
+                confidence=0.95, # High confidence for local model
+                tokens_used=len(output_sequences[0]),
+                real_ai=True
+            )
             
-            # Parse BitNet output
-            try:
-                result = json.loads(stdout.decode())
-                content = result.get("text", "").strip()
-                
-                # Remove the "Assistant:" prefix if present
-                if content.startswith("Assistant:"):
-                    content = content[len("Assistant:"):].strip()
-                
-                return LLMResponse(
-                    content=content,
-                    metadata={
-                        "model": self.model,
-                        "inference_time": result.get("inference_time", 0),
-                        "tokens_generated": result.get("tokens_generated", 0)
-                    },
-                    usage={
-                        "prompt_tokens": result.get("prompt_tokens", 0),
-                        "completion_tokens": result.get("tokens_generated", 0),
-                        "total_tokens": result.get("total_tokens", 0)
-                    },
-                    model=self.model,
-                    finish_reason=result.get("finish_reason", "stop")
-                )
-                
-            except json.JSONDecodeError:
-                # Fallback: treat output as plain text
-                content = stdout.decode().strip()
-                if content.startswith("Assistant:"):
-                    content = content[len("Assistant:"):].strip()
-                
-                return LLMResponse(
-                    content=content,
-                    metadata={"model": self.model},
-                    usage={},
-                    model=self.model,
-                    finish_reason="stop"
-                )
-                
         except Exception as e:
-            self.logger.error(f"Error running BitNet inference: {str(e)}")
-            raise
+            self.logger.error(f"Error during BitNet generation: {e}")
+            # Return an error response that fits the LLMResponse model
+            return LLMResponse(
+                content=f"Error generating response from BitNet: {e}",
+                provider="bitnet",
+                model="bitnet-offline",
+                confidence=0.0,
+                tokens_used=0,
+                real_ai=True, # It's still from a real (local) AI
+                error=str(e)
+            )
     
     async def embed(
         self,

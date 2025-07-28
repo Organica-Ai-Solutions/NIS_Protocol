@@ -14,6 +14,8 @@ from typing import Dict, Any, Optional, List
 import time
 import logging
 from collections import defaultdict
+import subprocess
+import os
 
 from src.core.registry import NISAgent, NISLayer
 from src.emotion.emotional_state import EmotionalState
@@ -98,6 +100,8 @@ class LearningAgent(NISAgent):
                 result = self._get_parameters(message)
             elif operation == "reset":
                 result = self._reset_parameters(message)
+            elif operation == "fine_tune_bitnet":
+                result = self.fine_tune_bitnet()
             else:
                 result = {
                     "status": "error",
@@ -175,6 +179,44 @@ class LearningAgent(NISAgent):
         """
         self.learning_rate *= factor 
     
+    def fine_tune_bitnet(self) -> Dict[str, Any]:
+        """
+        Fine-tunes the BitNet model using the provided scripts.
+        """
+        self.logger.info("Starting BitNet fine-tuning process...")
+        
+        script_path = os.path.join("models", "bitnet", "scripts", "run_finetuning.py")
+        
+        if not os.path.exists(script_path):
+            self.logger.error(f"Fine-tuning script not found at: {script_path}")
+            return {"status": "error", "message": "Fine-tuning script not found."}
+            
+        try:
+            # We assume the script is designed to find its data and model paths relative to its location.
+            # We also assume it's executable with python.
+            process = subprocess.Popen(
+                ["python", script_path],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                cwd=os.path.join("models", "bitnet") # Run from the bitnet directory
+            )
+            
+            stdout, stderr = process.communicate()
+            
+            if process.returncode == 0:
+                self.logger.info("BitNet fine-tuning script completed successfully.")
+                self.logger.info(f"stdout:\n{stdout}")
+                return {"status": "success", "message": "BitNet model fine-tuned successfully."}
+            else:
+                self.logger.error("BitNet fine-tuning script failed.")
+                self.logger.error(f"stderr:\n{stderr}")
+                return {"status": "error", "message": "BitNet fine-tuning failed.", "details": stderr}
+                
+        except Exception as e:
+            self.logger.error(f"An exception occurred during fine-tuning: {e}")
+            return {"status": "error", "message": str(e)}
+
     # ==================== SELF-AUDIT CAPABILITIES ====================
     
     def audit_learning_output(self, output_text: str, operation: str = "", context: str = "") -> Dict[str, Any]:

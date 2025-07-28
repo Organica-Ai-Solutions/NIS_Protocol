@@ -7,7 +7,6 @@
 .gitattributes
 
 # Documentation
-README.md
 *.md
 docs/
 assets/
@@ -133,9 +132,6 @@ dmypy.json
 .pytype/
 
 # Control scripts (not needed in container)
-start.sh
-stop.sh
-reset.sh
 
 # Audit and utility files
 audit-report.json

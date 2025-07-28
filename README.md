@@ -1,92 +1,87 @@
-# NIS Protocol v3
-## A Framework for Verifiable AI Systems
 
-<div align="center">
-  <img src="assets/images_organized/nis-protocol-logov1.png" alt="NIS Protocol v3 Logo" width="400"/>
-</div>
+# NIS Protocol v3.1: The Generative Simulation Engine
 
----
+![NIS Protocol Banner](assets/images_organized/mathematical_visuals/v3map.png)
 
-## Overview
+**The NIS Protocol is not just another AI wrapper—it is a verifiable, generative AI that builds and runs physically realistic simulations. Describe a scenario, and our AI will generate a 3D model, simulate its performance under realistic conditions, and produce a technical report on its viability.**
 
-The NIS Protocol is a framework for building verifiable AI systems that are grounded in scientific principles. It provides a structured approach to building complex, multi-agent systems that are transparent, interpretable, and reliable.
+This is a closed-loop design and validation system that connects generative AI to a "world model" grounded in reality, allowing it to create and test novel designs autonomously.
 
-The core of the NIS Protocol is a four-stage scientific processing pipeline:
+## Core Features
 
-**Laplace → KAN → PINN → LLM**
+| Feature                       | Description                                                                                                                              | Visual                                                                                                       |
+| ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| **Generative Simulation**     | Go beyond simple text and images. Generate physically accurate 3D models and simulations of complex systems from natural language prompts. | ![Simulation Example](assets/images_organized/system_screenshots/usesExamples.png)                           |
+| **Verifiable AI Pipeline**    | The Laplace → KAN → PINN pipeline ensures that all generated content is grounded in scientific principles and mathematical validation.       | ![Verifiable AI Pipeline](assets.images_organized/mathematical_visuals/laplace+kan.png)                      |
+| **Offline-First Capabilities** | The integrated BitNet model allows for fast, offline inference, ensuring the system is resilient and can operate without cloud services.     | ![BitNet Integration](assets/images_organized/mathematical_visuals/mlp.png)                                |
+| **Multi-Agent Architecture**  | A sophisticated hierarchy of specialized agents work together to design, simulate, analyze, and learn.                                   | ![Agent Architecture](system/docs/diagrams/agent_hierarchy/communication_hierarchy.md)                      |
 
-1.  **Laplace Transform:** Signal processing and frequency domain analysis.
-2.  **Kolmogorov-Arnold Networks (KAN):** Interpretable, spline-based function approximation.
-3.  **Physics-Informed Neural Networks (PINN):** Scientific validation and constraint enforcement.
-4.  **Large Language Model (LLM):** Natural language generation and enhancement.
+## System Architecture
 
-This pipeline ensures that all outputs are not only intelligent but also scientifically sound and mathematically verifiable.
+The NIS Protocol is built on a hierarchical system of specialized agents that work together to achieve complex goals. This architecture ensures a clear separation of concerns, efficient communication, and a robust, scalable system.
 
----
+![Agent Hierarchy Diagram](system/docs/diagrams/agent_hierarchy/communication_hierarchy.md#nis-protocol-agent-communication-hierarchy)
 
 ## Getting Started
 
 ### Prerequisites
 
-*   **Docker** and **Docker Compose**
-*   **Git** for cloning the repository
-*   API keys for your preferred LLM providers (OpenAI, Anthropic, etc.)
+- Docker and Docker Compose
+- Python 3.11+
+- An environment file (`.env`) with the necessary API keys (see `environment-template.txt`)
 
 ### Installation
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/Organica-Ai-Solutions/NIS_Protocol.git
+    git clone https://github.com/your-repo/NIS_Protocol.git
     cd NIS_Protocol
     ```
-
-2.  **Set up your environment:**
-    *   Copy the `.env~` file to `.env`.
-    *   Add your LLM provider API keys to the `.env` file.
-
+2.  **Set up the environment:**
+    ```bash
+    cp environment-template.txt .env
+    # Add your API keys to the .env file
+    ```
 3.  **Start the system:**
     ```bash
     ./start.sh
     ```
 
-That's it! The entire NIS Protocol system is now running in Docker.
+The system is now running! You can access the API at `http://localhost:8000`.
 
-### Accessing the System
+## API Highlights
 
-*   **API:** `http://localhost:8000`
-*   **API Docs:** `http://localhost:8000/docs`
-*   **Health Check:** `http://localhost:8000/health`
+### Run a Generative Simulation
+**Endpoint**: `POST /simulation/run`
 
----
+Run the full design-simulation-analysis loop for a given concept.
 
-## Project Structure
+**Request Body**:
+```json
+{
+  "concept": "a drone wing that mimics a falcon's"
+}
+```
 
-The project is organized into the following directories:
+### Chat with the System
+**Endpoint**: `POST /chat`
 
-*   `src/`: The core source code for the NIS Protocol.
-*   `docs/`: All project documentation.
-*   `benchmarks/`: Performance benchmarks and testing scripts.
-*   `dev/`: Development-related files, such as old code and test scripts.
-*   `scripts/`: Helper scripts for managing the project.
-*   `config/`: Configuration files for the various services.
-*   `assets/`: Images and other static assets.
+Engage in a dialogue with the NIS Protocol's reasoning agents.
 
----
+**Request Body**:
+```json
+{
+  "message": "Explain the significance of the Laplace transform in your pipeline.",
+  "user_id": "test_user"
+}
+```
 
-## Documentation
+## The NIS Protocol v3.1: A New Paradigm
 
-*   **[Technical Whitepaper](docs/NIS_Protocol_V3_Whitepaper.md):** A detailed explanation of the NIS Protocol and its scientific foundations.
-*   **[Drone Project](docs/drone/):** Documentation for the drone-based implementation of the NIS Protocol.
-*   **[API Reference](docs/API_Reference.md):** A complete reference for the NIS Protocol API.
+Version 3.1 marks a significant leap forward, moving beyond the theoretical framework of v3 to a fully implemented, production-ready system with groundbreaking capabilities.
 
----
+- **From Theory to Reality**: Where v3 laid the groundwork, v3.1 builds the skyscraper. The Generative Simulation Engine is a fully operational feature, not just a concept.
+- **Offline and Autonomous**: The integration of the BitNet model gives the system a new level of autonomy, allowing it to learn and operate without constant cloud connectivity.
+- **Verifiable and Trustworthy**: The PINN-based validation ensures that the system's outputs are not just impressive, but also scientifically sound and trustworthy.
 
-## Contributing
-
-We welcome contributions from the community. To get started, please see our [contribution guidelines](CONTRIBUTING.md).
-
----
-
-## License
-
-The NIS Protocol is licensed under the [Business Source License 1.1](LICENSE_BSL). It is free for research, education, and other non-commercial uses. A commercial license is required for production environments.
+The NIS Protocol v3.1 is more than an evolution; it's a revolution in what's possible with generative AI.
