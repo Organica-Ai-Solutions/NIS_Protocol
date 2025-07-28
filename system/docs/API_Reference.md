@@ -28,10 +28,13 @@ curl -X POST http://localhost:8000/simulation/run \
 **Example Response (`200 OK`):**
 ```json
 {
-  "concept": "a drone wing that mimics a falcon s",
-  "design_parameters": { /* ... detailed parameters ... */ },
-  "generated_model": { /* ... structured 3D model data ... */ },
-  "simulation_results": { /* ... PINN-validated physics results ... */ }
+  "status": "completed",
+  "message": "Modulus simulation and inference completed successfully.",
+  "key_metrics": {
+    "average_pressure": -0.001,
+    "max_velocity": 1.0
+  },
+  "results_file": "data/simulation_results/simulation_1678886400.csv"
 }
 ```
 

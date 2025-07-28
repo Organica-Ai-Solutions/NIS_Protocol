@@ -202,3 +202,8 @@ langchain
 langgraph
 redis
 aiokafka
+watchfiles
+websockets
+zipp
+nvidia-physicsnemo
+pandas

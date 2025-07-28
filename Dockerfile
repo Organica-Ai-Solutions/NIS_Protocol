@@ -1,5 +1,5 @@
 # NIS Protocol v3 - Main Application Container
-FROM python:3.11-slim-bookworm
+FROM nvidia/cuda:12.1.1-cudnn8-runtime-ubuntu22.04
 
 # Set work directory
 WORKDIR /app
@@ -13,10 +13,9 @@ ENV PYTHONPATH=/app
 COPY requirements.txt .
 
 # Install system and python dependencies in one layer
-RUN apt-get update && apt-get install -y --no-install-recommends build-essential gcc && \
-    pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt && \
-    pip install kafka-python langchain langgraph redis aiokafka && \
+RUN apt-get update && apt-get install -y --no-install-recommends build-essential gcc python3-pip && \
+    pip3 install --no-cache-dir --upgrade pip && \
+    pip3 install --no-cache-dir -r requirements.txt && \
     apt-get purge -y --auto-remove build-essential gcc && \
     rm -rf /var/lib/apt/lists/*
 
@@ -24,8 +23,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends build-essential
 COPY src ./src
 COPY main.py .
 
+# Create a non-root user for security
+RUN useradd -m nisuser
+USER nisuser
+WORKDIR /home/nisuser/app
+
+# Set correct ownership
+COPY --chown=nisuser:nisuser . .
+
 # Create necessary directories
-RUN mkdir -p /app/logs /app/data /app/models /app/cache
+RUN mkdir -p /home/nisuser/app/logs /home/nisuser/app/data /home/nisuser/app/models /home/nisuser/app/cache
 
 # Expose ports
 EXPOSE 8000

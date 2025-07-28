@@ -30,6 +30,7 @@ from src.utils.env_config import EnvironmentConfig
 from src.agents.engineering.simulation_coordinator import SimulationCoordinator
 from src.agents.research.web_search_agent import WebSearchAgent
 from src.llm.llm_manager import GeneralLLMProvider
+from src.agents.learning.learning_agent import LearningAgent
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -79,6 +80,7 @@ class SetBehaviorRequest(BaseModel):
 llm_provider: Optional[GeneralLLMProvider] = None
 web_search_agent: Optional[WebSearchAgent] = None
 simulation_coordinator: Optional[SimulationCoordinator] = None
+learning_agent: Optional[LearningAgent] = None
 conversation_memory: Dict[str, List[Dict[str, Any]]] = {}
 agent_registry: Dict[str, Dict[str, Any]] = {}
 tool_registry: Dict[str, Dict[str, Any]] = {}
@@ -107,7 +109,7 @@ app.add_middleware(
 @app.on_event("startup")
 async def startup_event():
     """Application startup event: initialize agents and pipeline."""
-    global llm_provider, web_search_agent, simulation_coordinator
+    global llm_provider, web_search_agent, simulation_coordinator, learning_agent
 
     logger.info("Initializing NIS Protocol v3...")
     
@@ -119,6 +121,9 @@ async def startup_event():
     
     # Initialize Simulation Coordinator
     simulation_coordinator = SimulationCoordinator(llm_provider, web_search_agent)
+
+    # Initialize Learning Agent
+    learning_agent = LearningAgent(agent_id="core_learning_agent_01")
 
     logger.info("✅ NIS Protocol v3.1 ready with REAL LLM integration!")
 
@@ -136,6 +141,23 @@ async def run_generative_simulation(concept: str):
         logger.error(f"Error during simulation loop: {e}")
         return JSONResponse(content={"error": str(e)}, status_code=500)
 
+# --- New Learning Endpoint ---
+@app.post("/learning/fine-tune-bitnet", tags=["Learning"])
+async def fine_tune_bitnet_model():
+    """
+    Triggers the fine-tuning process for the local BitNet model.
+    """
+    if not learning_agent:
+        raise HTTPException(status_code=500, detail="Learning Agent not initialized.")
+    
+    try:
+        results = learning_agent.fine_tune_bitnet()
+        if results.get("status") == "error":
+            raise HTTPException(status_code=500, detail=results)
+        return JSONResponse(content=results, status_code=200)
+    except Exception as e:
+        logger.error(f"Error during BitNet fine-tuning: {e}")
+        return JSONResponse(content={"error": str(e)}, status_code=500)
 
 # --- System & Core Endpoints ---
 @app.get("/", tags=["System"])
