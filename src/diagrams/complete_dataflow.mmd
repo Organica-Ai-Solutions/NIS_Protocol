@@ -1,0 +1,67 @@
+graph TD
+    subgraph "External Interfaces"
+        A[User via API]
+    end
+
+    subgraph "Web Server (FastAPI)"
+        B[API Endpoints]
+        C[Request/Response Handling]
+    end
+
+    subgraph "Core Components"
+        D[EnhancedScientificCoordinator]
+        E[LLM Manager]
+        F[Agent Registry]
+        G[Conversation Memory]
+        H[SymbolicBridge]
+    end
+    
+    subgraph "LLM Providers"
+        I[GeneralLLMProvider]
+    end
+
+    subgraph "Agent Ecosystem"
+        J[Agent Router]
+        K[Specialized Agents]
+    end
+
+    A --> B
+    B --> C
+    C --> D
+    C --> G
+    D --> J
+    J -- "routes to" --> K
+    K -- "interact with" --> H
+    H -- "uses" --> E
+    E -- "manages" --> I
+
+    subgraph "Data Flow"
+        L[Request] --> B
+        B --> M{Process Request}
+        M --> D
+        D --> J
+        J --> K
+        K --> H
+        H --> E
+        E --> I
+        I --> E
+        E --> H
+        H --> K
+        K --> J
+        J --> D
+        D --> N{Formulate Response}
+        N --> C
+        C --> O[Response]
+        O --> A
+    end
+
+    style J fill:#f9f,stroke:#333,stroke-width:2px
+    click J "src/agents/agent_router.py" "Go to agent_router.py"
+    
+    style K fill:#ccf,stroke:#333,stroke-width:2px
+    click K "src/agents" "Go to agents directory"
+
+    style H fill:#cfc,stroke:#333,stroke-width:2px
+    click H "src/core/symbolic_bridge.py" "Go to symbolic_bridge.py"
+
+    style D fill:#fcf,stroke:#333,stroke-width:2px

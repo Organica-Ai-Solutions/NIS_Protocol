@@ -37,6 +37,20 @@ function print_error {
     exit 1
 }
 
+function spinner() {
+    local pid=$1
+    local delay=0.1
+    local spinstr='|/-\'
+    while [ "$(ps a | awk '{print $1}' | grep $pid)" ]; do
+        local temp=${spinstr#?}
+        printf " [%c]  " "$spinstr"
+        local spinstr=$temp${spinstr%"$temp"}
+        sleep $delay
+        printf "\b\b\b\b\b\b"
+    done
+    printf "    \b\b\b\b"
+}
+
 # --- Main Script ---
 
 print_info "Starting NIS Protocol v3 Complete System..."
@@ -76,15 +90,37 @@ else
 fi
 echo ""
 
-# 4. Start Docker Compose
-print_info "Starting NIS Protocol v3 services..."
-docker-compose -f "$COMPOSE_FILE" -p "$PROJECT_NAME" up -d --build --force-recreate --remove-orphans
+# 4. Build Docker Images
+print_info "Building Docker images (this may take several minutes on the first run)..."
+docker-compose -f "$COMPOSE_FILE" -p "$PROJECT_NAME" build --progress=plain
+if [ $? -ne 0 ]; then
+    print_error "Docker build failed. Please check the output above for errors."
+fi
+print_success "Docker images built successfully."
+
+# 5. Start Docker Compose
+print_info "Starting NIS Protocol v3 services in detached mode..."
+docker-compose -f "$COMPOSE_FILE" -p "$PROJECT_NAME" up -d --force-recreate --remove-orphans
 
 if [ $? -ne 0 ]; then
     print_error "Docker Compose failed to start. Please check the logs."
 fi
+print_success "Services are starting..."
 
-# 5. Monitor Health of Services
+# 6. Stream Backend Logs for Insight
+print_info "Streaming logs from the backend service to show startup progress..."
+echo -e "${YELLOW}(Press Ctrl+C to stop streaming logs and continue to health monitoring)${NC}"
+(docker-compose -f "$COMPOSE_FILE" -p "$PROJECT_NAME" logs --follow --tail="1" backend) &
+LOGS_PID=$!
+
+# Show spinner while logs are streaming for a bit
+sleep 15
+kill $LOGS_PID > /dev/null 2>&1
+wait $LOGS_PID > /dev/null 2>&1
+echo ""
+
+
+# 7. Monitor Health of Services
 print_info "Monitoring service health..."
 SECONDS=0
 TIMEOUT=300 # 5 minutes

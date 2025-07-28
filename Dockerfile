@@ -13,10 +13,10 @@ ENV PYTHONPATH=/app
 COPY requirements.txt .
 
 # Install system and python dependencies in one layer
-RUN apt-get update && apt-get install -y --no-install-recommends build-essential gcc python3-pip && \
+RUN apt-get update && apt-get install -y --no-install-recommends build-essential gcc python3-pip python3-dev && \
     pip3 install --no-cache-dir --upgrade pip && \
     pip3 install --no-cache-dir -r requirements.txt && \
-    apt-get purge -y --auto-remove build-essential gcc && \
+    apt-get purge -y --auto-remove build-essential gcc python3-dev && \
     rm -rf /var/lib/apt/lists/*
 
 # Copy only the necessary application code
