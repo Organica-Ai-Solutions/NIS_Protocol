@@ -1,618 +1,231 @@
-# NIS Protocol v3 API Reference
+# NIS Protocol v3.1 API Reference
 
-## Overview
+## 1. Overview
 
-The NIS Protocol v3 provides a comprehensive REST API for AI agent coordination, consciousness modeling, and third-party protocol integration. All endpoints support real LLM integration with multiple providers.
+The NIS Protocol v3.1 provides a RESTful API for interacting with its scientific processing pipeline and multi-agent system. The API is designed to be simple, robust, and easy to integrate.
 
-**Base URL**: `http://localhost:8000` (development) or `http://localhost/api` (through Nginx)
+**Base URL:** `http://localhost:8000`
 
-## Authentication
+## 2. Core Endpoints
 
-Currently using development mode. Production deployment will require API keys.
-
-## Third-Party Protocol Integration
-
-NIS Protocol v3 supports integration with external AI systems through standardized protocols:
-
-- **MCP (Model Context Protocol)**: Anthropic's protocol for connecting AI systems to data sources
-- **ACP (Agent Communication Protocol)**: IBM's standardized protocol for agent communication  
-- **A2A (Agent2Agent Protocol)**: Google's protocol for agent interoperability across platforms
-
-## Core Endpoints
-
-### 1. System Status
+### System Status
 
 #### `GET /`
-**Description**: Root endpoint with system information and archaeological discovery pattern status
+**Description:** Returns the current status and identification of the NIS Protocol system.
 
-**Response**:
+**`curl` Example:**
+```bash
+curl -X GET http://localhost:8000/
+```
+
+**Example Response (`200 OK`):**
 ```json
 {
   "system": "NIS Protocol v3.1",
   "version": "3.1.0-archaeological",
-  "pattern": "OpenAIZChallenge Archaeological Discovery Platform",
+  "pattern": "nis_v3_agnostic",
   "status": "operational",
-  "real_llm_integrated": true,
-  "provider": "anthropic",
-  "model": "claude-3-sonnet-20240229",
+  "real_llm_integrated": { /* ... */ },
+  "provider": { /* ... */ },
+  "model": { /* ... */ },
   "features": [
     "Real LLM Integration (OpenAI, Anthropic)",
     "Archaeological Discovery Patterns",
     "Multi-Agent Coordination",
-    "Physics-Informed Reasoning", 
+    "Physics-Informed Reasoning",
     "Consciousness Modeling",
-    "Cultural Heritage Analysis",
-    "Third-Party Protocol Integration",
-    "Automated Audit Fixing"
+    "Cultural Heritage Analysis"
   ],
   "archaeological_success": "Proven patterns from successful heritage platform",
-  "timestamp": 1753654416.629
+  "timestamp": 1753693993.896
 }
 ```
 
 #### `GET /health`
-**Description**: Health check endpoint with provider and system status
+**Description:** Provides a detailed health check of the system, including the status of LLM providers and the number of registered agents.
 
-**Response**:
+**`curl` Example:**
+```bash
+curl -X GET http://localhost:8000/health
+```
+
+**Example Response (`200 OK`):**
 ```json
 {
   "status": "healthy",
-  "timestamp": 1753654416.629,
-  "provider": "anthropic",
-  "model": "claude-3-sonnet-20240229",
-  "real_ai": true,
-  "conversations_active": 3,
-  "agents_registered": 9,
+  "timestamp": 1753693994.123,
+  "provider": { /* ... */ },
+  "model": { /* ... */ },
+  "real_ai": { /* ... */ },
+  "conversations_active": 1,
+  "agents_registered": 4,
   "tools_available": 4,
-  "pattern": "archaeological_discovery"
+  "pattern": "nis_v3_agnostic"
 }
 ```
 
-### 2. Chat & Conversation
+### Chat and Processing
 
 #### `POST /chat`
-**Description**: Enhanced chat with real LLM integration using archaeological discovery patterns
+**Description:** The primary endpoint for interacting with the protocol. It takes a user message, runs it through the full **Laplace → KAN → PINN → LLM** pipeline, and returns a validated, natural language response.
 
-**Request Body**:
+**`curl` Example:**
+```bash
+curl -X POST http://localhost:8000/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message": "Explain the significance of the PINN validation layer."}'
+```
+
+**Request Body:**
 ```json
 {
-  "message": "How does the consciousness modeling work?",
-  "user_id": "user_123",
-  "conversation_id": "conv_456",
-  "context": {
-    "domain": "consciousness",
-    "priority": "high"
-  }
+  "message": "string",
+  "user_id": "string (optional)",
+  "conversation_id": "string (optional)",
+  "context": "object (optional)",
+  "agent_type": "string (optional, default: 'default')"
 }
 ```
 
-**Response**:
+**Example Response (`200 OK`):**
 ```json
 {
-  "response": "The consciousness modeling in NIS Protocol uses enhanced meta-cognitive processing (implemented) (implemented)...",
-  "user_id": "user_123",
-  "conversation_id": "conv_user_123_1753654416_abc123",
-  "timestamp": 1753654416.629,
-  "confidence": 0.92,
-  "provider": "anthropic",
+  "response": "The PINN validation layer is crucial...",
+  "user_id": "anonymous",
+  "conversation_id": "conv_anonymous_1753694055_e8a1b2c3",
+  "timestamp": 1753694060.123,
+  "confidence": 0.95,
+  "provider": "deepseek",
   "real_ai": true,
-  "model": "claude-3-sonnet-20240229",
-  "tokens_used": 245,
+  "model": "deepseek-chat",
+  "tokens_used": 350,
   "reasoning_trace": [
     "archaeological_pattern",
-    "context_analysis", 
+    "context_analysis",
     "llm_generation",
     "response_synthesis"
   ]
 }
 ```
 
-### 3. Agent Management
+#### `POST /chat/async`
+**Description:** Provides a streaming response for real-time applications. The functionality is identical to `/chat`, but the response is delivered as a stream of server-sent events.
 
-#### `POST /agent/create`
-**Description**: Create specialized AI agents with real LLM backing
-
-**Request Body**:
-```json
-{
-  "agent_type": "consciousness",
-  "capabilities": ["self_reflection", "meta_cognition", "integrity_monitoring"],
-  "memory_size": 1000,
-  "tools": ["audit_scanner", "violation_detector"],
-  "config": {
-    "enable_self_audit": true,
-    "reflection_interval": 60.0,
-    "consciousness_level": "enhanced"
-  }
-}
+**`curl` Example:**
+```bash
+curl -X POST http://localhost:8000/chat/async \
+  -H "Content-Type: application/json" \
+  -d '{"message": "What is a Kolmogorov-Arnold Network?"}'
 ```
 
-**Response**:
-```json
-{
-  "agent_id": "agent_consciousness_1753654416_e734c5c4",
-  "status": "created",
-  "agent_type": "consciousness",
-  "capabilities": ["self_reflection", "meta_cognition", "integrity_monitoring"],
-  "real_ai_backed": true,
-  "provider": "anthropic",
-  "model": "claude-3-sonnet-20240229",
-  "pattern": "archaeological_discovery",
-  "created_at": 1753654416.629
-}
+**Example Response (stream):**
+```
+data: A Kolmogorov-Arnold
+
+data: Network (KAN)
+
+data: is a...
+
+...
+
+data: [DONE]
 ```
 
-#### `POST /agent/behavior/{agent_id}`
-**Description**: Set behavior mode for an agent (lazy, normal, hyperactive)
-
-**Request Body**:
-```json
-{
-  "mode": "hyperactive"
-}
-```
-
-**Response**:
-```json
-{
-  "agent_id": "agent_123",
-  "behavior_mode": "hyperactive",
-  "status": "updated"
-}
-```
+### Agent Management
 
 #### `GET /agents`
-**Description**: List all registered agents with provider distribution
+**Description:** Lists all agents currently registered and active within the NIS Protocol.
 
-**Response**:
+**`curl` Example:**
+```bash
+curl -X GET http://localhost:8000/agents
+```
+
+**Example Response (`200 OK`):**
 ```json
 {
   "agents": {
-    "agent_consciousness_1753654416_e734c5c4": {
-      "agent_id": "agent_consciousness_1753654416_e734c5c4",
-      "agent_type": "consciousness",
-      "capabilities": ["self_reflection", "meta_cognition"],
-      "status": "active",
-      "real_ai_backed": true,
-      "provider": "anthropic"
-    }
+    "laplace_transformer_01": { /* status */ },
+    "kan_reasoning_01": { /* status */ },
+    "pinn_physics_01": { /* status */ },
+    "consciousness_01": { /* status */ }
   },
-  "total_count": 9,
-  "active_agents": 9,
-  "real_ai_backed": 9,
-  "pattern": "archaeological_discovery",
+  "total_count": 4,
+  "active_agents": 4,
+  "real_ai_backed": 0,
+  "pattern": "nis_v3_agnostic",
   "provider_distribution": {
-    "anthropic": 3,
-    "deepseek": 4,
-    "google": 2
+    "unknown": 4
   }
 }
 ```
 
-### 4. Action Agent & Audit Fixing
+### System Monitoring
 
-#### `POST /agent/action/audit-fix`
-**Description**: Start automated audit fixing session using action agents
+#### `GET /consciousness/status`
+**Description:** Returns the current status of the `EnhancedConsciousAgent`, including its operational level and awareness metrics.
 
-**Request Body**:
-```json
-{
-  "target_directories": ["src/", "examples/"],
-  "fix_strategies": ["hardcoded_value_replacement", "hype_language_correction"],
-  "use_third_party_tools": true,
-  "protocols": ["mcp", "acp"]
-}
-```
-
-**Response**:
-```json
-{
-  "session_id": "audit_fix_1753654416_abc123",
-  "status": "started",
-  "violations_detected": 12,
-  "fixes_scheduled": 12,
-  "third_party_tools": ["file_editor_tool", "language_correction_agent"],
-  "protocols_used": ["mcp", "acp"],
-  "estimated_duration": "30s"
-}
-```
-
-#### `GET /agent/action/audit-fix/{session_id}`
-**Description**: Get audit fixing session status and results
-
-**Response**:
-```json
-{
-  "session_id": "audit_fix_1753654416_abc123",
-  "status": "completed",
-  "duration": 28.5,
-  "violations_detected": 12,
-  "violations_fixed": 11,
-  "violations_failed": 1,
-  "success_rate": 0.92,
-  "files_modified": ["src/agents/physics/physics_agent.py", "simple_real_chat_test.py"],
-  "fixes_by_type": {
-    "hardcoded_value": 8,
-    "hype_language": 3,
-    "documentation_update": 1
-  },
-  "tools_used": ["mcp:file_editor_tool", "acp:language_correction_agent"],
-  "audit_trail": [
-    {
-      "file": "simple_real_chat_test.py",
-      "violation": "confidence=0.95",
-      "fix": "confidence=calculate_confidence(factors)",
-      "tool": "mcp:file_editor_tool",
-      "success": true
-    }
-  ]
-}
-```
-
-### 5. Consciousness Agent Introspection
-
-#### `POST /agent/{agent_id}/introspect`
-**Description**: Trigger consciousness agent introspection and integrity assessment
-
-**Request Body**:
-```json
-{
-  "reflection_type": "integrity_assessment",
-  "target_agent_id": null,
-    "context": {
-    "scan_codebase": true,
-    "target_directories": ["src/"]
-  }
-}
-```
-
-**Response**:
-```json
-{
-  "introspection_id": "intro_1753654416_xyz789",
-  "reflection_type": "integrity_assessment",
-  "agent_id": "agent_consciousness_1753654416_e734c5c4",
-  "findings": {
-    "integrity_score": 95.2,
-    "violations_detected": 3,
-    "codebase_health": "excellent",
-    "recommendations": [
-      "Fix hardcoded confidence values in simple_real_chat_test.py",
-      "Update hype language in documentation"
-    ]
-  },
-  "confidence": 0.94,
-  "processing_time": 1.2,
-  "auto_corrections_applied": 0,
-  "violations_found": [
-    {
-      "type": "hardcoded_value",
-      "file": "simple_real_chat_test.py",
-      "severity": "HIGH"
-    }
-  ]
-}
-```
-
-#### `POST /agent/{agent_id}/codebase-scan`
-**Description**: Trigger proactive codebase integrity scan by consciousness agent
-
-**Request Body**:
-```json
-{
-  "target_directories": ["src/", "examples/"],
-  "scan_depth": "deep",
-  "auto_fix": false
-}
-```
-
-**Response**:
-```json
-{
-  "scan_id": "scan_1753654416_def456",
-  "agent_id": "agent_consciousness_1753654416_e734c5c4",
-  "total_files_scanned": 45,
-  "total_violations": 8,
-  "violations_by_type": {
-    "hardcoded_value": 5,
-    "hype_language": 2,
-    "unsubstantiated_claim": 1
-  },
-  "critical_issues": 5,
-  "integrity_score": 88.3,
-  "scan_timestamp": 1753654416.629,
-  "recommendations": [
-    "Run automated fixing session to address hardcoded values",
-    "Review documentation for unsubstantiated claims"
-  ]
-}
-```
-
-### 6. Third-Party Protocol Integration
-
-#### `POST /protocol/mcp/tool/execute`
-**Description**: Execute MCP (Model Context Protocol) tool
-
-**Request Body**:
-```json
-{
-  "tool_name": "file_editor_tool",
-  "action": "replace_text",
-  "parameters": {
-    "file_path": "src/test.py",
-    "old_text": "confidence=0.95",
-    "new_text": "confidence=calculate_confidence(factors)"
-  },
-  "context": {
-    "violation_type": "hardcoded_value",
-    "session_id": "audit_fix_1753654416_abc123"
-  }
-}
-```
-
-**Response**:
-```json
-{
-  "tool_response": {
-    "status": "success",
-    "content": {
-      "file_modified": "src/test.py",
-      "changes_applied": 1,
-      "backup_created": true
-    },
-    "error": null
-  },
-  "execution_time": 0.8,
-  "protocol": "mcp",
-  "tool_name": "file_editor_tool"
-}
-```
-
-#### `POST /protocol/acp/agent/communicate`
-**Description**: Communicate with ACP (Agent Communication Protocol) agent
-
-**Request Body**:
-```json
-{
-  "agent_id": "language_correction_agent",
-  "message": {
-    "action": "detect_hype_language",
-    "content": "This is a comprehensive well-engineered system with high-quality accuracy",
-    "context": "code_documentation"
-  }
-}
-```
-
-**Response**:
-```json
-{
-  "agent_response": {
-    "violations_detected": 3,
-    "suggestions": [
-      {"original": "comprehensive", "replacement": "comprehensive"},
-      {"original": "well-engineered", "replacement": "well-engineered"},
-      {"original": "high-quality", "replacement": "high"}
-    ],
-    "confidence": 0.91
-  },
-  "protocol": "acp",
-  "agent_id": "language_correction_agent"
-}
-```
-
-#### `POST /protocol/a2a/coordinate`
-**Description**: Coordinate with A2A (Agent2Agent Protocol) agents across platforms
-
-**Request Body**:
-```json
-{
-  "target_platform": "external_system",
-  "coordination_type": "multi_agent_workflow",
-  "workflow": {
-    "task": "automated_code_review",
-    "agents_required": ["code_analyzer", "quality_checker", "documentation_updater"]
-  }
-}
-```
-
-**Response**:
-```json
-{
-  "coordination_id": "coord_1753654416_ghi789",
-  "status": "initiated",
-  "participating_agents": 3,
-  "external_platform": "external_system",
-  "workflow_stages": [
-    {"stage": "code_analysis", "agent": "code_analyzer", "status": "queued"},
-    {"stage": "quality_check", "agent": "quality_checker", "status": "pending"},
-    {"stage": "documentation", "agent": "documentation_updater", "status": "pending"}
-  ],
-  "protocol": "a2a"
-}
-```
-
-### 7. Memory & Knowledge Management
-
-#### `POST /memory/store`
-**Description**: Store information in agent memory systems
-
-**Request Body**:
-```json
-{
-  "key": "audit_findings_2025_01",
-  "data": {
-    "violations": 8,
-    "fixes_applied": 7,
-    "success_rate": 0.875
-  },
-  "agent_id": "agent_consciousness_1753654416_e734c5c4",
-  "memory_type": "episodic",
-  "retention_days": 30
-}
-```
-
-#### `GET /memory/query`
-**Description**: Query agent memory systems
-
-**Query Parameters**:
-- `key`: Memory key to retrieve
-- `agent_id`: Target agent ID
-- `memory_type`: Type of memory (episodic, semantic, procedural)
-
-### 8. Tool Management
-
-#### `POST /tool/register`
-**Description**: Register new tools for agent use
-
-**Request Body**:
-```json
-{
-  "tool_name": "well-engineered_code_analyzer",
-  "description": "well-engineered static code analysis tool",
-  "capabilities": ["syntax_analysis", "complexity_metrics", "vulnerability_detection"],
-  "protocol": "mcp",
-  "endpoint": "https://api.example.com/code-analyzer"
-}
-```
-
-#### `GET /tools`
-**Description**: List available tools and their capabilities
-
-**Response**:
-```json
-{
-  "tools": {
-    "calculator": {"description": "Mathematical calculator", "status": "active"},
-    "web_search": {"description": "Web search capabilities", "status": "active"},
-    "artifact_analysis": {"description": "Archaeological artifact analysis", "status": "active"},
-    "file_editor_tool": {"description": "MCP file editing tool", "protocol": "mcp", "status": "active"},
-    "language_correction_agent": {"description": "ACP language correction", "protocol": "acp", "status": "active"}
-  },
-  "total_tools": 5,
-  "active_tools": 5,
-  "protocol_distribution": {
-    "native": 3,
-    "mcp": 1,
-    "acp": 1
-  }
-}
-```
-
-### 9. Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) & Dashboard
-
-#### `GET /dashboard/metrics`
-**Description**: Get real-time system metrics and performance data
-
-**Response**:
-```json
-{
-  "metrics": {
-    "consciousness_response_time": {
-      "current_value": 0.85,
-      "target_value": 1.0,
-      "unit": "seconds",
-      "alert_level": "normal"
-    },
-    "memory_usage": {
-      "current_value": 67.2,
-      "target_value": 80.0,
-      "unit": "percent",
-      "alert_level": "normal"
-    },
-    "decision_quality": {
-      "current_value": 0.92,
-      "target_value": 0.85,
-      "unit": "score",
-      "alert_level": "excellent"
-    }
-  },
-  "system_health": "excellent",
-  "uptime": 3847.2
-}
-```
-
-## Error Handling
-
-All endpoints return appropriate HTTP status codes:
-
-- `200`: Success
-- `400`: Bad Request (invalid parameters)
-- `404`: Not Found (agent/resource doesn't exist)
-- `500`: Internal Server Error
-
-Error responses include detailed information:
-
-```json
-{
-  "detail": "Agent creation failed: Invalid agent type 'invalid_type'",
-  "error_type": "ValidationError",
-  "timestamp": 1753654416.629
-}
-```
-
-## Rate Limiting
-
-Production deployments include rate limiting:
-- Standard endpoints: 60 requests/minute
-- Chat endpoints: 30 requests/minute  
-- Tool execution: 10 requests/minute
-
-## WebSocket Support
-
-Real-time features available via WebSocket:
-- Live metrics: `ws://localhost:5000/socket.io/`
-- Agent communication: `ws://localhost:8000/ws/agents`
-- Audit Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/): `ws://localhost:8000/ws/audit`
-
-## Integration Examples
-
-### Automated Audit Fixing Workflow
-
+**`curl` Example:**
 ```bash
-# 1. Start audit fixing session
-curl -X POST "http://localhost/api/agent/action/audit-fix" \
-  -H "Content-Type: application/json" \
-  -d '{"target_directories": ["src/"], "use_third_party_tools": true}'
-
-# 2. Monitor session progress
-curl "http://localhost/api/agent/action/audit-fix/audit_fix_1753654416_abc123"
-
-# 3. Trigger consciousness agent scan
-curl -X POST "http://localhost/api/agent/agent_consciousness_1753654416_e734c5c4/codebase-scan" \
-  -H "Content-Type: application/json" \
-  -d '{"target_directories": ["src/"], "auto_fix": false}'
+curl -X GET http://localhost:8000/consciousness/status
 ```
 
-### Third-Party Tool Integration
+**Example Response (`200 OK`):**
+```json
+{
+  "consciousness_level": "enhanced",
+  "introspection_active": true,
+  "awareness_metrics": {
+    "self_awareness": 0.85,
+    "environmental_awareness": 0.92
+  }
+}
+```
 
+#### `GET /infrastructure/status`
+**Description:** Provides a status check of the system's core infrastructure services.
+
+**`curl` Example:**
 ```bash
-# Execute MCP file editing tool
-curl -X POST "http://localhost/api/protocol/mcp/tool/execute" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "tool_name": "file_editor_tool",
-    "action": "replace_text",
-    "parameters": {
-      "file_path": "src/test.py",
-      "old_text": "confidence=0.95",
-      "new_text": "confidence=calculate_confidence(factors)"
-    }
-  }'
+curl -X GET http://localhost:8000/infrastructure/status
 ```
 
-## Production Deployment
+**Example Response (`200 OK`):**
+```json
+{
+  "status": "healthy",
+  "active_services": ["llm", "memory", "agents"],
+  "resource_usage": {
+    "cpu": 45.2,
+    "memory": "2.1GB"
+  }
+}
+```
 
-For production deployment:
+#### `GET /metrics`
+**Description:** Returns key performance metrics for the running application, such as uptime.
 
-1. **Environment Variables**: Configure API keys for all LLM providers
-2. **Database**: Set up PostgreSQL for persistent storage
-3. **Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/)**: Configure Grafana dashboards
-4. **Security**: Enable JWT authentication and HTTPS
-5. **Scaling**: Use Docker Compose or Kubernetes
+**`curl` Example:**
+```bash
+curl -X GET http://localhost:8000/metrics
+```
 
-## SDK Support
+**Example Response (`200 OK`):**
+```json
+{
+  "uptime": 1234.56,
+  "total_requests": 100,
+  "average_response_time": 0.15
+}
+```
 
-Official SDKs available for:
-- Python: `pip install nis-protocol-sdk`
-- JavaScript: `npm install nis-protocol-js`
-- Go: Import `github.com/nis-protocol/go-sdk` 
+## 3. Error Handling
+
+The API returns standard HTTP status codes to indicate the success or failure of a request.
+
+- `200 OK`: The request was successful.
+- `404 Not Found`: The requested resource could not be found.
+- `422 Unprocessable Entity`: The request body is invalid.
+- `500 Internal Server Error`: An unexpected error occurred on the server.
+
+Error responses will contain a `detail` field with a description of the error. 

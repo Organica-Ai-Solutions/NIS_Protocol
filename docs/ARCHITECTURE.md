@@ -1,581 +1,73 @@
-# NIS Protocol System Architecture
+# NIS Protocol v3.1 System Architecture
 
-## Table of Contents
-- [Overview](#overview)
-- [Core Architectural Principles](#core-architectural-principles)
-- [System Components](#system-components)
-- [Dataflow Architecture](#dataflow-architecture)
-- [Scientific Processing Pipeline](#scientific-processing-pipeline)
-- [Infrastructure Layer](#infrastructure-layer)
-- [Agent Communication Patterns](#agent-communication-patterns)
-- [Memory Management](#memory-management)
-- [Performance Optimization](#performance-optimization)
+## 1. Overview
 
-## Overview
+The NIS Protocol is an advanced, containerized, and multi-layered AI framework. Its design is centered on achieving **scientifically grounded, interpretable, and self-aware artificial intelligence.** The architecture is built on three core pillars:
 
-The NIS Protocol v3 implements a containerized, multi-layered, event-driven architecture that combines traditional AI processing with physics-informed validation and production-ready distributed infrastructure. The system is designed around four core pillars:
+1.  **The Scientific Pipeline (Laplace → KAN → PINN → LLM):** A unique processing flow that grounds AI reasoning in mathematics and physics.
+2.  **A Multi-Agent Cognitive Framework:** A system of specialized, coordinated agents that handle distinct cognitive functions.
+3.  **A Meta-Control Layer:** A strategic oversight system, led by the `EnhancedConsciousAgent`, that governs the behavior and strategy of the entire agent ecosystem.
 
-1. **Containerized Deployment**: Complete Docker infrastructure with single-command deployment
-2. **Scientific Validation Pipeline**: Laplace→KAN→PINN→LLM processing architecture
-3. **Multi-Agent Coordination**: Comprehensive coordination framework with specialized agents
-4. **Production Infrastructure**: Kafka/Redis/PostgreSQL/Nginx-based distributed processing
+## 2. Core Architectural Principles
 
-## Docker Infrastructure Architecture
+- **Interpretability by Design:** The system is built to be transparent. The use of Kolmogorov-Arnold Networks (KAN) allows the core reasoning process to be expressed as verifiable symbolic formulas.
+- **Physical Grounding:** The system's outputs are not just statistically probable; they are validated against the fundamental laws of physics by Physics-Informed Neural Networks (PINN). This prevents AI "hallucinations" and ensures outputs are consistent with reality.
+- **Modular & Agent-Based:** The system is composed of specialized, independent agents. This makes the system robust, scalable, and easy to maintain. Each agent is an expert in its domain (e.g., signal processing, reasoning, physics).
+- **Self-Awareness and Introspection:** The protocol includes a dedicated "consciousness" layer that monitors the system's own performance, integrity, and alignment with its goals.
+
+## 3. The Scientific Pipeline: From Signal to Validated Insight
+
+This is the intellectual core of the NIS Protocol. Every complex query flows through this validated, multi-stage pipeline.
 
 ```mermaid
-graph TB
-    subgraph "External Access"
-        U[Users] --> N[Nginx :80]
-        D[Developers] --> G[Grafana :3000]
-    end
-    
-    subgraph "Application Layer"
-        N --> A[NIS App :8000]
-        A --> M[Dashboard :5000]
-    end
-    
-    subgraph "Data Layer"
-        A --> K[Kafka :9092]
-        A --> R[Redis :6379] 
-        A --> P[PostgreSQL :5432]
-    end
-    
-    subgraph "Infrastructure"
-        K --> Z[Zookeeper :2181]
-        G --> PR[Prometheus :9090]
-    end
-    
-    subgraph "Optional Monitoring"
-        KU[Kafka UI :8080]
-        RC[Redis Commander :8081]
-    end
-    
-    U --> N
-    D --> G --> PR
-    A --> K --> Z
-    A --> R
-    A --> P
+graph TD
+    A[Input Signal] --> B{EnhancedLaplaceTransformer};
+    B -- Frequency Domain Data --> C{EnhancedKANReasoningAgent};
+    C -- Symbolic Formula --> D{EnhancedPINNPhysicsAgent};
+    D -- Validated Result --> E{LLM Integration Layer};
+    E -- Natural Language Response --> F[Output];
+
+    style B fill:#f9f,stroke:#333,stroke-width:2px;
+    style C fill:#ccf,stroke:#333,stroke-width:2px;
+    style D fill:#cfc,stroke:#333,stroke-width:2px;
+    style E fill:#ff9,stroke:#333,stroke-width:2px;
 ```
 
-### **🚀 Deployment Architecture**
+1.  **Laplace Transform (`EnhancedLaplaceTransformer`):** Ingests raw input (text, sensor data, etc.) and transforms it into the frequency domain. This is crucial for identifying underlying patterns and periodicities that are not visible in the time domain.
+2.  **KAN Reasoning (`EnhancedKANReasoningAgent`):** Analyzes the frequency data and discovers the underlying mathematical relationships. It produces a symbolic formula (e.g., `f(x) = sin(2πx) + 0.1x²`), providing a fully interpretable model of the data.
+3.  **PINN Validation (`EnhancedPINNPhysicsAgent`):** Takes the symbolic formula from the KAN and validates it against a set of physical laws (e.g., conservation of energy, thermodynamics). This step acts as a powerful "reality check."
+4.  **LLM Integration (`GeneralLLMProvider`):** The final, validated, and interpretable result is passed to a Large Language Model, which translates the structured output into a coherent, natural language response for the user.
 
-| **Component** | **Container** | **Purpose** | **Scale** |
-|---------------|---------------|-------------|-----------|
-| **Nginx** | `nis-nginx` | Reverse proxy, load balancing | 1 replica |
-| **NIS App** | `nis-main-app` | Core AGI processing (implemented) (implemented), consciousness | Scalable |
-| **PostgreSQL** | `nis-postgres` | Persistent data, agent states | 1 primary |
-| **Kafka** | `nis-kafka` | Message streaming, agent coordination | 3 partitions |
-| **Redis** | `nis-redis` | Memory cache, shared state | LRU eviction |
-| **Zookeeper** | `nis-zookeeper` | Kafka coordination | 1 replica |
-| **Grafana** | `nis-grafana` | Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) dashboards | Optional |
+## 4. The Meta-Control Layer: Strategic Governance
 
-## Core Architectural Principles
-
-### 1. **Physics-Informed processing (implemented) (implemented)**
-All system outputs undergo physics constraint validation through PINN (Physics-Informed Neural Networks) to ensure scientific accuracy and prevent hallucinations.
-
-### 2. **Event-Driven Communication**
-Agents communicate through Kafka message streams, enabling:
-- Asynchronous processing (implemented) (implemented)
-- Horizontal scalability
-- Fault tolerance
-- Real-time Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/)
-
-### 3. **Consciousness-Aware Cognitive Architecture**
-The system follows a consciousness-integrated hierarchical processing (implemented) (implemented) model:
+The NIS Protocol's most advanced feature is its meta-control layer, which provides strategic oversight for the entire system.
 
 ```mermaid
-graph TB
-    subgraph "Consciousness Layer"
-        CA[Conscious Agent]
-        MCP[Meta-Cognitive Processor]
-        IM[Introspection Manager]
+graph TD
+    subgraph "Meta-Control Layer"
+        A[EnhancedConsciousAgent (The Strategist)] --> B{EnhancedScientificCoordinator (The Orchestrator)};
+        B --> C[DRLResourceManager (The Resource Manager)];
     end
-    
-    subgraph "Coordination Layer"
-        AR[Agent Router]
-        CC[Coordinator Controller]
-        DRL[DRL Enhanced Router]
+
+    subgraph "Cognitive Agents"
+        D[Laplace, KAN, PINN, etc.]
     end
-    
-    subgraph "Intelligence Layer"
-        GA[Goal Adaptation]
-        DG[Domain Generalization]
-        AP[Autonomous Planning]
-        KR[KAN Reasoning]
-        PP[PINN Physics]
-        LP[Laplace Processor]
-    end
-    
-    subgraph "Memory & Learning"
-        MA[Memory Agent]
-        LA[Learning Agent]
-        NP[Neuroplasticity Agent]
-    end
-    
-    subgraph "Infrastructure Integration"
-        K[Kafka Messages]
-        R[Redis Cache]
-        P[PostgreSQL DB]
-        LLM[Multi-LLM Orchestra]
-    end
-    
-    CA --> AR
-    AR --> GA
-    AR --> DG
-    AR --> AP
-    AR --> KR
-    AR --> PP
-    AR --> LP
-    
-    GA <--> MA
-    DG <--> LA
-    AP <--> NP
-    
-    MCP --> IM
-    CA --> MCP
-    
-    All --> K
-    All --> R
-    All --> P
-    All --> LLM
+
+    B -- Adjusts Parameters --> D;
+    C -- Allocates CPU/Memory --> D;
 ```
 
-### 4. **Self-Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) and Integrity**
-Every component includes:
-- Real-time integrity Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/)
-- Self-audit capabilities
-- Performance metrics
-- Auto-correction mechanisms
+- **The Strategist (`EnhancedConsciousAgent`):** This is the highest level of control. It performs continuous introspection and sets the global **Behavior Mode** for the entire system (e.g., `HIGH_PERFORMANCE`, `ENERGY_SAVING`, `MAX_INTEGRITY`).
+- **The Orchestrator (`EnhancedScientificCoordinator`):** This is the tactical layer. It receives the `BehaviorMode` from the Strategist and translates it into specific commands for the cognitive agents (e.g., "Laplace, reduce your resolution to 128 points to save energy").
+- **The Resource Manager (`DRLResourceManager`):** This is the logistics layer. It executes the Orchestrator's commands at the infrastructure level by managing the allocation of CPU, memory, and other computational resources.
 
-## System Components
+## 5. Deployment Architecture: Docker
 
-### Core processing (implemented) (implemented) Layers
+The entire system is containerized with Docker and managed by a single `docker-compose.yml` file. A simple `start.sh` script handles the entire deployment process, making the system easy to run and manage.
 
-#### Perception Layer (`src/agents/perception/`)
-- **Input Agent**: Processes text, speech, and sensor data
-- **Vision Agent**: Image processing (implemented) (implemented) and pattern recognition
-- **Pattern Recognition**: Feature extraction and preprocessing
+- **`nis-backend`:** The main FastAPI application container where all agents and the scientific pipeline run.
+- **`nis-redis-simple`:** A Redis container for high-speed caching and working memory.
+- **`nis-kafka` & `nis-zookeeper`:** Kafka and Zookeeper for robust, asynchronous messaging between agents (though the current implementation relies more on direct calls for simplicity).
+- **`nis-nginx`:** An Nginx container that acts as a reverse proxy, directing traffic to the backend.
 
-```python
-# Input Agent processing (implemented) (implemented) flow
-def process(self, message: Dict[str, Any]) -> Dict[str, Any]:
-    structured_data = {}
-    metadata = {}
-    
-    if "text" in message:
-        text_data, text_metadata = self._process_text(message["text"])
-        structured_data.update(text_data)
-        metadata.update(text_metadata)
-    
-    return {
-        "status": "success",
-        "structured_data": structured_data,
-        "metadata": metadata,
-        "emotional_state": self.emotional_state.get_state(),
-        "timestamp": time.time()
-    }
-```
-
-#### Reasoning Layer (`src/agents/reasoning/`)
-- **KAN Reasoning Agent**: Symbolic function extraction using Kolmogorov-Arnold Networks
-- **Enhanced Reasoning Agent**: Logic processing (implemented) (implemented) and inference
-- **Domain Generalization**: Transfer learning across domains
-
-#### Physics Layer (`src/agents/physics/`)
-- **PINN Physics Agent**: Physics constraint validation
-- **Conservation Laws**: Physical law enforcement
-- **Enhanced Physics Agent**: Auto-correction mechanisms
-
-### Infrastructure Components
-
-#### Message Streaming (`src/infrastructure/message_streaming.py`)
-```python
-class NISKafkaManager:
-    async def send_message(self, message: NISMessage, timeout: float = 10.0) -> bool:
-        """Send message with reliability guarantees"""
-        try:
-            result = await self.producer.send_and_wait(
-                message.topic,
-                value=message.to_dict(),
-                timeout=timeout
-            )
-            self._update_metrics("messages_sent", 1)
-            return True
-        except Exception as e:
-            self.logger.error(f"Failed to send message: {e}")
-            return False
-```
-
-#### Caching System (`src/infrastructure/caching_system.py`)
-- **Redis Manager**: Distributed memory management
-- **Cache Strategies**: TTL, LRU, and custom eviction policies
-- **Performance Tracking**: Cache hit rates and optimization
-
-## Dataflow Architecture
-
-### Primary processing (implemented) (implemented) Flow
-
-1. **Input Reception**
-   ```
-   User Input → Input Agent → Structured Data → Kafka Topic
-   ```
-
-2. **Cognitive processing (implemented) (implemented)**
-   ```
-   Kafka → Interpretation Agent → Cognitive System → Agent Router
-   ```
-
-3. **Scientific Validation**
-   ```
-   Agent Router → Hybrid Agent Core → Laplace→KAN→PINN Pipeline
-   ```
-
-4. **Response Generation**
-   ```
-   Scientific Result → LLM Integration → Communication Agent → User Output
-   ```
-
-### Message Flow Patterns
-
-#### Synchronous processing (implemented) (implemented)
-For real-time responses requiring immediate feedback:
-```python
-response = await cognitive_system.process_input(
-    text="Analyze this data",
-    generate_speech=False
-)
-```
-
-#### Asynchronous processing (implemented) (implemented)
-For complex analysis and background tasks:
-```python
-await kafka_manager.send_message(
-    NISMessage(
-        topic="analysis_requests",
-        content=analysis_data,
-        priority=MessagePriority.HIGH
-    )
-)
-```
-
-## Scientific processing (implemented) (implemented) Pipeline
-
-### Laplace Transform processing (implemented) (implemented)
-
-The Laplace processor converts time-domain signals to frequency domain for analysis:
-
-```python
-class LaplaceSignalProcessor:
-    def compute_laplace_transform(self, signal_data: np.ndarray, 
-                                 time_vector: np.ndarray) -> LaplaceTransform:
-        """Compute Laplace transform with pole-zero analysis"""
-        # Generate s-plane grid
-        s_values = self._generate_s_plane_grid()
-        
-        # Compute transform
-        transform_values = self._compute_transform(signal_data, time_vector, s_values)
-        
-        # Extract poles and zeros
-        poles, zeros = self._analyze_pole_zero(transform_values, s_values)
-        
-        return LaplaceTransform(
-            s_values=s_values,
-            transform_values=transform_values,
-            original_signal=signal_data,
-            time_vector=time_vector,
-            poles=poles,
-            zeros=zeros
-        )
-```
-
-### KAN Symbolic Reasoning
-
-KAN networks extract interpretable symbolic functions:
-
-```python
-class KANSymbolicReasoningNetwork:
-    def extract_symbolic_functions(self) -> List[SymbolicExtraction]:
-        """Extract interpretable functions from KAN layers"""
-        extractions = []
-        
-        for layer_idx, layer in enumerate(self.kan_layers):
-            # Extract spline coefficients
-            spline_coeffs = layer.get_spline_coefficients()
-            
-            # Convert to symbolic representation
-            symbolic_func = self._spline_to_symbolic(spline_coeffs)
-            
-            extractions.append(SymbolicExtraction(
-                layer_index=layer_idx,
-                symbolic_function=symbolic_func,
-                confidence=self._calculate_extraction_confidence(spline_coeffs),
-                interpretability_score=self._assess_interpretability(symbolic_func)
-            ))
-        
-        return extractions
-```
-
-### PINN Physics Validation
-
-Physics-Informed Neural Networks validate results against physical laws:
-
-```python
-class PINNPhysicsAgent:
-    def validate_physics_compliance(self, result: Any) -> PINNValidationResult:
-        """Validate result against physics constraints"""
-        violations = []
-        
-        # Check conservation laws
-        conservation_result = self._check_conservation_laws(result)
-        if not conservation_result.is_valid:
-            violations.extend(conservation_result.violations)
-        
-        # Check boundary conditions
-        boundary_result = self._check_boundary_conditions(result)
-        if not boundary_result.is_valid:
-            violations.extend(boundary_result.violations)
-        
-        # Calculate compliance score
-        compliance_score = self._calculate_compliance_score(violations)
-        
-        return PINNValidationResult(
-            is_valid=len(violations) == 0,
-            violations=violations,
-            compliance_score=compliance_score,
-            auto_correction_applied=self._apply_auto_correction(violations)
-        )
-```
-
-## Infrastructure Layer
-
-### Kafka Integration
-
-#### Topic Organization
-```
-nis-consciousness-events    # Consciousness Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/)
-nis-agent-coordination     # Multi-agent communication
-nis-memory-operations      # Memory management
-nis-performance-metrics    # System Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/)
-nis-audit-alerts          # Integrity violations
-```
-
-#### Message Types
-```python
-class MessageType(Enum):
-    CONSCIOUSNESS_EVENT = "consciousness_event"
-    GOAL_GENERATION = "goal_generation"
-    SIMULATION_RESULT = "simulation_result"
-    ALIGNMENT_CHECK = "alignment_check"
-    MEMORY_OPERATION = "memory_operation"
-    AGENT_COORDINATION = "agent_coordination"
-    SYSTEM_HEALTH = "system_health"
-    AUDIT_ALERT = "audit_alert"
-    PERFORMANCE_METRIC = "performance_metric"
-```
-
-### Redis Caching Strategy
-
-#### Cache Namespaces
-```python
-class CacheNamespace(Enum):
-    CONSCIOUSNESS_ANALYSIS = "consciousness"
-    MEMORY_EMBEDDINGS = "memory_embeddings"
-    AGENT_STATES = "agent_states"
-    PERFORMANCE_METRICS = "performance"
-    SCIENTIFIC_RESULTS = "scientific"
-    LLM_RESPONSES = "llm_responses"
-```
-
-#### Caching Patterns
-```python
-# Distributed caching with TTL
-await redis_manager.cache_with_ttl(
-    namespace=CacheNamespace.SCIENTIFIC_RESULTS,
-    key=f"laplace_transform_{signal_hash}",
-    value=transform_result,
-    ttl=1800  # 30 minutes
-)
-
-# Performance tracking
-cache_metrics = await redis_manager.get_performance_metrics()
-# Returns: hit_rate, miss_rate, avg_response_time, memory_usage
-```
-
-## Agent Communication Patterns
-
-### Registry-Based Discovery
-
-All agents register with the central NIS Registry:
-
-```python
-class NISRegistry:
-    def register(self, agent: NISAgent) -> None:
-        """Register agent and capabilities"""
-        self.agents[agent.agent_id] = agent
-        self._update_capability_index(agent)
-        self._notify_coordination_layer(agent)
-    
-    def route_message(self, message: Dict[str, Any], 
-                     target_layer: NISLayer) -> List[Dict[str, Any]]:
-        """Route message to appropriate agents"""
-        target_agents = self.get_agents_by_layer(target_layer)
-        results = []
-        
-        for agent in target_agents:
-            if agent.active:
-                result = agent.process(message)
-                results.append(result)
-        
-        return results
-```
-
-### Cross-Layer Communication
-
-Agents communicate across layers through Kafka topics:
-
-```python
-# Agent sending message to another layer
-await self.kafka_manager.send_message(
-    NISMessage(
-        topic=f"nis-{target_layer.value}",
-        content={
-            "source_agent": self.agent_id,
-            "target_layer": target_layer.value,
-            "payload": processed_data,
-            "metadata": context_info
-        },
-        priority=MessagePriority.NORMAL,
-        timestamp=time.time()
-    )
-)
-```
-
-### Coordination Patterns
-
-#### Multi-Agent Consensus
-```python
-class CoordinationAgent:
-    async def coordinate_multi_agent_task(self, task: Dict[str, Any]) -> Dict[str, Any]:
-        """Coordinate task across multiple agents"""
-        participating_agents = self._select_agents_for_task(task)
-        
-        # Distribute task to agents
-        agent_results = await self._distribute_task(participating_agents, task)
-        
-        # Consensus building
-        consensus_result = self._build_consensus(agent_results)
-        
-        # Validation through PINN if needed
-        if task.get("requires_physics_validation"):
-            consensus_result = await self._validate_with_pinn(consensus_result)
-        
-        return consensus_result
-```
-
-## Memory Management
-
-### Multi-Tier Memory Architecture
-
-#### Working Memory (Redis)
-- **Capacity**: Configurable (default: 10GB)
-- **TTL**: Short-term (minutes to hours)
-- **Purpose**: Active processing (implemented) (implemented) context
-
-#### Long-Term Memory (Vector Store)
-- **Storage**: Persistent vector embeddings
-- **Retrieval**: Similarity search
-- **Consolidation**: Periodic background process
-
-#### Memory Consolidation Process
-```python
-class LTMConsolidator:
-    async def consolidate_memories(self) -> None:
-        """Consolidate working memory to long-term storage"""
-        working_memories = await self.redis_manager.get_recent_memories()
-        
-        for memory in working_memories:
-            # Generate embeddings
-            embedding = await self.embedding_service.generate_embedding(memory)
-            
-            # Store in vector database
-            await self.vector_store.store_memory(
-                content=memory.content,
-                embedding=embedding,
-                metadata=memory.metadata,
-                importance_score=self._calculate_importance(memory)
-            )
-            
-            # Remove from working memory if criteria met
-            if self._should_remove_from_working_memory(memory):
-                await self.redis_manager.remove_memory(memory.id)
-```
-
-## Performance Optimization
-
-### Caching Strategies
-
-1. **Laplace Transform Results**: Cache computed transforms for reuse
-2. **KAN Symbolic Functions**: Cache extracted symbolic representations
-3. **PINN Validation Results**: Cache physics compliance checks
-4. **LLM Responses**: Cache provider responses with context hashing
-
-### Parallel processing (implemented) (implemented)
-
-```python
-class ScientificPipeline:
-    async def process_parallel(self, input_data: Any) -> CompleteScientificResult:
-        """Process through pipeline with parallel execution"""
-        # Start Laplace and KAN processing (implemented) (implemented) in parallel
-        laplace_task = asyncio.create_task(
-            self.laplace_processor.process_async(input_data)
-        )
-        kan_task = asyncio.create_task(
-            self.kan_network.process_async(input_data)
-        )
-        
-        # Wait for both to complete
-        laplace_result, kan_result = await asyncio.gather(
-            laplace_task, kan_task
-        )
-        
-        # PINN validation uses both results
-        pinn_result = await self.pinn_agent.validate_async(
-            laplace_result, kan_result
-        )
-        
-        return CompleteScientificResult(
-            laplace_transform=laplace_result,
-            kan_reasoning=kan_result,
-            pinn_validation=pinn_result
-        )
-```
-
-### Load Balancing
-
-The system implements intelligent load balancing across:
-- Multiple LLM providers
-- Agent instances
-- processing (implemented) (implemented) pipelines
-- Infrastructure services
-
-```python
-class LoadBalancer:
-    def select_optimal_provider(self, task_type: TaskType) -> str:
-        """Select optimal LLM provider based on current load and capabilities"""
-        available_providers = self._get_healthy_providers()
-        
-        # Score providers based on:
-        # - Current load
-        # - Task-specific performance
-        # - Response time history
-        # - Cost considerations
-        
-        scores = {}
-        for provider in available_providers:
-            scores[provider] = self._calculate_provider_score(provider, task_type)
-        
-        return max(scores, key=scores.get)
-```
-
-This architecture ensures the NIS Protocol maintains high performance, reliability, and scientific accuracy while providing a scalable foundation for well-engineered AI processing (implemented) (implemented). 
+This architecture ensures that the NIS Protocol is not just a theoretical model but a production-ready framework for building the next generation of intelligent systems. 

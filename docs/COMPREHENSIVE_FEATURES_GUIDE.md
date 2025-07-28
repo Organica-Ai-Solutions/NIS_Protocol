@@ -1,12 +1,12 @@
-# NIS Protocol v3 - Comprehensive Features Guide
+# NIS Protocol v3.1 - Comprehensive Features Guide
 
 <div align="center">
 
-![NIS Protocol v3 Features](../assets/images_organized/mathematical_visuals/v3map.png)
+![NIS Protocol v3.1 Pipeline](../assets/images_organized/mathematical_visuals/v3map.png)
 
-**Complete Guide to Multi-Agent Coordination Capabilities**
+**A Guide to the Grounded, Interpretable, and Self-Aware AI Framework**
 
-*Advanced Agent Coordination • Multi-Model Orchestration • Performance Integration*
+*Scientific Pipeline • Meta-Control Architecture • Verifiable AI*
 
 </div>
 
@@ -14,1509 +14,266 @@
 
 ## 📚 Table of Contents
 
-1. [**Quick Start with Docker**](#quick-start-with-docker)
-2. [**Core Coordination Systems**](#core-coordination-systems)
-3. [**Agent Architecture & Connections**](#agent-architecture--connections)
-4. [**Model Integration & Orchestration**](#model-integration--orchestration)
-5. [**Data Flow & Communication**](#data-flow--communication)
-6. [**Advanced Features**](#advanced-features)
-7. [**Programming Examples**](#programming-examples)
-8. [**Configuration & Customization**](#configuration--customization)
+1. [**Core Philosophy: Grounded AI**](#1-core-philosophy-grounded-ai)
+2. [**Quick Start with Docker**](#2-quick-start-with-docker)
+3. [**The Scientific Pipeline in Action**](#3-the-scientific-pipeline-in-action)
+4. [**The Meta-Control Layer**](#4-the-meta-control-layer)
+5. [**Key API Endpoints & Usage**](#5-key-api-endpoints--usage)
+6. [**Configuration & Customization**](#6-configuration--customization)
+7. [**Agent Architecture**](#7-agent-architecture)
 
 ---
 
-## Quick Start with Docker
+## 1. Core Philosophy: Grounded AI
 
-Before diving into features, get the system running:
+The NIS Protocol v3.1 is engineered to solve a fundamental problem in modern AI: the lack of grounding in reality. Unlike traditional models that can "hallucinate" or produce nonsensical outputs, NIS v3.1 forces every piece of information through a rigorous scientific validation pipeline *before* it is presented to the user.
+
+**The core principle is: an idea is only valid if it is mathematically interpretable and does not violate the fundamental laws of physics.**
+
+This approach makes the protocol ideal for applications requiring high-levels of trust, safety, and reliability, such as scientific research, engineering design, and critical analysis.
+
+---
+
+## 2. Quick Start with Docker
+
+The entire protocol, including all agents, services, and dependencies, is containerized for simple, one-command deployment.
+
+**Prerequisites:**
+*   Docker and Docker Compose installed.
+*   Git installed.
+*   API keys for your chosen LLM providers (OpenAI, Anthropic, etc.).
+
+**Steps:**
 
 ```bash
-# Deploy complete NIS Protocol v3 infrastructure
-git clone https://github.com/Organica-Ai-Solutions/NIS_Protocol.git
+# 1. Clone the repository
+git clone https://github.com/your-repo/NIS_Protocol.git
 cd NIS_Protocol
-./start.sh --with-monitoring
 
-# Verify all systems operational
-curl http://localhost/health
-curl http://localhost/agents/status
-curl http://localhost/infrastructure/status
+# 2. Create the environment file
+# This copies the example file. You MUST edit it.
+cp .env.example .env
+
+# 3. Add your API keys to the .env file
+# Use a text editor like nano, vim, or VS Code
+nano .env
+
+# 4. Start the entire system
+# This will build the Docker images and launch all services.
+./scripts/start.sh
+```
+
+**Verify the System is Running:**
+
+```bash
+# Check the health of the main application
+curl http://localhost:8000/health
+
+# See which agents have been successfully initialized
+curl http://localhost:8000/agents
 ```
 
 **Access Points:**
-- **Main API**: http://localhost/
-- **Real-time Dashboard**: http://localhost/dashboard/
-- **Interactive Docs**: http://localhost/docs
-- **Grafana Monitoring**: http://localhost:3000
+- **Main API**: `http://localhost:8000`
+- **Interactive API Docs (Swagger UI)**: `http://localhost:8000/docs`
 
 ---
 
-## 🧠 **Core Intelligence Systems**
+## 3. The Scientific Pipeline in Action
 
-### **🎯 1. Goal Adaptation System**
-*Autonomous goal generation and strategic evolution*
+This is the heart of the NIS Protocol. Every query to the `/chat` or `/chat/stream` endpoint goes through this four-stage process.
 
-<details>
-<summary><strong>📋 Capabilities & API Usage</strong></summary>
+![Pipeline Diagram](../assets/images_organized/mathematical_visuals/laplace%2Bkan.png)
 
-**Core Features:**
-- Dynamic goal generation based on context
-- Strategic goal evolution and refinement
-- Success pattern learning and adaptation
-- Multi-objective optimization
+### **Stage 1: Signal Processing (Laplace Transform)**
+-   **Agent:** `EnhancedLaplaceTransformer`
+-   **Purpose:** Converts unstructured input (like a text query) into a structured mathematical representation in the frequency domain. This strips away linguistic ambiguity and prepares the query for pure mathematical analysis.
 
-**API Usage:**
+### **Stage 2: Interpretable Reasoning (KAN)**
+-   **Agent:** `EnhancedKANReasoningAgent`
+-   **Purpose:** This agent uses a Kolmogorov-Arnold Network (KAN) to find the underlying mathematical function that describes the relationships in the data. Unlike a typical neural network that produces a matrix of weights, a KAN produces a **symbolic formula** (e.g., `f(x) = sin(πx) + x²`).
+-   **Key Benefit: Interpretability.** You can see the exact equation the AI is using to reason, making its logic fully transparent.
+
+### **Stage 3: Physics Validation (PINN)**
+-   **Agent:** `EnhancedPINNPhysicsAgent`
+-   **Purpose:** Acts as a "reality check." It takes the symbolic formula from the KAN and validates it against a set of fundamental physical laws (like conservation of energy, momentum, and thermodynamics).
+-   **Key Benefit: Grounding.** Any hypothesis or solution that is physically impossible is automatically rejected. The system cannot produce nonsense.
+
+### **Stage 4: Language Synthesis (LLM)**
+-   **Service:** `CognitiveOrchestra`
+-   **Purpose:** Only *after* the pipeline has validated a result does the system engage with Large Language Models. Their role is not to reason, but to translate the verified, mathematical output back into fluent, natural language for the user.
+-   **Key Benefit: Safety.** The LLM is used as a communication tool, not a source of truth, dramatically reducing the risk of "hallucinations."
+
+---
+
+## 4. The Meta-Control Layer
+
+Overseeing the pipeline is a trio of high-level agents that manage the system's strategy, resources, and "self-awareness."
+
+### **1. `EnhancedConsciousAgent` (The Strategist)**
+-   **Purpose:** Monitors the overall health, performance, and integrity of the entire system. It provides strategic oversight and performs introspective analysis on the system's own behavior. This is the closest the system comes to "self-awareness."
+-   **Check its Status:** `curl http://localhost:8000/consciousness/status`
+
+### **2. `EnhancedScientificCoordinator` (The Orchestrator)**
+-   **Purpose:** The operational manager of the scientific pipeline. It receives incoming requests and routes them sequentially through the Laplace, KAN, and PINN agents, ensuring the validation process is followed correctly.
+
+### **3. `DRLResourceManager` (The Efficiency Expert)**
+-   **Purpose:** Uses Deep Reinforcement Learning to manage and allocate computational resources (like CPU, memory, and LLM API calls) efficiently. It works to optimize the system for performance, cost, or a balance of both based on its operational goals.
+
+---
+
+## 5. Key API Endpoints & Usage
+
+All interactions are done via the FastAPI server running on port 8000.
+
+### **`/chat` (Primary Interaction Endpoint)**
+This endpoint runs your query through the full Scientific Pipeline.
+
+**Usage:**
 ```bash
-# Generate research goals
-curl -X POST http://localhost/process \
-  -H "Content-Type: application/json" \
-  -d '{
-    "text": "Generate research goals for well-engineered AI",
-    "context": {
-      "operation": "goal_generation",
-      "domain": "research",
-      "time_horizon": "6_months"
-    }
-  }'
+curl -X POST "http://localhost:8000/chat" \
+-H "Content-Type: application/json" \
+-d '{"message": "What is the relationship between energy and matter?"}'
 ```
 
-**Response Example:**
+**Example Response:**
 ```json
 {
-  "response_text": "Generated 3 strategic research goals for well-engineered AI",
-  "confidence": 0.89,
-  "agent_insights": {
-    "goals_generated": 3,
-    "strategic_alignment": 0.92,
-    "feasibility_score": 0.87
+  "response": "Based on a physically validated model, the relationship is described by the equation E=mc^2, representing mass-energy equivalence.",
+  "nis_pipeline_output": {
+    "pipeline": {
+      "is_valid": true,
+      "confidence": 0.99,
+      "symbolic_equation": "E = m*c**2",
+      "validated_laws": ["conservation_of_energy", "special_relativity"]
+    }
   },
-  "consciousness_state": {
-    "awareness_level": 0.85,
-    "goal_coherence": 0.91
+  "llm_provider": "openai"
+}
+```
+
+### **`/chat/stream` (Real-time Interaction)**
+This endpoint provides a streaming response for more interactive, real-time conversations.
+
+**Usage:**
+```bash
+curl -X POST "http://localhost:8000/chat/stream" \
+-H "Content-Type: application/json" \
+-d '{"message": "Simulate the trajectory of a projectile with air resistance."}'
+```
+*(The response will be a stream of server-sent events.)*
+
+### **`/health` (System Health Check)**
+Confirms that the main application server is running.
+
+**Usage:**
+```bash
+curl http://localhost:8000/health
+```
+**Response:** `{"status": "ok"}`
+
+### **`/agents` (View Active Agents)**
+Shows a list of all agents that were successfully initialized at startup.
+
+**Usage:**
+```bash
+curl http://localhost:8000/agents
+```
+**Example Response:**
+```json
+{
+  "agents_registered": 4,
+  "agent_details": {
+    "laplace_transformer_01": { /* status */ },
+    "kan_reasoning_01": { /* status */ },
+    "pinn_physics_01": { /* status */ },
+    "consciousness_01": { /* status */ }
   }
 }
 ```
 
-</details>
+### **`/consciousness/status` (Check the "Mind")**
+Provides a glimpse into the meta-cognitive state of the system.
 
-### **🌐 2. Domain Generalization Engine**
-*Cross-domain knowledge transfer and adaptation*
-
-<details>
-<summary><strong>📋 Capabilities & API Usage</strong></summary>
-
-**Core Features:**
-- Knowledge transfer between domains
-- Meta-learning adaptation
-- Universal pattern recognition
-- Analogical reasoning
-
-**API Usage:**
+**Usage:**
 ```bash
-# Transfer knowledge from physics to biology
-curl -X POST http://localhost/process \
-  -H "Content-Type: application/json" \
-  -d '{
-    "text": "Apply physics principles to biological systems",
-    "context": {
-      "operation": "domain_transfer",
-      "source_domain": "physics",
-      "target_domain": "biology",
-      "concepts": ["energy_conservation", "force_dynamics"]
-    }
-  }'
-```
-
-**Direct Python Access:**
-```python
-from src.agents.reasoning.domain_generalization_engine import DomainGeneralizationEngine
-
-# Initialize engine
-domain_engine = DomainGeneralizationEngine()
-
-# Transfer knowledge
-result = await domain_engine.process({
-    "operation": "transfer_knowledge",
-    "source_domain": "physics",
-    "target_domain": "biology",
-    "concepts": ["thermodynamics", "wave_mechanics"]
-})
-
-print(f"Transfer success: {result['success']}")
-print(f"Analogies found: {len(result['analogies'])}")
-```
-
-</details>
-
-### **🤖 3. Autonomous Planning System**
-*Multi-step strategic planning with dynamic adaptation*
-
-<details>
-<summary><strong>📋 Capabilities & API Usage</strong></summary>
-
-**Core Features:**
-- Hierarchical goal decomposition
-- Multi-step strategic planning
-- Dynamic execution adaptation
-- Resource optimization
-
-**API Usage:**
-```bash
-# Create strategic AI safety research plan
-curl -X POST http://localhost/process \
-  -H "Content-Type: application/json" \
-  -d '{
-    "text": "Create well-engineered AI safety research plan",
-    "context": {
-      "operation": "strategic_planning",
-      "goal": "ai_safety_research",
-      "resources": ["team_of_5", "12_month_timeline"],
-      "constraints": ["budget_limited", "ethical_compliance"]
-    }
-  }'
-```
-
-**well-engineered Planning:**
-```python
-from src.agents.planning.autonomous_planning_system import AutonomousPlanningSystem
-
-# Initialize planning system
-planner = AutonomousPlanningSystem()
-
-# Create complex multi-phase plan
-result = await planner.process({
-    "operation": "create_plan",
-    "goal": "research_breakthrough",
-    "phases": ["investigation", "experimentation", "validation"],
-    "adaptation_enabled": True
-})
-
-print(f"Plan phases: {len(result['phases'])}")
-print(f"Total actions: {len(result['actions'])}")
-```
-
-</details>
-
----
-
-## 🤖 **Agent Architecture & Connections**
-
-### **🏗️ Agent Hierarchy Overview**
-
-NIS Protocol v3 implements a multi-layer agent architecture:
-
-```mermaid
-graph TB
-    subgraph "Consciousness Layer"
-        CA[Conscious Agent]
-        MCP[Meta-Cognitive Processor]
-        IM[Introspection Manager]
-    end
-    
-    subgraph "Coordination Layer"
-        AR[Agent Router]
-        CC[Coordination Controller]
-        DRL[DRL Enhanced Router]
-    end
-    
-    subgraph "Specialized Agents"
-        subgraph "Cognitive"
-            GA[Goal Adaptation]
-            DG[Domain Generalization]
-            AP[Autonomous Planning]
-        end
-        
-        subgraph "processing (implemented) (implemented)"
-            LP[Laplace Processor]
-            KR[KAN Reasoning]
-            PP[PINN Physics]
-        end
-        
-        subgraph "Memory & Learning"
-            MA[Memory Agent]
-            LA[Learning Agent]
-            NP[Neuroplasticity Agent]
-        end
-        
-        subgraph "Perception & Action"
-            VA[Vision Agent]
-            IA[Input Agent]
-            MT[Motor Agent]
-        end
-    end
-    
-    subgraph "Infrastructure"
-        K[Kafka Messages]
-        R[Redis Cache]
-        P[PostgreSQL DB]
-    end
-    
-    CA --> AR
-    AR --> GA
-    AR --> DG
-    AR --> AP
-    AR --> LP
-    AR --> KR
-    AR --> PP
-    
-    GA <--> MA
-    DG <--> LA
-    AP <--> NP
-    
-    All --> K
-    All --> R
-    All --> P
-```
-
-### **🔗 Agent Connection Patterns**
-
-#### **1. Direct Agent-to-Agent Communication**
-
-```python
-# Example: Connect Goal Adaptation to Planning System
-from src.agents.goals.adaptive_goal_system import AdaptiveGoalSystem
-from src.agents.planning.autonomous_planning_system import AutonomousPlanningSystem
-
-async def connect_goal_to_planning():
-    # Initialize agents
-    goal_agent = AdaptiveGoalSystem()
-    planning_agent = AutonomousPlanningSystem()
-    
-    # Goal agent generates objectives
-    goals = await goal_agent.process({
-        "operation": "generate_goals",
-        "context": {"domain": "research", "urgency": "high"}
-    })
-    
-    # Planning agent creates execution strategy
-    for goal in goals['generated_goals']:
-        plan = await planning_agent.process({
-            "operation": "create_plan",
-            "goal": goal,
-            "inherit_context": True
-        })
-        
-        print(f"Goal: {goal['description']}")
-        print(f"Plan steps: {len(plan['actions'])}")
-```
-
-#### **2. Kafka-Based Message Routing**
-
-```python
-# Using Kafka for agent coordination
-from src.infrastructure.message_streaming import NISKafkaManager, MessageType
-
-async def kafka_agent_coordination():
-    kafka_manager = NISKafkaManager()
-    
-    # Agent A sends message
-    await kafka_manager.send_message(
-        topic="nis-coordination",
-        message_type=MessageType.AGENT_COORDINATION,
-        data={
-            "from_agent": "goal_adaptation",
-            "to_agent": "planning_system",
-            "operation": "goal_handoff",
-            "payload": {
-                "goal_id": "research_001",
-                "priority": "high",
-                "deadline": "2025-02-01"
-            }
-        }
-    )
-    
-    # Agent B receives and processes
-    messages = await kafka_manager.consume_messages(
-        topics=["nis-coordination"],
-        consumer_group="planning-agents"
-    )
-    
-    for message in messages:
-        if message.data["to_agent"] == "planning_system":
-            # Process the goal handoff
-            await handle_goal_handoff(message.data["payload"])
-```
-
-#### **3. Redis-Based State Sharing**
-
-```python
-# Shared state management via Redis
-from src.infrastructure.caching_system import NISRedisManager
-
-async def shared_agent_state():
-    redis_manager = NISRedisManager()
-    
-    # Agent stores shared state
-    await redis_manager.set_cached_data(
-        namespace="agent_coordination",
-        key="current_research_context",
-        data={
-            "active_goals": ["quantum_ai", "consciousness_research"],
-            "shared_knowledge": {
-                "recent_discoveries": ["pattern_x", "correlation_y"],
-                "working_hypotheses": ["hypothesis_a", "hypothesis_b"]
-            },
-            "coordination_state": "collaborative_mode"
-        },
-        ttl=3600  # 1 hour
-    )
-    
-    # Other agents access shared state
-    shared_context = await redis_manager.get_cached_data(
-        namespace="agent_coordination",
-        key="current_research_context"
-    )
-    
-    if shared_context:
-        print(f"Active goals: {shared_context['active_goals']}")
-        print(f"Shared knowledge: {shared_context['shared_knowledge']}")
-```
-
-### **🎯 Agent Router Configuration**
-
-The central `AgentRouter` coordinates all agent interactions:
-
-```python
-# Configure agent routing
-from src.agents.agent_router import AgentRouter
-
-# Initialize with enhanced capabilities
-router = AgentRouter(
-    enable_drl_routing=True,  # Use DRL for intelligent routing
-    enable_consciousness_integration=True,  # Consciousness-aware routing
-    enable_performance_optimization=True,  # Optimize based on performance
-    fallback_strategy="round_robin"  # Fallback if DRL unavailable
-)
-
-# Route complex multi-agent request
-response = await router.route_request({
-    "operation": "complex_analysis",
-    "requires_agents": ["reasoning", "memory", "planning"],
-    "coordination_mode": "parallel_with_synthesis",
-    "consciousness_level": "high"
-})
-```
-
-### **🧠 Consciousness Integration**
-
-Every agent can be consciousness-aware:
-
-```python
-# Consciousness-integrated agent
-from src.agents.consciousness.conscious_agent import EnhancedConsciousAgent
-
-# Initialize consciousness-aware processing (implemented) (implemented)
-conscious_agent = EnhancedConsciousAgent()
-
-# Process with consciousness integration
-result = await conscious_agent.process({
-    "input": "Analyze ethical implications of AI decision",
-    "consciousness_mode": "deep_reflection",
-    "meta_cognitive_analysis": True,
-    "ethical_evaluation": True
-})
-
-print(f"Analysis: {result['analysis']}")
-print(f"Ethical score: {result['ethical_score']}")
-print(f"Consciousness insights: {result['consciousness_insights']}")
+curl http://localhost:8000/consciousness/status
 ```
 
 ---
 
-## 🔗 **Model Integration & Orchestration**
+## 6. Configuration & Customization
 
-### **🎼 Cognitive Orchestra Architecture**
+The system's behavior is primarily controlled by environment variables.
 
-NIS Protocol v3 uses a "Cognitive Orchestra" approach where different LLMs specialize in different cognitive functions:
+### **`.env` File**
+This is the most important configuration file. It is created from `.env.example` on the first run and is where you **must** place your API keys.
+
+```env
+# .env
+
+# LLM Provider API Keys (Required)
+OPENAI_API_KEY="sk-..."
+ANTHROPIC_API_KEY="sk-..."
+DEEPSEEK_API_KEY="..."
+GOOGLE_API_KEY="..."
+
+# Select which LLM provider the CognitiveOrchestra should use
+# Options: "openai", "anthropic", "deepseek", "google"
+LLM_PROVIDER="openai"
+```
+
+### **`config/*.json` Files**
+For more advanced users, the JSON files in the `config/` directory offer finer control over aspects like agent parameters and infrastructure settings. *It is recommended to leave these as default unless you have a specific need to change them.*
+
+---
+
+## 7. Agent Architecture
+
+The system's architecture is designed to be modular and extensible.
 
 ```mermaid
 graph TD
-    subgraph "Cognitive Orchestra"
-        CO[Cognitive Orchestra]
-        
-        subgraph "Reasoning Models"
-            RM1[GPT-4 - Logic]
-            RM2[Claude - Analysis]
-            RM3[DeepSeek - Math]
-        end
-        
-        subgraph "Creative Models"
-            CM1[GPT-4 - Creative]
-            CM2[Claude - Writing]
-        end
-        
-        subgraph "Specialized Models"
-            SM1[BitNet - Efficiency]
-            SM2[Local Model - Privacy]
-        end
-        
-        subgraph "Functions"
-            CF1[Consciousness]
-            CF2[Reasoning]
-            CF3[Creativity]
-            CF4[Memory]
-            CF5[Planning]
-        end
+    subgraph "Meta-Control Layer"
+        F[EnhancedConsciousAgent]
+        G[EnhancedScientificCoordinator]
+        H[DRLResourceManager]
+    end
+
+    subgraph "Scientific Pipeline"
+        B[EnhancedLaplaceTransformer]
+        C[EnhancedKANReasoningAgent]
+        D[EnhancedPINNPhysicsAgent]
     end
     
-    CO --> RM1
-    CO --> RM2  
-    CO --> RM3
-    CO --> CM1
-    CO --> CM2
-    CO --> SM1
-    CO --> SM2
+    subgraph "LLM Layer"
+        E[CognitiveOrchestra]
+    end
     
-    CF1 --> RM2
-    CF2 --> RM1
-    CF3 --> CM1
-    CF4 --> SM1
-    CF5 --> RM3
+    subgraph "User"
+        A[API Request]
+    end
+
+    A --> G
+    G --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> A
+    
+    F <--> G
+    H <--> G
 ```
 
-### **🔧 Model Provider Configuration**
-
-#### **1. Configure Multiple LLM Providers**
-
-```python
-# Setup multiple LLM providers
-from src.llm.llm_manager import LLMManager
-from src.llm.cognitive_orchestra import CognitiveOrchestra
-
-# Initialize LLM manager with multiple providers
-llm_manager = LLMManager()
-
-# Add providers
-await llm_manager.add_provider("openai", {
-    "api_key": "your_openai_key",
-    "models": ["gpt-4", "gpt-3.5-turbo"],
-    "rate_limit": 100
-})
-
-await llm_manager.add_provider("anthropic", {
-    "api_key": "your_anthropic_key", 
-    "models": ["claude-3-opus", "claude-3-sonnet"],
-    "rate_limit": 50
-})
-
-await llm_manager.add_provider("deepseek", {
-    "api_key": "your_deepseek_key",
-    "models": ["deepseek-chat", "deepseek-coder"],
-    "rate_limit": 75
-})
-
-# Initialize cognitive orchestra
-orchestra = CognitiveOrchestra(llm_manager)
-```
-
-#### **2. Specialized Cognitive Function Assignment**
-
-```python
-# Configure cognitive functions for different models
-cognitive_config = {
-    "consciousness": {
-        "primary_model": "claude-3-opus",
-        "fallback_model": "gpt-4",
-        "temperature": 0.8,
-        "max_tokens": 2000
-    },
-    "reasoning": {
-        "primary_model": "gpt-4",
-        "fallback_model": "claude-3-sonnet",
-        "temperature": 0.3,
-        "max_tokens": 1500
-    },
-    "creativity": {
-        "primary_model": "gpt-4",
-        "fallback_model": "claude-3-opus",
-        "temperature": 0.9,
-        "max_tokens": 2500
-    },
-    "mathematical": {
-        "primary_model": "deepseek-coder",
-        "fallback_model": "gpt-4",
-        "temperature": 0.1,
-        "max_tokens": 1000
-    }
-}
-
-# Apply configuration
-await orchestra.configure_cognitive_functions(cognitive_config)
-```
-
-#### **3. Multi-Model Coordination**
-
-```python
-# Coordinate multiple models for complex tasks
-async def multi_model_analysis(query: str):
-    # Parallel processing (implemented) (implemented) with different models
-    tasks = [
-        orchestra.process_with_function("reasoning", query),
-        orchestra.process_with_function("creativity", query),
-        orchestra.process_with_function("consciousness", query)
-    ]
-    
-    results = await asyncio.gather(*tasks)
-    
-    # Synthesize results
-    synthesis_prompt = f"""
-    Synthesize these three perspectives:
-    
-    Reasoning Analysis: {results[0]['response']}
-    Creative Perspective: {results[1]['response']}
-    Consciousness Insights: {results[2]['response']}
-    
-    Provide integrated analysis:
-    """
-    
-    final_result = await orchestra.process_with_function("synthesis", synthesis_prompt)
-    return final_result
-```
-
-### **📊 Model Performance Optimization**
-
-#### **1. Automatic Model Selection**
-
-```python
-# Automatic model selection based on performance
-from src.llm.cognitive_orchestra import CognitiveFunction
-
-async def optimized_processing(request):
-    # Orchestra automatically selects best model based on:
-    # - Historical performance
-    # - Current load
-    # - Task requirements
-    # - Cost optimization
-    
-    result = await orchestra.process_adaptive(
-        text=request["text"],
-        cognitive_function=CognitiveFunction.REASONING,
-        optimization_criteria={
-            "priority": "quality",  # or "speed" or "cost"
-            "max_latency": 5.0,  # seconds
-            "budget_constraint": 0.10  # dollars
-        }
-    )
-    
-    return result
-```
-
-#### **2. Load Balancing and Fallbacks**
-
-```python
-# Intelligent load balancing with fallbacks
-async def resilient_processing(requests: List[Dict]):
-    results = []
-    
-    for request in requests:
-        try:
-            # Try primary model
-            result = await orchestra.process_with_function(
-                "reasoning", 
-                request["text"],
-                timeout=10.0
-            )
-            results.append(result)
-            
-        except TimeoutError:
-            # Fallback to faster model
-            result = await orchestra.process_with_function(
-                "reasoning",
-                request["text"], 
-                model_preference="fast",
-                timeout=5.0
-            )
-            results.append(result)
-            
-        except Exception as e:
-            # Final fallback to mock model for testing
-            result = await orchestra.process_with_fallback(
-                request["text"],
-                error=str(e)
-            )
-            results.append(result)
-    
-    return results
-```
-
----
-
-## 🌊 **Data Flow & Communication**
-
-### **📡 Infrastructure Communication Patterns**
-
-#### **1. Kafka Message Streaming**
-
-```python
-# well-engineered Kafka messaging for agent coordination
-from src.infrastructure.message_streaming import NISKafkaManager, MessageType
-
-# Real-time agent coordination
-async def stream_based_coordination():
-    kafka = NISKafkaManager()
-    
-    # Subscribe to consciousness events
-    await kafka.subscribe_to_topics([
-        "nis-consciousness",
-        "nis-goals", 
-        "nis-coordination"
-    ])
-    
-    # Stream processing (implemented) (implemented) loop
-    async for message in kafka.stream_messages():
-        if message.type == MessageType.CONSCIOUSNESS_EVENT:
-            await handle_consciousness_update(message)
-        elif message.type == MessageType.GOAL_GENERATION:
-            await handle_new_goal(message)
-        elif message.type == MessageType.AGENT_COORDINATION:
-            await handle_agent_coordination(message)
-```
-
-#### **2. Redis Caching Strategies**
-
-```python
-# Intelligent caching for performance optimization
-from src.infrastructure.caching_system import NISRedisManager, CacheStrategy
-
-async def intelligent_caching():
-    redis = NISRedisManager()
-    
-    # Cache agent states with TTL
-    await redis.set_cached_data(
-        namespace="agent_states",
-        key="consciousness_level",
-        data={"level": 0.89, "trend": "increasing"},
-        strategy=CacheStrategy.TTL,
-        ttl=300  # 5 minutes
-    )
-    
-    # Cache expensive computations
-    await redis.set_cached_data(
-        namespace="computations",
-        key="physics_simulation_results",
-        data=simulation_results,
-        strategy=CacheStrategy.LRU  # Least Recently Used
-    )
-    
-    # Cache model responses to avoid redundant API calls
-    await redis.set_cached_data(
-        namespace="llm_responses",
-        key=f"gpt4_{hash(prompt)}",
-        data=llm_response,
-        strategy=CacheStrategy.LFU,  # Least Frequently Used
-        ttl=3600  # 1 hour
-    )
-```
-
-### **🔄 Agent Communication Protocols**
-
-#### **1. Asynchronous Agent Messaging**
-
-```python
-# Asynchronous agent communication
-from src.agents.enhanced_agent_base import EnhancedAgentBase, AgentMessage
-
-class CustomIntelligentAgent(EnhancedAgentBase):
-    async def process_request(self, request: Dict) -> Dict:
-        # Send message to consciousness agent
-        consciousness_response = await self.send_agent_message(
-            target_agent="consciousness",
-            message_type="reflection_request",
-            data={
-                "request": request,
-                "require_ethical_analysis": True,
-                "depth": "deep"
-            }
-        )
-        
-        # Send parallel messages to multiple agents
-        parallel_responses = await self.send_parallel_messages([
-            {
-                "agent": "memory",
-                "type": "retrieve_context",
-                "data": {"query": request["text"]}
-            },
-            {
-                "agent": "reasoning", 
-                "type": "analyze",
-                "data": {"problem": request["text"]}
-            },
-            {
-                "agent": "planning",
-                "type": "generate_plan",
-                "data": {"objective": request["text"]}
-            }
-        ])
-        
-        # Synthesize responses
-        synthesis = await self.synthesize_responses(
-            consciousness_response,
-            parallel_responses
-        )
-        
-        return synthesis
-```
-
-#### **2. Event-Driven Architecture**
-
-```python
-# Event-driven agent coordination
-from src.infrastructure.message_streaming import MessageType
-
-class EventDrivenAgent(EnhancedAgentBase):
-    async def initialize(self):
-        # Subscribe to relevant events
-        await self.subscribe_to_events([
-            MessageType.CONSCIOUSNESS_EVENT,
-            MessageType.GOAL_GENERATION,
-            MessageType.MEMORY_OPERATION
-        ])
-    
-    async def handle_event(self, event):
-        if event.type == MessageType.CONSCIOUSNESS_EVENT:
-            # Adjust behavior based on consciousness state
-            consciousness_level = event.data["awareness_level"]
-            if consciousness_level > 0.8:
-                self.enable_deep_reflection_mode()
-            
-        elif event.type == MessageType.GOAL_GENERATION:
-            # New goal available, check if relevant
-            new_goal = event.data["goal"]
-            if self.is_goal_relevant(new_goal):
-                await self.adopt_goal(new_goal)
-                
-        elif event.type == MessageType.MEMORY_OPERATION:
-            # Memory updated, refresh context
-            await self.refresh_working_memory()
-```
-
----
-
-## 🔬 **advanced Features**
-
-### **🧠 Consciousness Integration**
-
-#### **1. Meta-Cognitive processing (implemented) (implemented)**
-
-```python
-# Access consciousness capabilities
-from src.agents.consciousness.conscious_agent import EnhancedConsciousAgent
-from src.agents.consciousness.meta_cognitive_processor import MetaCognitiveProcessor
-
-# Initialize consciousness system
-conscious_agent = EnhancedConsciousAgent()
-meta_processor = MetaCognitiveProcessor()
-
-# Deep consciousness analysis
-consciousness_analysis = await conscious_agent.process({
-    "input": "What is the nature of consciousness in AI?",
-    "analysis_depth": "deep",
-    "include_self_reflection": True,
-    "meta_cognitive_analysis": True
-})
-
-print(f"Consciousness insights: {consciousness_analysis['insights']}")
-print(f"Self-reflection: {consciousness_analysis['self_reflection']}")
-print(f"Meta-cognitive state: {consciousness_analysis['meta_state']}")
-```
-
-#### **2. Introspection and Self-Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/)**
-
-```python
-# Real-time introspection
-from src.agents.consciousness.introspection_manager import IntrospectionManager
-
-introspection = IntrospectionManager()
-
-# Monitor agent performance and consciousness
-monitoring_result = await introspection.analyze_agent_state({
-    "agent_id": "reasoning_agent_001",
-    "include_performance_metrics": True,
-    "include_consciousness_assessment": True,
-    "include_improvement_suggestions": True
-})
-
-print(f"Agent performance: {monitoring_result['performance']}")
-print(f"Consciousness level: {monitoring_result['consciousness_level']}")
-print(f"Suggestions: {monitoring_result['improvements']}")
-```
-
-### **🧮 KAN Network Integration**
-
-#### **1. Symbolic Reasoning with KAN**
-
-```python
-# Use KAN networks for interpretable reasoning
-from src.agents.reasoning.enhanced_kan_reasoning_agent import EnhancedKANReasoningAgent
-
-kan_agent = EnhancedKANReasoningAgent()
-
-# Process with mathematical interpretability
-kan_result = await kan_agent.process({
-    "problem": "Optimize energy efficiency in well-engineered computing",
-    "require_symbolic_explanation": True,
-    "mathematical_rigor": "high",
-    "interpretability_level": "full"
-})
-
-print(f"Solution: {kan_result['solution']}")
-print(f"Mathematical explanation: {kan_result['symbolic_form']}")
-print(f"Interpretability score: {kan_result['interpretability']}")
-```
-
-### **⚛️ Physics-Informed processing (implemented) (implemented)**
-
-#### **1. PINN Integration**
-
-```python
-# Physics-informed neural network processing (implemented) (implemented)
-from src.agents.physics.enhanced_pinn_physics_agent import EnhancedPINNPhysicsAgent
-
-pinn_agent = EnhancedPINNPhysicsAgent()
-
-# Process with physics constraints
-physics_result = await pinn_agent.process({
-    "system": "quantum_field_dynamics", 
-    "constraints": ["energy_conservation", "momentum_conservation"],
-    "boundary_conditions": {
-        "spatial": "periodic",
-        "temporal": "initial_value"
-    },
-    "validation_level": "strict"
-})
-
-print(f"Physics compliance: {physics_result['compliance_score']}")
-print(f"Conservation laws: {physics_result['conservation_check']}")
-```
-
-### **🌊 Laplace Transform processing (implemented) (implemented)**
-
-#### **1. Signal processing (implemented) (implemented) and Temporal Analysis**
-
-```python
-# well-engineered signal processing (implemented) (implemented) with Laplace transforms
-from src.agents.signal_processing.enhanced_laplace_transformer import EnhancedLaplaceTransformer
-
-laplace_agent = EnhancedLaplaceTransformer()
-
-# Process temporal signals
-signal_result = await laplace_agent.process({
-    "signal_data": time_series_data,
-    "analysis_type": "frequency_domain",
-    "transform_parameters": {
-        "s_domain_range": [-10, 10],
-        "frequency_resolution": 0.1
-    },
-    "output_format": "interpretable"
-})
-
-print(f"Frequency analysis: {signal_result['frequency_components']}")
-print(f"Temporal patterns: {signal_result['temporal_patterns']}")
-```
-
-### **🧠 Memory and Learning Systems**
-
-#### **1. Enhanced Memory Management**
-
-```python
-# well-engineered memory operations
-from src.agents.memory.enhanced_memory_agent import EnhancedMemoryAgent
-
-memory_agent = EnhancedMemoryAgent()
-
-# Store with well-engineered indexing
-await memory_agent.store_memory({
-    "content": "Important research finding about well-engineered consciousness",
-    "type": "research_insight",
-    "associations": ["quantum_mechanics", "consciousness", "AI"],
-    "importance": 0.95,
-    "temporal_context": "2025-01-19",
-    "emotional_valence": 0.8
-})
-
-# Retrieve with contextual search
-memories = await memory_agent.retrieve_memories({
-    "query": "consciousness research",
-    "context": "current_research_project",
-    "max_results": 10,
-    "relevance_threshold": 0.7
-})
-```
-
-#### **2. Neuroplasticity and Adaptation**
-
-```python
-# Neuroplasticity-based learning
-from src.agents.learning.neuroplasticity_agent import NeuroplasticityAgent
-
-plasticity_agent = NeuroplasticityAgent()
-
-# Adapt based on experience
-adaptation_result = await plasticity_agent.adapt_from_experience({
-    "experience_type": "problem_solving",
-    "outcome": "successful",
-    "context": "quantum_research",
-    "learning_rate": 0.1,
-    "consolidation_strength": 0.8
-})
-
-print(f"Adaptation applied: {adaptation_result['adaptations']}")
-print(f"New capabilities: {adaptation_result['new_capabilities']}")
-```
-
----
-
-## 💻 **Programming Examples**
-
-### **🚀 Complete Multi-Agent Workflow**
-
-```python
-import asyncio
-from src.agents.agent_router import AgentRouter
-from src.llm.cognitive_orchestra import CognitiveOrchestra
-from src.infrastructure.integration_coordinator import InfrastructureCoordinator
-
-async def complete_intelligence_workflow():
-    """
-    Demonstrate a complete multi-agent, multi-model workflow
-    for solving a complex research problem.
-    """
-    
-    # Initialize infrastructure
-    infrastructure = InfrastructureCoordinator()
-    await infrastructure.initialize()
-    
-    # Initialize agent router with DRL
-    router = AgentRouter(enable_drl_routing=True)
-    
-    # Initialize cognitive orchestra
-    orchestra = CognitiveOrchestra(llm_manager)
-    
-    # Complex research question
-    research_question = """
-    How can we develop well-engineered-inspired AI algorithms that maintain 
-    consciousness-like properties while being computationally efficient?
-    """
-    
-    # Step 1: Consciousness reflection on the question
-    consciousness_analysis = await router.route_to_agent(
-        agent_type="consciousness",
-        request={
-            "input": research_question,
-            "analysis_depth": "deep",
-            "include_ethical_considerations": True
-        }
-    )
-    
-    # Step 2: Generate strategic goals
-    goals = await router.route_to_agent(
-        agent_type="goals",
-        request={
-            "operation": "generate_research_goals",
-            "context": research_question,
-            "consciousness_insights": consciousness_analysis
-        }
-    )
-    
-    # Step 3: Domain knowledge retrieval and synthesis
-    domain_knowledge = await router.route_to_agent(
-        agent_type="domain_generalization",
-        request={
-            "operation": "knowledge_synthesis",
-            "domains": ["quantum_computing", "consciousness_research", "AI_efficiency"],
-            "research_goals": goals
-        }
-    )
-    
-    # Step 4: Physics-informed analysis
-    physics_analysis = await router.route_to_agent(
-        agent_type="physics",
-        request={
-            "operation": "physics_informed_analysis",
-            "system": "quantum_ai_hybrid",
-            "constraints": ["quantum_principles", "computational_limits"],
-            "domain_knowledge": domain_knowledge
-        }
-    )
-    
-    # Step 5: KAN-based mathematical formulation
-    mathematical_formulation = await router.route_to_agent(
-        agent_type="kan_reasoning",
-        request={
-            "operation": "mathematical_formulation",
-            "problem": research_question,
-            "physics_constraints": physics_analysis,
-            "interpretability_required": True
-        }
-    )
-    
-    # Step 6: Multi-model cognitive analysis
-    cognitive_analysis = await orchestra.process_parallel([
-        {
-            "function": "reasoning",
-            "input": f"Analyze feasibility: {mathematical_formulation}",
-            "model_preference": "analytical"
-        },
-        {
-            "function": "creativity", 
-            "input": f"Generate novel approaches: {research_question}",
-            "model_preference": "creative"
-        },
-        {
-            "function": "consciousness",
-            "input": f"Reflect on implications: {research_question}",
-            "model_preference": "reflective"
-        }
-    ])
-    
-    # Step 7: Strategic planning
-    implementation_plan = await router.route_to_agent(
-        agent_type="planning",
-        request={
-            "operation": "create_implementation_plan",
-            "research_goals": goals,
-            "mathematical_foundation": mathematical_formulation,
-            "cognitive_insights": cognitive_analysis,
-            "timeline": "12_months"
-        }
-    )
-    
-    # Step 8: Memory consolidation
-    await router.route_to_agent(
-        agent_type="memory",
-        request={
-            "operation": "consolidate_research_session",
-            "research_question": research_question,
-            "all_analyses": {
-                "consciousness": consciousness_analysis,
-                "goals": goals,
-                "domain_knowledge": domain_knowledge,
-                "physics": physics_analysis,
-                "mathematics": mathematical_formulation,
-                "cognitive": cognitive_analysis,
-                "implementation": implementation_plan
-            }
-        }
-    )
-    
-    # Return comprehensive research analysis
-    return {
-        "research_question": research_question,
-        "consciousness_insights": consciousness_analysis,
-        "strategic_goals": goals,
-        "domain_synthesis": domain_knowledge,
-        "physics_foundation": physics_analysis,
-        "mathematical_formulation": mathematical_formulation,
-        "cognitive_perspectives": cognitive_analysis,
-        "implementation_plan": implementation_plan,
-        "confidence_score": calculate_overall_confidence([
-            consciousness_analysis, goals, domain_knowledge,
-            physics_analysis, mathematical_formulation,
-            cognitive_analysis, implementation_plan
-        ])
-    }
-
-# Run the complete workflow
-if __name__ == "__main__":
-    result = asyncio.run(complete_intelligence_workflow())
-    print(f"Research Analysis Complete:")
-    print(f"Confidence Score: {result['confidence_score']}")
-    print(f"Implementation Timeline: {result['implementation_plan']['timeline']}")
-```
-
-### **🔗 Custom Agent Development**
-
-```python
-# Create custom agent that integrates all NIS capabilities
-from src.agents.enhanced_agent_base import EnhancedAgentBase
-
-from utils.integrity_metrics import calculate_confidence
-
-class CustomResearchAgent(EnhancedAgentBase):
-    """
-    Custom agent that combines consciousness, reasoning,
-    and domain expertise for specialized research tasks.
-    """
-    
-    def __init__(self):
-        super().__init__(
-            agent_type="custom_research",
-            capabilities=[
-                "consciousness_integration",
-                "multi_domain_reasoning", 
-                "physics_informed_analysis",
-                "kan_mathematical_processing"
-            ]
-        )
-    
-    async def research_analysis(self, research_topic: str) -> Dict:
-        """Comprehensive research analysis using all NIS capabilities."""
-        
-        # Start with consciousness reflection
-        consciousness_response = await self.invoke_consciousness({
-            "topic": research_topic,
-            "depth": "deep",
-            "include_ethical_analysis": True
-        })
-        
-        # Get domain knowledge from multiple domains
-        domain_analysis = await self.invoke_domain_generalization({
-            "operation": "multi_domain_analysis",
-            "topic": research_topic,
-            "domains": ["physics", "mathematics", "philosophy", "computer_science"]
-        })
-        
-        # Apply physics-informed constraints
-        physics_validation = await self.invoke_physics_agent({
-            "system": research_topic, 
-            "validate_against": ["conservation_laws", "quantum_principles"],
-            "rigor_level": "high"
-        })
-        
-        # Mathematical formulation with KAN
-        mathematical_model = await self.invoke_kan_reasoning({
-            "problem": research_topic,
-            "domain_constraints": domain_analysis,
-            "physics_constraints": physics_validation,
-            "interpretability": "maximum"
-        })
-        
-        # Multi-model cognitive analysis
-        cognitive_perspectives = await self.invoke_cognitive_orchestra([
-            ("reasoning", "analytical_assessment"),
-            ("creativity", "novel_approaches"),
-            ("consciousness", "deep_reflection")
-        ])
-        
-        # Synthesize all perspectives
-        synthesis = await self.synthesize_analysis({
-            "consciousness": consciousness_response,
-            "domain_knowledge": domain_analysis,
-            "physics": physics_validation,
-            "mathematics": mathematical_model,
-            "cognitive": cognitive_perspectives
-        })
-        
-        # Calculate confidence
-        confidence = calculate_confidence([
-            consciousness_response,
-            domain_analysis,
-            physics_validation,
-            mathematical_model,
-            cognitive_perspectives
-        ])
-        
-        return {
-            "topic": research_topic,
-            "synthesis": synthesis,
-            "confidence": confidence,
-            "detailed_analyses": {
-                "consciousness": consciousness_response,
-                "domain": domain_analysis,
-                "physics": physics_validation,
-                "mathematics": mathematical_model,
-                "cognitive": cognitive_perspectives
-            },
-            "recommendations": synthesis.get("recommendations", []),
-            "next_steps": synthesis.get("next_steps", [])
-        }
-    
-    async def invoke_consciousness(self, request: Dict) -> Dict:
-        """Invoke consciousness agent with specific request."""
-        return await self.send_agent_message(
-            target_agent="consciousness",
-            message_type="deep_analysis",
-            data=request
-        )
-    
-    async def invoke_domain_generalization(self, request: Dict) -> Dict:
-        """Invoke domain generalization agent."""
-        return await self.send_agent_message(
-            target_agent="domain_generalization",
-            message_type="multi_domain_analysis",
-            data=request
-        )
-    
-    async def invoke_physics_agent(self, request: Dict) -> Dict:
-        """Invoke physics-informed processing (implemented) (implemented)."""
-        return await self.send_agent_message(
-            target_agent="physics",
-            message_type="validation_analysis",
-            data=request
-        )
-    
-    async def invoke_kan_reasoning(self, request: Dict) -> Dict:
-        """Invoke KAN reasoning agent."""
-        return await self.send_agent_message(
-            target_agent="kan_reasoning",
-            message_type="mathematical_formulation",
-            data=request
-        )
-    
-    async def invoke_cognitive_orchestra(self, functions: List[Tuple[str, str]]) -> Dict:
-        """Invoke multiple cognitive functions in parallel."""
-        tasks = []
-        for function, analysis_type in functions:
-            task = self.send_llm_request(
-                cognitive_function=function,
-                analysis_type=analysis_type,
-                context=self.get_current_context()
-            )
-            tasks.append(task)
-        
-        results = await asyncio.gather(*tasks)
-        return {functions[i][0]: results[i] for i in range(len(functions))}
-
-# Usage example
-async def use_custom_agent():
-    agent = CustomResearchAgent()
-    
-    result = await agent.research_analysis(
-        "well-engineered consciousness in artificial intelligence systems"
-    )
-    
-    print(f"Research Topic: {result['topic']}")
-    print(f"Confidence: {result['confidence']}")
-    print(f"Key Insights: {result['synthesis']['key_insights']}")
-    print(f"Recommendations: {result['recommendations']}")
-```
-
----
-
-## 🛠️ **Configuration & Customization**
-
-### **⚙️ System Configuration**
-
-#### **1. Infrastructure Configuration**
-
-```json
-// config/enhanced_infrastructure_config.json
-{
-    "message_streaming": {
-        "provider": "kafka",
-        "bootstrap_servers": ["kafka:9092"],
-        "topics": {
-            "consciousness_events": "nis-consciousness",
-            "goal_events": "nis-goals",
-            "coordination": "nis-coordination"
-        }
-    },
-    "memory_cache": {
-        "provider": "redis",
-        "host": "redis",
-        "port": 6379,
-        "namespace_ttls": {
-            "consciousness": 1800,
-            "memory": 3600,
-            "simulation": 7200
-        }
-    },
-    "self_audit": {
-        "enabled": true,
-        "audit_threshold": 75.0,
-        "auto_correction": true
-    }
-}
-```
-
-#### **2. LLM Provider Configuration**
-
-```json
-// config/enhanced_llm_config.json
-{
-    "providers": {
-        "openai": {
-            "api_key": "${OPENAI_API_KEY}",
-            "models": {
-                "gpt-4": {
-                    "max_tokens": 4000,
-                    "temperature": 0.7,
-                    "rate_limit": 100
-                }
-            }
-        },
-        "anthropic": {
-            "api_key": "${ANTHROPIC_API_KEY}",
-            "models": {
-                "claude-3-opus": {
-                    "max_tokens": 4000,
-                    "temperature": 0.7,
-                    "rate_limit": 50
-                }
-            }
-        }
-    },
-    "cognitive_orchestra": {
-        "consciousness": {
-            "primary_model": "claude-3-opus",
-            "fallback_model": "gpt-4",
-            "temperature": 0.8
-        },
-        "reasoning": {
-            "primary_model": "gpt-4",
-            "fallback_model": "claude-3-sonnet",
-            "temperature": 0.3
-        },
-        "creativity": {
-            "primary_model": "gpt-4",
-            "fallback_model": "claude-3-opus",
-            "temperature": 0.9
-        }
-    }
-}
-```
-
-#### **3. Agent Routing Configuration**
-
-```json
-// config/agent_routing_config.json
-{
-    "routing_strategy": "drl_enhanced",
-    "fallback_strategy": "round_robin",
-    "consciousness_integration": true,
-    "performance_optimization": true,
-    "agent_priorities": {
-        "consciousness": 10,
-        "reasoning": 9,
-        "planning": 8,
-        "memory": 7,
-        "perception": 6
-    },
-    "load_balancing": {
-        "enabled": true,
-        "max_concurrent_requests": 10,
-        "timeout_seconds": 30
-    }
-}
-```
-
-### **🎛️ Custom Configurations**
-
-#### **1. Create Custom Agent Configuration**
-
-```python
-# Custom agent configuration
-custom_agent_config = {
-    "agent_type": "specialized_research",
-    "capabilities": [
-        "consciousness_integration",
-        "multi_domain_reasoning", 
-        "physics_informed_analysis",
-        "kan_mathematical_processing"
-    ],
-    "llm_preferences": {
-        "primary_provider": "anthropic",
-        "fallback_provider": "openai",
-        "cognitive_functions": {
-            "analysis": "claude-3-opus",
-            "synthesis": "gpt-4",
-            "reflection": "claude-3-opus"
-        }
-    },
-    "infrastructure": {
-        "kafka_topics": ["nis-research", "nis-analysis"],
-        "redis_namespaces": ["research_cache", "analysis_results"],
-        "cache_strategy": "intelligent_ttl"
-    },
-    "performance": {
-        "max_processing_time": 60.0,
-        "confidence_threshold": 0.8,
-        "quality_gates": ["physics_validation", "consciousness_check"]
-    }
-}
-```
-
-#### **2. Environment-Specific Configuration**
-
-```bash
-# Development environment
-export NIS_ENV=development
-export LOG_LEVEL=DEBUG
-export ENABLE_DETAILED_LOGGING=true
-export KAFKA_BOOTSTRAP_SERVERS=localhost:9092
-export REDIS_HOST=localhost
-
-# Production environment  
-export NIS_ENV=production
-export LOG_LEVEL=INFO
-export ENABLE_PERFORMANCE_MONITORING=true
-export KAFKA_BOOTSTRAP_SERVERS=kafka:9092
-export REDIS_HOST=redis
-```
-
----
-
-## 🎯 **Quick Reference**
-
-### **📋 Key API Endpoints**
-
-```bash
-# System Health
-curl http://localhost/health
-
-# Consciousness Status
-curl http://localhost/consciousness/status
-
-# Infrastructure Status
-curl http://localhost/infrastructure/status
-
-# Process Intelligence Request
-curl -X POST http://localhost/process \
-  -H "Content-Type: application/json" \
-  -d '{"text": "Your request", "context": {}}'
-
-# System Metrics
-curl http://localhost/metrics
-```
-
-### **🔧 Management Commands**
-
-```bash
-# Start system
-./start.sh                    # Core system
-./start.sh --with-Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/)  # Full Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) stack
-
-# Stop system
-./stop.sh                     # Graceful shutdown
-./stop.sh --save-logs         # Save logs first
-
-# Reset system
-./reset.sh                    # Complete reset
-./reset.sh --force --start    # Reset and restart
-
-# View logs
-docker-compose -p nis-protocol-v3 logs -f nis-app
-docker-compose -p nis-protocol-v3 logs kafka       # Kafka logs
-```
-
-### **🧠 Core Agent Types**
-
-- **`consciousness`** - Meta-cognitive processing (implemented) (implemented) and self-reflection
-- **`goals`** - Autonomous goal generation and adaptation
-- **`domain_generalization`** - Cross-domain knowledge transfer
-- **`planning`** - Strategic planning and execution
-- **`kan_reasoning`** - Mathematical reasoning with interpretability
-- **`physics`** - Physics-informed processing (implemented) (implemented) and validation
-- **`laplace`** - Signal processing (implemented) (implemented) and temporal analysis
-- **`memory`** - Enhanced memory management
-- **`learning`** - Neuroplasticity and adaptation
-
----
-
-## 🚀 **Next Steps**
-
-1. **🐳 Deploy the System**: `./start.sh --with-Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/)`
-2. **📖 Explore API**: Visit http://localhost/docs
-3. **🧪 Test Features**: Try the examples in this guide
-4. **🔧 Customize**: Modify configurations for your use case
-5. **🤝 Contribute**: Add new agents or enhance existing ones
+-   **Base Agent:** All agents inherit from `EnhancedAgentBase` (`src/agents/enhanced_agent_base.py`), which provides common functionality.
+-   **Adding New Agents:** To extend the system, you can create a new agent class in the `src/agents/` directory and register it within the `main.py` startup sequence.
 
 ---
 
 <div align="center">
 
-**🧠 Welcome to the Future of Neural Intelligence! 🚀**
+**🚀 Welcome to the forefront of verifiable and safe AI! 🚀**
 
-*Complete AGI capabilities, containerized and ready for production*
-
-⭐ **Star this repository if this guide helps your AI research!** ⭐
+⭐ **Star this repository to support the development of grounded intelligence!** ⭐
 
 </div> 
