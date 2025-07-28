@@ -59,10 +59,10 @@ stop_services() {
     docker-compose -p "$PROJECT_NAME" --profile monitoring stop 2>/dev/null || true
     
     print_status "Stopping main application..."
-    docker-compose -p "$PROJECT_NAME" stop nis-app 2>/dev/null || true
+    docker-compose -p "$PROJECT_NAME" stop backend 2>/dev/null || true
     
     print_status "Stopping infrastructure services..."
-    docker-compose -p "$PROJECT_NAME" stop kafka redis postgres zookeeper 2>/dev/null || true
+    docker-compose -p "$PROJECT_NAME" stop kafka redis zookeeper 2>/dev/null || true
     
     print_success "All services stopped"
 }
@@ -148,7 +148,7 @@ save_logs() {
         mkdir -p "$log_dir"
         
         # Save logs for each service
-        services=("postgres" "redis" "kafka" "zookeeper" "nis-app" "nginx")
+        services=("redis" "kafka" "zookeeper" "backend" "nginx")
         for service in "${services[@]}"; do
             if docker-compose -p "$PROJECT_NAME" ps "$service" 2>/dev/null | grep -q "Up"; then
                 print_status "Saving logs for $service..."

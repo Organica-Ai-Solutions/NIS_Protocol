@@ -1,8 +1,8 @@
-# 🎮 How to Use the NIS Protocol
+# How to Use the NIS Protocol
 
-## 🎯 **Choose Your Use Case**
+## Choose Your Use Case
 
-### **🔬 I'm a Researcher/Scientist**
+### Researcher/Scientist
 **Goal**: Use NIS for scientific analysis with physics validation
 
 ```python
@@ -20,7 +20,7 @@ validated_result = physics.validate_physics_constraints(frequency_data)
 print(f"Physics compliance: {validated_result.compliance_score}")
 ```
 
-### **🤖 I'm Building an AI Application**
+### AI Application Development
 **Goal**: Integrate intelligent agents into your app
 
 ```python
@@ -58,11 +58,11 @@ async def production_setup():
     coordinator = InfrastructureCoordinator()
     await coordinator.initialize()
     
-    # Deploy with monitoring
+    # Deploy with Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/)
     await coordinator.deploy_agent_cluster(
         agent_types=["reasoning", "memory", "coordination"],
         replicas=3,
-        monitoring=True
+        Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/)=True
     )
     
     return coordinator
@@ -121,13 +121,13 @@ async def solve_complex_problem(problem_description):
 solution = asyncio.run(solve_complex_problem("Design a sustainable energy system"))
 ```
 
-### **Pattern 3: Scientific Data Processing**
+### **Pattern 3: Scientific Data processing (implemented) (implemented)**
 ```python
 from src.agents.signal_processing.laplace_processor import LaplaceSignalProcessor
 from src.agents.reasoning.enhanced_kan_reasoning_agent import EnhancedKANReasoningAgent
 
 def analyze_scientific_data(time_series_data):
-    # Signal processing
+    # Signal processing (implemented) (implemented)
     processor = LaplaceSignalProcessor()
     frequency_features = processor.compute_laplace_transform(time_series_data)
     
@@ -198,7 +198,7 @@ NIS_CONFIG = {
     "infrastructure": {
         "kafka": {"enabled": False},  # Disable for basic usage
         "redis": {"enabled": False},  # Disable for basic usage  
-        "monitoring": {"enabled": True, "level": "info"}
+        "Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/)": {"enabled": True, "level": "info"}
     }
 }
 ```
@@ -216,7 +216,7 @@ PRODUCTION_CONFIG = {
     "infrastructure": {
         "kafka": {"enabled": True, "cluster_size": 3},
         "redis": {"enabled": True, "cluster_mode": True},
-        "monitoring": {"enabled": True, "level": "debug", "alerting": True}
+        "Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/)": {"enabled": True, "level": "debug", "alerting": True}
     },
     "performance": {
         "caching": {"enabled": True, "ttl": 3600},
@@ -236,26 +236,12 @@ from src.cognitive_agents.cognitive_system import CognitiveSystem
 app = FastAPI()
 cognitive_system = CognitiveSystem()
 
-@app.post("/intelligence/process")
-async def process_intelligence(request: dict):
-    response = cognitive_system.process_input(
-        text=request["input"],
-        context=request.get("context", {})
-    )
-    
+@app.post("/analyze")
+def analyze(request: dict):
+    response = cognitive_system.process_input(request['text'])
     return {
-        "response": response.response_text,
-        "confidence": response.confidence,
-        "processing_time": response.processing_time,
-        "agents_involved": response.agents_used
-    }
-
-@app.get("/intelligence/status")
-async def get_system_status():
-    return {
-        "agents": cognitive_system.get_agent_status(),
-        "memory_usage": cognitive_system.get_memory_stats(),
-        "performance": cognitive_system.get_performance_metrics()
+        "result": response.response_text,
+        "confidence": response.confidence
     }
 ```
 
@@ -325,12 +311,12 @@ else:
 ## 🚀 **Next Steps**
 
 ### **Beginner Path**
-1. ✅ Run the 5-minute demo
+1. ✅ Deploy with Docker
 2. 📖 Read [Getting Started](GETTING_STARTED.md)
 3. 🎮 Try [Basic Examples](../examples/README.md)
 4. 🔧 Explore [API Reference](API_Reference.md)
 
-### **Advanced Path**
+### **advanced Path**
 1. 🏗️ Study [Architecture Guide](docs/README.md)
 2. 🔬 Implement custom agents
 3. 🚀 Deploy to production

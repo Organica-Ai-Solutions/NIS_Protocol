@@ -182,7 +182,7 @@ Both droids and drones follow the same biologically-inspired layered architectur
 ## Droid-Specific Implementation
 
 The droid system specializes in ground-based operations with:
-- **Vision Agent** processing camera feeds for object/person recognition
+- **Vision Agent** processing (implemented) (implemented) camera feeds for object/person recognition
 - **Input Agent** handling voice commands and environmental sensors
 - **Memory Agent** maintaining knowledge of people, locations, and contexts
 - **Emotion Agent** adjusting suspicion for security applications
@@ -192,7 +192,7 @@ The droid system specializes in ground-based operations with:
 ## Drone-Specific Implementation
 
 The drone system focuses on aerial operations with:
-- **Vision Agent** processing aerial imagery and detecting obstacles
+- **Vision Agent** processing (implemented) (implemented) aerial imagery and detecting obstacles
 - **Input Agent** handling flight control signals and mission parameters
 - **Memory Agent** storing flight paths and navigation waypoints
 - **Emotion Agent** heightening urgency for weather or obstacle avoidance

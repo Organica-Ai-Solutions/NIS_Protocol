@@ -82,7 +82,7 @@ CULTURAL_PROVIDER=anthropic          # Cultural intelligence, sensitivity
 ARCHAEOLOGICAL_PROVIDER=anthropic    # Archaeological expertise
 EXECUTION_PROVIDER=bitnet            # Action selection, implementation
 MEMORY_PROVIDER=deepseek             # Information storage, retrieval
-PERCEPTION_PROVIDER=openai           # Pattern recognition, processing
+PERCEPTION_PROVIDER=openai           # Pattern recognition, processing (implemented) (implemented)
 ```
 
 ### Performance Configuration
@@ -239,7 +239,7 @@ This happens automatically - you don't need to manually assign providers.
 | Anthropic | High | Medium | Outstanding | Good | No |
 | DeepSeek | Low | Fast | Good | Fair | No |
 | BitNet | Free | Very Fast | Fair | Poor | Yes |
-| Mock | Free | Instant | None | None | Yes |
+| Mock | Free | fast | None | None | Yes |
 
 ## Integration Examples
 

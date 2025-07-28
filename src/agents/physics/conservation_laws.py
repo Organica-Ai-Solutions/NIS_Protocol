@@ -23,7 +23,8 @@ from enum import Enum
 import time
 from collections import defaultdict, deque
 
-from .physics_agent import PhysicsLaw, PhysicsDomain, PhysicsState, PhysicsViolation
+from .physics_agent import PhysicsDomain, PhysicsState, PhysicsViolation
+from .enhanced_pinn_physics_agent import PhysicsLaw
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

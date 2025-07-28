@@ -38,7 +38,7 @@ Specifications:
   Power: 12W typical, 25W peak
   Cost: ~$80
 
-Why Perfect for NIS Drone:
+Why high-quality for NIS Drone:
   ✅ Excellent performance for BitNet 2
   ✅ 8GB RAM sufficient for NIS Protocol v3
   ✅ Hardware AI acceleration
@@ -118,13 +118,13 @@ Use Cases:
 
 ---
 
-## 🧠 **AI/ML PROCESSING STRATEGY**
+## 🧠 **AI/ML processing (implemented) (implemented) STRATEGY**
 
 ### **🤖 Local Intelligence: BitNet 2**
 ```yaml
-Why BitNet 2 is Perfect:
+Why BitNet 2 is high-quality:
   ✅ 1-bit quantization = ultra-low memory
-  ✅ CPU-optimized (perfect for Pi 5)
+  ✅ CPU-optimized (high-quality for Pi 5)
   ✅ Real-time inference capability
   ✅ Low power consumption
   ✅ No internet dependency
@@ -142,7 +142,7 @@ Performance on Pi 5:
 Use Cases:
   ✅ Complex mission planning
   ✅ Weather analysis
-  ✅ Advanced route optimization
+  ✅ well-engineered route optimization
   ✅ Learning from mission data
   
 Considerations:
@@ -164,7 +164,7 @@ Local (BitNet 2):
 Cloud (Kimi K2):
   - Mission planning
   - Weather analysis
-  - Advanced optimization
+  - well-engineered optimization
   - Learning updates
 
 NIS Protocol v3:
@@ -277,7 +277,7 @@ Communication Flow:
   
 Safety Layers:
   1. Hardware flight controller (primary)
-  2. NIS Protocol monitoring (secondary)
+  2. NIS Protocol Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) (secondary)
   3. Ground station override (tertiary)
   4. Emergency RTL protocols
 ```
@@ -394,7 +394,7 @@ Testing Environment:
   - Tether system for initial tests: $100-200
   - Ground station laptop/tablet: $500-1000
   - Portable generator for field testing: $300-500
-  - Weather monitoring equipment: $100-200
+  - Weather Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) equipment: $100-200
 ```
 
 ### **📚 Regulatory & Compliance**

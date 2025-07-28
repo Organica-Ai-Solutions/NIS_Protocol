@@ -7,6 +7,7 @@ This module provides the base agent class that all NIS Protocol agents inherit f
 import time
 from enum import Enum
 from typing import Dict, Any, Optional, List
+import logging
 
 class NISLayer(Enum):
     """Enumeration of cognitive layers in the NIS Protocol."""
@@ -21,49 +22,29 @@ class NISLayer(Enum):
 
 
 class NISAgent:
-    """Base class for all NIS Protocol agents.
-    
-    All agents in the NIS Protocol inherit from this class, which provides
-    core functionality and ensures consistent behavior.
-    
-    Attributes:
-        agent_id: Unique identifier for the agent
-        layer: The cognitive layer this agent belongs to
-        description: Human-readable description of the agent's purpose
-        active: Whether the agent is currently active
-    """
-    
-    def __init__(
-        self,
-        agent_id: str,
-        layer: NISLayer,
-        description: str
-    ):
-        """Initialize a new NIS agent.
-        
-        Args:
-            agent_id: Unique identifier for the agent
-            layer: The cognitive layer this agent belongs to
-            description: Human-readable description of the agent's purpose
-        """
+    """Base class for all agents in the NIS Protocol."""
+    def __init__(self, agent_id: str):
         self.agent_id = agent_id
-        self.layer = layer
-        self.description = description
-        self.active = True
-        self.last_processing_time = 0.0
+        self.logger = logging.getLogger(f"nis.agent.{self.agent_id}")
+        self.logger.info(f"Initialized agent: {self.agent_id}")
+
+    def get_status(self) -> Dict[str, Any]:
+        """Returns the current status of the agent."""
+        return {
+            "agent_id": self.agent_id,
+            "status": "active",
+            "timestamp": time.time()
+        }
         
-        # Register with the global registry
-        from .registry import NISRegistry
-        NISRegistry().register(self)
-    
-    def process(self, message: Dict[str, Any]) -> Dict[str, Any]:
-        """Process an incoming message.
+    async def process(self, data: Any) -> Any:
+        """
+        Main processing method for the agent.
         
         Args:
-            message: The incoming message to process
+            data: The data to process
             
         Returns:
-            The processed message
+            The processed data
             
         Raises:
             NotImplementedError: If the subclass has not implemented this method

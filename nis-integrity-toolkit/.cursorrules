@@ -153,4 +153,8 @@
 # Reliable systems win competitions.
 # Honest developers build lasting reputations.
 
+## 🛡️ FILE PROTECTION RULES
+# □ Do not modify .env files - they contain user-specific secrets. Use .env.example for templates and examples.
+# □ Always check if changes could overwrite user configurations.
+
 # END OF RULES - COMMIT TO FOLLOWING THESE GUIDELINES 

@@ -1,4 +1,4 @@
-# NIS Protocol Consciousness Monitoring Flow
+# NIS Protocol Consciousness Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) Flow
 
 ```mermaid
 graph TB
@@ -34,29 +34,29 @@ graph TB
     end
     
     subgraph "Self-Awareness Levels"
-        L1[Level 1: Basic Monitoring<br/>📊 Performance Tracking]
+        L1[Level 1: Basic Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/)<br/>📊 Performance Tracking]
         L2[Level 2: State Awareness<br/>💭 System State Recognition]
         L3[Level 3: Goal Awareness<br/>🎯 Objective Understanding]
         L4[Level 4: Meta-Awareness<br/>🧠 Thinking About Thinking]
         L5[Level 5: Predictive Awareness<br/>🔮 Future State Prediction]
     end
     
-    subgraph "Monitoring Dimensions"
-        subgraph "Performance Monitoring"
+    subgraph "Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) Dimensions"
+        subgraph "Performance Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/)"
             ACC[Accuracy<br/>✅ Correctness Rate]
             SPD[Speed<br/>⚡ Response Time]
             RES[Resource Usage<br/>💾 Efficiency]
             ERR[Error Rate<br/>❌ Failure Frequency]
         end
         
-        subgraph "Cognitive Monitoring"
+        subgraph "Cognitive Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/)"
             ATT[Attention<br/>👁️ Focus Quality]
             MEM[Memory<br/>🧠 Recall Effectiveness]
             REA[Reasoning<br/>🤔 Logic Quality]
             LEA[Learning<br/>📚 Adaptation Rate]
         end
         
-        subgraph "Emotional Monitoring"
+        subgraph "Emotional Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/)"
             UNC[Uncertainty<br/>❓ Confidence Gaps]
             CUR[Curiosity<br/>🔍 Exploration Drive]
             SAT[Satisfaction<br/>😊 Goal Achievement]
@@ -108,7 +108,7 @@ graph TB
     L3 --> L4
     L4 --> L5
     
-    %% Monitoring dimensions
+    %% Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) dimensions
     MCP --> ACC
     MCP --> SPD
     MCP --> RES
@@ -170,10 +170,10 @@ graph TB
     class CC,AA,LR,EA output
 ```
 
-## Consciousness Monitoring Components
+## Consciousness Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) Components
 
 ### 💭 **Consciousness Core**
-- **Consciousness Agent**: Central monitoring and coordination hub
+- **Consciousness Agent**: Central Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) and coordination hub
 - **Meta-Cognitive Processor**: Analyzes the system's own thinking processes
 - **Introspection Manager**: Deep self-analysis and pattern recognition
 - **Consciousness State Manager**: Tracks overall awareness state
@@ -188,7 +188,7 @@ Multi-dimensional confidence scoring based on:
 ### 🧠 **Self-Awareness Levels**
 Progressive levels of system consciousness:
 
-#### **Level 1: Basic Monitoring** 
+#### **Level 1: Basic Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/)** 
 ```python
 basic_monitoring = {
     "cpu_usage": 0.65,
@@ -289,9 +289,9 @@ def express_confidence(confidence_score):
         return "I don't have enough information to provide a reliable answer"
 ```
 
-## Self-Monitoring Patterns
+## Self-Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) Patterns
 
-### **Performance Monitoring**
+### **Performance Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/)**
 ```python
 performance_metrics = {
     "accuracy": {
@@ -315,7 +315,7 @@ performance_metrics = {
 }
 ```
 
-### **Cognitive Monitoring**
+### **Cognitive Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/)**
 ```python
 cognitive_state = {
     "attention": {
@@ -336,7 +336,7 @@ cognitive_state = {
 }
 ```
 
-### **Emotional Monitoring**
+### **Emotional Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/)**
 ```python
 emotional_state = {
     "uncertainty": {
@@ -447,7 +447,7 @@ if consciousness_agent.is_uncertain():
     memory_agent.enable_cross_reference_checking()
 ```
 
-This consciousness monitoring system ensures:
+This consciousness Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) system ensures:
 - ✅ **Self-Awareness**: System knows its own capabilities and limitations
 - ✅ **Uncertainty Quantification**: Honest assessment of confidence levels
 - ✅ **Adaptive Behavior**: Adjusts strategies based on confidence

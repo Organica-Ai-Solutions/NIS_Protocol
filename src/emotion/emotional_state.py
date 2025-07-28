@@ -401,3 +401,15 @@ class EmotionalStateSystem:
                 base_rates[emotion] *= 0.5
         
         return base_rates 
+
+# Backward compatibility alias
+EmotionalState = EmotionalStateSystem
+
+# Also create EmotionalDimension for compatibility  
+class EmotionalDimension:
+    """Simple enum-like class for emotional dimensions"""
+    SUSPICION = "suspicion"
+    URGENCY = "urgency"
+    CONFIDENCE = "confidence"
+    INTEREST = "interest"
+    NOVELTY = "novelty" 

@@ -1,0 +1,1333 @@
+{
+  "audit_timestamp": "2025-07-28T01:21:52.920006",
+  "project_path": ".",
+  "issues": [
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated multi-agent system claim in COMPREHENSIVE_ACHIEVEMENTS_SUMMARY.md",
+      "details": {
+        "file": "COMPREHENSIVE_ACHIEVEMENTS_SUMMARY.md",
+        "term": "multi-agent system"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.206224"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated multi-agent system claim in COMPREHENSIVE_ACHIEVEMENTS_SUMMARY.md",
+      "details": {
+        "file": "COMPREHENSIVE_ACHIEVEMENTS_SUMMARY.md",
+        "term": "general intelligence"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.206224"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in COMPREHENSIVE_ACHIEVEMENTS_SUMMARY.md",
+      "details": {
+        "file": "COMPREHENSIVE_ACHIEVEMENTS_SUMMARY.md",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.206224"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in COMPREHENSIVE_ACHIEVEMENTS_SUMMARY.md",
+      "details": {
+        "file": "COMPREHENSIVE_ACHIEVEMENTS_SUMMARY.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.206224"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in COMPREHENSIVE_ACHIEVEMENTS_SUMMARY.md",
+      "details": {
+        "file": "COMPREHENSIVE_ACHIEVEMENTS_SUMMARY.md",
+        "term": "innovative"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.206224"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated interpretability claim in ENDPOINT_TEST_RESULTS.md",
+      "details": {
+        "file": "ENDPOINT_TEST_RESULTS.md",
+        "term": "95%+"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.219242"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in FINAL_SYSTEM_TEST_REPORT.md",
+      "details": {
+        "file": "FINAL_SYSTEM_TEST_REPORT.md",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.221854"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in FINAL_SYSTEM_TEST_REPORT.md",
+      "details": {
+        "file": "FINAL_SYSTEM_TEST_REPORT.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.221854"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in NIS_DRONE_HARDWARE_PLAN.md",
+      "details": {
+        "file": "NIS_DRONE_HARDWARE_PLAN.md",
+        "term": "optimized"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.248793"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in NIS_DRONE_PROJECT_PLAN.md",
+      "details": {
+        "file": "NIS_DRONE_PROJECT_PLAN.md",
+        "term": "optimized"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.265955"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in README.md",
+      "details": {
+        "file": "README.md",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.278672"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in README.md",
+      "details": {
+        "file": "README.md",
+        "term": "optimized"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.279669"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in README.md: Monitoring",
+      "details": {
+        "file": "README.md",
+        "claim": "Monitoring"
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-28T01:21:53.284179"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in README.md: Monitoring",
+      "details": {
+        "file": "README.md",
+        "claim": "Monitoring"
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-28T01:21:53.284179"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in README.md: Monitoring",
+      "details": {
+        "file": "README.md",
+        "claim": "Monitoring"
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-28T01:21:53.284179"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in README.md: Monitoring",
+      "details": {
+        "file": "README.md",
+        "claim": "Monitoring"
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-28T01:21:53.284179"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in AGENT_CONNECTION_GUIDE.md",
+      "details": {
+        "file": "docs\\AGENT_CONNECTION_GUIDE.md",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.288841"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in AGI_FOUNDATION_ACHIEVEMENT.md",
+      "details": {
+        "file": "docs\\AGI_FOUNDATION_ACHIEVEMENT.md",
+        "term": "interpretable"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.296355"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in AGI_FOUNDATION_ACHIEVEMENT.md",
+      "details": {
+        "file": "docs\\AGI_FOUNDATION_ACHIEVEMENT.md",
+        "term": "self-aware"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.296355"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in AGI_FOUNDATION_ACHIEVEMENT.md",
+      "details": {
+        "file": "docs\\AGI_FOUNDATION_ACHIEVEMENT.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.296355"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in AGI_FOUNDATION_ACHIEVEMENT.md",
+      "details": {
+        "file": "docs\\AGI_FOUNDATION_ACHIEVEMENT.md",
+        "term": "novel"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.297354"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated interpretability claim in AGI_FOUNDATION_ACHIEVEMENT.md",
+      "details": {
+        "file": "docs\\AGI_FOUNDATION_ACHIEVEMENT.md",
+        "term": "95%+"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.298356"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in ARCHITECTURE.md",
+      "details": {
+        "file": "docs\\ARCHITECTURE.md",
+        "term": "interpretable"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.307226"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in ARCHITECTURE.md: Monitoring",
+      "details": {
+        "file": "docs\\ARCHITECTURE.md",
+        "claim": "Monitoring"
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-28T01:21:53.312223"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in BITNET_KIMI_INTEGRATION_PLAN.md",
+      "details": {
+        "file": "docs\\BITNET_KIMI_INTEGRATION_PLAN.md",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.316299"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in BITNET_KIMI_INTEGRATION_PLAN.md",
+      "details": {
+        "file": "docs\\BITNET_KIMI_INTEGRATION_PLAN.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.316299"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in BITNET_KIMI_INTEGRATION_PLAN.md",
+      "details": {
+        "file": "docs\\BITNET_KIMI_INTEGRATION_PLAN.md",
+        "term": "optimized"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.317305"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated interpretability claim in BITNET_KIMI_INTEGRATION_PLAN.md",
+      "details": {
+        "file": "docs\\BITNET_KIMI_INTEGRATION_PLAN.md",
+        "term": "95%+"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.318458"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in BITNET_KIMI_INTEGRATION_PLAN.md: ('90', 'accuracy')",
+      "details": {
+        "file": "docs\\BITNET_KIMI_INTEGRATION_PLAN.md",
+        "claim": [
+          "90",
+          "accuracy"
+        ]
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-28T01:21:53.320035"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in COMPREHENSIVE_FEATURES_GUIDE.md",
+      "details": {
+        "file": "docs\\COMPREHENSIVE_FEATURES_GUIDE.md",
+        "term": "interpretable"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.323558"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in COMPREHENSIVE_FEATURES_GUIDE.md",
+      "details": {
+        "file": "docs\\COMPREHENSIVE_FEATURES_GUIDE.md",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.326557"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in COMPREHENSIVE_FEATURES_GUIDE.md",
+      "details": {
+        "file": "docs\\COMPREHENSIVE_FEATURES_GUIDE.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.326557"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in COMPREHENSIVE_FEATURES_GUIDE.md",
+      "details": {
+        "file": "docs\\COMPREHENSIVE_FEATURES_GUIDE.md",
+        "term": "novel"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.327560"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in COMPREHENSIVE_FEATURES_GUIDE.md",
+      "details": {
+        "file": "docs\\COMPREHENSIVE_FEATURES_GUIDE.md",
+        "term": "optimized"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.328557"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in GETTING_STARTED.md",
+      "details": {
+        "file": "docs\\GETTING_STARTED.md",
+        "term": "self-aware"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.379520"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in GETTING_STARTED.md",
+      "details": {
+        "file": "docs\\GETTING_STARTED.md",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.379520"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated interpretability claim in GETTING_STARTED.md",
+      "details": {
+        "file": "docs\\GETTING_STARTED.md",
+        "term": "95%+"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.381517"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in H100_DEPLOYMENT_VISION.md",
+      "details": {
+        "file": "docs\\H100_DEPLOYMENT_VISION.md",
+        "term": "self-aware"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.384144"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in H100_DEPLOYMENT_VISION.md",
+      "details": {
+        "file": "docs\\H100_DEPLOYMENT_VISION.md",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.384650"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in H100_DEPLOYMENT_VISION.md",
+      "details": {
+        "file": "docs\\H100_DEPLOYMENT_VISION.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.384650"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in H100_DEPLOYMENT_VISION.md",
+      "details": {
+        "file": "docs\\H100_DEPLOYMENT_VISION.md",
+        "term": "innovative"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.385661"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in H100_DEPLOYMENT_VISION.md",
+      "details": {
+        "file": "docs\\H100_DEPLOYMENT_VISION.md",
+        "term": "optimized"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.385661"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in HOW_TO_USE.md",
+      "details": {
+        "file": "docs\\HOW_TO_USE.md",
+        "term": "self-aware"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.389660"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in HOW_TO_USE.md",
+      "details": {
+        "file": "docs\\HOW_TO_USE.md",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.390681"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated multi-agent system claim in INTEGRATION_EXAMPLES.md",
+      "details": {
+        "file": "docs\\INTEGRATION_EXAMPLES.md",
+        "term": "general intelligence"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.395165"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated multi-agent system claim in INTEGRATION_GUIDE.md",
+      "details": {
+        "file": "docs\\INTEGRATION_GUIDE.md",
+        "term": "multi-agent system"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.403752"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in INTEGRATION_GUIDE.md",
+      "details": {
+        "file": "docs\\INTEGRATION_GUIDE.md",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.405260"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in INTEGRATION_GUIDE.md",
+      "details": {
+        "file": "docs\\INTEGRATION_GUIDE.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.405260"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in INTEGRATION_GUIDE.md",
+      "details": {
+        "file": "docs\\INTEGRATION_GUIDE.md",
+        "term": "optimized"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.407265"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in NIS_PROTOCOL_V31_BLUEPRINT.md",
+      "details": {
+        "file": "docs\\NIS_PROTOCOL_V31_BLUEPRINT.md",
+        "term": "self-aware"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.461275"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in NIS_PROTOCOL_V31_BLUEPRINT.md",
+      "details": {
+        "file": "docs\\NIS_PROTOCOL_V31_BLUEPRINT.md",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.462282"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in NIS_PROTOCOL_V31_BLUEPRINT.md",
+      "details": {
+        "file": "docs\\NIS_PROTOCOL_V31_BLUEPRINT.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.462282"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in NIS_PROTOCOL_V31_BLUEPRINT.md",
+      "details": {
+        "file": "docs\\NIS_PROTOCOL_V31_BLUEPRINT.md",
+        "term": "innovative"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.463289"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in NIS_PROTOCOL_V31_BLUEPRINT.md",
+      "details": {
+        "file": "docs\\NIS_PROTOCOL_V31_BLUEPRINT.md",
+        "term": "optimized"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.463289"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in NIS_PROTOCOL_V31_BLUEPRINT.md: Monitoring",
+      "details": {
+        "file": "docs\\NIS_PROTOCOL_V31_BLUEPRINT.md",
+        "claim": "Monitoring"
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-28T01:21:53.465282"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated multi-agent system claim in NIS_PROTOCOL_V4_V5_V6_BLUEPRINT.md",
+      "details": {
+        "file": "docs\\NIS_PROTOCOL_V4_V5_V6_BLUEPRINT.md",
+        "term": "general intelligence"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.492633"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in NIS_PROTOCOL_V4_V5_V6_BLUEPRINT.md",
+      "details": {
+        "file": "docs\\NIS_PROTOCOL_V4_V5_V6_BLUEPRINT.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.493632"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in NIS_PROTOCOL_V4_V5_V6_BLUEPRINT.md",
+      "details": {
+        "file": "docs\\NIS_PROTOCOL_V4_V5_V6_BLUEPRINT.md",
+        "term": "novel"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.493632"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in NIS_PROTOCOL_V4_V5_V6_BLUEPRINT.md",
+      "details": {
+        "file": "docs\\NIS_PROTOCOL_V4_V5_V6_BLUEPRINT.md",
+        "term": "optimized"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.494634"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated interpretability claim in NIS_PROTOCOL_V4_V5_V6_BLUEPRINT.md",
+      "details": {
+        "file": "docs\\NIS_PROTOCOL_V4_V5_V6_BLUEPRINT.md",
+        "term": "95%+"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.495632"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in NIS_V3_AGENT_MASTER_INVENTORY.md",
+      "details": {
+        "file": "docs\\NIS_V3_AGENT_MASTER_INVENTORY.md",
+        "term": "self-aware"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.498140"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated multi-agent system claim in NIS_V3_AGENT_MASTER_INVENTORY.md",
+      "details": {
+        "file": "docs\\NIS_V3_AGENT_MASTER_INVENTORY.md",
+        "term": "general intelligence"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.499148"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated interpretability claim in QUICK_START.md",
+      "details": {
+        "file": "docs\\QUICK_START.md",
+        "term": "95%+"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.527474"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in README.md",
+      "details": {
+        "file": "docs\\README.md",
+        "term": "self-aware"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.550814"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in README.md",
+      "details": {
+        "file": "docs\\README.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.551821"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in README.md",
+      "details": {
+        "file": "docs\\README.md",
+        "term": "innovative"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.551821"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in THIRD_PARTY_PROTOCOL_INTEGRATION.md: Monitoring",
+      "details": {
+        "file": "docs\\THIRD_PARTY_PROTOCOL_INTEGRATION.md",
+        "claim": "Monitoring"
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-28T01:21:53.558397"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in TROUBLESHOOTING_GUIDE.md",
+      "details": {
+        "file": "docs\\TROUBLESHOOTING_GUIDE.md",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.583194"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in TROUBLESHOOTING_GUIDE.md",
+      "details": {
+        "file": "docs\\TROUBLESHOOTING_GUIDE.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.584197"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in AWS_MIGRATION_ACCELERATOR_GUIDE.md",
+      "details": {
+        "file": "dev\\documentation\\AWS_MIGRATION_ACCELERATOR_GUIDE.md",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.764414"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in AWS_MIGRATION_ACCELERATOR_GUIDE.md",
+      "details": {
+        "file": "dev\\documentation\\AWS_MIGRATION_ACCELERATOR_GUIDE.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.764414"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in AWS_MIGRATION_ACCELERATOR_GUIDE.md",
+      "details": {
+        "file": "dev\\documentation\\AWS_MIGRATION_ACCELERATOR_GUIDE.md",
+        "term": "optimized"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.765414"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in DOCKER_README.md",
+      "details": {
+        "file": "dev\\documentation\\DOCKER_README.md",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.785687"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in DOCKER_README.md: Monitoring",
+      "details": {
+        "file": "dev\\documentation\\DOCKER_README.md",
+        "claim": "Monitoring"
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-28T01:21:53.788681"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in DOCKER_README.md: monitoring",
+      "details": {
+        "file": "dev\\documentation\\DOCKER_README.md",
+        "claim": "monitoring"
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-28T01:21:53.788681"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in DOCUMENTATION_UPDATE_SUMMARY.md",
+      "details": {
+        "file": "dev\\documentation\\DOCUMENTATION_UPDATE_SUMMARY.md",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.800861"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in DOCUMENTATION_UPDATE_SUMMARY.md",
+      "details": {
+        "file": "dev\\documentation\\DOCUMENTATION_UPDATE_SUMMARY.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.801869"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in DOCUMENTATION_UPDATE_SUMMARY.md",
+      "details": {
+        "file": "dev\\documentation\\DOCUMENTATION_UPDATE_SUMMARY.md",
+        "term": "optimized"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.801869"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in DOCUMENTATION_UPDATE_SUMMARY.md: monitoring",
+      "details": {
+        "file": "dev\\documentation\\DOCUMENTATION_UPDATE_SUMMARY.md",
+        "claim": "monitoring"
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-28T01:21:53.802870"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in DOCUMENTATION_VALIDATION_REPORT.md",
+      "details": {
+        "file": "dev\\documentation\\DOCUMENTATION_VALIDATION_REPORT.md",
+        "term": "self-aware"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.813378"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in DOCUMENTATION_VALIDATION_REPORT.md",
+      "details": {
+        "file": "dev\\documentation\\DOCUMENTATION_VALIDATION_REPORT.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.814380"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in DOCUMENTATION_VALIDATION_REPORT.md",
+      "details": {
+        "file": "dev\\documentation\\DOCUMENTATION_VALIDATION_REPORT.md",
+        "term": "optimized"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.814380"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in NIS_DRONE_HARDWARE_PLAN.md",
+      "details": {
+        "file": "dev\\documentation\\NIS_DRONE_HARDWARE_PLAN.md",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.839940"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in NIS_DRONE_HARDWARE_PLAN.md",
+      "details": {
+        "file": "dev\\documentation\\NIS_DRONE_HARDWARE_PLAN.md",
+        "term": "optimized"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.839940"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in NIS_DRONE_PROJECT_PLAN.md",
+      "details": {
+        "file": "dev\\documentation\\NIS_DRONE_PROJECT_PLAN.md",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.853524"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in NIS_DRONE_PROJECT_PLAN.md",
+      "details": {
+        "file": "dev\\documentation\\NIS_DRONE_PROJECT_PLAN.md",
+        "term": "optimized"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.853524"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in NIS_OFFLINE_MODEL_TRAINING_PLAN.md",
+      "details": {
+        "file": "dev\\documentation\\NIS_OFFLINE_MODEL_TRAINING_PLAN.md",
+        "term": "self-aware"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.869729"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in NIS_OFFLINE_MODEL_TRAINING_PLAN.md",
+      "details": {
+        "file": "dev\\documentation\\NIS_OFFLINE_MODEL_TRAINING_PLAN.md",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.870733"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated interpretability claim in NIS_OFFLINE_MODEL_TRAINING_PLAN.md",
+      "details": {
+        "file": "dev\\documentation\\NIS_OFFLINE_MODEL_TRAINING_PLAN.md",
+        "term": "95%+"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.872728"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in NIS_OFFLINE_MODEL_TRAINING_PLAN.md: ('100', 'x', 'faster')",
+      "details": {
+        "file": "dev\\documentation\\NIS_OFFLINE_MODEL_TRAINING_PLAN.md",
+        "claim": [
+          "100",
+          "x",
+          "faster"
+        ]
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-28T01:21:53.874232"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in NIS_OFFLINE_MODEL_TRAINING_PLAN.md: Monitoring",
+      "details": {
+        "file": "dev\\documentation\\NIS_OFFLINE_MODEL_TRAINING_PLAN.md",
+        "claim": "Monitoring"
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-28T01:21:53.875237"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in NIS_PROTOCOL_V3_COMPREHENSIVE_ANALYSIS.md",
+      "details": {
+        "file": "dev\\documentation\\NIS_PROTOCOL_V3_COMPREHENSIVE_ANALYSIS.md",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.887353"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated interpretability claim in NIS_PROTOCOL_V3_COMPREHENSIVE_ANALYSIS.md",
+      "details": {
+        "file": "dev\\documentation\\NIS_PROTOCOL_V3_COMPREHENSIVE_ANALYSIS.md",
+        "term": "95%+"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.888349"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in NIS_PROTOCOL_V3_COMPREHENSIVE_ANALYSIS.md: monitoring",
+      "details": {
+        "file": "dev\\documentation\\NIS_PROTOCOL_V3_COMPREHENSIVE_ANALYSIS.md",
+        "claim": "monitoring"
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-28T01:21:53.890356"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in NIS_Protocol_V3_Whitepaper.md: processing",
+      "details": {
+        "file": "dev\\documentation\\NIS_Protocol_V3_Whitepaper.md",
+        "claim": "processing"
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-28T01:21:53.905548"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in POSTMAN_IMPORT_GUIDE.md",
+      "details": {
+        "file": "dev\\documentation\\POSTMAN_IMPORT_GUIDE.md",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.916251"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in README.md",
+      "details": {
+        "file": "docs\\diagrams\\README.md",
+        "term": "self-aware"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.929338"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in communication_hierarchy.md",
+      "details": {
+        "file": "docs\\diagrams\\agent_hierarchy\\communication_hierarchy.md",
+        "term": "self-aware"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.930341"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in communication_hierarchy.md",
+      "details": {
+        "file": "docs\\diagrams\\agent_hierarchy\\communication_hierarchy.md",
+        "term": "optimized"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.931340"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in laplace_kan_pinn_pipeline.md",
+      "details": {
+        "file": "docs\\diagrams\\pipelines\\laplace_kan_pinn_pipeline.md",
+        "term": "interpretable"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.933341"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in consciousness_monitoring_flow.md",
+      "details": {
+        "file": "docs\\diagrams\\system_flow\\consciousness_monitoring_flow.md",
+        "term": "self-aware"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.934341"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in consciousness_monitoring_flow.md",
+      "details": {
+        "file": "docs\\diagrams\\system_flow\\consciousness_monitoring_flow.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.935893"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in consciousness_monitoring_flow.md",
+      "details": {
+        "file": "docs\\diagrams\\system_flow\\consciousness_monitoring_flow.md",
+        "term": "novel"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.935893"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in error_handling_recovery.md",
+      "details": {
+        "file": "docs\\diagrams\\system_flow\\error_handling_recovery.md",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.954507"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in error_handling_recovery.md",
+      "details": {
+        "file": "docs\\diagrams\\system_flow\\error_handling_recovery.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.954507"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in memory_system_architecture.md",
+      "details": {
+        "file": "docs\\diagrams\\system_flow\\memory_system_architecture.md",
+        "term": "self-aware"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.985235"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated interpretability claim in memory_system_architecture.md",
+      "details": {
+        "file": "docs\\diagrams\\system_flow\\memory_system_architecture.md",
+        "term": "95%+"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:53.988358"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in nis_complete_dataflow.md",
+      "details": {
+        "file": "docs\\diagrams\\system_flow\\nis_complete_dataflow.md",
+        "term": "interpretable"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:54.004510"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in nis_complete_dataflow.md",
+      "details": {
+        "file": "docs\\diagrams\\system_flow\\nis_complete_dataflow.md",
+        "term": "self-aware"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:54.004510"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in nis_complete_system_architecture.md",
+      "details": {
+        "file": "docs\\diagrams\\system_flow\\nis_complete_system_architecture.md",
+        "term": "self-aware"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:54.007715"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in nis_complete_system_architecture.md",
+      "details": {
+        "file": "docs\\diagrams\\system_flow\\nis_complete_system_architecture.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:54.008293"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated interpretability claim in nis_complete_system_architecture.md",
+      "details": {
+        "file": "docs\\diagrams\\system_flow\\nis_complete_system_architecture.md",
+        "term": "95%+"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:54.009900"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in agi_benchmark_results.txt",
+      "details": {
+        "file": "nis-integrity-toolkit\\agi_benchmark_results.txt",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:54.150986"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in agi_benchmark_results.txt",
+      "details": {
+        "file": "nis-integrity-toolkit\\agi_benchmark_results.txt",
+        "term": "novel"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:54.150986"
+    },
+    {
+      "type": "hardcoded_metric",
+      "description": "Hardcoded performance metric in automated_documentation_fixer.py: confidence = 0.95",
+      "details": {
+        "file": "automated_documentation_fixer.py",
+        "pattern": "confidence = 0.95"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:54.243252"
+    },
+    {
+      "type": "hardcoded_metric",
+      "description": "Hardcoded performance metric in automated_documentation_fixer.py: confidence = 0.95",
+      "details": {
+        "file": "automated_documentation_fixer.py",
+        "pattern": "confidence = 0.95"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:54.243252"
+    },
+    {
+      "type": "hardcoded_metric",
+      "description": "Hardcoded performance metric in automated_documentation_fixer.py: confidence = 0.95",
+      "details": {
+        "file": "automated_documentation_fixer.py",
+        "pattern": "confidence = 0.95"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:54.243252"
+    },
+    {
+      "type": "hardcoded_metric",
+      "description": "Hardcoded performance metric in automated_documentation_fixer.py: confidence = 0.95",
+      "details": {
+        "file": "automated_documentation_fixer.py",
+        "pattern": "confidence = 0.95"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:54.243252"
+    },
+    {
+      "type": "hardcoded_metric",
+      "description": "Hardcoded performance metric in test_enhanced_capabilities.py: confidence = 0.95",
+      "details": {
+        "file": "test_enhanced_capabilities.py",
+        "pattern": "confidence = 0.95"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-28T01:21:54.358607"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in full-audit.py",
+      "details": {
+        "file": "nis-integrity-toolkit\\audit-scripts\\full-audit.py",
+        "count": 4
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-28T01:21:55.468300"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in safety_monitor.py",
+      "details": {
+        "file": "src\\agents\\alignment\\safety_monitor.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-28T01:21:55.987356"
+    },
+    {
+      "type": "complex_dependencies",
+      "description": "Complex ML dependencies found: ['transformers', 'torch']. Are these actually used?",
+      "details": {
+        "dependencies": [
+          "transformers",
+          "torch"
+        ]
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-28T01:21:57.244485"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'advanced' appears 4 times",
+      "details": {
+        "file": "README.md",
+        "term": "advanced",
+        "count": 4
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-28T01:21:57.697194"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'optimized' appears 1 times",
+      "details": {
+        "file": "README.md",
+        "term": "optimized",
+        "count": 1
+      },
+      "severity": "LOW",
+      "timestamp": "2025-07-28T01:21:57.699194"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'self-aware' appears 1 times",
+      "details": {
+        "file": "docs\\README.md",
+        "term": "self-aware",
+        "count": 1
+      },
+      "severity": "LOW",
+      "timestamp": "2025-07-28T01:21:57.701709"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'improvement' appears 1 times",
+      "details": {
+        "file": "docs\\README.md",
+        "term": "improvement",
+        "count": 1
+      },
+      "severity": "LOW",
+      "timestamp": "2025-07-28T01:21:57.702709"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'innovative' appears 1 times",
+      "details": {
+        "file": "docs\\README.md",
+        "term": "innovative",
+        "count": 1
+      },
+      "severity": "LOW",
+      "timestamp": "2025-07-28T01:21:57.702709"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'self-aware' appears 1 times",
+      "details": {
+        "file": "docs\\diagrams\\README.md",
+        "term": "self-aware",
+        "count": 1
+      },
+      "severity": "LOW",
+      "timestamp": "2025-07-28T01:21:57.709223"
+    }
+  ],
+  "metrics": {
+    "claimed_services": 0,
+    "actual_services": 5,
+    "service_directories": 24,
+    "total_hype_instances": 9,
+    "high_issues": 104,
+    "medium_issues": 19,
+    "low_issues": 5
+  },
+  "recommendations": [
+    {
+      "priority": "HIGH",
+      "action": "Replace hardcoded performance metrics with actual calculations",
+      "reason": "Found 104 high-severity issues that damage credibility"
+    },
+    {
+      "priority": "HIGH",
+      "action": "Rewrite marketing language with evidence-based descriptions",
+      "reason": "Found 9 instances of unsupported hype language"
+    },
+    {
+      "priority": "MEDIUM",
+      "action": "Implement pre-commit hooks with this audit tool",
+      "reason": "Prevent future integrity issues"
+    },
+    {
+      "priority": "LOW",
+      "action": "Add explicit limitations section to documentation",
+      "reason": "Transparent communication of constraints builds trust"
+    }
+  ],
+  "integrity_score": 0
+}

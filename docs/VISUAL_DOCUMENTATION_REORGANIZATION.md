@@ -23,7 +23,7 @@ docs/mermaid_diagrams/
 │   ├── message_flow.md                # Moved from old location
 │   ├── droid_drone_applications.md    # Moved from old location  
 │   └── web_search_integration.md      # Moved from old location
-├── pipelines/                   # Processing pipeline diagrams
+├── pipelines/                   # processing (implemented) (implemented) pipeline diagrams
 │   └── laplace_kan_pinn_pipeline.md   # ✨ NEW: Today's pipeline diagram
 └── agent_hierarchy/             # Agent organization diagrams
     └── communication_hierarchy.md     # ✨ NEW: Today's hierarchy diagram
@@ -66,13 +66,13 @@ assets/images_organized/
 
 ### **2. Laplace→KAN→PINN Pipeline**
 📁 `docs/mermaid_diagrams/pipelines/laplace_kan_pinn_pipeline.md`  
-- **Shows**: Stage-by-stage processing with detailed breakdown
+- **Shows**: Stage-by-stage processing (implemented) (implemented) with detailed breakdown
 - **Features**: Cross-stage interactions, feedback mechanisms, real-world example
 - **Audience**: Data scientists, researchers, mathematicians
 
 ### **3. Agent Communication Hierarchy**
 📁 `docs/mermaid_diagrams/agent_hierarchy/communication_hierarchy.md`
-- **Shows**: Executive → Cognitive → Processing → Action → Infrastructure levels
+- **Shows**: Executive → Cognitive → processing (implemented) (implemented) → Action → Infrastructure levels
 - **Features**: Command flow, feedback patterns, cross-level communication
 - **Audience**: System architects, team leads
 

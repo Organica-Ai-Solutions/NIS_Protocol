@@ -28,35 +28,41 @@ from datetime import datetime, timedelta
 try:
     from kafka import KafkaProducer, KafkaConsumer
     from kafka.errors import KafkaError, KafkaTimeoutError
-    from aiokafka import AIOKafkaProducer, AIOKafkaConsumer
+    # Conditional async Kafka imports
+    try:
+        from aiokafka import AIOKafkaProducer, AIOKafkaConsumer
+        ASYNC_KAFKA_AVAILABLE = True
+    except ImportError:
+        ASYNC_KAFKA_AVAILABLE = False
+        # Create mock classes to prevent NameError
+        class AIOKafkaProducer:
+            pass
+        class AIOKafkaConsumer:
+            pass
     KAFKA_AVAILABLE = True
 except ImportError:
     KAFKA_AVAILABLE = False
+    ASYNC_KAFKA_AVAILABLE = False
+    # Create all mock classes
+    class KafkaProducer:
+        pass
+    class KafkaConsumer:
+        pass
+    class AIOKafkaProducer:
+        pass
+    class AIOKafkaConsumer:
+        pass
+    class KafkaError(Exception):
+        pass
+    class KafkaTimeoutError(Exception):
+        pass
     logging.warning("Kafka not available. Install kafka-python and aiokafka for full functionality.")
 
 # Self-audit integration
 from src.utils.self_audit import self_audit_engine
 
-
-class MessageType(Enum):
-    """Types of messages in the NIS Protocol system"""
-    CONSCIOUSNESS_EVENT = "consciousness_event"
-    GOAL_GENERATION = "goal_generation"
-    SIMULATION_RESULT = "simulation_result"
-    ALIGNMENT_CHECK = "alignment_check"
-    MEMORY_OPERATION = "memory_operation"
-    AGENT_COORDINATION = "agent_coordination"
-    SYSTEM_HEALTH = "system_health"
-    AUDIT_ALERT = "audit_alert"
-    PERFORMANCE_METRIC = "performance_metric"
-
-
-class MessagePriority(Enum):
-    """Message priority levels"""
-    CRITICAL = 1
-    HIGH = 2
-    NORMAL = 3
-    LOW = 4
+# Use the decoupled core messaging types
+from src.core.messaging import NISMessage, MessageType, MessagePriority
 
 
 class StreamingTopics:
@@ -79,23 +85,6 @@ class StreamingTopics:
             cls.ALIGNMENT, cls.MEMORY, cls.COORDINATION,
             cls.SYSTEM_HEALTH, cls.AUDIT_ALERTS, cls.PERFORMANCE
         ]
-
-
-@dataclass
-class NISMessage:
-    """Enhanced message structure for NIS Protocol"""
-    message_id: str
-    message_type: MessageType
-    priority: MessagePriority
-    source_agent: str
-    target_agent: Optional[str]
-    topic: str
-    content: Dict[str, Any]
-    timestamp: float
-    correlation_id: Optional[str] = None
-    metadata: Optional[Dict[str, Any]] = None
-    integrity_score: Optional[float] = None
-    audit_flags: Optional[List[str]] = None
 
 
 @dataclass

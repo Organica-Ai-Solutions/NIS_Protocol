@@ -517,8 +517,10 @@ class CompleteHybridAgent(NISAgent):
         self.llm_provider = llm_provider
         self.scientific_config = scientific_config or {}
 
-        # Initialize enhanced components
-        self.llm_interface = EnhancedMockLLMProvider(llm_provider)
+        # Initialize enhanced components - USE REAL LLM MANAGER
+        from ..llm.llm_manager import LLMManager
+        self.llm_manager = LLMManager()
+        self.llm_interface = self.llm_manager.get_provider()  # Will use real providers when configured!
         self.scientific_pipeline = CompleteScientificPipeline()
 
         # Enhanced processing configuration
@@ -591,9 +593,18 @@ class CompleteHybridAgent(NISAgent):
                 physics_violations=physics_violations
             )
 
-            # Generate LLM response
+            # Generate LLM response using REAL LLM provider
             import asyncio
-            llm_response = asyncio.run(self.llm_interface.generate_response(llm_context))
+            llm_messages = self._convert_context_to_messages(llm_context)
+            llm_response_obj = asyncio.run(self.llm_interface.generate(llm_messages))
+            
+            # Convert real provider response to expected format
+            llm_response = {
+                "content": llm_response_obj.content,
+                "confidence": 0.8,  # Real LLM response confidence
+                "metadata": llm_response_obj.metadata,
+                "usage": llm_response_obj.usage
+            }
 
             # Calculate final confidence with physics weighting
             final_confidence = min(
@@ -685,6 +696,39 @@ class CompleteHybridAgent(NISAgent):
             insights.append("Overall analysis needs improvement - recommend additional validation")
 
         return insights
+
+    def _convert_context_to_messages(self, context: EnhancedLLMContext):
+        """Convert EnhancedLLMContext to LLMMessage format for real LLM providers."""
+        from ..llm.base_llm_provider import LLMMessage, LLMRole
+        
+        # Build comprehensive prompt from scientific context
+        system_prompt = f"""You are a sophisticated AI agent specialized in {context.agent_type} analysis.
+You have access to advanced scientific processing results including signal analysis, symbolic reasoning, and physics validation.
+
+Current Task: {context.task_description}
+Physics Compliance Score: {context.physics_compliance:.3f}
+"""
+        
+        if context.constraints:
+            system_prompt += f"\nConstraints: {', '.join(context.constraints)}"
+        
+        if context.physics_violations:
+            system_prompt += f"\nPhysics Violations Detected: {', '.join(context.physics_violations)}"
+        
+        # Build user message with scientific insights
+        user_message = f"Please analyze the following data:\n\nInput: {context.raw_input}"
+        
+        if context.symbolic_insights:
+            user_message += f"\n\nScientific Insights:\n" + "\n".join(f"• {insight}" for insight in context.symbolic_insights)
+        
+        if hasattr(context.scientific_result, 'kan_reasoning') and context.scientific_result.kan_reasoning:
+            user_message += f"\n\nSymbolic Function: {context.scientific_result.kan_reasoning.symbolic_function}"
+            user_message += f"\nInterpretability: {context.scientific_result.kan_reasoning.interpretability_score:.3f}"
+        
+        return [
+            LLMMessage(role=LLMRole.SYSTEM, content=system_prompt),
+            LLMMessage(role=LLMRole.USER, content=user_message)
+        ]
 
     def _update_enhanced_agent_stats(self, confidence: float, processing_time: float,
                                    scientific_result: CompleteScientificProcessingResult):

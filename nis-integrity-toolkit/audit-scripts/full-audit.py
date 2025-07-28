@@ -17,6 +17,8 @@ import yaml
 class NISIntegrityAuditor:
     """Comprehensive engineering integrity auditor for NIS protocol systems"""
     
+    exclude_dirs = ['site-packages', 'venv', '.venv', 'env', '.env', '__pycache__', '.git', 'node_modules', '.pytest_cache', 'lib', 'Scripts', 'Include']
+    
     # Hype terms that require evidence
     HYPE_TERMS = {
         'KAN interpretability': ['KAN interpretability', 'interpretable', 'self-aware', 'sentient'],
@@ -109,8 +111,8 @@ class NISIntegrityAuditor:
         """Verify that documented features have actual code implementation"""
         print("🔍 Auditing Code-Claim Alignment...")
         
-        # Find all Python files
-        py_files = list(self.project_path.rglob("*.py"))
+        # Find all Python files excluding non-project dirs
+        py_files = [f for f in self.project_path.rglob("*.py") if not self._is_excluded(f)]
         
         # Look for hardcoded "impressive" values
         hardcoded_patterns = [
@@ -320,18 +322,19 @@ class NISIntegrityAuditor:
         
         self.results['recommendations'] = recommendations
     
+    def _is_excluded(self, path: Path) -> bool:
+        path_str = str(path).lower()
+        return any(ex in path_str.split(os.sep) for ex in self.exclude_dirs)
+    
     def _find_documentation_files(self) -> List[Path]:
-        """Find all documentation files"""
+        """Find all documentation files, excluding non-project directories"""
         doc_files = []
         patterns = ['*.md', '*.rst', '*.txt']
-        
         for pattern in patterns:
-            doc_files.extend(self.project_path.rglob(pattern))
-        
-        # Filter out obvious non-documentation
-        excluded = ['.git', '__pycache__', 'node_modules', '.pytest_cache']
-        doc_files = [f for f in doc_files if not any(ex in str(f) for ex in excluded)]
-        
+            for file in self.project_path.rglob(pattern):
+                if self._is_excluded(file):
+                    continue
+                doc_files.append(file)
         return doc_files
     
     def _add_issue(self, issue_type: str, description: str, details: Dict, severity: str):

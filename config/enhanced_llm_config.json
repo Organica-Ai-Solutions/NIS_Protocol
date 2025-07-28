@@ -63,10 +63,6 @@
         "reasoning": {
           "temperature": 0.3,
           "max_tokens": 3072
-        },
-        "archaeological": {
-          "temperature": 0.4,
-          "max_tokens": 4096
         }
       }
     },
@@ -182,18 +178,6 @@
         "max_tokens": 3072,
         "parallel_capable": true,
         "system_prompt": "You are operating in CULTURAL INTELLIGENCE mode. Focus on cultural sensitivity, recognizing diverse perspectives, avoiding appropriation, respecting indigenous knowledge, and considering historical implications."
-      },
-      "archaeological": {
-        "primary_provider": "anthropic",
-        "fallback_providers": [
-          "openai",
-          "deepseek",
-          "mock"
-        ],
-        "temperature": 0.4,
-        "max_tokens": 4096,
-        "parallel_capable": true,
-        "system_prompt": "You are operating in ARCHAEOLOGICAL EXPERTISE mode. Focus on archaeological methodology, cultural heritage preservation, historical context, interdisciplinary collaboration, and ethical considerations."
       },
       "execution": {
         "primary_provider": "bitnet",

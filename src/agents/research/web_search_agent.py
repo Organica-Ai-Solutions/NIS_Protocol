@@ -33,7 +33,6 @@ class SearchProvider(Enum):
 
 class ResearchDomain(Enum):
     """Research domain specializations."""
-    ARCHAEOLOGICAL = "archaeological"
     CULTURAL = "cultural"
     HISTORICAL = "historical"
     SCIENTIFIC = "scientific"
@@ -87,12 +86,6 @@ class WebSearchAgent:
         
         # Domain-specific configurations
         self.domain_configs = {
-            ResearchDomain.ARCHAEOLOGICAL: {
-                "academic_sources": True,
-                "cultural_sensitivity": True,
-                "preferred_domains": ["jstor.org", "cambridge.org", "academia.edu"],
-                "keywords_boost": ["archaeology", "cultural heritage", "excavation"]
-            },
             ResearchDomain.CULTURAL: {
                 "academic_sources": True,
                 "cultural_sensitivity": True,
@@ -218,12 +211,7 @@ class WebSearchAgent:
         enhanced_queries = [base_query]
         
         # Add domain-specific variations
-        if domain == ResearchDomain.ARCHAEOLOGICAL:
-            enhanced_queries.extend([
-                f"{base_query} archaeological evidence",
-                f"{base_query} cultural heritage preservation"
-            ])
-        elif domain == ResearchDomain.CULTURAL:
+        if domain == ResearchDomain.CULTURAL:
             enhanced_queries.extend([
                 f"{base_query} cultural significance",
                 f"{base_query} indigenous perspectives"

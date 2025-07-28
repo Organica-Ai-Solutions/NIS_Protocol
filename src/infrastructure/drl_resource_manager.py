@@ -32,10 +32,25 @@ from enum import Enum
 import json
 import asyncio
 
+# Simple fallback classes for missing imports
+class ExperienceBuffer:
+    def __init__(self, buffer_size: int = 10000):
+        self.buffer_size = buffer_size
+        self.buffer = []
+    
+    def add(self, experience):
+        if len(self.buffer) >= self.buffer_size:
+            self.buffer.pop(0)
+        self.buffer.append(experience)
+    
+    def sample(self, batch_size: int):
+        import random
+        return random.sample(self.buffer, min(batch_size, len(self.buffer)))
+
 # Import DRL foundation
-from src.agents.learning.drl_foundation import (
-    DRLPolicyNetwork, DRLEnvironment, DRLAgent, RewardSignal,
-    DRLMetrics, TrainingConfig, ExperienceBuffer
+from src.agents.drl.drl_foundation import (
+    DRLPolicyNetwork, NISCoordinationEnvironment, DRLAgent, DRLReward,
+    DRLTask, DRLAction, DRLState
 )
 
 # Import infrastructure components
@@ -1029,6 +1044,16 @@ class DRLResourceManager:
         except Exception as e:
             logger.error(f"Failed to load model: {e}")
             return False 
+
+    def get_status(self) -> Dict[str, Any]:
+        """Returns the current status of the resource manager."""
+        return {
+            "agent_id": "drl_resource_manager",
+            "layer": "Infrastructure",
+            "description": "Manages system resources using Deep Reinforcement Learning.",
+            "status": "active",
+            "timestamp": time.time()
+        }
 
     def _calculate_baseline_quality(self) -> float:
         """Calculate baseline quality score based on recent performance"""

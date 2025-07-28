@@ -54,14 +54,17 @@ try:
     LANGSMITH_AVAILABLE = True
 except ImportError:
     LANGSMITH_AVAILABLE = False
+    def traceable(func):
+        return func
 
-# Infrastructure integration
+# Infrastructure and Core messaging integration
 from src.infrastructure.integration_coordinator import (
     InfrastructureCoordinator,
     ServiceHealth,
     IntegrationStatus
 )
-from src.infrastructure.message_streaming import (
+# DECOUPLED: Import from core messaging instead of infrastructure
+from src.core.messaging import (
     MessageType,
     MessagePriority,
     NISMessage

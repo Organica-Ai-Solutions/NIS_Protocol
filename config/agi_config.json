@@ -77,7 +77,7 @@
             "neural_inspired": true
         },
         "cultural_alignment": {
-            "domain_specific": "archaeology_heritage",
+            "domain_specific": "multi-domain",
             "cultural_sensitivity": true,
             "ethical_by_design": true,
             "human_centric": true

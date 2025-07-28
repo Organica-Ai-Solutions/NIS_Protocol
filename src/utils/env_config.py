@@ -208,12 +208,6 @@ class EnvironmentConfig:
                         "temperature": 0.6,
                         "max_tokens": 3072
                     },
-                    "archaeological": {
-                        "primary_provider": self.get_env("ARCHAEOLOGICAL_PROVIDER", "anthropic"),
-                        "fallback_providers": ["openai", "deepseek", "mock"],
-                        "temperature": 0.4,
-                        "max_tokens": 4096
-                    },
                     "execution": {
                         "primary_provider": self.get_env("EXECUTION_PROVIDER", "bitnet"),
                         "fallback_providers": ["deepseek", "openai", "mock"],

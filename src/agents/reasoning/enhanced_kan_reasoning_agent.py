@@ -468,9 +468,11 @@ class EnhancedKANReasoningAgent(NISAgent):
                  input_dim: int = 8,
                  hidden_dims: List[int] = [16, 12, 8],
                  output_dim: int = 4,
-                 enable_self_audit: bool = True):
+                 enable_self_audit: bool = True,
+                 layer: Optional[NISLayer] = None):
         
-        super().__init__(agent_id, NISLayer.REASONING)
+        super().__init__(agent_id)
+        self.layer = layer if layer is not None else NISLayer.REASONING
         
         self.input_dim = input_dim
         self.hidden_dims = hidden_dims

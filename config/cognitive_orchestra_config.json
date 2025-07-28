@@ -158,21 +158,6 @@
             "specialization_prompt": "You are operating in COORDINATION mode. Focus on multi-agent communication, synchronization, conflict resolution, and maintaining system harmony."
         },
         
-        "archaeological": {
-            "description": "Archaeological expertise, cultural heritage, historical analysis",
-            "optimal_providers": ["anthropic", "openai", "deepseek"],
-            "fallback_providers": ["mock"],
-            "temperature_range": [0.3, 0.6],
-            "max_tokens": 4096,
-            "latency_priority": "quality",
-            "parallel_capable": true,
-            "memory_intensive": true,
-            "creativity_level": 0.5,
-            "precision_level": 0.8,
-            "domain_knowledge": ["archaeology", "history", "cultural_heritage"],
-            "specialization_prompt": "You are operating in ARCHAEOLOGICAL EXPERTISE mode. Focus on archaeological methodology, cultural heritage preservation, historical context, interdisciplinary collaboration, and ethical considerations in archaeological work."
-        },
-        
         "environmental": {
             "description": "Environmental intelligence, climate analysis, ecosystem understanding",
             "optimal_providers": ["anthropic", "openai", "deepseek"],

@@ -74,22 +74,20 @@ class ReasoningAgent(NISAgent):
         self.emotional_state = emotional_state or EmotionalState()
         self.interpreter = interpreter
         
+        # Initialize confidence factors for mathematical validation
+        self.confidence_factors = create_default_confidence_factors()
+        
         # Calculate adaptive confidence threshold if not provided
         if confidence_threshold is None:
-            # Calculate adaptive threshold based on context and emotional state
-            base_threshold = 0.65  # Conservative baseline
+            # Use calculate_confidence with factors adjusted by emotional state
+            urgency_factor = getattr(self.emotional_state, 'urgency', 0.5)
+            confidence_factor = getattr(self.emotional_state, 'confidence', 0.5)
             
-            # Adjust based on emotional state urgency and confidence
-            if self.emotional_state:
-                urgency_factor = getattr(self.emotional_state, 'urgency', 0.5)
-                confidence_factor = getattr(self.emotional_state, 'confidence', 0.5)
-                
-                # Higher urgency = lower threshold (faster decisions)
-                # Higher confidence = higher threshold (more selective)
-                threshold_adjustment = (confidence_factor - urgency_factor) * 0.15
-                self.confidence_threshold = max(0.5, min(0.85, base_threshold + threshold_adjustment))
-            else:
-                self.confidence_threshold = base_threshold
+            # Adjust factors
+            self.confidence_factors.algorithm_stability = confidence_factor
+            self.confidence_factors.validation_coverage = 1 - urgency_factor  # Higher urgency lowers coverage for faster decisions
+            
+            self.confidence_threshold = calculate_confidence(self.confidence_factors)
         else:
             self.confidence_threshold = confidence_threshold
             
@@ -105,9 +103,6 @@ class ReasoningAgent(NISAgent):
             'auto_corrections_applied': 0,
             'average_integrity_score': 100.0
         }
-        
-        # Initialize confidence factors for mathematical validation
-        self.confidence_factors = create_default_confidence_factors()
         
         # Initialize reasoning pipelines
         try:
@@ -317,19 +312,11 @@ class ReasoningAgent(NISAgent):
             )[0]["generated_text"]
             
             # Extract confidence assessment based on reasoning quality
-            confidence = self._assess_reasoning_confidence(reasoning, observation, question)
+            confidence = self._assess_reasoning_confidence(reasoning, examples_text, hypothesis)
             
             # Apply evidence-based confidence adjustments using proper calculation
-            evidence_boost = 0.0
-            if "strong evidence" in reasoning.lower():
-                evidence_boost = 0.25  # Significant evidence boost
-            elif "moderate evidence" in reasoning.lower():
-                evidence_boost = 0.15  # Moderate evidence boost
-            elif "weak evidence" in reasoning.lower():
-                evidence_boost = 0.05  # Small evidence boost
-            
-            # Apply evidence boost while maintaining calculated base confidence integrity
-            confidence = min(0.98, confidence + evidence_boost)  # Cap at realistic maximum
+            evidence_strength = self._calculate_evidence_strength(reasoning)
+            confidence = calculate_confidence(self.confidence_factors) * evidence_strength  # Use dynamic calculation
             
             return {
                 "status": "success",
@@ -586,20 +573,45 @@ class ReasoningAgent(NISAgent):
         observation_length = len(observation.split())
         question_complexity = len(question.split())
         
-        # Calculate quality metrics
-        reasoning_detail = min(1.0, reasoning_length / 50.0)  # Normalize to 50 words as good detail
-        evidence_quality = min(1.0, observation_length / 30.0)  # Normalize observation length
-        complexity_coverage = min(1.0, reasoning_length / (question_complexity * 5))  # Coverage vs complexity
+        # Calculate quality metrics dynamically
+        reasoning_detail = min(1.0, reasoning_length / max(1, question_complexity * 2))  # Dynamic normalization
+        evidence_quality = min(1.0, observation_length / max(1, question_complexity))
+        complexity_coverage = min(1.0, reasoning_length / max(1, question_complexity * 3))
         
         # Use proper confidence calculation
         factors = ConfidenceFactors(
             data_quality=evidence_quality,
-            algorithm_stability=0.85,  # Reasoning algorithms are fairly stable
+            algorithm_stability=complexity_coverage,  # Dynamic stability based on coverage
             validation_coverage=complexity_coverage,
-            error_rate=max(0.1, 1.0 - reasoning_detail)  # Higher error for shorter reasoning
+            error_rate=1.0 - reasoning_detail  # Dynamic error rate
         )
         
         confidence = calculate_confidence(factors)
+        return confidence
+
+    def _calculate_evidence_strength(self, reasoning: str) -> float:
+        """Dynamically calculate evidence strength from reasoning text."""
+        strong_keywords = ["strong evidence", "clear pattern", "consistent"]
+        moderate_keywords = ["moderate evidence", "possible pattern"]
+        weak_keywords = ["weak evidence", "uncertain"]
+        
+        score = 0.5  # Base
+        lower_reasoning = reasoning.lower()
+        if any(kw in lower_reasoning for kw in strong_keywords):
+            score = 0.9
+        elif any(kw in lower_reasoning for kw in moderate_keywords):
+            score = 0.7
+        elif any(kw in lower_reasoning for kw in weak_keywords):
+            score = 0.4
+        
+        # Adjust with calculate_confidence for integrity
+        factors = ConfidenceFactors(
+            data_quality=score,
+            algorithm_stability=0.9,
+            validation_coverage=len(lower_reasoning) / 100.0,  # Normalize length
+            error_rate=1.0 - score
+        )
+        return calculate_confidence(factors)
     
     def clear_cache(self) -> None:
         """Clear the reasoning cache."""

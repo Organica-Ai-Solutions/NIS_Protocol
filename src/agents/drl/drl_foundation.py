@@ -26,11 +26,13 @@ import os
 
 # Gym environment for RL
 try:
-    import gym
-    from gym import spaces
+    import gymnasium as gym
+    from gymnasium import spaces
     GYM_AVAILABLE = True
 except ImportError:
     GYM_AVAILABLE = False
+    class gym:
+        Env = object
 
 # PyTorch for DRL networks
 try:

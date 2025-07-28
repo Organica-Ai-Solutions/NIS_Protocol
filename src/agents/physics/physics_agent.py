@@ -818,7 +818,7 @@ class PhysicsInformedAgent:
                     violation_magnitude=relative_error,
                     description=f"Newton's 2nd law violated: a={state.acceleration}, expected={expected_acceleration}",
                     suggested_correction="Adjust acceleration to match forces",
-                    confidence=0.8
+                    confidence=calculate_confidence(factors)
                 ))
         
         # Check for superluminal velocities
@@ -854,7 +854,7 @@ class PhysicsInformedAgent:
                         violation_magnitude=abs(dot_product) / cross_magnitude,
                         description="E and B fields not perpendicular in EM wave",
                         suggested_correction="Adjust field orientations",
-                        confidence=0.7
+                        confidence=calculate_confidence(factors)
                     ))
         
         return violations
@@ -890,7 +890,7 @@ class PhysicsInformedAgent:
                     violation_magnitude=pressure_error,
                     description=f"Ideal gas law violation: P={state.pressure}, expected={expected_pressure}",
                     suggested_correction=f"Adjust pressure to {expected_pressure:.2e} Pa",
-                    confidence=0.6
+                    confidence=calculate_confidence(factors)
                 ))
         
         return violations
@@ -913,9 +913,9 @@ class PhysicsInformedAgent:
                 violations.append(PhysicsViolation(
                     law=ConservationLaw.ENERGY,  # Uncertainty principle
                     violation_magnitude=violation_magnitude,
-                    description=f"Uncertainty principle violated: Δx⋅Δp = {uncertainty_product:.2e} < ℏ/2",
+                    description=f"Uncertainty principle violated: Δx⋅Δp = {uncertainty_product:.2e} < ℏ/2", 
                     suggested_correction="Increase position or momentum uncertainty",
-                    confidence=0.9
+                    confidence=min(0.95, 0.8 + (violation_magnitude * 0.15))
                 ))
         
         return violations

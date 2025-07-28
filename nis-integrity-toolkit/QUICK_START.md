@@ -9,10 +9,10 @@
 python audit-scripts/pre-submission-check.py
 
 # This will instantly show you:
-# - Hardcoded performance values
-# - Unsupported hype language  
-# - Missing evidence for claims
-# - Documentation-code misalignment
+- Hardcoded performance values
+- Unsupported hype language  
+- Missing evidence for claims
+- Documentation-code misalignment
 ```
 
 #### **2. Run Full Audit** (3 minutes)
@@ -21,9 +21,9 @@ python audit-scripts/pre-submission-check.py
 python audit-scripts/full-audit.py --project-path .. --output-report
 
 # This creates detailed JSON report with:
-# - Integrity score (0-100)
-# - Specific issues and recommendations
-# - Evidence for all findings
+- Integrity score (0-100)
+- Specific issues and recommendations
+- Evidence for all findings
 ```
 
 ---

@@ -132,9 +132,14 @@ class EnhancedLaplaceTransformer(NISAgent):
                  agent_id: str = "laplace_transformer",
                  max_frequency: float = 1000.0,
                  num_points: int = 2048,
-                 enable_self_audit: bool = True):
+                 enable_self_audit: bool = True,
+                 layer: Optional[Any] = None):
         
         super().__init__(agent_id)
+        
+        # Defer NISLayer import to avoid circular dependency
+        from ...core.agent import NISLayer
+        self.layer = layer if layer is not None else NISLayer.SIGNAL_PROCESSING
         
         # Processing parameters
         self.max_frequency = max_frequency

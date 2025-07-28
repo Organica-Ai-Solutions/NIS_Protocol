@@ -40,7 +40,7 @@ action_agent = ActionAgent("action_1", "Executes actions in the environment")
 # Process an input
 input_data = {"type": "image", "data": "base64_encoded_image_data"}
 
-# Processing pipeline
+# processing (implemented) (implemented) pipeline
 perception_result = vision_agent.process(input_data)
 memory_context = memory_agent.retrieve(perception_result)
 decision = cortex_agent.decide(perception_result, memory_context, emotional_system.get_state())
@@ -70,7 +70,7 @@ When implementing the NIS Protocol, focus on these key components:
 
 ## Common Use Cases
 
-- **Automated monitoring ([health tracking](src/infrastructure/integration_coordinator.py)) Systems**: Create systems that adapt their suspicion levels based on inputs
+- **Automated Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) ([health tracking](src/infrastructure/integration_coordinator.py)) Systems**: Create systems that adapt their suspicion levels based on inputs
 - **Smart Assistants**: Build assistants that remember user preferences and adjust behavior
 - **Autonomous Agents**: Develop agents that make decisions with emotional modulation
 

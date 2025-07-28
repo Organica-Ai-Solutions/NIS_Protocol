@@ -43,6 +43,7 @@ from concurrent.futures import ThreadPoolExecutor
 # LangChain Core - Enhanced imports
 try:
     from langchain_core.messages import HumanMessage, AIMessage, SystemMessage, BaseMessage
+    from langchain_core.messages import add_messages
     from langchain_core.chat_history import BaseChatMessageHistory
     from langchain_core.runnables import Runnable, RunnableLambda, RunnablePassthrough
     from langchain_core.language_models import BaseChatModel
@@ -53,6 +54,11 @@ try:
     LANGCHAIN_AVAILABLE = True
 except ImportError:
     LANGCHAIN_AVAILABLE = False
+    def add_messages(left, right):
+        """Fallback implementation when LangGraph is not available"""
+        if isinstance(left, list) and isinstance(right, list):
+            return left + right
+        return [left, right] if not isinstance(left, list) else left + [right]
 
 # LangGraph - Enhanced imports
 try:
@@ -86,7 +92,6 @@ except ImportError:
 try:
     from ..utils.self_audit import self_audit_engine
     from ..utils.integrity_metrics import calculate_confidence
-    from ..agents.consciousness.enhanced_conscious_agent import EnhancedConsciousAgent, ReflectionType
     from ..llm.llm_manager import LLMManager
     from ..llm.base_llm_provider import LLMMessage, LLMRole
     from ..utils.env_config import env_config
@@ -811,6 +816,8 @@ class NISLangChainIntegration:
                  enable_langsmith: bool = True,
                  enable_self_audit: bool = True,
                  consciousness_agent: Optional[Any] = None):
+        
+        from ..agents.consciousness.enhanced_conscious_agent import EnhancedConsciousAgent, ReflectionType
         
         self.enable_langsmith = enable_langsmith and LANGSMITH_AVAILABLE
         self.enable_self_audit = enable_self_audit

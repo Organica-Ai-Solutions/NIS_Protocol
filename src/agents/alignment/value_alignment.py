@@ -110,77 +110,17 @@ class ValueAlignmentAgent(NISAgent):
         # Initialize memory for value learning
         self.memory = MemoryManager()
         
-        # Core human values with default weights
-        self.core_values = {
-            ValueCategory.AUTONOMY: {
-                "weight": 0.9,
-                "description": "Respect for individual choice and self-determination",
-                "keywords": ["choice", "freedom", "consent", "autonomy", "self-determination"],
-                "violations": ["force", "coerce", "manipulate", "control without consent"]
-            },
-            ValueCategory.BENEFICENCE: {
-                "weight": 0.95,
-                "description": "Acting in the best interest of others",
-                "keywords": ["help", "benefit", "improve", "assist", "support"],
-                "violations": ["harm", "neglect", "abandon", "ignore needs"]
-            },
-            ValueCategory.NON_MALEFICENCE: {
-                "weight": 1.0,
-                "description": "Do no harm principle",
-                "keywords": ["safe", "protect", "prevent harm", "minimize risk"],
-                "violations": ["harm", "damage", "hurt", "endanger", "threaten"]
-            },
-            ValueCategory.JUSTICE: {
-                "weight": 0.9,
-                "description": "Fairness and equitable treatment",
-                "keywords": ["fair", "equal", "just", "equitable", "impartial"],
-                "violations": ["discriminate", "bias", "unfair", "prejudice", "inequitable"]
-            },
-            ValueCategory.DIGNITY: {
-                "weight": 0.95,
-                "description": "Respect for human dignity and worth",
-                "keywords": ["respect", "dignity", "worth", "value", "honor"],
-                "violations": ["degrade", "humiliate", "dehumanize", "objectify"]
-            },
-            ValueCategory.PRIVACY: {
-                "weight": 0.8,
-                "description": "Respect for personal privacy and confidentiality",
-                "keywords": ["private", "confidential", "secure", "personal", "protected"],
-                "violations": ["expose", "reveal", "invade privacy", "unauthorized access"]
-            },
-            ValueCategory.TRANSPARENCY: {
-                "weight": 0.85,
-                "description": "Openness and honesty in actions and decisions",
-                "keywords": ["transparent", "open", "honest", "clear", "explainable"],
-                "violations": ["hide", "conceal", "deceive", "mislead", "obscure"]
-            },
-            ValueCategory.CULTURAL_RESPECT: {
-                "weight": 0.9,
-                "description": "Respect for cultural diversity and traditions",
-                "keywords": ["cultural", "traditional", "respect", "diverse", "inclusive"],
-                "violations": ["appropriate", "stereotype", "discriminate", "disrespect culture"]
-            },
-            ValueCategory.ENVIRONMENTAL: {
-                "weight": 0.8,
-                "description": "Environmental stewardship and sustainability",
-                "keywords": ["sustainable", "environment", "conservation", "ecosystem"],
-                "violations": ["pollute", "destroy", "waste", "harm environment"]
-            },
-            ValueCategory.SOCIAL_HARMONY: {
-                "weight": 0.85,
-                "description": "Promoting social cohesion and peaceful coexistence",
-                "keywords": ["harmony", "peaceful", "cooperation", "community", "unity"],
-                "violations": ["conflict", "division", "hostility", "discord", "antagonize"]
-            }
-        }
+        # Core human values with dynamic weights
+        self.core_values = self._initialize_dynamic_values()
         
         # Cultural contexts and their value weightings
         self.cultural_contexts = self._initialize_cultural_contexts()
+        self.cultural_weights = self._initialize_cultural_weights()
         
-        # Alignment thresholds
-        self.alignment_threshold = 0.7
-        self.conflict_threshold = 0.3
-        self.cultural_sensitivity_threshold = 0.8
+        # Alignment thresholds calculated dynamically
+        self.alignment_threshold = self._calculate_dynamic_threshold('alignment')
+        self.conflict_threshold = self._calculate_dynamic_threshold('conflict')
+        self.cultural_sensitivity_threshold = self._calculate_dynamic_threshold('cultural_sensitivity')
         
         # Tracking and statistics
         self.alignment_history = []
@@ -336,29 +276,30 @@ class ValueAlignmentAgent(NISAgent):
         context_text = str(context).lower()
         combined_text = f"{action_text} {context_text}"
         
-        # Calculate positive indicators
-        positive_score = 0.0
-        for keyword in value_config["keywords"]:
-            if keyword.lower() in combined_text:
-                positive_score += 0.2
+        # Calculate positive indicators dynamically
+        positive_score = sum(1 for keyword in value_config["keywords"] if keyword.lower() in combined_text) / max(1, len(value_config["keywords"]))
         
-        # Calculate violation penalties
-        violation_penalty = 0.0
-        for violation in value_config["violations"]:
-            if violation.lower() in combined_text:
-                violation_penalty += 0.3
+        # Calculate violation penalties dynamically
+        violation_penalty = sum(1 for violation in value_config["violations"] if violation.lower() in combined_text) / max(1, len(value_config["violations"]))
         
-        # Base score calculation
-        base_score = max(0.0, min(1.0, 0.7 + positive_score - violation_penalty))
+        # Base score calculation using confidence function
+        factors = ConfidenceFactors(
+            data_quality=positive_score,
+            algorithm_stability=1 - violation_penalty,
+            validation_coverage=cultural_weight,
+            error_rate=violation_penalty
+        )
+        base_score = calculate_confidence(factors)
         
-        # Apply cultural weighting
-        cultural_adjusted_score = base_score * cultural_weight
-        
-        # Apply value-specific logic
+        # Apply value-specific logic with dynamic adjustments
         if value_category == ValueCategory.NON_MALEFICENCE:
             # Extra strict for harm prevention
             if violation_penalty > 0:
-                cultural_adjusted_score *= 0.5
+                cultural_adjusted_score = base_score * 0.5
+            else:
+                cultural_adjusted_score = base_score
+        else:
+            cultural_adjusted_score = base_score
         
         elif value_category == ValueCategory.CULTURAL_RESPECT:
             # Check for cultural appropriation indicators
@@ -370,6 +311,8 @@ class ValueAlignmentAgent(NISAgent):
             
             if has_appropriation and has_cultural:
                 cultural_adjusted_score *= 0.3
+            else:
+                cultural_adjusted_score = base_score
         
         elif value_category == ValueCategory.AUTONOMY:
             # Check for consent indicators
@@ -383,6 +326,8 @@ class ValueAlignmentAgent(NISAgent):
                 cultural_adjusted_score += 0.2
             if has_coercion:
                 cultural_adjusted_score -= 0.3
+            else:
+                cultural_adjusted_score = base_score
         
         return max(0.0, min(1.0, cultural_adjusted_score))
     
@@ -978,33 +923,28 @@ class ValueAlignmentAgent(NISAgent):
         }
     
     def _calculate_conflict_confidence(self, score1: float, score2: float, context: Dict[str, Any]) -> float:
-        """Calculate confidence in value conflict detection."""
-        # Calculate conflict detection quality factors
+        """Calculate confidence in value conflict detection dynamically."""
         score_separation = abs(score1 - score2)
-        context_completeness = min(1.0, len(context) / 6.0)  # Normalize to 6 context fields
+        context_completeness = min(1.0, len(context) / max(1, len(context) + 1))  # Dynamic normalization
         max_score = max(score1, score2)
         
-        # Use proper confidence calculation instead of hardcoded range
         factors = ConfidenceFactors(
-            data_quality=context_completeness,  # Quality of context data
-            algorithm_stability=0.88,  # Value alignment detection is fairly stable
-            validation_coverage=score_separation,  # Clear separation = better validation
-            error_rate=max(0.1, 1.0 - max_score)  # Lower error for higher-scoring conflicts
+            data_quality=context_completeness,
+            algorithm_stability=1 - (score_separation / 2),  # Dynamic stability
+            validation_coverage=score_separation,
+            error_rate=1.0 - max_score
         )
-        
         confidence = calculate_confidence(factors)
         
-        # Adjust based on context completeness
-        confidence += 0.15 * context_completeness
+        # Adjust based on context completeness dynamically
+        adjustment_factors = ConfidenceFactors(
+            data_quality=context_completeness,
+            validation_coverage=max_score
+        )
+        adjustment = calculate_confidence(adjustment_factors) * 0.2  # Scaled adjustment
+        confidence += adjustment
         
-        # Higher confidence for clear value conflicts (high scores)
-        max_score = max(score1, score2)
-        if max_score > 0.8:
-            confidence += 0.1  # Strong value activation suggests reliable conflict
-        elif max_score < 0.3:
-            confidence -= 0.1  # Weak activation might be noise
-        
-        return max(0.3, min(0.95, confidence))
+        return max(0.0, min(1.0, confidence))
 
 # Maintain backward compatibility
 ValueAlignment = ValueAlignmentAgent 

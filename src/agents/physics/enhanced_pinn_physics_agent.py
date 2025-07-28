@@ -103,28 +103,23 @@ class PhysicsViolation:
 @dataclass
 class PINNValidationResult:
     """Comprehensive PINN physics validation results"""
+    # Required fields (no defaults)
     physics_compliance_score: float        # Overall compliance (0-1)
     conservation_scores: Dict[str, float]   # Individual conservation law scores
     violations: List[PhysicsViolation]      # Detected violations
-    
-    # Performance metrics
     processing_time: float                  # Actual processing time
     memory_usage: int                       # Memory used in bytes
     validation_confidence: float            # Confidence in validation
-    
-    # Correction results
-    auto_correction_applied: bool = False
-    corrected_function: Optional[sp.Expr] = None
-    correction_improvement: float = 0.0     # Improvement from correction
-    
-    # Analysis details
     constraint_evaluations: Dict[str, float]
     physics_law_scores: Dict[PhysicsLaw, float]
     numerical_stability: float
-    
-    # Recommendations
     physics_recommendations: List[str]
     improvement_suggestions: List[str]
+    
+    # Optional fields (with defaults)
+    auto_correction_applied: bool = False
+    corrected_function: Optional[sp.Expr] = None
+    correction_improvement: float = 0.0     # Improvement from correction
     
     def get_summary(self) -> str:
         """Generate integrity-compliant summary"""
@@ -768,9 +763,11 @@ class EnhancedPINNPhysicsAgent(NISAgent):
     def __init__(self, 
                  agent_id: str = "enhanced_pinn_physics",
                  enable_self_audit: bool = True,
-                 strict_mode: bool = False):
+                 strict_mode: bool = False,
+                 layer: Optional[NISLayer] = None):
         
-        super().__init__(agent_id, NISLayer.REASONING)
+        super().__init__(agent_id)
+        self.layer = layer if layer is not None else NISLayer.PHYSICS
         
         self.enable_self_audit = enable_self_audit
         self.strict_mode = strict_mode

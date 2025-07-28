@@ -105,15 +105,15 @@ class EnhancedConsciousAgent(NISAgent):
     
     def __init__(self,
                  agent_id: str = "enhanced_conscious_agent",
+                 description: str = "Enhanced consciousness agent with meta-cognitive capabilities and self-reflection",
                  reflection_interval: float = 60.0,
                  enable_self_audit: bool = True,
-                 consciousness_level: ConsciousnessLevel = ConsciousnessLevel.ENHANCED):
+                 consciousness_level: ConsciousnessLevel = ConsciousnessLevel.ENHANCED,
+                 layer: Optional[NISLayer] = None):
         
-        super().__init__(
-            agent_id, 
-            NISLayer.REASONING, 
-            "Enhanced consciousness agent with meta-cognitive capabilities and self-reflection"
-        )
+        super().__init__(agent_id)
+        self.layer = layer if layer is not None else NISLayer.CONSCIOUSNESS
+        self.description = description
         
         self.reflection_interval = reflection_interval
         self.enable_self_audit = enable_self_audit
@@ -264,6 +264,86 @@ class EnhancedConsciousAgent(NISAgent):
             result.findings['error'] = str(e)
             result.confidence = 0.0
             return result
+    
+    def perform_codebase_integrity_scan(self, target_directories: List[str] = None) -> Dict[str, Any]:
+        """
+        Perform comprehensive integrity scan of the codebase to detect issues
+        that should have been caught automatically.
+        
+        Args:
+            target_directories: Directories to scan (defaults to src/)
+            
+        Returns:
+            Comprehensive scan results with violations found
+        """
+        import os
+        import glob
+        
+        self.logger.info("Performing proactive codebase integrity scan")
+        
+        if target_directories is None:
+            target_directories = ['src/']
+        
+        scan_results = {
+            'total_files_scanned': 0,
+            'total_violations': 0,
+            'violations_by_file': {},
+            'violations_by_type': {},
+            'integrity_score': 0.0,
+            'critical_issues': [],
+            'scan_timestamp': time.time()
+        }
+        
+        # Scan Python files
+        for directory in target_directories:
+            pattern = os.path.join(directory, '**/*.py')
+            python_files = glob.glob(pattern, recursive=True)
+            
+            for file_path in python_files:
+                try:
+                    with open(file_path, 'r', encoding='utf-8') as f:
+                        file_content = f.read()
+                    
+                    # Run integrity audit on file content
+                    violations = self_audit_engine.audit_text(file_content, f"file:{file_path}")
+                    
+                    if violations:
+                        scan_results['violations_by_file'][file_path] = violations
+                        scan_results['total_violations'] += len(violations)
+                        
+                        # Categorize violations
+                        for violation in violations:
+                            violation_type = violation.violation_type.value
+                            if violation_type not in scan_results['violations_by_type']:
+                                scan_results['violations_by_type'][violation_type] = 0
+                            scan_results['violations_by_type'][violation_type] += 1
+                            
+                            # Mark critical issues (hardcoded values)
+                            if violation.severity == "HIGH":
+                                scan_results['critical_issues'].append({
+                                    'file': file_path,
+                                    'violation': violation.text,
+                                    'suggestion': violation.suggested_replacement,
+                                    'type': violation_type
+                                })
+                    
+                    scan_results['total_files_scanned'] += 1
+                    
+                except Exception as e:
+                    self.logger.warning(f"Could not scan file {file_path}: {e}")
+        
+        # Calculate overall integrity score
+        if scan_results['total_files_scanned'] > 0:
+            files_with_violations = len(scan_results['violations_by_file'])
+            violation_rate = files_with_violations / scan_results['total_files_scanned']
+            scan_results['integrity_score'] = max(0, 100 - (violation_rate * 50) - (scan_results['total_violations'] * 2))
+        
+        self.logger.warning(f"Codebase scan complete: {scan_results['total_violations']} violations in {scan_results['total_files_scanned']} files")
+        
+        if scan_results['critical_issues']:
+            self.logger.error(f"CRITICAL: Found {len(scan_results['critical_issues'])} high-severity issues that should have been auto-detected!")
+        
+        return scan_results
     
     def _perform_performance_review(self, result: IntrospectionResult, 
                                   target_agent_id: Optional[str]) -> IntrospectionResult:

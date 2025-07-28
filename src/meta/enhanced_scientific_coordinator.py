@@ -44,6 +44,10 @@ class PipelineStage(Enum):
     LLM_ENHANCEMENT = "llm_enhancement"     # Natural language generation
     OUTPUT_VALIDATION = "output_validation" # Final integrity check
 
+class BehaviorMode(Enum):
+    LAZY = "lazy"  # Low frequency, conserve resources
+    NORMAL = "normal"
+    HYPERACTIVE = "hyperactive"  # High frequency, parallel processing
 
 class ProcessingPriority(Enum):
     """Processing priority levels for pipeline management"""
@@ -183,11 +187,14 @@ class EnhancedScientificCoordinator:
     def __init__(self, 
                  coordinator_id: str = "enhanced_scientific_coordinator",
                  enable_self_audit: bool = True,
-                 enable_auto_correction: bool = True):
+                 enable_auto_correction: bool = True,
+                 default_mode: BehaviorMode = BehaviorMode.NORMAL):
         
         self.coordinator_id = coordinator_id
         self.enable_self_audit = enable_self_audit
         self.enable_auto_correction = enable_auto_correction
+        self.behavior_mode = default_mode
+        self.polling_interval = 5 if default_mode == BehaviorMode.LAZY else 1
         
         # Pipeline components (to be injected)
         self.pipeline_agents: Dict[PipelineStage, Any] = {}

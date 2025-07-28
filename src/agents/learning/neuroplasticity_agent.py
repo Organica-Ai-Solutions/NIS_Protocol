@@ -32,7 +32,7 @@ except ImportError:
     TORCH_AVAILABLE = False
 
 from src.core.registry import NISAgent, NISLayer
-from src.emotion.emotional_state import EmotionalState
+from src.emotion.emotional_state import EmotionalStateSystem
 from src.agents.memory.enhanced_memory_agent import EnhancedMemoryAgent, MemoryType
 
 # LSTM core integration for sequence learning
@@ -106,7 +106,7 @@ class NeuroplasticityAgent(NISAgent):
         self.consolidation_interval = consolidation_interval
         
         # Initialize emotional state
-        self.emotional_state = EmotionalState()
+        self.emotional_state = EmotionalStateSystem()
         
         # Set up logging
         self.logger = logging.getLogger(f"nis_neuroplasticity_{agent_id}")

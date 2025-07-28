@@ -46,7 +46,7 @@ graph TB
     subgraph "Consciousness Layer"
         CA[Conscious Agent]
         MCP[Meta-Cognitive Processor]
-        IM[Introspection Manager]
+        [+2 agents]  # See [agent inventory](NIS_V3_AGENT_MASTER_INVENTORY.md)
     end
     
     subgraph "Intelligence Agents"
@@ -56,18 +56,21 @@ graph TB
         KR[KAN Reasoning]
         PP[PINN Physics]
         LP[Laplace Processor]
+        [+4 agents]  # See [agent inventory](NIS_V3_AGENT_MASTER_INVENTORY.md)
     end
     
     subgraph "Memory & Learning"
         MA[Memory Agent]
         LA[Learning Agent]
         NP[Neuroplasticity Agent]
+        [+3 agents]  # See [agent inventory](NIS_V3_AGENT_MASTER_INVENTORY.md)
     end
     
     subgraph "Perception & Action"
         VA[Vision Agent]
         IA[Input Agent]
         MT[Motor Agent]
+        [+5 agents]  # See [agent inventory](NIS_V3_AGENT_MASTER_INVENTORY.md)
     end
     
     subgraph "Infrastructure"
@@ -103,7 +106,7 @@ graph TB
 
 ## 🔌 **Connection Patterns**
 
-### **1. 🎯 Direct Agent-to-Agent Communication**
+### **1. 🎯 Direct Agent-to-Agent Communication** (see [examples/direct_connection.py](examples/direct_connection.py))
 
 #### **Synchronous Connection**
 
@@ -156,7 +159,7 @@ import asyncio
 from src.agents.enhanced_agent_base import EnhancedAgentBase
 
 async def async_agent_coordination():
-    """Asynchronous agent coordination with parallel processing."""
+    """Asynchronous agent coordination with parallel processing (implemented) (implemented)."""
     
     # Initialize multiple agents
     agents = {
@@ -166,7 +169,7 @@ async def async_agent_coordination():
     }
     
     # Define coordination workflow
-    research_query = "Quantum consciousness in AI systems"
+    research_query = "advanced computational consciousness in AI systems"
     
     # Step 1: Parallel knowledge retrieval
     parallel_tasks = [
@@ -201,7 +204,7 @@ async def async_agent_coordination():
     }
 ```
 
-### **2. 📡 Message-Based Communication (Kafka)**
+### **2. 📡 Message-Based Communication (Kafka)** (see [message_streaming.py](src/infrastructure/message_streaming.py))
 
 #### **Publisher-Subscriber Pattern**
 
@@ -292,10 +295,12 @@ class AgentCoordinator:
 # Usage
 coordinator = AgentCoordinator()
 await coordinator.setup_agent_network()
-result = await coordinator.coordinate_research_workflow("Quantum AI consciousness")
+result = await coordinator.coordinate_research_workflow(
+    "advanced computational consciousness in AI systems"
+)
 ```
 
-### **3. 💾 Shared State Communication (Redis)**
+#### **Shared State Communication (Redis)**
 
 #### **Global State Management**
 
@@ -417,7 +422,7 @@ async def collaborative_research_session():
     # Create research session
     session = await state_manager.create_research_session(
         session_id, 
-        "Quantum consciousness in AI"
+        "advanced computational-conscious AI system"
     )
     
     # Agents join session
@@ -439,7 +444,7 @@ async def collaborative_research_session():
     })
     
     await state_manager.share_finding(session_id, "physics_agent", {
-        "constraint": "Quantum coherence limits consciousness duration",
+        "constraint": "advanced computational coherence limits consciousness duration",
         "confidence": 0.76,
         "mathematical_basis": "decoherence_calculations"
     })
@@ -451,7 +456,7 @@ async def collaborative_research_session():
 
 ---
 
-## 🎭 **Advanced Connection Patterns**
+## 🎭 **well-engineered Connection Patterns**
 
 ### **1. 🧠 Consciousness-Driven Coordination**
 
@@ -493,7 +498,7 @@ class ConsciousnessCoordinator:
             "ethical_constraints": consciousness_analysis["ethical_considerations"]
         }
         
-        # Step 4: Execute with consciousness monitoring
+        # Step 4: Execute with consciousness oversight
         results = await self.execute_with_consciousness_oversight(
             coordination_plan,
             consciousness_analysis
@@ -502,7 +507,7 @@ class ConsciousnessCoordinator:
         return results
     
     async def execute_with_consciousness_oversight(self, plan: Dict, consciousness_baseline: Dict):
-        """Execute agent coordination with consciousness monitoring."""
+        """Execute agent coordination with consciousness Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/)."""
         
         results = []
         
@@ -679,7 +684,7 @@ class EventDrivenOrchestrator:
 # Usage
 orchestrator = EventDrivenOrchestrator()
 workflow_id = await orchestrator.start_research_workflow(
-    "Quantum consciousness implementation in neural networks"
+    "advanced computational consciousness in neural networks"
 )
 ```
 
@@ -779,13 +784,13 @@ class GoalDrivenNetwork:
 network = GoalDrivenNetwork()
 
 # Register agent capabilities
-await network.register_agent_capabilities("consciousness", ["reflection", "ethics", "meta_cognition"])
-await network.register_agent_capabilities("reasoning", ["logic", "analysis", "synthesis"])
-await network.register_agent_capabilities("physics", ["quantum_mechanics", "validation", "mathematics"])
+await network.register_agent_capabilities("consciousness", ["reflection", "ethics"])
+await network.register_agent_capabilities("reasoning", ["logic", "analysis"])
+await network.register_agent_capabilities("physics", ["quantum_mechanics", "validation"])
 
 # Create and execute goal network
 goal_network = await network.create_goal_network(
-    "Develop quantum-conscious AI system with ethical safeguards"
+    "Develop advanced computational-conscious AI system with ethical safeguards"
 )
 
 results = await network.execute_goal_network(goal_network)
@@ -793,7 +798,7 @@ results = await network.execute_goal_network(goal_network)
 
 ---
 
-## 🔧 **Configuration & Monitoring**
+## 🔧 **Configuration & Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/)**
 
 ### **⚙️ Agent Connection Configuration**
 
@@ -834,7 +839,7 @@ AGENT_CONNECTION_CONFIG = {
             "fan_out": 3
         }
     },
-    "monitoring": {
+    "Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/)": {
         "health_check_interval": 30.0,
         "performance_metrics": True,
         "connection_logging": True,
@@ -843,7 +848,7 @@ AGENT_CONNECTION_CONFIG = {
 }
 ```
 
-### **📊 Connection Monitoring**
+### **📊 Connection Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/)**
 
 ```python
 from src.infrastructure.integration_coordinator import InfrastructureCoordinator

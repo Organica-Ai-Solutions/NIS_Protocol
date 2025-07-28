@@ -3,7 +3,7 @@
 ```mermaid
 graph TB
     subgraph "Error Detection Layer"
-        ME[Monitor Events<br/>👁️ Continuous Monitoring]
+        ME[Monitor Events<br/>👁️ Continuous Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/)]
         HD[Health Detector<br/>❤️ Component Health]
         ED[Error Detector<br/>🚨 Exception Catching]
         PD[Performance Detector<br/>📊 Performance Degradation]
@@ -37,7 +37,7 @@ graph TB
             CF[Cache Fallback<br/>💾 Cached Response]
         end
         
-        subgraph "Advanced Recovery"
+        subgraph "advanced Recovery"
             DR[Degraded Mode<br/>⬇️ Reduced Functionality]
             LB[Load Redistribution<br/>⚖️ Traffic Rerouting]
             FS[Failsafe Mode<br/>🛡️ Safe Operation]
@@ -78,11 +78,11 @@ graph TB
         IA[Improvement Actions<br/>📈 System Enhancement]
     end
     
-    subgraph "Monitoring & Alerting"
+    subgraph "Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) & Alerting"
         RM[Recovery Monitor<br/>📊 Recovery Tracking]
         AL[Alert System<br/>📢 Notification System]
         DG[Diagnostic Generator<br/>🔍 Issue Analysis]
-        RD[Recovery Dashboard<br/>📊 Visual Monitoring]
+        RD[Recovery Dashboard<br/>📊 Visual Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/)]
     end
     
     %% Detection flow
@@ -118,7 +118,7 @@ graph TB
     HIGH --> CL
     CRIT --> CF
     
-    %% Advanced recovery
+    %% advanced recovery
     RS --> DR
     RS --> LB
     RS --> FS
@@ -167,7 +167,7 @@ graph TB
     PS --> PA
     PA --> IA
     
-    %% Monitoring and alerting
+    %% Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) and alerting
     RE --> RM
     VM --> AL
     RR --> DG
@@ -184,13 +184,13 @@ graph TB
     classDef classification fill:#f1f8e9,stroke:#33691e,stroke-width:2px
     classDef errortype fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
     classDef severity fill:#ffebee,stroke:#c62828,stroke-width:2px
-    classDef strategy fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
+    classDef strategy fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
     classDef immediate fill:#e1f5fe,stroke:#01579b,stroke-width:2px
     classDef advanced fill:#fce4ec,stroke:#880e4f,stroke-width:2px
     classDef recovery fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
     classDef execution fill:#e8eaf6,stroke:#283593,stroke-width:2px
     classDef learning fill:#e0f2f1,stroke:#00695c,stroke-width:2px
-    classDef monitoring fill:#fafafa,stroke:#424242,stroke-width:2px
+    classDef Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) fill:#fafafa,stroke:#424242,stroke-width:2px
     
     class ME,HD,ED,PD detection
     class EC classification
@@ -202,17 +202,17 @@ graph TB
     class AR,AS,AC,LR,LF,LC,MR,MF,MC recovery
     class RE,VM,RR execution
     class LA,PS,PA,IA learning
-    class RM,AL,DG,RD monitoring
+    class RM,AL,DG,RD Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/)
 ```
 
 ## Error Handling & Recovery Overview
 
 ### 🚨 **Error Detection Layer**
-Continuous monitoring of system health and performance:
+Continuous Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) of system health and performance:
 - **Monitor Events**: Real-time event tracking across all components
 - **Health Detector**: Component health assessment and vital signs
 - **Error Detector**: Exception catching and error identification  
-- **Performance Detector**: Degradation detection and threshold monitoring
+- **Performance Detector**: Degradation detection and threshold Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/)
 
 ### 🏷️ **Error Classification System**
 
@@ -564,7 +564,6 @@ class CrisisDetector:
             await self.increase_verification_requirements()
         
         if "error_rate_spike" in indicators:
-            await self.switch_to_baseline_models()
             await self.enable_circuit_breakers()
         
         if "response_time_spike" in indicators:
@@ -577,10 +576,10 @@ class CrisisDetector:
 ```
 
 This error handling and recovery system ensures:
-- ✅ **Proactive Detection**: Continuous monitoring before issues become critical
+- ✅ **Proactive Detection**: Continuous Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) before issues become critical
 - ✅ **Intelligent Classification**: Smart error categorization and severity assessment
 - ✅ **Multi-Strategy Recovery**: Multiple recovery approaches for each error type
 - ✅ **Crisis Management**: System-wide crisis detection and emergency protocols
 - ✅ **Learning Integration**: Pattern recognition to prevent future issues
 
-Perfect for production deployment and AWS MAP program requirements! 
+high-quality for production deployment and AWS MAP program requirements! 

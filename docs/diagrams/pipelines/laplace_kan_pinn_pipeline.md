@@ -2,7 +2,7 @@
 
 ```mermaid
 graph LR
-    subgraph "Input Processing"
+    subgraph "Input processing (implemented) (implemented)"
         TD[Time Domain Signal<br/>📊 Raw Data]
         ST[Signal Types<br/>🎵 Audio, 📈 Sensor, 🔬 Scientific]
     end

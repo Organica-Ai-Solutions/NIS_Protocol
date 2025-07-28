@@ -62,19 +62,20 @@ show_warning() {
     fi
 }
 
-# Function to stop all services
+# Function to stop all services gracefully
 stop_all_services() {
-    print_status "Stopping all NIS Protocol v3 services..."
+    print_status "Stopping all NIS Protocol v3 services gracefully..."
     
-    # Force stop all containers
-    docker-compose -p "$PROJECT_NAME" kill 2>/dev/null || true
-    docker-compose -p "$PROJECT_NAME" --profile monitoring kill 2>/dev/null || true
+    # Use the stop.sh script for a graceful shutdown
+    if [ -f "./stop.sh" ]; then
+        ./stop.sh --remove-containers
+    else
+        # Fallback to more aggressive stop if stop.sh is not available
+        print_warning "stop.sh not found, using aggressive shutdown..."
+        docker-compose -p "$PROJECT_NAME" down --remove-orphans --timeout 30 2>/dev/null || true
+    fi
     
-    # Remove all containers
-    docker-compose -p "$PROJECT_NAME" down --remove-orphans 2>/dev/null || true
-    docker-compose -p "$PROJECT_NAME" --profile monitoring down --remove-orphans 2>/dev/null || true
-    
-    print_success "All services stopped"
+    print_success "All services stopped and removed"
 }
 
 # Function to remove all volumes and data

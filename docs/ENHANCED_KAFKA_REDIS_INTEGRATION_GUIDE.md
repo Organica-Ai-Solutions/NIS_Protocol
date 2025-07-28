@@ -21,7 +21,7 @@
 5. [Agent Integration](#-agent-integration)
 6. [Self-Audit Features](#-self-audit-features)
 7. [Performance Optimization](#-performance-optimization)
-8. [monitoring ([health tracking](src/infrastructure/integration_coordinator.py)) & Health](#-monitoring ([health tracking](src/infrastructure/integration_coordinator.py))--health)
+8. [Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) ([health tracking](src/infrastructure/integration_coordinator.py)) & Health](#-Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) ([health tracking](src/infrastructure/integration_coordinator.py))--health)
 9. [Troubleshooting](#-troubleshooting)
 10. [Configuration with measured performance](#-configuration)
 
@@ -32,7 +32,7 @@
 The NIS Protocol v3 enhanced infrastructure provides:
 
 ### **🌊 Kafka Message Streaming**
-- **Async message processing** with integrity monitoring ([health tracking](src/infrastructure/integration_coordinator.py))
+- **Async message processing (implemented) (implemented)** with integrity Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) ([health tracking](src/infrastructure/integration_coordinator.py))
 - **Auto-retry and circuit breaker** patterns
 - **Performance tracking** and optimization
 - **Self-audit integration** for message validation
@@ -42,12 +42,12 @@ The NIS Protocol v3 enhanced infrastructure provides:
 - **Intelligent cache strategies** (LRU, LFU, TTL)
 - **Performance tracking** and optimization
 - **Auto-cleanup** and memory management
-- **Health monitoring ([health tracking](src/infrastructure/integration_coordinator.py))** and diagnostics
+- **Health Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) ([health tracking](src/infrastructure/integration_coordinator.py))** and diagnostics
 - **Namespace-based organization**
 
 ### **🔄 Infrastructure Coordination**
 - **Unified interface** for message streaming and caching
-- **Health monitoring ([health tracking](src/infrastructure/integration_coordinator.py))** and auto-recovery
+- **Health Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) ([health tracking](src/infrastructure/integration_coordinator.py))** and auto-recovery
 - **Load balancing** and failover management
 - **metrics with implemented coverage** and performance tracking
 
@@ -423,7 +423,7 @@ print(f"Cached: {result.cache_key is not None}")
 
 ## 🛡️ Self-Audit Features
 
-### **Automatic Integrity monitoring ([health tracking](src/infrastructure/integration_coordinator.py))**
+### **Automatic Integrity Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) ([health tracking](src/infrastructure/integration_coordinator.py))**
 
 #### **Message Auditing**
 ```python
@@ -554,7 +554,7 @@ def optimize_cache_strategy(data_type: str, access_pattern: str) -> CacheStrateg
         return CacheStrategy.TTL
 ```
 
-### **Performance monitoring ([health tracking](src/infrastructure/integration_coordinator.py))**
+### **Performance Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) ([health tracking](src/infrastructure/integration_coordinator.py))**
 ```python
 # performance tracking
 async def monitor with implemented coverage_performance():
@@ -577,9 +577,9 @@ async def monitor with implemented coverage_performance():
 
 ---
 
-## 🏥 monitoring ([health tracking](src/infrastructure/integration_coordinator.py)) & Health
+## 🏥 Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) ([health tracking](src/infrastructure/integration_coordinator.py)) & Health
 
-### **Health monitoring ([health tracking](src/infrastructure/integration_coordinator.py))**
+### **Health Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) ([health tracking](src/infrastructure/integration_coordinator.py))**
 
 #### **Infrastructure Health**
 ```python

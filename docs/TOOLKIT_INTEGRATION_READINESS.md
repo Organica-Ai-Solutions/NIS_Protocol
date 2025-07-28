@@ -24,7 +24,7 @@ This document outlines how the current NIS Protocol documentation will integrate
 | Current Documentation | NAT Component | Integration Plan |
 |:---|:---|:---|
 | [Agent Hierarchy Diagram](mermaid_diagrams/agent_hierarchy/) | Agent Templates | Visual guide for `nis-agent create` |
-| [Consciousness Monitoring](mermaid_diagrams/system_flow/consciousness_monitoring_flow.md) | Cognitive Architecture | Template for reasoning agents |
+| [Consciousness Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/)](mermaid_diagrams/system_flow/consciousness_monitoring_flow.md) | Cognitive Architecture | Template for reasoning agents |
 | [Memory Architecture](mermaid_diagrams/system_flow/memory_system_architecture.md) | Memory Agents | Template for memory management |
 | [Error Handling](mermaid_diagrams/system_flow/error_handling_recovery.md) | Agent Resilience | Built-in error recovery patterns |
 
@@ -75,7 +75,7 @@ nis validate                     → Troubleshooting Guide
 nis deploy                       → Integration Examples
 
 # Agent Development  
-nis-agent create consciousness   → Consciousness Monitoring Flow
+nis-agent create consciousness   → Consciousness Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) Flow
 nis-agent simulate              → Testing & Validation
 nis-agent tools add calculator  → Integration Examples
 nis-agent deploy               → Production Deployment
@@ -127,7 +127,7 @@ nis-integrity audit --docs       # Uses our troubleshooting patterns
 ## 🎉 **Strategic Advantages**
 
 ### **For Developers:**
-- **Instant Setup** - `nis init` uses our proven patterns
+- **fast Setup** - `nis init` uses our proven patterns
 - **Built-in Best Practices** - Our architecture becomes default templates
 - **Integrated Troubleshooting** - Our diagnostics built into CLI
 - **Visual Guidance** - Our Mermaid diagrams embedded in toolkit docs

@@ -44,7 +44,6 @@ class CognitiveFunction(Enum):
     MONITORING = "monitoring"                # Performance monitoring, error detection
     
     # Specialized domains
-    ARCHAEOLOGICAL = "archaeological"        # Domain-specific archaeological knowledge
     ENVIRONMENTAL = "environmental"          # Environmental and climate intelligence
     SPATIAL = "spatial"                      # Spatial reasoning, navigation
     TEMPORAL = "temporal"                    # Time-based reasoning, scheduling
@@ -237,19 +236,6 @@ class CognitiveOrchestra:
                 creativity_level=0.1,
                 precision_level=0.9,
                 domain_knowledge=["robotics", "control_systems", "automation"]
-            ),
-            
-            CognitiveFunction.ARCHAEOLOGICAL: CognitiveProfile(
-                function=CognitiveFunction.ARCHAEOLOGICAL,
-                optimal_providers=["anthropic", "openai", "deepseek"],
-                temperature_range=(0.3, 0.6),
-                max_tokens=4096,
-                latency_priority="quality",
-                parallel_capable=True,
-                memory_intensive=True,
-                creativity_level=0.5,
-                precision_level=0.8,
-                domain_knowledge=["archaeology", "history", "cultural_heritage"]
             )
         }
         

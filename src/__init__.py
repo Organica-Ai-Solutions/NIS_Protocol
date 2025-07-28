@@ -8,7 +8,7 @@ based on the neuro-inspired system protocol.
 __version__ = "0.1.0"
 
 # Core components
-from src.core.agent import NISAgent, NISLayer
+from src.core.agent import NISAgent
 from src.core.registry import NISRegistry
 
 # Emotional state system

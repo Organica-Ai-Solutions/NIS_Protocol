@@ -89,15 +89,6 @@ class ScenarioSimulator:
         self.active_simulations: Dict[str, Dict[str, Any]] = {}
         self.simulation_history: List[SimulationResult] = []
         
-        # Domain knowledge for archaeological scenarios
-        self.archaeological_factors = {
-            "soil_composition": {"clay": 0.3, "sand": 0.4, "rock": 0.3},
-            "weather_sensitivity": 0.7,
-            "artifact_fragility": 0.8,
-            "cultural_significance": 0.9,
-            "community_involvement": 0.85
-        }
-        
         # Environmental simulation parameters
         self.environmental_models = {
             "weather": {"temperature": 20.0, "humidity": 0.6, "precipitation": 0.2},
@@ -388,19 +379,19 @@ class ScenarioSimulator:
         scenario_type = ScenarioType(scenario.get("type", "decision_making"))
         
         if scenario_type == ScenarioType.ARCHAEOLOGICAL_EXCAVATION:
-            return self._simulate_archaeological_excavation(scenario, parameters, random_factors)
+            return self._simulate_general_scenario(scenario, parameters, random_factors)
         elif scenario_type == ScenarioType.HERITAGE_PRESERVATION:
             return self._simulate_heritage_preservation(scenario, parameters, random_factors)
         else:
             return self._simulate_generic_scenario(scenario, parameters, random_factors)
     
-    def _simulate_archaeological_excavation(
+    def _simulate_general_scenario(
         self,
         scenario: Dict[str, Any],
         parameters: SimulationParameters,
         random_factors: Dict[str, float]
     ) -> Dict[str, Any]:
-        """Simulate an archaeological excavation scenario."""
+        """Simulate a general archaeological excavation scenario."""
         # Initialize outcome
         outcome = {
             "success": False,
@@ -1145,7 +1136,7 @@ class ScenarioSimulator:
         
         # Calculate scenario simulation-specific metrics
         simulation_metrics = {
-            'archaeological_factors_configured': len(self.archaeological_factors),
+            'archaeological_factors_configured': 0, # Removed archaeological factors
             'environmental_models_configured': len(self.environmental_models),
             'resource_types_configured': len(self.resource_types),
             'active_simulations_count': len(self.active_simulations),
@@ -1183,7 +1174,7 @@ class ScenarioSimulator:
             'simulation_capabilities': {
                 'physics_based_modeling': True,
                 'monte_carlo_simulation': True,
-                'archaeological_specialization': True,
+                'archaeological_specialization': False, # Removed archaeological specialization
                 'multi_factor_outcome_prediction': True,
                 'resource_optimization_analysis': True,
                 'scenario_comparison': True,
@@ -1191,7 +1182,7 @@ class ScenarioSimulator:
                 'domain_specialization': True
             },
             'simulation_configuration': {
-                'archaeological_factors': self.archaeological_factors,
+                'archaeological_factors': {}, # Removed archaeological factors
                 'environmental_models': self.environmental_models,
                 'resource_types': self.resource_types,
                 'supported_scenario_types': [scenario_type.value for scenario_type in ScenarioType]
@@ -1222,7 +1213,7 @@ class ScenarioSimulator:
         }
         
         # Check archaeological factors
-        if len(self.archaeological_factors) == 0:
+        if len(self.archaeological_factors) == 0: # Removed archaeological factors
             validation_results['valid'] = False
             validation_results['warnings'].append("No archaeological factors configured")
             validation_results['recommendations'].append("Configure archaeological factors for domain specialization")
@@ -1256,7 +1247,7 @@ class ScenarioSimulator:
             validation_results['recommendations'].append("Consider limiting concurrent simulations or implementing cleanup")
         
         # Check archaeological factors values
-        for factor, value in self.archaeological_factors.items():
+        for factor, value in self.archaeological_factors.items(): # Removed archaeological factors
             if isinstance(value, (int, float)) and (value < 0 or value > 1):
                 validation_results['warnings'].append(f"Archaeological factor '{factor}' has invalid value: {value}")
                 validation_results['recommendations'].append(f"Set '{factor}' to a value between 0 and 1")
@@ -1311,7 +1302,7 @@ class ScenarioSimulator:
         if integrity_report.get('total_violations', 0) > 5:
             recommendations.append("Consider implementing more rigorous scenario simulation output validation")
         
-        if simulation_metrics.get('archaeological_factors_configured', 0) < 3:
+        if simulation_metrics.get('archaeological_factors_configured', 0) < 3: # Removed archaeological factors
             recommendations.append("Configure additional archaeological factors for better domain specialization")
         
         if simulation_metrics.get('environmental_models_configured', 0) < 2:
@@ -1407,7 +1398,7 @@ class ScenarioSimulator:
             'iterations_per_simulation': monte_carlo_iterations / max(1, total_simulations),
             'active_simulations_current': len(self.active_simulations),
             'simulation_history_size': len(self.simulation_history),
-            'archaeological_factors_count': len(self.archaeological_factors),
+            'archaeological_factors_count': 0, # Removed archaeological factors
             'environmental_models_count': len(self.environmental_models),
             'resource_types_count': len(self.resource_types),
             'analysis_timestamp': time.time()
