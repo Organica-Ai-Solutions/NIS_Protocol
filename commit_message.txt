@@ -1,0 +1,17 @@
+feat(v3.1): Complete NIS Protocol v3.1 with Docker support and enhanced endpoints
+
+This commit finalizes the NIS Protocol v3.1 with the following improvements:
+
+- Added Docker containerization with multi-service architecture
+- Enhanced API endpoints for agent communication
+- Fixed simulation agent to properly calculate results based on input parameters
+- Added comprehensive Postman collection for API testing
+- Updated environment template for easier configuration
+- Implemented proper error handling and logging
+- Added health check and monitoring endpoints
+- Ensured all calculations follow NIS Protocol Engineering Integrity Rules
+
+The system now runs successfully in Docker with most endpoints functioning correctly. 
+Some specific agent endpoints still need further debugging but the core system is operational.
+
+This version serves as a stable checkpoint for NIS Protocol v3.1.
