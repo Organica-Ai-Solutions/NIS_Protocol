@@ -29,8 +29,7 @@ from datetime import datetime, timedelta
 # Enhanced agent base with infrastructure integration
 from src.agents.enhanced_agent_base import (
     EnhancedAgentBase,
-    AgentConfiguration,
-    AgentState
+    AgentConfiguration
 )
 
 # Infrastructure integration
@@ -38,13 +37,7 @@ from src.infrastructure.message_streaming import MessageType, MessagePriority, N
 from src.infrastructure.caching_system import CacheStrategy
 
 # Original simulation components (enhanced)
-from .scenario_simulator import (
-    ScenarioType,
-    SimulationParameters,
-    ScenarioResult,
-    RiskLevel,
-    SimulationMetrics
-)
+from .scenario_simulator import ScenarioType, SimulationParameters, SimulationResult
 
 # Self-audit and integrity
 from src.utils.self_audit import self_audit_engine
@@ -99,7 +92,7 @@ class EnhancedScenarioResult:
     """Enhanced scenario result with infrastructure metadata"""
     request_id: str
     scenario_id: str
-    result: ScenarioResult
+    result: SimulationResult
     processing_time: float
     cache_key: Optional[str]
     integrity_score: float
@@ -147,13 +140,11 @@ class EnhancedScenarioSimulator(EnhancedAgentBase):
         config = AgentConfiguration(
             agent_id=agent_id,
             agent_type="simulation",
-            enable_messaging=True,
-            enable_caching=True,
+            enable_kafka=False,
+            enable_redis=False,
+            enable_langgraph=False,
+            enable_langsmith=False,
             enable_self_audit=True,
-            enable_performance_tracking=True,
-            health_check_interval=60.0,
-            cache_ttl=cache_ttl,
-            auto_recovery=True
         )
         
         # Initialize base agent
@@ -186,6 +177,11 @@ class EnhancedScenarioSimulator(EnhancedAgentBase):
         
         self.logger.info(f"Enhanced Scenario Simulator {agent_id} initialized")
     
+    async def process_simple(self, input_data: Any) -> Any:
+        """A simple process method for the agent."""
+        # This is a placeholder implementation.
+        # In a real scenario, this would contain the agent's core logic.
+        return {"status": "processed", "input": input_data}
     # =============================================================================
     # AGENT BASE CLASS IMPLEMENTATIONS
     # =============================================================================
@@ -381,7 +377,7 @@ class EnhancedScenarioSimulator(EnhancedAgentBase):
                 return EnhancedScenarioResult(
                     request_id=request_id,
                     scenario_id=scenario_id,
-                    result=ScenarioResult(**cached_result['result']),
+                    result=SimulationResult(**cached_result['result']),
                     processing_time=0.001,  # Cache retrieval time
                     cache_key=cache_key,
                     integrity_score=cached_result.get('integrity_score', 100.0),
@@ -429,16 +425,17 @@ class EnhancedScenarioSimulator(EnhancedAgentBase):
             return EnhancedScenarioResult(
                 request_id=request_id,
                 scenario_id=scenario_id,
-                result=ScenarioResult(
+                result=SimulationResult(
                     scenario_id=scenario_id,
+                    scenario_type=request.scenario_type,
                     success_probability=0.0,
-                    confidence_interval=(0.0, 0.0),
-                    risk_assessment={},
-                    timeline_estimates={},
-                    resource_requirements={},
+                    expected_outcomes=[],
+                    risk_factors=[],
+                    resource_utilization={},
+                    timeline={},
+                    confidence_intervals={},
                     recommendations=[],
-                    success=False,
-                    error_message=str(e)
+                    metadata={"error": str(e)}
                 ),
                 processing_time=time.time() - start_time,
                 cache_key=None,
@@ -528,7 +525,7 @@ class EnhancedScenarioSimulator(EnhancedAgentBase):
             
             raise
     
-    async def _run_core_simulation(self, request: EnhancedScenarioRequest) -> ScenarioResult:
+    async def _run_core_simulation(self, request: EnhancedScenarioRequest) -> SimulationResult:
         """Run the core simulation logic with enhanced capabilities"""
         try:
             scenario_type = request.scenario_type
@@ -549,7 +546,7 @@ class EnhancedScenarioSimulator(EnhancedAgentBase):
             self.logger.error(f"Core simulation error: {e}")
             raise
     
-    async def _simulate_archaeological_excavation(self, request: EnhancedScenarioRequest) -> ScenarioResult:
+    async def _simulate_archaeological_excavation(self, request: EnhancedScenarioRequest) -> SimulationResult:
         """Enhanced archaeological excavation simulation with Monte Carlo analysis"""
         try:
             parameters = request.parameters
@@ -634,22 +631,41 @@ class EnhancedScenarioSimulator(EnhancedAgentBase):
                 recommendations.append("Conduct additional site survey")
                 recommendations.append("Reassess objectives and constraints")
             
-            return ScenarioResult(
+            return SimulationResult(
                 scenario_id=request.scenario_id,
+                scenario_type=request.scenario_type,
                 success_probability=mean_probability,
-                confidence_interval=confidence_interval,
-                risk_assessment=risk_assessment,
-                timeline_estimates=timeline_estimates,
-                resource_requirements=resource_requirements,
+                expected_outcomes=[],
+                risk_factors=[
+                    {"type": "weather_risk", "description": "Medium risk due to weather conditions"},
+                    {"type": "equipment_risk", "description": "Low risk for equipment failures"},
+                    {"type": "cultural_sensitivity_risk", "description": "High risk for cultural sensitivity"},
+                    {"type": "environmental_impact_risk", "description": "Medium risk for environmental impact"}
+                ],
+                resource_utilization={
+                    "team_archaeologists": max(3, parameters.constraints.get("team_size", 5)),
+                    "equipment_cost": 15000,
+                    "laboratory_time_hours": 200,
+                    "documentation_cost": 5000
+                },
+                timeline={
+                    "preparation_weeks": 2,
+                    "excavation_weeks": int(parameters.constraints.get("duration_days", 30) / 7),
+                    "analysis_weeks": 4,
+                    "documentation_weeks": 2
+                },
+                confidence_intervals={
+                    "success_probability": confidence_interval
+                },
                 recommendations=recommendations,
-                success=True
+                metadata={"success": True}
             )
             
         except Exception as e:
             self.logger.error(f"Archaeological simulation error: {e}")
             raise
     
-    async def _simulate_environmental_assessment(self, request: EnhancedScenarioRequest) -> ScenarioResult:
+    async def _simulate_environmental_assessment(self, request: EnhancedScenarioRequest) -> SimulationResult:
         """Enhanced environmental assessment simulation"""
         try:
             # Environmental impact modeling
@@ -678,40 +694,44 @@ class EnhancedScenarioSimulator(EnhancedAgentBase):
                 mean_probability = 0.68
                 confidence_interval = (0.55, 0.81)
             
-            return ScenarioResult(
+            return SimulationResult(
                 scenario_id=request.scenario_id,
+                scenario_type=request.scenario_type,
                 success_probability=mean_probability,
-                confidence_interval=confidence_interval,
-                risk_assessment={
-                    "biodiversity_loss": RiskLevel.MEDIUM,
-                    "soil_contamination": RiskLevel.LOW,
-                    "water_quality_impact": RiskLevel.MEDIUM,
-                    "air_quality_impact": RiskLevel.LOW
-                },
-                timeline_estimates={
-                    "baseline_assessment_weeks": 4,
-                    "monitoring_period_months": 12,
-                    "final_report_weeks": 6
-                },
-                resource_requirements={
+                expected_outcomes=[],
+                risk_factors=[
+                    {"type": "biodiversity_loss", "description": "Medium risk for biodiversity loss"},
+                    {"type": "soil_contamination", "description": "Low risk for soil contamination"},
+                    {"type": "water_quality_impact", "description": "Medium risk for water quality impact"},
+                    {"type": "air_quality_impact", "description": "Low risk for air quality impact"}
+                ],
+                resource_utilization={
                     "environmental_scientists": 3,
                     "monitoring_equipment_cost": 25000,
                     "laboratory_analysis_cost": 15000,
                     "field_surveys": 8
+                },
+                timeline={
+                    "baseline_assessment_weeks": 4,
+                    "monitoring_period_months": 12,
+                    "final_report_weeks": 6
+                },
+                confidence_intervals={
+                    "success_probability": confidence_interval
                 },
                 recommendations=[
                     "Implement biodiversity monitoring protocol",
                     "Establish buffer zones around sensitive areas",
                     "Regular water and soil quality testing"
                 ],
-                success=True
+                metadata={"success": True}
             )
             
         except Exception as e:
             self.logger.error(f"Environmental assessment simulation error: {e}")
             raise
     
-    async def _simulate_cultural_preservation(self, request: EnhancedScenarioRequest) -> ScenarioResult:
+    async def _simulate_cultural_preservation(self, request: EnhancedScenarioRequest) -> SimulationResult:
         """Enhanced cultural preservation simulation"""
         try:
             parameters = request.parameters
@@ -738,27 +758,31 @@ class EnhancedScenarioSimulator(EnhancedAgentBase):
                 mean_probability = 0.72
                 confidence_interval = (0.62, 0.82)
             
-            return ScenarioResult(
+            return SimulationResult(
                 scenario_id=request.scenario_id,
+                scenario_type=request.scenario_type,
                 success_probability=mean_probability,
-                confidence_interval=confidence_interval,
-                risk_assessment={
-                    "cultural_loss_risk": RiskLevel.MEDIUM,
-                    "community_resistance": RiskLevel.LOW,
-                    "funding_sustainability": RiskLevel.HIGH,
-                    "documentation_gaps": RiskLevel.MEDIUM
+                expected_outcomes=[],
+                risk_factors=[
+                    {"type": "cultural_loss_risk", "description": "Medium risk for cultural loss"},
+                    {"type": "community_resistance", "description": "Low risk for community resistance"},
+                    {"type": "funding_sustainability", "description": "High risk for funding sustainability"},
+                    {"type": "documentation_gaps", "description": "Medium risk for documentation gaps"}
+                ],
+                resource_utilization={
+                    "cultural_experts": 2,
+                    "community_liaisons": 4,
+                    "documentation_equipment": 10000,
+                    "capacity_building_budget": 20000
                 },
-                timeline_estimates={
+                timeline={
                     "community_consultation_months": 3,
                     "documentation_phase_months": 6,
                     "implementation_months": 12,
                     "evaluation_months": 6
                 },
-                resource_requirements={
-                    "cultural_experts": 2,
-                    "community_liaisons": 4,
-                    "documentation_equipment": 10000,
-                    "capacity_building_budget": 20000
+                confidence_intervals={
+                    "success_probability": confidence_interval
                 },
                 recommendations=[
                     "Prioritize community-led documentation",
@@ -766,14 +790,14 @@ class EnhancedScenarioSimulator(EnhancedAgentBase):
                     "Develop sustainable funding model",
                     "Create intergenerational knowledge transfer programs"
                 ],
-                success=True
+                metadata={"success": True}
             )
             
         except Exception as e:
             self.logger.error(f"Cultural preservation simulation error: {e}")
             raise
     
-    async def _simulate_resource_allocation(self, request: EnhancedScenarioRequest) -> ScenarioResult:
+    async def _simulate_resource_allocation(self, request: EnhancedScenarioRequest) -> SimulationResult:
         """Enhanced resource allocation simulation"""
         try:
             parameters = request.parameters
@@ -803,26 +827,30 @@ class EnhancedScenarioSimulator(EnhancedAgentBase):
                 mean_probability = 0.78
                 confidence_interval = (0.68, 0.88)
             
-            return ScenarioResult(
+            return SimulationResult(
                 scenario_id=request.scenario_id,
+                scenario_type=request.scenario_type,
                 success_probability=mean_probability,
-                confidence_interval=confidence_interval,
-                risk_assessment={
-                    "budget_overrun": RiskLevel.MEDIUM,
-                    "timeline_delay": RiskLevel.MEDIUM,
-                    "resource_shortage": RiskLevel.LOW,
-                    "quality_compromise": RiskLevel.LOW
-                },
-                timeline_estimates={
-                    "planning_phase_weeks": 4,
-                    "execution_months": project_duration,
-                    "review_phase_weeks": 2
-                },
-                resource_requirements={
+                expected_outcomes=[],
+                risk_factors=[
+                    {"type": "budget_overrun", "description": "Medium risk for budget overrun"},
+                    {"type": "timeline_delay", "description": "Medium risk for timeline delay"},
+                    {"type": "resource_shortage", "description": "Low risk for resource shortage"},
+                    {"type": "quality_compromise", "description": "Low risk for quality compromise"}
+                ],
+                resource_utilization={
                     "project_managers": 2,
                     "technical_specialists": 5,
                     "allocated_budget": total_budget,
                     "contingency_reserve": int(total_budget * 0.15)
+                },
+                timeline={
+                    "planning_phase_weeks": 4,
+                    "execution_months": project_duration,
+                    "review_phase_weeks": 2
+                },
+                confidence_intervals={
+                    "success_probability": confidence_interval
                 },
                 recommendations=[
                     "Implement regular budget reviews",
@@ -830,14 +858,14 @@ class EnhancedScenarioSimulator(EnhancedAgentBase):
                     "Maintain 15% contingency reserve",
                     "Use resource tracking tools"
                 ],
-                success=True
+                metadata={"success": True}
             )
             
         except Exception as e:
             self.logger.error(f"Resource allocation simulation error: {e}")
             raise
     
-    async def _simulate_generic_scenario(self, request: EnhancedScenarioRequest) -> ScenarioResult:
+    async def _simulate_generic_scenario(self, request: EnhancedScenarioRequest) -> SimulationResult:
         """Generic scenario simulation for unknown types"""
         try:
             # Basic Monte Carlo simulation for unknown scenario types
@@ -853,15 +881,17 @@ class EnhancedScenarioSimulator(EnhancedAgentBase):
                 mean_probability = 0.65
                 confidence_interval = (0.55, 0.75)
             
-            return ScenarioResult(
+            return SimulationResult(
                 scenario_id=request.scenario_id,
+                scenario_type=request.scenario_type,
                 success_probability=mean_probability,
-                confidence_interval=confidence_interval,
-                risk_assessment={"unknown_factors": RiskLevel.MEDIUM},
-                timeline_estimates={"estimated_duration_weeks": 8},
-                resource_requirements={"generic_resources": 10000},
+                expected_outcomes=[],
+                risk_factors=[{"type": "unknown_factors", "description": "Medium risk due to unknown factors"}],
+                resource_utilization={"generic_resources": 10000},
+                timeline={"estimated_duration_weeks": 8},
+                confidence_intervals={"success_probability": confidence_interval},
                 recommendations=["Conduct detailed scenario analysis"],
-                success=True
+                metadata={"success": True}
             )
             
         except Exception as e:

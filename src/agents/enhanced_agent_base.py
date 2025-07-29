@@ -164,6 +164,7 @@ class AgentMetrics:
     total_tasks_processed: int = 0
     successful_tasks: int = 0
     failed_tasks: int = 0
+    error_count: int = 0
     average_processing_time: float = 0.0
     
     # Collaboration metrics
