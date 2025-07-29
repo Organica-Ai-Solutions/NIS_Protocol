@@ -11,6 +11,8 @@ COMPOSE_FILE="docker-compose.yml"
 REQUIRED_DIRS=("logs" "data" "models" "cache")
 ENV_FILE=".env"
 ENV_TEMPLATE="environment-template.txt"
+BITNET_MODEL_DIR="models/bitnet/models/bitnet"
+BITNET_MODEL_MARKER="${BITNET_MODEL_DIR}/config.json"
 
 # --- ANSI Color Codes ---
 RED='\033[0;31m'
@@ -70,7 +72,41 @@ for dir in "${REQUIRED_DIRS[@]}"; do
 done
 print_success "All required directories are ready"
 
-# 3. Validate Environment and API Keys
+# 3. Check for BitNet Model Files
+print_info "Checking for BitNet model files..."
+if [ ! -f "$BITNET_MODEL_MARKER" ]; then
+    print_warning "BitNet model files not found. Initiating download..."
+    
+    # Check if Python is available
+    if command -v python &> /dev/null || command -v python3 &> /dev/null; then
+        PYTHON_CMD="python"
+        if ! command -v python &> /dev/null; then
+            PYTHON_CMD="python3"
+        fi
+        
+        # Check if download script exists
+        if [ -f "scripts/download_bitnet_models.py" ]; then
+            print_info "Running BitNet model download script..."
+            $PYTHON_CMD scripts/download_bitnet_models.py
+            
+            if [ $? -ne 0 ]; then
+                print_warning "BitNet model download failed. The system will use fallback mechanisms."
+            else
+                print_success "BitNet model files downloaded successfully!"
+            fi
+        else
+            print_warning "BitNet download script not found at scripts/download_bitnet_models.py"
+            print_warning "The system will use fallback mechanisms."
+        fi
+    else
+        print_warning "Python not found. Cannot download BitNet models."
+        print_warning "The system will use fallback mechanisms."
+    fi
+else
+    print_success "BitNet model files found!"
+fi
+
+# 4. Validate Environment and API Keys
 print_info "Validating environment and API keys..."
 if [ ! -f "$ENV_FILE" ]; then
     print_warning "Environment file '$ENV_FILE' not found. Copying from template."
@@ -90,7 +126,7 @@ else
 fi
 echo ""
 
-# 4. Build Docker Images
+# 5. Build Docker Images
 print_info "Building Docker images (this may take several minutes on the first run)..."
 docker-compose -f "$COMPOSE_FILE" -p "$PROJECT_NAME" build --progress=plain
 if [ $? -ne 0 ]; then
@@ -98,7 +134,7 @@ if [ $? -ne 0 ]; then
 fi
 print_success "Docker images built successfully."
 
-# 5. Start Docker Compose
+# 6. Start Docker Compose
 print_info "Starting NIS Protocol v3 services in detached mode..."
 docker-compose -f "$COMPOSE_FILE" -p "$PROJECT_NAME" up -d --force-recreate --remove-orphans
 
@@ -107,7 +143,7 @@ if [ $? -ne 0 ]; then
 fi
 print_success "Services are starting..."
 
-# 6. Stream Backend Logs for Insight
+# 7. Stream Backend Logs for Insight
 print_info "Streaming logs from the backend service to show startup progress..."
 echo -e "${YELLOW}(Press Ctrl+C to stop streaming logs and continue to health monitoring)${NC}"
 (docker-compose -f "$COMPOSE_FILE" -p "$PROJECT_NAME" logs --follow --tail="1" backend) &
@@ -120,7 +156,7 @@ wait $LOGS_PID > /dev/null 2>&1
 echo ""
 
 
-# 7. Monitor Health of Services
+# 8. Monitor Health of Services
 print_info "Monitoring service health..."
 SECONDS=0
 TIMEOUT=300 # 5 minutes

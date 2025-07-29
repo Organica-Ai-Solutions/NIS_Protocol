@@ -154,3 +154,22 @@ recovery_codes.txt
 *.token 
 # Archived documentation summaries
 docs/archive_summaries/
+
+# Large model files
+models/bitnet/models/bitnet/**/*.safetensors
+models/bitnet/models/bitnet/**/*.bin
+models/bitnet/models/bitnet/**/*.pt
+models/bitnet/models/bitnet/**/*.model
+models/bitnet/models/bitnet/**/*.ckpt
+# Exclude other large binary files
+*.safetensors
+*.bin
+*.pt
+*.ckpt
+*.model
+# Potential large dataset files
+*.h5
+*.npy
+*.npz
+*.pkl
+*.joblib
