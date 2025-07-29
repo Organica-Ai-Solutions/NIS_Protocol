@@ -1,5 +1,20 @@
 
-# NIS Protocol v3 - Well-Engineered Architecture
+# NIS Protocol v3.1
+
+The NIS Protocol (Neural Integration System Protocol) is an advanced protocol for agent orchestration. It provides a structured framework for developing, testing, and deploying agent systems across various applications.
+
+## 📋 Important Repository Note
+This repository uses Git LFS (Large File Storage) for managing large model files. If you're cloning this repository, please make sure you have Git LFS installed:
+
+```bash
+# Install Git LFS
+git lfs install
+
+# Clone with LFS support
+git lfs clone https://github.com/Organica-Ai-Solutions/NIS_Protocol.git
+```
+
+The actual large model files (located in `models/bitnet/`) are not included directly in the repository. See `models/bitnet/README.md` for instructions on downloading these files.
 
 ![NIS Protocol Banner](assets/images_organized/mathematical_visuals/v3map.png)
 
