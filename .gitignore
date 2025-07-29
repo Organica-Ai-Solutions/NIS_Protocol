@@ -173,3 +173,7 @@ models/bitnet/models/bitnet/**/*.ckpt
 *.npz
 *.pkl
 *.joblib
+
+# Virtual Environments
+venv/
+.cproject
