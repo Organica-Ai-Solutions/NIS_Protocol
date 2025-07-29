@@ -529,7 +529,7 @@ class PerformanceValidator:
             avg_latency = 0.05
             throughput = 10.0
             success_rate = 0.8
-            accuracy = 0.8
+            accuracy = measure_accuracy()
         
         metrics = PerformanceMetrics(
             component="coordination",

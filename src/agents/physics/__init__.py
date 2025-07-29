@@ -12,14 +12,20 @@ Key Components:
 - PhysicsConstraints: Real-time physics law validation
 """
 
-from .physics_agent import PhysicsInformedAgent, PhysicsDomain, PhysicsState, PhysicsViolation
-from .enhanced_pinn_physics_agent import PhysicsLaw
-from .nemo_physics_processor import NemoPhysicsProcessor
-from .conservation_laws import ConservationLaws
+from .conservation_laws import ConservationLaws, ConservationLawValidator
+from .electromagnetism import MaxwellEquationsValidator
+from .thermodynamics import ThermodynamicsValidator
+from .quantum_mechanics import QuantumMechanicsValidator
+from .physics_agent import PhysicsAgent as PhysicsInformedAgent, PhysicsDomain, PhysicsState, PhysicsViolation
 
 __all__ = [
-    'PhysicsInformedAgent',
-    'NemoPhysicsProcessor', 
-    'ConservationLaws',
-    'PhysicsLaw', 'PhysicsDomain', 'PhysicsState', 'PhysicsViolation'
+    "ConservationLaws",
+    "ConservationLawValidator",
+    "MaxwellEquationsValidator",
+    "ThermodynamicsValidator",
+    "QuantumMechanicsValidator",
+    "PhysicsInformedAgent",
+    "PhysicsDomain",
+    "PhysicsState",
+    "PhysicsViolation",
 ] 

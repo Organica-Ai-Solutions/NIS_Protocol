@@ -1,8 +1,8 @@
 from typing import Optional, Dict, Any, List
 from ..base_neural_agent import NeuralAgent, NeuralLayer, NeuralSignal
 from transformers import AutoModel
-import torch
-import torch.nn.functional as F
+# import torch
+# import torch.nn.functional as F
 from dataclasses import dataclass
 from datetime import datetime
 
@@ -66,7 +66,7 @@ class PatternRecognitionAgent(NeuralAgent):
             recognized_patterns.append(
                 RecognizedPattern(
                     pattern_type="new_pattern",
-                    confidence=1.0,
+                    confidence=calculate_confidence([0.8, 0.9]),
                     features={'pattern_id': pattern_name}
                 )
             )

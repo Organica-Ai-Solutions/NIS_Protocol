@@ -36,10 +36,10 @@ except ImportError:
 
 # PyTorch for DRL networks
 try:
-    import torch
-    import torch.nn as nn
-    import torch.optim as optim
-    import torch.nn.functional as F
+#     import torch
+#     import torch.nn as nn
+#     import torch.optim as optim
+#     import torch.nn.functional as F
     from torch.distributions import Categorical
     TORCH_AVAILABLE = True
 except ImportError:

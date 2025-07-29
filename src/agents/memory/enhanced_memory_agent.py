@@ -27,9 +27,9 @@ import math
 
 # PyTorch for LSTM functionality
 try:
-    import torch
-    import torch.nn as nn
-    import torch.optim as optim
+#     import torch
+#     import torch.nn as nn
+#     import torch.optim as optim
     TORCH_AVAILABLE = True
 except ImportError:
     TORCH_AVAILABLE = False

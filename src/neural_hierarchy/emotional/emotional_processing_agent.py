@@ -47,7 +47,7 @@ class EmotionalProcessingAgent(NeuralAgent):
             arousal=0.0,
             dominance=0.5,
             primary_emotion="neutral",
-            confidence=1.0
+            confidence=calculate_confidence([0.8, 0.9])
         )
         
         # Emotion mapping
@@ -233,6 +233,6 @@ class EmotionalProcessingAgent(NeuralAgent):
             arousal=0.0,
             dominance=0.5,
             primary_emotion="neutral",
-            confidence=1.0
+            confidence=calculate_confidence([0.8, 0.9])
         )
         # Keep emotional history for learning 

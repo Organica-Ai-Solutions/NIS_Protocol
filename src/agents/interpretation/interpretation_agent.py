@@ -50,7 +50,19 @@ class InterpretationAgent(NISAgent):
         # Cache for recent interpretations
         self.interpretation_cache = {}
         self.cache_size = 100
+        self.available = self.is_available()
         
+    def is_available(self) -> bool:
+        """Check if the required transformer models are available."""
+        try:
+            # This is a basic check. A more robust implementation would
+            # verify that the specific model weights are downloaded.
+            from transformers import AutoModel
+            AutoModel.from_pretrained(self.sentiment_analyzer.model.name_or_path)
+            return True
+        except Exception:
+            return False
+
     def process(self, message: Dict[str, Any]) -> Dict[str, Any]:
         """
         Process interpretation requests.

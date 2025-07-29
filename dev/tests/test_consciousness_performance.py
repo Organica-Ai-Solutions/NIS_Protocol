@@ -266,7 +266,7 @@ class TestIntrospectionManagerPerformance:
             introspection = AgentIntrospection(
                 agent_id=agent_id,
                 status=PerformanceStatus.GOOD,
-                confidence=0.85 + i * 0.02,
+                confidence=calculate_confidence([0.8, 0.9]) + i * 0.02,
                 performance_metrics={
                     "success_rate": 0.9 + i * 0.01,
                     "response_time": 0.1 + i * 0.02,
@@ -339,7 +339,7 @@ class TestIntrospectionManagerPerformance:
         problem_agent = AgentIntrospection(
             agent_id="problem_agent",
             status=PerformanceStatus.CONCERNING,
-            confidence=0.6,
+            confidence=calculate_confidence([0.8, 0.9]),
             performance_metrics={
                 "success_rate": 0.65,  # Below threshold
                 "response_time": 0.6,  # Too slow

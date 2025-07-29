@@ -15,7 +15,7 @@ from cachetools import TTLCache
 import logging
 
 from .base_llm_provider import BaseLLMProvider, LLMResponse, LLMMessage, LLMRole
-from .bitnet_provider import BitNetProvider
+from .providers.bitnet_provider import BitNetProvider
 
 # Import env_config with error handling for different execution contexts
 try:
@@ -365,62 +365,74 @@ class GeneralLLMProvider:
     def _validate_providers(self):
         for provider, config in self.providers.items():
             if provider == 'bitnet': continue
-            if not config.get('key') or config['key'] in ['your_key_here', '']:
-                logging.warning(f"{provider.upper()} key invalid - provider disabled")
-                config['disabled'] = True
+            if isinstance(config, dict):
+                if not config.get('key') or config['key'] in ['your_key_here', '']:
+                    logging.warning(f"{provider.upper()} key invalid - provider disabled")
+                    config['disabled'] = True
 
     async def generate_response(self, messages, temperature=0.7, agent_type='default'):
+        logging.info(f"--- generate_response called ---")
+        logging.info(f"Providers dict: {self.providers}")
+        for provider, config in self.providers.items():
+            logging.info(f"Provider: {provider}, Type: {type(config)}")
+            
         providers_to_try = [PROVIDER_ASSIGNMENTS.get(agent_type, PROVIDER_ASSIGNMENTS['default'])['provider']]
         providers_to_try += [p for p in ['openai', 'anthropic', 'google', 'deepseek'] if p not in providers_to_try]
         
         # Add BitNet as the final fallback before the mock
         providers_to_try.append('bitnet')
+        logging.info(f"Providers to try: {providers_to_try}")
 
         for provider in providers_to_try:
-            # Skip disabled online providers. BitNet is assumed to be always available locally.
-            if provider != 'bitnet' and self.providers[provider].get('disabled'):
-                continue
-            
-            try:
-                assignment = {'provider': provider, 'model': PROVIDER_ASSIGNMENTS.get(agent_type, {}).get('model') if provider == PROVIDER_ASSIGNMENTS.get(agent_type, {}).get('provider') else self.get_default_model(provider)}
-                
-                logging.info(f"Attempting to use provider: {provider} with model: {assignment['model']}")
+            logging.info(f"Trying provider: {provider}")
 
-                if provider == 'openai':
-                    result = await self._call_openai_api(messages, temperature, assignment['model'])
-                elif provider == 'anthropic':
-                    result = await self._call_anthropic_api(messages, temperature, assignment['model'])
-                elif provider == 'google':
-                    result = await self._call_google_api(messages, temperature, assignment['model'])
-                elif provider == 'deepseek':
-                    result = await self._call_deepseek_api(messages, temperature, assignment['model'])
-                elif provider == 'bitnet':
-                    logging.info("Falling back to local BitNet model.")
+            try:
+                if provider == 'bitnet':
                     bitnet_provider = self.providers['bitnet']
                     llm_messages = [LLMMessage(role=LLMRole(msg['role']), content=msg['content']) for msg in messages]
-                    result = await bitnet_provider.generate(messages=llm_messages, temperature=temperature)
-                    # Convert result to dict
+                    response_obj = await bitnet_provider.generate(messages=llm_messages, temperature=temperature)
+                    
+                    # Convert LLMResponse object to dictionary for FastAPI
                     result = {
-                        "content": result.content,
-                        "provider": result.provider,
-                        "model": result.model,
-                        "real_ai": result.real_ai,
-                        "tokens_used": result.tokens_used
+                        "content": response_obj.content,
+                        "provider": response_obj.metadata.get("provider", "bitnet"),
+                        "model": response_obj.model,
+                        "real_ai": True,
+                        "tokens_used": response_obj.usage.get("total_tokens", 0),
+                        "confidence": response_obj.metadata.get('confidence', 0.85)
                     }
 
+                elif self.providers.get(provider) and not self.providers[provider].get('disabled'):
+                    config = self.providers[provider]
+                    model = PROVIDER_ASSIGNMENTS.get(agent_type, {}).get('model') or self.get_default_model(provider)
+                    
+                    if provider == 'openai':
+                        result = await self._call_openai_api(messages, temperature, model)
+                    elif provider == 'anthropic':
+                        result = await self._call_anthropic_api(messages, temperature, model)
+                    elif provider == 'google':
+                        result = await self._call_google_api(messages, temperature, model)
+                    elif provider == 'deepseek':
+                        result = await self._call_deepseek_api(messages, temperature, model)
+                    else:
+                        continue # Should not happen
+
+                else:
+                    logging.info(f"Skipping disabled or unconfigured provider: {provider}")
+                    continue
+
                 logging.info(f"Success with {provider}")
-                result['confidence'] = 0.9 # Placeholder
-                logging.info(f"Calculated confidence: {result['confidence']}")
+                logging.info(f"Returning result from {provider}: {type(result)} {result}")
                 return result
 
             except Exception as e:
                 logging.warning(f"Provider {provider} failed: {e}. Trying next provider.")
-                if 'quota' in str(e).lower() or 'credit' in str(e).lower():
-                    continue
                 continue
 
-        # If all providers, including BitNet, fail, then generate a mock response.
-        return await self._generate_enhanced_mock(messages, temperature)
+        # Fallback to mock if all real providers fail
+        mock_result = await self._generate_enhanced_mock(messages, temperature)
+        logging.info(f"Returning mock result: {type(mock_result)} {mock_result}")
+        return mock_result
 
     def get_default_model(self, provider):
         return {
@@ -686,4 +698,4 @@ The system represents a breakthrough in creating AI that thinks, reasons, and co
                     raise ValueError(error)
                 data = await response.json()
                 content = data['choices'][0]['message']['content']
-                return {'content': content, 'provider': 'deepseek', 'model': model, 'real_ai': True, 'tokens_used': data['usage']['total_tokens']} 
+                return {'content': content, 'provider': 'deepseek', 'model': model, 'real_ai': True, 'tokens_used': data['usage']['total_tokens'], 'confidence': 0.9} 

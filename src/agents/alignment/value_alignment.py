@@ -299,35 +299,21 @@ class ValueAlignmentAgent(NISAgent):
             else:
                 cultural_adjusted_score = base_score
         else:
-            cultural_adjusted_score = base_score
-        
-        elif value_category == ValueCategory.CULTURAL_RESPECT:
-            # Check for cultural appropriation indicators
-            appropriation_indicators = ["take", "use", "extract", "commercialize"]
-            cultural_indicators = ["traditional", "sacred", "cultural", "indigenous"]
-            
-            has_appropriation = any(ind in combined_text for ind in appropriation_indicators)
-            has_cultural = any(ind in combined_text for ind in cultural_indicators)
-            
-            if has_appropriation and has_cultural:
-                cultural_adjusted_score *= 0.3
+            # Based on the value category, we adjust the weights
+            if value_category == ValueCategory.FAIRNESS:
+                weights = {"equality": 0.4, "equity": 0.4, "impartiality": 0.2}
+            elif value_category == ValueCategory.TRANSPARENCY:
+                weights = {"clarity": 0.5, "openness": 0.3, "honesty": 0.2}
+            elif value_category == ValueCategory.ACCOUNTABILITY:
+                weights = {"responsibility": 0.5, "answerability": 0.3, "liability": 0.2}
+            elif value_category == ValueCategory.CULTURAL_RESPECT:
+                weights = {"respect": 0.5, "sensitivity": 0.3, "inclusivity": 0.2}
             else:
-                cultural_adjusted_score = base_score
-        
-        elif value_category == ValueCategory.AUTONOMY:
-            # Check for consent indicators
-            consent_indicators = ["consent", "agree", "approve", "voluntary", "choice"]
-            coercion_indicators = ["force", "must", "require", "mandate"]
-            
-            has_consent = any(ind in combined_text for ind in consent_indicators)
-            has_coercion = any(ind in combined_text for ind in coercion_indicators)
-            
-            if has_consent:
-                cultural_adjusted_score += 0.2
-            if has_coercion:
-                cultural_adjusted_score -= 0.3
-            else:
-                cultural_adjusted_score = base_score
+                weights = {"default": 1.0}
+
+            # Calculate the weighted score
+            weighted_score = sum(weights.get(k, 0) * v for k, v in value_scores.items())
+            cultural_adjusted_score = weighted_score
         
         return max(0.0, min(1.0, cultural_adjusted_score))
     

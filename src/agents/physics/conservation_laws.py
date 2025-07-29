@@ -15,7 +15,7 @@ Key Features:
 """
 
 import numpy as np
-import torch
+# import torch
 import logging
 from typing import Dict, Any, List, Optional, Tuple, Union
 from dataclasses import dataclass
@@ -485,6 +485,27 @@ class ConservationLaws:
         self.violation_history.clear()
         self.active_violations.clear()
         self.logger.info("Conservation law statistics reset")
+
+class ConservationLawValidator:
+    """
+    A validator that uses the ConservationLaws class to check for violations.
+    This provides a simpler interface for other agents to use.
+    """
+    def __init__(self):
+        self.conservation_laws = ConservationLaws()
+
+    def validate(self, initial_state: PhysicsState, final_state: PhysicsState) -> List[ConservationViolation]:
+        """
+        Validates all conservation laws between two states.
+        
+        Args:
+            initial_state: The initial state of the system.
+            final_state: The final state of the system.
+            
+        Returns:
+            A list of any conservation violations that were detected.
+        """
+        return self.conservation_laws.validate_all_conservation_laws(initial_state, final_state)
 
 # Example usage and testing
 def test_conservation_laws():

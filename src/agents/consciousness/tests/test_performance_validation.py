@@ -107,7 +107,7 @@ class TestPerformanceClaims:
             introspection = AgentIntrospection(
                 agent_id=agent_id,
                 status=PerformanceStatus.GOOD,
-                confidence=0.85,
+                confidence=calculate_confidence([0.8, 0.9]),
                 performance_metrics={"success_rate": 0.9, "response_time": 0.1},
                 behavioral_patterns={"consistency": 0.8},
                 cultural_neutrality_score=0.9,

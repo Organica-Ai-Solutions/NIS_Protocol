@@ -16,7 +16,7 @@ Architecture Flow:
 Week 3 Complete: PINN Physics Validation Layer integrated
 """
 
-import torch
+# import torch
 import numpy as np
 import sympy as sp
 import logging

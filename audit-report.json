@@ -1,0 +1,369 @@
+{
+  "audit_timestamp": "2025-07-29T00:03:04.233790",
+  "project_path": ".",
+  "issues": [
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in README.md",
+      "details": {
+        "file": "README.md",
+        "term": "novel"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-29T00:03:06.030830"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated interpretability claim in ENDPOINT_TEST_RESULTS.md",
+      "details": {
+        "file": "dev\\ENDPOINT_TEST_RESULTS.md",
+        "term": "95%+"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-29T00:03:06.116380"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in NIS_Protocol_V3_Whitepaper.md: processing",
+      "details": {
+        "file": "dev\\documentation\\NIS_Protocol_V3_Whitepaper.md",
+        "claim": "processing"
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-29T00:03:06.155893"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated multi-agent system claim in API_Reference.md",
+      "details": {
+        "file": "system\\docs\\API_Reference.md",
+        "term": "multi-agent system"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-29T00:03:06.243114"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in DATA_FLOW_GUIDE.md",
+      "details": {
+        "file": "system\\docs\\DATA_FLOW_GUIDE.md",
+        "term": "interpretable"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-29T00:03:06.267259"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated multi-agent system claim in INTEGRATION_EXAMPLES.md",
+      "details": {
+        "file": "system\\docs\\INTEGRATION_EXAMPLES.md",
+        "term": "general intelligence"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-29T00:03:06.318820"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in NIS_V3_AGENT_MASTER_INVENTORY.md",
+      "details": {
+        "file": "system\\docs\\NIS_V3_AGENT_MASTER_INVENTORY.md",
+        "term": "self-aware"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-29T00:03:06.388272"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated multi-agent system claim in NIS_V3_AGENT_MASTER_INVENTORY.md",
+      "details": {
+        "file": "system\\docs\\NIS_V3_AGENT_MASTER_INVENTORY.md",
+        "term": "general intelligence"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-29T00:03:06.389274"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in THIRD_PARTY_PROTOCOL_INTEGRATION.md: Monitoring",
+      "details": {
+        "file": "system\\docs\\THIRD_PARTY_PROTOCOL_INTEGRATION.md",
+        "claim": "Monitoring"
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-29T00:03:06.436101"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in README.md",
+      "details": {
+        "file": "system\\docs\\diagrams\\README.md",
+        "term": "self-aware"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-29T00:03:06.557860"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in README.md",
+      "details": {
+        "file": "system\\docs\\emotional_state_system\\README.md",
+        "term": "novel"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-29T00:03:06.569127"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in laplace_kan_pinn_pipeline.md",
+      "details": {
+        "file": "system\\docs\\diagrams\\pipelines\\laplace_kan_pinn_pipeline.md",
+        "term": "interpretable"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-29T00:03:06.581766"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in consciousness_monitoring_flow.md",
+      "details": {
+        "file": "system\\docs\\diagrams\\system_flow\\consciousness_monitoring_flow.md",
+        "term": "self-aware"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-29T00:03:06.594910"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in consciousness_monitoring_flow.md",
+      "details": {
+        "file": "system\\docs\\diagrams\\system_flow\\consciousness_monitoring_flow.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-29T00:03:06.594910"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in consciousness_monitoring_flow.md",
+      "details": {
+        "file": "system\\docs\\diagrams\\system_flow\\consciousness_monitoring_flow.md",
+        "term": "novel"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-29T00:03:06.595909"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in memory_system_architecture.md",
+      "details": {
+        "file": "system\\docs\\diagrams\\system_flow\\memory_system_architecture.md",
+        "term": "self-aware"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-29T00:03:06.634802"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated interpretability claim in memory_system_architecture.md",
+      "details": {
+        "file": "system\\docs\\diagrams\\system_flow\\memory_system_architecture.md",
+        "term": "95%+"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-29T00:03:06.636803"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in nis_complete_dataflow.md",
+      "details": {
+        "file": "system\\docs\\diagrams\\system_flow\\nis_complete_dataflow.md",
+        "term": "interpretable"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-29T00:03:06.656223"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in nis_complete_dataflow.md",
+      "details": {
+        "file": "system\\docs\\diagrams\\system_flow\\nis_complete_dataflow.md",
+        "term": "self-aware"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-29T00:03:06.656223"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in nis_complete_system_architecture.md",
+      "details": {
+        "file": "system\\docs\\diagrams\\system_flow\\nis_complete_system_architecture.md",
+        "term": "self-aware"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-29T00:03:06.666756"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in nis_complete_system_architecture.md",
+      "details": {
+        "file": "system\\docs\\diagrams\\system_flow\\nis_complete_system_architecture.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-29T00:03:06.666756"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated interpretability claim in nis_complete_system_architecture.md",
+      "details": {
+        "file": "system\\docs\\diagrams\\system_flow\\nis_complete_system_architecture.md",
+        "term": "95%+"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-29T00:03:06.668260"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in agi_benchmark_results.txt",
+      "details": {
+        "file": "system\\nis-integrity-toolkit\\agi_benchmark_results.txt",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-29T00:03:06.742511"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in agi_benchmark_results.txt",
+      "details": {
+        "file": "system\\nis-integrity-toolkit\\agi_benchmark_results.txt",
+        "term": "novel"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-29T00:03:06.742511"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in run_integrity_fixes.py",
+      "details": {
+        "file": "scripts\\run_integrity_fixes.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-29T00:03:07.691420"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in eval_utils.py",
+      "details": {
+        "file": "models\\bitnet\\models\\bitnet\\eval_utils.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-29T00:03:08.391454"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in modeling_bitnet.py",
+      "details": {
+        "file": "models\\bitnet\\models\\bitnet\\modeling_bitnet.py",
+        "count": 7
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-29T00:03:08.406068"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in safety_monitor.py",
+      "details": {
+        "file": "src\\agents\\alignment\\safety_monitor.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-29T00:03:08.941239"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in full-audit.py",
+      "details": {
+        "file": "system\\nis-integrity-toolkit\\audit-scripts\\full-audit.py",
+        "count": 4
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-29T00:03:09.975576"
+    },
+    {
+      "type": "complex_dependencies",
+      "description": "Complex ML dependencies found: ['transformers', 'torch', 'tensorflow']. Are these actually used?",
+      "details": {
+        "dependencies": [
+          "transformers",
+          "torch",
+          "tensorflow"
+        ]
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-29T00:03:10.988491"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'novel' appears 1 times",
+      "details": {
+        "file": "README.md",
+        "term": "novel",
+        "count": 1
+      },
+      "severity": "LOW",
+      "timestamp": "2025-07-29T00:03:13.393889"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'self-aware' appears 1 times",
+      "details": {
+        "file": "system\\docs\\diagrams\\README.md",
+        "term": "self-aware",
+        "count": 1
+      },
+      "severity": "LOW",
+      "timestamp": "2025-07-29T00:03:13.402396"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'novel' appears 1 times",
+      "details": {
+        "file": "system\\docs\\emotional_state_system\\README.md",
+        "term": "novel",
+        "count": 1
+      },
+      "severity": "LOW",
+      "timestamp": "2025-07-29T00:03:13.403906"
+    }
+  ],
+  "metrics": {
+    "claimed_services": 0,
+    "actual_services": 5,
+    "service_directories": 15,
+    "total_hype_instances": 3,
+    "high_issues": 22,
+    "medium_issues": 8,
+    "low_issues": 3
+  },
+  "recommendations": [
+    {
+      "priority": "HIGH",
+      "action": "Replace hardcoded performance metrics with actual calculations",
+      "reason": "Found 22 high-severity issues that damage credibility"
+    },
+    {
+      "priority": "MEDIUM",
+      "action": "Implement pre-commit hooks with this audit tool",
+      "reason": "Prevent future integrity issues"
+    },
+    {
+      "priority": "LOW",
+      "action": "Add explicit limitations section to documentation",
+      "reason": "Transparent communication of constraints builds trust"
+    }
+  ],
+  "integrity_score": 0
+}

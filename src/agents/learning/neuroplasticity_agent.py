@@ -23,13 +23,10 @@ import numpy as np
 import logging
 
 # PyTorch for LSTM functionality
-try:
-    import torch
-    import torch.nn as nn
-    import torch.optim as optim
-    TORCH_AVAILABLE = True
-except ImportError:
-    TORCH_AVAILABLE = False
+# # import torch
+# # import torch.nn as nn
+# # import torch.optim as optim
+TORCH_AVAILABLE = False
 
 from src.core.registry import NISAgent, NISLayer
 from src.emotion.emotional_state import EmotionalStateSystem

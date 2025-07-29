@@ -17,8 +17,8 @@ Architecture Integration:
 [KAN Symbolic Functions] → [PINN Validation] → [Physics Compliance Score] → [LLM Enhancement]
 """
 
-import torch
-import torch.nn as nn
+# import torch
+# import torch.nn as nn
 import numpy as np
 import sympy as sp
 from typing import Dict, Any, List, Optional, Tuple, Union, Callable

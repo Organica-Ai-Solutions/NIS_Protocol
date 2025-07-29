@@ -16,6 +16,7 @@ import logging
 from collections import defaultdict
 import subprocess
 import os
+import sys
 
 from src.core.registry import NISAgent, NISLayer
 from src.emotion.emotional_state import EmotionalState
@@ -57,6 +58,7 @@ class LearningAgent(NISAgent):
         super().__init__(agent_id, NISLayer.LEARNING, description)
         self.emotional_state = emotional_state or EmotionalState()
         self.learning_rate = learning_rate
+        self.parameters: Dict[str, Any] = {"default_param": 1.0}
         
         # Set up self-audit integration
         self.enable_self_audit = enable_self_audit
@@ -90,6 +92,7 @@ class LearningAgent(NISAgent):
         Returns:
             Result of the learning operation with integrity monitoring
         """
+        self.logger.info(f"Processing learning request: {message}")
         operation = message.get("operation", "").lower()
         
         # Route to appropriate handler with self-audit monitoring
@@ -144,7 +147,11 @@ class LearningAgent(NISAgent):
         Returns:
             Update operation result
         """
-        raise NotImplementedError("Subclasses must implement _update_parameters()")
+        updates = message.get("updates", {})
+        for param, value in updates.items():
+            self.parameters[param] = value
+            self.logger.info(f"Updated parameter {param} to {value}")
+        return {"status": "success", "updated_params": list(updates.keys())}
     
     def _get_parameters(self, message: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -156,7 +163,10 @@ class LearningAgent(NISAgent):
         Returns:
             Current parameter values
         """
-        raise NotImplementedError("Subclasses must implement _get_parameters()")
+        param_keys = message.get("params", [])
+        if param_keys:
+            return {key: self.parameters.get(key) for key in param_keys}
+        return self.parameters
     
     def _reset_parameters(self, message: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -168,7 +178,9 @@ class LearningAgent(NISAgent):
         Returns:
             Reset operation result
         """
-        raise NotImplementedError("Subclasses must implement _reset_parameters()")
+        self.parameters = {"default_param": 1.0}
+        self.logger.info("Learning parameters have been reset.")
+        return {"status": "success", "message": "Parameters reset to default."}
     
     def adjust_learning_rate(self, factor: float) -> None:
         """
@@ -183,9 +195,10 @@ class LearningAgent(NISAgent):
         """
         Fine-tunes the BitNet model using the provided scripts.
         """
+        self.logger.info("Attempting to start BitNet fine-tuning process...")
         self.logger.info("Starting BitNet fine-tuning process...")
         
-        script_path = os.path.join("models", "bitnet", "scripts", "run_finetuning.py")
+        script_path = os.path.join(os.getcwd(), "models", "bitnet", "scripts", "run_finetuning.py")
         
         if not os.path.exists(script_path):
             self.logger.error(f"Fine-tuning script not found at: {script_path}")
@@ -195,11 +208,10 @@ class LearningAgent(NISAgent):
             # We assume the script is designed to find its data and model paths relative to its location.
             # We also assume it's executable with python.
             process = subprocess.Popen(
-                ["python", script_path],
+                [sys.executable, script_path],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
-                text=True,
-                cwd=os.path.join("models", "bitnet") # Run from the bitnet directory
+                text=True
             )
             
             stdout, stderr = process.communicate()

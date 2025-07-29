@@ -102,7 +102,6 @@ nest-asyncio
 networkx
 numcodecs
 numpy
-nvidia-physicsnemo
 onnx
 opt_einsum
 optimum
@@ -160,6 +159,7 @@ stack_data
 starlette
 sympy
 tblib
+tenacity
 tensorboard
 tensorboard-data-server
 tensorflow
@@ -207,3 +207,5 @@ websockets
 zipp
 nvidia-physicsnemo
 pandas
+#modulus-sym
+# Temporary comment to invalidate cache

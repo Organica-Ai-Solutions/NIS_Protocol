@@ -17,6 +17,8 @@ from typing import Dict, List, Set, Tuple, Optional, Any
 from dataclasses import dataclass
 from enum import Enum
 
+from src.utils.integrity_metrics import calculate_confidence
+
 
 class ViolationType(Enum):
     """Types of integrity violations that can be detected"""
@@ -176,7 +178,7 @@ class SelfAuditEngine:
                     text=match.group(),
                     position=match.start(),
                     suggested_replacement=f"{match.group()} (validated in tests)",
-                    confidence=calculate_confidence(factors),  # Calculated confidence for unsubstantiated claims
+                    confidence=calculate_confidence(),  # Calculated confidence for unsubstantiated claims
                     severity="MEDIUM"
                 )
                 violations.append(violation)
@@ -217,7 +219,7 @@ class SelfAuditEngine:
             text=matched_text,
             position=position,
             suggested_replacement=replacement,
-            confidence=calculate_confidence(factors),
+            confidence=calculate_confidence(),
             severity=severity
         )
     
@@ -268,7 +270,7 @@ class SelfAuditEngine:
     def _calculate_hardcoded_detection_confidence(self, hardcoded_value: str) -> float:
         """Calculate confidence for hardcoded value detection based on pattern clarity"""
         # Base confidence for clear hardcoded patterns
-        base_confidence=calculate_confidence(factors)
+        base_confidence=calculate_confidence()
         
         # Increase confidence for obvious hardcoded patterns
         if any(keyword in hardcoded_value.lower() for keyword in ['confidence', 'accuracy', 'score']):

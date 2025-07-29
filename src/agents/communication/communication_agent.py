@@ -16,7 +16,7 @@ from typing import Dict, Any, Optional, List, Tuple, Union
 import time
 import os
 import numpy as np
-import torch
+# import torch
 import logging
 from collections import defaultdict, deque
 import tempfile
@@ -136,6 +136,14 @@ class AdvancedTTSEngine:
     def __init__(self, preferred_engine: str = "auto"):
         self.preferred_engine = preferred_engine
         self.available_engines = self._detect_available_engines()
+        if not self.available_engines:
+            self.current_engine = "mock"
+            self.voice_profiles = self._initialize_voice_profiles()
+            self.engine_configs = {"mock": {}}
+            self.logger = logging.getLogger("nis.tts_engine")
+            self.logger.warning("No TTS engines available. Using mock engine.")
+            return
+
         self.current_engine = self._select_best_engine()
         self.voice_profiles = self._initialize_voice_profiles()
         
@@ -296,7 +304,9 @@ class AdvancedTTSEngine:
         
         try:
             # Select synthesis method based on current engine
-            if self.current_engine == 'coqui':
+            if self.current_engine == 'mock':
+                result = self._synthesize_mock(text, voice_profile, output_path)
+            elif self.current_engine == 'coqui':
                 result = self._synthesize_coqui(text, voice_profile, output_path)
             elif self.current_engine == 'speechbrain':
                 result = self._synthesize_speechbrain(text, voice_profile, output_path)
@@ -460,6 +470,19 @@ class AdvancedTTSEngine:
         except Exception as e:
             self.logger.error(f"gTTS synthesis failed: {e}")
             return None
+
+    def _synthesize_mock(self, text: str, voice_profile: VoiceProfile, output_path: Optional[str]) -> Optional[str]:
+        """Synthesize mock speech"""
+        self.logger.info(f"Synthesizing mock speech for text: {text}")
+        if not output_path:
+            output_path = tempfile.mktemp(suffix='.wav')
+        # Create a dummy silent wav file
+        with wave.open(output_path, 'wb') as wf:
+            wf.setnchannels(1)
+            wf.setsampwidth(2)
+            wf.setframerate(22050)
+            wf.writeframes(b'\x00\x00' * 22050) # 1 second of silence
+        return output_path
     
     def _modify_audio_properties(self, audio_path: str, voice_profile: VoiceProfile):
         """Modify audio properties based on voice profile"""

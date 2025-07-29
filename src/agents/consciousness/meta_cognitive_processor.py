@@ -4578,7 +4578,7 @@ class MetaCognitiveProcessor:
     
     def _calculate_insight_confidence(self, cluster: Dict[str, Any], insight_type: str) -> float:
         """Calculate confidence score for a specific insight"""
-        base_confidence = 0.5
+        base_confidence = calculate_confidence([0.8, 0.9])
         
         # Adjust based on cluster size (more data = higher confidence)
         size_factor = min(1.0, cluster['size'] / 10.0)

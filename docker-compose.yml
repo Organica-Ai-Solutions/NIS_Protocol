@@ -5,161 +5,69 @@ version: '3.8'
 services:
   zookeeper:
     image: confluentinc/cp-zookeeper:7.4.0
-    container_name: ${PROJECT_NAME:-nis}-zookeeper
-    restart: unless-stopped
+    container_name: nis-zookeeper
     networks:
-      - ${PROJECT_NAME:-nis}-network
+      - nis-network
     ports:
-      - "${ZOOKEEPER_PORT:-2181}:2181"
+      - "2181:2181"
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
-    volumes:
-      - zookeeper_data:/var/lib/zookeeper/data
-      - zookeeper_logs:/var/lib/zookeeper/log
-    healthcheck:
-      test: ["CMD", "nc", "-z", "localhost", "2181"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-    labels:
-      - "nis.service.name=NIS Zookeeper"
-      - "nis.description=Coordinates Kafka for message streaming"
-      - "nis.category=infrastructure"
-      - "nis.role=coordination"
 
   kafka:
     image: confluentinc/cp-kafka:7.4.0
-    container_name: ${PROJECT_NAME:-nis}-kafka
-    restart: unless-stopped
+    container_name: nis-kafka
     networks:
-      - ${PROJECT_NAME:-nis}-network
+      - nis-network
     ports:
-      - "${KAFKA_PORT:-9092}:9092"
-      - "${KAFKA_EXTERNAL_PORT:-29092}:29092"
+      - "9092:9092"
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
-      KAFKA_DELETE_TOPIC_ENABLE: 'true'
-    volumes:
-      - kafka_data:/var/lib/kafka/data
     depends_on:
-      zookeeper:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9092"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
-    labels:
-      - "nis.service.name=NIS Kafka"
-      - "nis.description=Handles event streaming and agent messages"
-      - "nis.category=infrastructure"
-      - "nis.role=messaging"
+      - zookeeper
 
   redis:
     image: redis:7-alpine
-    container_name: ${PROJECT_NAME:-nis}-redis-simple
-    restart: unless-stopped
+    container_name: nis-redis
     networks:
-      - ${PROJECT_NAME:-nis}-network
+      - nis-network
     ports:
-      - "${REDIS_PORT:-6379}:6379"
-    volumes:
-      - redis_data:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-    labels:
-      - "nis.service.name=NIS Redis"
-      - "nis.description=Provides caching and state management"
-      - "nis.category=infrastructure"
-      - "nis.role=caching"
+      - "6379:6379"
 
   backend:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: ${PROJECT_NAME:-nis}-backend
-    restart: unless-stopped
+    build: .
+    container_name: nis-backend
     networks:
-      - ${PROJECT_NAME:-nis}-network
+      - nis-network
     ports:
-      - "${BACKEND_PORT:-8000}:8000"
+      - "8000:8000"
     env_file:
       - .env
     depends_on:
-      redis:
-        condition: service_healthy
-      kafka:
-        condition: service_healthy
-    labels:
-      - "nis.service.name=NIS Backend"
-      - "nis.description=Core NIS Protocol application server"
-      - "nis.category=application"
-      - "nis.role=core"
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
-  
+      - redis
+      - kafka
+
   nginx:
     image: nginx:1.25-alpine
-    container_name: ${PROJECT_NAME:-nis}-nginx
-    restart: unless-stopped
+    container_name: nis-nginx
     networks:
-      - ${PROJECT_NAME:-nis}-network
+      - nis-network
     ports:
-      - "${NGINX_PORT:-80}:80"
+      - "80:80"
     volumes:
       - ./system/config/nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
-      backend:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://backend:8000/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 20s
-    labels:
-      - "nis.service.name=NIS Nginx"
-      - "nis.description=Reverse proxy and load balancer"
-      - "nis.category=application"
-      - "nis.role=proxy"
+      - backend
 
-# Named volumes for persistent data
 volumes:
-  postgres_data:
-    driver: local
-  kafka_data:
-    driver: local
   zookeeper_data:
-    driver: local
-  zookeeper_logs:
-    driver: local
+  zookeeper_log:
+  kafka_data:
   redis_data:
-    driver: local
-  prometheus_data:
-    driver: local
-  grafana_data:
-    driver: local
 
-# Network configuration
 networks:
   nis-network:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.25.0.0/16 
+    driver: bridge 

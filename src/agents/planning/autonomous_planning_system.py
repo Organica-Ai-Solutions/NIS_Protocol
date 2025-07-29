@@ -21,10 +21,10 @@ import time
 import asyncio
 import logging
 import numpy as np
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-import torch.optim as optim
+# import torch
+# import torch.nn as nn
+# import torch.nn.functional as F
+# import torch.optim as optim
 from typing import Dict, Any, List, Optional, Tuple, Set, Union
 from dataclasses import dataclass, field, asdict
 from enum import Enum
@@ -127,111 +127,111 @@ class Plan:
     contingency_plans: List[str] = field(default_factory=list)
 
 
-class PlanningNetwork(nn.Module):
-    """Neural network for learning optimal planning strategies"""
+# class PlanningNetwork(nn.Module):
+#     """Neural network for learning optimal planning strategies"""
     
-    def __init__(self, state_dim: int = 128, action_dim: int = 64, plan_dim: int = 32):
-        super().__init__()
+#     def __init__(self, state_dim: int = 128, action_dim: int = 64, plan_dim: int = 32):
+#         super().__init__()
         
-        self.state_dim = state_dim
-        self.action_dim = action_dim
-        self.plan_dim = plan_dim
+#         self.state_dim = state_dim
+#         self.action_dim = action_dim
+#         self.plan_dim = plan_dim
         
-        # Goal and context encoder
-        self.context_encoder = nn.Sequential(
-            nn.Linear(state_dim, 256),
-            nn.ReLU(),
-            nn.Dropout(0.1),
-            nn.Linear(256, 128),
-            nn.ReLU(),
-            nn.Linear(128, 64)
-        )
+#         # Goal and context encoder
+#         self.context_encoder = nn.Sequential(
+#             nn.Linear(state_dim, 256),
+#             nn.ReLU(),
+#             nn.Dropout(0.1),
+#             nn.Linear(256, 128),
+#             nn.ReLU(),
+#             nn.Linear(128, 64)
+#         )
         
-        # Action sequence predictor
-        self.action_predictor = nn.LSTM(
-            input_size=64,
-            hidden_size=128,
-            num_layers=2,
-            batch_first=True,
-            dropout=0.1
-        )
+#         # Action sequence predictor
+#         self.action_predictor = nn.LSTM(
+#             input_size=64,
+#             hidden_size=128,
+#             num_layers=2,
+#             batch_first=True,
+#             dropout=0.1
+#         )
         
-        # Plan quality estimator
-        self.quality_estimator = nn.Sequential(
-            nn.Linear(128 + 64, 128),  # LSTM output + context
-            nn.ReLU(),
-            nn.Dropout(0.1),
-            nn.Linear(128, 64),
-            nn.ReLU(),
-            nn.Linear(64, 1),
-            nn.Sigmoid()
-        )
+#         # Plan quality estimator
+#         self.quality_estimator = nn.Sequential(
+#             nn.Linear(128 + 64, 128),  # LSTM output + context
+#             nn.ReLU(),
+#             nn.Dropout(0.1),
+#             nn.Linear(128, 64),
+#             nn.ReLU(),
+#             nn.Linear(64, 1),
+#             nn.Sigmoid()
+#         )
         
-        # Plan type classifier
-        self.plan_type_head = nn.Sequential(
-            nn.Linear(64, 32),
-            nn.ReLU(),
-            nn.Linear(32, len(PlanType)),
-            nn.Softmax(dim=-1)
-        )
+#         # Plan type classifier
+#         self.plan_type_head = nn.Sequential(
+#             nn.Linear(64, 32),
+#             nn.ReLU(),
+#             nn.Linear(32, len(PlanType)),
+#             nn.Softmax(dim=-1)
+#         )
         
-        # Duration and cost predictors
-        self.duration_predictor = nn.Sequential(
-            nn.Linear(64, 32),
-            nn.ReLU(),
-            nn.Linear(32, 1),
-            nn.ReLU()
-        )
+#         # Duration and cost predictors
+#         self.duration_predictor = nn.Sequential(
+#             nn.Linear(64, 32),
+#             nn.ReLU(),
+#             nn.Linear(32, 1),
+#             nn.ReLU()
+#         )
         
-        self.cost_predictor = nn.Sequential(
-            nn.Linear(64, 32),
-            nn.ReLU(),
-            nn.Linear(32, 1),
-            nn.ReLU()
-        )
+#         self.cost_predictor = nn.Sequential(
+#             nn.Linear(64, 32),
+#             nn.ReLU(),
+#             nn.Linear(32, 1),
+#             nn.ReLU()
+#         )
     
-    def forward(self, goal_context: torch.Tensor, sequence_length: int = 10) -> Dict[str, torch.Tensor]:
-        """Generate plan predictions from goal context"""
+#     def forward(self, goal_context: torch.Tensor, sequence_length: int = 10) -> Dict[str, torch.Tensor]:
+#         """Generate plan predictions from goal context"""
         
-        # Encode context
-        context_features = self.context_encoder(goal_context)
+#         # Encode context
+#         context_features = self.context_encoder(goal_context)
         
-        # Generate action sequence
-        batch_size = goal_context.size(0)
-        hidden = None
-        action_sequence = []
+#         # Generate action sequence
+#         batch_size = goal_context.size(0)
+#         hidden = None
+#         action_sequence = []
         
-        # Initialize with context features
-        current_input = context_features.unsqueeze(1)
+#         # Initialize with context features
+#         current_input = context_features.unsqueeze(1)
         
-        for step in range(sequence_length):
-            lstm_out, hidden = self.action_predictor(current_input, hidden)
-            action_sequence.append(lstm_out)
-            current_input = lstm_out
+#         for step in range(sequence_length):
+#             lstm_out, hidden = self.action_predictor(current_input, hidden)
+#             action_sequence.append(lstm_out)
+#             current_input = lstm_out
         
-        # Concatenate sequence
-        full_sequence = torch.cat(action_sequence, dim=1)
-        final_state = lstm_out.squeeze(1)
+#         # Concatenate sequence
+#         full_sequence = torch.cat(action_sequence, dim=1)
+#         final_state = lstm_out.squeeze(1)
         
-        # Plan quality estimation
-        quality_input = torch.cat([final_state, context_features], dim=-1)
-        plan_quality = self.quality_estimator(quality_input)
+#         # Plan quality estimation
+#         quality_input = torch.cat([final_state, context_features], dim=-1)
+#         plan_quality = self.quality_estimator(quality_input)
         
-        # Plan type prediction
-        plan_type_probs = self.plan_type_head(context_features)
+#         # Plan type prediction
+#         plan_type_probs = self.plan_type_head(context_features)
         
-        # Duration and cost prediction
-        estimated_duration = self.duration_predictor(context_features)
-        estimated_cost = self.cost_predictor(context_features)
+#         # Duration and cost prediction
+#         estimated_duration = self.duration_predictor(context_features)
+#         estimated_cost = self.cost_predictor(context_features)
         
-        return {
-            'action_sequence': full_sequence,
-            'plan_quality': plan_quality,
-            'plan_type_probs': plan_type_probs,
-            'estimated_duration': estimated_duration,
-            'estimated_cost': estimated_cost,
-            'context_features': context_features
-        }
+#         return {
+#             'action_sequence': full_sequence,
+#             'plan_quality': plan_quality,
+#             'plan_type_probs': plan_type_probs,
+#             'estimated_duration': estimated_duration,
+#             'estimated_cost': estimated_cost,
+#             'context_features': context_features
+#         }
 
 
 class HierarchicalPlanner:
@@ -387,7 +387,7 @@ class AutonomousPlanningSystem(NISAgent):
                  enable_self_audit: bool = True,
                  infrastructure_coordinator: Optional[InfrastructureCoordinator] = None):
         
-        super().__init__(agent_id, NISLayer.REASONING)
+        super().__init__(agent_id)
         
         self.max_active_plans = max_active_plans
         self.planning_horizon = planning_horizon
@@ -400,9 +400,9 @@ class AutonomousPlanningSystem(NISAgent):
         self.execution_history: List[Dict[str, Any]] = []
         
         # Planning components
-        self.planning_network = PlanningNetwork()
+        self.planning_network = None # Removed torch-based planning network
         self.hierarchical_planner = HierarchicalPlanner()
-        self.planning_optimizer = optim.Adam(self.planning_network.parameters(), lr=0.001)
+        # self.planning_optimizer = optim.Adam(self.planning_network.parameters(), lr=0.001)
         
         # Execution state
         self.active_executions: Dict[str, Dict[str, Any]] = {}
@@ -466,84 +466,32 @@ class AutonomousPlanningSystem(NISAgent):
             return self._create_response("error", {"error": str(e)})
     
     async def _create_plan(self, message: Dict[str, Any]) -> Dict[str, Any]:
-        """Create a new plan for achieving a goal"""
+        """Create a new plan for achieving a goal (mock implementation)"""
         
         goal_data = message.get("goal_data", {})
-        planning_context = message.get("planning_context", {})
-        
         plan_id = f"plan_{goal_data.get('goal_id', int(time.time()))}"
         
-        # Decompose goal into sub-goals
-        sub_goals = self.hierarchical_planner.decompose_goal(
-            goal_data,
-            planning_context,
-            strategy=goal_data.get('decomposition_strategy', 'functional')
-        )
+        # Mock plan creation
+        mock_plan = {
+            "plan_id": plan_id,
+            "status": "DRAFT",
+            "goal": goal_data.get("description"),
+            "actions": [
+                {"action_id": "action_1", "description": "Sub-task 1 for the goal"},
+                {"action_id": "action_2", "description": "Sub-task 2 for the goal"}
+            ],
+            "estimated_duration": 120.0,
+            "confidence": 0.85
+        }
         
-        # Generate plan using neural network
-        goal_context = self._goal_to_context_vector(goal_data, planning_context)
-        
-        with torch.no_grad():
-            plan_predictions = self.planning_network(goal_context.unsqueeze(0))
-        
-        # Create actions from sub-goals and predictions
-        actions = self._create_actions_from_subgoals(sub_goals, plan_predictions)
-        
-        # Determine execution order
-        execution_order = self._determine_execution_order(actions)
-        
-        # Calculate plan metrics
-        total_duration = sum(action.estimated_duration for action in actions)
-        total_cost = sum(action.estimated_cost for action in actions)
-        plan_confidence = plan_predictions['plan_quality'].item()
-        
-        # Create plan object
-        plan = Plan(
-            plan_id=plan_id,
-            plan_type=self._select_plan_type(plan_predictions['plan_type_probs']),
-            goal_id=goal_data.get('goal_id', 'unknown'),
-            description=f"Plan for {goal_data.get('description', 'achieving goal')}",
-            actions=actions,
-            execution_order=execution_order,
-            constraints=planning_context.get('constraints', {}),
-            success_criteria=goal_data.get('success_criteria', {}),
-            estimated_total_duration=total_duration,
-            estimated_total_cost=total_cost,
-            confidence=plan_confidence,
-            created_time=time.time(),
-            deadline=goal_data.get('deadline')
-        )
-        
-        # Store plan
-        self.plans[plan_id] = plan
-        
-        # Add to execution queue if resources available
-        if len(self.active_executions) < self.max_active_plans:
-            heapq.heappush(self.plan_queue, (plan.confidence, plan_id))
-        
-        # Cache plan in Redis
-        if self.infrastructure and self.infrastructure.redis_manager:
-            await self.infrastructure.cache_data(
-                f"autonomous_plan:{plan_id}",
-                asdict(plan),
-                agent_id=self.agent_id,
-                ttl=86400  # 24 hours
-            )
-        
-        self.planning_metrics['plans_created'] += 1
-        
-        self.logger.info(f"Created plan {plan_id} with {len(actions)} actions")
+        self.plans[plan_id] = mock_plan
+        self.logger.info(f"Created mock plan {plan_id}")
         
         return {
             "plan_created": plan_id,
-            "sub_goals_count": len(sub_goals),
-            "actions_count": len(actions),
-            "estimated_duration": total_duration,
-            "estimated_cost": total_cost,
-            "confidence": plan_confidence,
-            "execution_ready": len(self.active_executions) < self.max_active_plans
+            "details": mock_plan
         }
-    
+        
     async def _execute_plan(self, message: Dict[str, Any]) -> Dict[str, Any]:
         """Execute a specific plan"""
         
@@ -742,7 +690,7 @@ class AutonomousPlanningSystem(NISAgent):
         
         return adaptation_success
     
-    def _goal_to_context_vector(self, goal_data: Dict[str, Any], planning_context: Dict[str, Any]) -> torch.Tensor:
+    def _goal_to_context_vector(self, goal_data: Dict[str, Any], planning_context: Dict[str, Any]):
         """Convert goal data and context to neural network input vector"""
         
         features = []
@@ -774,10 +722,10 @@ class AutonomousPlanningSystem(NISAgent):
         else:
             features = features[:target_dim]
         
-        return torch.FloatTensor(features)
+        return features
     
     def _create_actions_from_subgoals(self, sub_goals: List[Dict[str, Any]], 
-                                     plan_predictions: Dict[str, torch.Tensor]) -> List[Action]:
+                                     plan_predictions: Dict[str, Any]) -> List[Action]:
         """Create actions from decomposed sub-goals"""
         
         actions = []
@@ -825,10 +773,11 @@ class AutonomousPlanningSystem(NISAgent):
         else:
             return ActionType.COGNITIVE
     
-    def _select_plan_type(self, plan_type_probs: torch.Tensor) -> PlanType:
+    def _select_plan_type(self, plan_type_probs: Any) -> PlanType:
         """Select plan type from probability distribution"""
-        type_index = torch.argmax(plan_type_probs).item()
-        return list(PlanType)[type_index]
+        # type_index = torch.argmax(plan_type_probs).item()
+        # return list(PlanType)[type_index]
+        return PlanType.SEQUENTIAL # Mock implementation
     
     def _determine_execution_order(self, actions: List[Action]) -> List[List[str]]:
         """Determine optimal execution order for actions"""

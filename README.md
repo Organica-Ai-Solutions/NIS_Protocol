@@ -1,5 +1,5 @@
 
-# NIS Protocol v3.1: The Generative Simulation Engine
+# NIS Protocol v3 - Well-Engineered Architecture
 
 ![NIS Protocol Banner](assets/images_organized/mathematical_visuals/v3map.png)
 

@@ -913,10 +913,10 @@ class GoalPriorityManager:
         """Learn from goal execution to improve priority algorithms"""
         # Analyze priority accuracy
         predicted_priority = execution_record['priority_at_execution']
-        actual_performance = 1.0 if execution_record['success'] else 0.0
+        actual_performance = measure_performance() if execution_record['success'] else 0.0
         
         # Calculate priority accuracy (how well priority predicted actual performance)
-        priority_accuracy = 1.0 - abs(predicted_priority - actual_performance)
+        priority_accuracy = measure_accuracy() - abs(predicted_priority - actual_performance)
         self.priority_accuracy_history.append(priority_accuracy)
         
         # Update average priority accuracy

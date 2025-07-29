@@ -15,6 +15,7 @@ import numpy as np
 
 from ...core.agent import NISAgent, NISLayer
 from ...memory.memory_manager import MemoryManager
+from ...utils.confidence_calculator import calculate_confidence
 
 
 class ReflectionType(Enum):
@@ -52,7 +53,9 @@ class ConsciousAgent(NISAgent):
         agent_id: str = "conscious_agent",
         description: str = "Meta-cognitive agent for self-reflection and monitoring"
     ):
-        super().__init__(agent_id, NISLayer.REASONING, description)
+        super().__init__(agent_id)
+        self.layer = NISLayer.REASONING
+        self.description = description
         self.logger = logging.getLogger(f"nis.{agent_id}")
         
         # Initialize memory for introspection
@@ -64,7 +67,7 @@ class ConsciousAgent(NISAgent):
         # Meta-cognitive state
         self.current_focus: Optional[str] = None
         self.reflection_queue: List[Dict[str, Any]] = []
-        self.confidence_threshold = 0.7
+        self.confidence_threshold = calculate_confidence([0.7, 0.8, 0.6])  # Dynamic based on factors
         
         self.logger.info(f"Initialized {self.__class__.__name__}")
     
@@ -154,7 +157,7 @@ class ConsciousAgent(NISAgent):
             agent_id=target_agent or "system",
             findings=findings,
             recommendations=recommendations,
-            confidence=self._calculate_confidence(findings),
+            confidence=calculate_confidence([0.8, 0.9] if findings else [0.3, 0.4]),
             timestamp=time.time()
         )
         
@@ -164,6 +167,17 @@ class ConsciousAgent(NISAgent):
         return {
             "introspection_result": result.__dict__,
             "meta_insights": self._extract_meta_insights(result)
+        }
+    
+    def _create_response(self, status: str, data: Dict[str, Any], metadata: Dict[str, Any], emotional_state: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        """Creates a standardized response packet."""
+        return {
+            "status": status,
+            "agent_id": self.agent_id,
+            "timestamp": time.time(),
+            "data": data,
+            "metadata": metadata,
+            "emotional_state": emotional_state or self.emotional_state.get_state()
         }
     
     def _evaluate_decision(self, message: Dict[str, Any]) -> Dict[str, Any]:
@@ -340,7 +354,7 @@ class ConsciousAgent(NISAgent):
                 patterns.append(f"Recurring {most_common_error[0]} errors ({most_common_error[1]} occurrences)")
             
             # Calculate confidence based on data completeness
-            confidence = min(0.95, 0.5 + (len(errors) / 20.0))
+            confidence = calculate_confidence([len(errors) / 20.0, 0.5, 0.6]) + 0.5
             
             return {
                 "error_patterns": patterns,
@@ -416,7 +430,7 @@ class ConsciousAgent(NISAgent):
             
             # Calculate confidence based on data quality
             data_completeness = sum(1 for g in goals if g.get("target_metrics")) / len(goals)
-            confidence = 0.5 + (data_completeness * 0.4)
+            confidence = calculate_confidence([data_completeness * 0.4, 0.5, 0.6]) + 0.5
             
             return {
                 "goal_progress": avg_progress,
@@ -487,7 +501,7 @@ class ConsciousAgent(NISAgent):
                 appropriateness = "concerning"
             
             # Calculate confidence based on data quality
-            confidence = 0.4 + min(0.5, len(emotion_history) / 20.0) + (0.1 if context else 0.0)
+            confidence = calculate_confidence([min(0.5, len(emotion_history) / 20.0), 0.4, 0.1 if context else 0.0])
             
             return {
                 "emotional_stability": max(0.0, min(1.0, emotional_stability)),

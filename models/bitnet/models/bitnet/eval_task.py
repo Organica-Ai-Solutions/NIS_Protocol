@@ -1,7 +1,7 @@
 import os
 import json
 import argparse
-import torch
+# import torch
 import random
 import glog
 

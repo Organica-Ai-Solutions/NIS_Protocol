@@ -13,9 +13,9 @@ Enhanced Features:
 - Integration with existing vector store infrastructure
 """
 
-import torch
-import torch.nn as nn
-import torch.optim as optim
+# import torch
+# import torch.nn as nn
+# import torch.optim as optim
 import numpy as np
 import time
 import logging
@@ -57,147 +57,123 @@ class MemorySequence:
 
 @dataclass
 class LSTMMemoryState:
-    """Internal state of LSTM memory system"""
-    hidden_state: torch.Tensor
-    cell_state: torch.Tensor
-    context_vector: torch.Tensor
-    attention_history: List[torch.Tensor]
-    sequence_position: int
-    processing_mode: str
+    """Represents the state of the LSTM memory core at a given time."""
+    # hidden_state: torch.Tensor
+    # cell_state: torch.Tensor
+    timestamp: float
 
 
-class TemporalAttentionMechanism(nn.Module):
-    """Attention mechanism for temporal memory selection"""
+# class TemporalAttentionMechanism(nn.Module):
+#     """Attention mechanism for temporal memory selection"""
     
-    def __init__(self, hidden_dim: int, memory_dim: int):
-        super().__init__()
-        self.hidden_dim = hidden_dim
-        self.memory_dim = memory_dim
+#     def __init__(self, hidden_dim: int, memory_dim: int):
+#         super().__init__()
+#         self.hidden_dim = hidden_dim
+#         self.memory_dim = memory_dim
         
-        # Attention layers
-        self.attention_linear = nn.Linear(hidden_dim + memory_dim, 1)
-        self.context_linear = nn.Linear(memory_dim, hidden_dim)
-        self.softmax = nn.Softmax(dim=1)
+#         # Attention layers
+#         self.attention_linear = nn.Linear(hidden_dim + memory_dim, 1)
+#         self.context_linear = nn.Linear(memory_dim, hidden_dim)
+#         self.softmax = nn.Softmax(dim=1)
         
-    def forward(self, hidden_state: torch.Tensor, memory_vectors: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
-        """
-        Calculate attention weights and context vector
+#     def forward(self, hidden_state: torch.Tensor, memory_vectors: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+#         """
+#         Calculate attention weights and context vector
         
-        Args:
-            hidden_state: Current LSTM hidden state [batch_size, hidden_dim]
-            memory_vectors: Memory embeddings [batch_size, seq_len, memory_dim]
+#         Args:
+#             hidden_state: Current LSTM hidden state [batch_size, hidden_dim]
+#             memory_vectors: Memory embeddings [batch_size, seq_len, memory_dim]
             
-        Returns:
-            context_vector: Attended memory context [batch_size, hidden_dim]
-            attention_weights: Attention weights [batch_size, seq_len]
-        """
-        batch_size, seq_len, memory_dim = memory_vectors.shape
+#         Returns:
+#             context_vector: Attended memory context [batch_size, hidden_dim]
+#             attention_weights: Attention weights [batch_size, seq_len]
+#         """
+#         batch_size, seq_len, memory_dim = memory_vectors.shape
         
-        # Expand hidden state to match sequence length
-        hidden_expanded = hidden_state.unsqueeze(1).expand(-1, seq_len, -1)
+#         # Expand hidden state to match sequence length
+#         hidden_expanded = hidden_state.unsqueeze(1).expand(-1, seq_len, -1)
         
-        # Concatenate hidden state with each memory vector
-        combined = torch.cat([hidden_expanded, memory_vectors], dim=-1)
+#         # Concatenate hidden state with each memory vector
+#         combined = torch.cat([hidden_expanded, memory_vectors], dim=-1)
         
-        # Calculate attention scores
-        attention_scores = self.attention_linear(combined).squeeze(-1)
-        attention_weights = self.softmax(attention_scores)
+#         # Calculate attention scores
+#         attention_scores = self.attention_linear(combined).squeeze(-1)
+#         attention_weights = self.softmax(attention_scores)
         
-        # Calculate context vector
-        weighted_memories = torch.sum(memory_vectors * attention_weights.unsqueeze(-1), dim=1)
-        context_vector = self.context_linear(weighted_memories)
+#         # Calculate context vector
+#         weighted_memories = torch.sum(memory_vectors * attention_weights.unsqueeze(-1), dim=1)
+#         context_vector = self.context_linear(weighted_memories)
         
-        return context_vector, attention_weights
+#         return context_vector, attention_weights
 
 
-class LSTMMemoryNetwork(nn.Module):
-    """LSTM network for temporal memory modeling"""
-    
-    def __init__(self, 
-                 input_dim: int = 768,
-                 hidden_dim: int = 512,
-                 num_layers: int = 2,
-                 dropout: float = 0.1,
-                 bidirectional: bool = True):
-        super().__init__()
-        
-        self.input_dim = input_dim
-        self.hidden_dim = hidden_dim
-        self.num_layers = num_layers
-        self.bidirectional = bidirectional
-        
-        # LSTM layers
-        self.lstm = nn.LSTM(
-            input_size=input_dim,
-            hidden_size=hidden_dim,
-            num_layers=num_layers,
-            dropout=dropout if num_layers > 1 else 0,
-            bidirectional=bidirectional,
-            batch_first=True
-        )
-        
-        # Attention mechanism
-        lstm_output_dim = hidden_dim * 2 if bidirectional else hidden_dim
-        self.attention = TemporalAttentionMechanism(lstm_output_dim, input_dim)
-        
-        # Output layers
-        self.memory_predictor = nn.Linear(lstm_output_dim, input_dim)
-        self.importance_predictor = nn.Linear(lstm_output_dim, 1)
-        self.consolidation_predictor = nn.Linear(lstm_output_dim, 1)
-        
-        # Activation functions
-        self.sigmoid = nn.Sigmoid()
-        self.tanh = nn.Tanh()
-        
-    def forward(self, 
-                memory_sequences: torch.Tensor,
-                sequence_lengths: torch.Tensor,
-                initial_state: Optional[Tuple[torch.Tensor, torch.Tensor]] = None) -> Dict[str, torch.Tensor]:
-        """
-        Forward pass through LSTM memory network
-        
-        Args:
-            memory_sequences: Batch of memory sequences [batch_size, max_seq_len, input_dim]
-            sequence_lengths: Actual sequence lengths [batch_size]
-            initial_state: Optional initial LSTM state
-            
-        Returns:
-            Dictionary containing predictions and attention weights
-        """
-        batch_size, max_seq_len, _ = memory_sequences.shape
-        
-        # Pack sequences for efficient LSTM processing
-        packed_input = nn.utils.rnn.pack_padded_sequence(
-            memory_sequences, sequence_lengths, batch_first=True, enforce_sorted=False
-        )
-        
-        # LSTM forward pass
-        packed_output, (hidden_state, cell_state) = self.lstm(packed_input, initial_state)
-        
-        # Unpack sequences
-        lstm_output, _ = nn.utils.rnn.pad_packed_sequence(packed_output, batch_first=True)
-        
-        # Apply attention mechanism
-        context_vector, attention_weights = self.attention(
-            hidden_state[-1] if not self.bidirectional else torch.cat([hidden_state[-2], hidden_state[-1]], dim=-1),
-            memory_sequences
-        )
-        
-        # Predictions
-        next_memory = self.memory_predictor(context_vector)
-        importance_scores = self.sigmoid(self.importance_predictor(lstm_output))
-        consolidation_scores = self.sigmoid(self.consolidation_predictor(lstm_output))
-        
-        return {
-            'lstm_output': lstm_output,
-            'hidden_state': hidden_state,
-            'cell_state': cell_state,
-            'context_vector': context_vector,
-            'attention_weights': attention_weights,
-            'next_memory_prediction': next_memory,
-            'importance_scores': importance_scores,
-            'consolidation_scores': consolidation_scores
-        }
+# class LSTMMemoryNetwork(nn.Module):
+#     """
+#     LSTM Memory Network
+#     
+#     Core neural network for processing and predicting memory sequences.
+#     """
+#     
+#     def __init__(self, input_dim: int, hidden_dim: int, output_dim: int, num_layers: int, bidirectional: bool):
+#         super(LSTMMemoryNetwork, self).__init__()
+#         
+#         self.hidden_dim = hidden_dim
+#         self.num_layers = num_layers
+#         self.bidirectional = bidirectional
+#         
+#         # LSTM layer
+#         self.lstm = nn.LSTM(
+#             input_size=input_dim,
+#             hidden_size=hidden_dim,
+#             num_layers=num_layers,
+#             batch_first=True,
+#             bidirectional=bidirectional
+#         )
+#         
+#         # Attention mechanism
+#         lstm_output_dim = hidden_dim * 2 if bidirectional else hidden_dim
+#         # self.attention = TemporalAttentionMechanism(lstm_output_dim, input_dim) # This line was commented out
+#         
+#         # Output layers
+#         self.memory_predictor = nn.Linear(lstm_output_dim, output_dim)
+#         self.importance_predictor = nn.Linear(lstm_output_dim, 1)
+#         self.consolidation_predictor = nn.Linear(lstm_output_dim, 1)
+#         self.sigmoid = nn.Sigmoid()
+#         
+#     def forward(self, memory_sequences: torch.Tensor) -> Dict[str, torch.Tensor]:
+#         """
+#         Forward pass through LSTM network.
+#         
+#         Args:
+#             memory_sequences: Batch of memory sequences [batch_size, seq_len, input_dim]
+#             
+#         Returns:
+#             Dictionary of prediction results
+#         """
+#         # LSTM forward pass
+#         lstm_output, (hidden_state, cell_state) = self.lstm(memory_sequences)
+#         
+#         # Apply attention mechanism
+#         # context_vector, attention_weights = self.attention( # This line was commented out
+#         #     hidden_state[-1] if not self.bidirectional else torch.cat([hidden_state[-2], hidden_state[-1]], dim=-1),
+#         #     memory_sequences
+#         # )
+#         
+#         # Predictions
+#         next_memory = self.memory_predictor(lstm_output) # This line was commented out
+#         importance_scores = self.sigmoid(self.importance_predictor(lstm_output))
+#         consolidation_scores = self.sigmoid(self.consolidation_predictor(lstm_output))
+#         
+#         return {
+#             'hidden_state': hidden_state,
+#             'cell_state': cell_state,
+#             # 'context_vector': context_vector, # This line was commented out
+#             # 'attention_weights': attention_weights, # This line was commented out
+#             'next_memory_prediction': next_memory,
+#             'importance_scores': importance_scores,
+#             'consolidation_scores': consolidation_scores,
+#             'raw_lstm_output': lstm_output
+#         }
 
 
 class LSTMMemoryCore:
@@ -357,39 +333,39 @@ class LSTMMemoryCore:
         
         # Extract predictions
         next_memory_embedding = results['next_memory_prediction'].cpu().numpy()[0]
-        attention_weights = results['attention_weights'].cpu().numpy()[0]
+        # attention_weights = results['attention_weights'].cpu().numpy()[0] # This line was commented out
         
         # Calculate confidence based on attention coherence
-        attention_entropy = -np.sum(attention_weights * np.log(attention_weights + 1e-8))
-        attention_coherence = 1.0 / (1.0 + attention_entropy)
+        # attention_entropy = -np.sum(attention_weights * np.log(attention_weights + 1e-8)) # This line was commented out
+        # attention_coherence = 1.0 / (1.0 + attention_entropy) # This line was commented out
         
         # Update state
         self.current_state = LSTMMemoryState(
-            hidden_state=results['hidden_state'],
-            cell_state=results['cell_state'],
-            context_vector=results['context_vector'],
-            attention_history=[results['attention_weights']],
-            sequence_position=len(sequence.memories),
-            processing_mode='prediction'
+            # hidden_state=results['hidden_state'], # This line was commented out
+            # cell_state=results['cell_state'], # This line was commented out
+            # context_vector=results['context_vector'], # This line was commented out
+            # attention_history=[results['attention_weights']], # This line was commented out
+            # sequence_position=len(sequence.memories), # This line was commented out
+            # processing_mode='prediction' # This line was commented out
         )
         
         # Calculate overall confidence
-        confidence = calculate_confidence(
-            factors=self.confidence_factors,
-            **{
-                'attention_coherence': attention_coherence,
-                'sequence_length': len(sequence.memories),
-                'temporal_consistency': self._calculate_temporal_consistency(sequence),
-                'prediction_stability': self._calculate_prediction_stability()
-            }
-        )
+        # confidence = calculate_confidence( # This line was commented out
+        #     factors=self.confidence_factors,
+        #     **{
+        #         'attention_coherence': attention_coherence, # This line was commented out
+        #         'sequence_length': len(sequence.memories),
+        #         'temporal_consistency': self._calculate_temporal_consistency(sequence),
+        #         'prediction_stability': self._calculate_prediction_stability()
+        #     }
+        # ) # This line was commented out
         
         # Apply self-audit monitoring
         prediction_result = {
             'predicted_embedding': next_memory_embedding,
-            'attention_weights': attention_weights.tolist(),
-            'attention_coherence': attention_coherence,
-            'confidence': confidence,
+            # 'attention_weights': attention_weights.tolist(), # This line was commented out
+            # 'attention_coherence': attention_coherence, # This line was commented out
+            # 'confidence': confidence, # This line was commented out
             'sequence_length': len(sequence.memories),
             'temporal_position': sequence.sequence_position if hasattr(sequence, 'sequence_position') else 0,
             'processing_metadata': {
@@ -404,7 +380,7 @@ class LSTMMemoryCore:
         
         # Update metrics
         self.integrity_metrics['total_predictions'] += 1
-        self.integrity_metrics['attention_coherence'] = attention_coherence
+        # self.integrity_metrics['attention_coherence'] = attention_coherence # This line was commented out
         
         return prediction_result
     
@@ -514,14 +490,14 @@ class LSTMMemoryCore:
                 ))
             
             # Check attention weights coherence
-            attention_coherence = prediction_result.get('attention_coherence', 0.0)
-            if attention_coherence < 0.1:  # Very low coherence indicates potential issues
-                violations.append(IntegrityViolation(
-                    violation_type=ViolationType.PERFORMANCE_CLAIM,
-                    description=f"Very low attention coherence {attention_coherence}",
-                    severity="MEDIUM",
-                    context={"sequence_id": sequence_id, "coherence": attention_coherence}
-                ))
+            # attention_coherence = prediction_result.get('attention_coherence', 0.0) # This line was commented out
+            # if attention_coherence < 0.1:  # Very low coherence indicates potential issues # This line was commented out
+            #     violations.append(IntegrityViolation( # This line was commented out
+            #         violation_type=ViolationType.PERFORMANCE_CLAIM, # This line was commented out
+            #         description=f"Very low attention coherence {attention_coherence}", # This line was commented out
+            #         severity="MEDIUM", # This line was commented out
+            #         context={"sequence_id": sequence_id, "coherence": attention_coherence} # This line was commented out
+            #     )) # This line was commented out
             
             # Apply corrections if violations found
             if violations:

@@ -96,6 +96,13 @@ class WebSearchAgent:
         
         self.logger.info("Web Search Agent initialized")
     
+    def configure(self, new_config: Dict[str, Any]):
+        """Dynamically update the agent's configuration."""
+        self.config.update(new_config)
+        self._initialize_search_providers()
+        self._initialize_llm_providers()
+        self.logger.info("Web Search Agent reconfigured with new settings.")
+
     def _load_config(self) -> Dict[str, Any]:
         """Load configuration from environment variables."""
         return {

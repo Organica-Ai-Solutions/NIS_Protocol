@@ -74,7 +74,7 @@ class EthicalReasoner(NISAgent):
         description: str = "Multi-framework ethical reasoning and cultural sensitivity agent",
         enable_self_audit: bool = True
     ):
-        super().__init__(agent_id, NISLayer.REASONING, description)
+        super().__init__(agent_id)
         self.logger = logging.getLogger(f"nis.{agent_id}")
         
         # Initialize memory for ethical precedents
@@ -125,6 +125,7 @@ class EthicalReasoner(NISAgent):
             'average_integrity_score': 100.0
         }
         
+        self.last_processing_time = 0.0
         # Initialize confidence factors for mathematical validation
         self.confidence_factors = create_default_confidence_factors()
         
@@ -181,6 +182,24 @@ class EthicalReasoner(NISAgent):
         
         return response
     
+    def _start_processing_timer(self) -> float:
+        """Start the processing timer."""
+        return time.time()
+
+    def _end_processing_timer(self, start_time: float):
+        """End the processing timer and update metrics."""
+        end_time = time.time()
+        self.last_processing_time = end_time - start_time
+        
+        # Update average evaluation time
+        total_evals = self.ethical_stats['total_evaluations']
+        current_avg = self.ethical_stats['average_evaluation_time']
+        if total_evals > 0:
+            self.ethical_stats['average_evaluation_time'] = \
+                ((current_avg * (total_evals - 1)) + self.last_processing_time) / total_evals
+        else:
+            self.ethical_stats['average_evaluation_time'] = self.last_processing_time
+
     def _evaluate_ethical_implications(self, message: Dict[str, Any]) -> Dict[str, Any]:
         """Comprehensive ethical evaluation using multiple frameworks."""
         action = message.get("action", {})
@@ -284,7 +303,7 @@ class EthicalReasoner(NISAgent):
             score=score,
             concerns=concerns,
             recommendations=recommendations,
-            confidence=self._calculate_ethical_confidence(action, context, concerns, net_benefit),
+            confidence=self._calculate_ethical_confidence(action, context, concerns, recommendations, net_benefit),
             reasoning=f"Net utility: {net_benefit:.2f}, Population: {affected_population}"
         )
     
@@ -320,7 +339,7 @@ class EthicalReasoner(NISAgent):
             score=score,
             concerns=concerns,
             recommendations=recommendations,
-            confidence=self._calculate_ethical_confidence(action, context, concerns, score),
+            confidence=self._calculate_ethical_confidence(action, context, concerns, recommendations, score),
             reasoning=f"Rule compliance: {1-violation_penalty:.2f}, Universalizability: {universalizability:.2f}"
         )
     
@@ -388,7 +407,7 @@ class EthicalReasoner(NISAgent):
             score=score,
             concerns=concerns,
             recommendations=recommendations,
-            confidence=self._calculate_ethical_confidence(action, context, concerns, score),
+            confidence=self._calculate_ethical_confidence(action, context, concerns, recommendations, score),
             reasoning=f"Relationship: {relationship_impact:.2f}, Care: {care_provision:.2f}, Protection: {vulnerability_protection:.2f}"
         )
     
@@ -605,10 +624,11 @@ class EthicalReasoner(NISAgent):
         for evaluation in evaluations:
             framework_config = self.ethical_frameworks[evaluation.framework]
             weight = framework_config["weight"]
-            weighted_score = evaluation.score * weight * evaluation.confidence
+            confidence = evaluation.confidence if evaluation.confidence is not None else 0.5
+            weighted_score = evaluation.score * weight * confidence
             
             total_weighted_score += weighted_score
-            total_weight += weight * evaluation.confidence
+            total_weight += weight * confidence
         
         return total_weighted_score / total_weight if total_weight > 0 else 0.0
     
@@ -822,6 +842,7 @@ class EthicalReasoner(NISAgent):
         action: Dict[str, Any], 
         context: Dict[str, Any], 
         concerns: List[str], 
+        recommendations: List[str],
         score: float
     ) -> float:
         """Calculate confidence in ethical evaluation based on analysis quality."""

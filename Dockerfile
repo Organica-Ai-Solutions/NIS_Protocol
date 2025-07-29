@@ -1,45 +1,36 @@
-# NIS Protocol v3 - Main Application Container
+# Stage 1: Build stage
+FROM python:3.10-slim as builder
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends build-essential gcc gfortran libopenblas-dev liblapack-dev cython3 && rm -rf /var/lib/apt/lists/*
+
+# Install python dependencies
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir --upgrade pip
+RUN pip wheel --no-cache-dir --wheel-dir=/app/wheels -r requirements.txt
+
+
+# Stage 2: Final stage
 FROM nvidia/cuda:12.1.1-cudnn8-runtime-ubuntu22.04
 
-# Set work directory
-WORKDIR /app
+# Install runtime dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends python3 python3-pip libopenblas0 liblapack3 && rm -rf /var/lib/apt/lists/*
 
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-ENV PYTHONPATH=/app
-
-# Copy requirements first to leverage Docker cache
-COPY requirements.txt .
-
-# Install system and python dependencies in one layer
-RUN apt-get update && apt-get install -y --no-install-recommends build-essential gcc python3-pip python3-dev && \
-    pip3 install --no-cache-dir --upgrade pip && \
-    pip3 install --no-cache-dir -r requirements.txt && \
-    apt-get purge -y --auto-remove build-essential gcc python3-dev && \
-    rm -rf /var/lib/apt/lists/*
-
-# Copy only the necessary application code
-COPY src ./src
-COPY main.py .
-
-# Create a non-root user for security
+# Set up non-root user
 RUN useradd -m nisuser
 USER nisuser
+ENV PATH="/home/nisuser/.local/bin:${PATH}"
 WORKDIR /home/nisuser/app
 
-# Set correct ownership
+# Install dependencies from wheels
+COPY --from=builder /app/wheels /wheels
+COPY --from=builder /app/requirements.txt .
+RUN pip install --no-cache-dir /wheels/*
+
+# Copy application code
 COPY --chown=nisuser:nisuser . .
 
-# Create necessary directories
-RUN mkdir -p /home/nisuser/app/logs /home/nisuser/app/data /home/nisuser/app/models /home/nisuser/app/cache
-
-# Expose ports
+# Expose port and set entrypoint
 EXPOSE 8000
-
-# Health check using Python instead of curl
-HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
-    CMD python -c "import http.client; conn = http.client.HTTPConnection('localhost', 8000); conn.request('GET', '/health'); exit(0) if conn.getresponse().status == 200 else exit(1)"
-
-# Default command
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"] 

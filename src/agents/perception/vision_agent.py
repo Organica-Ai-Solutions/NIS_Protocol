@@ -69,7 +69,7 @@ class YOLOModel:
             
         try:
             # First try to load using ultralytics (YOLOv5/v8)
-            import torch
+#             import torch
             from ultralytics import YOLO
             
             # Use default YOLOv8n if no model specified

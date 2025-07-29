@@ -1,5 +1,5 @@
 from typing import Dict, List, Optional, Union
-import torch
+# import torch
 from transformers import (
     AutoTokenizer, 
     AutoModelForSequenceClassification,

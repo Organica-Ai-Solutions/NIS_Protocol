@@ -22,8 +22,8 @@ Key Features:
 """
 
 import numpy as np
-import torch
-import torch.nn as nn
+# import torch
+# import torch.nn as nn
 import scipy.signal as signal
 import scipy.fft as fft
 from scipy import integrate
@@ -90,61 +90,61 @@ class ProcessedSignal:
     compression_ratio: float
     signal_to_noise_ratio: float
 
-class KANSignalProcessor(nn.Module):
-    """
-    KAN-enhanced signal processor for pattern recognition in signals.
-    
-    Uses Kolmogorov-Arnold Networks to identify and extract patterns
-    from complex signals with better interpretability than traditional
-    signal processing methods.
-    """
-    
-    def __init__(self, input_dim: int = 256, hidden_dims: List[int] = [128, 64, 32]):
-        super().__init__()
-        
-        self.input_dim = input_dim
-        self.hidden_dims = hidden_dims
-        
-        # KAN layers for signal processing
-        self.kan_layers = nn.ModuleList()
-        
-        # Input projection layer
-        self.input_projection = nn.Linear(input_dim, hidden_dims[0])
-        
-        # KAN processing layers (simplified - would use actual KAN implementation)
-        for i in range(len(hidden_dims) - 1):
-            self.kan_layers.append(nn.Linear(hidden_dims[i], hidden_dims[i+1]))
-        
-        # Output layers
-        self.pattern_detector = nn.Linear(hidden_dims[-1], 16)  # Pattern features
-        self.signal_reconstructor = nn.Linear(hidden_dims[-1], input_dim)  # Reconstruction
-        
-        # Activation functions
-        self.activation = nn.GELU()
-        self.output_activation = nn.Tanh()
-    
-    def forward(self, signal_segment: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
-        """
-        Process signal segment through KAN network.
-        
-        Args:
-            signal_segment: Input signal segment [batch_size, input_dim]
-            
-        Returns:
-            Tuple of (pattern_features, reconstructed_signal)
-        """
-        # Project input
-        x = self.activation(self.input_projection(signal_segment))
-        
-        # Process through KAN layers
-        for layer in self.kan_layers:
-            x = self.activation(layer(x))
-        
-        # Extract patterns and reconstruct
-        pattern_features = self.pattern_detector(x)
-        reconstructed_signal = self.output_activation(self.signal_reconstructor(x))
-        
-        return pattern_features, reconstructed_signal
+# class KANSignalProcessor(nn.Module):
+#     """
+#     KAN-enhanced signal processor for pattern recognition in signals.
+#     
+#     Uses Kolmogorov-Arnold Networks to identify and extract patterns
+#     from complex signals with better interpretability than traditional
+#     signal processing methods.
+#     """
+#     
+#     def __init__(self, input_dim: int = 256, hidden_dims: List[int] = [128, 64, 32]):
+#         super().__init__()
+#         
+#         self.input_dim = input_dim
+#         self.hidden_dims = hidden_dims
+#         
+#         # KAN layers for signal processing
+#         self.kan_layers = nn.ModuleList()
+#         
+#         # Input projection layer
+#         self.input_projection = nn.Linear(input_dim, hidden_dims[0])
+#         
+#         # KAN processing layers (simplified - would use actual KAN implementation)
+#         for i in range(len(hidden_dims) - 1):
+#             self.kan_layers.append(nn.Linear(hidden_dims[i], hidden_dims[i+1]))
+#         
+#         # Output layers
+#         self.pattern_detector = nn.Linear(hidden_dims[-1], 16)  # Pattern features
+#         self.signal_reconstructor = nn.Linear(hidden_dims[-1], input_dim)  # Reconstruction
+#         
+#         # Activation functions
+#         self.activation = nn.GELU()
+#         self.output_activation = nn.Tanh()
+#     
+#     def forward(self, signal_segment: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+#         """
+#         Process signal segment through KAN network.
+#         
+#         Args:
+#             signal_segment: Input signal segment [batch_size, input_dim]
+#             
+#         Returns:
+#             Tuple of (pattern_features, reconstructed_signal)
+#         """
+#         # Project input
+#         x = self.activation(self.input_projection(signal_segment))
+#         
+#         # Process through KAN layers
+#         for layer in self.kan_layers:
+#             x = self.activation(layer(x))
+#         
+#         # Extract patterns and reconstruct
+#         pattern_features = self.pattern_detector(x)
+#         reconstructed_signal = self.output_activation(self.signal_reconstructor(x))
+#         
+#         return pattern_features, reconstructed_signal
 
 class CognitiveWaveFieldIntegrator:
     """

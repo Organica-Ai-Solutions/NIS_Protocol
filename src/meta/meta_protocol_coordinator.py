@@ -12,6 +12,7 @@ import json
 import asyncio
 import logging
 from enum import Enum
+import os
 
 from src.core.agent import NISAgent, NISLayer
 from src.adapters.base_adapter import BaseAdapter
@@ -42,15 +43,34 @@ class MetaProtocolCoordinator:
     maintaining cognitive context and emotional state.
     """
     
-    def __init__(self):
+    def __init__(self, adapter_directory: str = "src/adapters"):
         self.protocol_adapters: Dict[str, BaseAdapter] = {}
         self.metrics: Dict[str, ProtocolMetrics] = {}
         self.active_conversations: Dict[str, Dict[str, Any]] = {}
         self.emotional_context: Dict[str, Dict[str, float]] = {}
+        self.adapter_directory = adapter_directory
         
         # Initialize logger
         self.logger = logging.getLogger("meta_protocol")
+        self.discover_and_register_adapters()
     
+    def discover_and_register_adapters(self):
+        """Automatically discover and register protocol adapters."""
+        if not os.path.exists(self.adapter_directory):
+            self.logger.warning(f"Adapter directory not found: {self.adapter_directory}")
+            return
+
+        for filename in os.listdir(self.adapter_directory):
+            if filename.endswith("_adapter.py"):
+                module_name = filename[:-3]
+                protocol_name = module_name.replace("_adapter", "")
+                try:
+                    module = __import__(f"src.adapters.{module_name}", fromlist=["Adapter"])
+                    adapter_class = getattr(module, "Adapter")
+                    self.register_protocol(protocol_name, adapter_class())
+                except Exception as e:
+                    self.logger.error(f"Failed to load adapter {module_name}: {e}")
+
     def register_protocol(
         self,
         protocol_name: str,
