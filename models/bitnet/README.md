@@ -25,7 +25,7 @@ Install the transformers library and download the model using the Hugging Face H
 ```python
 from transformers import AutoModel, AutoTokenizer
 
-# This will automatically download and cache the model
+# This will systematically download and cache the model
 model_name = "microsoft/BitNet"  # Replace with the specific model you need
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 model = AutoModel.from_pretrained(model_name)

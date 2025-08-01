@@ -32,7 +32,7 @@ class EnhancedLaplaceTransformer(NISAgent):
 
         try:
             # Simple numerical Laplace transform (for demonstration)
-            # A real implementation would use more sophisticated methods.
+            # A real implementation would use more comprehensive methods.
             time_vector = np.linspace(0, 1, len(signal))
             transformed_signal = np.abs(np.fft.fft(signal)).tolist()
             

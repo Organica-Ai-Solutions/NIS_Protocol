@@ -5,7 +5,7 @@ This script demonstrates the complete data flow from LLM input through
 the enhanced memory, neuroplasticity, and coordination agents with
 LSTM temporal modeling and DRL intelligent decision making.
 
-Flow: LLM Input → Structured Messages → Enhanced Agents → Optimized Output
+Flow: LLM Input → Structured Messages → Enhanced Agents → efficient Output
 """
 
 import asyncio
@@ -383,7 +383,7 @@ class LLMDataFlowAnalyzer:
             "MEMORY_PROCESSING": "Operations → LSTM sequences + embeddings",
             "NEUROPLASTICITY_LEARNING": "Activations → Connection patterns + attention weights",
             "DRL_COORDINATION": "Task requirements → Learned coordination actions",
-            "DRL_ROUTING": "Workflow needs → Optimized agent selection"
+            "DRL_ROUTING": "Workflow needs → efficient agent selection"
         }
         
         logger.info("🔄 Key Data Transformations:")
@@ -420,7 +420,7 @@ class LLMDataFlowAnalyzer:
         enhanced_flow = [
             "LLM → LSTM Temporal Learning",
             "Attention-weighted Retrieval", 
-            "DRL-optimized Routing",
+            "DRL-efficient Routing",
             "Adaptive Coordination"
         ]
         

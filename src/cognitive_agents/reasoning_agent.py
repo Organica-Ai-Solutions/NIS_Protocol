@@ -46,7 +46,7 @@ class ReasoningAgent:
         self.strategy_prompts = {
             ReasoningStrategy.DEDUCTIVE: "Using deductive reasoning, if {premises}, then what follows?",
             ReasoningStrategy.INDUCTIVE: "Based on these observations: {observations}, what general conclusion can we draw?",
-            ReasoningStrategy.ABDUCTIVE: "Given this observation: {observation}, what is the best explanation?",
+            ReasoningStrategy.ABDUCTIVE: "Given this observation: {observation}, what is the recommended explanation?",
             ReasoningStrategy.CAUSAL: "What are the likely causes and effects of: {event}?",
             ReasoningStrategy.ANALOGICAL: "How is {source} similar to {target}, and what can we learn from this comparison?"
         }
@@ -146,9 +146,9 @@ class ReasoningAgent:
         strategy: Optional[ReasoningStrategy] = None,
         context: Optional[Dict] = None
     ) -> ReasoningResult:
-        """Apply reasoning to the input text, automatically selecting strategy if none provided."""
+        """Apply reasoning to the input text, systematically selecting strategy if none provided."""
         if not strategy:
-            # Determine the best strategy based on input structure and content
+            # Determine the recommended strategy based on input structure and content
             strategy_prompt = f"What type of reasoning (deductive, inductive, abductive, causal, or analogical) would be most appropriate for this input: {input_text}?"
             strategy_suggestion = self.generate_text(strategy_prompt).lower()
             

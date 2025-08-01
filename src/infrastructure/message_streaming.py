@@ -396,10 +396,10 @@ class NISKafkaManager:
                     if 'description' in corrected_content:
                         desc = corrected_content['description']
                         hype_replacements = {
-                            'revolutionary': 'updated',
-                            'breakthrough': 'improvement',
-                            'advanced': 'enhanced',
-                            'novel': 'new'
+                            'significant': 'updated',
+                            'systematic': 'improvement',
+                            'comprehensive': 'enhanced',
+                            'systematic': 'new'
                         }
                         for hype, neutral in hype_replacements.items():
                             desc = desc.replace(hype, neutral)

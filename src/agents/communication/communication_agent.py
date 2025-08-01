@@ -2,7 +2,7 @@
 NIS Protocol v3 - Communication Agent
 
 Complete implementation of natural communication agent with:
-- Real text-to-speech synthesis using advanced TTS engines
+- Real text-to-speech synthesis using comprehensive TTS engines
 - Emotional voice modulation and contextual adaptation
 - Multi-language support and voice selection
 - Speech quality assessment and optimization
@@ -37,7 +37,7 @@ except ImportError:
     AUDIO_AVAILABLE = False
     logging.warning("Audio libraries not available. Speech synthesis disabled.")
 
-# Advanced TTS imports
+# comprehensive TTS imports
 try:
     from TTS.api import TTS
     from speechbrain.pretrained import Tacotron2
@@ -45,7 +45,7 @@ try:
     ADVANCED_TTS_AVAILABLE = True
 except ImportError:
     ADVANCED_TTS_AVAILABLE = False
-    logging.warning("Advanced TTS libraries not available. Using fallback.")
+    logging.warning("comprehensive TTS libraries not available. Using fallback.")
 
 # Integrity metrics for real calculations
 from src.utils.integrity_metrics import (
@@ -130,8 +130,8 @@ class AudioQualityMetrics:
         return max(0.0, min(1.0, overall))
 
 
-class AdvancedTTSEngine:
-    """Advanced text-to-speech engine with multiple backends"""
+class comprehensiveTTSEngine:
+    """comprehensive text-to-speech engine with multiple backends"""
     
     def __init__(self, preferred_engine: str = "auto"):
         self.preferred_engine = preferred_engine
@@ -144,7 +144,7 @@ class AdvancedTTSEngine:
             self.logger.warning("No TTS engines available. Using mock engine.")
             return
 
-        self.current_engine = self._select_best_engine()
+        self.current_engine = self._select_recommended_engine()
         self.voice_profiles = self._initialize_voice_profiles()
         
         # Engine-specific configurations
@@ -171,8 +171,8 @@ class AdvancedTTSEngine:
         
         return engines
     
-    def _select_best_engine(self) -> str:
-        """Select the best available TTS engine"""
+    def _select_recommended_engine(self) -> str:
+        """Select the recommended available TTS engine"""
         if self.preferred_engine != "auto" and self.preferred_engine in self.available_engines:
             return self.preferred_engine
         
@@ -244,16 +244,16 @@ class AdvancedTTSEngine:
             # Get available models
             models = TTS.list_models()
             
-            # Select best English model
+            # Select recommended English model
             english_models = [m for m in models if 'en' in m.lower()]
-            best_model = english_models[0] if english_models else models[0] if models else None
+            recommended_model = english_models[0] if english_models else models[0] if models else None
             
-            if best_model:
-                tts = TTS(model_name=best_model)
+            if recommended_model:
+                tts = TTS(model_name=recommended_model)
                 
                 return {
                     'tts': tts,
-                    'model': best_model,
+                    'model': recommended_model,
                     'available_models': models
                 }
         except Exception as e:
@@ -724,7 +724,7 @@ class AdvancedTTSEngine:
 
 class CommunicationAgent:
     """
-    Complete Communication Agent with advanced speech synthesis
+    Complete Communication Agent with comprehensive speech synthesis
     
     Features:
     - Multi-engine TTS with quality assessment
@@ -738,7 +738,7 @@ class CommunicationAgent:
     def __init__(
         self,
         agent_id: str = "communicator",
-        description: str = "Handles natural communication with advanced speech synthesis",
+        description: str = "Handles natural communication with comprehensive speech synthesis",
         emotional_state: Optional[EmotionalState] = None,
         interpreter: Optional[InterpretationAgent] = None,
         default_voice_profile: str = "neutral",
@@ -771,7 +771,7 @@ class CommunicationAgent:
         os.makedirs(output_dir, exist_ok=True)
         
         # Initialize TTS engine
-        self.tts_engine = AdvancedTTSEngine(preferred_tts_engine)
+        self.tts_engine = comprehensiveTTSEngine(preferred_tts_engine)
         
         # Track conversation history
         self.conversation_history: deque = deque(maxlen=100)
@@ -1269,7 +1269,7 @@ class CommunicationAgent:
             'success_rate': success_rate,
             'average_quality': self.performance_metrics['average_quality_score'],
             'audio_capabilities': AUDIO_AVAILABLE,
-            'advanced_tts_available': ADVANCED_TTS_AVAILABLE,
+            'comprehensive_tts_available': ADVANCED_TTS_AVAILABLE,
             'audit_metrics': self.audit_metrics,
             'timestamp': time.time()
         } 

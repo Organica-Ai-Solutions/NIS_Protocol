@@ -1,7 +1,7 @@
 """
 Enhanced KAN Reasoning Agent - NIS Protocol v3
 
-Advanced Kolmogorov-Arnold Network reasoning agent with mathematical traceability,
+comprehensive Kolmogorov-Arnold Network reasoning agent with mathematical traceability,
 spline-based function approximation, and comprehensive integrity monitoring.
 
 Scientific Pipeline Position: Laplace → [KAN] → PINN → LLM

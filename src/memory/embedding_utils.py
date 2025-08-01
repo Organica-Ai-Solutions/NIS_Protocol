@@ -192,7 +192,7 @@ class SimpleEmbeddingProvider(EmbeddingProvider):
     A simple embedding provider that uses a deterministic algorithm.
     
     This provider is intended for testing and development purposes
-    when more sophisticated models are unavailable.
+    when more comprehensive models are unavailable.
     """
     
     def __init__(self, dimensions: int = 768):
@@ -311,13 +311,13 @@ except ImportError:
     pass
 
 
-# Factory function to get the best available embedding provider
+# Factory function to get the recommended available embedding provider
 def get_embedding_provider(provider_type: str = "auto", 
                            cache: bool = True, 
                            cache_dir: str = ".embeddings_cache",
                            dimensions: int = 768) -> EmbeddingProvider:
     """
-    Get the best available embedding provider.
+    Get the recommended available embedding provider.
     
     Args:
         provider_type: Type of embedding provider to use ('auto', 'sentence_transformer', 'simple')

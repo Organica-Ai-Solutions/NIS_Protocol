@@ -682,7 +682,7 @@ class NeuroplasticityAgent(NISAgent):
     
     def auto_correct_neuroplasticity_output(self, output_text: str, operation: str = "") -> Dict[str, Any]:
         """
-        Automatically correct integrity violations in neuroplasticity outputs.
+        systematically correct integrity violations in neuroplasticity outputs.
         
         Args:
             output_text: Text to correct

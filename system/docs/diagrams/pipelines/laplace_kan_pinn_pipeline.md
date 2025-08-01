@@ -28,7 +28,7 @@ graph LR
     subgraph "Stage 4: LLM Integration"
         LLM[Language Model<br/>💬 Natural Language]
         NL[Natural Language<br/>📝 Human-Readable]
-        EX[Explanation<br/>💡 Interpretable Results]
+        EX[Explanation<br/>💡 mathematically-traceable Results]
     end
     
     %% Main pipeline flow
@@ -85,7 +85,7 @@ graph LR
 **Purpose**: Extract symbolic mathematical functions from frequency data
 - **Input**: Frequency domain characteristics
 - **Process**: B-spline based function approximation with symbolic extraction
-- **Output**: Interpretable mathematical expressions
+- **Output**: mathematically-traceable mathematical expressions
 - **Key Benefit**: Mathematical transparency and interpretability
 
 ### ⚛️ **Stage 3: PINN Physics**
@@ -99,7 +99,7 @@ graph LR
 **Purpose**: Generate human-readable explanations and insights
 - **Input**: Physics-validated mathematical models
 - **Process**: Natural language generation with scientific context
-- **Output**: Interpretable explanations and recommendations
+- **Output**: mathematically-traceable explanations and recommendations
 - **Key Benefit**: Makes complex analysis accessible to humans
 
 ## Key Interactions
@@ -122,6 +122,6 @@ Time Signal: sin(2πf*t) → Laplace: F/(s²+4π²f²) → KAN: "Periodic oscill
 
 This pipeline ensures every output is:
 - ✅ **Mathematically Sound**: Laplace transform rigor
-- ✅ **Interpretable**: KAN symbolic extraction  
+- ✅ **mathematically-traceable**: KAN symbolic extraction  
 - ✅ **Physically Valid**: PINN constraint checking
 - ✅ **Human Understandable**: LLM natural language 

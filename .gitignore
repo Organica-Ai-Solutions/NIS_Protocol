@@ -176,4 +176,9 @@ models/bitnet/models/bitnet/**/*.ckpt
 
 # Virtual Environments
 venv/
+
+# Eclipse project files
 .cproject
+
+# Private directories
+private/

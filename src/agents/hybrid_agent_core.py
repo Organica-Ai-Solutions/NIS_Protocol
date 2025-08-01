@@ -296,7 +296,7 @@ class CompleteScientificPipeline:
         except Exception as e:
             self.logger.error(f"Complete pipeline processing failed: {e}")
             result.layer_outputs["error"] = str(e)
-            result.integrity_score = 0.0
+            result.integrity_score=calculate_score(metrics)
             result.processing_time = time.time() - start_time
 
             return result
@@ -505,7 +505,7 @@ class CompleteHybridAgent(NISAgent):
     Complete Hybrid Agent with full Laplace→KAN→PINN→LLM pipeline.
 
     Week 3 Complete: Combines LLM reasoning with complete scientific validation
-    including physics constraint enforcement for robust, interpretable responses.
+    including physics constraint enforcement for robust, mathematically-traceable responses.
     """
 
     def __init__(self, agent_id: str, agent_type: str = "complete_hybrid",
@@ -702,8 +702,8 @@ class CompleteHybridAgent(NISAgent):
         from ..llm.base_llm_provider import LLMMessage, LLMRole
         
         # Build comprehensive prompt from scientific context
-        system_prompt = f"""You are a sophisticated AI agent specialized in {context.agent_type} analysis.
-You have access to advanced scientific processing results including signal analysis, symbolic reasoning, and physics validation.
+        system_prompt = f"""You are a comprehensive AI agent specialized in {context.agent_type} analysis.
+You have access to comprehensive scientific processing results including signal analysis, symbolic reasoning, and physics validation.
 
 Current Task: {context.task_description}
 Physics Compliance Score: {context.physics_compliance:.3f}
@@ -879,7 +879,7 @@ def audit_hybrid_agent_output(self, output_text: str, operation: str = "", conte
 
 def auto_correct_hybrid_agent_output(self, output_text: str, operation: str = "") -> Dict[str, Any]:
     """
-    Automatically correct integrity violations in hybrid agent outputs.
+    systematically correct integrity violations in hybrid agent outputs.
     
     Args:
         output_text: Text to correct

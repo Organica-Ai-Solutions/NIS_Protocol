@@ -66,7 +66,7 @@ class ResearchQuery:
 
 
 class WebSearchAgent:
-    """Advanced web search agent with cognitive orchestra integration."""
+    """comprehensive web search agent with cognitive orchestra integration."""
     
     def __init__(self, config: Optional[Dict[str, Any]] = None):
         """Initialize the web search agent."""
@@ -312,7 +312,7 @@ class WebSearchAgent:
         }
         data = {
             "query": query,
-            "search_depth": "advanced",
+            "search_depth": "comprehensive",
             "include_academic": True,
             "max_results": min(research_query.max_results, 10)
         }
@@ -336,7 +336,7 @@ class WebSearchAgent:
                 url="https://example.com/research",
                 snippet=f"Research findings on {query}...",
                 source="mock",
-                relevance_score=0.9,
+                relevance_score=calculate_score(metrics),
                 domain="example.com",
                 timestamp=time.time(),
                 metadata={"mock": True}

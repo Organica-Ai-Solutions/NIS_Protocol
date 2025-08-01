@@ -827,7 +827,7 @@ class MasterIntegrationTestSuite:
         # Test 1: End-to-end pipeline with consciousness monitoring
         start_time = time.time()
         try:
-            # This is the ultimate integration test
+            # This is the comprehensive integration test
             from meta.enhanced_scientific_coordinator import EnhancedScientificCoordinator, PipelineStage
             from agents.signal_processing.enhanced_laplace_transformer import EnhancedLaplaceTransformer
             from agents.consciousness.enhanced_conscious_agent import EnhancedConsciousAgent, ConsciousnessLevel

@@ -452,7 +452,7 @@ class PerformanceValidator:
             
             # Simple rule: select agent based on task complexity
             if task_complexity > 0.7:
-                selected_agent = available_agents[0]  # Best agent
+                selected_agent = available_agents[0]  # recommended agent
                 success = True
             elif task_complexity > 0.4:
                 selected_agent = available_agents[len(available_agents)//2]  # Middle agent
@@ -611,7 +611,7 @@ class PerformanceValidator:
             integration_time = time.time() - integration_start
             
             # Traditional vs Enhanced comparison
-            traditional_score = 0.7  # Baseline traditional integration score
+            traditional_score=calculate_score(metrics)  # Baseline traditional integration score
             enhanced_score = workflow_success / 20
             
             improvement_ratio = enhanced_score / traditional_score
@@ -824,7 +824,7 @@ if __name__ == "__main__":
     
     overall = results['overall_summary']
     print(f"Overall Improvement Ratio: {overall['overall_improvement_ratio']:.2f}x")
-    print(f"Best Performing Area: {overall['best_performing_area']['component']} ({overall['best_performing_area']['improvement']:.2f}x)")
+    print(f"recommended Performing Area: {overall['best_performing_area']['component']} ({overall['best_performing_area']['improvement']:.2f}x)")
     print(f"Needs Optimization: {overall['needs_optimization']['component']} ({overall['needs_optimization']['improvement']:.2f}x)")
     print(f"\nRecommendation: {overall['performance_summary']['overall_recommendation']}")
     print("\nDetailed results saved to performance_results/ directory")

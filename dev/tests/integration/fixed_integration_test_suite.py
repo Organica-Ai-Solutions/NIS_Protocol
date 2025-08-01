@@ -201,7 +201,7 @@ class FixedIntegrationTestSuite:
             
             test_texts = [
                 "System analysis completed with measured performance metrics",
-                "Advanced AI delivers perfect results automatically",
+                "comprehensive AI delivers well-suited results systematically",
                 "Comprehensive evaluation yielded validated results"
             ]
             

@@ -2,12 +2,12 @@
 """
 NIS Protocol v3 - Audit Fixing Action Agent
 
-Specialized action agent that automatically fixes code violations detected by the 
+Specialized action agent that systematically fixes code violations detected by the 
 consciousness and self-audit systems. Uses third-party protocols (MCP, ACP, A2A) 
 to connect with external tools for code manipulation.
 
 Key Features:
-- Automatically fixes hardcoded values detected by self-audit
+- systematically fixes hardcoded values detected by self-audit
 - Integrates with MCP tools for file editing
 - Uses consciousness agent alerts to trigger fixes
 - Maintains audit trail of all fixes
@@ -67,7 +67,7 @@ class AuditFixSession:
 
 class AuditFixingActionAgent(EnhancedAgentBase):
     """
-    Specialized action agent for automatically fixing audit violations
+    Specialized action agent for systematically fixing audit violations
     using third-party tools and protocols.
     """
     

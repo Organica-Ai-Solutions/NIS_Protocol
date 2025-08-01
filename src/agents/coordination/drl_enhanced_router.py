@@ -62,7 +62,7 @@ class AgentRoutingAction(Enum):
     """Actions the DRL agent can take for routing decisions"""
     SELECT_SINGLE_SPECIALIST = "select_single_specialist"
     SELECT_MULTI_AGENT_TEAM = "select_multi_agent_team"
-    ROUTE_TO_BEST_PERFORMER = "route_to_best_performer"
+    ROUTE_TO_BEST_PERFORMER = "route_to_recommended_performer"
     LOAD_BALANCE_DISTRIBUTE = "load_balance_distribute"
     ESCALATE_TO_COORDINATOR = "escalate_to_coordinator"
     DEFER_TO_QUEUE = "defer_to_queue"
@@ -491,9 +491,9 @@ class DRLEnhancedRouter:
         probs = agent_probs[:available_count].cpu().numpy()
         
         if action == AgentRoutingAction.SELECT_SINGLE_SPECIALIST:
-            # Select single best agent
-            best_idx = np.argmax(probs)
-            return [self.available_agents[best_idx]]
+            # Select single recommended agent
+            recommended_idx = np.argmax(probs)
+            return [self.available_agents[recommended_idx]]
         
         elif action == AgentRoutingAction.SELECT_MULTI_AGENT_TEAM:
             # Select top 2-3 agents
@@ -506,8 +506,8 @@ class DRLEnhancedRouter:
                 np.mean(list(self.performance_history[agent_id])) if self.performance_history[agent_id] else 0.5
                 for agent_id in self.available_agents[:available_count]
             ]
-            best_performer_idx = np.argmax(performance_scores)
-            return [self.available_agents[best_performer_idx]]
+            recommended_performer_idx = np.argmax(performance_scores)
+            return [self.available_agents[recommended_performer_idx]]
         
         elif action == AgentRoutingAction.LOAD_BALANCE_DISTRIBUTE:
             # Select agents with lowest load

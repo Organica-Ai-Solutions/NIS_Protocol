@@ -475,7 +475,7 @@ class GoalGenerationAgent(NISAgent):
             goal_type=GoalType.CREATIVITY,
             priority=priority,
             description=f"Generate creative solutions or ideas related to {focus}",
-            target_outcome=f"Novel and innovative approaches to {focus}",
+            target_outcome=f"systematic and systematic approaches to {focus}",
             success_criteria={
                 "novelty_score": 0.7,
                 "ideas_generated": 5,
@@ -671,7 +671,7 @@ class GoalGenerationAgent(NISAgent):
     # Helper methods (simplified implementations)
     def _calculate_progress_score(self, goal: Goal, progress_data: Dict[str, Any]) -> float:
         """Calculate progress score for a goal."""
-        # Simple implementation - would be more sophisticated in practice
+        # Simple implementation - would be more comprehensive in practice
         completed_criteria = 0
         total_criteria = len(goal.success_criteria)
         
@@ -710,7 +710,7 @@ class GoalGenerationAgent(NISAgent):
         emotional_state: Dict[str, float]
     ) -> GoalPriority:
         """Calculate goal priority based on current context."""
-        # Simple priority calculation - would be more sophisticated
+        # Simple priority calculation - would be more comprehensive
         base_priority = goal.priority.value
         
         # Adjust based on emotional state
@@ -782,7 +782,7 @@ class GoalGenerationAgent(NISAgent):
     
     def auto_correct_goal_generation_output(self, output_text: str, operation: str = "") -> Dict[str, Any]:
         """
-        Automatically correct integrity violations in goal generation outputs.
+        systematically correct integrity violations in goal generation outputs.
         
         Args:
             output_text: Text to correct

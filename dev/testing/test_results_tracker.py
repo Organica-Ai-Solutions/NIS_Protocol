@@ -83,4 +83,4 @@ if __name__ == "__main__":
     print("2. Run: ./start.sh")
     print("3. Run: python3 quick_system_check.py")
     print("4. Run: python3 tests/comprehensive_nis_test_suite.py")
-    print("5. Evidence will be automatically saved to test_results/") 
+    print("5. Evidence will be systematically saved to test_results/") 

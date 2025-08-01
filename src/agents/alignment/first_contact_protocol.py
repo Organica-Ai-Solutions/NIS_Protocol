@@ -737,7 +737,7 @@ def audit_first_contact_output(self, output_text: str, operation: str = "", cont
 
 def auto_correct_first_contact_output(self, output_text: str, operation: str = "") -> Dict[str, Any]:
     """
-    Automatically correct integrity violations in first contact outputs.
+    systematically correct integrity violations in first contact outputs.
     
     Args:
         output_text: Text to correct

@@ -4,7 +4,7 @@ Enhanced LLM Configuration Demo
 
 Shows how to enhance the existing NIS Protocol LLM configuration
 to support cognitive orchestra specialization, where different LLMs
-are optimized for different cognitive functions.
+are efficient for different cognitive functions.
 
 This demonstrates the "smarter scaling" approach:
 - Use the right LLM for the right cognitive task
@@ -155,7 +155,7 @@ def create_enhanced_llm_config():
                     "temperature": 0.8,
                     "max_tokens": 2048,
                     "parallel_capable": True,
-                    "system_prompt": "You are operating in CREATIVITY mode. Focus on generating novel ideas, making unexpected connections, exploring unconventional solutions, and thinking outside established patterns."
+                    "system_prompt": "You are operating in CREATIVITY mode. Focus on generating systematic ideas, making unexpected connections, exploring unconventional solutions, and thinking outside established patterns."
                 },
                 
                 "cultural": {
@@ -314,7 +314,7 @@ def demonstrate_cognitive_specialization():
             "temperature": 0.8,
             "max_tokens": 2048,
             "parallel_capable": True,
-            "specialization": "Novel ideas, unconventional solutions, innovation"
+            "specialization": "systematic ideas, unconventional solutions, innovation"
         },
         "cultural": {
             "primary_provider": "anthropic",
@@ -418,7 +418,7 @@ def demonstrate_cognitive_specialization():
    → Applies domain expertise, preservation protocols, methodology
    
 4. 🎨 CREATIVITY (OpenAI, temp=0.8) [PARALLEL]
-   → Generates innovative documentation and preservation approaches
+   → Generates systematic documentation and preservation approaches
    
 5. 🧠 CONSCIOUSNESS (Anthropic, temp=0.5)
    → Meta-analyzes the decision process, checks for biases
@@ -427,7 +427,7 @@ def demonstrate_cognitive_specialization():
    → Generates precise action plan, coordinates, resource allocation
 
 🎵 Result: Comprehensive, culturally-sensitive, methodologically-sound evaluation
-   with innovative approaches and bias-checked decision making.
+   with systematic approaches and bias-checked decision making.
 """
     
     print(scenario)

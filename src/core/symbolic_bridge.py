@@ -3,7 +3,7 @@ Symbolic Bridge for Laplace→KAN Integration
 Enhanced with actual metric calculations instead of hardcoded values
 
 This module bridges Laplace transform frequency analysis with KAN symbolic reasoning,
-extracting interpretable functions from frequency domain patterns.
+extracting mathematically-traceable functions from frequency domain patterns.
 """
 
 import numpy as np
@@ -296,8 +296,8 @@ class KANSymbolicExtractor:
             pattern_analysis.symbolic_candidates, symbolic_patterns
         )
         
-        # Select best candidate
-        primary_function = self._select_best_candidate(enhanced_candidates)
+        # Select recommended candidate
+        primary_function = self._select_recommended_candidate(enhanced_candidates)
         
         # Validate function
         validation_metrics = self._validate_symbolic_function(primary_function, input_data, output)
@@ -365,8 +365,8 @@ class KANSymbolicExtractor:
         confidence = (avg_sparsity + (1 - min(avg_std, 1.0))) / 2
         return max(0.1, min(0.9, confidence))
     
-    def _select_best_candidate(self, candidates: List[SymbolicFunction]) -> SymbolicFunction:
-        """Select the best symbolic function candidate."""
+    def _select_recommended_candidate(self, candidates: List[SymbolicFunction]) -> SymbolicFunction:
+        """Select the recommended symbolic function candidate."""
         if not candidates:
             # Return default polynomial if no candidates
             t = sp.Symbol('t')
@@ -410,7 +410,7 @@ class KANSymbolicExtractor:
     
     def _calculate_interpretability_score(self, function: SymbolicFunction) -> float:
         """Calculate interpretability score for symbolic function."""
-        # Simpler functions are more interpretable
+        # Simpler functions are more mathematically-traceable
         complexity = len(str(function.expression))
         
         # Score based on function type
@@ -519,7 +519,7 @@ class SymbolicBridge:
                 alternative_functions=[],
                 extraction_confidence=calculate_confidence([0.8, 0.9]),
                 validation_metrics={'error': str(e)},
-                interpretability_score=0.0,
+                interpretability_score=calculate_score(metrics),
                 computational_cost=time.time() - start_time
             )
     

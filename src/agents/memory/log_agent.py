@@ -364,7 +364,7 @@ class LogAgent(NISAgent):
     
     def auto_correct_log_output(self, output_text: str, operation: str = "") -> Dict[str, Any]:
         """
-        Automatically correct integrity violations in log outputs.
+        systematically correct integrity violations in log outputs.
         
         Args:
             output_text: Text to correct

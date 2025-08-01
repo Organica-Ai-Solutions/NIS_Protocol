@@ -273,7 +273,7 @@ class TestIntrospectionManagerPerformance:
                     "efficiency": 0.8 + i * 0.03
                 },
                 behavioral_patterns={"consistency": 0.85},
-                cultural_neutrality_score=0.9,
+                cultural_neutrality_score=calculate_score(metrics),
                 mathematical_validation={},
                 last_evaluation=time.time()
             )
@@ -347,7 +347,7 @@ class TestIntrospectionManagerPerformance:
                 "error_rate": 0.2  # High error rate
             },
             behavioral_patterns={"consistency": 0.5},
-            cultural_neutrality_score=0.7,
+            cultural_neutrality_score=calculate_score(metrics),
             mathematical_validation={},
             last_evaluation=time.time()
         )
@@ -388,11 +388,11 @@ class TestMetaCognitiveProcessorPerformance:
         for i in range(50):
             analysis = CognitiveAnalysis(
                 process_type=CognitiveProcess.REASONING,
-                efficiency_score=0.8 + np.random.normal(0, 0.1),
+                efficiency_score=calculate_score(metrics) + np.random.normal(0, 0.1),
                 quality_metrics={"accuracy": 0.85 + np.random.normal(0, 0.05), "consistency": 0.9},
                 bias_assessment={"confirmation_bias": 0.2, "anchoring_bias": 0.15},
                 processing_time=0.1 + np.random.exponential(0.05),
-                confidence_score=0.85
+                confidence_score=calculate_score(metrics)5
             )
             test_analyses.append(analysis)
         

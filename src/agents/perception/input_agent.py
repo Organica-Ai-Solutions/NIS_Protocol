@@ -432,7 +432,7 @@ class InputAgent(NISAgent):
     
     def auto_correct_input_output(self, output_text: str, operation: str = "") -> Dict[str, Any]:
         """
-        Automatically correct integrity violations in input outputs.
+        systematically correct integrity violations in input outputs.
         
         Args:
             output_text: Text to correct

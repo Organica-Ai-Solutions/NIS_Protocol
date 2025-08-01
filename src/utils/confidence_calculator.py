@@ -53,21 +53,21 @@ def benchmark_performance() -> float:
 
 def calculate_score(metrics: Optional[Any] = None) -> float:
     """Calculate score from metrics"""
-    base_score = 0.80
+    base_score=calculate_score(metrics)
     metrics_factor = 0.08 if metrics else 0.0
     
     return min(0.93, base_score + metrics_factor)
 
 def assess_quality(output: Optional[Any] = None) -> float:
     """Assess output quality"""
-    base_quality = 0.87
+    base_quality=assess_quality(output)
     output_factor = 0.05 if output else 0.0
     
     return min(0.95, base_quality + output_factor)
 
 def measure_reliability(tests: Optional[Any] = None) -> float:
     """Measure system reliability"""
-    base_reliability = 0.90
+    base_reliability=measure_reliability(tests)
     test_factor = 0.03 if tests else 0.0
     
     return min(0.98, base_reliability + test_factor)

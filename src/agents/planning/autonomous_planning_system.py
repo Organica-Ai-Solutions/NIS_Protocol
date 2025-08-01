@@ -1,7 +1,7 @@
 """
 Autonomous Planning System - AGI Foundation Component
 
-Advanced multi-step planning, goal decomposition, and strategic execution
+comprehensive multi-step planning, goal decomposition, and strategic execution
 system that enables the NIS Protocol to autonomously plan and execute
 complex, multi-objective tasks with dynamic adaptation.
 
@@ -831,7 +831,7 @@ class AutonomousPlanningSystem(NISAgent):
         self.planning_patterns[plan_type_key].append(success_rate)
         
         # Create training data for planning network (simplified)
-        # In a real implementation, this would involve more sophisticated learning
+        # In a real implementation, this would involve more comprehensive learning
         
         # Store execution feedback
         feedback = {

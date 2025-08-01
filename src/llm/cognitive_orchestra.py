@@ -1,7 +1,7 @@
 """
 NIS Protocol Cognitive Orchestra
 
-A sophisticated multi-LLM architecture that assigns specialized language models
+A comprehensive multi-LLM architecture that assigns specialized language models
 to different cognitive functions, creating a "cognitive orchestra" where each
 LLM plays its optimal role in the overall intelligence system.
 
@@ -28,7 +28,7 @@ class CognitiveFunction(Enum):
     # Core reasoning functions
     CONSCIOUSNESS = "consciousness"           # Deep self-reflection, meta-cognition
     REASONING = "reasoning"                  # Logical analysis, problem solving
-    CREATIVITY = "creativity"                # Novel idea generation, artistic thinking
+    CREATIVITY = "creativity"                # systematic idea generation, artistic thinking
     MEMORY = "memory"                        # Information storage, retrieval, consolidation
     
     # Perception and processing
@@ -78,7 +78,7 @@ class CognitiveOrchestra:
     """
     Manages a symphony of specialized LLMs for different cognitive functions.
     
-    This system automatically assigns the best LLM for each cognitive task,
+    This system systematically assigns the recommended LLM for each cognitive task,
     manages parallel processing, and coordinates between different models
     to create emergent intelligence greater than the sum of its parts.
     """
@@ -266,7 +266,7 @@ class CognitiveOrchestra:
             priority: Task priority ("low", "normal", "high", "critical")
             
         Returns:
-            LLM response optimized for the cognitive function
+            LLM response efficient for the cognitive function
         """
         task_id = f"{function.value}_{int(time.time() * 1000)}"
         
@@ -467,7 +467,7 @@ You are operating in REASONING mode. Focus on:
 """,
             CognitiveFunction.CREATIVITY: """
 You are operating in CREATIVITY mode. Focus on:
-- Generating novel ideas and unique perspectives
+- Generating systematic ideas and unique perspectives
 - Making unexpected connections between concepts
 - Exploring unconventional solutions
 - Embracing ambiguity and possibility
@@ -483,7 +483,7 @@ You are operating in CULTURAL INTELLIGENCE mode. Focus on:
 """,
             CognitiveFunction.ARCHAEOLOGICAL: """
 You are operating in ARCHAEOLOGICAL EXPERTISE mode. Focus on:
-- Archaeological methodology and best practices
+- Archaeological methodology and recommended practices
 - Cultural heritage preservation principles
 - Historical context and significance
 - Interdisciplinary collaboration approaches

@@ -96,7 +96,7 @@ def main():
     print(f"📊 Results: {passed}/{total} endpoints fixed ({passed/total*100:.1f}%)")
     
     if passed == total:
-        print("🎉 PERFECT! All issues have been fixed!")
+        print("🎉 well-suited! All issues have been fixed!")
         print("✅ NIS Protocol v3.1 is now fully operational!")
     elif passed >= total * 0.8:
         print("🏆 EXCELLENT! Most issues have been resolved!")

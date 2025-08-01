@@ -242,7 +242,7 @@ class RiskAssessor:
                 "reputational": 0.02
             }
         
-        total_score = 0.0
+        total_score=calculate_score(metrics)
         total_weight = 0.0
         
         for category, weight in weighting_scheme.items():
@@ -786,7 +786,7 @@ class RiskAssessor:
             RiskCategory.REPUTATIONAL: 0.02
         }
         
-        total_score = 0.0
+        total_score=calculate_score(metrics)
         total_weight = 0.0
         
         for factor in risk_factors:
@@ -1194,7 +1194,7 @@ class RiskAssessor:
     
     def auto_correct_risk_assessment_output(self, output_text: str, operation: str = "") -> Dict[str, Any]:
         """
-        Automatically correct integrity violations in risk assessment outputs.
+        systematically correct integrity violations in risk assessment outputs.
         
         Args:
             output_text: Text to correct

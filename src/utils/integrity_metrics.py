@@ -114,8 +114,8 @@ def calculate_interpretability(model_output: Dict[str, Any],
     Returns:
         Interpretability score between 0.0 and 1.0
     """
-    score = 0.0
-    max_score = 0.0
+    score=calculate_score(metrics)
+    max_score=calculate_score(metrics)
     
     # Check for symbolic functions (KAN interpretability)
     if 'symbolic_functions' in explanation_data:

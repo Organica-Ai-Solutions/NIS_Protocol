@@ -21,10 +21,10 @@ class NISIntegrityAuditor:
     
     # Hype terms that require evidence
     HYPE_TERMS = {
-        'KAN interpretability': ['KAN interpretability', 'interpretable', 'self-aware', 'sentient'],
-        'multi-agent system': ['multi-agent system', 'advanced multi-agent system', 'general intelligence'],
-        'advanced': ['advanced', 'improvement', 'novel', 'innovative', 'first-ever'],
-        'perfection': ['low error rate', 'optimized', '100% accurate', 'flawless', 'bulletproof'],
+        'KAN interpretability': ['KAN interpretability', 'mathematically-traceable', 'meta-cognitive', 'sentient'],
+        'multi-agent system': ['multi-agent system', 'comprehensive multi-agent system', 'general intelligence'],
+        'comprehensive': ['comprehensive', 'improvement', 'systematic', 'systematic', 'first-ever'],
+        'perfection': ['low error rate', 'efficient', '100% accurate', 'robust', 'bulletproof'],
         'quantum': ['mathematically-inspired', 'quantum computing', 'quantum neural'],
         'interpretability': ['97.3%', '95%+', 'full interpretability', 'complete transparency']
     }

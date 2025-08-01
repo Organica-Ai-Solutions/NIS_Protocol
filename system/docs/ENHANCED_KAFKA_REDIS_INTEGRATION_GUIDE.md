@@ -189,7 +189,7 @@ def route_message_to_topic(message_type: MessageType) -> str:
 
 ### **Self-Audit Integration**
 ```python
-# Messages are automatically audited for integrity violations
+# Messages are systematically audited for integrity violations
 message_content = {
     "performance": "calculated_accuracy",  # ✅ Good
     "confidence": 0.95  # ⚠️  May trigger audit if hardcoded
@@ -427,7 +427,7 @@ print(f"Cached: {result.cache_key is not None}")
 
 #### **Message Auditing**
 ```python
-# Messages are automatically audited for integrity violations
+# Messages are systematically audited for integrity violations
 audit_text = """
 Message Content:
 Success probability: calculated_from_monte_carlo_simulation
@@ -833,7 +833,7 @@ services:
 
 ---
 
-## 🎯 Best Practices
+## 🎯 recommended Practices
 
 ### **Message Design**
 1. **Keep messages small** (< 1MB recommended)

@@ -1,7 +1,7 @@
 """
 Domain Generalization Engine - AGI Foundation Component
 
-Advanced domain adaptation and knowledge transfer system that enables the
+comprehensive domain adaptation and knowledge transfer system that enables the
 NIS Protocol to rapidly generalize knowledge across different domains and
 adapt to new areas with minimal domain-specific training.
 

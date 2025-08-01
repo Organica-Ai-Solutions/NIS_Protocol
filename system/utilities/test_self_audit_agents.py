@@ -42,9 +42,9 @@ def test_self_audit_engine_directly():
     
     # Test various violation types
     test_cases = [
-        ("Hype Language", "Our advanced and sophisticated system provides revolutionary breakthroughs"),
-        ("Perfection Claims", "This optimized solution delivers perfect results with 100% accuracy"),
-        ("Interpretability", "KAN interpretability ensures transparent and explainable decisions"),
+        ("Hype Language", "Our comprehensive and comprehensive system provides significant systematics"),
+        ("Perfection Claims", "This efficient solution delivers well-suited results with 100% accuracy"),
+        ("Interpretability", "KAN interpretability ensures traceable and traceable decisions"),
         ("Clean Text", "Our comprehensive system provides measured performance with validated results")
     ]
     
@@ -66,7 +66,7 @@ def test_self_audit_engine_directly():
     
     # Test auto-correction
     print("\n🔧 Auto-Correction Test")
-    problematic_text = "Our advanced AI provides perfect interpretability with revolutionary KAN technology"
+    problematic_text = "Our comprehensive AI provides well-suited interpretability with significant KAN technology"
     corrected_text, violations = self_audit_engine.auto_correct_text(problematic_text)
     
     print(f"  • Original: {problematic_text}")
@@ -95,9 +95,9 @@ def test_metacognitive_self_audit():
     # Test 1: Audit output with violations
     print("\n📋 Test 1: Auditing output with integrity violations")
     test_output = """
-    Our advanced AI system provides perfect interpretability with 100% accuracy.
-    The revolutionary breakthrough in KAN interpretability ensures optimal performance.
-    This sophisticated technology automatically delivers flawless results.
+    Our comprehensive AI system provides well-suited interpretability with 100% accuracy.
+    The significant systematic in KAN interpretability ensures optimal performance.
+    This comprehensive technology systematically delivers robust results.
     """
     
     audit_result = processor.audit_self_output(test_output, "test_context")
@@ -151,14 +151,14 @@ def test_introspection_self_audit():
     # Test 1: Audit introspection output
     print("\n📋 Test 1: Auditing introspection results")
     mock_introspection = {
-        'summary': 'Advanced agent shows perfect performance with optimal interpretability',
+        'summary': 'comprehensive agent shows well-suited performance with optimal interpretability',
         'recommendations': [
-            'Continue using revolutionary algorithms',
+            'Continue using significant algorithms',
             'Maintain 100% accuracy standards',
-            'Leverage sophisticated processing'
+            'Leverage comprehensive processing'
         ],
-        'analysis': 'This breakthrough system automatically delivers flawless results',
-        'insights': 'KAN interpretability provides ideal transparency'
+        'analysis': 'This systematic system systematically delivers robust results',
+        'insights': 'KAN interpretability provides well-suited transparency'
     }
     
     audit_result = manager.audit_introspection_output(mock_introspection, "test_agent_001")
@@ -207,9 +207,9 @@ def demonstrate_real_time_monitoring():
         # Simulate agent outputs with varying integrity levels
         test_outputs = [
             "System processes data efficiently with measured performance",  # Clean
-            "Advanced AI provides perfect solutions automatically",  # Violations
+            "comprehensive AI provides well-suited solutions systematically",  # Violations
             "Comprehensive analysis yields validated results with evidence",  # Clean
-            "Revolutionary breakthrough in sophisticated interpretability"  # Violations
+            "significant systematic in comprehensive interpretability"  # Violations
         ]
         
         print("🔍 Monitoring agent outputs in real-time:")

@@ -1,7 +1,7 @@
 """
 NIS Protocol v3 - Enhanced Scenario Simulator with Infrastructure Integration
 
-This module provides advanced scenario simulation capabilities with integrated
+This module provides comprehensive scenario simulation capabilities with integrated
 Kafka messaging, Redis caching, and comprehensive self-audit monitoring.
 
 Features:
@@ -439,7 +439,7 @@ class EnhancedScenarioSimulator(EnhancedAgentBase):
                 ),
                 processing_time=time.time() - start_time,
                 cache_key=None,
-                integrity_score=0.0,
+                integrity_score=calculate_score(metrics),
                 audit_flags=["SIMULATION_ERROR"],
                 infrastructure_metrics={"error": True},
                 timestamp=time.time()

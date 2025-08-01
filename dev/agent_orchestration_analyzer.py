@@ -134,7 +134,7 @@ class AgentOrchestrationAnalyzer:
         self.agent_interactions.append(interaction)
     
     def _process_kan_agent(self):
-        """KAN Reasoning Agent: Interpretable reasoning"""
+        """KAN Reasoning Agent: mathematically-traceable reasoning"""
         print("\n🧠 STEP 3: KAN REASONING AGENT")
         print("-" * 50)
         
@@ -142,7 +142,7 @@ class AgentOrchestrationAnalyzer:
             agent_name="Enhanced KAN Reasoning Agent",
             action_type="symbolic_function_extraction",
             input_data="Frequency domain patterns",
-            output_data="Symbolic representation + interpretable functions",
+            output_data="Symbolic representation + mathematically-traceable functions",
             processing_time=0.087,
             confidence=calculate_confidence([0.85, 0.90, 0.92]),
             status="completed"

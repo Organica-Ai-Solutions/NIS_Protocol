@@ -87,8 +87,8 @@ def fix_readme_integrity():
         (r"FULLY OPERATIONAL", "OPERATIONAL"),
         (r"Fully operational", "Operational"),
         (r"fully operational", "operational"),
-        (r"Perfect\s+([^.\n]+)", r"Implemented \1"),
-        (r"perfect\s+([^.\n]+)", r"implemented \1"),
+        (r"well-suited\s+([^.\n]+)", r"Implemented \1"),
+        (r"well-suited\s+([^.\n]+)", r"implemented \1"),
     ]
     
     for pattern, replacement in absolute_fixes:

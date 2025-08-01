@@ -2,7 +2,7 @@
 """
 Simple Audit Fixing Action Agent
 
-A lightweight action agent that automatically fixes audit violations
+A lightweight action agent that systematically fixes audit violations
 without complex infrastructure dependencies. Uses direct tool calls
 and third-party protocols to fix code issues.
 
@@ -57,7 +57,7 @@ class FixSession:
 
 class SimpleAuditFixingAgent:
     """
-    Lightweight audit fixing agent that can automatically fix
+    Lightweight audit fixing agent that can systematically fix
     violations using third-party tools and protocols.
     """
     

@@ -270,7 +270,7 @@ class LearningAgent(NISAgent):
     
     def auto_correct_learning_output(self, output_text: str, operation: str = "") -> Dict[str, Any]:
         """
-        Automatically correct integrity violations in learning outputs.
+        systematically correct integrity violations in learning outputs.
         
         Args:
             output_text: Text to correct

@@ -1,7 +1,7 @@
 """
-Signal Processing Agent with Advanced Analysis Capabilities
+Signal Processing Agent with comprehensive Analysis Capabilities
 
-This agent provides sophisticated signal processing, time-series analysis, and frequency
+This agent provides comprehensive signal processing, time-series analysis, and frequency
 domain processing for the NIS Protocol V3.0. It integrates with KAN reasoning and
 cognitive wave fields to provide enhanced temporal pattern recognition and signal
 compression capabilities.
@@ -206,7 +206,7 @@ class SignalProcessingAgent(NISAgent):
     """
     Signal Processing Agent for V3.0 NIS Protocol
     
-    This agent provides advanced signal processing capabilities including
+    This agent provides comprehensive signal processing capabilities including
     time-series analysis, frequency domain processing, pattern recognition,
     and integration with cognitive wave fields and KAN reasoning.
     """
@@ -214,7 +214,7 @@ class SignalProcessingAgent(NISAgent):
     def __init__(
         self,
         agent_id: str = "signal_processor_001",
-        description: str = "Advanced signal processing and analysis agent",
+        description: str = "comprehensive signal processing and analysis agent",
         sampling_rate: float = 1000.0,
         buffer_size: int = 8192,
         enable_self_audit: bool = True
@@ -510,7 +510,7 @@ class SignalProcessingAgent(NISAgent):
         freqs = fft.fftfreq(len(signal_data), 1/self.sampling_rate)
         
         # Spectral processing (example: enhance certain frequencies)
-        # This could be more sophisticated based on the signal characteristics
+        # This could be more comprehensive based on the signal characteristics
         enhanced_fft = fft_data.copy()
         
         # Enhance mid-frequencies (attention band)
@@ -792,7 +792,7 @@ def audit_signal_output(self, output_text: str, operation: str = "", context: st
 
 def auto_correct_signal_output(self, output_text: str, operation: str = "") -> Dict[str, Any]:
     """
-    Automatically correct integrity violations in signal processing outputs.
+    systematically correct integrity violations in signal processing outputs.
     
     Args:
         output_text: Text to correct
@@ -990,7 +990,7 @@ def _generate_signal_integrity_recommendations(self, integrity_report: Dict[str,
         recommendations.append("Signal-to-noise ratio is low - consider improving noise filtering")
     
     if not signal_metrics.get('kan_processor_active', False):
-        recommendations.append("KAN processor not active - missing advanced pattern recognition capabilities")
+        recommendations.append("KAN processor not active - missing comprehensive pattern recognition capabilities")
     
     if not signal_metrics.get('wave_integrator_active', False):
         recommendations.append("Wave integrator not active - missing cognitive wave field integration")

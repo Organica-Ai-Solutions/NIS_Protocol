@@ -18,13 +18,13 @@ hardcoded_patterns = {
 
 # Hype language replacements
 hype_replacements = {
-    'advanced multi-agent system': 'multi-agent coordination system',
-    'advanced': 'well-engineered',
-    'novel': 'documented',
-    'innovative': 'structured',
-    'breakthrough': 'development',
-    'optimized': 'evaluated',
-    'perfect': 'high-quality',
+    'comprehensive multi-agent system': 'multi-agent coordination system',
+    'comprehensive': 'well-engineered',
+    'systematic': 'documented',
+    'systematic': 'structured',
+    'systematic': 'development',
+    'efficient': 'evaluated',
+    'well-suited': 'high-quality',
     'KAN interpretability-driven': 'KAN-based symbolic regression',
     'KAN interpretability': 'KAN symbolic analysis',
     'sub-second processing': 'efficient processing'

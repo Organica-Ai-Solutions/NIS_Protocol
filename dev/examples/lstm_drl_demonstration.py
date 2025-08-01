@@ -168,7 +168,7 @@ class LSTMDRLDemonstration:
                 "themes": ["research", "hypothesis", "science"]
             },
             {
-                "content": "Data collection phase using advanced sensors and measurements",
+                "content": "Data collection phase using comprehensive sensors and measurements",
                 "importance": 0.8,
                 "memory_type": MemoryType.EPISODIC,
                 "themes": ["research", "data", "sensors"]
@@ -451,7 +451,7 @@ class LSTMDRLDemonstration:
             "Research project initialization with clear objectives and methodology",
             "Comprehensive literature review and background analysis completed",
             "Experimental design phase with hypothesis formulation",
-            "Data collection using advanced measurement techniques",
+            "Data collection using comprehensive measurement techniques",
             "Preliminary analysis reveals interesting patterns in the data",
             "Statistical analysis confirms significance of observed patterns",
             "Results interpretation and scientific conclusion formulation"
@@ -637,7 +637,7 @@ class LSTMDRLDemonstration:
     async def _cleanup_demo(self):
         """Cleanup demonstration resources"""
         logger.info("🧹 Cleaning up demonstration resources...")
-        # Note: Temporary directories will be cleaned up automatically
+        # Note: Temporary directories will be cleaned up systematically
         logger.info("✅ Cleanup complete")
 
 

@@ -3,11 +3,11 @@ NIS Protocol v3 - Enhanced Agent Base Class
 
 This module provides a comprehensive base class for all NIS Protocol agents
 with integrated Kafka messaging, Redis caching, LangGraph workflows, 
-LangSmith observability, and advanced multi-agent collaboration capabilities.
+LangSmith observability, and comprehensive multi-agent collaboration capabilities.
 
 Enhanced Features:
 - Unified infrastructure integration (Kafka + Redis + LangGraph + LangSmith)
-- Advanced multi-agent collaboration patterns
+- comprehensive multi-agent collaboration patterns
 - Self-audit integration with real-time monitoring
 - Async message handling and intelligent caching
 - Performance tracking and health monitoring
@@ -318,7 +318,7 @@ class EnhancedAgentBase(ABC):
         if config.enable_langgraph and LANGGRAPH_AVAILABLE:
             self._build_agent_workflows()
         
-        self.logger.info(f"Enhanced agent {self.agent_id} initialized with advanced capabilities")
+        self.logger.info(f"Enhanced agent {self.agent_id} initialized with comprehensive capabilities")
 
     def _setup_langsmith(self):
         """Setup LangSmith integration for agent observability"""

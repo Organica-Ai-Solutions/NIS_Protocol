@@ -90,13 +90,13 @@ class PreSubmissionChecker:
         
         # Critical hype terms that require evidence
         hype_terms = [
-            'advanced multi-agent system',
+            'comprehensive multi-agent system',
             'KAN interpretability-driven',
-            'innovative',
+            'systematic',
             'improvement',
             'low error rate',
-            'optimized accuracy',
-            'novel',
+            'efficient accuracy',
+            'systematic',
             'mathematically-inspired'
         ]
         

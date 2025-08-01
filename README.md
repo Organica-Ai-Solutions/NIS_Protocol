@@ -1,7 +1,6 @@
-
 # NIS Protocol v3.1
 
-The NIS Protocol (Neural Integration System Protocol) is an advanced protocol for agent orchestration. It provides a structured framework for developing, testing, and deploying agent systems across various applications.
+The NIS Protocol (Neural Integration System Protocol) is a structured framework for developing, testing, and deploying agent-based systems for generative simulation.
 
 ## 📋 Important Repository Note
 This repository uses Git LFS (Large File Storage) for managing large model files. If you're cloning this repository, please make sure you have Git LFS installed:
@@ -18,22 +17,22 @@ The actual large model files (located in `models/bitnet/`) are not included dire
 
 ![NIS Protocol Banner](assets/images_organized/mathematical_visuals/v3map.png)
 
-**The NIS Protocol is not just another AI wrapper—it is a verifiable, generative AI that builds and runs physically realistic simulations. Describe a scenario, and our AI will generate a 3D model, simulate its performance under realistic conditions, and produce a technical report on its viability.**
+**The NIS Protocol is a generative AI system that builds and runs physically-informed simulations. Based on a descriptive prompt, the system can generate a 3D model, simulate its performance under specified conditions, and produce a technical report on its viability (see `benchmarks/performance_validation.py` for validation).**
 
-This is a closed-loop design and validation system that connects generative AI to a "world model" grounded in reality, allowing it to create and test novel designs autonomously.
+This is a closed-loop design and validation system that connects generative AI to a "world model" grounded in physical principles, allowing it to create and test systematic designs.
 
 ## Core Features
 
 | Feature                       | Description                                                                                                                              | Visual                                                                                                       |
 | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| **Generative Simulation**     | Go beyond simple text and images. Generate physically accurate 3D models and simulations of complex systems from natural language prompts. | ![Simulation Example](assets/images_organized/system_screenshots/usesExamples.png)                           |
-| **Verifiable AI Pipeline**    | The Laplace → KAN → PINN pipeline, **powered by NVIDIA Modulus (PhysicsNeMo)**, ensures that all generated content is grounded in scientific principles. | ![Verifiable AI Pipeline](assets/images_organized/mathematical_visuals/laplace+kan.png)                      |
-| **Offline-First Capabilities** | The integrated BitNet model allows for fast, offline inference, ensuring the system is resilient and can operate without cloud services.     | ![BitNet Integration](assets/images_organized/mathematical_visuals/mlp.png)                                |
-| **Multi-Agent Architecture**  | A sophisticated hierarchy of specialized agents work together to design, simulate, analyze, and learn.                                   | ![Agent Architecture](system/docs/diagrams/agent_hierarchy/communication_hierarchy.md)                      |
+| **Generative Simulation**     | Generate physically-informed 3D models and simulations of complex systems from natural language prompts. | ![Simulation Example](assets/images_organized/system_screenshots/usesExamples.png)                           |
+| **Verifiable AI Pipeline**    | The Laplace → KAN → PINN pipeline, supported by NVIDIA Modulus, ensures that generated content is grounded in scientific principles (validated in `benchmarks/performance_validation.py`). | ![Verifiable AI Pipeline](assets/images_organized/mathematical_visuals/laplace+kan.png)                      |
+| **Offline-First Capabilities** | The integrated BitNet model allows for fast, offline inference, enabling the system to operate without constant cloud connectivity.     | ![BitNet Integration](assets/images_organized/mathematical_visuals/mlp.png)                                |
+| **Multi-Agent Architecture**  | A hierarchy of specialized agents work in coordination to design, simulate, analyze, and learn (see `system/docs/architecture/Agent_Architecture.md`).                                   | ![Agent Architecture](system/docs/diagrams/agent_hierarchy/communication_hierarchy.md)                      |
 
 ## System Architecture
 
-The NIS Protocol is built on a hierarchical system of specialized agents that work together to achieve complex goals. This architecture ensures a clear separation of concerns, efficient communication, and a robust, scalable system.
+The NIS Protocol is built on a hierarchical system of specialized agents that work together to achieve complex goals. This architecture promotes a clear separation of concerns, efficient communication, and a scalable system.
 
 ![Agent Hierarchy Diagram](system/docs/diagrams/agent_hierarchy/communication_hierarchy.md#nis-protocol-agent-communication-hierarchy)
 
@@ -93,10 +92,10 @@ Engage in a dialogue with the NIS Protocol's reasoning agents.
 
 ## The NIS Protocol v3.1: A New Paradigm
 
-Version 3.1 marks a significant leap forward, moving beyond the theoretical framework of v3 to a fully implemented, production-ready system with groundbreaking capabilities.
+Version 3.1 represents a significant step forward, moving from a theoretical framework to a functional, production-ready system with well-defined capabilities.
 
-- **From Theory to Reality**: Where v3 laid the groundwork, v3.1 builds the skyscraper. The Generative Simulation Engine is a fully operational feature, not just a concept.
-- **Offline and Autonomous**: The integration of the BitNet model gives the system a new level of autonomy, allowing it to learn and operate without constant cloud connectivity.
-- **Verifiable and Trustworthy**: The PINN-based validation ensures that the system's outputs are not just impressive, but also scientifically sound and trustworthy.
+- **From Theory to Implementation**: Where v3 laid the groundwork, v3.1 provides a working implementation. The Generative Simulation Engine is an operational feature.
+- **Offline and Autonomous Operation**: The integration of the BitNet model provides a new level of autonomy, allowing the system to learn and operate without constant cloud connectivity.
+- **Verifiable and Trustworthy by Design**: The PINN-based validation ensures that the system's outputs are scientifically sound and traceable to first principles.
 
-The NIS Protocol v3.1 is more than an evolution; it's a revolution in what's possible with generative AI.
+The NIS Protocol v3.1 is an evolution in what is possible with generative AI, with a strong focus on verifiable and trustworthy results.

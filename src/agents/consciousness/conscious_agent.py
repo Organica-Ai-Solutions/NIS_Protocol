@@ -477,7 +477,7 @@ class ConsciousAgent(NISAgent):
             situation_type = context.get("situation", "neutral")
             expected_emotions = self._get_expected_emotions(situation_type)
             
-            appropriateness_score = 0.0
+            appropriateness_score=calculate_score(metrics)
             if expected_emotions:
                 # Compare current emotion to expected range
                 expected_valence = expected_emotions.get("valence_range", [0, 0])
@@ -488,7 +488,7 @@ class ConsciousAgent(NISAgent):
                 
                 appropriateness_score = (0.6 if valence_appropriate else 0.2) + (0.4 if arousal_appropriate else 0.1)
             else:
-                appropriateness_score = 0.6  # Neutral when no expectations
+                appropriateness_score=calculate_score(metrics)  # Neutral when no expectations
             
             # Determine appropriateness category
             if appropriateness_score > 0.8:
@@ -730,7 +730,7 @@ class ConsciousAgent(NISAgent):
         
         if performance_trend > 0.1 and learning_potential > 0.6:
             recommendations.append("Maintain current trajectory with continued optimization")
-            recommendations.append("Explore advanced learning techniques")
+            recommendations.append("Explore comprehensive learning techniques")
         
         return recommendations
     
@@ -884,7 +884,7 @@ class ConsciousAgent(NISAgent):
                 goal_priority = goal.get("priority", 0.5)
                 
                 # Check if decision outcomes support goal metrics
-                alignment_score = 0.0
+                alignment_score=calculate_score(metrics)
                 metric_count = 0
                 
                 for metric, target_value in goal_metrics.items():

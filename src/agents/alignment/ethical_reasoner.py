@@ -618,7 +618,7 @@ class EthicalReasoner(NISAgent):
     
     def _calculate_weighted_ethical_score(self, evaluations: List[EthicalEvaluation]) -> float:
         """Calculate weighted overall ethical score."""
-        total_weighted_score = 0.0
+        total_weighted_score=calculate_score(metrics)
         total_weight = 0.0
         
         for evaluation in evaluations:
@@ -922,7 +922,7 @@ class EthicalReasoner(NISAgent):
     
     def auto_correct_ethical_reasoning_output(self, output_text: str, operation: str = "") -> Dict[str, Any]:
         """
-        Automatically correct integrity violations in ethical reasoning outputs.
+        systematically correct integrity violations in ethical reasoning outputs.
         
         Args:
             output_text: Text to correct

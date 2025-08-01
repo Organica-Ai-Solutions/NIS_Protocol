@@ -116,7 +116,7 @@ class NISBenchmarkSuite:
             return TestResult(
                 name="KAN Arithmetic Patterns",
                 result=BenchmarkResult.FAIL,
-                score=0.0,
+                score=calculate_score(metrics),
                 details={"error": str(e)},
                 execution_time=time.time() - start_time,
                 error=str(e)
@@ -188,7 +188,7 @@ class NISBenchmarkSuite:
             return TestResult(
                 name="KAN Trigonometric Functions",
                 result=BenchmarkResult.FAIL,
-                score=0.0,
+                score=calculate_score(metrics),
                 details={"error": str(e)},
                 execution_time=time.time() - start_time,
                 error=str(e)
@@ -280,7 +280,7 @@ class NISBenchmarkSuite:
             return TestResult(
                 name="PINN Conservation Laws",
                 result=BenchmarkResult.FAIL,
-                score=0.0,
+                score=calculate_score(metrics),
                 details={"error": str(e)},
                 execution_time=time.time() - start_time,
                 error=str(e)
@@ -396,7 +396,7 @@ class NISBenchmarkSuite:
             return TestResult(
                 name="Combined Physical Reasoning",
                 result=BenchmarkResult.FAIL,
-                score=0.0,
+                score=calculate_score(metrics),
                 details={"error": str(e)},
                 execution_time=time.time() - start_time,
                 error=str(e)
@@ -690,7 +690,7 @@ class NISBenchmarkSuite:
         pinn_score = pinn_validation.get("physics_accuracy", 0.0)
         
         # Weighted combination
-        combined_score = 0.4 * keyword_score + 0.3 * kan_score + 0.3 * pinn_score
+        combined_score=calculate_score(metrics) * keyword_score + 0.3 * kan_score + 0.3 * pinn_score
         
         return min(combined_score, 1.0)
     

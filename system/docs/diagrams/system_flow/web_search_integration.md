@@ -198,14 +198,14 @@ combined_report = {
 
 ### Filtering Mechanisms
 
-1. **Sensitive Term Detection**: Automatically filters results containing culturally insensitive language
+1. **Sensitive Term Detection**: systematically filters results containing culturally insensitive language
 2. **Indigenous Rights Protection**: Prioritizes sources that respect indigenous perspectives
 3. **Academic Source Verification**: Ensures sources meet academic standards for cultural research
 4. **Context-Aware Ranking**: Adjusts relevance scores based on cultural considerations
 
 ### Sensitive Terms Filter
 
-The system automatically reduces relevance scores for results containing:
+The system systematically reduces relevance scores for results containing:
 - "primitive"
 - "savage" 
 - "backward"
@@ -272,7 +272,7 @@ cultural_analysis = await cognitive_orchestra.execute_function(
 ```python
 # Research documentation methodologies
 doc_research = await search_agent.research(
-    query="archaeological site documentation best practices",
+    query="archaeological site documentation recommended practices",
     domain=ResearchDomain.ARCHAEOLOGICAL,
     context={"focus": "digital_preservation", "standards": "international"}
 )
@@ -280,7 +280,7 @@ doc_research = await search_agent.research(
 # Generate methodology recommendations
 methodology = await cognitive_orchestra.execute_function(
     function=CognitiveFunction.ARCHAEOLOGICAL,
-    prompt="Recommend documentation methodology based on current best practices",
+    prompt="Recommend documentation methodology based on current recommended practices",
     context=doc_research
 )
 ```
@@ -339,7 +339,7 @@ print(f"Cache size: {stats['cache_size']}")
 3. **Underwater Archaeology**: Marine archaeological research capabilities
 4. **Digital Humanities**: Integration with digital humanities tools
 
-## Best Practices
+## recommended Practices
 
 ### Research Query Design
 

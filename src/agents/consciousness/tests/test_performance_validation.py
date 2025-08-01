@@ -110,7 +110,7 @@ class TestPerformanceClaims:
                 confidence=calculate_confidence([0.8, 0.9]),
                 performance_metrics={"success_rate": 0.9, "response_time": 0.1},
                 behavioral_patterns={"consistency": 0.8},
-                cultural_neutrality_score=0.9,
+                cultural_neutrality_score=calculate_score(metrics),
                 mathematical_validation={},
                 last_evaluation=time.time()
             )
@@ -140,11 +140,11 @@ class TestPerformanceClaims:
         
         analysis = CognitiveAnalysis(
             process_type=CognitiveProcess.REASONING,
-            efficiency_score=0.85,
+            efficiency_score=calculate_score(metrics),
             quality_metrics={"accuracy": 0.9},
             bias_assessment={"confirmation_bias": 0.2},
             processing_time=0.1,
-            confidence_score=0.9
+            confidence_score=calculate_score(metrics)
         )
         
         # Measure pattern learning time

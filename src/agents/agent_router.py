@@ -3,7 +3,7 @@ NIS Protocol v3 - Enhanced Agent Router with LangGraph
 
 Advanced routing system for hybrid agent coordination with LLM integration,
 scientific processing pipeline, context-aware task distribution, and 
-sophisticated multi-agent orchestration using LangGraph workflows.
+comprehensive multi-agent orchestration using LangGraph workflows.
 
 Enhanced Features:
 - LangGraph state machine workflows for complex routing decisions
@@ -113,8 +113,8 @@ class RoutingStrategy(Enum):
     """Strategies for agent routing"""
     CAPABILITY_BASED = "capability_based"
     LOAD_BALANCED = "load_balanced"
-    PERFORMANCE_OPTIMIZED = "performance_optimized"
-    COST_OPTIMIZED = "cost_optimized"
+    PERFORMANCE_OPTIMIZED = "performance_efficient"
+    COST_OPTIMIZED = "cost_efficient"
     COLLABORATIVE = "collaborative"
     HIERARCHICAL = "hierarchical"
     CONSENSUS_SEEKING = "consensus_seeking"
@@ -502,7 +502,7 @@ class EnhancedAgentRouter:
         
         # Task requirements extraction
         requirements = {
-            "creativity_required": "creative" in task_description.lower() or "novel" in task_description.lower(),
+            "creativity_required": "creative" in task_description.lower() or "systematic" in task_description.lower(),
             "analysis_required": "analyze" in task_description.lower() or "examine" in task_description.lower(),
             "collaboration_required": "multiple" in task_description.lower() or "coordinate" in task_description.lower(),
             "expertise_level": self._determine_expertise_level(task_description),
@@ -568,10 +568,10 @@ class EnhancedAgentRouter:
             selected_agents = [agent for agent, score in sorted_agents[:3] if score > 0.7]
             routing_rationale["strategy"] = "collaborative_capability_matching"
         else:
-            # Select single best agent
+            # Select single recommended agent
             if sorted_agents and sorted_agents[0][1] > 0.6:
                 selected_agents = [sorted_agents[0][0]]
-                routing_rationale["strategy"] = "best_capability_match"
+                routing_rationale["strategy"] = "recommended_capability_match"
             else:
                 routing_rationale["strategy"] = "no_suitable_match"
         
@@ -595,7 +595,7 @@ class EnhancedAgentRouter:
             adjusted_performance = performance * (1.0 / (1.0 + workload * 0.1))
             performance_scores[agent_id] = adjusted_performance
         
-        # Select best performing available agents
+        # Select recommended performing available agents
         sorted_by_performance = sorted(performance_scores.items(), key=lambda x: x[1], reverse=True)
         
         selected_agents = []
@@ -606,7 +606,7 @@ class EnhancedAgentRouter:
             for agent_id, score in sorted_by_performance:
                 if agent_workload.get(agent_id, 0) < 5:  # Not overloaded
                     selected_agents = [agent_id]
-                    routing_rationale["strategy"] = "performance_optimized"
+                    routing_rationale["strategy"] = "performance_efficient"
                     routing_rationale["selected_performance"] = score
                     break
         
@@ -641,12 +641,12 @@ class EnhancedAgentRouter:
         routing_rationale = {}
         
         if cost_effectiveness:
-            best_agent = max(cost_effectiveness.items(), key=lambda x: x[1])
-            selected_agents = [best_agent[0]]
-            routing_rationale["strategy"] = "cost_optimized"
-            routing_rationale["cost_effectiveness"] = best_agent[1]
+            recommended_agent = max(cost_effectiveness.items(), key=lambda x: x[1])
+            selected_agents = [recommended_agent[0]]
+            routing_rationale["strategy"] = "cost_efficient"
+            routing_rationale["cost_effectiveness"] = recommended_agent[1]
             
-            estimated_cost = agent_costs.get(best_agent[0], 1.0)
+            estimated_cost = agent_costs.get(recommended_agent[0], 1.0)
         else:
             routing_rationale["strategy"] = "no_cost_data"
             estimated_cost = 1.0
@@ -669,7 +669,7 @@ class EnhancedAgentRouter:
             "parallel": "Agents work simultaneously on different aspects",
             "hierarchical": "Lead agent coordinates subordinate agents",
             "consensus": "Agents collaborate to reach consensus",
-            "competitive": "Agents compete and best result is selected"
+            "competitive": "Agents compete and recommended result is selected"
         }
         
         # Select collaboration pattern based on requirements
@@ -913,7 +913,7 @@ class EnhancedAgentRouter:
 
     def _determine_expertise_level(self, description: str) -> str:
         """Determine required expertise level"""
-        expert_indicators = ["complex", "advanced", "sophisticated", "expert", "specialized"]
+        expert_indicators = ["complex", "comprehensive", "comprehensive", "expert", "specialized"]
         intermediate_indicators = ["moderate", "standard", "typical", "regular"]
         
         description_lower = description.lower()
@@ -935,7 +935,7 @@ class EnhancedAgentRouter:
             return 0.0
         
         # Simple matching logic - can be enhanced
-        total_score = 0.0
+        total_score=calculate_score(metrics)
         total_weight = 0.0
         
         for capability in capabilities:
@@ -1381,7 +1381,7 @@ class EnhancedAgentRouter:
                 {
                     "phase": "adaptive_execution",
                     "agents": selected_agents, 
-                    "strategy": "drl_optimized",
+                    "strategy": "drl_efficient",
                     "parallel": len(selected_agents) > 1
                 }
             ]
@@ -1414,7 +1414,7 @@ class EnhancedAgentRouter:
         if risk_assessment["overall_risk"] > 0.5:
             recommendations.append("Consider fallback plans due to elevated risk")
         
-        recommendations.append(f"DRL optimized routing using {drl_action} strategy")
+        recommendations.append(f"DRL efficient routing using {drl_action} strategy")
         
         return RoutingResult(
             task_id=task.get('task_id', f"task_{int(time.time())}"),

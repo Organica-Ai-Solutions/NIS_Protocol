@@ -1,7 +1,7 @@
 """
 NIS Protocol Enhanced Reasoning Agent
 
-Advanced reasoning agent implementing multiple reasoning patterns
+comprehensive reasoning agent implementing multiple reasoning patterns
 including ReAct, Chain of Thought (CoT), and Tree of Thought (ToT).
 Enhanced with environment-based LLM configuration.
 """
@@ -206,7 +206,7 @@ class EnhancedReasoningNetwork(nn.Module):
     """
     Enhanced reasoning network using KAN layers.
     
-    Provides interpretable reasoning capabilities that can be used
+    Provides mathematically-traceable reasoning capabilities that can be used
     by any specialized application built on the NIS Protocol.
     """
     
@@ -271,9 +271,9 @@ class EnhancedReasoningAgent(NISAgent):
     """
     Enhanced Reasoning Agent with KAN Integration.
     
-    This agent provides advanced reasoning capabilities using Kolmogorov-Arnold
+    This agent provides comprehensive reasoning capabilities using Kolmogorov-Arnold
     Networks for any application built on the NIS Protocol. It replaces traditional
-    MLP-based reasoning with interpretable spline-based processing.
+    MLP-based reasoning with mathematically-traceable spline-based processing.
     """
     
     def __init__(self, agent_id: str = "enhanced_reasoning_001", description: str = "KAN-enhanced universal reasoning", enable_self_audit: bool = True):
@@ -396,7 +396,7 @@ class EnhancedReasoningAgent(NISAgent):
         })
     
     def _auto_configure_network(self, input_dim: int):
-        """Automatically configure reasoning network based on input dimension."""
+        """systematically configure reasoning network based on input dimension."""
         # Adaptive hidden layer sizing
         if input_dim <= 5:
             hidden_dims = [16, 8]
@@ -462,7 +462,7 @@ class EnhancedReasoningAgent(NISAgent):
             confidence=confidence,
             reasoning_path=reasoning_path,
             interpretability_data={
-                "spline_activations": "KAN layers provide smooth, interpretable transformations",
+                "spline_activations": "KAN layers provide smooth, mathematically-traceable transformations",
                 "wave_propagation": f"Cognitive coherence: {field_stats['coherence']:.3f}",
                 "temporal_stability": f"Stability: {field_stats['temporal_stability']:.3f}",
                 "field_variance": f"Variance: {field_stats['field_variance']:.3f}"
@@ -527,7 +527,7 @@ class EnhancedReasoningAgent(NISAgent):
                 "type": "KAN (Kolmogorov-Arnold Network)",
                 "layers": len(self.reasoning_network.kan_layers) if self.reasoning_network else 0,
                 "spline_based": True,
-                "interpretable": True
+                "mathematically-traceable": True
             }
         })
 
@@ -555,7 +555,7 @@ if __name__ == "__main__":
         print(f"   Cognitive Load: {reasoning_result['cognitive_load']:.3f}")
         print(f"   Processing Time: {reasoning_result['processing_time']:.3f}s")
         print(f"   Reasoning Path: {len(reasoning_result['reasoning_path'])} steps")
-        print(f"   KAN-Enhanced: ✅ Spline-based interpretable reasoning")
+        print(f"   KAN-Enhanced: ✅ Spline-based mathematically-traceable reasoning")
     else:
         print(f"❌ Error: {result['payload']}") 
     
@@ -600,7 +600,7 @@ if __name__ == "__main__":
     
     def auto_correct_enhanced_reasoning_output(self, output_text: str, operation: str = "") -> Dict[str, Any]:
         """
-        Automatically correct integrity violations in enhanced reasoning outputs.
+        systematically correct integrity violations in enhanced reasoning outputs.
         
         Args:
             output_text: Text to correct
@@ -692,7 +692,7 @@ if __name__ == "__main__":
             'monitoring_enabled': self.integrity_monitoring_enabled,
             'enhanced_reasoning_capabilities': {
                 'kan_integration': True,
-                'interpretable_reasoning': self.interpretability_enabled,
+                'mathematically-traceable_reasoning': self.interpretability_enabled,
                 'spline_based_processing': True,
                 'cognitive_wave_processing': bool(self.wave_processor),
                 'reasoning_modes': [mode.value for mode in ReasoningMode],

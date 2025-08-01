@@ -546,7 +546,7 @@ class MemoryAgent(NISAgent):
     
     def auto_correct_memory_output(self, output_text: str, operation: str = "") -> Dict[str, Any]:
         """
-        Automatically correct integrity violations in memory outputs.
+        systematically correct integrity violations in memory outputs.
         
         Args:
             output_text: Text to correct

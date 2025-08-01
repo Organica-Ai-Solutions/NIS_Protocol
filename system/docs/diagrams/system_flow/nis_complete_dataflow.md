@@ -112,6 +112,6 @@ This diagram shows the complete NIS Protocol dataflow from input to output, high
 
 This architecture ensures:
 - ✅ **Scientific Validity**: All outputs validated by physics
-- ✅ **Mathematical Transparency**: KAN networks provide interpretable functions
+- ✅ **Mathematical Transparency**: KAN networks provide mathematically-traceable functions
 - ✅ **Self-Awareness**: Consciousness Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) throughout
 - ✅ **Scalability**: Event-driven infrastructure for production 

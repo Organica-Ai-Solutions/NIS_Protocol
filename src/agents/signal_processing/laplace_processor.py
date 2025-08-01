@@ -3,7 +3,7 @@ Laplace Transform Signal Processor
 
 This module provides Laplace transform capabilities for signal compression,
 time-series analysis, and frequency domain processing. It integrates with
-the NIS Protocol V3.0 signal processing system to provide advanced temporal
+the NIS Protocol V3.0 signal processing system to provide comprehensive temporal
 pattern recognition and signal compression.
 
 Key Features:
@@ -459,7 +459,7 @@ class LaplaceSignalProcessor:
             for i, t in enumerate(time_points):
                 if t >= 0:  # Causal signal
                     # Numerical inverse using residue theorem (simplified)
-                    # Real implementation would use more sophisticated methods
+                    # Real implementation would use more comprehensive methods
                     
                     # Use poles for reconstruction if available
                     if laplace_transform.poles is not None and len(laplace_transform.poles) > 0:

@@ -1,7 +1,7 @@
 """
 DRL-Enhanced Executive Control Agent for NIS Protocol
 
-This module provides Deep Reinforcement Learning capabilities for sophisticated
+This module provides Deep Reinforcement Learning capabilities for comprehensive
 executive control and decision making. The DRL system learns optimal policies for:
 - Multi-objective optimization (speed, accuracy, resource usage)
 - Dynamic priority management and task scheduling
@@ -294,7 +294,7 @@ class DRLEnhancedExecutiveControl:
     """
     DRL-Enhanced Executive Control Agent with multi-objective optimization
     
-    This agent learns sophisticated control policies that balance multiple
+    This agent learns comprehensive control policies that balance multiple
     objectives including speed, accuracy, resource efficiency, and strategic
     alignment through deep reinforcement learning.
     """

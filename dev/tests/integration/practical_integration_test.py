@@ -78,9 +78,9 @@ class PracticalIntegrationAssessment:
             # Test multiple text types
             test_cases = [
                 ("Good text", "System analysis completed with measured performance metrics"),
-                ("Hype text", "Revolutionary AI breakthrough delivers perfect results"),
+                ("Hype text", "significant AI systematic delivers well-suited results"),
                 ("Technical text", "Laplace transform computed with 0.000456 reconstruction error"),
-                ("Marketing text", "Advanced system provides optimal performance automatically")
+                ("Marketing text", "Advanced system provides optimal performance systematically")
             ]
             
             audit_results = []

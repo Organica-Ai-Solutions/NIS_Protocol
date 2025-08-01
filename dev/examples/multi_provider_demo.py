@@ -101,7 +101,7 @@ def show_configuration_guide():
                 "4. Set 'enabled': true and update 'model_path'"
             ],
             "models": ["bitnet-b1.58-3b", "Custom BitNet models"],
-            "features": ["Local inference", "1-bit quantization", "CPU optimized"]
+            "features": ["Local inference", "1-bit quantization", "CPU efficient"]
         }
     }
     
@@ -238,7 +238,7 @@ def main():
     print("  3. Edit config/llm_config.json to enable and configure")
     print("  4. Set 'enabled': true and add your API key")
     print("  5. Restart your application to use the new provider")
-    print("\n🔧 The system will automatically fall back to mock provider for development.")
+    print("\n🔧 The system will systematically fall back to mock provider for development.")
 
 if __name__ == "__main__":
     main() 

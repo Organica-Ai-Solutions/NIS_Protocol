@@ -368,8 +368,8 @@ class InfrastructureDemo:
             # Test audit on infrastructure components
             test_texts = [
                 "System performance shows 95% accuracy with validated benchmarks",
-                "Revolutionary breakthrough achieved 99.9% confidence in testing",
-                "The advanced system demonstrates optimized performance metrics"
+                "significant systematic achieved 99.9% confidence in testing",
+                "The advanced system demonstrates efficient performance metrics"
             ]
             
             audit_results = []

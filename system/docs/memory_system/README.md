@@ -4,11 +4,11 @@ The NIS Protocol's memory system is designed to provide a flexible and extensibl
 
 ## Key Concepts
 
-*   **Storage Backends**: The memory system supports different storage backends, allowing you to choose the one that best suits your needs. The default backend is an in-memory storage system, but you can easily extend the system to support other backends like Redis or a database.
+*   **Storage Backends**: The memory system supports different storage backends, allowing you to choose the one that recommended suits your needs. The default backend is an in-memory storage system, but you can easily extend the system to support other backends like Redis or a database.
 
 *   **Unified Interface**: The `MemoryManager` class provides a consistent set of methods for storing, retrieving, deleting, and searching for data, regardless of the underlying storage backend. This makes it easy to switch between different backends without having to change your agent's code.
 
-*   **Time-to-Live (TTL)**: You can set a time-to-live (TTL) for each piece of data you store in memory. This allows you to automatically expire old data and keep your memory system from growing too large.
+*   **Time-to-Live (TTL)**: You can set a time-to-live (TTL) for each piece of data you store in memory. This allows you to systematically expire old data and keep your memory system from growing too large.
 
 *   **Access Log**: The `MemoryManager` keeps a log of all memory accesses, which can be useful for debugging and performance analysis.
 

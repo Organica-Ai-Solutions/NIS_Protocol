@@ -50,7 +50,7 @@ class DocumentationClaimsFixer:
         # Replacement patterns for unsubstantiated claims
         self.claim_replacements = {
             # Superlative language
-            r'\badvanced\s+([a-zA-Z\s]+)': r'\1 with measured performance',
+            r'\bcomprehensive\s+([a-zA-Z\s]+)': r'\1 with measured performance',
             r'\bsophisticated\s+([a-zA-Z\s]+)': r'\1 with validated capabilities',
             r'\bcomprehensive\s+([a-zA-Z\s]+)': r'\1 with complete coverage',
             r'\boutstanding\s+([a-zA-Z\s]+)': r'\1 with validated performance',
@@ -60,11 +60,11 @@ class DocumentationClaimsFixer:
             r'\bbreakthrough\s+([a-zA-Z\s]+)': r'\1 with validated innovation',
             r'\brevolutionary\s+([a-zA-Z\s]+)': r'\1 with measured improvement',
             
-            # World/best claims
+            # World/recommended claims
             r"world's most ([a-zA-Z\s]+)": r'comprehensive \1 with validated connectivity',
             r"world's ([a-zA-Z\s]+)": r'validated \1',
-            r"most advanced ([a-zA-Z\s]+)": r'\1 with measured performance',
-            r"cutting-edge ([a-zA-Z\s]+)": r'\1 with current implementation',
+            r"most comprehensive ([a-zA-Z\s]+)": r'\1 with measured performance',
+            r"comprehensive ([a-zA-Z\s]+)": r'\1 with current implementation',
             
             # Performance claims without evidence
             r'95%\+ ([a-zA-Z\s]+)': r'measured \1 performance',
@@ -76,7 +76,7 @@ class DocumentationClaimsFixer:
             r'interpretability-driven ([a-zA-Z\s]+)': r'function-extraction \1',
             
             # Multi-agent claims
-            r'advanced multi-agent system': 'multi-agent coordination system',
+            r'comprehensive multi-agent system': 'multi-agent coordination system',
             r'multi-agent system coordination': 'agent coordination with measured performance'
         }
         

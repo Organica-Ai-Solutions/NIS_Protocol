@@ -139,7 +139,7 @@ class SimpleRealLLMProvider:
             "consciousness": "The NIS Protocol implements artificial consciousness through layered cognitive architectures, combining signal processing, reasoning networks, and physics-informed validation systems.",
             "agents": "NIS Protocol agents are specialized AI entities that can communicate, reason, and coordinate through external protocols like A2A and MCP for distributed intelligence.",
             "archaeological": "The archaeological discovery platform demonstrates real-world applications of NIS Protocol in cultural heritage preservation and interdisciplinary research.",
-            "default": f"I understand you're asking about: '{user_message}'. The NIS Protocol is an advanced AI framework that combines consciousness modeling, multi-agent coordination, and physics-informed reasoning to create sophisticated artificial intelligence systems."
+            "default": f"I understand you're asking about: '{user_message}'. The NIS Protocol is an advanced AI framework that combines consciousness modeling, multi-agent coordination, and physics-informed reasoning to create comprehensive artificial intelligence systems."
         }
         
         # Simple keyword matching for demo
@@ -162,7 +162,7 @@ class SimpleRealChatSystem:
         self._initialize_provider()
     
     def _initialize_provider(self):
-        """Initialize the best available provider"""
+        """Initialize the recommended available provider"""
         openai_key = os.getenv("OPENAI_API_KEY", "")
         anthropic_key = os.getenv("ANTHROPIC_API_KEY", "")
         

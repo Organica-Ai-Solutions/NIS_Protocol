@@ -87,7 +87,7 @@ class AGIEvolutionDemo:
         print("   • Cultural sensitivity by design")
         print("   • Meta-cognitive self-awareness")
         print("   • Real-time adaptation")
-        print("   • Explainable reasoning")
+        print("   • traceable reasoning")
     
     async def demonstrate_consciousness(self):
         """Demonstrate meta-cognitive consciousness capabilities."""
@@ -342,7 +342,7 @@ class AGIEvolutionDemo:
             },
             "Meta-Cognitive Awareness": {
                 "description": "Self-reflection and introspection capabilities",
-                "vs_openai": "Self-aware vs. reactive responses",
+                "vs_openai": "meta-cognitive vs. reactive responses",
                 "vs_deepmind": "Conscious evaluation vs. black-box decisions",
                 "demonstration": "Real-time decision quality assessment"
             },

@@ -728,7 +728,7 @@ class VisionAgent(NISAgent):
     
     def auto_correct_vision_output(self, output_text: str, operation: str = "") -> Dict[str, Any]:
         """
-        Automatically correct integrity violations in vision outputs.
+        systematically correct integrity violations in vision outputs.
         
         Args:
             output_text: Text to correct

@@ -52,7 +52,7 @@ def setup_llm_providers():
             "key_var": "ANTHROPIC_API_KEY", 
             "enable_var": "ANTHROPIC_ENABLED",
             "url": "https://console.anthropic.com/",
-            "description": "Claude models for advanced reasoning"
+            "description": "Claude models for comprehensive reasoning"
         },
         "DeepSeek": {
             "key_var": "DEEPSEEK_API_KEY",

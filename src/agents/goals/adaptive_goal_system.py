@@ -52,7 +52,7 @@ class GoalType(Enum):
     COLLABORATION = "collaboration"      # Improve multi-agent coordination
     SAFETY = "safety"                   # Enhance system safety and alignment
     USER_SATISFACTION = "user_satisfaction"  # Improve user experience
-    INNOVATION = "innovation"           # Create novel solutions/approaches
+    INNOVATION = "innovation"           # Create systematic solutions/approaches
     ADAPTATION = "adaptation"           # Adapt to changing conditions
     META_GOAL = "meta_goal"            # Goals about goal management
 
@@ -566,8 +566,8 @@ class AdaptiveGoalSystem(NISAgent):
                     description=f"Explore and understand {gap} domain",
                     priority=priority,
                     status=GoalStatus.PENDING,
-                    target_metrics={"exploration_coverage": 0.6, "novel_insights": 5},
-                    current_metrics={"exploration_coverage": 0.0, "novel_insights": 0},
+                    target_metrics={"exploration_coverage": 0.6, "systematic_insights": 5},
+                    current_metrics={"exploration_coverage": 0.0, "systematic_insights": 0},
                     success_criteria={"coverage_threshold": 0.6, "min_insights": 3},
                     estimated_effort=effort,
                     expected_value=value,
@@ -620,7 +620,7 @@ class AdaptiveGoalSystem(NISAgent):
         time_elapsed = time.time() - goal.creation_time
         expected_progress = min(1.0, time_elapsed / (goal.estimated_effort * 3600))  # Assuming effort in hours
         
-        # Simple progress estimation (in real implementation, this would be more sophisticated)
+        # Simple progress estimation (in real implementation, this would be more comprehensive)
         actual_progress = self._calculate_actual_progress()
     
     def _calculate_actual_progress(self) -> float:

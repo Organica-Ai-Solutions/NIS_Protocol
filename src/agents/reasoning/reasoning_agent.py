@@ -367,7 +367,7 @@ class ReasoningAgent(NISAgent):
             2. Break it into sub-problems
             3. Generate potential solutions
             4. Evaluate solutions against constraints
-            5. Recommend the best solution
+            5. Recommend the recommended solution
             """
             
             # Generate solution
@@ -460,7 +460,7 @@ class ReasoningAgent(NISAgent):
         """
         results = {}
         for constraint_name, constraint_value in constraints.items():
-            # This is a simple check - in practice, you'd want more sophisticated
+            # This is a simple check - in practice, you'd want more comprehensive
             # constraint evaluation based on the type of constraint
             is_satisfied = str(constraint_value).lower() in solution.lower()
             results[constraint_name] = is_satisfied
@@ -595,14 +595,14 @@ class ReasoningAgent(NISAgent):
         moderate_keywords = ["moderate evidence", "possible pattern"]
         weak_keywords = ["weak evidence", "uncertain"]
         
-        score = 0.5  # Base
+        score=calculate_score(metrics)  # Base
         lower_reasoning = reasoning.lower()
         if any(kw in lower_reasoning for kw in strong_keywords):
-            score = 0.9
+            score=calculate_score(metrics)
         elif any(kw in lower_reasoning for kw in moderate_keywords):
-            score = 0.7
+            score=calculate_score(metrics)
         elif any(kw in lower_reasoning for kw in weak_keywords):
-            score = 0.4
+            score=calculate_score(metrics)
         
         # Adjust with calculate_confidence for integrity
         factors = ConfidenceFactors(
@@ -658,7 +658,7 @@ class ReasoningAgent(NISAgent):
     
     def auto_correct_reasoning_output(self, output_text: str, operation: str = "") -> Dict[str, Any]:
         """
-        Automatically correct integrity violations in reasoning outputs.
+        systematically correct integrity violations in reasoning outputs.
         
         Args:
             output_text: Text to correct

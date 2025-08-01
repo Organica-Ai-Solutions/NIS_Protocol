@@ -1,13 +1,13 @@
 """
 Enhanced Conscious Agent - NIS Protocol v3
 
-Advanced meta-cognitive agent with comprehensive self-reflection, monitoring,
+comprehensive meta-cognitive agent with comprehensive self-reflection, monitoring,
 and integrity capabilities. Provides consciousness layer that observes and
 evaluates the system's own thinking processes with real-time integrity monitoring.
 
 Enhanced Features:
 - Complete self-audit integration with real-time monitoring
-- Advanced introspection capabilities with mathematical validation
+- comprehensive introspection capabilities with mathematical validation
 - System-wide consciousness coordination
 - Integrity violation detection and auto-correction
 - Performance-tracked meta-cognitive reasoning
@@ -45,7 +45,7 @@ class ReflectionType(Enum):
 class ConsciousnessLevel(Enum):
     """Levels of consciousness operation"""
     BASIC = "basic"           # Simple monitoring and reflection
-    ENHANCED = "enhanced"     # Advanced pattern recognition
+    ENHANCED = "enhanced"     # comprehensive pattern recognition
     INTEGRATED = "integrated" # Full system integration
     TRANSCENDENT = "transcendent"  # Meta-level consciousness
 
@@ -99,7 +99,7 @@ class EnhancedConsciousAgent(NISAgent):
     """
     Enhanced meta-cognitive agent with comprehensive consciousness capabilities.
     
-    Provides advanced self-reflection, system monitoring, and integrity oversight
+    Provides comprehensive self-reflection, system monitoring, and integrity oversight
     with mathematical rigor and performance tracking.
     """
     
@@ -268,7 +268,7 @@ class EnhancedConsciousAgent(NISAgent):
     def perform_codebase_integrity_scan(self, target_directories: List[str] = None) -> Dict[str, Any]:
         """
         Perform comprehensive integrity scan of the codebase to detect issues
-        that should have been caught automatically.
+        that should have been caught systematically.
         
         Args:
             target_directories: Directories to scan (defaults to src/)

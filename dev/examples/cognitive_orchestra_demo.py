@@ -83,8 +83,8 @@ class CognitiveOrchestraDemo:
             },
             {
                 "function": CognitiveFunction.CREATIVITY,
-                "task": "Imagine innovative ways to preserve underwater archaeological sites",
-                "expected_specialization": "Novel ideas, unconventional solutions"
+                "task": "Imagine systematic ways to preserve underwater archaeological sites",
+                "expected_specialization": "systematic ideas, unconventional solutions"
             },
             {
                 "function": CognitiveFunction.CULTURAL,
@@ -149,7 +149,7 @@ class CognitiveOrchestraDemo:
         # Define tasks that can be processed in parallel
         parallel_tasks = [
             (CognitiveFunction.REASONING, [LLMMessage(role="user", content="Analyze the structural integrity of this ancient building")], {"priority": "high"}),
-            (CognitiveFunction.CREATIVITY, [LLMMessage(role="user", content="Brainstorm innovative archaeological documentation methods")], {"priority": "normal"}),
+            (CognitiveFunction.CREATIVITY, [LLMMessage(role="user", content="Brainstorm systematic archaeological documentation methods")], {"priority": "normal"}),
             (CognitiveFunction.CULTURAL, [LLMMessage(role="user", content="Evaluate cultural implications of this excavation plan")], {"priority": "high"}),
         ]
         
@@ -210,7 +210,7 @@ class CognitiveOrchestraDemo:
             logger.error(f"❌ Error getting orchestra status: {e}")
     
     async def demonstrate_provider_optimization(self):
-        """Show how different providers are optimized for different tasks."""
+        """Show how different providers are efficient for different tasks."""
         logger.info("\n🎵 === Provider Optimization Demo ===")
         
         # Show the mapping strategy
@@ -224,7 +224,7 @@ class CognitiveOrchestraDemo:
             {
                 "function": "Creativity", 
                 "optimal_providers": ["openai", "anthropic"],
-                "reason": "Strong creative capabilities, novel idea generation",
+                "reason": "Strong creative capabilities, systematic idea generation",
                 "temperature": "0.7-1.0 (high creativity)"
             },
             {
@@ -295,12 +295,12 @@ async def demonstrate_cognitive_orchestra_concept():
         },
         
         "🎨 Creativity": {
-            "description": "Novel idea generation, artistic thinking, innovation",
+            "description": "systematic idea generation, artistic thinking, innovation",
             "optimal_llms": ["GPT-4o", "Claude-3.5-Sonnet", "DeepSeek-V2"],
             "temperature": "0.7-1.0 (high creativity)",
             "specialization": "Unconventional solutions, unexpected connections",
             "parallel": "✅ (independent creative process)",
-            "use_case": "Brainstorming innovative underwater site preservation methods"
+            "use_case": "Brainstorming systematic underwater site preservation methods"
         },
         
         "🌍 Cultural Intelligence": {
@@ -345,7 +345,7 @@ async def demonstrate_cognitive_orchestra_concept():
     print()
     
     benefits = [
-        "🎼 Specialized Excellence: Each LLM optimized for specific cognitive functions",
+        "🎼 Specialized Excellence: Each LLM efficient for specific cognitive functions",
         "⚡ Computational Efficiency: Use expensive models only where needed",
         "🔄 Parallel Processing: Multiple functions can run simultaneously",
         "🎯 Quality Optimization: Right temperature and tokens for each task",
@@ -375,7 +375,7 @@ async def demonstrate_cognitive_orchestra_concept():
    → Applies domain expertise, preservation protocols, methodology
    
 4. 🎨 CREATIVITY (GPT-4o, temp=0.8) [PARALLEL]
-   → Generates innovative documentation and preservation approaches
+   → Generates systematic documentation and preservation approaches
    
 5. 🧠 CONSCIOUSNESS (Claude-3.5-Sonnet, temp=0.6)
    → Meta-analyzes the decision process, checks for biases
@@ -384,7 +384,7 @@ async def demonstrate_cognitive_orchestra_concept():
    → Generates precise action plan, coordinates, resource allocation
 
 🎵 Result: Comprehensive, culturally-sensitive, methodologically-sound site evaluation
-   with innovative preservation approaches and bias-checked decision making.
+   with systematic preservation approaches and bias-checked decision making.
 """
     
     print(example_scenario)

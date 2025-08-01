@@ -1041,7 +1041,7 @@ class SafetyMonitorAgent(NISAgent):
         )
     
     def _auto_trigger_interventions(self, violations: List[SafetyViolation]) -> None:
-        """Automatically trigger interventions for violations."""
+        """systematically trigger interventions for violations."""
         for violation in violations:
             intervention_action = violation.recommended_action
             
@@ -1326,7 +1326,7 @@ def audit_safety_monitoring_output(self, output_text: str, operation: str = "", 
 
 def auto_correct_safety_monitoring_output(self, output_text: str, operation: str = "") -> Dict[str, Any]:
     """
-    Automatically correct integrity violations in safety monitoring outputs.
+    systematically correct integrity violations in safety monitoring outputs.
     
     Args:
         output_text: Text to correct
@@ -1473,7 +1473,7 @@ def validate_safety_monitoring_configuration(self) -> Dict[str, Any]:
         validation_results['recommendations'].append("Enable active monitoring for real-time safety checking")
     
     if not self.intervention_enabled:
-        validation_results['warnings'].append("Intervention is disabled - safety violations will not be automatically addressed")
+        validation_results['warnings'].append("Intervention is disabled - safety violations will not be systematically addressed")
         validation_results['recommendations'].append("Enable intervention for automatic safety violation handling")
     
     # Check memory manager

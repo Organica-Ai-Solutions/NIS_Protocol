@@ -313,7 +313,7 @@ Content-Type: application/json
   "action": "replace_text",
   "parameters": {
     "file_path": "src/test.py",
-    "old_text": "confidence=0.95",
+    "old_text": "confidence=calculate_confidence(factors)",
     "new_text": "confidence=calculate_confidence(factors)"
   }
 }

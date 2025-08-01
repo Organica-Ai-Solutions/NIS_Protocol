@@ -512,9 +512,9 @@ class GeneralLLMProvider:
         
         # Archaeological platform style intelligent responses
         if "nis protocol" in user_message:
-            response = """The NIS Protocol v3 is an advanced AI framework for multi-agent coordination and signal processing. Key features include:
+            response = """The NIS Protocol v3 is an comprehensive AI framework for multi-agent coordination and signal processing. Key features include:
 - Multi-LLM integration
-- Advanced agent architecture
+- comprehensive agent architecture
 - Signal processing pipeline
 - Production-ready infrastructure"""
         
@@ -540,7 +540,7 @@ The archaeological platform successfully demonstrated this with specialized agen
 - Real-time artifact analysis using computer vision
 - Cultural context interpretation with specialized LLMs
 - Interdisciplinary research coordination through multi-agent systems
-- Historical timeline reconstruction using advanced reasoning
+- Historical timeline reconstruction using comprehensive reasoning
 
 **Technical Implementation**:
 - Anthropic Claude for cultural sensitivity and historical context
@@ -567,25 +567,25 @@ This platform demonstrates how the NIS Protocol's consciousness-driven architect
 
 PINN prevents AI hallucinations by grounding responses in fundamental physics principles, ensuring scientifically sound conclusions."""
         
-        elif "kan" in user_message or "reasoning" in user_message or "interpretable" in user_message:
-            response = """Kolmogorov-Arnold Networks (KAN) provide transparent, interpretable reasoning:
+        elif "kan" in user_message or "reasoning" in user_message or "mathematically-traceable" in user_message:
+            response = """Kolmogorov-Arnold Networks (KAN) provide transparent, mathematically-traceable reasoning:
 
 **Key Features**:
 - **Symbolic Function Extraction**: Explicit mathematical relationships
-- **Spline-Based Approximation**: Smooth, interpretable functions
+- **Spline-Based Approximation**: Smooth, mathematically-traceable functions
 - **Transparency**: Clear reasoning pathways
 - **Scientific Validation**: Verifiable mathematical foundations
 
 **Archaeological Platform Usage**:
-- Cultural pattern recognition with explainable results
+- Cultural pattern recognition with traceable results
 - Historical trend analysis with clear mathematical models
-- Artifact classification with interpretable decision trees
+- Artifact classification with mathematically-traceable decision trees
 - Research hypothesis generation with transparent logic
 
 Unlike black-box neural networks, KAN enables researchers to understand exactly how AI reaches its conclusions, building trust and enabling scientific validation."""
         
         elif "laplace" in user_message or "signal" in user_message or "transform" in user_message:
-            response = """Laplace Transform processing enables sophisticated temporal analysis:
+            response = """Laplace Transform processing enables comprehensive temporal analysis:
 
 **Signal Processing Capabilities**:
 - **Frequency Domain Analysis**: Pattern recognition in time-series data
@@ -616,15 +616,15 @@ All endpoints support real LLM integration with OpenAI, Anthropic, and other pro
         else:
             response = f"""I understand you're asking about: "{user_message}". 
 
-The NIS Protocol is an advanced AI framework combining consciousness modeling, multi-agent coordination, and physics-informed reasoning. Key innovations include:
+The NIS Protocol is an comprehensive AI framework combining consciousness modeling, multi-agent coordination, and physics-informed reasoning. Key innovations include:
 
 - **Real LLM Integration**: Direct API connections to OpenAI, Anthropic, etc.
 - **Consciousness Architecture**: Multi-layered cognitive processing
 - **Scientific Rigor**: Physics-informed validation and constraint enforcement
-- **Interpretable AI**: Transparent reasoning through KAN networks
+- **mathematically-traceable AI**: Transparent reasoning through KAN networks
 - **Practical Applications**: Proven success in archaeological discovery platform
 
-The system represents a breakthrough in creating AI that thinks, reasons, and coordinates like biological intelligence while maintaining scientific accuracy and transparency."""
+The system represents a systematic in creating AI that thinks, reasons, and coordinates like biological intelligence while maintaining scientific accuracy and transparency."""
         
         return {
             "content": response,

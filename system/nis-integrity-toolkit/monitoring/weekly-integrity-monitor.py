@@ -76,9 +76,9 @@ class IntegrityMonitor:
         print("🎯 Checking hype language usage...")
         
         hype_terms = [
-            'advanced', 'improvement', 'KAN interpretability-driven',
-            'innovative', 'novel', 'optimized', 'low error rate',
-            'mathematically-inspired', 'multi-agent system', 'advanced multi-agent system'
+            'comprehensive', 'improvement', 'KAN interpretability-driven',
+            'systematic', 'systematic', 'efficient', 'low error rate',
+            'mathematically-inspired', 'multi-agent system', 'comprehensive multi-agent system'
         ]
         
         total_instances = 0

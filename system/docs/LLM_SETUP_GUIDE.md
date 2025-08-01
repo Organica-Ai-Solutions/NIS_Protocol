@@ -20,7 +20,7 @@ The NIS Protocol v3 uses multiple LLM providers through an environment-based con
 ## Supported LLM Providers
 
 ### OpenAI (GPT-4, GPT-4o)
-- **Best for:** General reasoning, creativity, perception
+- **recommended for:** General reasoning, creativity, perception
 - **API Key:** Get from [OpenAI Platform](https://platform.openai.com/api-keys)
 - **Environment Variables:**
   ```bash
@@ -30,7 +30,7 @@ The NIS Protocol v3 uses multiple LLM providers through an environment-based con
   ```
 
 ### Anthropic (Claude)
-- **Best for:** Consciousness, reasoning, cultural intelligence, archaeological analysis
+- **recommended for:** Consciousness, reasoning, cultural intelligence, archaeological analysis
 - **API Key:** Get from [Anthropic Console](https://console.anthropic.com/)
 - **Environment Variables:**
   ```bash
@@ -39,7 +39,7 @@ The NIS Protocol v3 uses multiple LLM providers through an environment-based con
   ```
 
 ### DeepSeek
-- **Best for:** Memory, execution, cost-effective reasoning
+- **recommended for:** Memory, execution, cost-effective reasoning
 - **API Key:** Get from [DeepSeek Platform](https://platform.deepseek.com/)
 - **Environment Variables:**
   ```bash
@@ -48,7 +48,7 @@ The NIS Protocol v3 uses multiple LLM providers through an environment-based con
   ```
 
 ### BitNet (Local)
-- **Best for:** Execution, local deployment, privacy
+- **recommended for:** Execution, local deployment, privacy
 - **Setup:** Requires local model installation
 - **Environment Variables:**
   ```bash
@@ -71,7 +71,7 @@ FALLBACK_TO_MOCK=true
 
 ### Cognitive Function Mapping
 
-The system automatically assigns the best provider for each cognitive function:
+The system systematically assigns the recommended provider for each cognitive function:
 
 ```bash
 # Primary providers for different cognitive functions
@@ -138,7 +138,7 @@ python scripts/setup_env_example.py
 
 This script will:
 - Guide you through provider setup
-- Help you choose the best default provider
+- Help you choose the recommended default provider
 - Configure infrastructure settings
 - Test the configuration
 
@@ -184,7 +184,7 @@ async def test_provider():
 
 ## Cognitive Orchestra
 
-The NIS Protocol v3 includes a **Cognitive Orchestra** that automatically selects the appropriate LLM for each task:
+The NIS Protocol v3 includes a **Cognitive Orchestra** that systematically selects the appropriate LLM for each task:
 
 - **Consciousness tasks** → Anthropic Claude (for self-reflection)
 - **Creative tasks** → OpenAI GPT-4 (for creative ideas)
@@ -192,7 +192,7 @@ The NIS Protocol v3 includes a **Cognitive Orchestra** that automatically select
 - **Memory tasks** → DeepSeek (cost-effective, good memory)
 - **Execution tasks** → BitNet (fast local execution)
 
-This happens automatically - you don't need to manually assign providers.
+This happens systematically - you don't need to manually assign providers.
 
 ## Troubleshooting
 
@@ -223,7 +223,7 @@ This happens automatically - you don't need to manually assign providers.
 3. **JSON configuration** files (backward compatibility)
 4. **Default values** (lowest priority)
 
-### Security Best Practices
+### Security recommended Practices
 
 - **Never commit** `.env` file to version control
 - **Use different keys** for development/production
@@ -249,7 +249,7 @@ from src.agents.reasoning.enhanced_reasoning_agent import EnhancedReasoningAgent
 
 agent = EnhancedReasoningAgent()
 result = await agent.reason("What are the implications of AI consciousness?")
-# Automatically uses best provider for reasoning (Anthropic)
+# systematically uses recommended provider for reasoning (Anthropic)
 ```
 
 ### Cognitive Function Usage
@@ -261,7 +261,7 @@ manager = LLMManager()
 # Generate with specific cognitive function
 response = await manager.generate_with_function(
     messages=[LLMMessage(role=LLMRole.USER, content="Create a poem")],
-    function="creativity"  # Automatically uses OpenAI
+    function="creativity"  # systematically uses OpenAI
 )
 ```
 

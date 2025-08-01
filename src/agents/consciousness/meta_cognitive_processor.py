@@ -1,14 +1,14 @@
 """
 NIS Protocol Meta-Cognitive Processor
 
-This module provides advanced meta-cognitive processing capabilities for the
+This module provides comprehensive meta-cognitive processing capabilities for the
 Conscious Agent, enabling deep self-reflection and cognitive analysis.
 
 Integrates with:
 - Kafka: Event streaming for consciousness events
 - Redis: Caching cognitive analysis results
 - LangGraph: Workflow orchestration for complex reasoning
-- LangChain: LLM integration for advanced analysis
+- LangChain: LLM integration for comprehensive analysis
 """
 
 import time
@@ -75,7 +75,7 @@ class CognitiveAnalysis:
 
 
 class MetaCognitiveProcessor:
-    """Advanced meta-cognitive processing for self-reflection and analysis.
+    """comprehensive meta-cognitive processing for self-reflection and analysis.
     
     This processor provides:
     - Deep analysis of cognitive processes
@@ -511,7 +511,7 @@ class MetaCognitiveProcessor:
             self._check_recency_bias
         ]
         
-        total_bias_score = 0.0
+        total_bias_score=calculate_score(metrics)
         bias_count = 0
         
         for bias_check in bias_checks:
@@ -555,7 +555,7 @@ class MetaCognitiveProcessor:
         # Look for patterns that suggest confirmation bias
         supporting_evidence_count = 0
         contradicting_evidence_count = 0
-        evidence_balance_score = 0.0
+        evidence_balance_score=calculate_score(metrics)
         
         for step in reasoning_chain:
             evidence_type = step.get("evidence_type", "neutral")
@@ -610,7 +610,7 @@ class MetaCognitiveProcessor:
         first_value = first_step.get("initial_estimate", first_step.get("value"))
         
         # Track how much subsequent estimates deviate from the first
-        anchoring_score = 0.0
+        anchoring_score=calculate_score(metrics)
         adjustment_count = 0
         
         for i, step in enumerate(reasoning_chain[1:], 1):
@@ -659,7 +659,7 @@ class MetaCognitiveProcessor:
         # Look for over-reliance on recent or memorable examples
         recent_examples_count = 0
         total_examples_count = 0
-        recency_bias_score = 0.0
+        recency_bias_score=calculate_score(metrics)
         
         for step in reasoning_chain:
             examples = step.get("examples", [])
@@ -845,7 +845,7 @@ class MetaCognitiveProcessor:
             return 0.0
         
         # Simple heuristic: look for emotionally charged or biased terms
-        biased_indicators = ["best", "worst", "prove", "disprove", "confirm", "deny"]
+        biased_indicators = ["recommended", "worst", "prove", "disprove", "confirm", "deny"]
         biased_count = sum(1 for term in search_terms 
                           if any(indicator in term.lower() for indicator in biased_indicators))
         
@@ -1611,7 +1611,7 @@ class MetaCognitiveProcessor:
             time_span = analyses[-1].timestamp - analyses[0].timestamp
             time_coverage_score = min(1.0, time_span / 3600)  # Optimal at 1+ hours
         else:
-            time_coverage_score = 0.1
+            time_coverage_score=calculate_score(metrics)
         
         # Combined confidence
         overall_confidence = (
@@ -2394,8 +2394,8 @@ class MetaCognitiveProcessor:
             mean_efficiency = np.mean(recent_data)
             consistency = 1.0 / (1.0 + mad)  # Higher consistency = lower MAD
             
-            optimized_baseline = consistency * median_efficiency + (1 - consistency) * mean_efficiency
-            patterns["pattern_recognition_models"]["efficiency_baseline"] = optimized_baseline
+            efficient_baseline = consistency * median_efficiency + (1 - consistency) * mean_efficiency
+            patterns["pattern_recognition_models"]["efficiency_baseline"] = efficient_baseline
             
             # Optimize bias detection thresholds using percentile analysis
             if len(efficiency_history) > 100:
@@ -2415,7 +2415,7 @@ class MetaCognitiveProcessor:
                     adjusted_threshold = current_threshold * (1 - base_adjustment)
                     thresholds[bias_type] = max(0.05, min(0.5, adjusted_threshold))
             
-            self.logger.info(f"Optimized pattern models - new baseline: {optimized_baseline:.3f}")
+            self.logger.info(f"efficient pattern models - new baseline: {efficient_baseline:.3f}")
             
         except Exception as e:
             self.logger.error(f"Pattern model optimization failed: {e}")
@@ -3216,7 +3216,7 @@ class MetaCognitiveProcessor:
             analysis_prompt = PromptTemplate(
                 input_variables=["cognitive_data", "context", "history"],
                 template="""
-                You are an advanced cognitive analysis AI tasked with evaluating thinking patterns and decision-making processes.
+                You are an comprehensive cognitive analysis AI tasked with evaluating thinking patterns and decision-making processes.
                 
                 Cognitive Process Data:
                 {cognitive_data}
@@ -3262,7 +3262,7 @@ class MetaCognitiveProcessor:
                 Focus on:
                 1. Identifying cognitive biases (confirmation bias, anchoring, availability heuristic, etc.)
                 2. Assessing decision-making efficiency and accuracy
-                3. Recognizing patterns that could be optimized
+                3. Recognizing patterns that could be efficient
                 4. Providing actionable recommendations for improvement
                 5. Evaluating the overall cognitive health and performance
                 
@@ -3705,7 +3705,7 @@ class MetaCognitiveProcessor:
                 "criteria": "Major efficiency and accuracy improvements active"
             },
             {
-                "milestone": "Advanced capabilities operational",
+                "milestone": "comprehensive capabilities operational",
                 "timeline": "16 weeks",
                 "criteria": "Meta-learning and adaptability enhancements functional"
             },
@@ -3902,7 +3902,7 @@ class MetaCognitiveProcessor:
     
     def auto_correct_self_output(self, output_text: str) -> Dict[str, Any]:
         """
-        Automatically correct integrity violations in agent output.
+        systematically correct integrity violations in agent output.
         
         Args:
             output_text: Text to correct
@@ -4131,7 +4131,7 @@ class MetaCognitiveProcessor:
     
     def _implement_pattern_learning(self, patterns: List[Dict[str, Any]]) -> Dict[str, Any]:
         """
-        Implement sophisticated pattern learning using advanced ML techniques
+        Implement comprehensive pattern learning using comprehensive ML techniques
         
         Args:
             patterns: List of cognitive patterns to learn from
@@ -4235,7 +4235,7 @@ class MetaCognitiveProcessor:
         return features
     
     def _cluster_patterns(self, pattern_matrix: np.ndarray, metadata: List[Dict[str, Any]]) -> Dict[str, Any]:
-        """Cluster patterns using sophisticated ML techniques"""
+        """Cluster patterns using comprehensive ML techniques"""
         try:
             from sklearn.cluster import DBSCAN, KMeans
             from sklearn.preprocessing import StandardScaler
@@ -4463,7 +4463,7 @@ class MetaCognitiveProcessor:
     
     def _generate_meta_insights_from_patterns(self, learning_results: Dict[str, Any]) -> List[Dict[str, Any]]:
         """
-        Generate sophisticated meta-insights from learned patterns
+        Generate comprehensive meta-insights from learned patterns
         
         Args:
             learning_results: Results from pattern learning
@@ -4556,7 +4556,7 @@ class MetaCognitiveProcessor:
                         'confidence': performance_variance['opportunity_score'],
                         'actionable_recommendations': [
                             'Focus improvement efforts on underperforming clusters',
-                            'Study high-performing clusters for best practices',
+                            'Study high-performing clusters for recommended practices',
                             'Implement pattern selection optimization'
                         ]
                     }

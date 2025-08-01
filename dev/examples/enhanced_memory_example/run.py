@@ -3,7 +3,7 @@
 NIS Protocol Enhanced Memory Agent Example
 
 This example demonstrates how to use the EnhancedMemoryAgent with semantic search
-and advanced memory features.
+and comprehensive memory features.
 """
 
 import os
@@ -85,7 +85,7 @@ SAMPLE_EPISODES = [
 
 SAMPLE_PROCEDURES = [
     {
-        "content": "To register a new agent, instantiate the agent class and the registry will automatically add it.",
+        "content": "To register a new agent, instantiate the agent class and the registry will systematically add it.",
         "memory_type": MemoryType.PROCEDURAL,
         "themes": ["agent", "registration"],
         "importance": 0.75
@@ -97,7 +97,7 @@ SAMPLE_PROCEDURES = [
         "importance": 0.7
     },
     {
-        "content": "Memory consolidation happens automatically at regular intervals to move short-term memories to long-term storage.",
+        "content": "Memory consolidation happens systematically at regular intervals to move short-term memories to long-term storage.",
         "memory_type": MemoryType.PROCEDURAL,
         "themes": ["memory", "maintenance"],
         "importance": 0.8

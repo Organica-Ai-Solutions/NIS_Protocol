@@ -275,7 +275,7 @@ def calculate_confidence(context):
 ### **Confidence Communication**
 ```python
 def express_confidence(confidence_score):
-    """Convert numerical confidence to human-readable expression"""
+    """Convert numerical confidence to human-traceable expression"""
     
     if confidence_score >= 0.9:
         return "I'm very confident in this answer"

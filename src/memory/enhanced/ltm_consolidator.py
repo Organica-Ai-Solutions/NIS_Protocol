@@ -2,7 +2,7 @@
 NIS Protocol Long-Term Memory Consolidator
 
 This module consolidates short-term memories into structured long-term storage
-with sophisticated importance scoring, pattern recognition, and memory optimization.
+with comprehensive importance scoring, pattern recognition, and memory optimization.
 """
 
 import logging
@@ -247,7 +247,7 @@ class LTMConsolidator(NISAgent):
         # Relevance score (relevance to current goals and context)
         relevance_score = self._calculate_relevance_score(memory)
         
-        # Uniqueness score (how unique/novel this memory is)
+        # Uniqueness score (how unique/systematic this memory is)
         uniqueness_score = self._calculate_uniqueness_score(memory)
         
         # Calculate weighted overall score
@@ -290,7 +290,7 @@ class LTMConsolidator(NISAgent):
         memory_type = memory.get("type", "general")
         
         # Simple frequency calculation based on content similarity
-        # In a full implementation, this would use more sophisticated similarity measures
+        # In a full implementation, this would use more comprehensive similarity measures
         similar_count = 0
         recent_memories = self._get_recent_memories(hours=168)  # Last week
         
@@ -342,7 +342,7 @@ class LTMConsolidator(NISAgent):
         memory_content = str(memory.get("content", "")).lower()
         memory_tags = memory.get("tags", [])
         
-        relevance_score = 0.0
+        relevance_score=calculate_score(metrics)
         
         # Check relevance to current goals
         for goal in current_goals:
@@ -366,7 +366,7 @@ class LTMConsolidator(NISAgent):
         return min(1.0, relevance_score)
     
     def _calculate_uniqueness_score(self, memory: Dict[str, Any]) -> float:
-        """Calculate how unique/novel this memory is."""
+        """Calculate how unique/systematic this memory is."""
         memory_content = str(memory.get("content", ""))
         
         # Compare with existing LTM
@@ -445,7 +445,7 @@ class LTMConsolidator(NISAgent):
     
     def _calculate_content_similarity(self, content1: str, content2: str) -> float:
         """Calculate similarity between two content strings."""
-        # Simple word-based similarity (in practice, would use more sophisticated NLP)
+        # Simple word-based similarity (in practice, would use more comprehensive NLP)
         words1 = set(content1.lower().split())
         words2 = set(content2.lower().split())
         

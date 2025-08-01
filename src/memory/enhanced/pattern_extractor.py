@@ -2,7 +2,7 @@
 Enhanced Pattern Extractor for Memory Systems
 Enhanced with actual metric calculations instead of hardcoded values
 
-Advanced pattern recognition and extraction from memory data with proper
+comprehensive pattern recognition and extraction from memory data with proper
 confidence calculations based on pattern quality and detection accuracy.
 """
 
@@ -91,7 +91,7 @@ class PatternExtractorAgent(NISAgent):
     def __init__(
         self,
         agent_id: str = "pattern_extractor",
-        description: str = "Advanced pattern recognition and trend analysis agent"
+        description: str = "comprehensive pattern recognition and trend analysis agent"
     ):
         super().__init__(agent_id, NISLayer.MEMORY, description)
         self.logger = logging.getLogger(f"nis.{agent_id}")

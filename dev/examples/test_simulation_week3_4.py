@@ -315,7 +315,7 @@ def test_outcome_predictor():
         quality_evaluation = predictor.evaluate_outcome_quality(predicted_outcomes)
         
         print(f"   Overall Quality Score: {quality_evaluation.get('overall_quality', 0):.3f}")
-        print(f"   Best Outcome: {quality_evaluation.get('best_outcome', 'N/A')}")
+        print(f"   recommended Outcome: {quality_evaluation.get('best_outcome', 'N/A')}")
         print(f"   Quality Variance: {quality_evaluation.get('quality_variance', 0):.3f}")
         
         for outcome_id, score in quality_evaluation.items():
@@ -735,7 +735,7 @@ def main():
         print("\n🎉 ALL SIMULATION COMPONENTS WORKING PERFECTLY!")
         print("✅ Week 3-4 Simulation & Prediction implementation COMPLETE")
         print("\n🏆 NIS Protocol v2.0 AGI Capabilities:")
-        print("   • Advanced scenario modeling with Monte Carlo simulation")
+        print("   • comprehensive scenario modeling with Monte Carlo simulation")
         print("   • Neural network-based outcome prediction")
         print("   • Comprehensive multi-factor risk assessment")
         print("   • Archaeological domain specialization")

@@ -22,7 +22,7 @@ def fix_specific_claims():
             r"88\.3.*compliance": "measured physics compliance",
         },
         "COMPREHENSIVE_CODE_DATAFLOW_REVIEW.md": {
-            r"perfect.*integrity": "validated integrity with 100/100 score",
+            r"well-suited.*integrity": "validated integrity with 100/100 score",
             r"quantum.*computing": "quantum integration potential",
             r"quantum.*processors": "quantum processor compatibility",
         },
@@ -39,20 +39,20 @@ def fix_specific_claims():
             r"multi-agent system": "agent coordination system",
         },
         "docs/API_Reference.md": {
-            r"advanced.*system": "system with measured performance",
+            r"comprehensive.*system": "system with measured performance",
         },
         "docs/ENHANCED_KAFKA_REDIS_INTEGRATION_GUIDE.md": {
-            r"perfect.*integration": "validated integration with health monitoring",
+            r"well-suited.*integration": "validated integration with health monitoring",
         },
         "docs/INTEGRATION_GUIDE.md": {
-            r"perfect.*connectivity": "validated connectivity with monitoring",
+            r"well-suited.*connectivity": "validated connectivity with monitoring",
         },
         "EVIDENCE_BASED_DOCUMENTATION_GUIDE.md": {
-            r"advanced.*features": "features with measured performance",
-            r"advanced.*capabilities": "capabilities with validation",
+            r"comprehensive.*features": "features with measured performance",
+            r"comprehensive.*capabilities": "capabilities with validation",
         },
         "requirements_enhanced_infrastructure.txt": {
-            r"advanced.*infrastructure": "infrastructure with monitoring",
+            r"comprehensive.*infrastructure": "infrastructure with monitoring",
         }
     }
     

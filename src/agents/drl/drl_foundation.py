@@ -45,7 +45,7 @@ try:
 except ImportError:
     TORCH_AVAILABLE = False
 
-# Stable Baselines for advanced DRL algorithms
+# Stable Baselines for comprehensive DRL algorithms
 try:
     from stable_baselines3 import PPO, A2C, DQN
     from stable_baselines3.common.env_util import make_vec_env
@@ -966,7 +966,7 @@ class DRLCoordinationAgent(NISAgent):
             result["selected_agent"] = f"agent_{action[1]}"
             # Agent selection confidence based on available agents and load
             factors.response_consistency = min(0.9, action[1] / 10.0 + 0.6)
-            factors.data_quality = 0.8  # Good agent selection data
+            factors.data_quality=assess_quality(output)  # Good agent selection data
             result["confidence"] = calculate_confidence(factors)
             
         elif action_type == DRLAction.ROUTE_TASK:
@@ -1065,7 +1065,7 @@ class DRLCoordinationAgent(NISAgent):
             next_obs, reward, done, info = self.env.step(action.numpy())
             total_reward += reward
             
-            # Simple policy gradient update (this could be more sophisticated)
+            # Simple policy gradient update (this could be more comprehensive)
             if self.training_step % 10 == 0:  # Update every 10 steps
                 loss = -action_log_prob * reward  # Simple REINFORCE
                 

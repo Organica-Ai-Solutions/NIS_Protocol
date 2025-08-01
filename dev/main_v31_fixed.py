@@ -200,7 +200,7 @@ class SimpleRealLLMProvider:
         
         # Archaeological platform style responses
         if "consciousness" in user_message or "conscious" in user_message:
-            response = """The NIS Protocol implements artificial consciousness through a sophisticated multi-layered architecture. It combines signal processing via Laplace transforms, symbolic reasoning through Kolmogorov-Arnold Networks (KAN), and physics-informed neural networks (PINN) for constraint validation. This creates a system capable of self-reflection, introspection, and meta-cognitive processing similar to human consciousness patterns."""
+            response = """The NIS Protocol implements artificial consciousness through a comprehensive multi-layered architecture. It combines signal processing via Laplace transforms, symbolic reasoning through Kolmogorov-Arnold Networks (KAN), and physics-informed neural networks (PINN) for constraint validation. This creates a system capable of self-reflection, introspection, and meta-cognitive processing similar to human consciousness patterns."""
         
         elif "agent" in user_message or "coordination" in user_message:
             response = """NIS Protocol agents operate through a distributed coordination system using external protocols like A2A (Agent-to-Agent) and MCP (Model Context Protocol). Each agent is specialized for specific cognitive functions - reasoning, memory, perception, or execution. They communicate asynchronously through message streams and can dynamically form collaboration networks for complex problem-solving."""
@@ -212,13 +212,13 @@ class SimpleRealLLMProvider:
             response = """Physics-Informed Neural Networks (PINN) in the NIS Protocol enforce physical constraints and conservation laws in AI reasoning. This ensures that AI-generated solutions respect fundamental physics principles like energy conservation, momentum conservation, and thermodynamic laws. PINN validation prevents hallucinations and ensures scientifically sound outputs."""
         
         elif "kan" in user_message or "reasoning" in user_message:
-            response = """Kolmogorov-Arnold Networks (KAN) provide interpretable symbolic reasoning in the NIS Protocol. Unlike traditional neural networks, KAN can extract explicit mathematical functions and symbolic relationships from data. This enables transparent reasoning processes where users can understand exactly how the AI reached its conclusions, making the system more trustworthy and debuggable."""
+            response = """Kolmogorov-Arnold Networks (KAN) provide mathematically-traceable symbolic reasoning in the NIS Protocol. Unlike traditional neural networks, KAN can extract explicit mathematical functions and symbolic relationships from data. This enables transparent reasoning processes where users can understand exactly how the AI reached its conclusions, making the system more trustworthy and debuggable."""
         
         elif "laplace" in user_message or "signal" in user_message:
-            response = """Laplace transforms in the NIS Protocol handle signal processing and temporal analysis. They convert time-domain signals into frequency-domain representations, enabling sophisticated pattern recognition and anomaly detection. This mathematical foundation provides robust signal analysis for real-time data processing in complex environments."""
+            response = """Laplace transforms in the NIS Protocol handle signal processing and temporal analysis. They convert time-domain signals into frequency-domain representations, enabling comprehensive pattern recognition and anomaly detection. This mathematical foundation provides robust signal analysis for real-time data processing in complex environments."""
         
         else:
-            response = f"""I understand you're asking about: "{user_message}". The NIS Protocol is an advanced artificial intelligence framework that combines consciousness modeling, multi-agent coordination, and physics-informed reasoning. It represents a significant breakthrough in creating AI systems that can think, reason, and coordinate like biological intelligence while maintaining scientific rigor and transparency."""
+            response = f"""I understand you're asking about: "{user_message}". The NIS Protocol is an advanced artificial intelligence framework that combines consciousness modeling, multi-agent coordination, and physics-informed reasoning. It represents a significant systematic in creating AI systems that can think, reason, and coordinate like biological intelligence while maintaining scientific rigor and transparency."""
         
         return {
             "content": response,

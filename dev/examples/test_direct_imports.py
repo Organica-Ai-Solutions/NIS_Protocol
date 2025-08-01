@@ -102,7 +102,7 @@ def test_meta_cognitive_processor():
         ]
         
         bias_context = {
-            "search_terms": ["prove theory", "confirm hypothesis", "best evidence"],
+            "search_terms": ["prove theory", "confirm hypothesis", "recommended evidence"],
             "domain": "archaeology"
         }
         
@@ -351,8 +351,8 @@ def main():
     if passed == total:
         print("\n🎉 All core AGI v2.0 components are working correctly!")
         print("\n✨ Implementation Status:")
-        print("✅ MetaCognitiveProcessor: Advanced cognitive analysis & bias detection")
-        print("✅ CuriosityEngine: Sophisticated knowledge gap detection & novelty assessment") 
+        print("✅ MetaCognitiveProcessor: comprehensive cognitive analysis & bias detection")
+        print("✅ CuriosityEngine: comprehensive knowledge gap detection & novelty assessment") 
         print("✅ GoalPriorityManager: Multi-criteria prioritization with cultural alignment")
         
         print("\n🎯 Ready for Week 3-4 Development:")
@@ -361,7 +361,7 @@ def main():
         print("• Memory Consolidation - Enhanced memory system integration")
         
         print("\n📈 Key Achievements:")
-        print("• Implemented sophisticated cognitive process analysis")
+        print("• Implemented comprehensive cognitive process analysis")
         print("• Built comprehensive bias detection for 6+ bias types")
         print("• Created intelligent knowledge gap detection algorithms")
         print("• Developed multi-criteria goal prioritization with cultural alignment")

@@ -55,7 +55,7 @@ class MetaProtocolCoordinator:
         self.discover_and_register_adapters()
     
     def discover_and_register_adapters(self):
-        """Automatically discover and register protocol adapters."""
+        """systematically discover and register protocol adapters."""
         if not os.path.exists(self.adapter_directory):
             self.logger.warning(f"Adapter directory not found: {self.adapter_directory}")
             return

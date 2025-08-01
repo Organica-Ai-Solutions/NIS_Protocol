@@ -184,7 +184,7 @@ async def demo_langgraph_consciousness_workflow():
         def insights_node(state: CognitiveState):
             logger.info("  💡 Generating insights...")
             state.insights = [
-                "Decision speed could be optimized",
+                "Decision speed could be efficient",
                 "Consider alternative perspectives"
             ]
             return state

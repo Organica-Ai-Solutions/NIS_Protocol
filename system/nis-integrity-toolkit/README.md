@@ -179,7 +179,7 @@ cd /path/to/new-project/nis-integrity-toolkit/
 - [Template Usage Manual](./documentation/TEMPLATE_MANUAL.md)  
 - [Audit Script Reference](./documentation/SCRIPT_REFERENCE.md)
 - [Troubleshooting Guide](./documentation/TROUBLESHOOTING.md)
-- [Best Practices](./documentation/BEST_PRACTICES.md)
+- [recommended Practices](./documentation/BEST_PRACTICES.md)
 
 ---
 
@@ -193,7 +193,7 @@ cd /path/to/new-project/nis-integrity-toolkit/
 ### **Community:**
 - Report issues via GitHub issues
 - Contribute enhancements via pull requests
-- Share best practices in discussions
+- Share recommended practices in discussions
 - Request new features for future versions
 
 ---

@@ -152,7 +152,7 @@ The example demonstrates how emotional state influences decision-making:
 You can modify this example to explore different aspects of the NIS Protocol:
 
 1. Add more agent types from different cognitive layers
-2. Implement more sophisticated decision-making in the Cortex Agent
+2. Implement more comprehensive decision-making in the Cortex Agent
 3. Add learning capabilities to improve decision accuracy over time
 4. Integrate with actual hardware (cameras, payment systems, gates)
 

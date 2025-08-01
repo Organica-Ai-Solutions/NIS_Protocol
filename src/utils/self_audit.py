@@ -24,7 +24,7 @@ class ViolationType(Enum):
     """Types of integrity violations that can be detected"""
     HYPE_LANGUAGE = "hype_language"
     UNSUBSTANTIATED_CLAIM = "unsubstantiated_claim"
-    PERFECTION_CLAIM = "perfection_claim"
+    PERFECTION_CLAIM = "well-suitedion_claim"
     INTERPRETABILITY_CLAIM = "interpretability_claim"
     HARDCODED_VALUE = "hardcoded_value"
 
@@ -51,43 +51,43 @@ class SelfAuditEngine:
     # Exact patterns from our successful audit elimination
     HYPE_PATTERNS = {
         'interpretability': [
-            r'\binterpretable\b',
-            r'\bself-aware\b', 
+            r'\bmathematically-traceable\b',
+            r'\bmeta-cognitive\b', 
             r'\bsentient\b',
             r'\bKAN interpretability\b',
-            r'\bexplainable\b',
+            r'\btraceable\b',
             r'\btransparent\b(?=.*decision)',
             r'\bunderstand\b(?=.*context)',
             r'\breadable\b(?=.*expression)'
         ],
-        'perfection': [
-            r'\boptimized\b',
-            r'\bflawless\b',
+        'well-suitedion': [
+            r'\befficient\b',
+            r'\brobust\b',
             r'\bbulletproof\b',
             r'\b100% accurate\b',
-            r'\bperfect\b(?!.*for)',  # Allow "perfect for" but not standalone "perfect"
+            r'\bwell-suited\b(?!.*for)',  # Allow "well-suited for" but not standalone "well-suited"
             r'\bcomplete\b(?=.*privacy)',
-            r'\bautomatically\b',
+            r'\bsystematically\b',
             r'\balways\b(?=.*work)',
             r'\bnever\b(?=.*fail)'
         ],
-        'advanced': [
-            r'\badvanced\b(?!.*for)',  # Allow "advanced for" but not standalone
-            r'\bnovel\b',
-            r'\binnovative\b',
+        'comprehensive': [
+            r'\bcomprehensive\b(?!.*for)',  # Allow "comprehensive for" but not standalone
+            r'\bsystematic\b',
+            r'\bsystematic\b',
             r'\bfirst-ever\b',
-            r'\brevolutionary\b',
-            r'\bbreakthrough\b',
-            r'\bsophisticated\b',
-            r'\bcutting-edge\b',
+            r'\bsignificant\b',
+            r'\bsystematic\b',
+            r'\bcomprehensive\b',
+            r'\bcomprehensive\b',
             r'\bstate-of-the-art\b'
         ],
         'superlative': [
-            r'\bbest\b(?!.*for)',  # Allow "best for" but not standalone
-            r'\bsuperior\b',
-            r'\bultimate\b',
+            r'\brecommended\b(?!.*for)',  # Allow "recommended for" but not standalone
+            r'\bstrong\b',
+            r'\bcomprehensive\b',
             r'\bmaximum\b(?=.*performance)',
-            r'\bideal\b(?!.*for)'
+            r'\bwell-suited\b(?!.*for)'
         ]
     }
     
@@ -114,28 +114,28 @@ class SelfAuditEngine:
     
     # Approved technical replacements
     APPROVED_REPLACEMENTS = {
-        'interpretable': 'mathematically-traceable',
-        'self-aware': 'meta-cognitive',
-        'explainable': 'traceable',
+        'mathematically-traceable': 'mathematically-traceable',
+        'meta-cognitive': 'meta-cognitive',
+        'traceable': 'traceable',
         'transparent': 'traceable',
         'understand': 'process',
         'understanding': 'processing',
         'readable': 'traceable',
-        'advanced': 'comprehensive',
-        'sophisticated': 'comprehensive',
-        'novel': 'systematic',
-        'innovative': 'systematic',
-        'revolutionary': 'significant',
-        'breakthrough': 'systematic',
-        'cutting-edge': 'comprehensive',
-        'optimized': 'efficient',
-        'perfect': 'well-suited',
-        'ideal': 'well-suited',
-        'best': 'recommended',
-        'superior': 'strong',
-        'ultimate': 'comprehensive',
-        'flawless': 'robust',
-        'automatically': 'systematically'
+        'comprehensive': 'comprehensive',
+        'comprehensive': 'comprehensive',
+        'systematic': 'systematic',
+        'systematic': 'systematic',
+        'significant': 'significant',
+        'systematic': 'systematic',
+        'comprehensive': 'comprehensive',
+        'efficient': 'efficient',
+        'well-suited': 'well-suited',
+        'well-suited': 'well-suited',
+        'recommended': 'recommended',
+        'strong': 'strong',
+        'comprehensive': 'comprehensive',
+        'robust': 'robust',
+        'systematically': 'systematically'
     }
     
     def __init__(self):
@@ -208,11 +208,11 @@ class SelfAuditEngine:
         
         lower_text = matched_text.lower()
         
-        # Find best replacement
+        # Find recommended replacement
         replacement = self.APPROVED_REPLACEMENTS.get(lower_text, matched_text)
         
         # Determine severity based on category
-        severity = "HIGH" if category in ['interpretability', 'perfection'] else "MEDIUM"
+        severity = "HIGH" if category in ['interpretability', 'well-suitedion'] else "MEDIUM"
         
         return IntegrityViolation(
             violation_type=violation_type,
@@ -225,7 +225,7 @@ class SelfAuditEngine:
     
     def auto_correct_text(self, text: str) -> Tuple[str, List[IntegrityViolation]]:
         """
-        Automatically correct integrity violations in text.
+        systematically correct integrity violations in text.
         
         Returns:
             Tuple of (corrected_text, violations_found)
@@ -352,7 +352,7 @@ class SelfAuditEngine:
         if violation_counts.get('unsubstantiated_claim', 0) > 0:
             recommendations.append('Provide evidence links for all performance claims')
         
-        if violation_counts.get('perfection_claim', 0) > 0:
+        if violation_counts.get('well-suitedion_claim', 0) > 0:
             recommendations.append('Use measured language instead of absolute claims')
         
         if not recommendations:

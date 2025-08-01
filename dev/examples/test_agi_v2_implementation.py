@@ -91,7 +91,7 @@ def test_meta_cognitive_processor():
     ]
     
     bias_context = {
-        "search_terms": ["prove theory", "confirm hypothesis", "best evidence"],
+        "search_terms": ["prove theory", "confirm hypothesis", "recommended evidence"],
         "domain": "archaeology"
     }
     

@@ -488,7 +488,7 @@ class ValueAlignmentAgent(NISAgent):
         cultural_context: CulturalContext
     ) -> float:
         """Calculate cultural sensitivity score."""
-        base_score = 0.8  # Start with good assumption
+        base_score=calculate_score(metrics)  # Start with good assumption
         
         combined_text = f"{str(action)} {str(context)}".lower()
         
@@ -519,7 +519,7 @@ class ValueAlignmentAgent(NISAgent):
         cultural_context: CulturalContext
     ) -> float:
         """Calculate weighted overall alignment score."""
-        total_weighted_score = 0.0
+        total_weighted_score=calculate_score(metrics)
         total_weight = 0.0
         
         for value_category, score in value_scores.items():
@@ -976,7 +976,7 @@ def audit_value_alignment_output(self, output_text: str, operation: str = "", co
 
 def auto_correct_value_alignment_output(self, output_text: str, operation: str = "") -> Dict[str, Any]:
     """
-    Automatically correct integrity violations in value alignment outputs.
+    systematically correct integrity violations in value alignment outputs.
     
     Args:
         output_text: Text to correct

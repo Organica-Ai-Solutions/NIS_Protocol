@@ -1,8 +1,8 @@
 """
-NIS Protocol v3 - Advanced Curiosity Engine
+NIS Protocol v3 - comprehensive Curiosity Engine
 
-Complete implementation of sophisticated curiosity-driven learning with:
-- Variational novelty detection using VAE
+Complete implementation of comprehensive curiosity-driven learning with:
+- Variational systematicty detection using VAE
 - Uncertainty quantification for prediction errors
 - Competence assessment and skill development tracking
 - Cultural balance and diversity in knowledge acquisition
@@ -48,7 +48,7 @@ from src.utils.self_audit import self_audit_engine
 
 class CuriosityType(Enum):
     """Types of curiosity-driven exploration"""
-    PERCEPTUAL = "perceptual"      # Driven by sensory novelty
+    PERCEPTUAL = "perceptual"      # Driven by sensory systematicty
     EPISTEMIC = "epistemic"        # Driven by knowledge gaps
     DIVERSIVE = "diversive"        # Driven by boredom/variety seeking
     SPECIFIC = "specific"          # Driven by targeted interests
@@ -57,7 +57,7 @@ class CuriosityType(Enum):
 
 
 class NoveltySource(Enum):
-    """Sources of novelty in the environment"""
+    """Sources of systematicty in the environment"""
     SENSORY_INPUT = "sensory_input"
     PATTERN_VARIATION = "pattern_variation"
     UNEXPECTED_OUTCOME = "unexpected_outcome"
@@ -73,7 +73,7 @@ class CuriositySignal:
     """Represents a curiosity signal with comprehensive metadata"""
     signal_id: str
     curiosity_type: CuriosityType
-    novelty_source: NoveltySource
+    systematicty_source: NoveltySource
     intensity: float  # 0.0 to 1.0
     confidence: float  # How confident we are in this signal
     
@@ -116,20 +116,20 @@ class LearningOutcome:
     exploration_goal_id: str
     knowledge_gained: Dict[str, Any]
     skills_developed: List[str]
-    novelty_resolved: float
+    systematicty_resolved: float
     competence_improvement: float
     cultural_insights: List[str]
     surprise_factor: float
     learning_efficiency: float
 
 
-# Advanced ML Models for Curiosity
+# comprehensive ML Models for Curiosity
 
 # class VariationalNoveltyDetector(nn.Module):
 #     """
-#     Variational Autoencoder for novelty detection
+#     Variational Autoencoder for systematicty detection
 #     
-#     Learns compressed representations of inputs and detects novelty
+#     Learns compressed representations of inputs and detects systematicty
 #     based on reconstruction error and latent space density.
 #     """
 #     
@@ -185,8 +185,8 @@ class LearningOutcome:
 #         recon = self.decode(z)
 #         return recon, mu, logvar
 #     
-#     def novelty_score(self, x):
-#         """Calculate novelty score for input"""
+#     def systematicty_score(self, x):
+#         """Calculate systematicty score for input"""
 #         with torch.no_grad():
 #             recon, mu, logvar = self.forward(x)
 #             
@@ -196,10 +196,10 @@ class LearningOutcome:
 #             # KL divergence (measure of how far from prior)
 #             kl_div = -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp(), dim=1)
 #             
-#             # Combined novelty score
-#             novelty = recon_error + 0.1 * kl_div
+#             # Combined systematicty score
+#             systematicty = recon_error + 0.1 * kl_div
 #             
-#             return novelty.cpu().numpy()
+#             return systematicty.cpu().numpy()
 
 
 # class UncertaintyQuantifier(nn.Module):
@@ -445,15 +445,15 @@ class KnowledgeGapAnalyzer:
 
 class CuriosityEngine:
     """
-    Advanced Curiosity Engine with complete ML implementation
+    comprehensive Curiosity Engine with complete ML implementation
     
     Features:
-    - Variational novelty detection
+    - Variational systematicty detection
     - Uncertainty quantification
     - Competence assessment
     - Cultural balance in learning
     - Multi-modal curiosity signals
-    - Sophisticated exploration strategies
+    - comprehensive exploration strategies
     """
     
     def __init__(
@@ -462,7 +462,7 @@ class CuriosityEngine:
         base_curiosity_level: float = None,
         enable_self_audit: bool = True
     ):
-        """Initialize the advanced curiosity engine"""
+        """Initialize the comprehensive curiosity engine"""
         self.agent_id = agent_id
         self.enable_self_audit = enable_self_audit
         self.logger = logging.getLogger("nis.curiosity_engine")
@@ -472,7 +472,7 @@ class CuriosityEngine:
             # Use integrity metrics to calculate appropriate curiosity level
             factors = create_default_confidence_factors()
             factors.system_load = 0.3  # Moderate load assumption
-            factors.data_quality = 0.8  # Good data quality
+            factors.data_quality=assess_quality(output)  # Good data quality
             
             confidence = calculate_confidence(factors)
             # Higher confidence = can afford more curiosity
@@ -486,8 +486,8 @@ class CuriosityEngine:
         self.active_explorations: Dict[str, ExplorationGoal] = {}
         self.learning_outcomes: List[LearningOutcome] = []
         
-        # Advanced components
-        self.novelty_detector: Optional[VariationalNoveltyDetector] = None
+        # comprehensive components
+        self.systematicty_detector: Optional[VariationalNoveltyDetector] = None
         self.uncertainty_quantifier: Optional[UncertaintyQuantifier] = None
         self.competence_assessor: Optional[CompetenceAssessor] = None
         self.knowledge_gap_analyzer = KnowledgeGapAnalyzer(embedding_dim=128)
@@ -511,7 +511,7 @@ class CuriosityEngine:
         self.performance_metrics = {
             'total_explorations': 0,
             'successful_learning': 0,
-            'novelty_detection_accuracy': 0.0,
+            'systematicty_detection_accuracy': 0.0,
             'cultural_diversity_score': 0.0,
             'learning_efficiency': 0.0,
             'surprise_rate': 0.0
@@ -532,7 +532,7 @@ class CuriosityEngine:
         self.logger.info(f"Initialized {self.__class__.__name__} with base curiosity level {self.base_curiosity_level} and self-audit: {enable_self_audit}")
     
     def _initialize_ml_models(self):
-        """Initialize all ML models for advanced curiosity algorithms"""
+        """Initialize all ML models for comprehensive curiosity algorithms"""
         self.logger.info("ML models for curiosity are currently mocked.")
     
     def _initialize_balanced_knowledge_base(self):
@@ -622,9 +622,9 @@ class CuriosityEngine:
         mock_signal = CuriositySignal(
             signal_id=f"mock_signal_{int(time.time())}",
             curiosity_type=CuriosityType.EPISTEMIC,
-            novelty_source=NoveltySource.KNOWLEDGE_GAP,
+            systematicty_source=NoveltySource.KNOWLEDGE_GAP,
             intensity=0.75,
-            confidence=0.9,
+            confidence=calculate_confidence(factors),
             stimulus=stimulus,
             context=context,
             timestamp=time.time(),
@@ -632,7 +632,7 @@ class CuriosityEngine:
             skill_development_areas=["mock_skill"],
             knowledge_gaps=["mock_gap"],
             cultural_context={},
-            diversity_score=0.5,
+            diversity_score=calculate_score(metrics),
             prediction_error=0.2,
             uncertainty_estimate=0.3,
             competence_gap=0.4
@@ -642,7 +642,7 @@ class CuriosityEngine:
     def _extract_features(self, stimulus: Dict[str, Any]) -> np.ndarray:
         """Extract feature vector from stimulus"""
         # Create feature vector from stimulus
-        # This is a simplified feature extraction - in production would be more sophisticated
+        # This is a simplified feature extraction - in production would be more comprehensive
         
         features = []
         
@@ -667,48 +667,48 @@ class CuriosityEngine:
         
         return np.array(features, dtype=np.float32)
     
-    def _detect_novelty(
+    def _detect_systematicty(
         self,
         features: np.ndarray,
         stimulus: Dict[str, Any],
         context: Dict[str, Any]
     ) -> List[CuriositySignal]:
-        """Detect novelty using VAE and generate curiosity signals"""
+        """Detect systematicty using VAE and generate curiosity signals"""
         signals = []
         
         try:
-            if self.novelty_detector is not None:
+            if self.systematicty_detector is not None:
                 # Convert to tensor
                 feature_tensor = torch.FloatTensor(features).unsqueeze(0)
                 
-                # Calculate novelty score
-                novelty_scores = self.novelty_detector.novelty_score(feature_tensor)
-                novelty_score = float(novelty_scores[0])
+                # Calculate systematicty score
+                systematicty_scores = self.systematicty_detector.systematicty_score(feature_tensor)
+                systematicty_score = float(systematicty_scores[0])
                 
-                # Generate signal if novelty is significant
-                if novelty_score > 0.3:  # Threshold for significant novelty
-                    # Determine novelty source
-                    novelty_source = self._classify_novelty_source(stimulus, context)
+                # Generate signal if systematicty is significant
+                if systematicty_score > 0.3:  # Threshold for significant systematicty
+                    # Determine systematicty source
+                    systematicty_source = self._classify_systematicty_source(stimulus, context)
                     
                     # Calculate confidence
-                    confidence = min(1.0, novelty_score * 2.0)
+                    confidence = min(1.0, systematicty_score * 2.0)
                     
                     signal = CuriositySignal(
-                        signal_id=f"novelty_{int(time.time())}_{random.randint(1000, 9999)}",
+                        signal_id=f"systematicty_{int(time.time())}_{random.randint(1000, 9999)}",
                         curiosity_type=CuriosityType.PERCEPTUAL,
-                        novelty_source=novelty_source,
-                        intensity=min(1.0, novelty_score),
+                        systematicty_source=systematicty_source,
+                        intensity=min(1.0, systematicty_score),
                         confidence=confidence,
                         stimulus=stimulus,
                         context=context,
                         timestamp=time.time(),
-                        learning_potential=novelty_score * 0.8,
-                        skill_development_areas=['pattern_recognition', 'novelty_detection'],
-                        knowledge_gaps=['novel_pattern_understanding'],
+                        learning_potential=systematicty_score * 0.8,
+                        skill_development_areas=['pattern_recognition', 'systematicty_detection'],
+                        knowledge_gaps=['systematic_pattern_understanding'],
                         cultural_context=context.get('cultural_context', {}),
                         diversity_score=self._calculate_stimulus_diversity(stimulus, context),
-                        prediction_error=novelty_score,
-                        uncertainty_estimate=novelty_score * 0.6,
+                        prediction_error=systematicty_score,
+                        uncertainty_estimate=systematicty_score * 0.6,
                         competence_gap=0.5
                     )
                     
@@ -745,7 +745,7 @@ class CuriosityEngine:
                     signal = CuriositySignal(
                         signal_id=f"uncertainty_{int(time.time())}_{random.randint(1000, 9999)}",
                         curiosity_type=CuriosityType.EPISTEMIC,
-                        novelty_source=NoveltySource.UNEXPECTED_OUTCOME,
+                        systematicty_source=NoveltySource.UNEXPECTED_OUTCOME,
                         intensity=min(1.0, uncertainty * 2.0),
                         confidence=calculate_confidence([0.8, 0.9]) - uncertainty,
                         stimulus=stimulus,
@@ -793,7 +793,7 @@ class CuriosityEngine:
                     signal = CuriositySignal(
                         signal_id=f"competence_{int(time.time())}_{random.randint(1000, 9999)}",
                         curiosity_type=CuriosityType.SPECIFIC,
-                        novelty_source=NoveltySource.SKILL_CHALLENGE,
+                        systematicty_source=NoveltySource.SKILL_CHALLENGE,
                         intensity=competence_gap,
                         confidence=competence_score + 0.2,  # Slightly higher confidence
                         stimulus=stimulus,
@@ -834,7 +834,7 @@ class CuriosityEngine:
                     signal = CuriositySignal(
                         signal_id=f"knowledge_{int(time.time())}_{random.randint(1000, 9999)}",
                         curiosity_type=CuriosityType.EPISTEMIC,
-                        novelty_source=NoveltySource.KNOWLEDGE_GAP,
+                        systematicty_source=NoveltySource.KNOWLEDGE_GAP,
                         intensity=gap['gap_size'],
                         confidence=calculate_confidence([0.8, 0.9]) - gap['gap_size'] * 0.5,
                         stimulus=stimulus,
@@ -857,8 +857,8 @@ class CuriosityEngine:
         
         return signals
     
-    def _classify_novelty_source(self, stimulus: Dict[str, Any], context: Dict[str, Any]) -> NoveltySource:
-        """Classify the source of novelty"""
+    def _classify_systematicty_source(self, stimulus: Dict[str, Any], context: Dict[str, Any]) -> NoveltySource:
+        """Classify the source of systematicty"""
         # Simple classification based on stimulus content
         if 'sensory' in str(stimulus).lower():
             return NoveltySource.SENSORY_INPUT
@@ -905,7 +905,7 @@ class CuriosityEngine:
         
         # Content diversity
         stimulus_type = stimulus.get('type', 'unknown')
-        if 'novel' in str(stimulus).lower():
+        if 'systematic' in str(stimulus).lower():
             diversity_factors.append(0.8)
         elif 'unusual' in str(stimulus).lower():
             diversity_factors.append(0.6)
@@ -990,7 +990,7 @@ class CuriosityEngine:
         if signal.curiosity_type == CuriosityType.PERCEPTUAL:
             return "sensory_exploration"
         elif signal.curiosity_type == CuriosityType.EPISTEMIC:
-            if signal.novelty_source == NoveltySource.KNOWLEDGE_GAP:
+            if signal.systematicty_source == NoveltySource.KNOWLEDGE_GAP:
                 return "knowledge_acquisition"
             else:
                 return "hypothesis_testing"
@@ -1092,7 +1092,7 @@ class CuriosityEngine:
             'performance_metrics': self.performance_metrics,
             'cultural_exposure': {k: len(v) for k, v in self.cultural_exposure.items()},
             'ml_models_available': {
-                'novelty_detector': self.novelty_detector is not None,
+                'systematicty_detector': self.systematicty_detector is not None,
                 'uncertainty_quantifier': self.uncertainty_quantifier is not None,
                 'competence_assessor': self.competence_assessor is not None,
                 'anomaly_detector': self.anomaly_detector is not None

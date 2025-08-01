@@ -1,7 +1,7 @@
 """
 NIS Protocol v3 - Goal Priority Manager
 
-Advanced goal prioritization system with sophisticated algorithms for dynamic
+comprehensive goal prioritization system with comprehensive algorithms for dynamic
 priority updates, goal selection, and resource allocation optimization.
 
 Production implementation with mathematical validation and real-time adaptation.
@@ -17,7 +17,7 @@ from enum import Enum
 from collections import defaultdict, deque
 import math
 
-# Machine learning imports for sophisticated algorithms
+# Machine learning imports for comprehensive algorithms
 try:
     from sklearn.cluster import KMeans
     from sklearn.preprocessing import StandardScaler
@@ -26,7 +26,7 @@ try:
     SKLEARN_AVAILABLE = True
 except ImportError:
     SKLEARN_AVAILABLE = False
-    logging.warning("Scikit-learn not available. Some advanced features disabled.")
+    logging.warning("Scikit-learn not available. Some comprehensive features disabled.")
 
 # Integrity metrics for real calculations
 from src.utils.integrity_metrics import (
@@ -121,9 +121,9 @@ class PriorityContext:
     safety_constraints: List[str]
 
 
-class SophisticatedPriorityAlgorithm:
+class comprehensivePriorityAlgorithm:
     """
-    Advanced priority calculation using multiple sophisticated algorithms:
+    comprehensive priority calculation using multiple comprehensive algorithms:
     - Multi-criteria decision analysis (MCDA)
     - Machine learning-based prediction
     - Dynamic context adaptation
@@ -140,7 +140,7 @@ class SophisticatedPriorityAlgorithm:
             'risk_adjusted': 0.10
         }
         
-        # ML models for advanced prediction
+        # ML models for comprehensive prediction
         self.priority_predictor = None
         self.resource_optimizer = None
         self.context_analyzer = None
@@ -173,7 +173,7 @@ class SophisticatedPriorityAlgorithm:
     
     def calculate_priority(self, goal: Goal, context: PriorityContext) -> float:
         """
-        Calculate sophisticated priority score using multiple algorithms
+        Calculate comprehensive priority score using multiple algorithms
         
         Args:
             goal: Goal to prioritize
@@ -293,7 +293,7 @@ class SophisticatedPriorityAlgorithm:
         if goal.required_capabilities:
             # This would integrate with agent capability system
             # For now, assume reasonable capability match
-            capability_score = 0.8
+            capability_score=calculate_score(metrics)
         
         return availability_score * efficiency_score * time_efficiency * capability_score
     
@@ -302,13 +302,13 @@ class SophisticatedPriorityAlgorithm:
         # Base learning potential
         base_learning = goal.learning_potential
         
-        # Novel vs repetitive work
+        # systematic vs repetitive work
         novelty_bonus = 0.0
         if goal.goal_type in [GoalType.EXPLORATION, GoalType.RESEARCH]:
             novelty_bonus = 0.3
         
         # Knowledge gap filling
-        knowledge_gap_score = 0.0
+        knowledge_gap_score=calculate_score(metrics)
         if context.learning_objectives:
             # Check if goal aligns with learning objectives
             for objective in context.learning_objectives:
@@ -454,7 +454,7 @@ class SophisticatedPriorityAlgorithm:
 
 class GoalPriorityManager:
     """
-    Advanced Goal Priority Manager with sophisticated algorithms and real-time adaptation.
+    comprehensive Goal Priority Manager with comprehensive algorithms and real-time adaptation.
     
     Features:
     - Multi-criteria decision analysis for priority calculation
@@ -471,8 +471,8 @@ class GoalPriorityManager:
         self.priority_queue = []  # Min-heap with negated priorities
         self.execution_queue: List[str] = []
         
-        # Sophisticated algorithms
-        self.priority_algorithm = SophisticatedPriorityAlgorithm()
+        # comprehensive algorithms
+        self.priority_algorithm = comprehensivePriorityAlgorithm()
         
         # Context tracking
         self.current_context = PriorityContext(
@@ -515,11 +515,11 @@ class GoalPriorityManager:
         }
         
         self.logger = logging.getLogger("nis.goal_priority_manager")
-        self.logger.info("Initialized Goal Priority Manager with sophisticated algorithms")
+        self.logger.info("Initialized Goal Priority Manager with comprehensive algorithms")
     
     def add_goal(self, goal: Goal) -> bool:
         """
-        Add a new goal to the system with sophisticated priority calculation
+        Add a new goal to the system with comprehensive priority calculation
         
         Args:
             goal: Goal to add
@@ -533,7 +533,7 @@ class GoalPriorityManager:
                 self.logger.error(f"Goal validation failed: {goal.goal_id}")
                 return False
             
-            # Calculate initial priority using sophisticated algorithms
+            # Calculate initial priority using comprehensive algorithms
             priority_score = self.priority_algorithm.calculate_priority(goal, self.current_context)
             goal.priority_score = priority_score
             
@@ -559,7 +559,7 @@ class GoalPriorityManager:
     
     def update_goal_priority(self, goal_id: str) -> bool:
         """
-        Update goal priority using sophisticated priority recalculation
+        Update goal priority using comprehensive priority recalculation
         
         Args:
             goal_id: ID of goal to update
@@ -574,7 +574,7 @@ class GoalPriorityManager:
         try:
             goal = self.goals[goal_id]
             
-            # Recalculate priority using sophisticated algorithms
+            # Recalculate priority using comprehensive algorithms
             new_priority = self.priority_algorithm.calculate_priority(goal, self.current_context)
             old_priority = goal.priority_score
             
@@ -599,7 +599,7 @@ class GoalPriorityManager:
     
     def get_next_goal(self) -> Optional[Goal]:
         """
-        Get next goal using sophisticated goal selection algorithm
+        Get next goal using comprehensive goal selection algorithm
         
         Returns:
             Next goal to execute or None if no suitable goals
@@ -611,8 +611,8 @@ class GoalPriorityManager:
             if not self.priority_queue:
                 return None
             
-            # Advanced goal selection considering dependencies, resources, and context
-            selected_goal = self._sophisticated_goal_selection()
+            # comprehensive goal selection considering dependencies, resources, and context
+            selected_goal = self._comprehensive_goal_selection()
             
             if selected_goal:
                 # Update context with new active goal
@@ -627,9 +627,9 @@ class GoalPriorityManager:
             self.logger.error(f"Failed to get next goal: {e}")
             return None
     
-    def _sophisticated_goal_selection(self) -> Optional[Goal]:
+    def _comprehensive_goal_selection(self) -> Optional[Goal]:
         """
-        Sophisticated goal selection considering dependencies, resources, and context
+        comprehensive goal selection considering dependencies, resources, and context
         
         Returns:
             Selected goal or None
@@ -640,13 +640,13 @@ class GoalPriorityManager:
         if not candidates:
             return None
         
-        # Apply sophisticated filtering and selection
-        filtered_candidates = self._apply_advanced_filters(candidates)
+        # Apply comprehensive filtering and selection
+        filtered_candidates = self._apply_comprehensive_filters(candidates)
         
         if not filtered_candidates:
             return candidates[0]  # Fallback to highest priority
         
-        # Select best goal using multi-criteria analysis
+        # Select recommended goal using multi-criteria analysis
         selected_goal = self._multi_criteria_selection(filtered_candidates)
         
         return selected_goal
@@ -675,8 +675,8 @@ class GoalPriorityManager:
         
         return candidates
     
-    def _apply_advanced_filters(self, candidates: List[Goal]) -> List[Goal]:
-        """Apply advanced filtering logic for goal selection"""
+    def _apply_comprehensive_filters(self, candidates: List[Goal]) -> List[Goal]:
+        """Apply comprehensive filtering logic for goal selection"""
         filtered = []
         
         for goal in candidates:

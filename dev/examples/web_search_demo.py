@@ -3,7 +3,7 @@
 NIS Protocol Web Search Agent Demo
 
 Demonstrates the integration of web search capabilities with the Cognitive Orchestra
-for advanced archaeological and cultural research.
+for comprehensive archaeological and cultural research.
 
 This example shows:
 - Multi-provider web search integration
@@ -196,7 +196,7 @@ async def demonstrate_cognitive_orchestra_integration():
             },
             {
                 "function": CognitiveFunction.ARCHAEOLOGICAL,
-                "prompt": f"Assess the archaeological methodology and best practices from this research: {json.dumps(research_context, indent=2)}"
+                "prompt": f"Assess the archaeological methodology and recommended practices from this research: {json.dumps(research_context, indent=2)}"
             }
         ]
         

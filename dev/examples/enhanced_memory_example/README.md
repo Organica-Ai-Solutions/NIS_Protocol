@@ -7,7 +7,7 @@ This example demonstrates the capabilities of the EnhancedMemoryAgent, which pro
 - **Semantic Search**: Find memories based on meaning, not just keywords
 - **Memory Organization**: Work with different memory types (episodic, semantic, procedural)
 - **Working Memory**: Maintain a small set of currently relevant memories
-- **Memory Consolidation**: Automatically move memories from short-term to long-term storage
+- **Memory Consolidation**: systematically move memories from short-term to long-term storage
 - **Forgetting Mechanisms**: Importance-based memory decay over time
 - **Metadata Queries**: Search by themes, importance, time, and other metadata
 
@@ -122,7 +122,7 @@ Memory importance decays over time based on a combination of factors:
 - How frequently it's accessed
 - Emotional salience
 
-Memories that decay below a threshold are automatically marked as forgotten.
+Memories that decay below a threshold are systematically marked as forgotten.
 
 ## Neuroplasticity Implementation
 

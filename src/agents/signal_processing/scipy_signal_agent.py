@@ -1,8 +1,8 @@
 """
-SciPy Signal Agent for Advanced Signal Processing
+SciPy Signal Agent for comprehensive Signal Processing
 
 This agent provides comprehensive signal processing capabilities using SciPy's
-signal processing tools. It offers advanced filtering, spectral analysis,
+signal processing tools. It offers comprehensive filtering, spectral analysis,
 and signal conditioning for the NIS Protocol V3.0.
 
 Enhanced Features (v3):
@@ -12,7 +12,7 @@ Enhanced Features (v3):
 - Auto-correction capabilities for signal processing-related communications
 
 Key Features:
-- Advanced digital filtering (Butterworth, Chebyshev, Elliptic)
+- comprehensive digital filtering (Butterworth, Chebyshev, Elliptic)
 - Spectral analysis and FFT processing
 - Signal conditioning and preprocessing
 - Integration with other NIS signal processing components
@@ -55,7 +55,7 @@ class SciPySignalAgent(NISAgent):
     """
     SciPy Signal Processing Agent
     
-    Provides advanced signal processing using SciPy tools including
+    Provides comprehensive signal processing using SciPy tools including
     filtering, spectral analysis, and signal conditioning.
     """
     
@@ -184,7 +184,7 @@ class SciPySignalAgent(NISAgent):
     
     def auto_correct_scipy_signal_output(self, output_text: str, operation: str = "") -> Dict[str, Any]:
         """
-        Automatically correct integrity violations in SciPy signal outputs.
+        systematically correct integrity violations in SciPy signal outputs.
         
         Args:
             output_text: Text to correct

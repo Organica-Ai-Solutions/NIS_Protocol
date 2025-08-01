@@ -1,7 +1,7 @@
 """
 Time Series Analyzer for Temporal Pattern Recognition
 
-This module provides advanced time series analysis capabilities including
+This module provides comprehensive time series analysis capabilities including
 trend detection, seasonality analysis, anomaly detection, and temporal
 pattern recognition for the NIS Protocol V3.0.
 
@@ -62,7 +62,7 @@ class TimeSeriesAnalyzer(NISAgent):
     def __init__(
         self,
         agent_id: str = "time_series_001",
-        description: str = "Advanced time series analysis and pattern recognition agent",
+        description: str = "comprehensive time series analysis and pattern recognition agent",
         enable_self_audit: bool = True
     ):
         super().__init__(agent_id, NISLayer.PERCEPTION, description)
@@ -205,7 +205,7 @@ class TimeSeriesAnalyzer(NISAgent):
     
     def auto_correct_timeseries_output(self, output_text: str, operation: str = "") -> Dict[str, Any]:
         """
-        Automatically correct integrity violations in time series outputs.
+        systematically correct integrity violations in time series outputs.
         
         Args:
             output_text: Text to correct

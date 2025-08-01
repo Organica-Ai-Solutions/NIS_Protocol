@@ -1,9 +1,9 @@
 # 🔄 NIS Protocol v3.1 - Data Flow Guide
-## From API Request to Grounded AI Response
+## From API Request to AI Response
 
-### 🚀 **Overview: A Journey Through Scientific Validation**
+### 🚀 **Overview**
 
-This guide traces the path of a single user request as it travels through the NIS Protocol v3.1. The flow is designed to be sequential and rigorous, ensuring that every output is mathematically interpretable and physically plausible before being delivered. The core principle is **validation before generation**.
+This guide traces the path of a single user request as it travels through the NIS Protocol v3.1. The flow is designed to be sequential, ensuring that every output is processed through a validation pipeline before being delivered.
 
 ---
 
@@ -105,7 +105,7 @@ laplace_output = laplace_agent.compute_laplace_transform(text_as_signal, time_ve
 The output from the Laplace agent is then passed to the `EnhancedKANReasoningAgent`.
 
 -   **Input:** The frequency-domain data from the Laplace agent.
--   **Process:** The KAN agent analyzes the mathematical object to discover an underlying symbolic function. It finds the simplest, most elegant mathematical equation that describes the relationships in the data.
+-   **Process:** The KAN agent analyzes the mathematical object to discover an underlying symbolic function. It finds a mathematical equation that describes the relationships in the data.
 -   **Output:** A symbolic expression, like `f(t) = -kt^2 + c`. This is the system's "interpretation" of the query.
 
 ```python
@@ -119,7 +119,7 @@ kan_output = kan_agent.process_laplace_input(laplace_output) # Returns a Symboli
 The symbolic function from the KAN agent is now sent to the `EnhancedPINNPhysicsAgent` for the critical validation step.
 
 -   **Input:** The symbolic formula, `f(t) = -kt^2 + c`.
--   **Process:** The PINN agent checks this function against its internal knowledge base of physical laws. Does this function violate causality? Does it break the laws of thermodynamics? Does it conflict with general relativity?
+-   **Process:** The PINN agent checks this function against its internal knowledge base of physical laws.
 -   **Output:** A `PINNValidationResult` object, which contains a boolean `is_valid` flag and a list of the laws it was checked against. For this query, it would likely find a violation of causality.
 
 ```python
@@ -136,7 +136,7 @@ The `EnhancedScientificCoordinator` now has a validated (or invalidated) result 
 
 -   **Input:** The `PINNValidationResult` object.
 -   **Process:** The `CognitiveOrchestra` selects the configured LLM provider (e.g., OpenAI). It constructs a prompt that includes the final, validated information. For example: *"The user asked about time travel. Our physics validation pipeline concluded that it violates the principle of causality. Explain this conclusion in natural language."*
--   **Output:** A fluent, natural language string that accurately reflects the findings of the scientific pipeline.
+-   **Output:** A fluent, natural language string that reflects the findings of the scientific pipeline.
 
 ```python
 # CognitiveOrchestra.py
@@ -157,7 +157,7 @@ The coordinator packages the LLM's response along with the pipeline's structured
   "nis_pipeline_output": {
     "pipeline": {
       "is_valid": false,
-      "confidence": 0.98,
+      "confidence": "calculated_value",
       "symbolic_equation": "f(t) = ...",
       "violated_laws": ["causality"]
     }
@@ -168,18 +168,18 @@ The coordinator packages the LLM's response along with the pipeline's structured
 
 ### **Continuous Oversight: The Meta-Control Loop** 🧠
 
-While the data flows through the pipeline, the meta-control agents are always active:
+While the data flows through the pipeline, the meta-control agents are active:
 
 -   **`EnhancedConsciousAgent`:** Receives status updates from the coordinator at each stage. It monitors for integrity violations, performance bottlenecks, or repeated failures, updating its internal "awareness" metrics.
 -   **`DRLResourceManager`:** Monitors the resource consumption (CPU, memory) of each agent in the pipeline. It can learn to proactively allocate more resources to agents that are under heavy load, ensuring the system remains responsive.
 
 ---
 
-## 🏆 **What Makes This Data Flow Unique**
+## 📜 **Key Design Principles**
 
 1.  **Mandatory Validation:** There is no path from user input to LLM response that bypasses the scientific validation pipeline.
-2.  **Interpretability by Design:** The flow through the KAN agent ensures that the system's reasoning is always available as a clear, symbolic formula.
+2.  **Interpretability by Design:** The flow through the KAN agent ensures that the system's reasoning is available as a symbolic formula.
 3.  **Grounded in Physics:** The PINN agent acts as a gatekeeper, preventing physically impossible or nonsensical ideas from ever reaching the language generation stage.
-4.  **Separation of Concerns:** The pipeline agents are responsible for **validation and reasoning**. The LLM is responsible only for **communication**. This clear separation is key to the system's safety and reliability.
+4.  **Separation of Concerns:** The pipeline agents are responsible for **validation and reasoning**. The LLM is responsible only for **communication**. This clear separation is key to the system's design.
 
-This deliberate, rigorous, and verifiable data flow is the core of the NIS Protocol's commitment to building trustworthy AI. 
+This verifiable data flow is a core component of the NIS Protocol's commitment to building trustworthy AI.

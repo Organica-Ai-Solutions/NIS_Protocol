@@ -2,14 +2,14 @@
 
 ## 1. Overview
 
-The NIS Protocol v3.1 provides a RESTful API for interacting with its **Generative Simulation Engine** and multi-agent system. The API is designed to be simple, robust, and easy to integrate.
+The NIS Protocol v3.1 provides a RESTful API for interacting with its Generative Simulation Engine and multi-agent system. The API is designed to be straightforward and easy to integrate.
 
 **Base URL:** `http://localhost:8000`
 
 ## 2. Generative Simulation
 
 ### `POST /simulation/run`
-**Description:** The flagship endpoint of the NIS Protocol v3.1. It runs the full **design → simulate → analyze** loop for a given natural language concept, leveraging the verifiable AI pipeline and multi-agent system.
+**Description:** This endpoint runs the **design → simulate → analyze** loop for a given natural language concept, leveraging the verifiable AI pipeline and multi-agent system.
 
 **`curl` Example:**
 ```bash
@@ -72,7 +72,7 @@ curl -X GET http://localhost:8000/
 ```
 
 #### `GET /health`
-**Description:** Provides a detailed health check of the system, including the status of LLM providers and the number of registered agents.
+**Description:** Provides a health check of the system, including the status of LLM providers and the number of registered agents.
 
 **`curl` Example:**
 ```bash
@@ -97,7 +97,7 @@ curl -X GET http://localhost:8000/health
 ### Chat and Processing
 
 #### `POST /chat`
-**Description:** The primary endpoint for interacting with the protocol. It takes a user message, runs it through the full **Laplace → KAN → PINN → LLM** pipeline, and returns a validated, natural language response. This endpoint will automatically fall back to the local BitNet model if online providers are unavailable.
+**Description:** The primary endpoint for interacting with the protocol. It takes a user message, runs it through the **Laplace → KAN → PINN → LLM** pipeline, and returns a natural language response. This endpoint will fall back to the local BitNet model if online providers are unavailable.
 
 **`curl` Example:**
 ```bash
@@ -124,7 +124,7 @@ curl -X POST http://localhost:8000/chat \
   "user_id": "anonymous",
   "conversation_id": "conv_anonymous_1753694055_e8a1b2c3",
   "timestamp": 1753694060.123,
-  "confidence": 0.95,
+  "confidence": "calculated_value",
   "provider": "deepseek",
   "real_ai": true,
   "model": "deepseek-chat",
@@ -206,8 +206,8 @@ curl -X GET http://localhost:8000/consciousness/status
   "consciousness_level": "enhanced",
   "introspection_active": true,
   "awareness_metrics": {
-    "self_awareness": 0.85,
-    "environmental_awareness": 0.92
+    "self_awareness": "calculated_value",
+    "environmental_awareness": "calculated_value"
   }
 }
 ```
@@ -258,4 +258,4 @@ The API returns standard HTTP status codes to indicate the success or failure of
 - `422 Unprocessable Entity`: The request body is invalid.
 - `500 Internal Server Error`: An unexpected error occurred on the server.
 
-Error responses will contain a `detail` field with a description of the error. 
+Error responses will contain a `detail` field with a description of the error.

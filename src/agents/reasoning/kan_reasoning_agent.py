@@ -90,9 +90,9 @@ class ReasoningResult:
     processing_time: float
 
 
-class AdvancedKANLayer(nn.Module):
+class comprehensiveKANLayer(nn.Module):
     """
-    Advanced KAN layer with enhanced spline interpolation and symbolic extraction
+    comprehensive KAN layer with enhanced spline interpolation and symbolic extraction
     
     Features:
     - B-spline basis functions with learnable control points
@@ -215,7 +215,7 @@ class AdvancedKANLayer(nn.Module):
     
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
-        Forward pass through advanced KAN layer
+        Forward pass through comprehensive KAN layer
         
         Args:
             x: Input tensor of shape (batch_size, in_features)
@@ -370,7 +370,7 @@ class AdvancedKANLayer(nn.Module):
         # Check for logarithmic characteristics
         log_score = self._check_logarithmic_curve(x_values, y_values)
         
-        # Determine best fit
+        # Determine recommended fit
         scores = {
             FunctionType.POLYNOMIAL: poly_score,
             FunctionType.TRIGONOMETRIC: trig_score,
@@ -378,17 +378,17 @@ class AdvancedKANLayer(nn.Module):
             FunctionType.LOGARITHMIC: log_score
         }
         
-        best_type = max(scores, key=scores.get)
+        recommended_type = max(scores, key=scores.get)
         
         # Require minimum score for classification
-        if scores[best_type] < 0.3:
+        if scores[recommended_type] < 0.3:
             return FunctionType.UNKNOWN
         
-        return best_type
+        return recommended_type
     
     def _check_polynomial_fit(self, x_values: np.ndarray, y_values: np.ndarray) -> float:
         """Check how well data fits polynomial functions"""
-        best_score = 0.0
+        recommended_score=calculate_score(metrics)
         
         # Try polynomials of different degrees
         for degree in range(1, 5):
@@ -402,12 +402,12 @@ class AdvancedKANLayer(nn.Module):
                 
                 if ss_tot > 0:
                     r_squared = 1 - (ss_res / ss_tot)
-                    best_score = max(best_score, r_squared)
+                    recommended_score = max(recommended_score, r_squared)
                 
             except np.RankWarning:
                 continue
         
-        return max(0.0, best_score)
+        return max(0.0, recommended_score)
     
     def _check_trigonometric_patterns(self, x_values: np.ndarray, y_values: np.ndarray) -> float:
         """Check for trigonometric patterns in data"""
@@ -515,9 +515,9 @@ class AdvancedKANLayer(nn.Module):
         
         try:
             if function_type == FunctionType.POLYNOMIAL:
-                # Find best polynomial degree
-                best_degree = 1
-                best_score = 0.0
+                # Find recommended polynomial degree
+                recommended_degree = 1
+                recommended_score=calculate_score(metrics)
                 
                 for degree in range(1, 5):
                     try:
@@ -529,9 +529,9 @@ class AdvancedKANLayer(nn.Module):
                         
                         if ss_tot > 0:
                             score = 1 - (ss_res / ss_tot)
-                            if score > best_score:
-                                best_score = score
-                                best_degree = degree
+                            if score > recommended_score:
+                                recommended_score = score
+                                recommended_degree = degree
                                 
                                 # Store coefficients
                                 for i, coeff in enumerate(coeffs):
@@ -539,7 +539,7 @@ class AdvancedKANLayer(nn.Module):
                     except:
                         continue
                 
-                parameters['degree'] = best_degree
+                parameters['degree'] = recommended_degree
             
             elif function_type == FunctionType.TRIGONOMETRIC:
                 # Extract sine/cosine parameters
@@ -743,7 +743,7 @@ class AdvancedKANLayer(nn.Module):
         """Calculate interpretability metrics for symbolic function"""
         metrics = {}
         
-        # Complexity metric (simpler functions are more interpretable)
+        # Complexity metric (simpler functions are more mathematically-traceable)
         complexity = len(parameters) + symbolic_function.count('*') + symbolic_function.count('+')
         metrics['complexity'] = 1.0 / (1.0 + complexity * 0.1)
         
@@ -909,7 +909,7 @@ class KANReasoningAgent:
         
         # Hidden layers
         for hidden_dim in self.hidden_dims:
-            layer = AdvancedKANLayer(
+            layer = comprehensiveKANLayer(
                 in_features=prev_dim,
                 out_features=hidden_dim,
                 grid_size=self.grid_size,
@@ -919,7 +919,7 @@ class KANReasoningAgent:
             prev_dim = hidden_dim
         
         # Output layer
-        output_layer = AdvancedKANLayer(
+        output_layer = comprehensiveKANLayer(
             in_features=prev_dim,
             out_features=self.output_dim,
             grid_size=self.grid_size,
@@ -1050,7 +1050,7 @@ class KANReasoningAgent:
         all_extractions = []
         
         for i, layer in enumerate(self.kan_network):
-            if isinstance(layer, AdvancedKANLayer):
+            if isinstance(layer, comprehensiveKANLayer):
                 layer_extractions = layer.extract_symbolic_function()
                 
                 # Add layer information to extractions
@@ -1072,31 +1072,31 @@ class KANReasoningAgent:
             return None
         
         try:
-            # Use the best symbolic extraction (highest confidence)
-            best_extraction = max(symbolic_extractions, key=lambda x: x.confidence)
+            # Use the recommended symbolic extraction (highest confidence)
+            recommended_extraction = max(symbolic_extractions, key=lambda x: x.confidence)
             
             # Generate Laplace pair
-            time_domain = best_extraction.symbolic_function
+            time_domain = recommended_extraction.symbolic_function
             
             # Compute Laplace transform of symbolic function
             frequency_domain = self._compute_symbolic_laplace_transform(
-                best_extraction.symbolic_function,
-                best_extraction.function_type,
-                best_extraction.parameters
+                recommended_extraction.symbolic_function,
+                recommended_extraction.function_type,
+                recommended_extraction.parameters
             )
             
             # Analyze convergence conditions
             conditions = self._analyze_convergence_conditions(
-                best_extraction.function_type,
-                best_extraction.parameters
+                recommended_extraction.function_type,
+                recommended_extraction.parameters
             )
             
             # Extract mathematical properties
             properties = {
-                'poles': self._find_poles(frequency_domain, best_extraction.function_type),
-                'zeros': self._find_zeros(frequency_domain, best_extraction.function_type),
-                'roi': self._determine_region_of_convergence(best_extraction.function_type, best_extraction.parameters),
-                'stability': self._assess_stability(best_extraction.function_type, best_extraction.parameters)
+                'poles': self._find_poles(frequency_domain, recommended_extraction.function_type),
+                'zeros': self._find_zeros(frequency_domain, recommended_extraction.function_type),
+                'roi': self._determine_region_of_convergence(recommended_extraction.function_type, recommended_extraction.parameters),
+                'stability': self._assess_stability(recommended_extraction.function_type, recommended_extraction.parameters)
             }
             
             return LaplacePair(

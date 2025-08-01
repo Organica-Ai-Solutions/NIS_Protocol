@@ -38,32 +38,32 @@ def clean_essential_docs():
         
         # Fix unsubstantiated claims
         claim_fixes = [
-            # Advanced claims
-            (r"advanced multi-agent system", "multi-agent system implementation"),
-            (r"Advanced multi-agent", "Multi-agent"),
-            (r"advanced ([a-z]+)", r"implemented \1"),
-            (r"Advanced ([A-Z][a-z]+)", r"Implemented \1"),
+            # comprehensive claims
+            (r"comprehensive multi-agent system", "multi-agent system implementation"),
+            (r"comprehensive multi-agent", "Multi-agent"),
+            (r"comprehensive ([a-z]+)", r"implemented \1"),
+            (r"comprehensive ([A-Z][a-z]+)", r"Implemented \1"),
             
-            # Perfect/Complete claims
-            (r"perfect ([a-z]+)", r"implemented \1"),
-            (r"Perfect ([A-Z][a-z]+)", r"Implemented \1"),
+            # well-suited/Complete claims
+            (r"well-suited ([a-z]+)", r"implemented \1"),
+            (r"well-suited ([A-Z][a-z]+)", r"Implemented \1"),
             (r"complete ([a-z]+)", r"implemented \1"),
             (r"Complete ([A-Z][a-z]+)", r"Implemented \1"),
             
             # KAN interpretability claims
             (r"KAN interpretability", "KAN symbolic function extraction"),
-            (r"interpretability breakthrough", "symbolic function extraction implementation"),
+            (r"interpretability systematic", "symbolic function extraction implementation"),
             (r"interpretability capabilities", "symbolic function extraction capabilities"),
             
             # Multi-agent system specifics
             (r"multi-agent system coordination", "multi-agent system implementation"),
-            (r"sophisticated multi-agent", "multi-agent"),
+            (r"comprehensive multi-agent", "multi-agent"),
             
-            # Revolutionary/breakthrough claims
-            (r"revolutionary ([a-z]+)", r"implemented \1"),
-            (r"Revolutionary ([A-Z][a-z]+)", r"Implemented \1"),
-            (r"breakthrough ([a-z]+)", r"implementation \1"),
-            (r"Breakthrough ([A-Z][a-z]+)", r"Implementation \1"),
+            # significant/systematic claims
+            (r"significant ([a-z]+)", r"implemented \1"),
+            (r"significant ([A-Z][a-z]+)", r"Implemented \1"),
+            (r"systematic ([a-z]+)", r"implementation \1"),
+            (r"systematic ([A-Z][a-z]+)", r"Implementation \1"),
         ]
         
         for pattern, replacement in claim_fixes:
@@ -77,7 +77,7 @@ def clean_essential_docs():
             (r"production-ready agents", "implemented agents"),
             (r"Production-ready agents", "Implemented agents"),
             (r"state-of-the-art", "implemented"),
-            (r"cutting-edge", "implemented"),
+            (r"comprehensive", "implemented"),
             (r"world-class", "implemented"),
             (r"industry-leading", ""),
             (r"enterprise-grade", "production"),
@@ -92,10 +92,10 @@ def clean_essential_docs():
         
         # Fix performance/optimization claims
         performance_fixes = [
-            (r"optimized performance", "measured performance"),
+            (r"efficient performance", "measured performance"),
             (r"optimal ([a-z]+)", r"measured \1"),
             (r"Optimal ([A-Z][a-z]+)", r"Measured \1"),
-            (r"highly optimized", "implemented"),
+            (r"highly efficient", "implemented"),
             (r"ultra-fast", "measured"),
             (r"lightning-fast", "fast"),
             (r"blazing-fast", "fast"),

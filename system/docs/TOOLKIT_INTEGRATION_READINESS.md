@@ -128,7 +128,7 @@ nis-integrity audit --docs       # Uses our troubleshooting patterns
 
 ### **For Developers:**
 - **fast Setup** - `nis init` uses our proven patterns
-- **Built-in Best Practices** - Our architecture becomes default templates
+- **Built-in recommended Practices** - Our architecture becomes default templates
 - **Integrated Troubleshooting** - Our diagnostics built into CLI
 - **Visual Guidance** - Our Mermaid diagrams embedded in toolkit docs
 

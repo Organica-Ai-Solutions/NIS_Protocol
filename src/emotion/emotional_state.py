@@ -48,7 +48,7 @@ class EmotionalStateSystem:
             "urgency": ["processing_priority", "resource_allocation", "response_time"],
             "confidence": ["decision_threshold", "action_boldness", "retry_attempts"],
             "interest": ["attention_focus", "detail_level", "memory_retention"],
-            "novelty": ["learning_rate", "exploration_bias", "pattern_sensitivity"]
+            "systematicty": ["learning_rate", "exploration_bias", "pattern_sensitivity"]
         }
         
         # Initialize the last update timestamp
@@ -170,7 +170,7 @@ class EmotionalStateSystem:
             raise ValueError(f"Emotional dimension '{dimension}' does not exist")
         
         # Check if the dimension is a default dimension
-        if dimension in ["suspicion", "urgency", "confidence", "interest", "novelty"]:
+        if dimension in ["suspicion", "urgency", "confidence", "interest", "systematicty"]:
             raise ValueError(f"Cannot remove default dimension '{dimension}'")
         
         # Remove the dimension
@@ -334,7 +334,7 @@ class EmotionalStateSystem:
             "urgency": self._calculate_initial_urgency(),
             "confidence": self._calculate_initial_confidence(),
             "interest": self._calculate_initial_interest(),
-            "novelty": self._calculate_initial_novelty()
+            "systematicty": self._calculate_initial_systematicty()
         }
         
         return initial_state
@@ -364,13 +364,13 @@ class EmotionalStateSystem:
         """Calculate initial interest level for learning and adaptation."""
         return 0.5  # Balanced interest for normal operations
     
-    def _calculate_initial_novelty(self) -> float:
-        """Calculate initial novelty sensitivity."""
-        # Higher novelty detection for safety-critical systems
+    def _calculate_initial_systematicty(self) -> float:
+        """Calculate initial systematicty sensitivity."""
+        # Higher systematicty detection for safety-critical systems
         if self._is_life_critical_context():
-            return 0.6  # More sensitive to novel patterns
+            return 0.6  # More sensitive to systematic patterns
         else:
-            return 0.4  # Normal novelty sensitivity
+            return 0.4  # Normal systematicty sensitivity
     
     def _is_life_critical_context(self) -> bool:
         """Determine if this is a life-critical deployment context."""
@@ -391,7 +391,7 @@ class EmotionalStateSystem:
             "urgency": 0.08,     # Moderate decay for urgency
             "confidence": 0.01,  # Very slow decay for confidence
             "interest": 0.05,    # Moderate decay for interest
-            "novelty": 0.15      # Faster decay for novelty detection
+            "systematicty": 0.15      # Faster decay for systematicty detection
         }
         
         # Adjust based on context
@@ -412,4 +412,4 @@ class EmotionalDimension:
     URGENCY = "urgency"
     CONFIDENCE = "confidence"
     INTEREST = "interest"
-    NOVELTY = "novelty" 
+    NOVELTY = "systematicty" 

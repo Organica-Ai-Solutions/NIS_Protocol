@@ -1,7 +1,7 @@
 """
 NIS Protocol Memory Pruner
 
-This module manages memory cleanup and pruning operations with advanced algorithms,
+This module manages memory cleanup and pruning operations with comprehensive algorithms,
 lifecycle management, and mathematical validation for optimal memory utilization.
 """
 
@@ -92,12 +92,12 @@ class PruningResult:
 
 
 class MemoryPrunerAgent(NISAgent):
-    """Manages cleanup and pruning of memory systems with advanced algorithms."""
+    """Manages cleanup and pruning of memory systems with comprehensive algorithms."""
     
     def __init__(
         self,
         agent_id: str = "memory_pruner",
-        description: str = "Advanced memory pruning and lifecycle management agent"
+        description: str = "comprehensive memory pruning and lifecycle management agent"
     ):
         super().__init__(agent_id, NISLayer.MEMORY, description)
         self.logger = logging.getLogger(f"nis.{agent_id}")
@@ -151,7 +151,7 @@ class MemoryPrunerAgent(NISAgent):
         self.stability_window = 15
         self.pruning_history = deque(maxlen=100)
         
-        # Advanced algorithms
+        # comprehensive algorithms
         self.semantic_clustering_enabled = True
         self.predictive_pruning_enabled = True
         self.adaptive_thresholds_enabled = True
@@ -367,7 +367,7 @@ class MemoryPrunerAgent(NISAgent):
     ) -> PruningDecision:
         """Make pruning decision for a memory item."""
         # Calculate overall pruning score
-        pruning_score = 0.0
+        pruning_score=calculate_score(metrics)
         total_weight = 0.0
         
         for criteria, score in criteria_scores.items():
@@ -607,7 +607,7 @@ class MemoryPrunerAgent(NISAgent):
             for i, memory_item in enumerate(sorted_cluster):
                 if i == 0:
                     # Keep the most important memory
-                    redundancy_score = 0.0
+                    redundancy_score=calculate_score(metrics)
                 else:
                     # Calculate redundancy with more important memories
                     redundancy_score = memory_item.redundancy_score
