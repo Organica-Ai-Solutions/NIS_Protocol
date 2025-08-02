@@ -41,6 +41,7 @@ except ImportError:
 from src.utils.integrity_metrics import (
     calculate_confidence, create_default_confidence_factors, ConfidenceFactors
 )
+from src.utils.confidence_calculator import assess_quality
 
 # Self-audit capabilities
 from src.utils.self_audit import self_audit_engine
@@ -472,7 +473,7 @@ class CuriosityEngine:
             # Use integrity metrics to calculate appropriate curiosity level
             factors = create_default_confidence_factors()
             factors.system_load = 0.3  # Moderate load assumption
-            factors.data_quality=assess_quality(output)  # Good data quality
+            factors.data_quality = assess_quality()  # Good data quality
             
             confidence = calculate_confidence(factors)
             # Higher confidence = can afford more curiosity
