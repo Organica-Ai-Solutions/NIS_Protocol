@@ -1,0 +1,5 @@
+[33m0918ab0[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m � Enhanced README with Visual Documentation
+[33mca90108[m � VALIDATION SPRINT READY: Complete Endpoint Fixes & Documentation
+[33m572d013[m � NIS PROTOCOL v3.1 MAJOR ENHANCEMENT: BitNet Online Training + Anthropic-Style Execution + Import Fixes
+[33ma2acc05[m � SECURITY: Remove .env~ backup file containing exposed API keys
+[33m919c9c2[m � Fix endpoint parameter issues and enable demo-ready features

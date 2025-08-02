@@ -488,7 +488,7 @@ class ValueAlignmentAgent(NISAgent):
         cultural_context: CulturalContext
     ) -> float:
         """Calculate cultural sensitivity score."""
-        base_score=calculate_score(metrics)  # Start with good assumption
+        base_score = 0.8  # Start with good assumption
         
         combined_text = f"{str(action)} {str(context)}".lower()
         
@@ -519,7 +519,7 @@ class ValueAlignmentAgent(NISAgent):
         cultural_context: CulturalContext
     ) -> float:
         """Calculate weighted overall alignment score."""
-        total_weighted_score=calculate_score(metrics)
+        total_weighted_score = 0.0
         total_weight = 0.0
         
         for value_category, score in value_scores.items():
