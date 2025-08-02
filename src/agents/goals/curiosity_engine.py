@@ -620,6 +620,16 @@ class CuriosityEngine:
         Process stimulus and generate mock curiosity signals
         """
         context = context or {}
+        
+        # Create confidence factors for calculation
+        factors = create_default_confidence_factors()
+        factors.system_load = 0.4  # Moderate curiosity load
+        factors.data_quality = 0.85  # Good stimulus quality
+        factors.response_consistency = 0.75  # Consistent response
+        
+        # Create basic metrics for diversity calculation
+        metrics = {"diversity": 0.8, "novelty": 0.7, "complexity": 0.6}
+        
         mock_signal = CuriositySignal(
             signal_id=f"mock_signal_{int(time.time())}",
             curiosity_type=CuriosityType.EPISTEMIC,
@@ -633,7 +643,7 @@ class CuriosityEngine:
             skill_development_areas=["mock_skill"],
             knowledge_gaps=["mock_gap"],
             cultural_context={},
-            diversity_score=calculate_score(metrics),
+            diversity_score=sum(metrics.values()) / len(metrics),  # Calculate average diversity
             prediction_error=0.2,
             uncertainty_estimate=0.3,
             competence_gap=0.4

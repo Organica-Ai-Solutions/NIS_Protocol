@@ -108,13 +108,15 @@ def main():
             "scenario_id": "physics_test_001",
             "scenario_type": "physics", 
             "parameters": {
+                "time_horizon": 10.0,  # Required field
+                "resolution": 0.1,     # Required field  
                 "mass": 1.0,
                 "height": 10.0,
                 "gravity": 9.8,
                 "simulation_type": "falling_object"
             }
         },
-        "Complex simulation endpoint"
+        "Complex simulation endpoint (with required fields)"
     )
     
     # Test 5: NEW Simple simulation endpoint (just enabled)

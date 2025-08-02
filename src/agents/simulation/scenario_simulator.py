@@ -41,6 +41,7 @@ class ScenarioType(Enum):
     RISK_MITIGATION = "risk_mitigation"
     CULTURAL_INTERACTION = "cultural_interaction"
     TEMPORAL_ANALYSIS = "temporal_analysis"
+    PHYSICS = "physics"  # Added for physics simulations
 
 
 @dataclass

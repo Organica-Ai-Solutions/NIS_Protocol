@@ -273,7 +273,13 @@ async def process_stimulus(request: StimulusRequest):
 
     try:
         signals = curiosity_engine.process_stimulus(request.stimulus, request.context)
-        return JSONResponse(content={"signals": [s.__dict__ for s in signals]}, status_code=200)
+        return JSONResponse(content={"signals": [
+            {
+                **s.__dict__,
+                'curiosity_type': s.curiosity_type.value,
+                'systematicty_source': s.systematicty_source.value
+            } for s in signals
+        ]}, status_code=200)
     except Exception as e:
         logger.error(f"Error during stimulus processing: {e}")
         return JSONResponse(content={"error": str(e)}, status_code=500)
@@ -446,7 +452,7 @@ def add_message_to_conversation(conversation_id: str, role: str, content: str, m
 
 @app.post("/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
-    """Enhanced chat with REAL LLM - Archaeological Discovery Pattern"""
+    """Enhanced chat with REAL LLM - NIS Protocol v3.1"""
     conversation_id = get_or_create_conversation(request.conversation_id, request.user_id)
     
     # Add user message
@@ -639,9 +645,9 @@ async def process_request(req: ProcessRequest):
         "provider": result['provider']
     }
 
-# ====== ARCHAEOLOGICAL PATTERN: SIMPLE STARTUP ======
+# ======  PATTERN: SIMPLE STARTUP ======
 if __name__ == "__main__":
-    logger.info("🏺 Starting NIS Protocol v3.1 with Archaeological Discovery Platform patterns")
+    logger.info("🏺 Starting NIS Protocol v3.1 with  Platform patterns")
     logger.info("🚀 Based on proven success from OpenAIZChallenge heritage platform")
     
     app.start_time = datetime.now() # Initialize app.start_time
