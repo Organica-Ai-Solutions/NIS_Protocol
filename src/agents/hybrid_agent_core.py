@@ -27,12 +27,9 @@ from abc import ABC, abstractmethod
 import time
 from collections import defaultdict
 
-from .signal_processing.laplace_processor import LaplaceSignalProcessor, LaplaceTransform, LaplaceTransformType
-from .physics.pinn_physics_agent import PINNPhysicsAgent, PINNValidationResult
-from .reasoning.kan_reasoning_agent import (
-    KANSymbolicReasoningNetwork, SymbolicReasoningResult, 
-    FrequencyPatternFeatures
-)
+from .signal_processing.unified_signal_agent import LaplaceSignalProcessor, LaplaceTransform
+from .physics.unified_physics_agent import PINNPhysicsAgent, PhysicsValidationResult as PINNValidationResult
+from .reasoning.unified_reasoning_agent import KANReasoningAgent, ReasoningResult
 from ..core.agent import NISAgent, NISLayer
 from ..core.symbolic_bridge import SymbolicBridge, SymbolicExtractionResult
 
@@ -68,7 +65,7 @@ class CompleteScientificProcessingResult:
     """Enhanced result from complete Laplace→KAN→PINN scientific pipeline."""
     laplace_transform: Optional[LaplaceTransform] = None
     symbolic_extraction: Optional[SymbolicExtractionResult] = None
-    kan_reasoning: Optional[SymbolicReasoningResult] = None
+    kan_reasoning: Optional[ReasoningResult] = None
     pinn_validation: Optional[PINNValidationResult] = None
     physics_constraints: Optional[List[str]] = None
     integrity_score: float = 0.0
@@ -371,16 +368,16 @@ class CompleteScientificPipeline:
                 payload = pinn_response["payload"]
 
                 # Convert to PINNValidationResult
-                from .physics.pinn_physics_agent import PhysicsViolation, ViolationType
+                from .physics.unified_physics_agent import ViolationType
 
                 violations = []
                 for v_data in payload["violations"]:
-                    violation = PhysicsViolation(
-                        violation_type=ViolationType(v_data["type"]),
-                        severity=v_data["severity"],
-                        description=v_data["description"],
-                        suggested_correction=v_data["suggested_correction"]
-                    )
+                    violation = {
+                        "violation_type": ViolationType(v_data["type"]),
+                        "severity": v_data["severity"],
+                        "description": v_data["description"],
+                        "suggested_correction": v_data["suggested_correction"]
+                    }
                     violations.append(violation)
 
                 corrected_function = None

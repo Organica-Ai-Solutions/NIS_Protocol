@@ -18,7 +18,7 @@ from src.emotion.emotional_state import EmotionalStateSystem
 from src.memory.memory_manager import MemoryManager
 
 # Coordinator agent
-from src.agents.coordination.coordinator_agent import CoordinatorAgent
+from src.meta.unified_coordinator import CoordinatorAgent
 
 # Protocol adapters
 from src.adapters.bootstrap import configure_coordinator_agent 

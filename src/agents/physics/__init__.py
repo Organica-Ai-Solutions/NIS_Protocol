@@ -16,7 +16,7 @@ from .conservation_laws import ConservationLaws, ConservationLawValidator
 from .electromagnetism import MaxwellEquationsValidator
 from .thermodynamics import ThermodynamicsValidator
 from .quantum_mechanics import QuantumMechanicsValidator
-from .physics_agent import PhysicsAgent as PhysicsInformedAgent, PhysicsDomain, PhysicsState, PhysicsViolation
+from .unified_physics_agent import PhysicsAgent as PhysicsInformedAgent, PhysicsDomain, PhysicsState, ViolationType as PhysicsViolation
 
 __all__ = [
     "ConservationLaws",

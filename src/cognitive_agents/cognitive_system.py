@@ -1,7 +1,7 @@
 from typing import Dict, List, Optional, Union
 from .interpretation_agent import InterpretationAgent
 from .communication_agent import CommunicationAgent
-from .reasoning_agent import ReasoningAgent, ReasoningStrategy
+from ..agents.reasoning.unified_reasoning_agent import ReasoningAgent, ReasoningStrategy
 from dataclasses import dataclass
 from datetime import datetime
 

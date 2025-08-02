@@ -51,7 +51,7 @@ from .hybrid_agent_core import (
     MetaCognitiveProcessor, CuriosityEngine, ValidationAgent,
     LLMProvider, ProcessingLayer
 )
-from .coordination.coordinator_agent import EnhancedCoordinatorAgent, CoordinationMode, WorkflowPriority
+from ..meta.unified_coordinator import EnhancedCoordinatorAgent
 from .coordination.multi_llm_agent import EnhancedMultiLLMAgent, LLMOrchestrationStrategy
 
 # DRL foundation integration
@@ -77,7 +77,7 @@ from ..llm.llm_manager import LLMManager
 from ..utils.env_config import env_config
 
 # Infrastructure integration for DRL caching
-from ..infrastructure.integration_coordinator import InfrastructureCoordinator
+from ..meta.unified_coordinator import InfrastructureCoordinator
 
 # Integrity metrics for actual calculations
 from src.utils.integrity_metrics import (

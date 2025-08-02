@@ -11,7 +11,7 @@ import asyncio
 import random
 
 from src.agents.physics.modulus_simulation_engine import ModulusSimulationEngine
-from src.agents.physics.nemo_physics_processor import NemoPhysicsProcessor, NemoModelType
+from src.agents.physics.unified_physics_agent import NemoPhysicsProcessor
 
 class PINNAgent:
     """

@@ -28,7 +28,7 @@ def test_symbolic_bridge():
     
     try:
         from src.core.symbolic_bridge import SymbolicBridge, SymbolicType, PatternType
-        from src.agents.signal_processing.laplace_processor import LaplaceSignalProcessor, LaplaceTransform, LaplaceTransformType
+        from src.agents.signal_processing.unified_signal_agent import LaplaceSignalProcessor, LaplaceTransform, LaplaceTransformType
         
         # Create test signal
         t_values = np.linspace(0, 10, 100)
@@ -70,10 +70,10 @@ def test_enhanced_kan_agent():
     print("\n🧠 Testing Enhanced KAN Reasoning Agent...")
     
     try:
-        from src.agents.reasoning.kan_reasoning_agent import KANReasoningAgent, SymbolicReasoningType
+        from src.agents.reasoning.unified_reasoning_agent import KANReasoningAgent
         
-        # Create agent in symbolic mode
-        agent = KANReasoningAgent(mode="symbolic")
+        # Create agent with advanced KAN reasoning
+        agent = KANReasoningAgent(agent_id="test_kan_agent", enable_self_audit=True)
         
         # Test symbolic extraction
         test_data = [1.0, 0.5, -0.5, 0.8, 0.2, -0.3, 0.9, 0.1, -0.8, 0.4]

@@ -1,7 +1,7 @@
 {
   "info": {
-    "name": "NIS Protocol v3.1 - Complete API Collection",
-    "description": "Complete API collection for testing NIS Protocol v3.1 Neural Intelligence Synthesis system with Docker deployment",
+    "name": "NIS Protocol v3.1 - Complete API Collection with NVIDIA Models",
+    "description": "Complete API collection for testing NIS Protocol v3.1 Neural Intelligence Synthesis system with Docker deployment. Features NVIDIA Nemotron, Nemo, and Modulus integration with consciousness validation.",
     "version": "3.1.0",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
@@ -414,6 +414,194 @@
         }
       ],
       "description": "Specialized agent endpoints for various cognitive tasks"
+    },
+    {
+      "name": "🚀 NVIDIA Models",
+      "item": [
+        {
+          "name": "NVIDIA Nemotron - Advanced Reasoning",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"prompt\": \"Analyze the physics of quantum entanglement and its implications for consciousness\",\n  \"model_type\": \"nemotron\",\n  \"physics_validation\": true,\n  \"consciousness_check\": true,\n  \"domain\": \"quantum\",\n  \"temperature\": 0.7,\n  \"max_tokens\": 512\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/nvidia/process",
+              "host": ["{{base_url}}"],
+              "path": ["nvidia", "process"]
+            },
+            "description": "Process advanced reasoning tasks using NVIDIA Nemotron with consciousness validation"
+          },
+          "response": []
+        },
+        {
+          "name": "NVIDIA Nemo - Physics Modeling",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"prompt\": \"Model the thermodynamics of a nuclear fusion reactor\",\n  \"model_type\": \"nemo\",\n  \"physics_validation\": true,\n  \"consciousness_check\": true,\n  \"domain\": \"thermodynamics\",\n  \"temperature\": 0.3,\n  \"max_tokens\": 1024\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/nvidia/process",
+              "host": ["{{base_url}}"],
+              "path": ["nvidia", "process"]
+            },
+            "description": "Advanced physics modeling using NVIDIA Nemo with PINN validation"
+          },
+          "response": []
+        },
+        {
+          "name": "NVIDIA Modulus - Physics Simulation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"prompt\": \"Simulate fluid dynamics in a turbulent flow system\",\n  \"model_type\": \"modulus\",\n  \"physics_validation\": true,\n  \"consciousness_check\": false,\n  \"domain\": \"conservation\",\n  \"temperature\": 0.1,\n  \"max_tokens\": 2048\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/nvidia/process",
+              "host": ["{{base_url}}"],
+              "path": ["nvidia", "process"]
+            },
+            "description": "High-precision physics simulation using NVIDIA Modulus"
+          },
+          "response": []
+        },
+        {
+          "name": "NVIDIA - Creative Reasoning",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"prompt\": \"Explore the relationship between mathematics and consciousness in AI systems\",\n  \"model_type\": \"nemotron\",\n  \"physics_validation\": false,\n  \"consciousness_check\": true,\n  \"domain\": \"general\",\n  \"temperature\": 0.9,\n  \"max_tokens\": 1024\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/nvidia/process",
+              "host": ["{{base_url}}"],
+              "path": ["nvidia", "process"]
+            },
+            "description": "Creative reasoning with high temperature for exploration and consciousness validation"
+          },
+          "response": []
+        },
+        {
+          "name": "NVIDIA - Consciousness-Only Validation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"prompt\": \"Analyze potential biases in AI decision-making processes\",\n  \"model_type\": \"nemotron\",\n  \"physics_validation\": false,\n  \"consciousness_check\": true,\n  \"domain\": \"general\",\n  \"temperature\": 0.5,\n  \"max_tokens\": 800\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/nvidia/process",
+              "host": ["{{base_url}}"],
+              "path": ["nvidia", "process"]
+            },
+            "description": "Focus on consciousness validation and bias detection without physics validation"
+          },
+          "response": []
+        }
+      ],
+      "description": "NVIDIA model endpoints with enhanced NIS consciousness and physics validation"
+    },
+    {
+      "name": "🎯 BitNet Online Training",
+      "item": [
+        {
+          "name": "BitNet Training Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/training/bitnet/status",
+              "host": ["{{base_url}}"],
+              "path": ["training", "bitnet", "status"]
+            },
+            "description": "Get current BitNet online training status including examples collected, training activity, and offline readiness score"
+          },
+          "response": []
+        },
+        {
+          "name": "Force BitNet Training Session",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Manual training trigger for testing BitNet improvement\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/training/bitnet/force",
+              "host": ["{{base_url}}"],
+              "path": ["training", "bitnet", "force"]
+            },
+            "description": "Manually trigger an immediate BitNet training session with current conversation examples"
+          },
+          "response": []
+        },
+        {
+          "name": "Detailed Training Metrics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/training/bitnet/metrics",
+              "host": ["{{base_url}}"],
+              "path": ["training", "bitnet", "metrics"]
+            },
+            "description": "Get comprehensive BitNet training metrics including efficiency, offline readiness analysis, and improvement recommendations"
+          },
+          "response": []
+        }
+      ],
+      "description": "BitNet online training monitoring and control endpoints for real-time model improvement"
     }
   ]
 } 

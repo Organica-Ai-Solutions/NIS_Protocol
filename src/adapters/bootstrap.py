@@ -8,7 +8,7 @@ import json
 import os
 from typing import Dict, Any, Optional
 
-from src.agents.coordination.coordinator_agent import CoordinatorAgent
+from src.meta.unified_coordinator import CoordinatorAgent
 from src.adapters.mcp_adapter import MCPAdapter
 from src.adapters.acp_adapter import ACPAdapter
 from src.adapters.a2a_adapter import A2AAdapter

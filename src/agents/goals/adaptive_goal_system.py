@@ -21,9 +21,23 @@ import time
 import asyncio
 import logging
 import numpy as np
-# import torch
-# import torch.nn as nn
-# import torch.optim as optim
+try:
+    import torch
+    import torch.nn as nn
+    import torch.optim as optim
+    TORCH_AVAILABLE = True
+except ImportError:
+    TORCH_AVAILABLE = False
+    # Fallback for when torch is not available
+    class nn:
+        class Module:
+            def __init__(self):
+                pass
+    
+    class optim:
+        class Adam:
+            def __init__(self, *args, **kwargs):
+                pass
 from typing import Dict, Any, List, Optional, Tuple, Set, Union
 from dataclasses import dataclass, field, asdict
 from enum import Enum
@@ -275,7 +289,10 @@ class AdaptiveGoalSystem(NISAgent):
         
         # Neural networks for goal adaptation
         self.goal_generator = GoalGenerationNetwork()
-        self.goal_optimizer = optim.Adam(self.goal_generator.parameters(), lr=0.001)
+        if TORCH_AVAILABLE:
+            self.goal_optimizer = optim.Adam(self.goal_generator.parameters(), lr=0.001)
+        else:
+            self.goal_optimizer = optim.Adam()
         
         # Goal generation state
         self.last_generation_time = 0.0

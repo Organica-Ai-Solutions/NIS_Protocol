@@ -32,7 +32,7 @@ except ImportError:
 
 # Reasoning and coordination - conditional imports
 try:
-    from .reasoning import ReasoningAgent, InferenceAgent
+    from .reasoning.unified_reasoning_agent import ReasoningAgent, InferenceAgent
     REASONING_AVAILABLE = True
 except ImportError:
     REASONING_AVAILABLE = False

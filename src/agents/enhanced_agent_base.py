@@ -58,7 +58,7 @@ except ImportError:
         return func
 
 # Infrastructure and Core messaging integration
-from src.infrastructure.integration_coordinator import (
+from ..meta.unified_coordinator import (
     InfrastructureCoordinator,
     ServiceHealth,
     IntegrationStatus

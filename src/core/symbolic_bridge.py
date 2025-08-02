@@ -7,7 +7,19 @@ extracting mathematically-traceable functions from frequency domain patterns.
 """
 
 import numpy as np
-# import torch
+try:
+    import torch
+    TORCH_AVAILABLE = True
+except ImportError:
+    TORCH_AVAILABLE = False
+    # Fallback for when torch is not available
+    class torch:
+        @staticmethod
+        def tensor(data):
+            return np.array(data)
+        
+        class Tensor:
+            pass
 import sympy as sp
 from typing import Dict, Any, List, Optional, Tuple, Union, Callable
 from dataclasses import dataclass, field
@@ -22,8 +34,8 @@ from src.utils.integrity_metrics import (
     ConfidenceFactors, calculate_interpretability
 )
 
-from ..agents.signal_processing.laplace_processor import LaplaceTransform, LaplaceSignalProcessor
-from ..agents.reasoning.kan_reasoning_agent import KANReasoningNetwork
+from ..agents.signal_processing.unified_signal_agent import LaplaceSignalProcessor, LaplaceTransform, LaplaceTransformType
+from ..agents.reasoning.unified_reasoning_agent import KANReasoningAgent
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -266,7 +278,7 @@ class FrequencyPatternAnalyzer:
 class KANSymbolicExtractor:
     """Extracts symbolic functions from KAN network representations."""
     
-    def __init__(self, kan_network: KANReasoningNetwork):
+    def __init__(self, kan_network: KANReasoningAgent):
         self.kan_network = kan_network
         self.logger = logging.getLogger("nis.symbolic.kan_extractor")
         
@@ -436,10 +448,10 @@ class SymbolicBridge:
     to symbolic function extraction and validation.
     """
     
-    def __init__(self, kan_network: Optional[KANReasoningNetwork] = None):
+    def __init__(self, kan_network: Optional[KANReasoningAgent] = None):
         self.pattern_analyzer = FrequencyPatternAnalyzer()
         self.kan_extractor = KANSymbolicExtractor(
-            kan_network or KANReasoningNetwork()
+            kan_network or KANReasoningAgent()
         )
         self.logger = logging.getLogger("nis.symbolic.bridge")
         
@@ -548,7 +560,6 @@ if __name__ == "__main__":
     signal = np.sin(2 * np.pi * 0.5 * t_values) * np.exp(-0.1 * t_values)
     
     # This would normally come from the signal processor
-    from ..agents.signal_processing.laplace_processor import LaplaceTransform, LaplaceTransformType
     sample_transform = LaplaceTransform(
         s_values=np.linspace(-1+1j, 1+10j, 100),
         transform_values=np.fft.fft(signal),

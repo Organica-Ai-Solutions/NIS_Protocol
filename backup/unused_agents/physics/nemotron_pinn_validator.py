@@ -25,7 +25,7 @@ from scipy import optimize
 from scipy.spatial.distance import euclidean
 
 # NIS Protocol imports
-from src.agents.reasoning.nemotron_reasoning_agent import NemotronReasoningAgent, NemotronConfig
+from src.agents.reasoning.unified_reasoning_agent import NemotronReasoningAgent, NemotronConfig
 from src.agents.base import BaseAgent
 from src.utils.physics_utils import PhysicsCalculator
 

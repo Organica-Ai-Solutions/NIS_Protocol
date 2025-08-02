@@ -22,7 +22,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent / 'src'))
 
 # Test imports
 try:
-    from agents.reasoning.nemotron_reasoning_agent import NemotronReasoningAgent, NemotronConfig
+    from src.agents.reasoning.unified_reasoning_agent import NemotronReasoningAgent, NemotronConfig
     from agents.reasoning.nemotron_kan_integration import NemotronKANIntegration, KANNemotronConfig
     print("✅ Successfully imported Nemotron components")
 except ImportError as e:

@@ -1,0 +1,455 @@
+{
+  "timestamp": "2025-08-02T04:25:30.044007",
+  "project_root": "C:\\Users\\penti\\OneDrive\\Desktop\\NIS_Protocol",
+  "dry_run": false,
+  "summary": {
+    "fixes_applied": 63,
+    "errors_encountered": 0,
+    "moves": 63,
+    "deletions": 0
+  },
+  "fixes": [
+    {
+      "type": "MISPLACED_TEST",
+      "action": "MOVE",
+      "source": "dev\\test_all_endpoints.py",
+      "destination": "dev\\testing\\root_cleanup\\test_all_endpoints.py",
+      "timestamp": "2025-08-02T04:25:23.922703"
+    },
+    {
+      "type": "MISPLACED_TEST",
+      "action": "MOVE",
+      "source": "dev\\test_comprehensive_async_coordination.py",
+      "destination": "dev\\testing\\root_cleanup\\test_comprehensive_async_coordination.py",
+      "timestamp": "2025-08-02T04:25:23.925212"
+    },
+    {
+      "type": "MISPLACED_TEST",
+      "action": "MOVE",
+      "source": "dev\\test_endpoints.py",
+      "destination": "dev\\testing\\root_cleanup\\test_endpoints.py",
+      "timestamp": "2025-08-02T04:25:23.928771"
+    },
+    {
+      "type": "MISPLACED_TEST",
+      "action": "MOVE",
+      "source": "dev\\test_enhanced_capabilities.py",
+      "destination": "dev\\testing\\root_cleanup\\test_enhanced_capabilities.py",
+      "timestamp": "2025-08-02T04:25:23.929776"
+    },
+    {
+      "type": "MISPLACED_TEST",
+      "action": "MOVE",
+      "source": "dev\\test_fixes.py",
+      "destination": "dev\\testing\\root_cleanup\\test_fixes.py",
+      "timestamp": "2025-08-02T04:25:23.930777"
+    },
+    {
+      "type": "MISPLACED_TEST",
+      "action": "MOVE",
+      "source": "dev\\test_import.py",
+      "destination": "dev\\testing\\root_cleanup\\test_import.py",
+      "timestamp": "2025-08-02T04:25:23.932777"
+    },
+    {
+      "type": "MISPLACED_TEST",
+      "action": "MOVE",
+      "source": "dev\\test_llm_only.py",
+      "destination": "dev\\testing\\root_cleanup\\test_llm_only.py",
+      "timestamp": "2025-08-02T04:25:23.932777"
+    },
+    {
+      "type": "MISPLACED_TEST",
+      "action": "MOVE",
+      "source": "dev\\test_real_llm_integration.py",
+      "destination": "dev\\testing\\root_cleanup\\test_real_llm_integration.py",
+      "timestamp": "2025-08-02T04:25:23.934867"
+    },
+    {
+      "type": "MISPLACED_TEST",
+      "action": "MOVE",
+      "source": "dev\\test_v31_complete.py",
+      "destination": "dev\\testing\\root_cleanup\\test_v31_complete.py",
+      "timestamp": "2025-08-02T04:25:23.936873"
+    },
+    {
+      "type": "MISPLACED_TEST",
+      "action": "MOVE",
+      "source": "endpoint_fixes_backup\\test_fixed_parameters.py",
+      "destination": "dev\\testing\\root_cleanup\\test_fixed_parameters.py",
+      "timestamp": "2025-08-02T04:25:23.938874"
+    },
+    {
+      "type": "MISPLACED_TEST",
+      "action": "MOVE",
+      "source": "dev\\examples\\test_agi_v2_implementation.py",
+      "destination": "dev\\testing\\root_cleanup\\test_agi_v2_implementation.py",
+      "timestamp": "2025-08-02T04:25:24.004261"
+    },
+    {
+      "type": "MISPLACED_TEST",
+      "action": "MOVE",
+      "source": "dev\\examples\\test_core_agi_minimal.py",
+      "destination": "dev\\testing\\root_cleanup\\test_core_agi_minimal.py",
+      "timestamp": "2025-08-02T04:25:24.006261"
+    },
+    {
+      "type": "MISPLACED_TEST",
+      "action": "MOVE",
+      "source": "dev\\examples\\test_direct_imports.py",
+      "destination": "dev\\testing\\root_cleanup\\test_direct_imports.py",
+      "timestamp": "2025-08-02T04:25:24.007262"
+    },
+    {
+      "type": "MISPLACED_TEST",
+      "action": "MOVE",
+      "source": "dev\\examples\\test_drl_integration.py",
+      "destination": "dev\\testing\\root_cleanup\\test_drl_integration.py",
+      "timestamp": "2025-08-02T04:25:24.007262"
+    },
+    {
+      "type": "MISPLACED_TEST",
+      "action": "MOVE",
+      "source": "dev\\examples\\test_first_contact_golden_egg.py",
+      "destination": "dev\\testing\\root_cleanup\\test_first_contact_golden_egg.py",
+      "timestamp": "2025-08-02T04:25:24.008951"
+    },
+    {
+      "type": "MISPLACED_TEST",
+      "action": "MOVE",
+      "source": "dev\\examples\\test_simulation_direct.py",
+      "destination": "dev\\testing\\root_cleanup\\test_simulation_direct.py",
+      "timestamp": "2025-08-02T04:25:24.009956"
+    },
+    {
+      "type": "MISPLACED_TEST",
+      "action": "MOVE",
+      "source": "dev\\examples\\test_simulation_week3_4.py",
+      "destination": "dev\\testing\\root_cleanup\\test_simulation_week3_4.py",
+      "timestamp": "2025-08-02T04:25:24.010958"
+    },
+    {
+      "type": "MISPLACED_TEST",
+      "action": "MOVE",
+      "source": "dev\\examples\\test_standalone.py",
+      "destination": "dev\\testing\\root_cleanup\\test_standalone.py",
+      "timestamp": "2025-08-02T04:25:24.012586"
+    },
+    {
+      "type": "MISPLACED_TEST",
+      "action": "MOVE",
+      "source": "dev\\tests\\test_consciousness_performance.py",
+      "destination": "dev\\testing\\root_cleanup\\test_consciousness_performance.py",
+      "timestamp": "2025-08-02T04:25:24.014591"
+    },
+    {
+      "type": "MISPLACED_TEST",
+      "action": "MOVE",
+      "source": "dev\\tests\\integration\\test_lstm_drl_integration.py",
+      "destination": "dev\\testing\\root_cleanup\\test_lstm_drl_integration.py",
+      "timestamp": "2025-08-02T04:25:24.020850"
+    },
+    {
+      "type": "MISPLACED_TEST",
+      "action": "MOVE",
+      "source": "src\\data\\test_era5_connection.py",
+      "destination": "dev\\testing\\root_cleanup\\test_era5_connection.py",
+      "timestamp": "2025-08-02T04:25:24.505087"
+    },
+    {
+      "type": "MISPLACED_TEST",
+      "action": "MOVE",
+      "source": "src\\agents\\consciousness\\tests\\test_performance_validation.py",
+      "destination": "dev\\testing\\root_cleanup\\test_performance_validation.py",
+      "timestamp": "2025-08-02T04:25:24.511191"
+    },
+    {
+      "type": "MISPLACED_TEST",
+      "action": "MOVE",
+      "source": "system\\utilities\\test_enhanced_conscious_agent.py",
+      "destination": "dev\\testing\\root_cleanup\\test_enhanced_conscious_agent.py",
+      "timestamp": "2025-08-02T04:25:24.524243"
+    },
+    {
+      "type": "MISPLACED_TEST",
+      "action": "MOVE",
+      "source": "system\\utilities\\test_laplace_core.py",
+      "destination": "dev\\testing\\root_cleanup\\test_laplace_core.py",
+      "timestamp": "2025-08-02T04:25:24.525748"
+    },
+    {
+      "type": "MISPLACED_TEST",
+      "action": "MOVE",
+      "source": "system\\utilities\\test_laplace_transformer.py",
+      "destination": "dev\\testing\\root_cleanup\\test_laplace_transformer.py",
+      "timestamp": "2025-08-02T04:25:24.527758"
+    },
+    {
+      "type": "MISPLACED_TEST",
+      "action": "MOVE",
+      "source": "system\\utilities\\test_life_critical_safety.py",
+      "destination": "dev\\testing\\root_cleanup\\test_life_critical_safety.py",
+      "timestamp": "2025-08-02T04:25:24.529756"
+    },
+    {
+      "type": "MISPLACED_TEST",
+      "action": "MOVE",
+      "source": "system\\utilities\\test_self_audit_agents.py",
+      "destination": "dev\\testing\\root_cleanup\\test_self_audit_agents.py",
+      "timestamp": "2025-08-02T04:25:24.532332"
+    },
+    {
+      "type": "MISPLACED_TEST",
+      "action": "MOVE",
+      "source": "system\\utilities\\test_week2_kan_symbolic_implementation.py",
+      "destination": "dev\\testing\\root_cleanup\\test_week2_kan_symbolic_implementation.py",
+      "timestamp": "2025-08-02T04:25:24.533337"
+    },
+    {
+      "type": "MISPLACED_TEST",
+      "action": "MOVE",
+      "source": "system\\utilities\\test_week3_complete_pipeline.py",
+      "destination": "dev\\testing\\root_cleanup\\test_week3_complete_pipeline.py",
+      "timestamp": "2025-08-02T04:25:24.534339"
+    },
+    {
+      "type": "MISPLACED_TEST",
+      "action": "MOVE",
+      "source": "system\\utilities\\test_week4_multi_llm_integration.py",
+      "destination": "dev\\testing\\root_cleanup\\test_week4_multi_llm_integration.py",
+      "timestamp": "2025-08-02T04:25:24.535341"
+    },
+    {
+      "type": "MISPLACED_TEST",
+      "action": "MOVE",
+      "source": "dev\\comprehensive_system_test.py",
+      "destination": "dev\\testing\\root_cleanup\\comprehensive_system_test.py",
+      "timestamp": "2025-08-02T04:25:24.545446"
+    },
+    {
+      "type": "MISPLACED_TEST",
+      "action": "MOVE",
+      "source": "dev\\intensive_brain_stress_test.py",
+      "destination": "dev\\testing\\root_cleanup\\intensive_brain_stress_test.py",
+      "timestamp": "2025-08-02T04:25:24.546450"
+    },
+    {
+      "type": "MISPLACED_TEST",
+      "action": "MOVE",
+      "source": "dev\\live_system_test.py",
+      "destination": "dev\\testing\\root_cleanup\\live_system_test.py",
+      "timestamp": "2025-08-02T04:25:24.548449"
+    },
+    {
+      "type": "MISPLACED_TEST",
+      "action": "MOVE",
+      "source": "dev\\physics_validation_test.py",
+      "destination": "dev\\testing\\root_cleanup\\physics_validation_test.py",
+      "timestamp": "2025-08-02T04:25:24.550448"
+    },
+    {
+      "type": "MISPLACED_TEST",
+      "action": "MOVE",
+      "source": "dev\\quick_v31_test.py",
+      "destination": "dev\\testing\\root_cleanup\\quick_v31_test.py",
+      "timestamp": "2025-08-02T04:25:24.551450"
+    },
+    {
+      "type": "MISPLACED_TEST",
+      "action": "MOVE",
+      "source": "dev\\simple_real_chat_test.py",
+      "destination": "dev\\testing\\root_cleanup\\simple_real_chat_test.py",
+      "timestamp": "2025-08-02T04:25:24.553544"
+    },
+    {
+      "type": "MISPLACED_TEST",
+      "action": "MOVE",
+      "source": "dev\\examples\\simple_provider_test.py",
+      "destination": "dev\\testing\\root_cleanup\\simple_provider_test.py",
+      "timestamp": "2025-08-02T04:25:24.620761"
+    },
+    {
+      "type": "MISPLACED_TEST",
+      "action": "MOVE",
+      "source": "dev\\tests\\comprehensive_system_test.py",
+      "destination": "dev\\testing\\root_cleanup\\comprehensive_system_test.py",
+      "timestamp": "2025-08-02T04:25:24.623328"
+    },
+    {
+      "type": "MISPLACED_TEST",
+      "action": "MOVE",
+      "source": "dev\\utilities\\quick_nvidia_test.py",
+      "destination": "dev\\testing\\root_cleanup\\quick_nvidia_test.py",
+      "timestamp": "2025-08-02T04:25:24.624328"
+    },
+    {
+      "type": "MISPLACED_TEST",
+      "action": "MOVE",
+      "source": "dev\\tests\\integration\\practical_integration_test.py",
+      "destination": "dev\\testing\\root_cleanup\\practical_integration_test.py",
+      "timestamp": "2025-08-02T04:25:24.630386"
+    },
+    {
+      "type": "MISPLACED_TEST",
+      "action": "MOVE",
+      "source": "dev\\tests\\integration\\protocol_integration_test.py",
+      "destination": "dev\\testing\\root_cleanup\\protocol_integration_test.py",
+      "timestamp": "2025-08-02T04:25:24.631386"
+    },
+    {
+      "type": "MISPLACED_TEST",
+      "action": "MOVE",
+      "source": "src\\data\\era5_test.py",
+      "destination": "dev\\testing\\root_cleanup\\era5_test.py",
+      "timestamp": "2025-08-02T04:25:25.107172"
+    },
+    {
+      "type": "MISPLACED_TEST",
+      "action": "MOVE",
+      "source": "src\\test_cases\\atmospheric\\hurricane_test.py",
+      "destination": "dev\\testing\\root_cleanup\\hurricane_test.py",
+      "timestamp": "2025-08-02T04:25:25.123711"
+    },
+    {
+      "type": "MISPLACED_TEST",
+      "action": "MOVE",
+      "source": "src\\test_cases\\conservation\\energy_test.py",
+      "destination": "dev\\testing\\root_cleanup\\energy_test.py",
+      "timestamp": "2025-08-02T04:25:25.126225"
+    },
+    {
+      "type": "MISPLACED_TEST",
+      "action": "MOVE",
+      "source": "src\\test_cases\\fluid_dynamics\\navier_stokes_test.py",
+      "destination": "dev\\testing\\root_cleanup\\navier_stokes_test.py",
+      "timestamp": "2025-08-02T04:25:25.127225"
+    },
+    {
+      "type": "MISPLACED_TEST",
+      "action": "MOVE",
+      "source": "system\\utilities\\final_100_test.py",
+      "destination": "dev\\testing\\root_cleanup\\final_100_test.py",
+      "timestamp": "2025-08-02T04:25:25.131223"
+    },
+    {
+      "type": "MISPLACED_UTILITY",
+      "action": "MOVE",
+      "source": "scripts\\fix_documentation_claims.py",
+      "destination": "system\\utilities\\fix_documentation_claims.py",
+      "timestamp": "2025-08-02T04:25:25.749627"
+    },
+    {
+      "type": "MISPLACED_UTILITY",
+      "action": "MOVE",
+      "source": "scripts\\fix_readme_integrity.py",
+      "destination": "system\\utilities\\fix_readme_integrity.py",
+      "timestamp": "2025-08-02T04:25:25.750626"
+    },
+    {
+      "type": "MISPLACED_REPORT",
+      "action": "MOVE",
+      "source": "dev\\tests\\capability_report.json",
+      "destination": "system\\utilities\\reports\\capability_report.json",
+      "timestamp": "2025-08-02T04:25:26.829863"
+    },
+    {
+      "type": "MISPLACED_REPORT",
+      "action": "MOVE",
+      "source": "dev\\tests\\integration\\final_100_percent_validation_report.json",
+      "destination": "system\\utilities\\reports\\final_100_percent_validation_report.json",
+      "timestamp": "2025-08-02T04:25:26.834866"
+    },
+    {
+      "type": "MISPLACED_REPORT",
+      "action": "MOVE",
+      "source": "dev\\tests\\integration\\fixed_integration_test_report.json",
+      "destination": "system\\utilities\\reports\\fixed_integration_test_report.json",
+      "timestamp": "2025-08-02T04:25:26.837377"
+    },
+    {
+      "type": "MISPLACED_REPORT",
+      "action": "MOVE",
+      "source": "dev\\tests\\integration\\integration_test_report.json",
+      "destination": "system\\utilities\\reports\\integration_test_report.json",
+      "timestamp": "2025-08-02T04:25:26.838379"
+    },
+    {
+      "type": "MISPLACED_REPORT",
+      "action": "MOVE",
+      "source": "dev\\tests\\integration\\practical_assessment_report.json",
+      "destination": "system\\utilities\\reports\\practical_assessment_report.json",
+      "timestamp": "2025-08-02T04:25:26.840377"
+    },
+    {
+      "type": "MISPLACED_REPORT",
+      "action": "MOVE",
+      "source": "dev\\tests\\integration\\protocol_integration_report.json",
+      "destination": "system\\utilities\\reports\\protocol_integration_report.json",
+      "timestamp": "2025-08-02T04:25:26.841882"
+    },
+    {
+      "type": "MISPLACED_REPORT",
+      "action": "MOVE",
+      "source": "system\\utilities\\evidence_validation_report.json",
+      "destination": "system\\utilities\\reports\\evidence_validation_report.json",
+      "timestamp": "2025-08-02T04:25:27.381123"
+    },
+    {
+      "type": "MISPLACED_REPORT",
+      "action": "MOVE",
+      "source": "dev\\COMPREHENSIVE_ACHIEVEMENTS_SUMMARY.md",
+      "destination": "system\\utilities\\reports\\COMPREHENSIVE_ACHIEVEMENTS_SUMMARY.md",
+      "timestamp": "2025-08-02T04:25:27.391636"
+    },
+    {
+      "type": "MISPLACED_REPORT",
+      "action": "MOVE",
+      "source": "endpoint_fixes_backup\\FIXES_SUMMARY.md",
+      "destination": "system\\utilities\\reports\\FIXES_SUMMARY.md",
+      "timestamp": "2025-08-02T04:25:27.393670"
+    },
+    {
+      "type": "MISPLACED_REPORT",
+      "action": "MOVE",
+      "source": "dev\\audit-report.json",
+      "destination": "system\\utilities\\reports\\audit-report.json",
+      "timestamp": "2025-08-02T04:25:27.973767"
+    },
+    {
+      "type": "MISPLACED_REPORT",
+      "action": "MOVE",
+      "source": "dev\\audit-results-comprehensive.json",
+      "destination": "system\\utilities\\reports\\audit-results-comprehensive.json",
+      "timestamp": "2025-08-02T04:25:27.974765"
+    },
+    {
+      "type": "MISPLACED_REPORT",
+      "action": "MOVE",
+      "source": "system\\nis-integrity-toolkit\\audit-report.json",
+      "destination": "system\\utilities\\reports\\audit-report.json",
+      "timestamp": "2025-08-02T04:25:28.481008"
+    },
+    {
+      "type": "MISPLACED_REPORT",
+      "action": "MOVE",
+      "source": "system\\utilities\\audit-report.json",
+      "destination": "system\\utilities\\reports\\audit-report.json",
+      "timestamp": "2025-08-02T04:25:28.483006"
+    },
+    {
+      "type": "TEMPORARY_FILE",
+      "action": "MOVE",
+      "source": ".venv\\Lib\\site-packages\\pip\\_internal\\utils\\temp_dir.py",
+      "destination": "cache\\temp_dir.py",
+      "timestamp": "2025-08-02T04:25:29.603172"
+    },
+    {
+      "type": "TEMPORARY_FILE",
+      "action": "MOVE",
+      "source": ".venv\\Lib\\site-packages\\pip\\_internal\\utils\\__pycache__\\temp_dir.cpython-312.pyc",
+      "destination": "cache\\temp_dir.cpython-312.pyc",
+      "timestamp": "2025-08-02T04:25:29.610843"
+    }
+  ],
+  "errors": []
+}

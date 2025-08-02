@@ -176,4 +176,40 @@
 # Reliable systems win in the long run.
 # Honest descriptions of impressive work are more impressive than hype.
 
-# INTEGRITY FIRST. ALWAYS. 
+# INTEGRITY FIRST. ALWAYS.
+
+## 📁 FILE ORGANIZATION RULES
+
+### 🚨 ROOT DIRECTORY DISCIPLINE
+# The root directory MUST remain clean and professional
+# ONLY these files are allowed in root:
+# ✅ main.py, requirements.txt, docker-compose.yml, Dockerfile
+# ✅ README.md, LICENSE, .gitignore, .dockerignore, .gitattributes
+# ✅ start.sh, stop.sh, reset.sh, .cursorrules, .nojekyll, CNAME
+# ✅ NIS_Protocol_v3_COMPLETE_Postman_Collection.json
+
+### 🔧 MANDATORY FILE PLACEMENT
+# All other files MUST go in appropriate subdirectories:
+# 🧪 test_*.py → dev/testing/root_cleanup/
+# 🔧 *_utility.py, fix_*.py → dev/utilities/
+# 📊 *_report.json → system/utilities/reports/
+# 📝 Documentation → system/docs/ or dev/documentation/
+# 📜 Scripts → scripts/installation/, scripts/deployment/, etc.
+# 🗄️ Logs → logs/archived/ or logs/application/
+
+### 🚫 NEVER CREATE IN ROOT
+# ❌ Test files, utility scripts, reports, summaries
+# ❌ Temporary files, backup files, log files
+# ❌ Development tools, generators, validators
+
+### 📋 BEFORE CREATING ANY FILE
+# 1. Check system/docs/FILE_ORGANIZATION_RULES.md
+# 2. Determine correct subdirectory location
+# 3. Use proper naming conventions (snake_case)
+# 4. Never create in root unless explicitly allowed
+# 5. Update documentation if creating new file categories
+
+### 🔍 COMPLIANCE ENFORCEMENT
+# Every file creation MUST follow organization rules
+# Root directory violations are BLOCKING issues
+# Clean, organized codebase = professional credibility 
