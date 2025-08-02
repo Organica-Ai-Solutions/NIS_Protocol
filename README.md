@@ -3,6 +3,12 @@
 
 *Version: 3.1.2 | Updated: 2025-01-19 | Status: Production Ready*
 
+<div align="center">
+
+![NIS Protocol Logo](assets/images/nis-protocol-logov1.png)
+
+</div>
+
 [![Python](https://img.shields.io/badge/Python-3.8%2B-blue)](https://python.org)
 [![Docker](https://img.shields.io/badge/Docker-Compose-blue)](https://docker.com)
 [![License](https://img.shields.io/badge/License-BSL-green)](LICENSE_BSL)
@@ -29,6 +35,13 @@ The **Neural Intelligence Synthesis Protocol v3.1** is a consciousness-driven AI
         ↓
 ✅ VALIDATED OUTPUT (Physics-Compliant & Consciousness-Aware)
 ```
+
+<div align="center">
+
+![Mathematical Foundation](assets/images/v3_mathematical_foundation/v3map.png)
+*Complete mathematical pipeline: Laplace → KAN → PINN → LLM integration*
+
+</div>
 
 **This is the only AI system that combines:**
 - 🧠 **Consciousness Architecture** - Self-aware meta-cognitive processing
@@ -67,11 +80,25 @@ The **Neural Intelligence Synthesis Protocol v3.1** is a consciousness-driven AI
 - **Multi-Step Logic** - Complex reasoning chains with validation
 - **Transparent Decisions** - Explainable AI reasoning paths
 
+<div align="center">
+
+![KAN vs MLP](assets/images/v3_mathematical_foundation/whyKanMatters.png)
+*Why KAN Networks matter: Mathematical interpretability vs black-box MLPs*
+
+</div>
+
 #### **🌊 Signal Processing**
 - **Laplace Transform Analysis** - Frequency domain signal processing
 - **Pattern Recognition** - Temporal and spectral pattern detection
 - **Real-Time Processing** - Low-latency signal analysis
 - **Data Fusion** - Multi-source signal integration
+
+<div align="center">
+
+![Laplace + PINN Integration](assets/images/v3_mathematical_foundation/laplace+pinn.png)
+*Laplace Transform + PINN Physics: Signal processing meets physics validation*
+
+</div>
 
 #### **🤖 Multi-LLM Coordination**
 - **Provider Management** - OpenAI, Anthropic, DeepSeek, Google, BitNet integration
@@ -79,6 +106,13 @@ The **Neural Intelligence Synthesis Protocol v3.1** is a consciousness-driven AI
 - **Response Fusion** - Combining outputs from multiple providers
 - **Cost Optimization** - Automatic provider selection based on cost/quality
 - **Offline Capability** - BitNet local model fallback
+
+<div align="center">
+
+![External Protocols Integration](assets/images/externalprotocolslogos.png)
+*Multi-protocol integration: Supporting industry standards and custom implementations*
+
+</div>
 
 ---
 
@@ -193,7 +227,7 @@ curl -X POST http://localhost/chat \
 ```
 
 ### **🧠 Consciousness Analysis Example**
-```bash
+    ```bash
 curl -X POST http://localhost/chat \
   -H "Content-Type: application/json" \
   -d '{
@@ -203,7 +237,7 @@ curl -X POST http://localhost/chat \
 ```
 
 ### **🧮 Complex Reasoning Example**
-```bash
+    ```bash
 curl -X POST http://localhost/simulation/run \
   -H "Content-Type: application/json" \
   -d '{
@@ -215,7 +249,7 @@ curl -X POST http://localhost/simulation/run \
 
 Run the comprehensive test suite to validate all functionality:
 
-```bash
+    ```bash
 # Fresh rebuild and test everything
 ./rebuild_and_test.sh
 python test_endpoints.py
@@ -235,6 +269,17 @@ Import the complete API collection for interactive testing:
 - **File**: `NIS_Protocol_v3_COMPLETE_Postman_Collection.json`
 - **Tests**: 25+ pre-configured API tests
 - **Examples**: Physics validation, consciousness monitoring, multi-LLM coordination
+
+---
+
+## 📈 **Evolution: v1 → v2 → v3.1**
+
+<div align="center">
+
+![NIS Protocol Evolution](assets/images/v1_v2_v3_evolution_fixed.png)
+*The evolution of NIS Protocol: From basic coordination to consciousness-driven AI*
+
+</div>
 
 ---
 
@@ -278,9 +323,23 @@ graph TD
 - **📊 Grafana + Prometheus** - Comprehensive monitoring and alerting
 - **🤖 BitNet Models** - Offline AI capability for edge deployment
 
+<div align="center">
+
+![Core Agents Diagram](assets/images_organized/system_screenshots/diagram-nis-core%20agents%20v2.png)
+*NIS Protocol core agents and their interactions*
+
+</div>
+
 ---
 
 ## 🎯 **Real-World Applications**
+
+<div align="center">
+
+![Use Cases Examples](assets/images/usesExamples.png)
+*Real-world applications across industries: Engineering, Healthcare, Finance, Research*
+
+</div>
 
 ### **🔬 Scientific Research**
 - **Physics Simulation Validation** - Ensure simulations obey conservation laws
