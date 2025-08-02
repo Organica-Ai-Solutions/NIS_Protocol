@@ -70,9 +70,9 @@ try:
     import torch.nn as nn
     import torch.nn.functional as F
     TORCH_AVAILABLE = True
-except ImportError:
+except (ImportError, OSError) as e:
     TORCH_AVAILABLE = False
-    logging.warning("PyTorch not available - using mathematical fallback signal processing")
+    logging.warning(f"PyTorch not available ({e}) - using mathematical fallback signal processing")
 
 
 # =============================================================================
@@ -358,7 +358,9 @@ class UnifiedSignalAgent(NISAgent):
         try:
             # Extract signal data
             signal_data = data.get("signal", [])
-            if not signal_data:
+            if isinstance(signal_data, (list, tuple)) and len(signal_data) == 0:
+                signal_data = data.get("data", [1.0, 0.5, -0.5, 0.8])  # Default signal
+            elif isinstance(signal_data, np.ndarray) and signal_data.size == 0:
                 signal_data = data.get("data", [1.0, 0.5, -0.5, 0.8])  # Default signal
             
             # Ensure signal is numpy array
@@ -386,7 +388,7 @@ class UnifiedSignalAgent(NISAgent):
             
             # Calculate confidence
             confidence = calculate_confidence([
-                0.9 if amplitudes else 0.1,
+                0.9 if len(amplitudes) > 0 else 0.1,
                 0.8,  # Base transform confidence
                 0.7   # Signal quality factor
             ])

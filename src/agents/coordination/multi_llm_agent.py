@@ -54,11 +54,40 @@ except ImportError:
 
 from ...core.agent import NISAgent, NISLayer
 from ..hybrid_agent_core import CompleteScientificProcessingResult, CompleteHybridAgent
-from ...llm.providers.llm_provider_manager import (
-    LLMProviderManager, PhysicsInformedContext, LLMResponse, FusedResponse,
-    TaskType, LLMProvider, ResponseConfidence
-)
 from ...llm.llm_manager import LLMManager
+from ...llm.base_llm_provider import LLMResponse
+from enum import Enum
+from dataclasses import dataclass
+from typing import Any, Dict, List, Optional, TypedDict
+
+# Define missing classes locally to avoid import errors
+class TaskType(Enum):
+    SCIENTIFIC_ANALYSIS = "scientific_analysis"
+    CREATIVE_EXPLORATION = "creative_exploration" 
+    MATHEMATICAL_REASONING = "mathematical_reasoning"
+    CODE_GENERATION = "code_generation"
+
+@dataclass
+class PhysicsInformedContext:
+    conservation_laws: List[str]
+    boundary_conditions: Dict[str, Any] 
+    physical_constraints: List[str]
+
+@dataclass
+class FusedResponse:
+    content: str
+    confidence: float
+    consensus_score: float
+    individual_responses: List[Dict[str, Any]]
+
+@dataclass 
+class ResponseConfidence:
+    value: float
+    reasoning: str
+
+# Use LLMManager as LLMProviderManager
+LLMProviderManager = LLMManager
+LLMProvider = str  # Simple type alias
 from ...utils.env_config import env_config
 
 # Integrity metrics for actual calculations

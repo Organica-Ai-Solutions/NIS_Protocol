@@ -52,16 +52,17 @@ try:
     import torch.nn as nn
     import torch.nn.functional as F
     TORCH_AVAILABLE = True
-except ImportError:
+except (ImportError, OSError) as e:
     TORCH_AVAILABLE = False
-    logging.warning("PyTorch not available - using mathematical fallback physics")
+    logging.warning(f"PyTorch not available ({e}) - using mathematical fallback physics")
 
 # Transformers for physics reasoning (if available)
 try:
     from transformers import pipeline, AutoTokenizer, AutoModelForCausalLM
     TRANSFORMERS_AVAILABLE = True
-except ImportError:
+except (ImportError, OSError) as e:
     TRANSFORMERS_AVAILABLE = False
+    logging.warning(f"Transformers not available for physics ({e}) - using basic physics")
 
 # Physics-specific imports
 try:

@@ -370,17 +370,26 @@ class GeneralLLMProvider:
                     logging.warning(f"{provider.upper()} key invalid - provider disabled")
                     config['disabled'] = True
 
-    async def generate_response(self, messages, temperature=0.7, agent_type='default'):
+    async def generate_response(self, messages, temperature=0.7, agent_type='default', requested_provider=None):
         logging.info(f"--- generate_response called ---")
+        logging.info(f"Requested provider: {requested_provider}")
         logging.info(f"Providers dict: {self.providers}")
-        for provider, config in self.providers.items():
-            logging.info(f"Provider: {provider}, Type: {type(config)}")
+        for provider_name, config in self.providers.items():
+            logging.info(f"Provider: {provider_name}, Type: {type(config)}")
             
-        providers_to_try = [PROVIDER_ASSIGNMENTS.get(agent_type, PROVIDER_ASSIGNMENTS['default'])['provider']]
-        providers_to_try += [p for p in ['openai', 'anthropic', 'google', 'deepseek'] if p not in providers_to_try]
-        
-        # Add BitNet as the final fallback before the mock
-        providers_to_try.append('bitnet')
+        # 🎯 PRIORITY: Honor explicit provider requests first
+        if requested_provider and requested_provider in self.providers:
+            providers_to_try = [requested_provider]
+            logging.info(f"🎯 Explicit provider requested: {requested_provider}")
+        else:
+            # Use agent_type routing as fallback
+            providers_to_try = [PROVIDER_ASSIGNMENTS.get(agent_type, PROVIDER_ASSIGNMENTS['default'])['provider']]
+            
+        # Add other providers as fallbacks (except the already chosen one)
+        all_fallbacks = ['openai', 'anthropic', 'google', 'deepseek', 'bitnet']
+        for p in all_fallbacks:
+            if p not in providers_to_try:
+                providers_to_try.append(p)
         logging.info(f"Providers to try: {providers_to_try}")
 
         for provider in providers_to_try:

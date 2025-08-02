@@ -27,6 +27,7 @@ from src.utils.integrity_metrics import (
     calculate_confidence, create_default_confidence_factors,
     ConfidenceFactors
 )
+from src.utils.confidence_calculator import calculate_score
 
 # Self-audit capabilities for real-time integrity monitoring
 from src.utils.self_audit import self_audit_engine, ViolationType, IntegrityViolation
@@ -618,7 +619,7 @@ class EthicalReasoner(NISAgent):
     
     def _calculate_weighted_ethical_score(self, evaluations: List[EthicalEvaluation]) -> float:
         """Calculate weighted overall ethical score."""
-        total_weighted_score=calculate_score(metrics)
+        total_weighted_score = 0.0
         total_weight = 0.0
         
         for evaluation in evaluations:

@@ -7,7 +7,7 @@ Handles semantic interpretation and understanding of information in the NIS Prot
 from typing import Dict, Any, List, Optional, Tuple
 import time
 import numpy as np
-from transformers import pipeline
+# from transformers import pipeline  # Temporarily commented out for CUDA issues
 
 from src.core.registry import NISAgent, NISLayer
 from src.emotion.emotional_state import EmotionalState
@@ -42,10 +42,13 @@ class InterpretationAgent(NISAgent):
         self.emotional_state = emotional_state or EmotionalState()
         self.confidence_threshold = confidence_threshold
         
-        # Initialize NLP pipelines
-        self.sentiment_analyzer = pipeline("sentiment-analysis", model=model_name)
-        self.zero_shot_classifier = pipeline("zero-shot-classification", model=model_name)
-        self.question_answerer = pipeline("question-answering", model=model_name)
+        # Initialize NLP pipelines (temporarily disabled for CUDA issues)
+        # self.sentiment_analyzer = pipeline("sentiment-analysis", model=model_name)
+        # self.zero_shot_classifier = pipeline("zero-shot-classification", model=model_name)
+        # self.question_answerer = pipeline("question-answering", model=model_name)
+        self.sentiment_analyzer = None
+        self.zero_shot_classifier = None
+        self.question_answerer = None
         
         # Cache for recent interpretations
         self.interpretation_cache = {}

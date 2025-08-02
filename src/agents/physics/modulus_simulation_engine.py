@@ -2,28 +2,37 @@
 import logging
 from typing import Dict, Any
 
-# Assuming nvidia-physicsnemo is installed and its modules are available.
-# We will use the symbolic API for defining the physics problem.
-from physicsnemo.sym.node import Node
-from physicsnemo.sym.solver import Solver
-from physicsnemo.sym.domain import Domain
-from physicsnemo.sym.geometry import Box, Cylinder
-from physicsnemo.sym.models.fully_connected import FullyConnectedArch
-from physicsnemo.sym.pdes import NavierStokes
-from physicsnemo.sym.constraint import PointwiseBoundaryConstraint
-from physicsnemo.sym.key import Key
-from physicsnemo.sym.hydra import to_yaml, to_dict
-from physicsnemo.sym.hydra.utils import compose
-from physicsnemo.sym.inferencer import PointwiseInferencer
+# NVIDIA PhysicsNemo (Modulus) imports (if available)
+try:
+    from physicsnemo.sym.node import Node
+    from physicsnemo.sym.solver import Solver
+    from physicsnemo.sym.domain import Domain
+    from physicsnemo.sym.geometry import Box, Cylinder
+    from physicsnemo.sym.models.fully_connected import FullyConnectedArch
+    from physicsnemo.sym.pdes import NavierStokes
+    from physicsnemo.sym.constraint import PointwiseBoundaryConstraint
+    from physicsnemo.sym.key import Key
+    from physicsnemo.sym.hydra import to_yaml, to_dict
+    from physicsnemo.sym.hydra.utils import compose
+    from physicsnemo.sym.inferencer import PointwiseInferencer
+    PHYSICSNEMO_AVAILABLE = True
+except (ImportError, OSError) as e:
+    PHYSICSNEMO_AVAILABLE = False
+    logging.warning(f"NVIDIA PhysicsNemo not available ({e}) - using mock physics simulation")
 import pandas as pd
 import os
 import numpy as np
 import time
 # import torch
 
-# Import from physicsnemo based on docs
-from physicsnemo.models.mlp.fully_connected import FullyConnected
-from physicsnemo.models.fno.fno import FNO  # Example, adjust as needed
+# Additional PhysicsNemo model imports (if available)
+try:
+    from physicsnemo.models.mlp.fully_connected import FullyConnected
+    from physicsnemo.models.fno.fno import FNO  # Example, adjust as needed
+    PHYSICSNEMO_MODELS_AVAILABLE = True
+except (ImportError, OSError) as e:
+    PHYSICSNEMO_MODELS_AVAILABLE = False
+    logging.warning(f"NVIDIA PhysicsNemo models not available ({e}) - using basic models")
 # Note: Adjust the following to match actual PhysicsNeMo API; this is based on docs
 # For simplicity, using FNO as an example model
 class ModulusSimulationEngine:

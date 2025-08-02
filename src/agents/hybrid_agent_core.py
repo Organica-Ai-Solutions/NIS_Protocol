@@ -61,6 +61,17 @@ class ProcessingLayer(Enum):
     LLM = "llm"
 
 @dataclass
+class FrequencyPatternFeatures:
+    """Features extracted from frequency domain analysis of Laplace transforms."""
+    dominant_frequencies: List[float]
+    magnitude_peaks: List[float]
+    phase_characteristics: Dict[str, float]
+    spectral_centroid: float
+    bandwidth: float
+    energy: float
+    pattern_complexity: float
+
+@dataclass
 class CompleteScientificProcessingResult:
     """Enhanced result from complete Laplace→KAN→PINN scientific pipeline."""
     laplace_transform: Optional[LaplaceTransform] = None
@@ -324,7 +335,7 @@ class CompleteScientificPipeline:
             return None
 
     def _process_kan_layer(self, laplace_transform: LaplaceTransform,
-                          config: Dict[str, Any]) -> Tuple[Optional[SymbolicExtractionResult], Optional[SymbolicReasoningResult]]:
+                          config: Dict[str, Any]) -> Tuple[Optional[SymbolicExtractionResult], Optional[ReasoningResult]]:
         """Process through KAN symbolic layer."""
         try:
             # Use symbolic bridge for frequency domain to symbolic conversion

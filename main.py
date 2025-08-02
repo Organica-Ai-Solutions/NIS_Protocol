@@ -44,8 +44,8 @@ from src.agents.goals.curiosity_engine import CuriosityEngine
 from src.utils.self_audit import self_audit_engine
 from src.agents.alignment.ethical_reasoner import EthicalReasoner, EthicalFramework
 from src.agents.simulation.enhanced_scenario_simulator import EnhancedScenarioSimulator, ScenarioType, SimulationParameters
-from src.agents.autonomous_execution.anthropic_style_executor import create_anthropic_style_executor, ExecutionStrategy, ExecutionMode
-from src.agents.training.bitnet_online_trainer import create_bitnet_online_trainer, OnlineTrainingConfig
+# from src.agents.autonomous_execution.anthropic_style_executor import create_anthropic_style_executor, ExecutionStrategy, ExecutionMode  # Temporarily disabled
+# from src.agents.training.bitnet_online_trainer import create_bitnet_online_trainer, OnlineTrainingConfig  # Temporarily disabled
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -186,36 +186,38 @@ async def startup_event():
         unified_coordinator=coordinator
     )
     
-    # 🚀 Initialize Anthropic-Style Autonomous Executor
-    anthropic_executor = create_anthropic_style_executor(
-        agent_id="anthropic_autonomous_executor",
-        enable_consciousness_validation=True,
-        enable_physics_validation=True,
-        human_oversight_level="adaptive"
-    )
+    # 🚀 Initialize Anthropic-Style Autonomous Executor (temporarily disabled)
+    # anthropic_executor = create_anthropic_style_executor(
+    #     agent_id="anthropic_autonomous_executor",
+    #     enable_consciousness_validation=True,
+    #     enable_physics_validation=True,
+    #     human_oversight_level="adaptive"
+    # )
+    anthropic_executor = None  # Temporarily disabled
     
-    # 🎯 Initialize BitNet Online Training System
-    training_config = OnlineTrainingConfig(
-        model_path="models/bitnet/models/bitnet",
-        learning_rate=1e-5,  # Conservative for online learning
-        training_interval_seconds=300.0,  # Train every 5 minutes
-        min_examples_before_training=5,   # Start training with fewer examples for demo
-        quality_threshold=0.6,           # Lower threshold for more training data
-        checkpoint_interval_minutes=30   # Checkpoint every 30 minutes
-    )
-    bitnet_trainer = create_bitnet_online_trainer(
-        agent_id="bitnet_online_trainer",
-        config=training_config,
-        consciousness_service=consciousness_service
-    )
+    # 🎯 Initialize BitNet Online Training System (temporarily disabled)
+    # training_config = OnlineTrainingConfig(
+    #     model_path="models/bitnet/models/bitnet",
+    #     learning_rate=1e-5,  # Conservative for online learning
+    #     training_interval_seconds=300.0,  # Train every 5 minutes
+    #     min_examples_before_training=5,   # Start training with fewer examples for demo
+    #     quality_threshold=0.6,           # Lower threshold for more training data
+    #     checkpoint_interval_minutes=30   # Checkpoint every 30 minutes
+    # )
+    # bitnet_trainer = create_bitnet_online_trainer(
+    #     agent_id="bitnet_online_trainer",
+    #     config=training_config,
+    #     consciousness_service=consciousness_service
+    # )
+    bitnet_trainer = None  # Temporarily disabled
 
     logger.info("✅ NIS Protocol v3.1 ready with REAL LLM integration and NIS HUB consciousness!")
     logger.info(f"🧠 Consciousness Service initialized: {consciousness_service.agent_id}")
     logger.info(f"🌉 Protocol Bridge initialized: {protocol_bridge.agent_id}")
-    logger.info(f"🚀 Anthropic-Style Executor initialized: {anthropic_executor.agent_id}")
-    logger.info(f"🎯 BitNet Online Trainer initialized: {bitnet_trainer.agent_id}")
+    # logger.info(f"🚀 Anthropic-Style Executor initialized: {anthropic_executor.agent_id}")  # Temporarily disabled
+    # logger.info(f"🎯 BitNet Online Trainer initialized: {bitnet_trainer.agent_id}")  # Temporarily disabled
     logger.info(f"📊 Enhanced pipeline: Laplace → Consciousness → KAN → PINN → Safety")
-    logger.info(f"🎓 Online Training: BitNet continuously learning from conversations")
+    # logger.info(f"🎓 Online Training: BitNet continuously learning from conversations")  # Temporarily disabled
 
 
 # --- New Generative Simulation Endpoint ---
@@ -855,7 +857,9 @@ async def chat(request: ChatRequest):
         messages.append({"role": "system", "content": f"Pipeline result: {json.dumps(pipeline_result)}"})
         
         # Generate REAL LLM response using archaeological patterns
-        result = await llm_provider.generate_response(messages, temperature=0.7, agent_type=request.agent_type)
+        logger.info(f"🎯 CHAT REQUEST: provider={request.provider}, agent_type={request.agent_type}")
+        result = await llm_provider.generate_response(messages, temperature=0.7, agent_type=request.agent_type, requested_provider=request.provider)
+        logger.info(f"🎯 CHAT RESULT: provider={result.get('provider', 'unknown')}")
         
         if not result.get('real_ai', False):
             raise ValueError("Mock response detected - real API required")
@@ -967,7 +971,7 @@ async def chat_stream(request: ChatRequest):
             messages.append({"role": "system", "content": f"Pipeline Insight: {json.dumps(pipeline_result)}"})
             
             # Use the provider's streaming capability if available
-            result = await llm_provider.generate_response(messages, agent_type=request.agent_type)
+            result = await llm_provider.generate_response(messages, agent_type=request.agent_type, requested_provider=request.provider)
             
             # Stream word by word for a better experience
             response_words = result['content'].split(' ')

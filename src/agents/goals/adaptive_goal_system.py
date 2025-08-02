@@ -26,8 +26,9 @@ try:
     import torch.nn as nn
     import torch.optim as optim
     TORCH_AVAILABLE = True
-except ImportError:
+except (ImportError, OSError) as e:
     TORCH_AVAILABLE = False
+    logging.warning(f"PyTorch not available in goals ({e}) - using mathematical fallback")
     # Fallback for when torch is not available
     class nn:
         class Module:
@@ -129,8 +130,9 @@ class GoalGenerationContext:
     domain_knowledge_gaps: List[str]
 
 
-class GoalGenerationNetwork(nn.Module):
-    """Neural network for autonomous goal generation"""
+if TORCH_AVAILABLE:
+    class GoalGenerationNetwork(nn.Module):
+        """Neural network for autonomous goal generation"""
     
     def __init__(self, state_dim: int = 100, goal_dim: int = 50, hidden_dims: List[int] = [256, 128, 64]):
         super().__init__()
@@ -194,6 +196,23 @@ class GoalGenerationNetwork(nn.Module):
             'success_probability': self.success_probability_head(features),
             'goal_features': self.goal_features_head(features)
         }
+
+else:
+    # Fallback when PyTorch is not available
+    class GoalGenerationNetwork:
+        """Fallback goal generation without PyTorch"""
+        def __init__(self, *args, **kwargs):
+            self.logger = logging.getLogger("goal_generation_fallback")
+            
+        def forward(self, state):
+            return {
+                'goal_type_probs': [0.25, 0.25, 0.25, 0.25],
+                'priority_probs': [0.33, 0.33, 0.34],
+                'estimated_effort': 0.5,
+                'expected_value': 0.5,
+                'success_probability': 0.7,
+                'goal_features': [0.1] * 10
+            }
 
 
 class GoalHierarchyManager:

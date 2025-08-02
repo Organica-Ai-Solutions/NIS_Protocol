@@ -38,9 +38,9 @@ try:
     )
     from peft import LoraConfig, get_peft_model, TaskType
     TRAINING_AVAILABLE = True
-except ImportError:
+except (ImportError, OSError) as e:
     TRAINING_AVAILABLE = False
-    logging.warning("Training libraries not available - using training simulation mode")
+    logging.warning(f"Training libraries not available ({e}) - using training simulation mode")
 
 # NIS Protocol imports
 from ...core.agent import NISAgent
@@ -97,7 +97,8 @@ class OnlineTrainingConfig:
     max_checkpoints: int = 10
 
 
-class NISTrainingDataset(Dataset):
+if TRAINING_AVAILABLE:
+    class NISTrainingDataset(Dataset):
     """Dataset for NIS Protocol training examples"""
     
     def __init__(self, examples: List[TrainingExample], tokenizer, max_length: int = 512):

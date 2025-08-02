@@ -1,0 +1,1 @@
+{"detail":[{"type":"missing","loc":["body","concept"],"msg":"Field required","input":{"scenario_type":"physics","parameters":{"spacecraft_mass":1000,"target_velocity":"0.1c","energy_discrepancy":0.675,"relativistic_effects":true,"simulation_duration":3600,"physics_validation":"enhanced_pinn"},"agents_involved":["physics","reasoning","signal_processing"]}}]}
