@@ -20,7 +20,8 @@ import numpy as np
 # FastAPI and web framework imports
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse, StreamingResponse
+from fastapi.responses import HTMLResponse, StreamingResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 import uvicorn
 from fastapi.responses import JSONResponse
@@ -69,6 +70,7 @@ class ChatRequest(BaseModel):
     conversation_id: Optional[str] = None
     context: Optional[Dict[str, Any]] = None
     agent_type: Optional[str] = "default"  # Add agent_type with default
+    provider: Optional[str] = None  # Add provider attribute
 
 class ChatResponse(BaseModel):
     response: str
@@ -133,6 +135,41 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Mount static files
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# Chat Console endpoint
+@app.get("/console", response_class=HTMLResponse, tags=["Demo"])
+async def chat_console():
+    """
+    🎯 NIS Protocol Chat Console
+    
+    Interactive web-based chat interface for demonstrating the full NIS Protocol pipeline:
+    - Laplace Transform signal processing
+    - Consciousness-driven validation  
+    - KAN symbolic reasoning
+    - PINN physics validation
+    - Multi-LLM coordination
+    
+    Access at: http://localhost:8000/console
+    """
+    try:
+        with open("static/chat_console.html", "r", encoding="utf-8") as f:
+            return HTMLResponse(content=f.read())
+    except FileNotFoundError:
+        return HTMLResponse(
+            content="""
+            <html>
+                <body>
+                    <h1>Chat Console Not Found</h1>
+                    <p>The chat console file is missing. Please ensure static/chat_console.html exists.</p>
+                    <p><a href="/docs">Go to API Documentation</a></p>
+                </body>
+            </html>
+            """,
+            status_code=404
+        )
 
 @app.on_event("startup")
 async def startup_event():
@@ -769,6 +806,19 @@ async def read_root():
             "Cultural Heritage Analysis"
         ],
         "archaeological_success": "Proven patterns from successful heritage platform",
+                "demo_interfaces": {
+            "chat_console": "/console",
+            "api_docs": "/docs",
+            "health_check": "/health",
+            "formatted_chat": "/chat/formatted"
+        },
+        "pipeline_features": [
+            "Laplace Transform signal processing",
+            "Consciousness-driven validation",
+            "KAN symbolic reasoning", 
+            "PINN physics validation",
+            "Multi-LLM coordination"
+        ],
         "timestamp": time.time()
     }
 
@@ -823,6 +873,104 @@ def add_message_to_conversation(conversation_id: str, role: str, content: str, m
     if metadata:
         message.update(metadata)
     conversation_memory[conversation_id].append(message)
+
+@app.post("/chat/formatted", response_class=HTMLResponse, tags=["Chat"])
+async def chat_formatted(request: ChatRequest):
+    """
+    🎯 Human-Readable Chat Response
+    
+    Returns a clean, formatted response perfect for human reading.
+    No JSON metadata - just the AI response in a readable format.
+    """
+    conversation_id = get_or_create_conversation(request.conversation_id, request.user_id)
+    
+    # Add user message
+    add_message_to_conversation(conversation_id, "user", request.message, {"context": request.context})
+    
+    try:
+        # Get conversation context (archaeological pattern - keep last 8 messages)
+        context_messages = conversation_memory.get(conversation_id, [])[-8:]
+        
+        # Build message array for LLM
+        messages = [
+            {
+                "role": "system", 
+                "content": """You are an expert AI assistant specializing in the NIS Protocol v3. Provide detailed, accurate, and technically grounded responses about the system's architecture, capabilities, and usage. Focus on multi-agent coordination, signal processing pipeline, and LLM integration. Format your responses with clear structure using markdown-style formatting for better readability."""
+            }
+        ]
+        
+        # Add conversation history (exclude current message)
+        for msg in context_messages[:-1]:
+            if msg["role"] in ["user", "assistant"]:
+                messages.append({"role": msg["role"], "content": msg["content"]})
+        
+        # Add current message
+        messages.append({"role": "user", "content": request.message})
+
+        # Process NIS pipeline
+        pipeline_result = await process_nis_pipeline(request.message)
+        messages.append({"role": "system", "content": f"Pipeline result: {json.dumps(pipeline_result)}"})
+        
+        # Generate REAL LLM response using archaeological patterns
+        logger.info(f"🎯 FORMATTED CHAT REQUEST: provider={request.provider}, agent_type={request.agent_type}")
+        result = await llm_provider.generate_response(messages, temperature=0.7, agent_type=request.agent_type, requested_provider=request.provider)
+        logger.info(f"🎯 FORMATTED CHAT RESULT: provider={result.get('provider', 'unknown')}")
+        
+        if not result.get('real_ai', False):
+            raise ValueError("Mock response detected - real API required")
+
+        # Add assistant response to history
+        add_message_to_conversation(
+            conversation_id, "assistant", result["content"], 
+            {
+                "confidence": result["confidence"], 
+                "provider": result["provider"],
+                "model": result["model"],
+                "tokens_used": result["tokens_used"]
+            }
+        )
+        
+        logger.info(f"💬 Formatted chat response: {result['provider']} - {result['tokens_used']} tokens")
+        
+        # Format the response for human reading
+        formatted_response = f"""
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🤖 NIS Protocol v3.1 Response
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+{result["content"]}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📊 Response Metadata:
+🧠 Provider: {result["provider"]} | Model: {result["model"]}
+⚡ Confidence: {result["confidence"]:.1%} | Tokens: {result["tokens_used"]}
+🆔 Conversation: {conversation_id} | User: {request.user_id}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+"""
+        
+        # Return as plain text with proper content type
+        return HTMLResponse(
+            content=f"<pre style='font-family: monospace; white-space: pre-wrap; background: #1a1a1a; color: #00ff00; padding: 20px; border-radius: 10px;'>{formatted_response}</pre>",
+            headers={"Content-Type": "text/html; charset=utf-8"}
+        )
+        
+    except Exception as e:
+        logger.error(f"Formatted chat error: {e}")
+        error_response = f"""
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+❌ NIS Protocol v3.1 Error
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Error: {str(e)}
+
+Please try again or contact support if the issue persists.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+"""
+        return HTMLResponse(
+            content=f"<pre style='font-family: monospace; white-space: pre-wrap; background: #1a1a1a; color: #ff4444; padding: 20px; border-radius: 10px;'>{error_response}</pre>",
+            status_code=500,
+            headers={"Content-Type": "text/html; charset=utf-8"}
+        )
 
 @app.post("/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):

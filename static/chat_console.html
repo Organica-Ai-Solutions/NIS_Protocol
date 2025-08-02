@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NIS Protocol v3.1 - Chat Console</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #00ff00;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .header {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px 20px;
+            border-bottom: 2px solid #00ff00;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            color: #00ff00;
+            font-size: 24px;
+            text-shadow: 0 0 10px #00ff00;
+        }
+
+        .status {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #00ff00;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 80px);
+            background: rgba(0, 0, 0, 0.7);
+            margin: 0;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid #00ff00;
+            margin: 10px;
+            border-radius: 8px;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+
+        .message.user {
+            background: rgba(0, 100, 255, 0.2);
+            border-left: 3px solid #0066ff;
+            color: #66ccff;
+        }
+
+        .message.assistant {
+            background: rgba(0, 255, 0, 0.1);
+            border-left: 3px solid #00ff00;
+            color: #ccffcc;
+        }
+
+        .message.system {
+            background: rgba(255, 165, 0, 0.1);
+            border-left: 3px solid #ffa500;
+            color: #ffcc99;
+            font-style: italic;
+        }
+
+        .message.error {
+            background: rgba(255, 0, 0, 0.2);
+            border-left: 3px solid #ff0000;
+            color: #ffcccc;
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+        .message-meta {
+            font-size: 10px;
+            opacity: 0.6;
+            margin-top: 5px;
+        }
+
+        .input-area {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border-top: 1px solid #00ff00;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .input-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        select, input[type="text"] {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            padding: 8px;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 12px;
+        }
+
+        select:focus, input[type="text"]:focus, textarea:focus {
+            outline: none;
+            border-color: #66ff66;
+            box-shadow: 0 0 5px #00ff00;
+        }
+
+        textarea {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            padding: 12px;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 60px;
+            max-height: 120px;
+        }
+
+        button {
+            background: linear-gradient(45deg, #00ff00, #00cc00);
+            border: none;
+            color: #000;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            min-width: 80px;
+        }
+
+        button:hover {
+            background: linear-gradient(45deg, #66ff66, #33ff33);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 255, 0, 0.3);
+        }
+
+        button:disabled {
+            background: #333;
+            color: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .typing-indicator {
+            display: none;
+            color: #00ff00;
+            font-style: italic;
+            opacity: 0.7;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 0.7; }
+            51%, 100% { opacity: 0.3; }
+        }
+
+        .pipeline-info {
+            background: rgba(255, 165, 0, 0.1);
+            border: 1px solid #ffa500;
+            border-radius: 4px;
+            padding: 8px;
+            margin-top: 5px;
+            font-size: 11px;
+            color: #ffcc99;
+        }
+
+        .quick-commands {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+
+        .quick-command {
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .quick-command:hover {
+            background: rgba(0, 255, 0, 0.2);
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #00ff00;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #66ff66;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🧠 NIS Protocol v3.1 - Chat Console</h1>
+        <div class="status">
+            <div class="status-item">
+                <div class="status-dot"></div>
+                <span id="connection-status">Connected</span>
+            </div>
+            <div class="status-item">
+                <span id="provider-info">Provider: Loading...</span>
+            </div>
+            <div class="status-item">
+                <span id="response-time">Response: --ms</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="chat-container">
+        <div class="chat-messages" id="chatMessages">
+            <div class="message system">
+                <div class="message-header">
+                    <strong>🤖 NIS Protocol System</strong>
+                    <span id="timestamp"></span>
+                </div>
+                Welcome to the NIS Protocol v3.1 Chat Console! 
+                <br><br>
+                This system features:
+                <br>• 🌊 Laplace Transform signal processing
+                <br>• 🧠 Consciousness-driven validation
+                <br>• 🧮 KAN (Kolmogorov-Arnold) symbolic reasoning
+                <br>• 🔬 PINN physics-informed validation
+                <br>• 🤖 Multi-LLM provider integration
+                <br><br>
+                Try asking about physics, mathematics, or complex reasoning problems!
+            </div>
+        </div>
+
+        <div class="input-area">
+            <div class="input-group">
+                <div class="quick-commands">
+                    <span class="quick-command" onclick="insertQuickCommand('Explain the physics of a bouncing ball')">⚽ Physics Demo</span>
+                    <span class="quick-command" onclick="insertQuickCommand('Analyze your consciousness level')">🧠 Consciousness</span>
+                    <span class="quick-command" onclick="insertQuickCommand('Solve a complex mathematical equation')">🧮 Math Reasoning</span>
+                    <span class="quick-command" onclick="insertQuickCommand('Run a physics simulation')">🔬 Simulation</span>
+                    <span class="quick-command" onclick="insertQuickCommand('What are your capabilities?')">❓ Capabilities</span>
+                </div>
+                
+                <div class="controls">
+                    <select id="agentType">
+                        <option value="default">Default Agent</option>
+                        <option value="physics">Physics Agent</option>
+                        <option value="consciousness">Consciousness Agent</option>
+                        <option value="reasoning">Reasoning Agent</option>
+                        <option value="simulation">Simulation Agent</option>
+                    </select>
+                    
+                    <select id="provider">
+                        <option value="">Auto-Select Provider</option>
+                        <option value="openai">OpenAI</option>
+                        <option value="anthropic">Anthropic</option>
+                        <option value="deepseek">DeepSeek</option>
+                        <option value="bitnet">BitNet (Local)</option>
+                    </select>
+                    
+                    <select id="responseFormat">
+                        <option value="formatted" selected>📄 Formatted (Human-Readable)</option>
+                        <option value="json">🔧 JSON (Developer/API)</option>
+                    </select>
+                    
+                    <input type="text" id="userId" placeholder="User ID (optional)" value="demo_user">
+                </div>
+                
+                <div class="input-container">
+                    <textarea id="messageInput" placeholder="Ask the NIS Protocol anything... (Press Ctrl+Enter to send)" rows="3"></textarea>
+                    <button id="sendButton" onclick="sendMessage()">Send</button>
+                </div>
+            </div>
+            
+            <div class="typing-indicator" id="typingIndicator">
+                🤖 NIS Protocol is processing through Laplace → Consciousness → KAN → PINN → LLM pipeline...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let conversationId = null;
+        let messageCount = 0;
+
+        // Initialize the console
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('timestamp').textContent = new Date().toLocaleTimeString();
+            checkSystemHealth();
+            
+            // Add keyboard shortcuts
+            document.getElementById('messageInput').addEventListener('keydown', function(e) {
+                if (e.ctrlKey && e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+        });
+
+        async function checkSystemHealth() {
+            try {
+                const response = await fetch('/health');
+                const health = await response.json();
+                
+                document.getElementById('provider-info').textContent = 
+                    `Providers: ${health.provider ? health.provider.join(', ') : 'None'}`;
+                
+                if (health.status === 'healthy') {
+                    document.getElementById('connection-status').textContent = 'Healthy';
+                } else {
+                    document.getElementById('connection-status').textContent = 'Degraded';
+                }
+            } catch (error) {
+                document.getElementById('connection-status').textContent = 'Offline';
+                document.getElementById('provider-info').textContent = 'Connection Failed';
+            }
+        }
+
+        function insertQuickCommand(command) {
+            document.getElementById('messageInput').value = command;
+            document.getElementById('messageInput').focus();
+        }
+
+        async function sendMessage() {
+            const messageInput = document.getElementById('messageInput');
+            const sendButton = document.getElementById('sendButton');
+            const message = messageInput.value.trim();
+            
+            if (!message) return;
+
+            // Disable input while processing
+            messageInput.disabled = true;
+            sendButton.disabled = true;
+            document.getElementById('typingIndicator').style.display = 'block';
+
+            // Add user message to chat
+            addMessage('user', message, {
+                agent_type: document.getElementById('agentType').value,
+                provider: document.getElementById('provider').value,
+                user_id: document.getElementById('userId').value || 'anonymous'
+            });
+
+            // Clear input
+            messageInput.value = '';
+
+            const startTime = Date.now();
+
+            try {
+                const responseFormat = document.getElementById('responseFormat').value;
+                const endpoint = responseFormat === 'formatted' ? '/chat/formatted' : '/chat';
+                
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        user_id: document.getElementById('userId').value || 'anonymous',
+                        conversation_id: conversationId,
+                        agent_type: document.getElementById('agentType').value,
+                        provider: document.getElementById('provider').value || undefined
+                    })
+                });
+
+                const responseTime = Date.now() - startTime;
+
+                if (response.ok) {
+                    if (responseFormat === 'formatted') {
+                        // Handle formatted HTML response
+                        const htmlContent = await response.text();
+                        addMessage('assistant', htmlContent, {
+                            response_time: responseTime,
+                            format: 'formatted',
+                            is_html: true
+                        });
+                    } else {
+                        // Handle JSON response
+                        const result = await response.json();
+                        
+                        // Update conversation ID
+                        conversationId = result.conversation_id;
+                        
+                        // Add assistant response
+                        addMessage('assistant', result.response, {
+                            confidence: result.confidence,
+                            provider: result.provider,
+                            model: result.model,
+                            tokens_used: result.tokens_used,
+                            real_ai: result.real_ai,
+                            response_time: responseTime,
+                            format: 'json'
+                        });
+                    }
+
+                    // Update status
+                    document.getElementById('response-time').textContent = `Response: ${responseTime}ms`;
+                    
+                } else {
+                    const errorContent = responseFormat === 'formatted' ? await response.text() : await response.json();
+                    const errorMessage = responseFormat === 'formatted' ? 
+                        errorContent : 
+                        `Error: ${errorContent.detail || 'Unknown error occurred'}`;
+                    
+                    addMessage('error', errorMessage, {
+                        status_code: response.status,
+                        format: responseFormat,
+                        is_html: responseFormat === 'formatted'
+                    });
+                }
+
+            } catch (error) {
+                addMessage('error', `Connection error: ${error.message}`, {});
+            }
+
+            // Re-enable input
+            messageInput.disabled = false;
+            sendButton.disabled = false;
+            document.getElementById('typingIndicator').style.display = 'none';
+            messageInput.focus();
+        }
+
+        function addMessage(type, content, metadata) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+
+            let headerText = '';
+            let metaInfo = '';
+
+            switch (type) {
+                case 'user':
+                    headerText = `👤 User (${metadata.agent_type || 'default'})`;
+                    if (metadata.provider) {
+                        metaInfo = `Agent: ${metadata.agent_type || 'default'} | Provider: ${metadata.provider}`;
+                    }
+                    break;
+                case 'assistant':
+                    headerText = `🤖 NIS Protocol`;
+                    if (metadata.format === 'formatted') {
+                        metaInfo = `Format: Formatted (Human-Readable) | Time: ${metadata.response_time || 0}ms`;
+                    } else {
+                        metaInfo = `Provider: ${metadata.provider || 'unknown'} | Model: ${metadata.model || 'unknown'} | ` +
+                                  `Confidence: ${(metadata.confidence * 100).toFixed(1)}% | ` +
+                                  `Tokens: ${metadata.tokens_used || 0} | ` +
+                                  `Real AI: ${metadata.real_ai ? '✅' : '❌'} | ` +
+                                  `Time: ${metadata.response_time || 0}ms`;
+                    }
+                    break;
+                case 'error':
+                    headerText = `❌ Error`;
+                    metaInfo = `Status: ${metadata.status_code || 'Unknown'}`;
+                    break;
+                case 'system':
+                    headerText = `🤖 System`;
+                    break;
+            }
+
+            // Handle HTML content vs text content
+            const contentDiv = metadata.is_html ? content : `<div style="white-space: pre-wrap;">${content}</div>`;
+            
+            messageDiv.innerHTML = `
+                <div class="message-header">
+                    <strong>${headerText}</strong>
+                    <span>${new Date().toLocaleTimeString()}</span>
+                </div>
+                ${contentDiv}
+                ${metaInfo ? `<div class="message-meta">${metaInfo}</div>` : ''}
+                ${type === 'assistant' && metadata.real_ai ? 
+                    '<div class="pipeline-info">✅ Processed through: Laplace → Consciousness → KAN → PINN → LLM Pipeline</div>' : ''}
+            `;
+
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            messageCount++;
+        }
+
+        // Auto-refresh health status every 30 seconds
+        setInterval(checkSystemHealth, 30000);
+    </script>
+</body>
+</html>
