@@ -574,3 +574,8 @@ class EnhancedReasoningChain(NISAgent):
             "reasoning_stages": [rs.value for rs in ReasoningStage],
             "last_activity": self._get_timestamp()
         }
+    
+    def _get_timestamp(self) -> str:
+        """Get current timestamp in ISO format"""
+        from datetime import datetime
+        return datetime.now().isoformat()

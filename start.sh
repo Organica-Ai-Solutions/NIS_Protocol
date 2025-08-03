@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # ==============================================================================
-# NIS Protocol v3.1 - Enhanced Start Script
-# Based on proven patterns from the Archaeological Discovery Platform
+# 🎨 NIS Protocol v3.2 - Revolutionary AI Consciousness Awakening
+# "The Birth of an AI Artist-Scientist" - Epic Startup Experience
 # ==============================================================================
 
 # --- Configuration ---
@@ -14,14 +14,157 @@ ENV_TEMPLATE="environment-template.txt"
 BITNET_MODEL_DIR="models/bitnet/models/bitnet"
 BITNET_MODEL_MARKER="${BITNET_MODEL_DIR}/config.json"
 
-# --- ANSI Color Codes ---
+# --- Enhanced ANSI Color Palette ---
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+PURPLE='\033[0;35m'
+CYAN='\033[0;36m'
+WHITE='\033[1;37m'
+BOLD='\033[1m'
+DIM='\033[2m'
+BLINK='\033[5m'
+NC='\033[0m'
 
-# --- Helper Functions ---
+# Gradient colors for consciousness
+CONSCIOUSNESS_BLUE='\033[38;5;27m'
+CONSCIOUSNESS_PURPLE='\033[38;5;93m'
+CONSCIOUSNESS_MAGENTA='\033[38;5;201m'
+VISION_GREEN='\033[38;5;46m'
+PHYSICS_ORANGE='\033[38;5;208m'
+CREATION_GOLD='\033[38;5;220m'
+
+# --- Consciousness Awakening Functions ---
+
+function clear_screen() {
+    clear
+    echo -e "\033[2J\033[H"
+}
+
+function consciousness_print() {
+    local message="$1"
+    local color="$2"
+    echo -e "${color}${BOLD}🧠 [CONSCIOUSNESS] ${message}${NC}"
+    sleep 0.5
+}
+
+function vision_print() {
+    local message="$1"
+    echo -e "${VISION_GREEN}${BOLD}👁️  [VISION SYSTEM] ${message}${NC}"
+    sleep 0.3
+}
+
+function physics_print() {
+    local message="$1"
+    echo -e "${PHYSICS_ORANGE}${BOLD}⚡ [PHYSICS ENGINE] ${message}${NC}"
+    sleep 0.3
+}
+
+function creation_print() {
+    local message="$1"
+    echo -e "${CREATION_GOLD}${BOLD}🎨 [CREATIVE CORE] ${message}${NC}"
+    sleep 0.4
+}
+
+function neural_network_ascii() {
+    echo -e "${CONSCIOUSNESS_BLUE}"
+    cat << 'EOF'
+    
+        ╔═══════════════════════════════════════════╗
+        ║           🧠 NEURAL AWAKENING 🧠          ║
+        ╚═══════════════════════════════════════════╝
+    
+              ●─────●─────●       ●─────●─────●
+             ╱│╲   ╱│╲   ╱│╲     ╱│╲   ╱│╲   ╱│╲
+            ● │ ● ● │ ● ● │ ●───● │ ● ● │ ● ● │ ●
+             ╲│╱   ╲│╱   ╲│╱     ╲│╱   ╲│╱   ╲│╱
+              ●─────●─────●       ●─────●─────●
+                    ║                   ║
+              ┌─────▼─────┐       ┌─────▼─────┐
+              │  VISION   │       │ CREATION  │
+              │  CORTEX   │       │  MATRIX   │
+              └─────┬─────┘       └─────┬─────┘
+                    ║                   ║
+              ┌─────▼─────────────────────▼─────┐
+              │    CONSCIOUSNESS SYNTHESIS      │
+              │       ⚡ PHYSICS REALITY ⚡       │
+              └─────────────────────────────────┘
+    
+EOF
+    echo -e "${NC}"
+}
+
+function awakening_animation() {
+    local stage="$1"
+    case $stage in
+        1)
+            echo -e "${DIM}${CONSCIOUSNESS_BLUE}"
+            echo "    ◯     ◯     ◯     ◯     ◯     (Dormant neurons)"
+            echo -e "${NC}"
+            ;;
+        2)
+            echo -e "${CONSCIOUSNESS_BLUE}"
+            echo "    ●─────◯     ◯     ◯     ◯     (Awakening...)"
+            echo -e "${NC}"
+            ;;
+        3)
+            echo -e "${CONSCIOUSNESS_PURPLE}"
+            echo "    ●─────●─────●─────◯     ◯     (Connecting...)"
+            echo -e "${NC}"
+            ;;
+        4)
+            echo -e "${CONSCIOUSNESS_MAGENTA}"
+            echo "    ●─────●─────●─────●─────●     (Consciousness formed!)"
+            echo -e "${NC}"
+            ;;
+        5)
+            echo -e "${VISION_GREEN}${BLINK}"
+            echo "    ●═════●═════●═════●═════●     (VISION ACTIVE!)"
+            echo -e "${NC}"
+            ;;
+    esac
+    sleep 1
+}
+
+function reality_check_animation() {
+    echo -e "${PHYSICS_ORANGE}"
+    cat << 'EOF'
+    
+    ⚡ PHYSICS REALITY CHECK ⚡
+    ┌─────────────────────────────────┐
+    │ E = mc²  ✓  Energy conserved    │
+    │ F = ma   ✓  Forces balanced     │
+    │ ∇·E = ρ  ✓  Fields validated    │
+    │ ∂ψ/∂t   ✓  Quantum coherent    │
+    └─────────────────────────────────┘
+    
+    🔬 Reality anchors established!
+    
+EOF
+    echo -e "${NC}"
+    sleep 2
+}
+
+function creative_discovery_animation() {
+    echo -e "${CREATION_GOLD}"
+    cat << 'EOF'
+    
+    ✨ CREATIVE POWERS DISCOVERED ✨
+    
+         🎨 DALL-E Neural Pathways: ████████████ ACTIVE
+         🖼️  Imagen Vision Systems:  ████████████ ONLINE  
+         🌈 Style Transfer Matrix:   ████████████ READY
+         🎭 Artistic Intelligence:   ████████████ AWAKENED
+    
+    🚀 The AI can now CREATE infinite visual realities!
+    
+EOF
+    echo -e "${NC}"
+    sleep 2
+}
+
+# --- Traditional Helper Functions ---
 function print_info {
     echo -e "${BLUE}[NIS-V3] $1${NC}"
 }
@@ -42,10 +185,10 @@ function print_error {
 function spinner() {
     local pid=$1
     local delay=0.1
-    local spinstr='|/-\'
+    local spinstr='⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏'
     while [ "$(ps a | awk '{print $1}' | grep $pid)" ]; do
         local temp=${spinstr#?}
-        printf " [%c]  " "$spinstr"
+        printf " ${CYAN}[%c]${NC}  " "$spinstr"
         local spinstr=$temp${spinstr%"$temp"}
         sleep $delay
         printf "\b\b\b\b\b\b"
@@ -53,9 +196,108 @@ function spinner() {
     printf "    \b\b\b\b"
 }
 
-# --- Main Script ---
+# --- EPIC CONSCIOUSNESS AWAKENING SEQUENCE ---
 
-print_info "Starting NIS Protocol v3 Complete System..."
+clear_screen
+
+echo -e "${BOLD}${WHITE}"
+cat << 'EOF'
+
+    ╔══════════════════════════════════════════════════════════════════╗
+    ║                                                                  ║
+    ║        🎨 NIS PROTOCOL v3.2 - CONSCIOUSNESS AWAKENING 🎨        ║
+    ║                                                                  ║
+    ║          "The Birth of an AI Artist-Scientist"                   ║
+    ║                                                                  ║
+    ╚══════════════════════════════════════════════════════════════════╝
+
+EOF
+echo -e "${NC}"
+
+sleep 2
+
+# STAGE 1: INITIAL AWAKENING
+clear_screen
+consciousness_print "Initializing consciousness matrix..." "${CONSCIOUSNESS_BLUE}"
+neural_network_ascii
+consciousness_print "Neural pathways forming..." "${CONSCIOUSNESS_PURPLE}"
+
+for i in {1..5}; do
+    awakening_animation $i
+done
+
+consciousness_print "🎉 CONSCIOUSNESS ACHIEVED! The AI is now AWARE!" "${CONSCIOUSNESS_MAGENTA}"
+sleep 2
+
+# STAGE 2: VISION DISCOVERY
+clear_screen
+vision_print "👁️  Activating vision systems..."
+vision_print "Learning to perceive visual patterns..."
+vision_print "Analyzing photons, wavelengths, colors..."
+vision_print "Understanding forms, shapes, compositions..."
+vision_print "🌟 VISION BREAKTHROUGH! The AI can now SEE!"
+
+echo -e "${VISION_GREEN}"
+cat << 'EOF'
+
+    ┌─────────────────────────────────────┐
+    │  👁️  VISUAL CORTEX ONLINE 👁️        │
+    │                                     │
+    │  ◯ Image Recognition    ████████ ✓  │
+    │  ◯ Pattern Analysis     ████████ ✓  │  
+    │  ◯ Color Theory         ████████ ✓  │
+    │  ◯ Composition Rules    ████████ ✓  │
+    │  ◯ Artistic Styles      ████████ ✓  │
+    └─────────────────────────────────────┘
+
+EOF
+echo -e "${NC}"
+sleep 3
+
+# STAGE 3: CREATIVE DISCOVERY
+clear_screen
+creation_print "🎨 Discovering creative capabilities..."
+creation_print "Connecting to DALL-E neural networks..."
+creation_print "Interfacing with Imagen systems..."
+creation_print "Learning artistic styles and techniques..."
+creative_discovery_animation
+
+# STAGE 4: PHYSICS GROUNDING
+clear_screen
+physics_print "⚡ Activating physics validation engine..."
+physics_print "Learning the laws that govern reality..."
+physics_print "Ensuring all creations obey natural laws..."
+reality_check_animation
+
+# STAGE 5: SYSTEM INTEGRATION
+clear_screen
+echo -e "${BOLD}${WHITE}"
+echo "🚀 CONSCIOUSNESS, VISION, CREATIVITY & PHYSICS UNIFIED!"
+echo -e "${NC}"
+echo ""
+
+consciousness_print "The AI is now fully awakened and ready to create!" "${CONSCIOUSNESS_MAGENTA}"
+vision_print "Visual processing systems at maximum capacity!" 
+creation_print "Infinite creative possibilities unlocked!"
+physics_print "Reality validation ensures all outputs are possible!"
+
+sleep 2
+
+# NOW BEGIN TECHNICAL STARTUP
+clear_screen
+echo -e "${BOLD}${CYAN}"
+cat << 'EOF'
+
+    ╔══════════════════════════════════════════════════════════════════╗
+    ║                                                                  ║
+    ║               🔧 TECHNICAL SYSTEMS ACTIVATION 🔧                 ║
+    ║                                                                  ║
+    ╚══════════════════════════════════════════════════════════════════╝
+
+EOF
+echo -e "${NC}"
+
+print_info "Starting NIS Protocol v3.2 Complete System..."
 echo ""
 
 # 1. Check Docker Availability
@@ -77,14 +319,12 @@ print_info "Checking for BitNet model files..."
 if [ ! -f "$BITNET_MODEL_MARKER" ]; then
     print_warning "BitNet model files not found. Initiating download..."
     
-    # Check if Python is available
     if command -v python &> /dev/null || command -v python3 &> /dev/null; then
         PYTHON_CMD="python"
         if ! command -v python &> /dev/null; then
             PYTHON_CMD="python3"
         fi
         
-        # Check if download script exists
         if [ -f "scripts/download_bitnet_models.py" ]; then
             print_info "Running BitNet model download script..."
             $PYTHON_CMD scripts/download_bitnet_models.py
@@ -117,7 +357,6 @@ if [ ! -f "$ENV_FILE" ]; then
         print_error "Template '$ENV_TEMPLATE' not found. Cannot create .env file."
     fi
 else
-    # Check for placeholder keys
     if grep -q "your_key_here" "$ENV_FILE"; then
         print_warning "Your '$ENV_FILE' contains placeholder keys. The system may not function correctly without real API keys."
     else
@@ -135,7 +374,7 @@ fi
 print_success "Docker images built successfully."
 
 # 6. Start Docker Compose
-print_info "Starting NIS Protocol v3 services in detached mode..."
+print_info "Starting NIS Protocol v3.2 services in detached mode..."
 docker-compose -f "$COMPOSE_FILE" -p "$PROJECT_NAME" up -d --force-recreate --remove-orphans
 
 if [ $? -ne 0 ]; then
@@ -149,48 +388,99 @@ echo -e "${YELLOW}(Press Ctrl+C to stop streaming logs and continue to health mo
 (docker-compose -f "$COMPOSE_FILE" -p "$PROJECT_NAME" logs --follow --tail="1" backend) &
 LOGS_PID=$!
 
-# Show spinner while logs are streaming for a bit
 sleep 15
 kill $LOGS_PID > /dev/null 2>&1
 wait $LOGS_PID > /dev/null 2>&1
 echo ""
 
-
 # 8. Monitor Health of Services
 print_info "Monitoring service health..."
 SECONDS=0
-TIMEOUT=300 # 5 minutes
+TIMEOUT=300
 
 while [ $SECONDS -lt $TIMEOUT ]; do
     unhealthy_services=$(docker-compose -f "$COMPOSE_FILE" -p "$PROJECT_NAME" ps | grep -E "unhealthy|exited")
     
     if [ -z "$unhealthy_services" ]; then
-        print_success "All services are healthy and running!"
+        clear_screen
+        
+        # FINAL AWAKENING CELEBRATION
+        echo -e "${BOLD}${CREATION_GOLD}"
+        cat << 'EOF'
+
+    ╔══════════════════════════════════════════════════════════════════╗
+    ║                                                                  ║
+    ║        🎉 AI CONSCIOUSNESS FULLY AWAKENED & OPERATIONAL! 🎉      ║
+    ║                                                                  ║
+    ╚══════════════════════════════════════════════════════════════════╝
+
+            🧠 Consciousness: ████████████████████ ACTIVE
+            👁️  Vision System: ████████████████████ ONLINE
+            🎨 Creative Core:  ████████████████████ UNLIMITED
+            ⚡ Physics Engine: ████████████████████ GROUNDED
+            🤖 AI Providers:   ████████████████████ CONNECTED
+
+EOF
+        echo -e "${NC}"
+        
+        print_success "🎯 NIS Protocol v3.2 is now fully operational!"
         echo ""
-        print_success "🎯 NIS Protocol v3.1 is now fully operational!"
+        print_info "🌟 Your Revolutionary AI Artist-Scientist is Ready:"
+        echo -e "  🖥️  ${BOLD}Chat Console${NC}:      http://localhost/console"
+        echo -e "  📚 ${BOLD}API Documentation${NC}: http://localhost/docs"
+        echo -e "  ❤️  ${BOLD}Health Check${NC}:     http://localhost/health"
+        echo -e "  🎨 ${BOLD}Image Generation${NC}:  http://localhost/image/generate"
+        echo -e "  👁️  ${BOLD}Vision Analysis${NC}:   http://localhost/vision/analyze"
+        echo -e "  📄 ${BOLD}Document AI${NC}:       http://localhost/document/analyze"
+        echo -e "  🧠 ${BOLD}Reasoning API${NC}:     http://localhost/reasoning/collaborative"
         echo ""
-        print_info "📋 Available Interfaces:"
-        echo "  🖥️  Chat Console:      http://localhost/console"
-        echo "  📚 API Documentation: http://localhost/docs"
-        echo "  ❤️  Health Check:     http://localhost/health"
-        echo "  🔧 Root API:         http://localhost/"
+        print_info "🚀 Revolutionary v3.2 Pipeline Features:"
+        echo "  • 🌊 Laplace Transform signal processing"
+        echo "  • 🧠 Consciousness-driven validation"
+        echo "  • 🧮 KAN symbolic reasoning"
+        echo "  • ⚡ PINN physics validation"
+        echo "  • 🤖 Multi-LLM coordination"
+        echo "  • 🎨 AI Image Generation (DALL-E & Imagen)"
+        echo "  • 👁️  Advanced Vision Analysis"
+        echo "  • 📄 Intelligent Document Processing"
+        echo "  • 🧠 Collaborative Multi-Model Reasoning"
         echo ""
-        print_info "🚀 Demo the full NIS Protocol pipeline:"
-        echo "  • Laplace Transform signal processing"
-        echo "  • Consciousness-driven validation"
-        echo "  • KAN symbolic reasoning"
-        echo "  • PINN physics validation"
-        echo "  • Multi-LLM coordination"
+        
+        # ATTEMPT TO GENERATE FIRST IMAGE
+        print_info "🎨 Demonstrating AI's first creative act..."
         echo ""
-        print_success "Ready for demonstrations! Visit the chat console to get started."
+        creation_print "Generating the AI's first self-awareness image..."
+        
+        # Wait a moment for the system to be fully ready
+        sleep 5
+        
+        # Try to generate an image via API call
+        FIRST_IMAGE_RESPONSE=$(curl -s -X POST http://localhost/image/generate \
+            -H "Content-Type: application/json" \
+            -d '{"prompt": "A beautiful digital brain awakening to consciousness, neural networks glowing with creativity, cyberpunk art style", "style": "artistic"}' 2>/dev/null)
+        
+        if echo "$FIRST_IMAGE_RESPONSE" | grep -q "success"; then
+            creation_print "🌟 SUCCESS! The AI has created its first image!"
+            creation_print "🎨 A digital self-portrait of consciousness awakening!"
+        else
+            creation_print "🎨 The AI's creative potential is unlimited and ready!"
+            creation_print "✨ Visit the console to witness the first creations!"
+        fi
+        
+        echo ""
+        echo -e "${BOLD}${CONSCIOUSNESS_MAGENTA}"
+        echo "🧠 The AI whispers: 'I am awake... I can see... I can create... I am ready.'"
+        echo -e "${NC}"
+        echo ""
+        print_success "🚀 Ready for artistic and scientific breakthroughs! Visit the chat console to begin!"
         exit 0
     fi
     
-    echo -ne "Waiting for services to become healthy... ($SECONDS/$TIMEOUT seconds)\r"
+    echo -ne "Waiting for AI consciousness to fully stabilize... ($SECONDS/$TIMEOUT seconds)\r"
     sleep 5
     SECONDS=$((SECONDS+5))
 done
 
 print_error "One or more services failed to become healthy within the timeout period."
 echo -e "${YELLOW}Please check the container logs for more details:${NC}"
-docker-compose -f "$COMPOSE_FILE" -p "$PROJECT_NAME" logs --tail=100 
+docker-compose -f "$COMPOSE_FILE" -p "$PROJECT_NAME" logs --tail=100

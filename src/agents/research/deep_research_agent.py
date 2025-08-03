@@ -124,3 +124,8 @@ class DeepResearchAgent(NISAgent):
             "research_sources": list(self.research_sources.keys()),
             "last_activity": self._get_timestamp()
         }
+    
+    def _get_timestamp(self) -> str:
+        """Get current timestamp in ISO format"""
+        from datetime import datetime
+        return datetime.now().isoformat()

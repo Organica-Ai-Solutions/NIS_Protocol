@@ -581,3 +581,7 @@ class MultimodalVisionAgent(NISAgent):
             "provider_capabilities": self.provider_capabilities,
             "last_activity": self._get_timestamp()
         }
+    
+    def _get_timestamp(self) -> str:
+        """Get current timestamp in ISO format"""
+        return datetime.now().isoformat()

@@ -639,6 +639,11 @@ class DocumentAnalysisAgent(NISAgent):
             "last_activity": self._get_timestamp()
         }
     
+    def _get_timestamp(self) -> str:
+        """Get current timestamp in ISO format"""
+        from datetime import datetime
+        return datetime.now().isoformat()
+    
     # Additional helper methods would be implemented here
     async def _analyze_document_flow(self, text: str, sections: Dict) -> Dict[str, Any]:
         return {"flow_quality": 0.8, "coherence": 0.85}
