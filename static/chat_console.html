@@ -1026,12 +1026,16 @@
             const prompt = window.prompt("🎨 Enter your image generation prompt:", "A majestic dragon soaring through a cyberpunk cityscape at sunset");
             if (!prompt) return;
             
-            const style = window.prompt("🎭 Choose style (photorealistic, artistic, scientific, anime, sketch):", "artistic");
-            const validStyles = ["photorealistic", "artistic", "scientific", "anime", "sketch"];
+            const style = window.prompt("🎭 Choose style (photorealistic, artistic, scientific, physics, technical, anime, sketch):", "artistic");
+            const validStyles = ["photorealistic", "artistic", "scientific", "physics", "technical", "anime", "sketch"];
             const selectedStyle = validStyles.includes(style) ? style : "artistic";
             
-            addMessage('user', `🎨 Generate Image: "${prompt}" (${selectedStyle} style)`, {});
-            addMessage('system', '🎨 Generating your custom image...', {});
+            const provider = window.prompt("🤖 Choose provider (auto, google, openai, kimi):", "google");
+            const validProviders = ["auto", "google", "openai", "kimi"];
+            const selectedProvider = validProviders.includes(provider) ? provider : "google";
+            
+            addMessage('user', `🎨 Generate Image: "${prompt}" (${selectedStyle} style, ${selectedProvider} provider)`, {});
+            addMessage('system', `🎨 Generating your custom image with ${selectedProvider === 'google' ? 'Gemini 2.5' : selectedProvider === 'kimi' ? 'Kimi K2' : selectedProvider}...`, {});
             
             try {
                 const response = await fetch('/image/generate', {
@@ -1041,7 +1045,7 @@
                         prompt: prompt,
                         style: selectedStyle,
                         size: "1024x1024",
-                        provider: "auto",
+                        provider: selectedProvider,
                         quality: "standard",
                         num_images: 1
                     })

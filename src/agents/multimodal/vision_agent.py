@@ -65,9 +65,15 @@ class MultimodalVisionAgent(NISAgent):
                 'supports_generation': False
             },
             'google': {
-                'vision_models': ['gemini-pro-vision'],
-                'image_generation': ['imagen-2', 'imagen'],
+                'vision_models': ['gemini-2.5-flash', 'gemini-pro-vision'],
+                'image_generation': ['imagen-3.0', 'imagen-2', 'imagen'],
                 'supports_generation': True
+            },
+            'kimi': {
+                'vision_models': ['moonshot-v1-128k'],
+                'image_generation': ['physics-compliant-placeholder'],
+                'supports_generation': True,  # Physics-compliant descriptions + enhanced placeholders
+                'specialty': 'long_context_physics_analysis'
             }
         }
         
@@ -486,25 +492,27 @@ class MultimodalVisionAgent(NISAgent):
                 return provider
             return None
         
-        # Auto-select based on style and capabilities
+        # Auto-select based on style and capabilities - prefer Gemini 2.5
         if style in ['scientific', 'technical', 'physics']:
-            # OpenAI DALL-E is good for technical/scientific images
-            return 'openai' if self.provider_capabilities['openai']['supports_generation'] else 'google'
+            # Gemini 2.5 with physics compliance for scientific images
+            return 'google' if self.provider_capabilities['google']['supports_generation'] else 'kimi'
         elif style in ['artistic', 'anime', 'sketch']:
-            # Google Imagen might be better for artistic styles
+            # Gemini 2.5 Imagen is excellent for artistic styles
             return 'google' if self.provider_capabilities['google']['supports_generation'] else 'openai'
         else:
-            # Default to OpenAI for photorealistic
-            return 'openai' if self.provider_capabilities['openai']['supports_generation'] else 'google'
+            # Default to Gemini 2.5 for photorealistic with physics compliance
+            return 'google' if self.provider_capabilities['google']['supports_generation'] else 'openai'
     
     def _enhance_generation_prompt(self, prompt: str, style: str) -> str:
-        """Enhance prompt based on style preferences and LLM enhancement"""
+        """Enhance prompt based on style preferences with NIS physics compliance"""
         style_enhancements = {
-            'photorealistic': 'high resolution, photorealistic, detailed, professional photography',
-            'artistic': 'artistic, creative, beautiful composition, artistic style',
-            'scientific': 'scientific illustration, technical diagram, accurate, educational',
-            'anime': 'anime style, manga art, Japanese animation style',
-            'sketch': 'pencil sketch, hand-drawn, artistic sketch style'
+            'photorealistic': 'high resolution, photorealistic, detailed, professional photography, physically accurate lighting, realistic materials',
+            'artistic': 'artistic, creative, beautiful composition, artistic style, maintaining physical realism, scientifically plausible',
+            'scientific': 'scientific illustration, technical diagram, accurate, educational, physics-compliant, mathematically coherent',
+            'anime': 'anime style, manga art, Japanese animation style, with realistic proportions, physics-accurate motion',
+            'sketch': 'pencil sketch, hand-drawn, artistic sketch style, anatomically correct, physically accurate',
+            'physics': 'physics-accurate, conservation laws visible, realistic material properties, scientific precision, mathematically sound',
+            'technical': 'technical precision, engineering accuracy, physical realism, detailed specifications, scientifically valid'
         }
         
         # Apply style enhancement
@@ -594,9 +602,65 @@ Enhanced prompt:"""
                 return result
                 
             elif provider == 'google':
-                # Google Imagen API would go here
-                logger.warning("Google Imagen not yet implemented, using fallback")
-                return self._fallback_image_generation(prompt, provider, num_images)
+                # Use real Google Imagen API
+                from src.llm.providers.google_provider import GoogleProvider
+                import os
+                
+                # Check if we have an API key
+                api_key = os.getenv("GOOGLE_API_KEY")
+                if not api_key or api_key in ["YOUR_GOOGLE_API_KEY", "your_google_api_key_here"]:
+                    logger.warning("Google API key not available, using physics-compliant fallback")
+                    return self._fallback_image_generation(prompt, provider, num_images)
+                
+                # Initialize Google provider
+                google_config = {
+                    "api_key": api_key,
+                    "model": "gemini-2.5-flash",
+                    "image_model": "imagen-3.0-generate-001"
+                }
+                
+                google_provider = GoogleProvider(google_config)
+                result = await google_provider.generate_image(
+                    prompt=prompt,
+                    size=size,
+                    quality=quality,
+                    num_images=num_images
+                )
+                
+                # Clean up provider
+                await google_provider.close()
+                
+                return result
+                
+            elif provider == 'kimi':
+                # Use Kimi K2 for physics-compliant image descriptions and placeholders
+                from src.llm.providers.kimi_provider import KimiProvider
+                import os
+                
+                # Check if we have an API key
+                api_key = os.getenv("KIMI_API_KEY")
+                if not api_key or api_key in ["YOUR_KIMI_API_KEY", "your_kimi_api_key_here"]:
+                    logger.warning("Kimi API key not available, using physics-compliant fallback")
+                    return self._fallback_image_generation(prompt, provider, num_images)
+                
+                # Initialize Kimi provider
+                kimi_config = {
+                    "api_key": api_key,
+                    "model": "moonshot-v1-128k"  # Use long context for detailed physics analysis
+                }
+                
+                kimi_provider = KimiProvider(kimi_config)
+                result = await kimi_provider.generate_image(
+                    prompt=prompt,
+                    size=size,
+                    quality=quality,
+                    num_images=num_images
+                )
+                
+                # Clean up provider
+                await kimi_provider.close()
+                
+                return result
             
             else:
                 logger.warning(f"Unknown provider: {provider}, using fallback")
