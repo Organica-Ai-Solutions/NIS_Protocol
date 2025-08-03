@@ -12,26 +12,32 @@
         }
 
         body {
-            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            color: #00ff00;
+            font-family: 'SF Pro Display', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            color: #e2e8f0;
             height: 100vh;
             overflow: hidden;
+            font-size: 14px;
+            line-height: 1.6;
         }
 
         .header {
-            background: rgba(0, 0, 0, 0.8);
-            padding: 15px 20px;
-            border-bottom: 2px solid #00ff00;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px 24px;
+            border-bottom: 1px solid #475569;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
         .header h1 {
-            color: #00ff00;
-            font-size: 24px;
-            text-shadow: 0 0 10px #00ff00;
+            color: #06b6d4;
+            font-size: 28px;
+            font-weight: 700;
+            text-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
+            letter-spacing: -0.025em;
         }
 
         .status {
@@ -63,52 +69,88 @@
         .chat-container {
             display: flex;
             flex-direction: column;
-            height: calc(100vh - 80px);
+            min-height: calc(100vh - 80px);
+            max-height: calc(100vh - 80px);
             background: rgba(0, 0, 0, 0.7);
             margin: 0;
         }
 
         .chat-messages {
-            flex: 1;
+            flex: 1 1 auto;
             overflow-y: auto;
+            overflow-x: hidden;
             padding: 20px;
-            background: rgba(0, 0, 0, 0.9);
-            border: 1px solid #00ff00;
-            margin: 10px;
-            border-radius: 8px;
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid #475569;
+            margin: 12px;
+            border-radius: 12px;
+            box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+            word-wrap: break-word;
+            hyphens: auto;
         }
 
         .message {
-            margin-bottom: 15px;
-            padding: 10px;
-            border-radius: 5px;
-            line-height: 1.4;
+            margin-bottom: 16px;
+            padding: 14px 18px;
+            border-radius: 12px;
+            line-height: 1.6;
             word-wrap: break-word;
+            word-break: break-word;
+            border: 1px solid transparent;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            font-size: 14px;
+            max-width: 100%;
+            overflow-wrap: break-word;
+        }
+
+        .message img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 8px 0;
+            display: block;
+        }
+
+        .message pre {
+            overflow-x: auto;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            margin: 8px 0;
+        }
+
+        .message code {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 13px;
         }
 
         .message.user {
-            background: rgba(0, 100, 255, 0.2);
-            border-left: 3px solid #0066ff;
-            color: #66ccff;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.05));
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            color: #e2e8f0;
         }
 
         .message.assistant {
-            background: rgba(0, 255, 0, 0.1);
-            border-left: 3px solid #00ff00;
-            color: #ccffcc;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.05));
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: #f1f5f9;
         }
 
         .message.system {
-            background: rgba(255, 165, 0, 0.1);
-            border-left: 3px solid #ffa500;
-            color: #ffcc99;
-            font-style: italic;
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(217, 119, 6, 0.05));
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            color: #fbbf24;
+            font-style: normal;
         }
 
         .message.error {
-            background: rgba(255, 0, 0, 0.2);
-            border-left: 3px solid #ff0000;
-            color: #ffcccc;
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.05));
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
         }
 
         .message-header {
@@ -127,14 +169,15 @@
         }
 
         .input-area {
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.8);
-            border-top: 1px solid #00ff00;
+            padding: 16px;
+            background: rgba(15, 23, 42, 0.9);
+            border-top: 1px solid #475569;
+            backdrop-filter: blur(10px);
         }
 
         .input-container {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             align-items: flex-end;
         }
 
@@ -168,16 +211,23 @@
         }
 
         textarea {
-            background: rgba(0, 0, 0, 0.8);
-            border: 1px solid #00ff00;
-            color: #00ff00;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid #475569;
+            color: #e2e8f0;
             padding: 12px;
-            border-radius: 4px;
+            border-radius: 8px;
             font-family: inherit;
             font-size: 14px;
             resize: vertical;
-            min-height: 60px;
-            max-height: 120px;
+            min-height: 50px;
+            max-height: 100px;
+            flex: 1;
+            transition: border-color 0.2s ease;
+        }
+
+        textarea:focus {
+            border-color: #06b6d4;
+            box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.1);
         }
 
         button {
@@ -253,24 +303,30 @@
         }
 
         .multimodal-inputs {
-            margin: 10px 0;
-            padding: 10px;
-            background: rgba(0, 255, 255, 0.05);
-            border: 1px solid rgba(0, 255, 255, 0.2);
-            border-radius: 5px;
+            margin: 6px 0;
+            padding: 8px 12px;
+            background: rgba(15, 23, 42, 0.3);
+            border: 1px solid rgba(100, 116, 139, 0.3);
+            border-radius: 8px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
         }
 
         .input-group {
             display: flex;
             align-items: center;
-            margin: 5px 0;
-            gap: 10px;
+            margin: 0;
+            gap: 6px;
+            flex: 0 0 auto;
         }
 
         .file-label {
-            color: #00cccc;
-            min-width: 80px;
-            font-size: 12px;
+            color: #94a3b8;
+            min-width: 60px;
+            font-size: 11px;
+            font-weight: 500;
         }
 
         .file-preview {
@@ -280,24 +336,32 @@
         }
 
         input[type="file"] {
-            background: rgba(0, 255, 255, 0.1);
-            border: 1px solid #00cccc;
-            color: #00cccc;
-            padding: 4px;
-            border-radius: 3px;
-            font-size: 11px;
-            width: 200px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid #475569;
+            color: #cbd5e1;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            width: 140px;
+            cursor: pointer;
+        }
+
+        input[type="file"]:hover {
+            border-color: #64748b;
+            background: rgba(15, 23, 42, 0.8);
         }
 
         .toggle-label {
-            color: #ffaa00;
-            min-width: 100px;
-            font-size: 12px;
+            color: #f59e0b;
+            min-width: 70px;
+            font-size: 11px;
+            font-weight: 500;
         }
 
         .toggle-input {
-            transform: scale(1.2);
-            accent-color: #ffaa00;
+            transform: scale(1.1);
+            accent-color: #f59e0b;
+            cursor: pointer;
         }
 
         .image-preview {
@@ -403,9 +467,12 @@
                     
                     <select id="provider">
                         <option value="">Auto-Select Provider</option>
-                        <option value="openai">OpenAI</option>
-                        <option value="anthropic">Anthropic</option>
-                        <option value="deepseek">DeepSeek</option>
+                        <option value="multimodel">🧠 Multimodel (Consensus)</option>
+                        <option value="openai">OpenAI (GPT-4)</option>
+                        <option value="anthropic">Anthropic (Claude)</option>
+                        <option value="deepseek">DeepSeek (R1)</option>
+                        <option value="google">Google (Gemini)</option>
+                        <option value="kimi">🌙 Kimi K2 (Long Context)</option>
                         <option value="bitnet">BitNet (Local)</option>
                     </select>
                     
@@ -671,8 +738,10 @@
                     if (metadata.format === 'formatted') {
                         metaInfo = `Format: Formatted (Human-Readable) | Time: ${metadata.response_time || 0}ms`;
                     } else {
+                        const confidence = metadata.confidence && !isNaN(metadata.confidence) ? 
+                            (metadata.confidence * 100).toFixed(1) + '%' : 'N/A';
                         metaInfo = `Provider: ${metadata.provider || 'unknown'} | Model: ${metadata.model || 'unknown'} | ` +
-                                  `Confidence: ${(metadata.confidence * 100).toFixed(1)}% | ` +
+                                  `Confidence: ${confidence} | ` +
                                   `Tokens: ${metadata.tokens_used || 0} | ` +
                                   `Real AI: ${metadata.real_ai ? '✅' : '❌'} | ` +
                                   `Time: ${metadata.response_time || 0}ms`;
@@ -690,10 +759,13 @@
             // Handle HTML content vs text content
             const contentDiv = metadata.is_html ? content : `<div style="white-space: pre-wrap;">${content}</div>`;
             
+            // Clean timestamp display
+            const timestamp = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
             messageDiv.innerHTML = `
                 <div class="message-header">
                     <strong>${headerText}</strong>
-                    <span>${new Date().toLocaleTimeString()}</span>
+                    <span>${timestamp}</span>
                 </div>
                 ${contentDiv}
                 ${metaInfo ? `<div class="message-meta">${metaInfo}</div>` : ''}
@@ -1000,15 +1072,31 @@
                         }
                     }
                     
-                    displayContent += `\`\`\`json
-${JSON.stringify(result, null, 2)}
+                    // Create clean metadata without massive base64 strings
+                    const cleanResult = {
+                        status: result.status,
+                        generation: {
+                            ...result.generation,
+                            images: result.generation.images.map(img => ({
+                                ...img,
+                                url: img.url.startsWith('data:image/') ? '[Base64 Image Data - Displayed Above]' : img.url
+                            }))
+                        },
+                        agent_id: result.agent_id,
+                        processing_time: result.generation?.generation_info?.generation_time || 'N/A'
+                    };
+                    
+                    displayContent += `📊 **Generation Metadata:**
+\`\`\`json
+${JSON.stringify(cleanResult, null, 2)}
 \`\`\``;
                     
                     addMessage('assistant', displayContent, {
                         format: 'html',
                         endpoint: '/image/generate',
                         test_type: 'image_generation',
-                        has_images: true
+                        has_images: true,
+                        response_time: Math.round((result.generation?.generation_info?.generation_time || 0) * 1000)
                     });
                 } else {
                     addMessage('assistant', `🚨 Image generation failed: ${JSON.stringify(result, null, 2)}`, {
