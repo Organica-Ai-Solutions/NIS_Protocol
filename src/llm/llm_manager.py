@@ -97,7 +97,10 @@ class LLMManager:
             "openai": "openai_provider.OpenAIProvider",
             "anthropic": "anthropic_provider.AnthropicProvider", 
             "deepseek": "deepseek_provider.DeepseekProvider",
+            "google": "google_provider.GoogleProvider",
+            "kimi": "kimi_provider.KimiProvider",
             "bitnet": "bitnet_provider.BitNetProvider",
+            "multimodel": "multimodel_provider.MultimodelProvider",
             "mock": "mock_provider.MockProvider"
         }
         
@@ -182,8 +185,22 @@ class LLMManager:
             if actual_provider == "mock":
                 # Mock provider doesn't need real config
                 provider_config = {"model": "mock-provider", "max_tokens": 2048, "temperature": 0.7}
+            elif actual_provider == "multimodel":
+                # Multimodel provider doesn't need API keys
+                provider_config = {
+                    "model": "multimodel-consensus", 
+                    "max_tokens": 4096, 
+                    "temperature": 0.7,
+                    "consensus_threshold": 0.7,
+                    "max_providers": 3
+                }
             else:
-                provider_config = self.config["providers"][actual_provider]
+                provider_config = self.config["providers"].get(actual_provider, {
+                    "model": f"{actual_provider}-default",
+                    "max_tokens": 2048,
+                    "temperature": 0.7,
+                    "api_key": "placeholder"
+                })
                 
             self.providers[actual_provider] = self.provider_registry[actual_provider](provider_config)
         
@@ -198,6 +215,18 @@ class LLMManager:
         Returns:
             The actual provider name to use
         """
+        # Honor user's explicit choice first (even if not fully configured)
+        if requested_provider:
+            # Special handling for multimodel
+            if requested_provider == "multimodel":
+                self.logger.info("🧠 Using multimodel consensus provider")
+                return "multimodel"
+            
+            # Allow any registered provider to be used (user will get helpful error if API key missing)
+            if requested_provider in self.provider_registry:
+                self.logger.info(f"🎯 Using explicitly requested provider: {requested_provider}")
+                return requested_provider
+        
         # If specific provider requested and configured, use it
         if requested_provider and self.is_provider_configured(requested_provider):
             return requested_provider

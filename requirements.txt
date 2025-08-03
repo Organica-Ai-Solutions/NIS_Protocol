@@ -207,5 +207,8 @@ websockets
 zipp
 nvidia-physicsnemo
 pandas
+openai
+anthropic
+google-generativeai
 #modulus-sym
 # Temporary comment to invalidate cache

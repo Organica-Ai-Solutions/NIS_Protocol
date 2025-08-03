@@ -25,6 +25,7 @@ class ReasoningType(Enum):
     ETHICAL = "ethical"
     STRATEGIC = "strategic"
     CAUSAL = "causal"
+    PHILOSOPHICAL = "philosophical"
 
 class ModelSpecialization(Enum):
     """Model specializations for different reasoning types"""
@@ -70,7 +71,8 @@ class EnhancedReasoningChain(NISAgent):
             ReasoningType.SCIENTIFIC: [ModelSpecialization.DEEPSEEK, ModelSpecialization.GOOGLE_GEMINI],
             ReasoningType.ETHICAL: [ModelSpecialization.CLAUDE_OPUS, ModelSpecialization.GPT4_TURBO],
             ReasoningType.STRATEGIC: [ModelSpecialization.GPT4_TURBO, ModelSpecialization.CLAUDE_SONNET],
-            ReasoningType.CAUSAL: [ModelSpecialization.CLAUDE_OPUS, ModelSpecialization.DEEPSEEK]
+            ReasoningType.CAUSAL: [ModelSpecialization.CLAUDE_OPUS, ModelSpecialization.DEEPSEEK],
+            ReasoningType.PHILOSOPHICAL: [ModelSpecialization.CLAUDE_OPUS, ModelSpecialization.GPT4_TURBO]
         }
         
         # Reasoning chain templates

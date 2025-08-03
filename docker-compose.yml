@@ -46,6 +46,10 @@ services:
       - "8000:8000"
     env_file:
       - .env
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-your_openai_api_key_here}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-your_anthropic_api_key_here}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY:-your_google_api_key_here}
     depends_on:
       - redis
       - kafka
