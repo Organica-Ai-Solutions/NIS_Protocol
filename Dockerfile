@@ -31,6 +31,9 @@ RUN pip install --no-cache-dir /wheels/*
 # Copy application code
 COPY --chown=nisuser:nisuser . .
 
+# Create static directory and ensure permissions
+RUN mkdir -p static && chown -R nisuser:nisuser static
+
 # Expose port and set entrypoint
 EXPOSE 8000
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"] 

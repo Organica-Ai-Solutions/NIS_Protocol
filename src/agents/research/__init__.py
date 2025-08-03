@@ -1,15 +1,12 @@
 """
-NIS Protocol Research Agents
-
-comprehensive research capabilities with web search integration and cognitive orchestra support.
+🔬 NIS Protocol v3.2 - Research Agents Package
+Advanced research capabilities with multi-source validation and knowledge synthesis
 """
 
-from .web_search_agent import WebSearchAgent, SearchProvider, ResearchDomain, SearchResult, ResearchQuery
+from .deep_research_agent import DeepResearchAgent
 
 __all__ = [
-    "WebSearchAgent",
-    "SearchProvider", 
-    "ResearchDomain",
-    "SearchResult",
-    "ResearchQuery"
-] 
+    'DeepResearchAgent'
+]
+
+__version__ = '3.2.0'

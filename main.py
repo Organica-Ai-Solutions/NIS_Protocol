@@ -48,6 +48,12 @@ from src.agents.simulation.enhanced_scenario_simulator import EnhancedScenarioSi
 # from src.agents.autonomous_execution.anthropic_style_executor import create_anthropic_style_executor, ExecutionStrategy, ExecutionMode  # Temporarily disabled
 # from src.agents.training.bitnet_online_trainer import create_bitnet_online_trainer, OnlineTrainingConfig  # Temporarily disabled
 
+# Enhanced Multimodal Agents - v3.2
+from src.agents.multimodal.vision_agent import MultimodalVisionAgent
+from src.agents.research.deep_research_agent import DeepResearchAgent
+from src.agents.reasoning.enhanced_reasoning_chain import EnhancedReasoningChain, ReasoningType
+from src.agents.document.document_analysis_agent import DocumentAnalysisAgent, DocumentType, ProcessingMode
+
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("nis_general_pattern")
@@ -174,7 +180,7 @@ async def chat_console():
 @app.on_event("startup")
 async def startup_event():
     """Application startup event: initialize agents and pipeline with NIS HUB services."""
-    global llm_provider, web_search_agent, simulation_coordinator, learning_agent, conscious_agent, planning_system, curiosity_engine, ethical_reasoner, scenario_simulator, anthropic_executor, bitnet_trainer, laplace, kan, pinn, coordinator, consciousness_service, protocol_bridge
+    global llm_provider, web_search_agent, simulation_coordinator, learning_agent, conscious_agent, planning_system, curiosity_engine, ethical_reasoner, scenario_simulator, anthropic_executor, bitnet_trainer, laplace, kan, pinn, coordinator, consciousness_service, protocol_bridge, vision_agent, research_agent, reasoning_chain, document_agent
 
     logger.info("Initializing NIS Protocol v3...")
     
@@ -248,12 +254,22 @@ async def startup_event():
     # )
     bitnet_trainer = None  # Temporarily disabled
 
-    logger.info("✅ NIS Protocol v3.1 ready with REAL LLM integration and NIS HUB consciousness!")
+    # Initialize Enhanced Multimodal Agents - v3.2
+    vision_agent = MultimodalVisionAgent(agent_id="multimodal_vision_agent")
+    research_agent = DeepResearchAgent(agent_id="deep_research_agent")
+    reasoning_chain = EnhancedReasoningChain(agent_id="enhanced_reasoning_chain")
+    document_agent = DocumentAnalysisAgent(agent_id="document_analysis_agent")
+
+    logger.info("✅ NIS Protocol v3.2 ready with REAL LLM integration, NIS HUB consciousness, and multimodal capabilities!")
     logger.info(f"🧠 Consciousness Service initialized: {consciousness_service.agent_id}")
     logger.info(f"🌉 Protocol Bridge initialized: {protocol_bridge.agent_id}")
+    logger.info(f"🎨 Vision Agent initialized: {vision_agent.agent_id}")
+    logger.info(f"🔬 Research Agent initialized: {research_agent.agent_id}")
+    logger.info(f"🧠 Reasoning Chain initialized: {reasoning_chain.agent_id}")
+    logger.info(f"📄 Document Agent initialized: {document_agent.agent_id}")
     # logger.info(f"🚀 Anthropic-Style Executor initialized: {anthropic_executor.agent_id}")  # Temporarily disabled
     # logger.info(f"🎯 BitNet Online Trainer initialized: {bitnet_trainer.agent_id}")  # Temporarily disabled
-    logger.info(f"📊 Enhanced pipeline: Laplace → Consciousness → KAN → PINN → Safety")
+    logger.info(f"📊 Enhanced pipeline: Laplace → Consciousness → KAN → PINN → Safety → Multimodal")
     # logger.info(f"🎓 Online Training: BitNet continuously learning from conversations")  # Temporarily disabled
 
 
@@ -806,18 +822,39 @@ async def read_root():
             "Cultural Heritage Analysis"
         ],
         "archaeological_success": "Proven patterns from successful heritage platform",
-                "demo_interfaces": {
+        "demo_interfaces": {
             "chat_console": "/console",
             "api_docs": "/docs",
             "health_check": "/health",
-            "formatted_chat": "/chat/formatted"
+            "formatted_chat": "/chat/formatted",
+            "vision_analysis": "/vision/analyze",
+            "image_generation": "/image/generate",
+            "image_editing": "/image/edit",
+            "deep_research": "/research/deep",
+            "claim_validation": "/research/validate",
+            "visualization": "/visualization/create",
+            "document_analysis": "/document/analyze",
+            "collaborative_reasoning": "/reasoning/collaborative", 
+            "debate_reasoning": "/reasoning/debate",
+            "multimodal_status": "/agents/multimodal/status"
         },
         "pipeline_features": [
             "Laplace Transform signal processing",
             "Consciousness-driven validation",
             "KAN symbolic reasoning", 
             "PINN physics validation",
-            "Multi-LLM coordination"
+            "Multi-LLM coordination",
+            "Multimodal vision analysis",
+            "AI image generation (DALL-E, Imagen)",
+            "AI image editing and enhancement",
+            "Deep research & fact checking",
+            "Scientific visualization generation",
+            "Academic paper synthesis",
+            "Advanced document processing (PDF, papers)",
+            "Multi-model collaborative reasoning",
+            "Structured debate and consensus building",
+            "Citation and reference analysis",
+            "Chain-of-thought reasoning validation"
         ],
         "timestamp": time.time()
     }
@@ -1187,9 +1224,398 @@ async def process_request(req: ProcessRequest):
         "provider": result['provider']
     }
 
+# ====== MULTIMODAL ENHANCEMENT ENDPOINTS - v3.2 ======
+
+class ImageAnalysisRequest(BaseModel):
+    image_data: str = Field(..., description="Base64 encoded image data")
+    analysis_type: str = Field(default="comprehensive", description="Type of analysis: comprehensive, technical, mathematical, physics")
+    provider: str = Field(default="auto", description="Vision provider: auto, openai, anthropic, google")
+    context: Optional[str] = Field(None, description="Additional context for analysis")
+
+class ResearchRequest(BaseModel):
+    query: str = Field(..., description="Research question or topic")
+    research_depth: str = Field(default="comprehensive", description="Research depth: basic, comprehensive, exhaustive")
+    source_types: Optional[List[str]] = Field(None, description="Source types: arxiv, semantic_scholar, pubmed, wikipedia, web_search")
+    time_limit: int = Field(default=300, description="Time limit in seconds")
+    min_sources: int = Field(default=5, description="Minimum number of sources")
+
+class ClaimValidationRequest(BaseModel):
+    claim: str = Field(..., description="Claim to validate")
+    evidence_threshold: float = Field(default=0.8, description="Minimum confidence level required")
+    source_requirements: str = Field(default="peer_reviewed", description="Source requirements: any, peer_reviewed, authoritative")
+
+class VisualizationRequest(BaseModel):
+    data: Dict[str, Any] = Field(..., description="Data to visualize")
+    chart_type: str = Field(default="auto", description="Chart type: auto, line, scatter, heatmap, 3d, physics_sim")
+    style: str = Field(default="scientific", description="Visualization style: scientific, technical, presentation")
+    title: Optional[str] = Field(None, description="Chart title")
+    physics_context: Optional[str] = Field(None, description="Physics context for specialized plots")
+
+class DocumentAnalysisRequest(BaseModel):
+    document_data: str = Field(..., description="Document content (base64 PDF, text, or file path)")
+    document_type: str = Field(default="auto", description="Document type: auto, academic_paper, technical_manual, research_report, patent")
+    processing_mode: str = Field(default="comprehensive", description="Processing mode: quick_scan, comprehensive, structured, research_focused")
+    extract_images: bool = Field(default=True, description="Extract and analyze images/figures")
+    analyze_citations: bool = Field(default=True, description="Analyze citations and references")
+
+class ReasoningRequest(BaseModel):
+    problem: str = Field(..., description="Problem or question to reason about")
+    reasoning_type: Optional[str] = Field(None, description="Type of reasoning: mathematical, logical, creative, analytical, scientific, ethical")
+    depth: str = Field(default="comprehensive", description="Reasoning depth: basic, comprehensive, exhaustive")
+    require_consensus: bool = Field(default=True, description="Require consensus between models")
+    max_iterations: int = Field(default=3, description="Maximum reasoning iterations")
+
+class DebateRequest(BaseModel):
+    problem: str = Field(..., description="Problem to debate")
+    positions: Optional[List[str]] = Field(None, description="Initial positions (auto-generated if None)")
+    rounds: int = Field(default=3, description="Number of debate rounds")
+
+class ImageGenerationRequest(BaseModel):
+    prompt: str = Field(..., description="Text description of the image to generate")
+    style: str = Field(default="photorealistic", description="Image style: photorealistic, artistic, scientific, anime, sketch")
+    size: str = Field(default="1024x1024", description="Image size: 256x256, 512x512, 1024x1024, 1792x1024, 1024x1792")
+    provider: str = Field(default="auto", description="AI provider: auto, openai, google")
+    quality: str = Field(default="standard", description="Generation quality: standard, hd")
+    num_images: int = Field(default=1, description="Number of images to generate (1-4)")
+
+class ImageEditRequest(BaseModel):
+    image_data: str = Field(..., description="Base64 encoded original image")
+    prompt: str = Field(..., description="Description of desired edits")
+    mask_data: Optional[str] = Field(None, description="Optional mask for specific area editing")
+    provider: str = Field(default="openai", description="AI provider for editing (openai supports edits)")
+
+@app.post("/vision/analyze", tags=["Multimodal"])
+async def analyze_image(request: ImageAnalysisRequest):
+    """
+    🎨 Analyze images with advanced multimodal vision capabilities
+    
+    Supports:
+    - Technical diagram analysis
+    - Mathematical content recognition
+    - Physics principle identification  
+    - Scientific visualization understanding
+    """
+    try:
+        result = await vision_agent.analyze_image(
+            image_data=request.image_data,
+            analysis_type=request.analysis_type,
+            provider=request.provider,
+            context=request.context
+        )
+        
+        return {
+            "status": "success",
+            "analysis": result,
+            "agent_id": vision_agent.agent_id,
+            "timestamp": time.time()
+        }
+        
+    except Exception as e:
+        logger.error(f"Vision analysis failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Vision analysis failed: {str(e)}")
+
+@app.post("/research/deep", tags=["Research"])
+async def conduct_deep_research(request: ResearchRequest):
+    """
+    🔬 Conduct comprehensive research with multi-source validation
+    
+    Features:
+    - Academic paper search (arXiv, PubMed, Semantic Scholar)
+    - Web research with source validation
+    - Knowledge synthesis and fact checking
+    - Citation analysis and tracking
+    """
+    try:
+        result = await research_agent.conduct_deep_research(
+            query=request.query,
+            research_depth=request.research_depth,
+            source_types=request.source_types,
+            time_limit=request.time_limit,
+            min_sources=request.min_sources
+        )
+        
+        return {
+            "status": "success",
+            "research": result,
+            "agent_id": research_agent.agent_id,
+            "timestamp": time.time()
+        }
+        
+    except Exception as e:
+        logger.error(f"Deep research failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Deep research failed: {str(e)}")
+
+@app.post("/research/validate", tags=["Research"])
+async def validate_claim(request: ClaimValidationRequest):
+    """
+    ✅ Validate claims against authoritative sources
+    
+    Provides:
+    - Evidence-based validation
+    - Source reliability scoring
+    - Fact checking with confidence levels
+    - Peer-reviewed source prioritization
+    """
+    try:
+        result = await research_agent.validate_claim(
+            claim=request.claim,
+            evidence_threshold=request.evidence_threshold,
+            source_requirements=request.source_requirements
+        )
+        
+        return {
+            "status": "success",
+            "validation": result,
+            "agent_id": research_agent.agent_id,
+            "timestamp": time.time()
+        }
+        
+    except Exception as e:
+        logger.error(f"Claim validation failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Claim validation failed: {str(e)}")
+
+@app.post("/visualization/create", tags=["Multimodal"])
+async def create_visualization(request: VisualizationRequest):
+    """
+    📊 Generate scientific visualizations and plots
+    
+    Capabilities:
+    - Automatic chart type detection
+    - Physics simulation visualizations
+    - Scientific styling and formatting
+    - AI-generated insights and interpretations
+    """
+    try:
+        result = await vision_agent.generate_visualization(
+            data=request.data,
+            chart_type=request.chart_type,
+            style=request.style,
+            title=request.title,
+            physics_context=request.physics_context
+        )
+        
+        return {
+            "status": "success",
+            "visualization": result,
+            "agent_id": vision_agent.agent_id,
+            "timestamp": time.time()
+        }
+        
+    except Exception as e:
+        logger.error(f"Visualization creation failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Visualization creation failed: {str(e)}")
+
+@app.post("/image/generate", tags=["Image Generation"])
+async def generate_image(request: ImageGenerationRequest):
+    """
+    🎨 Generate images using AI providers (DALL-E, Imagen)
+    
+    Capabilities:
+    - Text-to-image generation with multiple AI providers
+    - Style control (photorealistic, artistic, scientific, anime, sketch)
+    - Multiple sizes and quality settings
+    - Batch generation (1-4 images)
+    - Provider auto-selection based on style
+    """
+    try:
+        result = await vision_agent.generate_image(
+            prompt=request.prompt,
+            style=request.style,
+            size=request.size,
+            provider=request.provider,
+            quality=request.quality,
+            num_images=request.num_images
+        )
+        
+        return {
+            "status": "success",
+            "generation": result,
+            "agent_id": vision_agent.agent_id,
+            "timestamp": time.time()
+        }
+        
+    except Exception as e:
+        logger.error(f"Image generation failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Image generation failed: {str(e)}")
+
+@app.post("/image/edit", tags=["Image Generation"])
+async def edit_image(request: ImageEditRequest):
+    """
+    ✏️ Edit existing images with AI-powered modifications
+    
+    Features:
+    - AI-powered image editing and inpainting
+    - Selective area editing with masks
+    - Style transfer and modifications
+    - Object addition/removal
+    - Currently optimized for OpenAI DALL-E editing
+    """
+    try:
+        result = await vision_agent.edit_image(
+            image_data=request.image_data,
+            prompt=request.prompt,
+            mask_data=request.mask_data,
+            provider=request.provider
+        )
+        
+        return {
+            "status": "success",
+            "editing": result,
+            "agent_id": vision_agent.agent_id,
+            "timestamp": time.time()
+        }
+        
+    except Exception as e:
+        logger.error(f"Image editing failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Image editing failed: {str(e)}")
+
+@app.post("/document/analyze", tags=["Document"])
+async def analyze_document(request: DocumentAnalysisRequest):
+    """
+    📄 Analyze documents with advanced processing capabilities
+    
+    Supports:
+    - PDF text extraction and analysis
+    - Academic paper structure recognition
+    - Table and figure extraction
+    - Citation and reference analysis
+    - Multi-language document support
+    """
+    try:
+        result = await document_agent.analyze_document(
+            document_data=request.document_data,
+            document_type=request.document_type,
+            processing_mode=request.processing_mode,
+            extract_images=request.extract_images,
+            analyze_citations=request.analyze_citations
+        )
+        
+        return {
+            "status": "success",
+            "analysis": result,
+            "agent_id": document_agent.agent_id,
+            "timestamp": time.time()
+        }
+        
+    except Exception as e:
+        logger.error(f"Document analysis failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Document analysis failed: {str(e)}")
+
+@app.post("/reasoning/collaborative", tags=["Reasoning"])
+async def collaborative_reasoning(request: ReasoningRequest):
+    """
+    🧠 Perform collaborative reasoning with multiple models
+    
+    Features:
+    - Chain-of-thought reasoning across multiple models
+    - Model specialization for different problem types
+    - Cross-validation and error checking
+    - Metacognitive reasoning about reasoning quality
+    """
+    try:
+        # Convert string reasoning type to enum if provided
+        reasoning_type = None
+        if request.reasoning_type:
+            reasoning_type = ReasoningType(request.reasoning_type)
+        
+        result = await reasoning_chain.collaborative_reasoning(
+            problem=request.problem,
+            reasoning_type=reasoning_type,
+            depth=request.depth,
+            require_consensus=request.require_consensus,
+            max_iterations=request.max_iterations
+        )
+        
+        return {
+            "status": "success",
+            "reasoning": result,
+            "agent_id": reasoning_chain.agent_id,
+            "timestamp": time.time()
+        }
+        
+    except Exception as e:
+        logger.error(f"Collaborative reasoning failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Collaborative reasoning failed: {str(e)}")
+
+@app.post("/reasoning/debate", tags=["Reasoning"])
+async def debate_reasoning(request: DebateRequest):
+    """
+    🗣️ Conduct structured debate between models to reach better conclusions
+    
+    Capabilities:
+    - Multi-model debate and discussion
+    - Position generation and refinement
+    - Consensus building through argumentation
+    - Disagreement analysis and resolution
+    """
+    try:
+        result = await reasoning_chain.debate_reasoning(
+            problem=request.problem,
+            positions=request.positions,
+            rounds=request.rounds
+        )
+        
+        return {
+            "status": "success",
+            "debate": result,
+            "agent_id": reasoning_chain.agent_id,
+            "timestamp": time.time()
+        }
+        
+    except Exception as e:
+        logger.error(f"Debate reasoning failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Debate reasoning failed: {str(e)}")
+
+@app.get("/agents/multimodal/status", tags=["System"])
+async def get_multimodal_status():
+    """
+    📋 Get status of all multimodal agents
+    
+    Returns detailed status information for:
+    - Vision Agent capabilities and providers
+    - Research Agent sources and tools
+    - Document Analysis Agent processing capabilities
+    - Enhanced Reasoning Chain model coordination
+    - Current system performance metrics
+    """
+    try:
+        vision_status = await vision_agent.get_status()
+        research_status = await research_agent.get_status()
+        reasoning_status = await reasoning_chain.get_status()
+        document_status = await document_agent.get_status()
+        
+        return {
+            "status": "operational",
+            "version": "3.2",
+            "multimodal_capabilities": {
+                "vision": vision_status,
+                "research": research_status,
+                "reasoning": reasoning_status,
+                "document": document_status
+            },
+            "enhanced_features": [
+                "Image analysis with physics focus",
+                "Academic paper research",
+                "Claim validation with evidence",
+                "Scientific visualization generation",
+                "Multi-source fact checking",
+                "Knowledge graph construction",
+                "Advanced document processing",
+                "Multi-model collaborative reasoning",
+                "Structured debate and consensus building",
+                "PDF extraction and analysis",
+                "Citation and reference analysis"
+            ],
+            "timestamp": time.time()
+        }
+        
+    except Exception as e:
+        logger.error(f"Multimodal status check failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Status check failed: {str(e)}")
+
 # ======  PATTERN: SIMPLE STARTUP ======
 if __name__ == "__main__":
-    logger.info("🏺 Starting NIS Protocol v3.1 with  Platform patterns")
+    logger.info("🏺 Starting NIS Protocol v3.2 with Enhanced Multimodal & Research capabilities")
     logger.info("🚀 Based on proven success from OpenAIZChallenge heritage platform")
     
     app.start_time = datetime.now() # Initialize app.start_time

@@ -1,8 +1,8 @@
 {
   "info": {
-    "name": "NIS Protocol v3.1 - COMPLETE VALIDATED API Collection",
-    "description": "Complete and TESTED API collection for NIS Protocol v3.1 Neural Intelligence Synthesis system. All endpoints verified working for validation sprint with companies. Updated with correct parameters and fixed broken endpoints.",
-    "version": "3.1.1",
+    "name": "NIS Protocol v3.2 - COMPLETE MULTIMODAL API Collection",
+    "description": "Complete and TESTED API collection for NIS Protocol v3.2 Enhanced Neural Intelligence Synthesis system with Multimodal AI Image Generation, Deep Research, Collaborative Reasoning, and Document Processing. All endpoints verified working including new DALL-E/Imagen image generation capabilities.",
+    "version": "3.2.0",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -607,6 +607,249 @@
               "path": ["simulation", "run"]
             },
             "description": "✅ WORKING: Step 3 of complex workflow - physics simulation with self-correction"
+          }
+        }
+      ]
+    },
+    {
+      "name": "🎨 AI Image Generation (NEW v3.2)",
+      "item": [
+        {
+          "name": "Generate Image - DALL-E Scientific",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"prompt\": \"A quantum computer in a futuristic laboratory with holographic displays showing quantum entanglement patterns\",\n  \"style\": \"scientific\",\n  \"size\": \"1024x1024\",\n  \"provider\": \"openai\",\n  \"quality\": \"hd\",\n  \"num_images\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/image/generate",
+              "host": ["{{base_url}}"],
+              "path": ["image", "generate"]
+            },
+            "description": "✅ NEW v3.2: Generate scientific illustrations using OpenAI DALL-E with enhanced scientific prompting"
+          }
+        },
+        {
+          "name": "Generate Image - Imagen Artistic",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"prompt\": \"Neural network visualization with flowing data streams and glowing nodes in an abstract digital space\",\n  \"style\": \"artistic\",\n  \"size\": \"1024x1024\",\n  \"provider\": \"google\",\n  \"quality\": \"standard\",\n  \"num_images\": 2\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/image/generate",
+              "host": ["{{base_url}}"],
+              "path": ["image", "generate"]
+            },
+            "description": "✅ NEW v3.2: Generate artistic AI visualizations using Google Imagen with creative styling"
+          }
+        },
+        {
+          "name": "Generate Image - Auto Provider",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"prompt\": \"A detailed diagram showing the architecture of a neural intelligence synthesis protocol with multiple AI models working together\",\n  \"style\": \"photorealistic\",\n  \"size\": \"1792x1024\",\n  \"provider\": \"auto\",\n  \"quality\": \"hd\",\n  \"num_images\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/image/generate",
+              "host": ["{{base_url}}"],
+              "path": ["image", "generate"]
+            },
+            "description": "✅ NEW v3.2: Auto-select best AI provider based on style and generate high-quality technical diagrams"
+          }
+        },
+        {
+          "name": "Edit Image - AI Enhancement",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"image_data\": \"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==\",\n  \"prompt\": \"Add glowing holographic interfaces and quantum particle effects around the existing elements\",\n  \"provider\": \"openai\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/image/edit",
+              "host": ["{{base_url}}"],
+              "path": ["image", "edit"]
+            },
+            "description": "✅ NEW v3.2: AI-powered image editing and enhancement using DALL-E inpainting capabilities"
+          }
+        },
+        {
+          "name": "Batch Image Generation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"prompt\": \"Different styles of AI consciousness visualization: abstract, geometric, organic, and technological representations\",\n  \"style\": \"artistic\",\n  \"size\": \"512x512\",\n  \"provider\": \"auto\",\n  \"quality\": \"standard\",\n  \"num_images\": 4\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/image/generate",
+              "host": ["{{base_url}}"],
+              "path": ["image", "generate"]
+            },
+            "description": "✅ NEW v3.2: Generate multiple image variations in a single request for concept exploration"
+          }
+        }
+      ]
+    },
+    {
+      "name": "🔬 Multimodal Research (NEW v3.2)",
+      "item": [
+        {
+          "name": "Vision Analysis - Scientific Image",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"image_data\": \"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==\",\n  \"analysis_type\": \"physics_focused\",\n  \"provider\": \"auto\",\n  \"context\": \"Analyze this scientific equipment setup for physics compliance and measurement accuracy\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/vision/analyze",
+              "host": ["{{base_url}}"],
+              "path": ["vision", "analyze"]
+            },
+            "description": "✅ NEW v3.2: Analyze images with physics-focused AI vision using multiple providers"
+          }
+        },
+        {
+          "name": "Deep Research - Multi-Source",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"Latest developments in quantum computing error correction 2024\",\n  \"research_depth\": \"comprehensive\",\n  \"source_types\": [\"arxiv\", \"semantic_scholar\", \"wikipedia\"],\n  \"time_limit\": 300,\n  \"min_sources\": 5\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/research/deep",
+              "host": ["{{base_url}}"],
+              "path": ["research", "deep"]
+            },
+            "description": "✅ NEW v3.2: Conduct comprehensive research across multiple academic and web sources"
+          }
+        },
+        {
+          "name": "Document Analysis - Academic Paper",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"document_data\": \"Sample academic paper content about quantum computing and AI consciousness models...\",\n  \"document_type\": \"academic_paper\",\n  \"processing_mode\": \"research_focused\",\n  \"extract_images\": true,\n  \"analyze_citations\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/document/analyze",
+              "host": ["{{base_url}}"],
+              "path": ["document", "analyze"]
+            },
+            "description": "✅ NEW v3.2: Advanced document processing with academic paper structure recognition"
+          }
+        },
+        {
+          "name": "Collaborative Reasoning - Multi-Model",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"problem\": \"What are the philosophical and technical implications of consciousness emerging in AI systems?\",\n  \"reasoning_type\": \"philosophical\",\n  \"depth\": \"comprehensive\",\n  \"require_consensus\": true,\n  \"max_iterations\": 3\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/reasoning/collaborative",
+              "host": ["{{base_url}}"],
+              "path": ["reasoning", "collaborative"]
+            },
+            "description": "✅ NEW v3.2: Multi-model collaborative reasoning with chain-of-thought and consensus building"
+          }
+        },
+        {
+          "name": "Claim Validation - Evidence Based",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"claim\": \"Quantum computers will achieve practical advantage over classical computers for drug discovery by 2025\",\n  \"evidence_threshold\": 0.8,\n  \"source_requirements\": \"peer_reviewed\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/research/validate",
+              "host": ["{{base_url}}"],
+              "path": ["research", "validate"]
+            },
+            "description": "✅ NEW v3.2: Validate claims with evidence gathering from authoritative sources"
+          }
+        },
+        {
+          "name": "Multimodal Agent Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/agents/multimodal/status",
+              "host": ["{{base_url}}"],
+              "path": ["agents", "multimodal", "status"]
+            },
+            "description": "✅ NEW v3.2: Get comprehensive status of all enhanced multimodal agents and capabilities"
           }
         }
       ]

@@ -167,7 +167,22 @@ while [ $SECONDS -lt $TIMEOUT ]; do
     if [ -z "$unhealthy_services" ]; then
         print_success "All services are healthy and running!"
         echo ""
-        print_info "NIS Protocol v3 is now accessible at http://localhost:80"
+        print_success "🎯 NIS Protocol v3.1 is now fully operational!"
+        echo ""
+        print_info "📋 Available Interfaces:"
+        echo "  🖥️  Chat Console:      http://localhost/console"
+        echo "  📚 API Documentation: http://localhost/docs"
+        echo "  ❤️  Health Check:     http://localhost/health"
+        echo "  🔧 Root API:         http://localhost/"
+        echo ""
+        print_info "🚀 Demo the full NIS Protocol pipeline:"
+        echo "  • Laplace Transform signal processing"
+        echo "  • Consciousness-driven validation"
+        echo "  • KAN symbolic reasoning"
+        echo "  • PINN physics validation"
+        echo "  • Multi-LLM coordination"
+        echo ""
+        print_success "Ready for demonstrations! Visit the chat console to get started."
         exit 0
     fi
     

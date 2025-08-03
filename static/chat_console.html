@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NIS Protocol v3.1 - Chat Console</title>
+    <title>NIS Protocol v3.2 - Enhanced Multimodal Chat Console</title>
     <style>
         * {
             margin: 0;
@@ -252,6 +252,72 @@
             background: rgba(0, 255, 0, 0.2);
         }
 
+        .multimodal-inputs {
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(0, 255, 255, 0.05);
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            border-radius: 5px;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+            gap: 10px;
+        }
+
+        .file-label {
+            color: #00cccc;
+            min-width: 80px;
+            font-size: 12px;
+        }
+
+        .file-preview {
+            color: #00ff00;
+            font-size: 11px;
+            opacity: 0.8;
+        }
+
+        input[type="file"] {
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid #00cccc;
+            color: #00cccc;
+            padding: 4px;
+            border-radius: 3px;
+            font-size: 11px;
+            width: 200px;
+        }
+
+        .toggle-label {
+            color: #ffaa00;
+            min-width: 100px;
+            font-size: 12px;
+        }
+
+        .toggle-input {
+            transform: scale(1.2);
+            accent-color: #ffaa00;
+        }
+
+        .image-preview {
+            max-width: 100px;
+            max-height: 100px;
+            border: 1px solid #00cccc;
+            border-radius: 3px;
+            margin-top: 5px;
+        }
+
+        .multimodal-indicator {
+            background: rgba(255, 170, 0, 0.1);
+            border: 1px solid #ffaa00;
+            color: #ffaa00;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 10px;
+            margin-left: 5px;
+        }
+
         /* Scrollbar styling */
         ::-webkit-scrollbar {
             width: 8px;
@@ -273,7 +339,7 @@
 </head>
 <body>
     <div class="header">
-        <h1>🧠 NIS Protocol v3.1 - Chat Console</h1>
+                        <h1>🧠 NIS Protocol v3.2 - Enhanced Multimodal Console</h1>
         <div class="status">
             <div class="status-item">
                 <div class="status-dot"></div>
@@ -295,7 +361,7 @@
                     <strong>🤖 NIS Protocol System</strong>
                     <span id="timestamp"></span>
                 </div>
-                Welcome to the NIS Protocol v3.1 Chat Console! 
+                Welcome to the NIS Protocol v3.2 Enhanced Multimodal Console! 
                 <br><br>
                 This system features:
                 <br>• 🌊 Laplace Transform signal processing
@@ -303,8 +369,12 @@
                 <br>• 🧮 KAN (Kolmogorov-Arnold) symbolic reasoning
                 <br>• 🔬 PINN physics-informed validation
                 <br>• 🤖 Multi-LLM provider integration
+                <br>• 🎨 Advanced multimodal vision analysis
+                <br>• 📄 Intelligent document processing
+                <br>• 🔬 Deep research & fact checking
+                <br>• 🧠 Multi-model collaborative reasoning
                 <br><br>
-                Try asking about physics, mathematics, or complex reasoning problems!
+                Try uploading images, documents, or enabling research mode for enhanced AI capabilities!
             </div>
         </div>
 
@@ -314,8 +384,12 @@
                     <span class="quick-command" onclick="insertQuickCommand('Explain the physics of a bouncing ball')">⚽ Physics Demo</span>
                     <span class="quick-command" onclick="insertQuickCommand('Analyze your consciousness level')">🧠 Consciousness</span>
                     <span class="quick-command" onclick="insertQuickCommand('Solve a complex mathematical equation')">🧮 Math Reasoning</span>
-                    <span class="quick-command" onclick="insertQuickCommand('Run a physics simulation')">🔬 Simulation</span>
-                    <span class="quick-command" onclick="insertQuickCommand('What are your capabilities?')">❓ Capabilities</span>
+                    <span class="quick-command" onclick="testImageAnalysis()">🎨 Vision Analysis</span>
+                    <span class="quick-command" onclick="testDocumentAnalysis()">📄 Document AI</span>
+                    <span class="quick-command" onclick="testDeepResearch()">🔬 Deep Research</span>
+                    <span class="quick-command" onclick="testCollaborativeReasoning()">🧠 AI Reasoning</span>
+                    <span class="quick-command" onclick="testImageGeneration()">🎨 Image Generation</span>
+                    <span class="quick-command" onclick="showEndpointDemo()">🚀 API Endpoints</span>
                 </div>
                 
                 <div class="controls">
@@ -345,6 +419,27 @@
                 
                 <div class="input-container">
                     <textarea id="messageInput" placeholder="Ask the NIS Protocol anything... (Press Ctrl+Enter to send)" rows="3"></textarea>
+                    
+                    <!-- Multimodal Input Section -->
+                    <div class="multimodal-inputs">
+                        <div class="input-group">
+                            <label for="imageUpload" class="file-label">📸 Image:</label>
+                            <input type="file" id="imageUpload" accept="image/*" onchange="handleImageUpload(event)">
+                            <span id="imagePreview" class="file-preview"></span>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="documentUpload" class="file-label">📄 Document:</label>
+                            <input type="file" id="documentUpload" accept=".pdf,.txt,.md,.doc,.docx" onchange="handleDocumentUpload(event)">
+                            <span id="documentPreview" class="file-preview"></span>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="researchMode" class="toggle-label">🔬 Research Mode:</label>
+                            <input type="checkbox" id="researchMode" class="toggle-input">
+                        </div>
+                    </div>
+                    
                     <button id="sendButton" onclick="sendMessage()">Send</button>
                 </div>
             </div>
@@ -358,6 +453,8 @@
     <script>
         let conversationId = null;
         let messageCount = 0;
+        let uploadedImage = null;
+        let uploadedDocument = null;
 
         // Initialize the console
         document.addEventListener('DOMContentLoaded', function() {
@@ -401,19 +498,35 @@
             const sendButton = document.getElementById('sendButton');
             const message = messageInput.value.trim();
             
-            if (!message) return;
+            if (!message && !uploadedImage && !uploadedDocument) return;
+
+            // Check for multimodal inputs
+            const researchMode = document.getElementById('researchMode').checked;
+            const hasImage = uploadedImage !== null;
+            const hasDocument = uploadedDocument !== null;
+            const isMultimodal = hasImage || hasDocument || researchMode;
 
             // Disable input while processing
             messageInput.disabled = true;
             sendButton.disabled = true;
             document.getElementById('typingIndicator').style.display = 'block';
 
-            // Add user message to chat
-            addMessage('user', message, {
+            // Add user message to chat with multimodal indicators
+            const userMetadata = {
                 agent_type: document.getElementById('agentType').value,
                 provider: document.getElementById('provider').value,
-                user_id: document.getElementById('userId').value || 'anonymous'
-            });
+                user_id: document.getElementById('userId').value || 'anonymous',
+                has_image: hasImage,
+                has_document: hasDocument,
+                research_mode: researchMode
+            };
+            
+            let displayMessage = message;
+            if (hasImage) displayMessage += ' 📸';
+            if (hasDocument) displayMessage += ' 📄';
+            if (researchMode) displayMessage += ' 🔬';
+            
+            addMessage('user', displayMessage, userMetadata);
 
             // Clear input
             messageInput.value = '';
@@ -421,71 +534,114 @@
             const startTime = Date.now();
 
             try {
-                const responseFormat = document.getElementById('responseFormat').value;
-                const endpoint = responseFormat === 'formatted' ? '/chat/formatted' : '/chat';
+                let response;
                 
-                const response = await fetch(endpoint, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        message: message,
-                        user_id: document.getElementById('userId').value || 'anonymous',
-                        conversation_id: conversationId,
-                        agent_type: document.getElementById('agentType').value,
-                        provider: document.getElementById('provider').value || undefined
-                    })
-                });
+                if (isMultimodal) {
+                    // Use multimodal request function
+                    response = await sendMultimodalRequest(message, uploadedImage, uploadedDocument, researchMode);
+                } else {
+                    // Use regular chat request
+                    const responseFormat = document.getElementById('responseFormat').value;
+                    const endpoint = responseFormat === 'formatted' ? '/chat/formatted' : '/chat';
+                    
+                    response = await fetch(endpoint, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            message: message,
+                            user_id: document.getElementById('userId').value || 'anonymous',
+                            conversation_id: conversationId,
+                            agent_type: document.getElementById('agentType').value,
+                            provider: document.getElementById('provider').value || undefined
+                        })
+                    });
+                }
 
                 const responseTime = Date.now() - startTime;
 
                 if (response.ok) {
-                    if (responseFormat === 'formatted') {
-                        // Handle formatted HTML response
-                        const htmlContent = await response.text();
-                        addMessage('assistant', htmlContent, {
-                            response_time: responseTime,
-                            format: 'formatted',
-                            is_html: true
-                        });
-                    } else {
-                        // Handle JSON response
+                    if (isMultimodal) {
+                        // Handle multimodal response
                         const result = await response.json();
                         
-                        // Update conversation ID
-                        conversationId = result.conversation_id;
-                        
-                        // Add assistant response
-                        addMessage('assistant', result.response, {
-                            confidence: result.confidence,
-                            provider: result.provider,
-                            model: result.model,
-                            tokens_used: result.tokens_used,
-                            real_ai: result.real_ai,
+                        let content = '';
+                        let metadata = {
                             response_time: responseTime,
-                            format: 'json'
-                        });
+                            format: 'multimodal',
+                            is_html: false
+                        };
+                        
+                        // Format content based on response type
+                        if (result.analysis) {
+                            // Vision analysis response
+                            content = `🎨 **Vision Analysis Results**\n\n${JSON.stringify(result.analysis, null, 2)}`;
+                            metadata.analysis_type = 'vision';
+                        } else if (result.research) {
+                            // Research response
+                            content = `🔬 **Research Results**\n\n${JSON.stringify(result.research, null, 2)}`;
+                            metadata.analysis_type = 'research';
+                        } else if (result.validation) {
+                            // Validation response
+                            content = `✅ **Validation Results**\n\n${JSON.stringify(result.validation, null, 2)}`;
+                            metadata.analysis_type = 'validation';
+                        } else {
+                            content = JSON.stringify(result, null, 2);
+                        }
+                        
+                        addMessage('assistant', content, metadata);
+                        
+                    } else {
+                        // Handle regular response
+                        const responseFormat = document.getElementById('responseFormat').value;
+                        
+                        if (responseFormat === 'formatted') {
+                            // Handle formatted HTML response
+                            const htmlContent = await response.text();
+                            addMessage('assistant', htmlContent, {
+                                response_time: responseTime,
+                                format: 'formatted',
+                                is_html: true
+                            });
+                        } else {
+                            // Handle JSON response
+                            const result = await response.json();
+                            
+                            // Update conversation ID
+                            conversationId = result.conversation_id;
+                            
+                            // Add assistant response
+                            addMessage('assistant', result.response, {
+                                confidence: result.confidence,
+                                provider: result.provider,
+                                model: result.model,
+                                tokens_used: result.tokens_used,
+                                real_ai: result.real_ai,
+                                response_time: responseTime,
+                                format: 'json'
+                            });
+                        }
                     }
 
                     // Update status
                     document.getElementById('response-time').textContent = `Response: ${responseTime}ms`;
                     
                 } else {
-                    const errorContent = responseFormat === 'formatted' ? await response.text() : await response.json();
-                    const errorMessage = responseFormat === 'formatted' ? 
-                        errorContent : 
-                        `Error: ${errorContent.detail || 'Unknown error occurred'}`;
-                    
-                    addMessage('error', errorMessage, {
+                    const errorContent = await response.text();
+                    addMessage('error', `Error: ${errorContent}`, {
                         status_code: response.status,
-                        format: responseFormat,
-                        is_html: responseFormat === 'formatted'
+                        response_time: responseTime
                     });
                 }
 
             } catch (error) {
                 addMessage('error', `Connection error: ${error.message}`, {});
+            }
+
+            // Clear multimodal inputs after sending
+            if (isMultimodal) {
+                clearMultimodalInputs();
             }
 
             // Re-enable input
@@ -548,6 +704,341 @@
             messagesContainer.appendChild(messageDiv);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
             messageCount++;
+        }
+
+        // ====== MULTIMODAL ENHANCEMENT FUNCTIONS ======
+        
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    uploadedImage = e.target.result;
+                    document.getElementById('imagePreview').innerHTML = 
+                        `📸 ${file.name} (${(file.size / 1024).toFixed(1)}KB) <span class="multimodal-indicator">Ready</span>`;
+                    
+                    // Show preview image
+                    const img = document.createElement('img');
+                    img.src = uploadedImage;
+                    img.className = 'image-preview';
+                    document.getElementById('imagePreview').appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        function handleDocumentUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    uploadedDocument = {
+                        content: e.target.result,
+                        name: file.name,
+                        type: file.type,
+                        size: file.size
+                    };
+                    document.getElementById('documentPreview').innerHTML = 
+                        `📄 ${file.name} (${(file.size / 1024).toFixed(1)}KB) <span class="multimodal-indicator">Ready</span>`;
+                };
+                
+                // Handle different file types
+                if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
+                    reader.readAsDataURL(file);
+                } else {
+                    reader.readAsText(file);
+                }
+            }
+        }
+        
+        async function sendMultimodalRequest(message, image, document, researchMode) {
+            try {
+                let endpoint = '/chat/formatted';
+                let requestData = {
+                    message: message,
+                    user_id: document.getElementById('userId').value || 'demo_user',
+                    conversation_id: conversationId,
+                    agent_type: document.getElementById('agentType').value,
+                    provider: document.getElementById('provider').value || undefined
+                };
+                
+                // Handle image analysis
+                if (image) {
+                    endpoint = '/vision/analyze';
+                    requestData = {
+                        image_data: image.split(',')[1], // Remove data:image/jpeg;base64, prefix
+                        analysis_type: researchMode ? 'scientific' : 'comprehensive',
+                        provider: 'auto',
+                        context: message
+                    };
+                }
+                
+                // Handle document analysis
+                if (document && !image) {
+                    endpoint = '/document/analyze';
+                    requestData = {
+                        document_data: document.content,
+                        document_type: 'auto',
+                        processing_mode: researchMode ? 'research_focused' : 'comprehensive',
+                        context: message
+                    };
+                }
+                
+                // Handle research mode
+                if (researchMode && !image && !document) {
+                    endpoint = '/research/deep';
+                    requestData = {
+                        query: message,
+                        research_depth: 'comprehensive',
+                        source_types: ['arxiv', 'semantic_scholar', 'wikipedia', 'web_search'],
+                        time_limit: 300,
+                        min_sources: 5
+                    };
+                }
+                
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestData)
+                });
+                
+                return response;
+                
+            } catch (error) {
+                throw new Error(`Multimodal request failed: ${error.message}`);
+            }
+        }
+        
+        function clearMultimodalInputs() {
+            // Clear file inputs
+            document.getElementById('imageUpload').value = '';
+            document.getElementById('documentUpload').value = '';
+            document.getElementById('imagePreview').innerHTML = '';
+            document.getElementById('documentPreview').innerHTML = '';
+            document.getElementById('researchMode').checked = false;
+            
+            // Clear variables
+            uploadedImage = null;
+            uploadedDocument = null;
+        }
+        
+        function addMultimodalIndicators(metadata) {
+            let indicators = [];
+            
+            if (metadata.has_image) {
+                indicators.push('<span class="multimodal-indicator">🎨 Vision</span>');
+            }
+            if (metadata.has_document) {
+                indicators.push('<span class="multimodal-indicator">📄 Document</span>');
+            }
+            if (metadata.research_mode) {
+                indicators.push('<span class="multimodal-indicator">🔬 Research</span>');
+            }
+            
+            return indicators.join(' ');
+        }
+
+        // ====== MULTIMODAL TESTING FUNCTIONS ======
+        
+        async function testImageAnalysis() {
+            addMessage('system', '🎨 Testing Vision Analysis Endpoint...', {});
+            
+            try {
+                const response = await fetch('/vision/analyze', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        image_data: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
+                        analysis_type: "comprehensive",
+                        provider: "auto",
+                        context: "Testing NIS Protocol v3.2 vision capabilities"
+                    })
+                });
+                
+                const result = await response.json();
+                addMessage('assistant', JSON.stringify(result, null, 2), {
+                    format: 'json',
+                    endpoint: '/vision/analyze',
+                    test_type: 'vision_analysis'
+                });
+            } catch (error) {
+                addMessage('error', `Vision Analysis Test Failed: ${error.message}`, {});
+            }
+        }
+        
+        async function testDocumentAnalysis() {
+            addMessage('system', '📄 Testing Document Analysis Endpoint...', {});
+            
+            try {
+                const response = await fetch('/document/analyze', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        document_data: "Sample academic paper content for testing NIS Protocol v3.2 document processing capabilities.",
+                        document_type: "academic_paper",
+                        processing_mode: "comprehensive",
+                        extract_images: true,
+                        analyze_citations: true
+                    })
+                });
+                
+                const result = await response.json();
+                addMessage('assistant', JSON.stringify(result, null, 2), {
+                    format: 'json',
+                    endpoint: '/document/analyze',
+                    test_type: 'document_analysis'
+                });
+            } catch (error) {
+                addMessage('error', `Document Analysis Test Failed: ${error.message}`, {});
+            }
+        }
+        
+        async function testDeepResearch() {
+            addMessage('system', '🔬 Testing Deep Research Endpoint...', {});
+            
+            try {
+                const response = await fetch('/research/deep', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        query: "Latest developments in quantum computing 2024",
+                        research_depth: "comprehensive",
+                        source_types: ["arxiv", "semantic_scholar", "wikipedia"],
+                        time_limit: 120,
+                        min_sources: 3
+                    })
+                });
+                
+                const result = await response.json();
+                addMessage('assistant', JSON.stringify(result, null, 2), {
+                    format: 'json',
+                    endpoint: '/research/deep',
+                    test_type: 'deep_research'
+                });
+            } catch (error) {
+                addMessage('error', `Deep Research Test Failed: ${error.message}`, {});
+            }
+        }
+        
+        async function testCollaborativeReasoning() {
+            addMessage('system', '🧠 Testing Collaborative Reasoning Endpoint...', {});
+            
+            try {
+                const response = await fetch('/reasoning/collaborative', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        problem: "What are the philosophical implications of consciousness in AI systems?",
+                        reasoning_type: "philosophical",
+                        depth: "comprehensive",
+                        require_consensus: true,
+                        max_iterations: 3
+                    })
+                });
+                
+                const result = await response.json();
+                addMessage('assistant', JSON.stringify(result, null, 2), {
+                    format: 'json',
+                    endpoint: '/reasoning/collaborative',
+                    test_type: 'collaborative_reasoning'
+                });
+            } catch (error) {
+                addMessage('error', `Collaborative Reasoning Test Failed: ${error.message}`, {});
+            }
+        }
+        
+        async function testImageGeneration() {
+            addMessage('system', '🎨 Testing AI Image Generation Endpoint...', {});
+            
+            try {
+                const response = await fetch('/image/generate', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        prompt: "A futuristic quantum computer in a high-tech laboratory with holographic displays and neural networks",
+                        style: "scientific",
+                        size: "1024x1024",
+                        provider: "auto",
+                        quality: "standard",
+                        num_images: 1
+                    })
+                });
+                
+                const result = await response.json();
+                
+                // Display result with enhanced formatting for image generation
+                let displayContent = JSON.stringify(result, null, 2);
+                if (result.status === "success" && result.generation && result.generation.images) {
+                    displayContent = `🎨 IMAGE GENERATION SUCCESSFUL!
+
+📋 Generation Details:
+• Prompt: ${result.generation.prompt}
+• Enhanced Prompt: ${result.generation.enhanced_prompt}
+• Style: ${result.generation.style}
+• Provider: ${result.generation.provider_used}
+• Images Generated: ${result.generation.num_images}
+
+${JSON.stringify(result, null, 2)}`;
+                }
+                
+                addMessage('assistant', displayContent, {
+                    format: 'json',
+                    endpoint: '/image/generate',
+                    test_type: 'image_generation',
+                    has_images: result.status === 'success'
+                });
+            } catch (error) {
+                addMessage('error', `Image Generation Test Failed: ${error.message}`, {});
+            }
+        }
+
+        function showEndpointDemo() {
+            const endpointInfo = `
+🚀 NIS Protocol v3.2 - Enhanced API Endpoints
+
+📊 MULTIMODAL & RESEARCH APIs:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎨 VISION & IMAGE PROCESSING:
+  POST /vision/analyze          - Multi-provider image analysis
+  POST /image/generate          - AI image generation (DALL-E, Imagen)
+  POST /image/edit              - AI image editing and enhancement
+  POST /visualization/create    - Scientific visualization generation
+
+🔬 RESEARCH & KNOWLEDGE:
+  POST /research/deep           - Multi-source deep research
+  POST /research/validate       - Claim validation with evidence
+
+📄 DOCUMENT PROCESSING:
+  POST /document/analyze        - Advanced PDF/paper analysis
+
+🧠 ENHANCED REASONING:
+  POST /reasoning/collaborative - Multi-model reasoning chains
+  POST /reasoning/debate        - Structured AI debates
+
+🎯 CORE SYSTEM:
+  POST /chat                    - Standard chat interface
+  POST /chat/formatted          - Human-readable responses
+  GET  /health                  - System health check
+  GET  /agents/multimodal/status - Enhanced agents status
+
+💡 NEW IMAGE GENERATION FEATURES:
+• Text-to-image with DALL-E and Imagen
+• Multiple styles: photorealistic, artistic, scientific, anime
+• Multiple sizes: 256x256 to 1792x1024
+• Batch generation (1-4 images)
+• AI-powered image editing and inpainting
+
+🎮 Try the test buttons above to demo each endpoint!
+            `;
+            
+            addMessage('system', endpointInfo, {
+                format: 'documentation',
+                endpoint_count: 12,
+                version: 'v3.2'
+            });
         }
 
         // Auto-refresh health status every 30 seconds
