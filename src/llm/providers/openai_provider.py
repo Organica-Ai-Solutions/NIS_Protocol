@@ -46,6 +46,9 @@ class OpenAIProvider(BaseLLMProvider):
         # Initialize session
         self.session = None
         
+        # Image generation endpoints
+        self.dalle_endpoint = f"{self.api_base}/images/generations"
+        
     def __del__(self):
         """Cleanup aiohttp session."""
         if self.session and not self.session.closed:
@@ -184,6 +187,120 @@ class OpenAIProvider(BaseLLMProvider):
             Number of tokens
         """
         return len(self.encoding.encode(text))
+    
+    async def generate_image(
+        self, 
+        prompt: str, 
+        size: str = "1024x1024", 
+        quality: str = "standard", 
+        num_images: int = 1
+    ) -> Dict[str, Any]:
+        """
+        Generate images using DALL-E API
+        
+        Args:
+            prompt: Text description of the image to generate
+            size: Image size (256x256, 512x512, 1024x1024, 1792x1024, 1024x1792)
+            quality: Generation quality (standard, hd)
+            num_images: Number of images to generate (1-10)
+            
+        Returns:
+            Dict containing image generation results
+        """
+        try:
+            if not self.session:
+                await self._init_session()
+            
+            # Prepare the request payload
+            payload = {
+                "prompt": prompt,
+                "n": min(num_images, 10),  # DALL-E limit
+                "size": size
+            }
+            
+            # Use DALL-E 3 for HD quality and specific sizes, DALL-E 2 otherwise
+            if quality == "hd" and size in ["1024x1024", "1792x1024", "1024x1792"]:
+                payload["model"] = "dall-e-3"
+                payload["quality"] = "hd"
+                payload["n"] = 1  # DALL-E 3 only supports 1 image
+            else:
+                payload["model"] = "dall-e-2"
+                payload["size"] = "1024x1024" if size not in ["256x256", "512x512", "1024x1024"] else size
+            
+            headers = {
+                "Authorization": f"Bearer {self.api_key}",
+                "Content-Type": "application/json"
+            }
+            
+            if self.organization:
+                headers["OpenAI-Organization"] = self.organization
+            
+            self.logger.info(f"Generating image with DALL-E: {payload['model']}")
+            
+            async with self.session.post(
+                self.dalle_endpoint,
+                headers=headers,
+                json=payload
+            ) as response:
+                if response.status == 200:
+                    result = await response.json()
+                    
+                    # Convert URLs to base64 data URLs for embedding
+                    images = []
+                    for img_data in result.get("data", []):
+                        image_url = img_data.get("url", "")
+                        revised_prompt = img_data.get("revised_prompt", prompt)
+                        
+                        # Download and convert to base64
+                        try:
+                            async with self.session.get(image_url) as img_response:
+                                if img_response.status == 200:
+                                    image_bytes = await img_response.read()
+                                    import base64
+                                    b64_image = base64.b64encode(image_bytes).decode('utf-8')
+                                    data_url = f"data:image/png;base64,{b64_image}"
+                                    
+                                    images.append({
+                                        "url": data_url,
+                                        "revised_prompt": revised_prompt,
+                                        "size": payload["size"],
+                                        "format": "png"
+                                    })
+                                else:
+                                    self.logger.warning(f"Failed to download image: {img_response.status}")
+                        except Exception as e:
+                            self.logger.error(f"Error downloading image: {e}")
+                            # Fallback to original URL
+                            images.append({
+                                "url": image_url,
+                                "revised_prompt": revised_prompt,
+                                "size": payload["size"],
+                                "format": "png"
+                            })
+                    
+                    return {
+                        "images": images,
+                        "model": payload["model"],
+                        "provider": "openai"
+                    }
+                else:
+                    error_text = await response.text()
+                    self.logger.error(f"DALL-E API error {response.status}: {error_text}")
+                    return {
+                        "images": [],
+                        "model": payload.get("model", "unknown"),
+                        "provider": "openai",
+                        "error": f"API error {response.status}: {error_text}"
+                    }
+                    
+        except Exception as e:
+            self.logger.error(f"Error generating image: {e}")
+            return {
+                "images": [],
+                "model": "unknown",
+                "provider": "openai",
+                "error": str(e)
+            }
     
     async def close(self):
         """Close the aiohttp session."""

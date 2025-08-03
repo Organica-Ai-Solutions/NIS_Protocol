@@ -388,7 +388,7 @@
                     <span class="quick-command" onclick="testDocumentAnalysis()">📄 Document AI</span>
                     <span class="quick-command" onclick="testDeepResearch()">🔬 Deep Research</span>
                     <span class="quick-command" onclick="testCollaborativeReasoning()">🧠 AI Reasoning</span>
-                    <span class="quick-command" onclick="testImageGeneration()">🎨 Image Generation</span>
+                    <span class="quick-command" onclick="promptImageGeneration()">🎨 Generate Image</span>
                     <span class="quick-command" onclick="showEndpointDemo()">🚀 API Endpoints</span>
                 </div>
                 
@@ -949,6 +949,80 @@
             }
         }
         
+        async function promptImageGeneration() {
+            // Prompt user for custom image generation
+            const prompt = window.prompt("🎨 Enter your image generation prompt:", "A majestic dragon soaring through a cyberpunk cityscape at sunset");
+            if (!prompt) return;
+            
+            const style = window.prompt("🎭 Choose style (photorealistic, artistic, scientific, anime, sketch):", "artistic");
+            const validStyles = ["photorealistic", "artistic", "scientific", "anime", "sketch"];
+            const selectedStyle = validStyles.includes(style) ? style : "artistic";
+            
+            addMessage('user', `🎨 Generate Image: "${prompt}" (${selectedStyle} style)`, {});
+            addMessage('system', '🎨 Generating your custom image...', {});
+            
+            try {
+                const response = await fetch('/image/generate', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        prompt: prompt,
+                        style: selectedStyle,
+                        size: "1024x1024",
+                        provider: "auto",
+                        quality: "standard",
+                        num_images: 1
+                    })
+                });
+                
+                const result = await response.json();
+                
+                // Display result with enhanced formatting for image generation
+                if (result.status === "success" && result.generation && result.generation.images) {
+                    let displayContent = `🎨 **IMAGE GENERATION SUCCESSFUL!**
+
+📋 **Generation Details:**
+• **Prompt:** ${result.generation.prompt}
+• **Enhanced Prompt:** ${result.generation.enhanced_prompt}
+• **Style:** ${result.generation.style}
+• **Provider:** ${result.generation.provider_used}
+• **Images Generated:** ${result.generation.num_images}
+
+`;
+                    
+                    // Try to display the actual image if it's a valid data URL
+                    if (result.generation.images && result.generation.images[0] && result.generation.images[0].url) {
+                        const imageUrl = result.generation.images[0].url;
+                        if (imageUrl.startsWith('data:image/') && imageUrl.length > 100) {
+                            displayContent += `<img src="${imageUrl}" style="max-width: 100%; border-radius: 8px; margin: 10px 0;" alt="Generated Image">
+
+`;
+                        }
+                    }
+                    
+                    displayContent += `\`\`\`json
+${JSON.stringify(result, null, 2)}
+\`\`\``;
+                    
+                    addMessage('assistant', displayContent, {
+                        format: 'html',
+                        endpoint: '/image/generate',
+                        test_type: 'image_generation',
+                        has_images: true
+                    });
+                } else {
+                    addMessage('assistant', `🚨 Image generation failed: ${JSON.stringify(result, null, 2)}`, {
+                        format: 'json',
+                        endpoint: '/image/generate',
+                        test_type: 'image_generation',
+                        has_images: false
+                    });
+                }
+            } catch (error) {
+                addMessage('error', `🚨 Image Generation Failed: ${error.message}`, {});
+            }
+        }
+
         async function testImageGeneration() {
             addMessage('system', '🎨 Testing AI Image Generation Endpoint...', {});
             

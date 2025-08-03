@@ -503,35 +503,67 @@ class MultimodalVisionAgent(NISAgent):
         quality: str, 
         num_images: int
     ) -> Dict[str, Any]:
-        """Perform actual image generation (mock implementation)"""
+        """Perform actual image generation using real APIs"""
         
-        # Mock implementation - in production would call actual APIs
-        if provider == 'openai':
-            # Would call OpenAI DALL-E API
-            return {
-                "images": [
-                    {
-                        "url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
-                        "revised_prompt": f"DALL-E enhanced: {prompt}"
-                    }
-                ] * num_images,
-                "model": "dall-e-3" if quality == "hd" else "dall-e-2",
-                "provider": "openai"
-            }
-        elif provider == 'google':
-            # Would call Google Imagen API
-            return {
-                "images": [
-                    {
-                        "url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
-                        "revised_prompt": f"Imagen enhanced: {prompt}"
-                    }
-                ] * num_images,
-                "model": "imagen-2",
-                "provider": "google"
-            }
-        
-        return {"images": [], "model": "unknown", "provider": provider}
+        try:
+            if provider == 'openai':
+                # Use real OpenAI DALL-E API
+                from src.llm.providers.openai_provider import OpenAIProvider
+                import os
+                
+                # Check if we have an API key
+                api_key = os.getenv("OPENAI_API_KEY")
+                if not api_key or api_key in ["YOUR_OPENAI_API_KEY", "your_openai_api_key_here"]:
+                    logger.warning("OpenAI API key not available, using fallback")
+                    return self._fallback_image_generation(prompt, provider, num_images)
+                
+                # Initialize OpenAI provider
+                openai_config = {
+                    "api_key": api_key,
+                    "model": "gpt-4"  # Default model for provider init
+                }
+                
+                openai_provider = OpenAIProvider(openai_config)
+                result = await openai_provider.generate_image(
+                    prompt=prompt,
+                    size=size,
+                    quality=quality,
+                    num_images=num_images
+                )
+                
+                # Clean up provider
+                await openai_provider.close()
+                
+                return result
+                
+            elif provider == 'google':
+                # Google Imagen API would go here
+                logger.warning("Google Imagen not yet implemented, using fallback")
+                return self._fallback_image_generation(prompt, provider, num_images)
+            
+            else:
+                logger.warning(f"Unknown provider: {provider}, using fallback")
+                return self._fallback_image_generation(prompt, provider, num_images)
+                
+        except Exception as e:
+            logger.error(f"Error in image generation: {e}")
+            return self._fallback_image_generation(prompt, provider, num_images)
+    
+    def _fallback_image_generation(self, prompt: str, provider: str, num_images: int) -> Dict[str, Any]:
+        """Fallback mock implementation when real APIs are unavailable"""
+        return {
+            "images": [
+                {
+                    "url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
+                    "revised_prompt": f"{provider.upper()} enhanced: {prompt}",
+                    "size": "1024x1024",
+                    "format": "png"
+                }
+            ] * num_images,
+            "model": "dall-e-2" if provider == "openai" else "imagen-2",
+            "provider": provider,
+            "note": "Fallback mock - configure API keys for real generation"
+        }
     
     def _process_generation_results(
         self, 
