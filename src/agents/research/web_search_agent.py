@@ -17,7 +17,7 @@ import aiohttp
 
 # Try to import optional dependencies
 try:
-    import google.generativeai as genai
+    import google.generativeai as check_genai_available
     GEMINI_AVAILABLE = True
 except ImportError:
     GEMINI_AVAILABLE = False
@@ -146,8 +146,9 @@ class WebSearchAgent:
         # Initialize Gemini for query generation
         if GEMINI_AVAILABLE and self.config.get("google_api_key"):
             try:
-                genai.configure(api_key=self.config["google_api_key"])
-                self.llm_providers["gemini"] = genai.GenerativeModel('gemini-pro')
+                import google.generativeai as local_genai_module
+                local_genai_module.configure(api_key=self.config["google_api_key"])
+                self.llm_providers["gemini"] = local_genai_module.GenerativeModel('gemini-pro')
                 self.logger.info("Gemini LLM provider initialized")
             except Exception as e:
                 self.logger.warning(f"Could not initialize Gemini: {e}")

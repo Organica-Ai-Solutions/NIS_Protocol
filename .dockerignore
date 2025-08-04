@@ -13,7 +13,7 @@ __pycache__/
 *.pyd
 venv/
 *.egg-info/
-.env
+# .env - ALLOW .env file for API keys
 
 # Cache and logs
 cache/
@@ -24,6 +24,8 @@ dev/logs/
 # Development and testing folders
 dev/
 benchmarks/
+backup/
+private/
 
 # Large assets and models not needed in the final image
 assets/

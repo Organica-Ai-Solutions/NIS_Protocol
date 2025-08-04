@@ -69,7 +69,7 @@ This Commercial License Agreement grants you the right to use the NIS Protocol i
 ## 📞 **GETTING STARTED**
 
 ### **License Application Process**
-1. **Initial Contact:** diego@organicaai.com
+1. **Initial Contact:** diego.torres@organicaai.com
 2. **Requirements Discussion:** 30-minute consultation call
 3. **License Agreement:** Customized terms based on your needs
 4. **Payment & Activation:** License key provided upon payment
@@ -150,7 +150,7 @@ For unique requirements not covered by standard tiers:
 ---
 
 **📧 Ready to discuss commercial licensing?**
-**Contact: diego@organicaai.com**
+**Contact: diego.torres@organicaai.com**
 **Subject: "NIS Protocol Commercial License Inquiry"**
 
 ---

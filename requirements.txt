@@ -170,6 +170,7 @@ text-unidecode
 threadpoolctl
 tinycss2
 tokenizers
+tiktoken
 toml
 tomlkit
 toolz
@@ -210,5 +211,6 @@ pandas
 openai
 anthropic
 google-generativeai
+google-genai
 #modulus-sym
 # Temporary comment to invalidate cache

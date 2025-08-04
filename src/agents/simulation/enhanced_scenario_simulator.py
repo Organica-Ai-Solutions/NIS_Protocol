@@ -427,7 +427,7 @@ class EnhancedScenarioSimulator(EnhancedAgentBase):
                 scenario_id=scenario_id,
                 result=SimulationResult(
                     scenario_id=scenario_id,
-                    scenario_type=request.scenario_type,
+                    scenario_type=scenario_type,  # Use parameter instead of request.scenario_type
                     success_probability=0.0,
                     expected_outcomes=[],
                     risk_factors=[],
@@ -439,7 +439,7 @@ class EnhancedScenarioSimulator(EnhancedAgentBase):
                 ),
                 processing_time=time.time() - start_time,
                 cache_key=None,
-                integrity_score=calculate_score(metrics),
+                integrity_score=0.0,  # Set default score since calculate_score(metrics) might fail
                 audit_flags=["SIMULATION_ERROR"],
                 infrastructure_metrics={"error": True},
                 timestamp=time.time()

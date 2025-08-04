@@ -45,6 +45,7 @@ class ProtocolType(Enum):
     """Supported external protocol types"""
     # Tier 1: Native Integration
     MCP = "mcp"                           # Model Context Protocol
+    A2A = "a2a"                           # Agent-to-Agent Protocol
     ATOA = "atoa"                         # Agent-to-Operator-to-Agent
     OPENAI_TOOLS = "openai_tools"         # OpenAI Function Calling
     

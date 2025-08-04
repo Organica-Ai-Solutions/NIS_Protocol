@@ -1,0 +1,107 @@
+{
+  "summary": {
+    "total_tests": 12,
+    "passed_tests": 8,
+    "failed_tests": 4,
+    "success_rate": 66.66666666666666,
+    "total_time": 51.44650673866272
+  },
+  "results": [
+    {
+      "endpoint": "/",
+      "method": "GET",
+      "status": "PASS",
+      "details": "System operational - 5 providers",
+      "response_time": 0.02423882484436035,
+      "timestamp": 1754288112.5509083
+    },
+    {
+      "endpoint": "/health",
+      "method": "GET",
+      "status": "PASS",
+      "details": "Healthy - 0 conversations",
+      "response_time": 0.015576601028442383,
+      "timestamp": 1754288112.566485
+    },
+    {
+      "endpoint": "/chat",
+      "method": "POST",
+      "status": "PASS",
+      "details": "Response generated - Provider: deepseek",
+      "response_time": 23.342764377593994,
+      "timestamp": 1754288135.9092493
+    },
+    {
+      "endpoint": "/chat/formatted",
+      "method": "POST",
+      "status": "FAIL",
+      "details": "Error: Expecting value: line 2 column 9 (char 9)",
+      "response_time": 0,
+      "timestamp": 1754288157.1059134
+    },
+    {
+      "endpoint": "/image/generate",
+      "method": "POST",
+      "status": "PASS",
+      "details": "Generated 1 images - Provider: google",
+      "response_time": 0.21726703643798828,
+      "timestamp": 1754288157.3237028
+    },
+    {
+      "endpoint": "/vision/analyze",
+      "method": "POST",
+      "status": "PASS",
+      "details": "Analysis complete - Confidence: 0.95",
+      "response_time": 0.005002498626708984,
+      "timestamp": 1754288157.3287053
+    },
+    {
+      "endpoint": "/research/deep",
+      "method": "POST",
+      "status": "PASS",
+      "details": "Research complete - 0 sources found",
+      "response_time": 0.006777048110961914,
+      "timestamp": 1754288157.3369868
+    },
+    {
+      "endpoint": "/reasoning/collaborative",
+      "method": "POST",
+      "status": "FAIL",
+      "details": "Status code: 422",
+      "response_time": 0,
+      "timestamp": 1754288157.365042
+    },
+    {
+      "endpoint": "/visualization/create",
+      "method": "POST",
+      "status": "FAIL",
+      "details": "Status code: 422",
+      "response_time": 0,
+      "timestamp": 1754288157.372042
+    },
+    {
+      "endpoint": "/document/analyze",
+      "method": "POST",
+      "status": "PASS",
+      "details": "Endpoint functional",
+      "response_time": 6.575390577316284,
+      "timestamp": 1754288163.9474325
+    },
+    {
+      "endpoint": "/agents/multimodal/status",
+      "method": "GET",
+      "status": "PASS",
+      "details": "Endpoint functional",
+      "response_time": 0.019181489944458008,
+      "timestamp": 1754288163.966614
+    },
+    {
+      "endpoint": "/training/bitnet/status",
+      "method": "GET",
+      "status": "FAIL",
+      "details": "Status code: 500",
+      "response_time": 0,
+      "timestamp": 1754288163.9706728
+    }
+  ]
+}

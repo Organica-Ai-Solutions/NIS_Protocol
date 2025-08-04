@@ -706,12 +706,12 @@ The system represents a systematic in creating AI that thinks, reasons, and coor
 
     async def _call_google_api(self, messages, temperature, model):
         try:
-            import google.generativeai as genai
-            genai.configure(api_key=self.providers['google']['key'])
-            model = genai.GenerativeModel(model)
+            import google.generativeai as local_google_genai
+            local_google_genai.configure(api_key=self.providers['google']['key'])
+            genai_model = local_google_genai.GenerativeModel(model)
             # Convert messages to Google format
             content = '\n'.join([f"{msg['role']}: {msg['content']}" for msg in messages])
-            response = await model.generate_content_async(content, generation_config=genai.types.GenerationConfig(temperature=temperature))
+            response = await genai_model.generate_content_async(content, generation_config=local_google_genai.types.GenerationConfig(temperature=temperature))
             content = response.text
             logging.info(f"✅ Google real response generated ({len(content)} chars)")
             return {

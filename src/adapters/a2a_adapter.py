@@ -30,7 +30,8 @@ class A2AAdapter(BaseAdapter):
         Args:
             config: Configuration for the adapter, including API endpoints and auth
         """
-        super().__init__("a2a", config)
+        super().__init__(config or {})
+        self.protocol_name = "a2a"  # Set the protocol name
         self.session = requests.Session()
         
         # Set default headers for API requests

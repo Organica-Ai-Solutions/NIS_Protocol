@@ -30,7 +30,8 @@ class MCPAdapter(BaseAdapter):
         Args:
             config: Configuration for the adapter, including API endpoints and auth
         """
-        super().__init__("mcp", config)
+        super().__init__(config or {})
+        self.protocol_name = "mcp"  # Set the protocol name
         self.session = requests.Session()
         
         # Set default headers for API requests

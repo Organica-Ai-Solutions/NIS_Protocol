@@ -1,0 +1,25 @@
+{
+  "scenario_id": "heritage_001",
+  "scenario_type": "heritage_preservation",
+  "parameters": {
+    "time_horizon": 50,
+    "resolution": 0.1,
+    "iterations": 1000,
+    "confidence_level": 0.85,
+    "environmental_factors": {
+      "weather": 0.7,
+      "erosion": 0.5,
+      "tourism": 0.8
+    },
+    "resource_constraints": {
+      "budget": 100000,
+      "staff": 5,
+      "time": 2
+    },
+    "uncertainty_factors": {
+      "climate_change": 0.3,
+      "political_stability": 0.1
+    }
+  },
+  "simulation_duration": 10.0
+}

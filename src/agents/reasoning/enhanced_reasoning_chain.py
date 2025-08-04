@@ -581,3 +581,227 @@ class EnhancedReasoningChain(NISAgent):
         """Get current timestamp in ISO format"""
         from datetime import datetime
         return datetime.now().isoformat()
+    
+    async def _conduct_debate_round(
+        self,
+        problem: str,
+        positions: List[str], 
+        round_num: int,
+        debate_history: List[Dict[str, Any]]
+    ) -> Dict[str, Any]:
+        """
+        Conduct a single round of structured debate between models
+        
+        Args:
+            problem: The problem being debated
+            positions: Current positions in the debate
+            round_num: Current round number
+            debate_history: Previous rounds of debate
+            
+        Returns:
+            Results from this debate round
+        """
+        try:
+            # Get specialized models for debate
+            debate_models = [ModelSpecialization.CLAUDE_OPUS, ModelSpecialization.GPT4_TURBO]
+            
+            round_arguments = {}
+            
+            for i, position in enumerate(positions):
+                model = debate_models[i % len(debate_models)]
+                model_name = model.value
+                
+                # Build context from previous rounds
+                context = ""
+                if debate_history:
+                    context = f"\nPrevious debate rounds:\n{json.dumps(debate_history, indent=2)}"
+                
+                debate_prompt = f"""
+                You are participating in a structured debate about: {problem}
+                
+                Your position: {position}
+                Round: {round_num + 1}
+                {context}
+                
+                Provide your strongest argument for this position. Address counter-arguments from previous rounds if applicable.
+                Be logical, evidence-based, and persuasive. Keep your response focused and under 300 words.
+                """
+                
+                try:
+                    response = await self.llm_provider.generate_response([
+                        {"role": "system", "content": "You are an expert debater skilled in logical argumentation."},
+                        {"role": "user", "content": debate_prompt}
+                    ], agent_type="reasoning", requested_provider=model_name)
+                    
+                    round_arguments[f"position_{i}_{model_name}"] = {
+                        "position": position,
+                        "argument": response.get("content", "No argument provided"),
+                        "model": model_name,
+                        "confidence": response.get("confidence", 0.7)
+                    }
+                    
+                except Exception as e:
+                    logger.warning(f"Debate argument generation failed for {model_name}: {e}")
+                    round_arguments[f"position_{i}_{model_name}"] = {
+                        "position": position,
+                        "argument": f"Unable to generate argument: {str(e)}",
+                        "model": model_name,
+                        "confidence": 0.1
+                    }
+            
+            return {
+                "round": round_num,
+                "arguments": round_arguments,
+                "timestamp": self._get_timestamp()
+            }
+            
+        except Exception as e:
+            logger.error(f"Debate round conduct failed: {e}")
+            return {
+                "round": round_num,
+                "arguments": {},
+                "error": str(e),
+                "timestamp": self._get_timestamp()
+            }
+    
+    async def _generate_debate_positions(self, problem: str) -> List[str]:
+        """
+        Generate initial debate positions for a problem
+        
+        Args:
+            problem: The problem to generate positions for
+            
+        Returns:
+            List of debate positions
+        """
+        try:
+            position_prompt = f"""
+            For the following problem/question, generate 2-3 distinct, reasonable positions that could be debated:
+            
+            Problem: {problem}
+            
+            Provide diverse perspectives that reasonable people might hold. Each position should be:
+            - Clear and specific
+            - Defensible with evidence
+            - Meaningfully different from the others
+            
+            Format as a JSON list of position strings.
+            """
+            
+            response = await self.llm_provider.generate_response([
+                {"role": "system", "content": "You are an expert at identifying debate positions on complex topics."},
+                {"role": "user", "content": position_prompt}
+            ])
+            
+            content = response.get("content", "")
+            
+            try:
+                positions = json.loads(content)
+                if isinstance(positions, list) and len(positions) >= 2:
+                    return positions[:3]  # Max 3 positions
+            except json.JSONDecodeError:
+                pass
+            
+            # Fallback to simple pro/con positions
+            return [
+                f"Position supporting: {problem}",
+                f"Position opposing: {problem}"
+            ]
+            
+        except Exception as e:
+            logger.warning(f"Position generation failed: {e}")
+            return [
+                f"Affirmative position on: {problem}",
+                f"Negative position on: {problem}"
+            ]
+    
+    async def _update_positions(
+        self, 
+        original_positions: List[str], 
+        round_results: Dict[str, Any]
+    ) -> List[str]:
+        """
+        Update debate positions based on round results
+        
+        Args:
+            original_positions: Original positions
+            round_results: Results from the latest round
+            
+        Returns:
+            Updated positions (may be unchanged)
+        """
+        # For now, keep positions stable across rounds
+        # In future versions, could evolve positions based on strong counter-arguments
+        return original_positions
+    
+    async def _synthesize_debate(
+        self, 
+        problem: str, 
+        debate_history: List[Dict[str, Any]]
+    ) -> Dict[str, Any]:
+        """
+        Synthesize final conclusions from debate history
+        
+        Args:
+            problem: The original problem
+            debate_history: Complete debate history
+            
+        Returns:
+            Synthesis results with consensus analysis
+        """
+        try:
+            # Build synthesis prompt with all debate content
+            history_text = ""
+            for round_data in debate_history:
+                history_text += f"\nRound {round_data['round'] + 1}:\n"
+                for arg_key, arg_data in round_data.get('arguments', {}).items():
+                    history_text += f"- {arg_data['position']}: {arg_data['argument']}\n"
+            
+            synthesis_prompt = f"""
+            Analyze this debate and provide a balanced synthesis:
+            
+            Problem: {problem}
+            
+            Debate History:{history_text}
+            
+            Provide:
+            1. Whether consensus was reached (true/false)
+            2. The strongest arguments presented
+            3. Areas of agreement and disagreement
+            4. A balanced conclusion
+            
+            Format as JSON with keys: consensus, strongest_arguments, agreements, disagreements, conclusion
+            """
+            
+            response = await self.llm_provider.generate_response([
+                {"role": "system", "content": "You are an expert at synthesizing debate outcomes objectively."},
+                {"role": "user", "content": synthesis_prompt}
+            ])
+            
+            content = response.get("content", "")
+            
+            try:
+                synthesis = json.loads(content)
+                return synthesis
+            except json.JSONDecodeError:
+                pass
+            
+            # Fallback synthesis
+            return {
+                "consensus": False,
+                "strongest_arguments": ["Multiple valid perspectives presented"],
+                "agreements": ["Complex issue with merit on multiple sides"],
+                "disagreements": ["Fundamental differences in approach"],
+                "conclusion": "The debate revealed important considerations from multiple perspectives."
+            }
+            
+        except Exception as e:
+            logger.error(f"Debate synthesis failed: {e}")
+            return {
+                "consensus": False,
+                "strongest_arguments": [],
+                "agreements": [],
+                "disagreements": [],
+                "conclusion": f"Synthesis failed: {str(e)}",
+                "error": str(e)
+            }

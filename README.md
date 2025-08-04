@@ -556,7 +556,7 @@ python test_endpoints.py
 
 ### **💼 Commercial Licensing**
 For commercial deployments and enterprise support:
-- **Contact**: diego@organicaai.com
+- **Contact**: diego.torres@organicaai.com
 - **Enterprise Features**: Priority support, custom integrations, SLA guarantees
 - **Pricing**: Based on scale and requirements
 
@@ -623,10 +623,10 @@ For commercial deployments and enterprise support:
 - **💡 Feature Requests**: Community-driven feature development
 
 ### **📧 Contact Information**
-- **General Inquiries**: info@organicaai.com
-- **Technical Support**: support@organicaai.com  
-- **Commercial Licensing**: diego@organicaai.com
-- **Research Collaboration**: research@organicaai.com
+- **General Inquiries**: contact@organicaai.com
+- **Technical Support**: contact@organicaai.com
+- **Commercial Licensing**: diego.torres@organicaai.com
+- **Research Collaboration**: contact@organicaai.com
 
 ### **🌐 Connect With Us**
 - **Website**: https://organicaai.com

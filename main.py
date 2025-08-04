@@ -43,6 +43,7 @@ from src.agents.physics.unified_physics_agent import create_enhanced_pinn_physic
 from src.agents.planning.autonomous_planning_system import AutonomousPlanningSystem
 from src.agents.goals.curiosity_engine import CuriosityEngine
 from src.utils.self_audit import self_audit_engine
+from src.utils.response_formatter import NISResponseFormatter
 from src.agents.alignment.ethical_reasoner import EthicalReasoner, EthicalFramework
 from src.agents.simulation.enhanced_scenario_simulator import EnhancedScenarioSimulator, ScenarioType, SimulationParameters
 # from src.agents.autonomous_execution.anthropic_style_executor import create_anthropic_style_executor, ExecutionStrategy, ExecutionMode  # Temporarily disabled
@@ -77,6 +78,11 @@ class ChatRequest(BaseModel):
     context: Optional[Dict[str, Any]] = None
     agent_type: Optional[str] = "default"  # Add agent_type with default
     provider: Optional[str] = None  # Add provider attribute
+    # Formatting parameters
+    output_mode: Optional[str] = Field(default="technical", description="Output mode: technical, casual, eli5, visual")
+    audience_level: Optional[str] = Field(default="expert", description="Audience level: expert, intermediate, beginner")
+    include_visuals: Optional[bool] = Field(default=False, description="Include visual elements")
+    show_confidence: Optional[bool] = Field(default=False, description="Show confidence breakdown")
 
 class ChatResponse(BaseModel):
     response: str
@@ -128,9 +134,9 @@ env_config = EnvironmentConfig()
 
 # Create the FastAPI app
 app = FastAPI(
-    title="NIS Protocol v3.1 - Archaeological Pattern",
-    description="Real LLM Integration following OpenAIZChallenge success patterns",
-    version="3.1.0-archaeological"
+    title="NIS Protocol v3.2 - Enhanced Multimodal Console",
+    description="Revolutionary AI with Smart Image Generation and Advanced Response Formatting",
+    version="3.2.0"
 )
 
 # CORS middleware
@@ -210,6 +216,9 @@ async def startup_event():
 
     # Initialize Scenario Simulator
     scenario_simulator = EnhancedScenarioSimulator()
+
+    # Initialize Response Formatter
+    response_formatter = NISResponseFormatter()
 
     # Initialize Conscious Agent
     conscious_agent = ConsciousAgent(agent_id="core_conscious_agent")
@@ -687,7 +696,30 @@ async def get_bitnet_training_status():
     - Training metrics and configuration
     """
     if not bitnet_trainer:
-        raise HTTPException(status_code=500, detail="BitNet trainer not initialized")
+        # Return mock/placeholder status when trainer is not initialized
+        logger.info("BitNet trainer not initialized, returning mock status")
+        return TrainingStatusResponse(
+            is_training=False,
+            training_available=False,
+            total_examples=0,
+            unused_examples=0,
+            offline_readiness_score=0.0,
+            metrics={
+                "offline_readiness_score": 0.0,
+                "total_training_sessions": 0,
+                "last_training_time": None,
+                "model_version": "mock_v1.0",
+                "training_quality_avg": 0.0
+            },
+            config={
+                "model_path": "models/bitnet/models/bitnet",
+                "learning_rate": 1e-5,
+                "training_interval_seconds": 300.0,
+                "min_examples_before_training": 5,
+                "quality_threshold": 0.6,
+                "status": "disabled"
+            }
+        )
     
     try:
         status = await bitnet_trainer.get_training_status()
@@ -715,7 +747,15 @@ async def force_bitnet_training(request: ForceTrainingRequest):
     Useful for testing and immediate model improvement.
     """
     if not bitnet_trainer:
-        raise HTTPException(status_code=500, detail="BitNet trainer not initialized")
+        logger.info("BitNet trainer not initialized, returning mock training response")
+        return JSONResponse(content={
+            "status": "disabled",
+            "message": "BitNet training is currently disabled",
+            "training_triggered": False,
+            "reason": request.reason,
+            "timestamp": datetime.now().isoformat(),
+            "mock_response": True
+        }, status_code=200)
     
     try:
         logger.info(f"🎯 Manual training session requested: {request.reason}")
@@ -806,8 +846,8 @@ async def read_root():
             models.append(getattr(p, 'model', 'default'))
 
     return {
-        "system": "NIS Protocol v3.1",
-        "version": "3.1.0-archaeological",
+        "system": "NIS Protocol v3.2",
+        "version": "3.2.0",
         "pattern": "nis_v3_agnostic",
         "status": "operational",
         "real_llm_integrated": list(llm_provider.providers.keys()),
@@ -885,6 +925,39 @@ async def health_check():
         error_details = traceback.format_exc()
         raise HTTPException(status_code=500, detail=f"Internal Error: {str(e)}\n{error_details}")
 
+@app.post("/test/formatter", tags=["Testing"])
+async def test_response_formatter(request: dict):
+    """Test the response formatter directly"""
+    global response_formatter
+    
+    try:
+        test_data = {
+            "content": request.get("content", "Neural networks are computational models inspired by biological networks."),
+            "confidence": 0.85,
+            "provider": "test"
+        }
+        
+        result = response_formatter.format_response(
+            data=test_data,
+            output_mode=request.get("output_mode", "visual"),
+            audience_level=request.get("audience_level", "intermediate"),
+            include_visuals=request.get("include_visuals", True),
+            show_confidence=request.get("show_confidence", False)
+        )
+        
+        return {
+            "status": "success",
+            "formatted_result": result,
+            "original_content": test_data["content"],
+            "output_mode": request.get("output_mode", "visual")
+        }
+        
+    except Exception as e:
+        return {
+            "status": "error", 
+            "error": str(e)
+        }
+
 async def process_nis_pipeline(input_text: str) -> Dict:
     if laplace is None or kan is None or pinn is None:
         return {'pipeline': 'skipped - init failed'}
@@ -919,6 +992,7 @@ async def chat_formatted(request: ChatRequest):
     Returns a clean, formatted response perfect for human reading.
     No JSON metadata - just the AI response in a readable format.
     """
+    global response_formatter
     conversation_id = get_or_create_conversation(request.conversation_id, request.user_id)
     
     # Add user message
@@ -969,25 +1043,49 @@ async def chat_formatted(request: ChatRequest):
         
         logger.info(f"💬 Formatted chat response: {result['provider']} - {result['tokens_used']} tokens")
         
-        # Format the response for human reading
-        formatted_response = f"""
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🤖 NIS Protocol v3.1 Response
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-{result["content"]}
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📊 Response Metadata:
-🧠 Provider: {result["provider"]} | Model: {result["model"]}
-⚡ Confidence: {result["confidence"]:.1%} | Tokens: {result["tokens_used"]}
-🆔 Conversation: {conversation_id} | User: {request.user_id}
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-"""
+        # Apply advanced response formatting
+        response_data = {
+            "content": result["content"],
+            "confidence": result["confidence"],
+            "provider": result["provider"],
+            "model": result["model"],
+            "tokens_used": result["tokens_used"],
+            "conversation_id": conversation_id,
+            "user_id": request.user_id,
+            "pipeline_result": pipeline_result
+        }
         
-        # Return as plain text with proper content type
+        # Use the advanced response formatter
+        try:
+            from src.utils.response_formatter import NISResponseFormatter
+            local_formatter = NISResponseFormatter()
+            
+            formatted_result = local_formatter.format_response(
+                data=response_data,
+                output_mode=request.output_mode,
+                audience_level=request.audience_level,
+                include_visuals=request.include_visuals,
+                show_confidence=request.show_confidence
+            )
+            formatted_content = formatted_result.get("formatted_content", result["content"])
+            
+        except Exception as formatter_error:
+            logger.warning(f"Response formatter failed: {formatter_error}")
+            formatted_content = result["content"]
+        
+        # Apply HTML styling for web display
+        html_content = f"""
+        <div style='font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; 
+                    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); 
+                    color: #e2e8f0; padding: 30px; border-radius: 15px; 
+                    box-shadow: 0 10px 25px rgba(0,0,0,0.3);'>
+            {formatted_content}
+        </div>
+        """
+        
+        # Return as styled HTML
         return HTMLResponse(
-            content=f"<pre style='font-family: monospace; white-space: pre-wrap; background: #1a1a1a; color: #00ff00; padding: 20px; border-radius: 10px;'>{formatted_response}</pre>",
+            content=html_content,
             headers={"Content-Type": "text/html; charset=utf-8"}
         )
         
@@ -1012,6 +1110,7 @@ Please try again or contact support if the issue persists.
 @app.post("/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
     """Enhanced chat with REAL LLM - NIS Protocol v3.1"""
+    global response_formatter
     conversation_id = get_or_create_conversation(request.conversation_id, request.user_id)
     
     # Add user message
@@ -1080,8 +1179,49 @@ async def chat(request: ChatRequest):
             except Exception as e:
                 logger.warning(f"⚠️ Failed to capture training example: {e}")
         
+        # Apply response formatting if requested
+        formatted_content = result["content"]
+        logger.info(f"🎨 Formatting check: mode={request.output_mode}, visuals={request.include_visuals}, confidence={request.show_confidence}")
+        
+        if request.output_mode != "technical" or request.include_visuals or request.show_confidence:
+            logger.info(f"🎨 Applying formatting for {request.output_mode} mode")
+            try:
+                # Prepare data for formatting
+                response_data = {
+                    "content": result["content"],
+                    "confidence": result["confidence"],
+                    "provider": result["provider"],
+                    "model": result["model"],
+                    "tokens_used": result["tokens_used"],
+                    "pipeline_result": pipeline_result,
+                    "reasoning_trace": ["archaeological_pattern", "context_analysis", "llm_generation", "response_synthesis"]
+                }
+                
+                # Apply formatting
+                from src.utils.response_formatter import NISResponseFormatter
+                local_formatter = NISResponseFormatter()
+                
+                formatted_response = local_formatter.format_response(
+                    data=response_data,
+                    output_mode=request.output_mode,
+                    audience_level=request.audience_level,
+                    include_visuals=request.include_visuals,
+                    show_confidence=request.show_confidence
+                )
+                
+                # Extract formatted content
+                formatted_content = formatted_response.get("formatted_content", result["content"])
+                logger.info(f"🎨 Formatting applied successfully, length: {len(formatted_content)}")
+                
+            except Exception as e:
+                logger.error(f"🎨 Formatting failed: {e}")
+                # Keep original content if formatting fails
+                formatted_content = result["content"]
+        else:
+            logger.info(f"🎨 No formatting applied - using technical mode")
+        
         return ChatResponse(
-            response=result["content"],
+            response=formatted_content,
             user_id=request.user_id,
             conversation_id=conversation_id,
             timestamp=time.time(),

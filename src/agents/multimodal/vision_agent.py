@@ -236,7 +236,7 @@ class MultimodalVisionAgent(NISAgent):
             
             # Generate image(s) using selected provider
             generation_result = await self._perform_image_generation(
-                enhanced_prompt, selected_provider, size, quality, num_images
+                enhanced_prompt, selected_provider, size, quality, num_images, style
             )
             
             # Process and validate results
@@ -566,7 +566,8 @@ Enhanced prompt:"""
         provider: str, 
         size: str, 
         quality: str, 
-        num_images: int
+        num_images: int,
+        style: str = "realistic"
     ) -> Dict[str, Any]:
         """Perform actual image generation using real APIs"""
         
@@ -580,7 +581,7 @@ Enhanced prompt:"""
                 api_key = os.getenv("OPENAI_API_KEY")
                 if not api_key or api_key in ["YOUR_OPENAI_API_KEY", "your_openai_api_key_here"]:
                     logger.warning("OpenAI API key not available, using fallback")
-                    return self._fallback_image_generation(prompt, provider, num_images)
+                    return self._fallback_image_generation(prompt, provider, num_images, style)
                 
                 # Initialize OpenAI provider
                 openai_config = {
@@ -593,7 +594,8 @@ Enhanced prompt:"""
                     prompt=prompt,
                     size=size,
                     quality=quality,
-                    num_images=num_images
+                    num_images=num_images,
+                    style=style
                 )
                 
                 # Clean up provider
@@ -610,7 +612,7 @@ Enhanced prompt:"""
                 api_key = os.getenv("GOOGLE_API_KEY")
                 if not api_key or api_key in ["YOUR_GOOGLE_API_KEY", "your_google_api_key_here"]:
                     logger.warning("Google API key not available, using physics-compliant fallback")
-                    return self._fallback_image_generation(prompt, provider, num_images)
+                    return self._fallback_image_generation(prompt, provider, num_images, style)
                 
                 # Initialize Google provider
                 google_config = {
@@ -620,12 +622,15 @@ Enhanced prompt:"""
                 }
                 
                 google_provider = GoogleProvider(google_config)
+                logger.info(f"🎨 Vision Agent calling Google provider with prompt: {prompt[:50]}...")
                 result = await google_provider.generate_image(
                     prompt=prompt,
+                    style=style,
                     size=size,
                     quality=quality,
                     num_images=num_images
                 )
+                logger.info(f"🎨 Vision Agent got result status: {result.get('status')} with {len(result.get('images', []))} images")
                 
                 # Clean up provider
                 await google_provider.close()
@@ -641,7 +646,7 @@ Enhanced prompt:"""
                 api_key = os.getenv("KIMI_API_KEY")
                 if not api_key or api_key in ["YOUR_KIMI_API_KEY", "your_kimi_api_key_here"]:
                     logger.warning("Kimi API key not available, using physics-compliant fallback")
-                    return self._fallback_image_generation(prompt, provider, num_images)
+                    return self._fallback_image_generation(prompt, provider, num_images, style)
                 
                 # Initialize Kimi provider
                 kimi_config = {
@@ -652,6 +657,7 @@ Enhanced prompt:"""
                 kimi_provider = KimiProvider(kimi_config)
                 result = await kimi_provider.generate_image(
                     prompt=prompt,
+                    style=style,
                     size=size,
                     quality=quality,
                     num_images=num_images
@@ -664,13 +670,13 @@ Enhanced prompt:"""
             
             else:
                 logger.warning(f"Unknown provider: {provider}, using fallback")
-                return self._fallback_image_generation(prompt, provider, num_images)
+                return self._fallback_image_generation(prompt, provider, num_images, style)
                 
         except Exception as e:
             logger.error(f"Error in image generation: {e}")
-            return self._fallback_image_generation(prompt, provider, num_images)
+            return self._fallback_image_generation(prompt, provider, num_images, style)
     
-    def _fallback_image_generation(self, prompt: str, provider: str, num_images: int) -> Dict[str, Any]:
+    def _fallback_image_generation(self, prompt: str, provider: str, num_images: int, style: str = "realistic") -> Dict[str, Any]:
         """Enhanced fallback with visual placeholder and LLM description"""
         
         # Create a colorful placeholder image (200x200 gradient)

@@ -39,7 +39,7 @@
 - Consulting services that use NIS Protocol for clients
 
 ### **Q: We're AWS/Google/Microsoft. What license do we need?**
-**A:** 🏢 **Strategic Commercial License required** - Contact diego@organicaai.com for enterprise partnership discussions.
+**A:** 🏢 **Strategic Commercial License required** - Contact diego.torres@organicaai.com for enterprise partnership discussions.
 
 ### **Q: Can I evaluate NIS Protocol before buying a commercial license?**
 **A:** ✅ **YES!** Evaluation and testing are free under BSL. Commercial license only needed when you deploy to production.
@@ -119,10 +119,10 @@
 2. **Will customers/users pay for it?** → Commercial License  
 3. **Is it for learning/research only?** → BSL (Free)
 4. **Is it a personal project?** → BSL (Free)
-5. **Still unsure?** → Ask us: diego@organicaai.com
+5. **Still unsure?** → Ask us: diego.torres@organicaai.com
 
 ### **🎯 When in Doubt:**
-- **Contact us first:** diego@organicaai.com
+- **Contact us first:** diego.torres@organicaai.com
 - **Better to ask than assume** - we're flexible and want to help
 - **We offer evaluation periods** for commercial assessment
 - **No penalties for honest questions** about licensing
@@ -143,7 +143,7 @@
 - 💼 Volume licensing and multi-year agreements
 - 💼 Technical integration support
 
-**📧 Contact: diego@organicaai.com**
+**📧 Contact: diego.torres@organicaai.com**
 **📞 Response Time: 24-48 hours**
 
 ---

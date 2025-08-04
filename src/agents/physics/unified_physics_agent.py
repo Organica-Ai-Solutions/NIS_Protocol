@@ -24,6 +24,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from collections import defaultdict, deque
 import concurrent.futures
+import os # Added for image generation
 
 # Working Enhanced PINN Physics Agent imports (PRESERVE)
 from src.core.agent import NISAgent, NISLayer
@@ -859,42 +860,63 @@ class UnifiedPhysicsAgent(NISAgent):
             self.logger.error(f"Modulus physics validation error: {e}")
             return {"is_valid": False, "confidence": 0.1, "error": str(e)}
     
-    def _validate_basic_physics(self, data: Dict[str, Any], domain: PhysicsDomain) -> Dict[str, Any]:
-        """Basic physics validation fallback"""
+    async def _generate_physics_image(self, simulation_data: Dict[str, Any], domain: PhysicsDomain) -> str:
+        """Generate image for physics simulation."""
         try:
-            physics_data = data.get("physics_data", {})
-            
-            # Simple physics checks
-            basic_score = 0.75
-            
-            # Check for obvious violations
-            violations = []
-            if isinstance(physics_data, dict):
-                # Check for negative energy (in most cases)
-                energy = physics_data.get("energy", 0)
-                if energy < 0 and domain != PhysicsDomain.QUANTUM_MECHANICS:
-                    violations.append({"type": "negative_energy", "value": energy})
-                    basic_score *= 0.5
-                
-                # Check for infinite values
-                for key, value in physics_data.items():
-                    if isinstance(value, (int, float)) and np.isinf(value):
-                        violations.append({"type": "infinite_value", "field": key})
-                        basic_score *= 0.7
-            
-            return {
-                "is_valid": len(violations) == 0,
-                "confidence": basic_score,
-                "conservation_scores": {"overall": basic_score},
-                "violations": violations,
-                "laws_checked": [PhysicsLaw.ENERGY_CONSERVATION],
-                "physics_type": "basic_validation",
-                "physical_plausibility": basic_score
-            }
-            
+            from src.llm.providers.google_provider import GoogleProvider
+            provider = GoogleProvider({'api_key': os.getenv('GOOGLE_API_KEY')})
+            prompt = f"Diagram of {domain.value} simulation: {json.dumps(simulation_data, indent=2)}"
+            result = await provider.generate_image(prompt, style="scientific", size="512x512")
+            if result.get('images'):
+                return result['images'][0]['url']
+            return "No image generated"
         except Exception as e:
-            self.logger.error(f"Basic physics validation error: {e}")
-            return {"is_valid": False, "confidence": 0.1, "error": str(e)}
+            self.logger.error(f"Image generation failed: {e}")
+            return "Image generation error"
+
+async def _validate_basic_physics(self, data: Dict[str, Any], domain: PhysicsDomain) -> Dict[str, Any]:
+    """Basic physics validation fallback"""
+    try:
+        physics_data = data.get("physics_data", {})
+        
+        # Simple physics checks
+        basic_score = 0.75
+        
+        # Check for obvious violations
+        violations = []
+        if isinstance(physics_data, dict):
+            # Check for negative energy (in most cases)
+            energy = physics_data.get("energy", 0)
+            if energy < 0 and domain != PhysicsDomain.QUANTUM_MECHANICS:
+                violations.append({"type": "negative_energy", "value": energy})
+                basic_score *= 0.5
+            
+            # Check for infinite values
+            for key, value in physics_data.items():
+                if isinstance(value, (int, float)) and np.isinf(value):
+                    violations.append({"type": "infinite_value", "field": key})
+                    basic_score *= 0.7
+        
+        result = {
+            "is_valid": len(violations) == 0,
+            "confidence": basic_score,
+            "conservation_scores": {"overall": basic_score},
+            "violations": violations,
+            "laws_checked": [PhysicsLaw.ENERGY_CONSERVATION],
+            "physics_type": "basic_validation",
+            "physical_plausibility": basic_score
+        }
+        
+        # Add image generation for classical mechanics
+        if domain == PhysicsDomain.CLASSICAL_MECHANICS:
+            image_url = await self._generate_physics_image(result, domain)
+            result["simulation_image"] = image_url
+        
+        return result
+        
+    except Exception as e:
+        self.logger.error(f"Basic physics validation error: {e}")
+        return {"is_valid": False, "confidence": 0.1, "error": str(e)}
     
     # =============================================================================
     # CONSERVATION LAW VALIDATION METHODS
@@ -985,20 +1007,17 @@ class UnifiedPhysicsAgent(NISAgent):
     # =============================================================================
     
     def _initialize_pinn_networks(self):
-        """Initialize PINN networks for advanced physics validation"""
+        """Initialize PINN networks"""
         try:
-            # Initialize PINN network
+            state_dim = self.pinn_config.input_dim  # Use config input dim
             self.pinn_network = PhysicsInformedNetwork(
-                input_dim=10,  # Physics state dimension
+                input_dim=state_dim,
                 hidden_layers=self.pinn_config.hidden_layers,
-                output_dim=5   # Physics validation outputs
+                hidden_dim=self.pinn_config.hidden_dim,
+                output_dim=1  # Assuming scalar output for physics prediction
             )
-            
-            # Initialize conservation law network
-            self.conservation_network = ConservationLawNetwork(state_dim=10)
-            
+            self.conservation_network = ConservationLawNetwork(state_dim=state_dim)
             self.logger.info("PINN networks initialized successfully")
-            
         except Exception as e:
             self.logger.error(f"Failed to initialize PINN networks: {e}")
             self.pinn_network = None

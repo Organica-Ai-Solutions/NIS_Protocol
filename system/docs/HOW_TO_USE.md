@@ -523,7 +523,7 @@ python benchmarks/run_comprehensive_benchmark.py
 - 📚 **Documentation**: Complete guides in `/system/docs/`
 - 🐛 **Issues**: GitHub Issues for bug reports
 - 💬 **Discussions**: GitHub Discussions for questions
-- 📧 **Enterprise**: Contact team@organica-ai.com
+- 📧 **Enterprise**: Contact contact@organicaai.com
 
 ## 🎓 **Learning Resources**
 
