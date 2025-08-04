@@ -295,8 +295,7 @@ class UnifiedPhysicsAgent(NISAgent):
         self.pinn_network = None
         self.conservation_network = None
         
-        if TORCH_AVAILABLE:
-            self._initialize_pinn_networks()
+        self._initialize_pinn_networks()
         
         # =============================================================================
         # 4. REAL NVIDIA NEMOTRON INTEGRATION
@@ -874,49 +873,49 @@ class UnifiedPhysicsAgent(NISAgent):
             self.logger.error(f"Image generation failed: {e}")
             return "Image generation error"
 
-async def _validate_basic_physics(self, data: Dict[str, Any], domain: PhysicsDomain) -> Dict[str, Any]:
-    """Basic physics validation fallback"""
-    try:
-        physics_data = data.get("physics_data", {})
-        
-        # Simple physics checks
-        basic_score = 0.75
-        
-        # Check for obvious violations
-        violations = []
-        if isinstance(physics_data, dict):
-            # Check for negative energy (in most cases)
-            energy = physics_data.get("energy", 0)
-            if energy < 0 and domain != PhysicsDomain.QUANTUM_MECHANICS:
-                violations.append({"type": "negative_energy", "value": energy})
-                basic_score *= 0.5
+    async def _validate_basic_physics(self, data: Dict[str, Any], domain: PhysicsDomain) -> Dict[str, Any]:
+        """Basic physics validation fallback"""
+        try:
+            physics_data = data.get("physics_data", {})
             
-            # Check for infinite values
-            for key, value in physics_data.items():
-                if isinstance(value, (int, float)) and np.isinf(value):
-                    violations.append({"type": "infinite_value", "field": key})
-                    basic_score *= 0.7
-        
-        result = {
-            "is_valid": len(violations) == 0,
-            "confidence": basic_score,
-            "conservation_scores": {"overall": basic_score},
-            "violations": violations,
-            "laws_checked": [PhysicsLaw.ENERGY_CONSERVATION],
-            "physics_type": "basic_validation",
-            "physical_plausibility": basic_score
-        }
-        
-        # Add image generation for classical mechanics
-        if domain == PhysicsDomain.CLASSICAL_MECHANICS:
-            image_url = await self._generate_physics_image(result, domain)
-            result["simulation_image"] = image_url
-        
-        return result
-        
-    except Exception as e:
-        self.logger.error(f"Basic physics validation error: {e}")
-        return {"is_valid": False, "confidence": 0.1, "error": str(e)}
+            # Simple physics checks
+            basic_score = 0.75
+            
+            # Check for obvious violations
+            violations = []
+            if isinstance(physics_data, dict):
+                # Check for negative energy (in most cases)
+                energy = physics_data.get("energy", 0)
+                if energy < 0 and domain != PhysicsDomain.QUANTUM_MECHANICS:
+                    violations.append({"type": "negative_energy", "value": energy})
+                    basic_score *= 0.5
+                
+                # Check for infinite values
+                for key, value in physics_data.items():
+                    if isinstance(value, (int, float)) and np.isinf(value):
+                        violations.append({"type": "infinite_value", "field": key})
+                        basic_score *= 0.7
+            
+            result = {
+                "is_valid": len(violations) == 0,
+                "confidence": basic_score,
+                "conservation_scores": {"overall": basic_score},
+                "violations": violations,
+                "laws_checked": [PhysicsLaw.ENERGY_CONSERVATION],
+                "physics_type": "basic_validation",
+                "physical_plausibility": basic_score
+            }
+            
+            # Add image generation for classical mechanics
+            if domain == PhysicsDomain.CLASSICAL_MECHANICS:
+                image_url = await self._generate_physics_image(result, domain)
+                result["simulation_image"] = image_url
+            
+            return result
+            
+        except Exception as e:
+            self.logger.error(f"Basic physics validation error: {e}")
+            return {"is_valid": False, "confidence": 0.1, "error": str(e)}
     
     # =============================================================================
     # CONSERVATION LAW VALIDATION METHODS
@@ -1009,15 +1008,19 @@ async def _validate_basic_physics(self, data: Dict[str, Any], domain: PhysicsDom
     def _initialize_pinn_networks(self):
         """Initialize PINN networks"""
         try:
-            state_dim = self.pinn_config.input_dim  # Use config input dim
-            self.pinn_network = PhysicsInformedNetwork(
-                input_dim=state_dim,
-                hidden_layers=self.pinn_config.hidden_layers,
-                hidden_dim=self.pinn_config.hidden_dim,
-                output_dim=1  # Assuming scalar output for physics prediction
-            )
-            self.conservation_network = ConservationLawNetwork(state_dim=state_dim)
-            self.logger.info("PINN networks initialized successfully")
+            if TORCH_AVAILABLE:
+                state_dim = 10  # Default input dimension for physics state
+                self.pinn_network = PhysicsInformedNetwork(
+                    input_dim=state_dim,
+                    hidden_layers=self.pinn_config.hidden_layers,
+                    output_dim=1
+                )
+                self.conservation_network = ConservationLawNetwork(state_dim=state_dim)
+                self.logger.info("PINN networks initialized successfully")
+            else:
+                self.pinn_network = None
+                self.conservation_network = None
+                self.logger.info("PyTorch not available, using mock PINN networks")
         except Exception as e:
             self.logger.error(f"Failed to initialize PINN networks: {e}")
             self.pinn_network = None

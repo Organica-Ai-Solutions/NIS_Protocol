@@ -212,5 +212,6 @@ openai
 anthropic
 google-generativeai
 google-genai
+google-cloud-aiplatform
 #modulus-sym
 # Temporary comment to invalidate cache
