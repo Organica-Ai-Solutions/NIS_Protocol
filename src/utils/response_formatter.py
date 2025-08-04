@@ -68,9 +68,13 @@ class NISResponseFormatter:
         if show_confidence:
             result["confidence_breakdown"] = self._explain_confidence(data)
             
-        # Add visual elements if requested
+        # Add visual elements if requested - ACTUALLY GENERATE IMAGES!
         if include_visuals:
-            result["visual_elements"] = self._generate_visual_suggestions(data)
+            # Extract content for visual generation
+            content_for_visuals = data.get("content", str(data))
+            generated_visuals = self._generate_visual_content(content_for_visuals)
+            result["visual_elements"] = generated_visuals
+            result["visual_suggestions"] = self._generate_visual_suggestions(data)  # Keep suggestions as backup
         
         return result
     
@@ -636,7 +640,7 @@ Just like how you get better at math by practicing. 🎯
                         "size": request.get("size", "1024x1024"),
                         "provider": request.get("provider", "google"),
                         "quality": "high"
-                    }, timeout=30)  # Increased timeout for real image generation
+                    }, timeout=10)  # Reduced timeout to prevent blocking text response
                     
                     if response.status_code == 200:
                         result = response.json()

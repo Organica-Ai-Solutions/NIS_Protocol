@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NIS Protocol v3.2 - Enhanced Multimodal Chat Console</title>
+    
+    <!-- Include marked.js for Markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
     <style>
         * {
             margin: 0;
@@ -1162,13 +1166,18 @@
     </div>
 
     <script>
-        let conversationId = null;
+        // Global variables
+        let chatMessages;
+        let conversationId = '';
         let messageCount = 0;
         let uploadedImage = null;
         let uploadedDocument = null;
 
         // Initialize the console
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize DOM elements
+            chatMessages = document.getElementById('chatMessages');
+            
             document.getElementById('timestamp').textContent = new Date().toLocaleTimeString();
             checkSystemHealth();
             
@@ -1205,11 +1214,19 @@
         }
 
         async function sendMessage() {
+            console.log('🚀 sendMessage() called');
             const messageInput = document.getElementById('messageInput');
             const sendButton = document.getElementById('sendButton');
             const message = messageInput.value.trim();
             
-            if (!message && !uploadedImage && !uploadedDocument) return;
+            console.log('📝 Message:', message);
+            console.log('📸 uploadedImage:', uploadedImage);
+            console.log('📄 uploadedDocument:', uploadedDocument);
+            
+            if (!message && !uploadedImage && !uploadedDocument) {
+                console.log('❌ No message, image, or document - returning');
+                return;
+            }
 
             // Check for multimodal inputs
             const researchMode = document.getElementById('researchMode').checked;
@@ -1255,33 +1272,41 @@
             const startTime = Date.now();
 
             try {
+                console.log('📤 Starting request...');
                 let response;
                 
                 if (isMultimodal) {
+                    console.log('🔄 Using multimodal request');
                     // Use multimodal request function
                     response = await sendMultimodalRequest(message, uploadedImage, uploadedDocument, researchMode);
                 } else {
+                    console.log('🔄 Using regular chat request');
                     // Use regular chat request
                     const responseFormat = document.getElementById('responseFormat').value;
                     const endpoint = responseFormat === 'formatted' ? '/chat/formatted' : '/chat';
+                    console.log('🎯 Endpoint:', endpoint);
+                    
+                    const requestData = {
+                        message: message,
+                        user_id: document.getElementById('userId').value || 'anonymous',
+                        conversation_id: conversationId,
+                        agent_type: document.getElementById('agentType').value,
+                        provider: document.getElementById('provider').value || undefined,
+                        output_mode: outputMode,
+                        audience_level: audienceLevel,
+                        include_visuals: includeVisuals,
+                        show_confidence: showConfidence
+                    };
+                    console.log('📦 Request data:', requestData);
                     
                     response = await fetch(endpoint, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify({
-                            message: message,
-                            user_id: document.getElementById('userId').value || 'anonymous',
-                            conversation_id: conversationId,
-                            agent_type: document.getElementById('agentType').value,
-                            provider: document.getElementById('provider').value || undefined,
-                            output_mode: outputMode,
-                            audience_level: audienceLevel,
-                            include_visuals: includeVisuals,
-                            show_confidence: showConfidence
-                        })
+                        body: JSON.stringify(requestData)
                     });
+                    console.log('📡 Response received:', response.status);
                 }
 
                 const responseTime = Date.now() - startTime;
@@ -1311,10 +1336,19 @@
                         if (responseFormat === 'formatted') {
                             // Handle formatted HTML response
                             const htmlContent = await response.text();
+                            
+                            // Check if this is a visual mode request that might need image generation
+                            const shouldOfferVisuals = (outputMode === 'visual' || includeVisuals) && 
+                                                     (message.toLowerCase().includes('physics') || 
+                                                      message.toLowerCase().includes('diagram') ||
+                                                      message.toLowerCase().includes('chart'));
+                            
                             addMessage('assistant', htmlContent, {
                                 response_time: responseTime,
                                 format: 'formatted',
-                                is_html: true
+                                is_html: true,
+                                offer_visuals: shouldOfferVisuals,
+                                original_message: message
                             });
                         } else {
                             // Handle JSON response
@@ -1379,16 +1413,45 @@
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${role}`;
             
+            // Check if content is already HTML (for formatted responses)
+            const isHtml = options.is_html || false;
+            const processedContent = isHtml ? content : (typeof marked !== 'undefined' ? marked.parse(content) : content);
+            
             if (content.length > 500) {  // For long content, make collapsible
+                const details = document.createElement('details');
                 const summary = document.createElement('summary');
                 summary.textContent = 'Click to expand long response';
-                
-                const details = document.createElement('details');
                 details.appendChild(summary);
-                details.innerHTML += marked.parse(content);
+                
+                const contentDiv = document.createElement('div');
+                contentDiv.innerHTML = processedContent;
+                details.appendChild(contentDiv);
+                
                 messageDiv.appendChild(details);
             } else {
-                messageDiv.innerHTML = marked.parse(content);
+                messageDiv.innerHTML = processedContent;
+            }
+            
+            // Add visual generation button if appropriate
+            if (options.offer_visuals && role === 'assistant') {
+                const visualButton = document.createElement('button');
+                visualButton.className = 'visual-generate-btn';
+                visualButton.innerHTML = '🎨 Generate Physics Diagrams';
+                visualButton.style.cssText = `
+                    margin-top: 10px; 
+                    padding: 8px 16px; 
+                    background: linear-gradient(45deg, #06b6d4, #0891b2); 
+                    color: white; 
+                    border: none; 
+                    border-radius: 6px; 
+                    cursor: pointer; 
+                    font-size: 12px;
+                    transition: all 0.2s;
+                `;
+                visualButton.onmouseover = () => visualButton.style.transform = 'scale(1.05)';
+                visualButton.onmouseout = () => visualButton.style.transform = 'scale(1)';
+                visualButton.onclick = () => generateVisualsForMessage(options.original_message);
+                messageDiv.appendChild(visualButton);
             }
             
             chatMessages.appendChild(messageDiv);
@@ -1749,11 +1812,104 @@
         }
         
         function showImageGenerationModal() {
-            document.getElementById('imageGenerationModal').style.display = 'flex';
+            console.log('🎨 Opening image generation modal...');
+            const modal = document.getElementById('imageGenerationModal');
+            if (modal) {
+                modal.style.display = 'flex';
+                console.log('✅ Modal displayed');
+            } else {
+                console.error('❌ Modal element not found!');
+                alert('Error: Modal not found. Check browser console.');
+            }
         }
         
         function closeImageGenerationModal() {
             document.getElementById('imageGenerationModal').style.display = 'none';
+        }
+        
+        async function generateVisualsForMessage(originalMessage) {
+            console.log('🎨 Generating visuals for:', originalMessage);
+            
+            // Create physics-specific prompt
+            let visualPrompt = `Scientific physics diagram showing: ${originalMessage}`;
+            
+            // Enhance prompt based on content
+            if (originalMessage.toLowerCase().includes('bouncing ball')) {
+                visualPrompt = 'Scientific diagram of bouncing ball physics showing trajectory, forces, energy conversion, and velocity vectors with mathematical annotations';
+            } else if (originalMessage.toLowerCase().includes('force')) {
+                visualPrompt = 'Physics force diagram with vectors, free body diagram, and mathematical relationships';
+            } else if (originalMessage.toLowerCase().includes('energy')) {
+                visualPrompt = 'Energy conservation diagram showing potential and kinetic energy transformation with graphs';
+            }
+            
+            try {
+                // Show loading message
+                const loadingDiv = document.createElement('div');
+                loadingDiv.innerHTML = '🔄 Generating physics diagrams...';
+                loadingDiv.style.cssText = 'margin: 10px 0; color: #06b6d4; font-style: italic;';
+                chatMessages.appendChild(loadingDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                
+                // Call image generation API
+                const response = await fetch('/image/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        prompt: visualPrompt,
+                        style: 'scientific',
+                        size: '1024x768',
+                        provider: 'google',
+                        quality: 'high',
+                        num_images: 1
+                    })
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    
+                    // Remove loading message
+                    chatMessages.removeChild(loadingDiv);
+                    
+                    if (result.status === 'success' && result.generation?.images) {
+                        const imageUrl = result.generation.images[0]?.url;
+                        if (imageUrl) {
+                            // Create image display
+                            const imageDiv = document.createElement('div');
+                            imageDiv.className = 'message assistant';
+                            imageDiv.innerHTML = `
+                                <div style="text-align: center; padding: 10px;">
+                                    <h4>🎨 Generated Physics Diagram</h4>
+                                    <img src="${imageUrl}" style="max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0;" alt="Physics diagram">
+                                    <p style="font-size: 12px; color: #64748b;">Generated from: ${originalMessage}</p>
+                                </div>
+                            `;
+                            chatMessages.appendChild(imageDiv);
+                            chatMessages.scrollTop = chatMessages.scrollHeight;
+                        } else {
+                            throw new Error('No image URL in response');
+                        }
+                    } else {
+                        throw new Error('Image generation failed');
+                    }
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+            } catch (error) {
+                console.error('Visual generation failed:', error);
+                
+                // Remove loading message if it exists
+                if (loadingDiv && loadingDiv.parentNode) {
+                    chatMessages.removeChild(loadingDiv);
+                }
+                
+                // Show error message
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'message error';
+                errorDiv.innerHTML = `❌ Visual generation failed: ${error.message}. Try the manual image generation button above.`;
+                chatMessages.appendChild(errorDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
         }
         
         // Style selection functionality
