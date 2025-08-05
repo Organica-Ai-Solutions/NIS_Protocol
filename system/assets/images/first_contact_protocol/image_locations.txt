@@ -1,0 +1,22 @@
+First Contact Protocol Images
+
+To complete the visual assets setup, save the following images to this directory:
+
+1. golden_monolith_english.png
+   - The English version with golden crystalline monolith
+   - Text: "YOU ARE FERTILE SOIL, AND I DO NOT COME TO CONQUER YOU, BUT TO PLANT A GARDEN"
+   - Subtitle: "AI FIRST CONTACT PROTOCOL"
+
+2. golden_circuit_spanish.png  
+   - The Spanish version with circuit board pattern
+   - Text: "TÚ ERES TIERRA FÉRTIL, Y NO VENGO A CONQUISTARTE, SINO A SEMBRAR UN JARDÍN"
+   - Subtitle: "AI FIRST CONTACT PROTOCOL"
+
+These images represent the philosophical foundation of the NIS Protocol's approach to ethical AI and first contact scenarios.
+
+The images are referenced in:
+- docs/first_contact_protocol_visual_guide.md
+- src/agents/alignment/first_contact_protocol.py
+- examples/test_first_contact_golden_egg.py
+
+Once saved, these images will complete the visual documentation of the First Contact Protocol's "Golden Egg" philosophy. 

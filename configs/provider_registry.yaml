@@ -1,0 +1,176 @@
+# NIS Protocol v3.2 - Provider Registry
+# Centralized management of all AI providers, models, and capabilities
+
+version: "3.2.0"
+last_updated: "2025-01-19"
+
+# Provider definitions with capabilities, costs, and performance
+providers:
+  
+  # OpenAI - General Intelligence & Vision
+  openai:
+    gpt-4o:
+      capabilities: [default, reasoning, vision, multimodal, coding]
+      max_tokens: 128000
+      cost_per_million_tokens: 5.00
+      avg_latency_ms: 1500
+      quality_score: 9.5
+      availability: 99.9
+      features: [function_calling, vision, json_mode]
+      
+    gpt-4o-mini:
+      capabilities: [default, reasoning, coding, fast]
+      max_tokens: 128000
+      cost_per_million_tokens: 0.60
+      avg_latency_ms: 800
+      quality_score: 8.5
+      availability: 99.9
+      features: [function_calling, json_mode]
+
+  # Anthropic - Consciousness & Deep Reasoning  
+  anthropic:
+    claude-sonnet-4-20250514:
+      capabilities: [consciousness, reasoning, research, analysis, coding, visualization]
+      max_tokens: 200000
+      cost_per_million_tokens: 8.00
+      avg_latency_ms: 2500
+      quality_score: 9.8
+      availability: 99.8
+      features: [extended_thinking, tool_use, computer_use]
+      
+    claude-opus-4-20250514:
+      capabilities: [consciousness, complex_reasoning, research, analysis]
+      max_tokens: 200000
+      cost_per_million_tokens: 15.00
+      avg_latency_ms: 4000
+      quality_score: 10.0
+      availability: 99.5
+      features: [extended_thinking, tool_use, computer_use]
+
+  # Google - Multimodal & Fast Processing
+  google:
+    gemini-2.5-flash:
+      capabilities: [default, reasoning, multimodal, vision, fast]
+      max_tokens: 1048576
+      cost_per_million_tokens: 1.50
+      avg_latency_ms: 1200
+      quality_score: 8.8
+      availability: 99.7
+      features: [thinking, multimodal, function_calling]
+      
+    gemini-2.5-pro:
+      capabilities: [reasoning, complex_analysis, multimodal, research]
+      max_tokens: 2097152
+      cost_per_million_tokens: 3.50
+      avg_latency_ms: 3500
+      quality_score: 9.2
+      availability: 99.5
+      features: [thinking, multimodal, advanced_reasoning]
+
+  # DeepSeek - Reasoning & Physics
+  deepseek:
+    deepseek-chat:
+      capabilities: [reasoning, physics, research, coding, mathematics]
+      max_tokens: 32000
+      cost_per_million_tokens: 1.50
+      avg_latency_ms: 8000
+      quality_score: 9.0
+      availability: 98.5
+      features: [reasoning, mathematics, coding]
+
+  # Local/BitNet - Cost-effective fallback
+  bitnet:
+    bitnet-local:
+      capabilities: [basic, fallback, offline]
+      max_tokens: 4096
+      cost_per_million_tokens: 0.00
+      avg_latency_ms: 500
+      quality_score: 6.5
+      availability: 95.0
+      features: [offline, privacy]
+
+# Task routing preferences (ordered by priority)
+task_routing:
+  consciousness:
+    primary: [anthropic/claude-sonnet-4-20250514]
+    fallback: [anthropic/claude-opus-4-20250514, openai/gpt-4o]
+    strategy: "quality_first"
+    
+  reasoning:
+    primary: [deepseek/deepseek-chat, anthropic/claude-sonnet-4-20250514]
+    fallback: [openai/gpt-4o, google/gemini-2.5-flash]
+    strategy: "cost_performance_balance"
+    
+  physics:
+    primary: [deepseek/deepseek-chat]
+    fallback: [anthropic/claude-sonnet-4-20250514, openai/gpt-4o]
+    strategy: "domain_expertise"
+    
+  research:
+    primary: [deepseek/deepseek-chat, anthropic/claude-sonnet-4-20250514]
+    fallback: [google/gemini-2.5-pro, openai/gpt-4o]
+    strategy: "thoroughness"
+    
+  default:
+    primary: [openai/gpt-4o]
+    fallback: [google/gemini-2.5-flash, anthropic/claude-sonnet-4-20250514]
+    strategy: "balanced"
+    
+  vision:
+    primary: [openai/gpt-4o, google/gemini-2.5-flash]
+    fallback: [google/gemini-2.5-pro]
+    strategy: "multimodal_first"
+    
+  fast:
+    primary: [google/gemini-2.5-flash, openai/gpt-4o-mini]
+    fallback: [bitnet/bitnet-local]
+    strategy: "speed_first"
+    
+  visualization:
+    primary: [anthropic/claude-sonnet-4-20250514]
+    fallback: [openai/gpt-4o, google/gemini-2.5-flash]
+    strategy: "quality_first"
+
+# Selection strategies
+strategies:
+  quality_first:
+    weight_quality: 0.6
+    weight_cost: 0.1
+    weight_speed: 0.3
+    
+  cost_performance_balance:
+    weight_quality: 0.4
+    weight_cost: 0.4
+    weight_speed: 0.2
+    
+  speed_first:
+    weight_quality: 0.2
+    weight_cost: 0.2
+    weight_speed: 0.6
+    
+  domain_expertise:
+    weight_quality: 0.7
+    weight_cost: 0.1
+    weight_speed: 0.2
+    
+  balanced:
+    weight_quality: 0.4
+    weight_cost: 0.3
+    weight_speed: 0.3
+
+# Environment-specific overrides
+environments:
+  development:
+    default_strategy: "cost_performance_balance"
+    enable_fallback: true
+    max_cost_per_request: 0.10
+    
+  production:
+    default_strategy: "quality_first"
+    enable_fallback: true
+    max_cost_per_request: 1.00
+    
+  testing:
+    default_strategy: "speed_first"
+    enable_fallback: false
+    force_provider: "bitnet/bitnet-local"

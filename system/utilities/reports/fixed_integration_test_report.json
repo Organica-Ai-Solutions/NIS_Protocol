@@ -1,0 +1,31 @@
+{
+  "summary": {
+    "total_tests": 14,
+    "passed_tests": 3,
+    "failed_tests": 11,
+    "skipped_tests": 0,
+    "pass_rate": 0.21428571428571427,
+    "total_execution_time": 130.26417899131775,
+    "system_status": "NEEDS_ATTENTION"
+  },
+  "recommendations": [
+    "Address 11 failing tests",
+    "Improve test pass rate before production deployment"
+  ],
+  "test_results": [
+    "TestResult(test_name='utils_imports', category='Import Validation', status='PASS', execution_time=0.01081991195678711, details={'modules': ['self_audit', 'integrity_metrics']}, error_message=None)",
+    "TestResult(test_name='scientific_agents_imports', category='Import Validation', status='FAIL', execution_time=130.24718379974365, details={'imported_agents': [], 'failed_imports': ['Laplace: attempted relative import beyond top-level package', 'KAN: attempted relative import beyond top-level package', 'PINN: attempted relative import beyond top-level package', 'Coordinator: attempted relative import beyond top-level package']}, error_message=\"Failed imports: ['Laplace: attempted relative import beyond top-level package', 'KAN: attempted relative import beyond top-level package', 'PINN: attempted relative import beyond top-level package', 'Coordinator: attempted relative import beyond top-level package']\")",
+    "TestResult(test_name='consciousness_imports', category='Import Validation', status='FAIL', execution_time=0.00031304359436035156, details={}, error_message='attempted relative import beyond top-level package')",
+    "TestResult(test_name='self_audit_functionality', category='Core Components', status='PASS', execution_time=0.0015697479248046875, details={'audit_results': [{'text': 'System analysis completed with measured performance metrics', 'integrity_score': 100.0, 'violations': 0}, {'text': 'Advanced AI delivers perfect results automatically', 'integrity_score': 75, 'violations': 3}, {'text': 'Comprehensive evaluation yielded validated results', 'integrity_score': 100.0, 'violations': 0}]}, error_message=None)",
+    "TestResult(test_name='integrity_metrics_calculation', category='Core Components', status='FAIL', execution_time=1.0013580322265625e-05, details={}, error_message='calculate_confidence() takes 1 positional argument but 4 were given')",
+    "TestResult(test_name='laplace_transformer_test', category='Scientific Pipeline', status='FAIL', execution_time=0.0003180503845214844, details={}, error_message='attempted relative import beyond top-level package')",
+    "TestResult(test_name='scientific_coordinator_test', category='Scientific Pipeline', status='FAIL', execution_time=0.0002892017364501953, details={}, error_message='attempted relative import beyond top-level package')",
+    "TestResult(test_name='kan_reasoning_agent_test', category='Scientific Pipeline', status='FAIL', execution_time=0.0004248619079589844, details={}, error_message='attempted relative import beyond top-level package')",
+    "TestResult(test_name='pinn_physics_agent_test', category='Scientific Pipeline', status='FAIL', execution_time=0.000286102294921875, details={}, error_message='attempted relative import beyond top-level package')",
+    "TestResult(test_name='conscious_agent_initialization', category='Consciousness System', status='FAIL', execution_time=0.00019979476928710938, details={}, error_message='attempted relative import beyond top-level package')",
+    "TestResult(test_name='docs_integrity_example', category='Documentation Examples', status='PASS', execution_time=0.00010800361633300781, details={'original_text': 'System analysis completed with measured performance metrics', 'integrity_score': 100.0, 'violations_count': 0}, error_message=None)",
+    "TestResult(test_name='docs_signal_processing_example', category='Documentation Examples', status='FAIL', execution_time=0.0002090930938720703, details={}, error_message='attempted relative import beyond top-level package')",
+    "TestResult(test_name='laplace_performance_scaling', category='Performance Tests', status='FAIL', execution_time=0.0002257823944091797, details={}, error_message='attempted relative import beyond top-level package')",
+    "TestResult(test_name='consciousness_introspection_performance', category='Performance Tests', status='FAIL', execution_time=0.0001800060272216797, details={}, error_message='attempted relative import beyond top-level package')"
+  ]
+}

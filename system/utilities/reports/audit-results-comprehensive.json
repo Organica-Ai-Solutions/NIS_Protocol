@@ -1,0 +1,2135 @@
+{
+  "audit_timestamp": "2025-07-27T18:06:08.503050",
+  "project_path": ".",
+  "issues": [
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated interpretability claim in ENDPOINT_TEST_RESULTS.md",
+      "details": {
+        "file": "ENDPOINT_TEST_RESULTS.md",
+        "term": "95%+"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.721597"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in NIS_DRONE_HARDWARE_PLAN.md",
+      "details": {
+        "file": "NIS_DRONE_HARDWARE_PLAN.md",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.726103"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in NIS_DRONE_HARDWARE_PLAN.md",
+      "details": {
+        "file": "NIS_DRONE_HARDWARE_PLAN.md",
+        "term": "optimized"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.726723"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in NIS_DRONE_PROJECT_PLAN.md",
+      "details": {
+        "file": "NIS_DRONE_PROJECT_PLAN.md",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.729728"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in NIS_DRONE_PROJECT_PLAN.md",
+      "details": {
+        "file": "NIS_DRONE_PROJECT_PLAN.md",
+        "term": "optimized"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.730727"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in NIS_Protocol_V3_Whitepaper.md: processing",
+      "details": {
+        "file": "NIS_Protocol_V3_Whitepaper.md",
+        "claim": "processing"
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:08.738289"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in README.md",
+      "details": {
+        "file": "README.md",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.741904"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in README.md",
+      "details": {
+        "file": "README.md",
+        "term": "optimized"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.743916"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated quantum claim in README.md",
+      "details": {
+        "file": "README.md",
+        "term": "quantum computing"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.744913"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in README.md: Monitoring",
+      "details": {
+        "file": "README.md",
+        "claim": "Monitoring"
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:08.747430"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in README.md: monitoring",
+      "details": {
+        "file": "README.md",
+        "claim": "monitoring"
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:08.747430"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in README.md: monitoring",
+      "details": {
+        "file": "README.md",
+        "claim": "monitoring"
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:08.747430"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in README.md: monitoring",
+      "details": {
+        "file": "README.md",
+        "claim": "monitoring"
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:08.747430"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in AGENT_CONNECTION_GUIDE.md",
+      "details": {
+        "file": "docs\\AGENT_CONNECTION_GUIDE.md",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.750933"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in AGI_FOUNDATION_ACHIEVEMENT.md",
+      "details": {
+        "file": "docs\\AGI_FOUNDATION_ACHIEVEMENT.md",
+        "term": "interpretable"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.758450"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in AGI_FOUNDATION_ACHIEVEMENT.md",
+      "details": {
+        "file": "docs\\AGI_FOUNDATION_ACHIEVEMENT.md",
+        "term": "self-aware"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.758450"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in AGI_FOUNDATION_ACHIEVEMENT.md",
+      "details": {
+        "file": "docs\\AGI_FOUNDATION_ACHIEVEMENT.md",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.759448"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in AGI_FOUNDATION_ACHIEVEMENT.md",
+      "details": {
+        "file": "docs\\AGI_FOUNDATION_ACHIEVEMENT.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.759448"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in AGI_FOUNDATION_ACHIEVEMENT.md",
+      "details": {
+        "file": "docs\\AGI_FOUNDATION_ACHIEVEMENT.md",
+        "term": "novel"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.759448"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated quantum claim in AGI_FOUNDATION_ACHIEVEMENT.md",
+      "details": {
+        "file": "docs\\AGI_FOUNDATION_ACHIEVEMENT.md",
+        "term": "quantum computing"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.760450"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated interpretability claim in AGI_FOUNDATION_ACHIEVEMENT.md",
+      "details": {
+        "file": "docs\\AGI_FOUNDATION_ACHIEVEMENT.md",
+        "term": "95%+"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.760450"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in API_Reference.md",
+      "details": {
+        "file": "docs\\API_Reference.md",
+        "term": "self-aware"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.762449"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in API_Reference.md",
+      "details": {
+        "file": "docs\\API_Reference.md",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.763448"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in ARCHITECTURE.md",
+      "details": {
+        "file": "docs\\ARCHITECTURE.md",
+        "term": "interpretable"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.766486"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in ARCHITECTURE.md",
+      "details": {
+        "file": "docs\\ARCHITECTURE.md",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.767486"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in ARCHITECTURE.md: monitoring",
+      "details": {
+        "file": "docs\\ARCHITECTURE.md",
+        "claim": "monitoring"
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:08.771517"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in BITNET_KIMI_INTEGRATION_PLAN.md",
+      "details": {
+        "file": "docs\\BITNET_KIMI_INTEGRATION_PLAN.md",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.773126"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in BITNET_KIMI_INTEGRATION_PLAN.md",
+      "details": {
+        "file": "docs\\BITNET_KIMI_INTEGRATION_PLAN.md",
+        "term": "optimized"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.775132"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated interpretability claim in BITNET_KIMI_INTEGRATION_PLAN.md",
+      "details": {
+        "file": "docs\\BITNET_KIMI_INTEGRATION_PLAN.md",
+        "term": "95%+"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.775132"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in BITNET_KIMI_INTEGRATION_PLAN.md: ('90', 'accuracy')",
+      "details": {
+        "file": "docs\\BITNET_KIMI_INTEGRATION_PLAN.md",
+        "claim": [
+          "90",
+          "accuracy"
+        ]
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:08.776131"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in BITNET_KIMI_INTEGRATION_PLAN.md: ('10', 'x', 'faster')",
+      "details": {
+        "file": "docs\\BITNET_KIMI_INTEGRATION_PLAN.md",
+        "claim": [
+          "10",
+          "x",
+          "faster"
+        ]
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:08.776131"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in COMPREHENSIVE_FEATURES_GUIDE.md",
+      "details": {
+        "file": "docs\\COMPREHENSIVE_FEATURES_GUIDE.md",
+        "term": "interpretable"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.778643"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in COMPREHENSIVE_FEATURES_GUIDE.md",
+      "details": {
+        "file": "docs\\COMPREHENSIVE_FEATURES_GUIDE.md",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.780643"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in COMPREHENSIVE_FEATURES_GUIDE.md",
+      "details": {
+        "file": "docs\\COMPREHENSIVE_FEATURES_GUIDE.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.781644"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in COMPREHENSIVE_FEATURES_GUIDE.md",
+      "details": {
+        "file": "docs\\COMPREHENSIVE_FEATURES_GUIDE.md",
+        "term": "novel"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.781644"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in COMPREHENSIVE_FEATURES_GUIDE.md",
+      "details": {
+        "file": "docs\\COMPREHENSIVE_FEATURES_GUIDE.md",
+        "term": "optimized"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.782642"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated quantum claim in COMPREHENSIVE_FEATURES_GUIDE.md",
+      "details": {
+        "file": "docs\\COMPREHENSIVE_FEATURES_GUIDE.md",
+        "term": "quantum computing"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.784145"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in DOCUMENTATION_IMPROVEMENTS_SUMMARY.md",
+      "details": {
+        "file": "docs\\DOCUMENTATION_IMPROVEMENTS_SUMMARY.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.797661"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in GETTING_STARTED.md",
+      "details": {
+        "file": "docs\\GETTING_STARTED.md",
+        "term": "self-aware"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.807264"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated multi-agent system claim in GETTING_STARTED.md",
+      "details": {
+        "file": "docs\\GETTING_STARTED.md",
+        "term": "multi-agent system"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.807264"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in GETTING_STARTED.md",
+      "details": {
+        "file": "docs\\GETTING_STARTED.md",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.807264"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated interpretability claim in GETTING_STARTED.md",
+      "details": {
+        "file": "docs\\GETTING_STARTED.md",
+        "term": "95%+"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.808770"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in H100_DEPLOYMENT_VISION.md",
+      "details": {
+        "file": "docs\\H100_DEPLOYMENT_VISION.md",
+        "term": "self-aware"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.810776"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in H100_DEPLOYMENT_VISION.md",
+      "details": {
+        "file": "docs\\H100_DEPLOYMENT_VISION.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.811776"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in H100_DEPLOYMENT_VISION.md",
+      "details": {
+        "file": "docs\\H100_DEPLOYMENT_VISION.md",
+        "term": "optimized"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.812775"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated quantum claim in H100_DEPLOYMENT_VISION.md",
+      "details": {
+        "file": "docs\\H100_DEPLOYMENT_VISION.md",
+        "term": "quantum computing"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.812775"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in H100_DEPLOYMENT_VISION.md: ('100', 'x', 'faster')",
+      "details": {
+        "file": "docs\\H100_DEPLOYMENT_VISION.md",
+        "claim": [
+          "100",
+          "x",
+          "faster"
+        ]
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:08.813774"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in H100_DEPLOYMENT_VISION.md: ('300', 'x', 'faster')",
+      "details": {
+        "file": "docs\\H100_DEPLOYMENT_VISION.md",
+        "claim": [
+          "300",
+          "x",
+          "faster"
+        ]
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:08.813774"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in H100_DEPLOYMENT_VISION.md: ('500', 'x', 'faster')",
+      "details": {
+        "file": "docs\\H100_DEPLOYMENT_VISION.md",
+        "claim": [
+          "500",
+          "x",
+          "faster"
+        ]
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:08.813774"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in H100_DEPLOYMENT_VISION.md: ('1000', 'x', 'faster')",
+      "details": {
+        "file": "docs\\H100_DEPLOYMENT_VISION.md",
+        "claim": [
+          "1000",
+          "x",
+          "faster"
+        ]
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:08.813774"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in H100_DEPLOYMENT_VISION.md: ('100', 'x', 'faster')",
+      "details": {
+        "file": "docs\\H100_DEPLOYMENT_VISION.md",
+        "claim": [
+          "100",
+          "x",
+          "faster"
+        ]
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:08.813774"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in H100_DEPLOYMENT_VISION.md: ('100', 'x', 'faster')",
+      "details": {
+        "file": "docs\\H100_DEPLOYMENT_VISION.md",
+        "claim": [
+          "100",
+          "x",
+          "faster"
+        ]
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:08.813774"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in H100_DEPLOYMENT_VISION.md: Processing",
+      "details": {
+        "file": "docs\\H100_DEPLOYMENT_VISION.md",
+        "claim": "Processing"
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:08.813774"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in HOW_TO_USE.md",
+      "details": {
+        "file": "docs\\HOW_TO_USE.md",
+        "term": "self-aware"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.814775"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in HOW_TO_USE.md",
+      "details": {
+        "file": "docs\\HOW_TO_USE.md",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.815775"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated multi-agent system claim in INTEGRATION_EXAMPLES.md",
+      "details": {
+        "file": "docs\\INTEGRATION_EXAMPLES.md",
+        "term": "general intelligence"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.820798"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated multi-agent system claim in INTEGRATION_GUIDE.md",
+      "details": {
+        "file": "docs\\INTEGRATION_GUIDE.md",
+        "term": "multi-agent system"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.830296"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated multi-agent system claim in INTEGRATION_GUIDE.md",
+      "details": {
+        "file": "docs\\INTEGRATION_GUIDE.md",
+        "term": "general intelligence"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.830296"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in INTEGRATION_GUIDE.md",
+      "details": {
+        "file": "docs\\INTEGRATION_GUIDE.md",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.830296"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in INTEGRATION_GUIDE.md",
+      "details": {
+        "file": "docs\\INTEGRATION_GUIDE.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.831301"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in INTEGRATION_GUIDE.md",
+      "details": {
+        "file": "docs\\INTEGRATION_GUIDE.md",
+        "term": "optimized"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.833306"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated quantum claim in INTEGRATION_GUIDE.md",
+      "details": {
+        "file": "docs\\INTEGRATION_GUIDE.md",
+        "term": "quantum computing"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.834306"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in NIS_PROTOCOL_V31_BLUEPRINT.md",
+      "details": {
+        "file": "docs\\NIS_PROTOCOL_V31_BLUEPRINT.md",
+        "term": "self-aware"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.848867"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in NIS_PROTOCOL_V31_BLUEPRINT.md",
+      "details": {
+        "file": "docs\\NIS_PROTOCOL_V31_BLUEPRINT.md",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.848867"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in NIS_PROTOCOL_V31_BLUEPRINT.md",
+      "details": {
+        "file": "docs\\NIS_PROTOCOL_V31_BLUEPRINT.md",
+        "term": "optimized"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.848867"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in NIS_PROTOCOL_V31_BLUEPRINT.md: ('10', 'x', 'faster')",
+      "details": {
+        "file": "docs\\NIS_PROTOCOL_V31_BLUEPRINT.md",
+        "claim": [
+          "10",
+          "x",
+          "faster"
+        ]
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:08.850882"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in NIS_PROTOCOL_V31_BLUEPRINT.md: monitoring",
+      "details": {
+        "file": "docs\\NIS_PROTOCOL_V31_BLUEPRINT.md",
+        "claim": "monitoring"
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:08.851493"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in NIS_PROTOCOL_V31_BLUEPRINT.md: Monitoring",
+      "details": {
+        "file": "docs\\NIS_PROTOCOL_V31_BLUEPRINT.md",
+        "claim": "Monitoring"
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:08.851493"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in NIS_Protocol_V3_Technical_Whitepaper.md: processing",
+      "details": {
+        "file": "docs\\NIS_Protocol_V3_Technical_Whitepaper.md",
+        "claim": "processing"
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:08.857501"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated multi-agent system claim in NIS_PROTOCOL_V4_V5_V6_BLUEPRINT.md",
+      "details": {
+        "file": "docs\\NIS_PROTOCOL_V4_V5_V6_BLUEPRINT.md",
+        "term": "general intelligence"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.858500"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in NIS_PROTOCOL_V4_V5_V6_BLUEPRINT.md",
+      "details": {
+        "file": "docs\\NIS_PROTOCOL_V4_V5_V6_BLUEPRINT.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.859502"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in NIS_PROTOCOL_V4_V5_V6_BLUEPRINT.md",
+      "details": {
+        "file": "docs\\NIS_PROTOCOL_V4_V5_V6_BLUEPRINT.md",
+        "term": "novel"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.859502"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in NIS_PROTOCOL_V4_V5_V6_BLUEPRINT.md",
+      "details": {
+        "file": "docs\\NIS_PROTOCOL_V4_V5_V6_BLUEPRINT.md",
+        "term": "optimized"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.860503"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated interpretability claim in NIS_PROTOCOL_V4_V5_V6_BLUEPRINT.md",
+      "details": {
+        "file": "docs\\NIS_PROTOCOL_V4_V5_V6_BLUEPRINT.md",
+        "term": "95%+"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.861818"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in NIS_PROTOCOL_V4_V5_V6_BLUEPRINT.md: Processing",
+      "details": {
+        "file": "docs\\NIS_PROTOCOL_V4_V5_V6_BLUEPRINT.md",
+        "claim": "Processing"
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:08.862817"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in NIS_V3_AGENT_MASTER_INVENTORY.md",
+      "details": {
+        "file": "docs\\NIS_V3_AGENT_MASTER_INVENTORY.md",
+        "term": "self-aware"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.863817"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated multi-agent system claim in NIS_V3_AGENT_MASTER_INVENTORY.md",
+      "details": {
+        "file": "docs\\NIS_V3_AGENT_MASTER_INVENTORY.md",
+        "term": "general intelligence"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.863817"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in QUICK_START.md",
+      "details": {
+        "file": "docs\\QUICK_START.md",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.868916"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated interpretability claim in QUICK_START.md",
+      "details": {
+        "file": "docs\\QUICK_START.md",
+        "term": "95%+"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.869913"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in README.md",
+      "details": {
+        "file": "docs\\README.md",
+        "term": "self-aware"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.871417"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in README.md",
+      "details": {
+        "file": "docs\\README.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.871417"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in TROUBLESHOOTING_GUIDE.md",
+      "details": {
+        "file": "docs\\TROUBLESHOOTING_GUIDE.md",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.876421"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in TROUBLESHOOTING_GUIDE.md",
+      "details": {
+        "file": "docs\\TROUBLESHOOTING_GUIDE.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.877421"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated quantum claim in TROUBLESHOOTING_GUIDE.md",
+      "details": {
+        "file": "docs\\TROUBLESHOOTING_GUIDE.md",
+        "term": "quantum computing"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.878423"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in V4_V5_V6_IMPLEMENTATION_TRACKER.md: processing",
+      "details": {
+        "file": "docs\\V4_V5_V6_IMPLEMENTATION_TRACKER.md",
+        "claim": "processing"
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:08.887987"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in AWS_MIGRATION_ACCELERATOR_GUIDE.md",
+      "details": {
+        "file": "dev\\documentation\\AWS_MIGRATION_ACCELERATOR_GUIDE.md",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.902753"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in AWS_MIGRATION_ACCELERATOR_GUIDE.md",
+      "details": {
+        "file": "dev\\documentation\\AWS_MIGRATION_ACCELERATOR_GUIDE.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.902753"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in AWS_MIGRATION_ACCELERATOR_GUIDE.md",
+      "details": {
+        "file": "dev\\documentation\\AWS_MIGRATION_ACCELERATOR_GUIDE.md",
+        "term": "optimized"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.903752"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in DOCKER_README.md",
+      "details": {
+        "file": "dev\\documentation\\DOCKER_README.md",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.909751"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in DOCKER_README.md: Monitoring",
+      "details": {
+        "file": "dev\\documentation\\DOCKER_README.md",
+        "claim": "Monitoring"
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:08.912256"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in DOCKER_README.md: monitoring",
+      "details": {
+        "file": "dev\\documentation\\DOCKER_README.md",
+        "claim": "monitoring"
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:08.912256"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in DOCUMENTATION_UPDATE_SUMMARY.md",
+      "details": {
+        "file": "dev\\documentation\\DOCUMENTATION_UPDATE_SUMMARY.md",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.913261"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in DOCUMENTATION_UPDATE_SUMMARY.md",
+      "details": {
+        "file": "dev\\documentation\\DOCUMENTATION_UPDATE_SUMMARY.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.913261"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in DOCUMENTATION_UPDATE_SUMMARY.md",
+      "details": {
+        "file": "dev\\documentation\\DOCUMENTATION_UPDATE_SUMMARY.md",
+        "term": "optimized"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.914260"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in DOCUMENTATION_UPDATE_SUMMARY.md: monitoring",
+      "details": {
+        "file": "dev\\documentation\\DOCUMENTATION_UPDATE_SUMMARY.md",
+        "claim": "monitoring"
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:08.915802"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in DOCUMENTATION_VALIDATION_REPORT.md",
+      "details": {
+        "file": "dev\\documentation\\DOCUMENTATION_VALIDATION_REPORT.md",
+        "term": "self-aware"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.915802"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in DOCUMENTATION_VALIDATION_REPORT.md",
+      "details": {
+        "file": "dev\\documentation\\DOCUMENTATION_VALIDATION_REPORT.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.915802"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in DOCUMENTATION_VALIDATION_REPORT.md",
+      "details": {
+        "file": "dev\\documentation\\DOCUMENTATION_VALIDATION_REPORT.md",
+        "term": "optimized"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.917427"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in NIS_DRONE_HARDWARE_PLAN.md",
+      "details": {
+        "file": "dev\\documentation\\NIS_DRONE_HARDWARE_PLAN.md",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.920432"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in NIS_DRONE_HARDWARE_PLAN.md",
+      "details": {
+        "file": "dev\\documentation\\NIS_DRONE_HARDWARE_PLAN.md",
+        "term": "optimized"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.921432"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in NIS_DRONE_PROJECT_PLAN.md",
+      "details": {
+        "file": "dev\\documentation\\NIS_DRONE_PROJECT_PLAN.md",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.924466"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in NIS_DRONE_PROJECT_PLAN.md",
+      "details": {
+        "file": "dev\\documentation\\NIS_DRONE_PROJECT_PLAN.md",
+        "term": "optimized"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.924466"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in NIS_OFFLINE_MODEL_TRAINING_PLAN.md",
+      "details": {
+        "file": "dev\\documentation\\NIS_OFFLINE_MODEL_TRAINING_PLAN.md",
+        "term": "self-aware"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.927466"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in NIS_OFFLINE_MODEL_TRAINING_PLAN.md",
+      "details": {
+        "file": "dev\\documentation\\NIS_OFFLINE_MODEL_TRAINING_PLAN.md",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.928464"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated interpretability claim in NIS_OFFLINE_MODEL_TRAINING_PLAN.md",
+      "details": {
+        "file": "dev\\documentation\\NIS_OFFLINE_MODEL_TRAINING_PLAN.md",
+        "term": "95%+"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.931078"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in NIS_OFFLINE_MODEL_TRAINING_PLAN.md: ('100', 'x', 'faster')",
+      "details": {
+        "file": "dev\\documentation\\NIS_OFFLINE_MODEL_TRAINING_PLAN.md",
+        "claim": [
+          "100",
+          "x",
+          "faster"
+        ]
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:08.932582"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in NIS_OFFLINE_MODEL_TRAINING_PLAN.md: Monitoring",
+      "details": {
+        "file": "dev\\documentation\\NIS_OFFLINE_MODEL_TRAINING_PLAN.md",
+        "claim": "Monitoring"
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:08.932582"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in NIS_PROTOCOL_V3_COMPREHENSIVE_ANALYSIS.md",
+      "details": {
+        "file": "dev\\documentation\\NIS_PROTOCOL_V3_COMPREHENSIVE_ANALYSIS.md",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.935101"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated interpretability claim in NIS_PROTOCOL_V3_COMPREHENSIVE_ANALYSIS.md",
+      "details": {
+        "file": "dev\\documentation\\NIS_PROTOCOL_V3_COMPREHENSIVE_ANALYSIS.md",
+        "term": "95%+"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.937101"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in NIS_PROTOCOL_V3_COMPREHENSIVE_ANALYSIS.md: monitoring",
+      "details": {
+        "file": "dev\\documentation\\NIS_PROTOCOL_V3_COMPREHENSIVE_ANALYSIS.md",
+        "claim": "monitoring"
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:08.938101"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in NIS_Protocol_V3_Whitepaper.md: processing",
+      "details": {
+        "file": "dev\\documentation\\NIS_Protocol_V3_Whitepaper.md",
+        "claim": "processing"
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:08.943605"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in POSTMAN_IMPORT_GUIDE.md",
+      "details": {
+        "file": "dev\\documentation\\POSTMAN_IMPORT_GUIDE.md",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.945165"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in README.md",
+      "details": {
+        "file": "docs\\diagrams\\README.md",
+        "term": "self-aware"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.947172"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in communication_hierarchy.md",
+      "details": {
+        "file": "docs\\diagrams\\agent_hierarchy\\communication_hierarchy.md",
+        "term": "self-aware"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.949170"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in communication_hierarchy.md",
+      "details": {
+        "file": "docs\\diagrams\\agent_hierarchy\\communication_hierarchy.md",
+        "term": "optimized"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.949170"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in laplace_kan_pinn_pipeline.md",
+      "details": {
+        "file": "docs\\diagrams\\pipelines\\laplace_kan_pinn_pipeline.md",
+        "term": "interpretable"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.951683"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in consciousness_monitoring_flow.md",
+      "details": {
+        "file": "docs\\diagrams\\system_flow\\consciousness_monitoring_flow.md",
+        "term": "self-aware"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.954194"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in consciousness_monitoring_flow.md",
+      "details": {
+        "file": "docs\\diagrams\\system_flow\\consciousness_monitoring_flow.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.955198"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in consciousness_monitoring_flow.md",
+      "details": {
+        "file": "docs\\diagrams\\system_flow\\consciousness_monitoring_flow.md",
+        "term": "novel"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.955198"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in error_handling_recovery.md",
+      "details": {
+        "file": "docs\\diagrams\\system_flow\\error_handling_recovery.md",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.963329"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in error_handling_recovery.md",
+      "details": {
+        "file": "docs\\diagrams\\system_flow\\error_handling_recovery.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.963329"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in llm_provider_integration.md",
+      "details": {
+        "file": "docs\\diagrams\\system_flow\\llm_provider_integration.md",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.969365"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in memory_system_architecture.md",
+      "details": {
+        "file": "docs\\diagrams\\system_flow\\memory_system_architecture.md",
+        "term": "self-aware"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.972365"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated interpretability claim in memory_system_architecture.md",
+      "details": {
+        "file": "docs\\diagrams\\system_flow\\memory_system_architecture.md",
+        "term": "95%+"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.974896"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in nis_complete_dataflow.md",
+      "details": {
+        "file": "docs\\diagrams\\system_flow\\nis_complete_dataflow.md",
+        "term": "interpretable"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.978431"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in nis_complete_dataflow.md",
+      "details": {
+        "file": "docs\\diagrams\\system_flow\\nis_complete_dataflow.md",
+        "term": "self-aware"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.978431"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in nis_complete_system_architecture.md",
+      "details": {
+        "file": "docs\\diagrams\\system_flow\\nis_complete_system_architecture.md",
+        "term": "self-aware"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.980429"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in nis_complete_system_architecture.md",
+      "details": {
+        "file": "docs\\diagrams\\system_flow\\nis_complete_system_architecture.md",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.981430"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in nis_complete_system_architecture.md",
+      "details": {
+        "file": "docs\\diagrams\\system_flow\\nis_complete_system_architecture.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.981430"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated interpretability claim in nis_complete_system_architecture.md",
+      "details": {
+        "file": "docs\\diagrams\\system_flow\\nis_complete_system_architecture.md",
+        "term": "95%+"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.982430"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in nis_complete_system_architecture.md: Monitoring",
+      "details": {
+        "file": "docs\\diagrams\\system_flow\\nis_complete_system_architecture.md",
+        "claim": "Monitoring"
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:08.984451"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in environment-template.txt",
+      "details": {
+        "file": "environment-template.txt",
+        "term": "advanced"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:08.997555"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in agi_benchmark_results.txt",
+      "details": {
+        "file": "nis-integrity-toolkit\\agi_benchmark_results.txt",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:09.002612"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated advanced claim in agi_benchmark_results.txt",
+      "details": {
+        "file": "nis-integrity-toolkit\\agi_benchmark_results.txt",
+        "term": "novel"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:09.002612"
+    },
+    {
+      "type": "hardcoded_metric",
+      "description": "Hardcoded performance metric in simple_real_chat_test.py: confidence=0.95",
+      "details": {
+        "file": "simple_real_chat_test.py",
+        "pattern": "confidence=0.95"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:09.099748"
+    },
+    {
+      "type": "hardcoded_metric",
+      "description": "Hardcoded performance metric in simple_real_chat_test.py: confidence=0.93",
+      "details": {
+        "file": "simple_real_chat_test.py",
+        "pattern": "confidence=0.93"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-07-27T18:06:09.099748"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in build_env.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_internal\\build_env.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.152015"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in cache.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_internal\\cache.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.153013"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in typing_extensions.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_vendor\\typing_extensions.py",
+        "count": 6
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.162077"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in base_command.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_internal\\cli\\base_command.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.164075"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in inspect.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_internal\\commands\\inspect.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.171103"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in collector.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_internal\\index\\collector.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.176680"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in base.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_internal\\locations\\base.py",
+        "count": 2
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.180196"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in _distutils.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_internal\\locations\\_distutils.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.180196"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in base.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_internal\\metadata\\base.py",
+        "count": 3
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.182196"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in index.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_internal\\models\\index.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.184194"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in installation_report.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_internal\\models\\installation_report.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.184194"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in selection_prefs.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_internal\\models\\selection_prefs.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.186204"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in lazy_wheel.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_internal\\network\\lazy_wheel.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.189727"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in prepare.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_internal\\operations\\prepare.py",
+        "count": 2
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.193293"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in constructors.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_internal\\req\\constructors.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.195294"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in req_file.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_internal\\req\\req_file.py",
+        "count": 3
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.197290"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in req_install.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_internal\\req\\req_install.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.197290"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in req_set.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_internal\\req\\req_set.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.198794"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in req_uninstall.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_internal\\req\\req_uninstall.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.199799"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in unpacking.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_internal\\utils\\unpacking.py",
+        "count": 2
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.209170"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in subversion.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_internal\\vcs\\subversion.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.212865"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in _compat.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_internal\\metadata\\importlib\\_compat.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.214432"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in wheel.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_internal\\operations\\install\\wheel.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.217534"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in candidates.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_internal\\resolution\\resolvelib\\candidates.py",
+        "count": 2
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.220048"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in factory.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_internal\\resolution\\resolvelib\\factory.py",
+        "count": 2
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.222052"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in provider.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_internal\\resolution\\resolvelib\\provider.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.223635"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in controller.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_vendor\\cachecontrol\\controller.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.226641"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in filewrapper.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_vendor\\cachecontrol\\filewrapper.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.226641"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in database.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_vendor\\distlib\\database.py",
+        "count": 10
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.232651"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in locators.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_vendor\\distlib\\locators.py",
+        "count": 6
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.236158"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in metadata.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_vendor\\distlib\\metadata.py",
+        "count": 4
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.238159"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in resources.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_vendor\\distlib\\resources.py",
+        "count": 4
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.239161"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in util.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_vendor\\distlib\\util.py",
+        "count": 6
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.242531"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in version.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_vendor\\distlib\\version.py",
+        "count": 2
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.243534"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in wheel.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_vendor\\distlib\\wheel.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.245535"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in fallback.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_vendor\\msgpack\\fallback.py",
+        "count": 4
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.267394"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in metadata.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_vendor\\packaging\\metadata.py",
+        "count": 2
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.269447"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in requirements.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_vendor\\packaging\\requirements.py",
+        "count": 2
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.270447"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in tags.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_vendor\\packaging\\tags.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.272957"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in __init__.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_vendor\\pkg_resources\\__init__.py",
+        "count": 7
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.280957"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in lexer.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_vendor\\pygments\\lexer.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.286684"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in unistring.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_vendor\\pygments\\unistring.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.291200"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in adapters.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_vendor\\requests\\adapters.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.294206"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in hooks.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_vendor\\requests\\hooks.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.296208"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in utils.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_vendor\\requests\\utils.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.300709"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in text.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_vendor\\rich\\text.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.330371"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in _api.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_vendor\\truststore\\_api.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.350741"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in _macos.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_vendor\\truststore\\_macos.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.352277"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in connection.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_vendor\\urllib3\\connection.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.354374"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in connectionpool.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_vendor\\urllib3\\connectionpool.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.356375"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in exceptions.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_vendor\\urllib3\\exceptions.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.356375"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in response.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_vendor\\urllib3\\response.py",
+        "count": 3
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.360372"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in __init__.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_vendor\\pygments\\filters\\__init__.py",
+        "count": 3
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.366392"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in python.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_vendor\\pygments\\lexers\\python.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.369454"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in _mapping.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_vendor\\pygments\\lexers\\_mapping.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.372452"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in pyopenssl.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_vendor\\urllib3\\contrib\\pyopenssl.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.376961"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in securetransport.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_vendor\\urllib3\\contrib\\securetransport.py",
+        "count": 3
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.378966"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in response.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_vendor\\urllib3\\util\\response.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.382587"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in retry.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_vendor\\urllib3\\util\\retry.py",
+        "count": 5
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.384092"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in url.py",
+      "details": {
+        "file": ".venv\\Lib\\site-packages\\pip\\_vendor\\urllib3\\util\\url.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.387099"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in full-audit.py",
+      "details": {
+        "file": "nis-integrity-toolkit\\audit-scripts\\full-audit.py",
+        "count": 4
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.403667"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in safety_monitor.py",
+      "details": {
+        "file": "src\\agents\\alignment\\safety_monitor.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.445122"
+    },
+    {
+      "type": "complex_dependencies",
+      "description": "Complex ML dependencies found: ['transformers', 'torch']. Are these actually used?",
+      "details": {
+        "dependencies": [
+          "transformers",
+          "torch"
+        ]
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-07-27T18:06:09.689745"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'advanced' appears 3 times",
+      "details": {
+        "file": "README.md",
+        "term": "advanced",
+        "count": 3
+      },
+      "severity": "LOW",
+      "timestamp": "2025-07-27T18:06:10.080616"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'optimized' appears 1 times",
+      "details": {
+        "file": "README.md",
+        "term": "optimized",
+        "count": 1
+      },
+      "severity": "LOW",
+      "timestamp": "2025-07-27T18:06:10.082616"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'quantum computing' appears 1 times",
+      "details": {
+        "file": "README.md",
+        "term": "quantum computing",
+        "count": 1
+      },
+      "severity": "LOW",
+      "timestamp": "2025-07-27T18:06:10.082616"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'self-aware' appears 1 times",
+      "details": {
+        "file": "docs\\README.md",
+        "term": "self-aware",
+        "count": 1
+      },
+      "severity": "LOW",
+      "timestamp": "2025-07-27T18:06:10.085125"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'improvement' appears 1 times",
+      "details": {
+        "file": "docs\\README.md",
+        "term": "improvement",
+        "count": 1
+      },
+      "severity": "LOW",
+      "timestamp": "2025-07-27T18:06:10.085125"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'self-aware' appears 1 times",
+      "details": {
+        "file": "docs\\diagrams\\README.md",
+        "term": "self-aware",
+        "count": 1
+      },
+      "severity": "LOW",
+      "timestamp": "2025-07-27T18:06:10.090218"
+    }
+  ],
+  "metrics": {
+    "claimed_services": 0,
+    "actual_services": 5,
+    "service_directories": 24,
+    "total_hype_instances": 8,
+    "high_issues": 107,
+    "medium_issues": 92,
+    "low_issues": 6
+  },
+  "recommendations": [
+    {
+      "priority": "HIGH",
+      "action": "Replace hardcoded performance metrics with actual calculations",
+      "reason": "Found 107 high-severity issues that damage credibility"
+    },
+    {
+      "priority": "HIGH",
+      "action": "Rewrite marketing language with evidence-based descriptions",
+      "reason": "Found 8 instances of unsupported hype language"
+    },
+    {
+      "priority": "MEDIUM",
+      "action": "Implement pre-commit hooks with this audit tool",
+      "reason": "Prevent future integrity issues"
+    },
+    {
+      "priority": "LOW",
+      "action": "Add explicit limitations section to documentation",
+      "reason": "Transparent communication of constraints builds trust"
+    }
+  ],
+  "integrity_score": 0
+}

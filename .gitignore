@@ -140,4 +140,46 @@ dmypy.json
 .LSOverride
 
 # Redis
-dump.rdb 
+dump.rdb
+
+# 🔐 PyPI Security Files
+.pypi/RECOVERY_CODES.md
+.pypi/tokens.txt
+*.pypi-token
+recovery_codes.txt
+
+# API Keys and Tokens
+.env.local
+*.key
+*.token 
+# Archived documentation summaries
+docs/archive_summaries/
+
+# Large model files
+models/bitnet/models/bitnet/**/*.safetensors
+models/bitnet/models/bitnet/**/*.bin
+models/bitnet/models/bitnet/**/*.pt
+models/bitnet/models/bitnet/**/*.model
+models/bitnet/models/bitnet/**/*.ckpt
+# Exclude other large binary files
+*.safetensors
+*.bin
+*.pt
+*.ckpt
+*.model
+# Potential large dataset files
+*.h5
+*.npy
+*.npz
+*.pkl
+*.joblib
+
+# Virtual Environments
+venv/
+
+# Eclipse project files
+.cproject
+
+# Private directories
+private/
+.env.backup

@@ -1,11 +1,28 @@
 """
 Perception Layer Agents
 
-This module contains agents for the Perception layer, which is responsible for
-processing raw sensory inputs into structured data for higher-level processing.
+Contains agents responsible for processing sensory inputs including:
+- VisionAgent: Processes visual inputs (images, video, UI)
+- InputAgent: Handles user inputs and interface interactions
 """
 
-from .vision_agent import VisionAgent
-from .input_agent import InputAgent
+try:
+    from .vision_agent import VisionAgent
+    VISION_AVAILABLE = True
+except ImportError:
+    VISION_AVAILABLE = False
+    VisionAgent = None
 
-__all__ = ["VisionAgent", "InputAgent"] 
+try:
+    from .input_agent import InputAgent
+    INPUT_AVAILABLE = True
+except ImportError:
+    INPUT_AVAILABLE = False
+    InputAgent = None
+
+__all__ = []
+
+if VISION_AVAILABLE:
+    __all__.append('VisionAgent')
+if INPUT_AVAILABLE:
+    __all__.append('InputAgent') 

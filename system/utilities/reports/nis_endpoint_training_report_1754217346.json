@@ -1,0 +1,322 @@
+{
+  "working": [
+    {
+      "endpoint": "POST /visualization/create",
+      "description": "Scientific data visualization",
+      "status_code": 200,
+      "response_time": 0.0098,
+      "timestamp": "2025-08-03T06:35:41.366806",
+      "response": {
+        "status": "success",
+        "visualization": {
+          "status": "success",
+          "visualization_type": "bar",
+          "style": "scientific",
+          "title": "Training Data Visualization",
+          "data_summary": {
+            "data_points": 64,
+            "complexity": "medium",
+            "recommended_type": "line"
+          },
+          "generation_info": {
+            "method": "programmatic_generation",
+            "physics_enhanced": false,
+            "style_applied": "scientific"
+          },
+          "mock_image_data": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
+          "timestamp": "2025-08-03T10:35:41.365944"
+        },
+        "agent_id": "multimodal_vision_agent",
+        "timestamp": 1754217341.3659582
+      },
+      "response_type": "json",
+      "performance": "excellent"
+    },
+    {
+      "endpoint": "POST /agents/curiosity/process_stimulus",
+      "description": "Curiosity-driven learning stimulus",
+      "status_code": 200,
+      "response_time": 0.0278,
+      "timestamp": "2025-08-03T06:35:42.411168",
+      "response": {
+        "signals": [
+          {
+            "signal_id": "mock_signal_1754217342",
+            "curiosity_type": "epistemic",
+            "systematicty_source": "knowledge_gap",
+            "intensity": 0.75,
+            "confidence": 0.85,
+            "stimulus": {
+              "type": "information",
+              "content": "A new scientific discovery about quantum computing",
+              "source": "research_paper",
+              "complexity": "high"
+            },
+            "context": {},
+            "timestamp": 1754217342.4107392,
+            "learning_potential": 0.8,
+            "skill_development_areas": [
+              "mock_skill"
+            ],
+            "knowledge_gaps": [
+              "mock_gap"
+            ],
+            "cultural_context": {},
+            "diversity_score": 0.7000000000000001,
+            "prediction_error": 0.2,
+            "uncertainty_estimate": 0.3,
+            "competence_gap": 0.4
+          }
+        ]
+      },
+      "response_type": "json",
+      "performance": "excellent"
+    },
+    {
+      "endpoint": "POST /simulation/run",
+      "description": "Quantum physics simulation",
+      "status_code": 200,
+      "response_time": 0.0264,
+      "timestamp": "2025-08-03T06:35:43.983197",
+      "response": {
+        "status": "completed",
+        "message": "Physics simulation completed for concept: 'quantum_entanglement_experiment'",
+        "concept": "quantum_entanglement_experiment",
+        "key_metrics": {
+          "physics_compliance": 0.94,
+          "energy_conservation": 0.98,
+          "momentum_conservation": 0.96,
+          "simulation_accuracy": 0.92
+        },
+        "physics_analysis": {
+          "conservation_laws_verified": true,
+          "physical_constraints_satisfied": true,
+          "realistic_behavior": true
+        },
+        "timestamp": 1754217343.9828646,
+        "simulation_id": "sim_1754217343"
+      },
+      "response_type": "json",
+      "performance": "excellent"
+    },
+    {
+      "endpoint": "POST /nvidia/process",
+      "description": "NVIDIA-accelerated physics processing",
+      "status_code": 200,
+      "response_time": 0.0079,
+      "timestamp": "2025-08-03T06:35:44.492158",
+      "response": {
+        "status": "success",
+        "nvidia_response": "NVIDIA physics_informed response: Advanced AI processing of 'Analyze this physics data using NVIDIA acceleration' in general domain with enhanced NIS validation",
+        "model_type": "physics_informed",
+        "domain": "general",
+        "confidence": 0.6458209667418796,
+        "processing_time": 0.0033082962036132812,
+        "consciousness_validation": {
+          "consciousness_level": "introspective",
+          "consciousness_confidence": 0.7273272542291583,
+          "self_awareness_score": 0.7,
+          "introspection_depth": 0.6,
+          "meta_cognition_level": 0.5,
+          "ethical_reasoning_capability": 0.9,
+          "bias_resistance": 0.6,
+          "detected_biases": [
+            "overconfidence"
+          ],
+          "bias_confidence_scores": {
+            "overconfidence": 0.4
+          },
+          "overall_bias_score": 0.05714285714285715,
+          "bias_recommendations": [
+            "Seek external validation and consider uncertainty"
+          ],
+          "ethical_framework_scores": {
+            "utilitarian": 0.8,
+            "deontological": 0.9,
+            "virtue_ethics": 0.7,
+            "care_ethics": 0.8,
+            "justice": 0.9
+          },
+          "overall_ethical_score": 0.8200000000000001,
+          "ethical_concerns": [
+            "May not align with virtuous character"
+          ],
+          "ethical_recommendations": [
+            "Consider what a virtuous agent would do"
+          ],
+          "requires_human_review": false,
+          "processing_time": 0.0002353191375732422,
+          "validated_at": "2025-08-03T10:35:44.488690",
+          "validator_id": "consciousness_service"
+        },
+        "physics_validation": {
+          "physics_compliant": false,
+          "confidence": 0.675,
+          "details": "Validation complete based on unified PINN logic.",
+          "agent_id": "pinn_physics_agent",
+          "physics_mode": "enhanced_pinn"
+        },
+        "pipeline_validation": {
+          "error": "asyncio.run() cannot be called from a running event loop",
+          "pipeline_stage": "enhanced_scientific",
+          "requires_human_review": true,
+          "pipeline_version": "v3.1_nis_hub_enhanced"
+        },
+        "nis_signature": {
+          "consciousness_validated": true,
+          "physics_validated": true,
+          "model_type": "physics_informed",
+          "confidence": 0.6458209667418796,
+          "timestamp": "2025-08-03T10:35:44.491734",
+          "validator": "nis_nvidia_endpoint"
+        },
+        "request_id": "nvidia_1754217344491",
+        "prompt_length": 51,
+        "response_tokens": 21
+      },
+      "response_type": "json",
+      "performance": "excellent"
+    }
+  ],
+  "partial": [],
+  "errors": [
+    {
+      "endpoint": "POST /agents/learning/process",
+      "description": "Supervised learning processing",
+      "status_code": 500,
+      "response_time": 0.0147,
+      "timestamp": "2025-08-03T06:35:42.926690",
+      "error": "{\"error\":\"500: {'status': 'error', 'error': 'Unknown operation: learn_from_data', 'agent_id': 'core_learning_agent_01', 'timestamp': 1754217342.9257827}\"}"
+    },
+    {
+      "endpoint": "POST /training/bitnet/force",
+      "description": "Force BitNet model training",
+      "status_code": 500,
+      "response_time": 0.0131,
+      "timestamp": "2025-08-03T06:35:46.038463",
+      "error": "{\"detail\":\"BitNet trainer not initialized\"}"
+    }
+  ],
+  "parameter_fixes": [
+    {
+      "endpoint": "POST /agents/alignment/evaluate_ethics",
+      "description": "AI ethics evaluation",
+      "status_code": 422,
+      "response_time": 0.0147,
+      "timestamp": "2025-08-03T06:35:41.882439",
+      "error": [
+        {
+          "type": "dict_type",
+          "loc": [
+            "body",
+            "action"
+          ],
+          "msg": "Input should be a valid dictionary",
+          "input": "provide medical diagnosis recommendation"
+        }
+      ],
+      "fix_needed": "parameter_format"
+    },
+    {
+      "endpoint": "POST /agents/simulation/run",
+      "description": "Physics simulation execution",
+      "status_code": 422,
+      "response_time": 0.028,
+      "timestamp": "2025-08-03T06:35:43.455806",
+      "error": [
+        {
+          "type": "missing",
+          "loc": [
+            "body",
+            "scenario_type"
+          ],
+          "msg": "Field required",
+          "input": {
+            "scenario_id": "physics_simulation_001",
+            "scenario": {
+              "type": "physics",
+              "parameters": {
+                "gravity": 9.8,
+                "time": 10,
+                "mass": 1.0
+              },
+              "environment": "vacuum"
+            }
+          }
+        },
+        {
+          "type": "missing",
+          "loc": [
+            "body",
+            "parameters"
+          ],
+          "msg": "Field required",
+          "input": {
+            "scenario_id": "physics_simulation_001",
+            "scenario": {
+              "type": "physics",
+              "parameters": {
+                "gravity": 9.8,
+                "time": 10,
+                "mass": 1.0
+              },
+              "environment": "vacuum"
+            }
+          }
+        }
+      ],
+      "fix_needed": "parameter_format"
+    },
+    {
+      "endpoint": "POST /process",
+      "description": "General text processing",
+      "status_code": 422,
+      "response_time": 0.0173,
+      "timestamp": "2025-08-03T06:35:45.010498",
+      "error": [
+        {
+          "type": "missing",
+          "loc": [
+            "body",
+            "processing_type"
+          ],
+          "msg": "Field required",
+          "input": {
+            "text": "Process this scientific text for key insights",
+            "context": "physics research analysis",
+            "processing_mode": "comprehensive",
+            "extract_insights": true
+          }
+        }
+      ],
+      "fix_needed": "parameter_format"
+    },
+    {
+      "endpoint": "POST /agent/behavior/test_agent_001",
+      "description": "Agent behavior modification",
+      "status_code": 422,
+      "response_time": 0.0134,
+      "timestamp": "2025-08-03T06:35:45.524551",
+      "error": [
+        {
+          "type": "missing",
+          "loc": [
+            "body",
+            "mode"
+          ],
+          "msg": "Field required",
+          "input": {
+            "behavior_changes": {
+              "learning_rate": 0.01,
+              "exploration_factor": 0.2,
+              "collaboration_mode": "active"
+            },
+            "modification_type": "parameter_tuning"
+          }
+        }
+      ],
+      "fix_needed": "parameter_format"
+    }
+  ],
+  "performance_metrics": {}
+}

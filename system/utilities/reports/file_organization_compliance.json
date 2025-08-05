@@ -1,0 +1,17 @@
+{
+  "timestamp": "2025-08-02T04:28:13.487150",
+  "project_root": "C:\\Users\\penti\\OneDrive\\Desktop\\NIS_Protocol",
+  "compliance_score": 100,
+  "summary": {
+    "total_violations": 0,
+    "total_warnings": 0,
+    "high_severity": 0,
+    "medium_severity": 0,
+    "low_severity": 0
+  },
+  "violations": [],
+  "warnings": [],
+  "recommendations": [
+    "\ud83c\udf89 Excellent! File organization is fully compliant"
+  ]
+}

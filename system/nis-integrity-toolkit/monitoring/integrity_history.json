@@ -1,0 +1,30 @@
+[
+  {
+    "timestamp": "2025-07-27T18:04:52.274397",
+    "integrity_score": 0,
+    "hype_instances": 144,
+    "hardcoded_values": 80,
+    "unverified_claims": 10,
+    "missing_evidence": 0,
+    "documentation_alignment": 0,
+    "test_coverage": 6,
+    "benchmark_coverage": 40,
+    "git_commits_since_last": 35,
+    "code_quality_score": 20,
+    "professional_language_score": 0
+  },
+  {
+    "timestamp": "2025-07-27T18:06:13.004063",
+    "integrity_score": 0,
+    "hype_instances": 144,
+    "hardcoded_values": 80,
+    "unverified_claims": 10,
+    "missing_evidence": 0,
+    "documentation_alignment": 0,
+    "test_coverage": 6,
+    "benchmark_coverage": 40,
+    "git_commits_since_last": 35,
+    "code_quality_score": 20,
+    "professional_language_score": 0
+  }
+]

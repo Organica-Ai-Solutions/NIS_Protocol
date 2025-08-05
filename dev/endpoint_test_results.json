@@ -1,0 +1,327 @@
+[
+  {
+    "endpoint": "/",
+    "method": "GET",
+    "status_code": 200,
+    "status": "PASS",
+    "response_time": 2.054493,
+    "content_length": 311,
+    "content_type": "application/json",
+    "response": {
+      "message": "NIS Protocol v3 Test Server Active",
+      "version": "3.0.0-test",
+      "status": "operational",
+      "endpoints": [
+        "/health",
+        "/agents",
+        "/agent/create",
+        "/chat",
+        "/consciousness/status",
+        "/infrastructure/status",
+        "/metrics",
+        "/process",
+        "/memory/store",
+        "/memory/query",
+        "/tool/execute",
+        "/protocol/status",
+        "/dashboard/metrics"
+      ]
+    }
+  },
+  {
+    "endpoint": "/health",
+    "method": "GET",
+    "status_code": 200,
+    "status": "PASS",
+    "response_time": 2.045496,
+    "content_length": 151,
+    "content_type": "application/json",
+    "response": {
+      "status": "healthy",
+      "timestamp": 1753683361.5206273,
+      "server": "minimal-test",
+      "components": {
+        "api": "operational",
+        "agents": "0 active",
+        "memory": "0 entries"
+      }
+    }
+  },
+  {
+    "endpoint": "/agents",
+    "method": "GET",
+    "status_code": 200,
+    "status": "PASS",
+    "response_time": 2.053638,
+    "content_length": 54,
+    "content_type": "application/json",
+    "response": {
+      "agents": [],
+      "total": 0,
+      "timestamp": 1753683363.6758451
+    }
+  },
+  {
+    "endpoint": "/agent/create",
+    "method": "POST",
+    "status_code": 200,
+    "status": "PASS",
+    "response_time": 2.064198,
+    "content_length": 160,
+    "content_type": "application/json",
+    "response": {
+      "agent": {
+        "id": "agent_1",
+        "type": "consciousness",
+        "config": {},
+        "created": 1753683365.841381,
+        "status": "active"
+      },
+      "message": "Agent consciousness created successfully"
+    }
+  },
+  {
+    "endpoint": "/chat",
+    "method": "POST",
+    "status_code": 200,
+    "status": "PASS",
+    "response_time": 2.070913,
+    "content_length": 478,
+    "content_type": "application/json",
+    "response": {
+      "response": "NIS Protocol v3 response to: Hello NIS Protocol",
+      "agent_type": "default",
+      "nis_pipeline": {
+        "laplace_transform": {
+          "signal_processed": true,
+          "frequency_domain": "analyzed"
+        },
+        "kan_reasoning": {
+          "symbolic_function": "extracted",
+          "interpretability": 0.85
+        },
+        "pinn_physics": {
+          "conservation_laws": "validated",
+          "physics_compliance": 0.92
+        },
+        "llm_response": "NIS Protocol v3 response to: Hello NIS Protocol"
+      },
+      "confidence": 0.87,
+      "provider": "test_llm",
+      "real_ai": true,
+      "timestamp": 1753683368.0140176
+    }
+  },
+  {
+    "endpoint": "/chat",
+    "method": "POST",
+    "status_code": 200,
+    "status": "PASS",
+    "response_time": 2.048056,
+    "content_length": 482,
+    "content_type": "application/json",
+    "response": {
+      "response": "NIS Protocol v3 response to: Test NIS pipeline",
+      "agent_type": "consciousness",
+      "nis_pipeline": {
+        "laplace_transform": {
+          "signal_processed": true,
+          "frequency_domain": "analyzed"
+        },
+        "kan_reasoning": {
+          "symbolic_function": "extracted",
+          "interpretability": 0.85
+        },
+        "pinn_physics": {
+          "conservation_laws": "validated",
+          "physics_compliance": 0.92
+        },
+        "llm_response": "NIS Protocol v3 response to: Test NIS pipeline"
+      },
+      "confidence": 0.87,
+      "provider": "test_llm",
+      "real_ai": true,
+      "timestamp": 1753683370.1628172
+    }
+  },
+  {
+    "endpoint": "/consciousness/status",
+    "method": "GET",
+    "status_code": 200,
+    "status": "PASS",
+    "response_time": 2.029341,
+    "content_length": 182,
+    "content_type": "application/json",
+    "response": {
+      "consciousness_level": 0.75,
+      "introspection_active": true,
+      "awareness_metrics": {
+        "self_model_accuracy": 0.82,
+        "goal_clarity": 0.78,
+        "decision_coherence": 0.85
+      },
+      "timestamp": 1753683372.2937953
+    }
+  },
+  {
+    "endpoint": "/infrastructure/status",
+    "method": "GET",
+    "status_code": 200,
+    "status": "PASS",
+    "response_time": 2.063115,
+    "content_length": 198,
+    "content_type": "application/json",
+    "response": {
+      "system_health": "optimal",
+      "resource_utilization": {
+        "cpu": 45.2,
+        "memory": 67.8,
+        "disk": 23.1
+      },
+      "services": {
+        "llm_providers": 4,
+        "active_agents": 1,
+        "memory_system": "operational"
+      },
+      "timestamp": 1753683374.458035
+    }
+  },
+  {
+    "endpoint": "/metrics",
+    "method": "GET",
+    "status_code": 200,
+    "status": "PASS",
+    "response_time": 2.075324,
+    "content_length": 255,
+    "content_type": "application/json",
+    "response": {
+      "performance": {
+        "avg_response_time": 0.145,
+        "throughput": 142.7,
+        "error_rate": 0.003
+      },
+      "agent_metrics": {
+        "total_agents": 1,
+        "active_conversations": 12,
+        "memory_entries": 0
+      },
+      "system_metrics": {
+        "uptime": 1753683376.6342149,
+        "requests_processed": 1247,
+        "success_rate": 0.997
+      }
+    }
+  },
+  {
+    "endpoint": "/process",
+    "method": "POST",
+    "status_code": 200,
+    "status": "PASS",
+    "response_time": 2.060365,
+    "content_length": 223,
+    "content_type": "application/json",
+    "response": {
+      "input": "test data",
+      "laplace_analysis": {
+        "transform_successful": true
+      },
+      "kan_interpretation": {
+        "symbolic_form": "extracted"
+      },
+      "physics_validation": {
+        "compliant": true
+      },
+      "output": "Processed: test data",
+      "timestamp": 1753683378.795815
+    }
+  },
+  {
+    "endpoint": "/memory/store",
+    "method": "POST",
+    "status_code": 200,
+    "status": "PASS",
+    "response_time": 2.04062,
+    "content_length": 72,
+    "content_type": "application/json",
+    "response": {
+      "status": "stored",
+      "memory_id": 1,
+      "message": "Memory stored successfully"
+    }
+  },
+  {
+    "endpoint": "/memory/query",
+    "method": "POST",
+    "status_code": 200,
+    "status": "PASS",
+    "response_time": 2.04058,
+    "content_length": 81,
+    "content_type": "application/json",
+    "response": {
+      "query": "test query",
+      "results": [],
+      "total_found": 0,
+      "timestamp": 1753683383.079594
+    }
+  },
+  {
+    "endpoint": "/tool/execute",
+    "method": "POST",
+    "status_code": 200,
+    "status": "PASS",
+    "response_time": 2.044137,
+    "content_length": 159,
+    "content_type": "application/json",
+    "response": {
+      "tool": "test_tool",
+      "parameters": {},
+      "result": "Tool test_tool executed successfully",
+      "execution_time": 0.234,
+      "status": "completed",
+      "timestamp": 1753683385.2259598
+    }
+  },
+  {
+    "endpoint": "/protocol/status",
+    "method": "GET",
+    "status_code": 200,
+    "status": "PASS",
+    "response_time": 2.066579,
+    "content_length": 178,
+    "content_type": "application/json",
+    "response": {
+      "protocol_version": "3.0.0",
+      "integrations": {
+        "mcp": "connected",
+        "acp": "connected",
+        "a2a": "connected"
+      },
+      "active_protocols": 3,
+      "message_throughput": 156.3,
+      "timestamp": 1753683387.3929617
+    }
+  },
+  {
+    "endpoint": "/dashboard/metrics",
+    "method": "GET",
+    "status_code": 200,
+    "status": "PASS",
+    "response_time": 2.046163,
+    "content_length": 216,
+    "content_type": "application/json",
+    "response": {
+      "overview": {
+        "system_health": 98.7,
+        "active_agents": 1,
+        "memory_utilization": 45.2,
+        "performance_index": 94.1
+      },
+      "real_time": {
+        "requests_per_second": 23.7,
+        "avg_latency": 145.2,
+        "success_rate": 99.8
+      },
+      "timestamp": 1753683389.5406258
+    }
+  }
+]

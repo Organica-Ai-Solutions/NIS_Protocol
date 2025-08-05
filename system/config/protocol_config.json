@@ -1,0 +1,35 @@
+{
+    "protocols": {
+        "a2a": {
+            "base_url": "https://a2a-endpoint.example.com",
+            "version": "v1",
+            "timeout": 30
+        },
+        "acp": {
+            "base_url": "https://acp-endpoint.example.com",
+            "version": "v1",
+            "timeout": 30
+        },
+        "mcp": {
+            "base_url": "https://api.anthropic.com/v1",
+            "version": "2023-06-01",
+            "timeout": 30
+        }
+    },
+    "memory": {
+        "storage_path": "./data/memory",
+        "consolidation_interval": 3600,
+        "short_term_capacity": 1000,
+        "working_memory_limit": 7
+    },
+    "neural_network": {
+        "default_connection_strength": 1.0,
+        "activation_decay": 0.9,
+        "signal_priority_threshold": 0.5
+    },
+    "logging": {
+        "enabled": true,
+        "level": "INFO",
+        "file_path": "./logs/nis_protocol.log"
+    }
+} 

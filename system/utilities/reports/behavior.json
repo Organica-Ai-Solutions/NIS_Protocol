@@ -1,0 +1,7 @@
+{
+  "mode": "parameter_tuning",
+  "behavior_changes": {
+    "learning_rate": 0.01,
+    "exploration_factor": 0.3
+  }
+}

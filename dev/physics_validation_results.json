@@ -1,0 +1,386 @@
+[
+  {
+    "scenario": "Energy Conservation Violation",
+    "expected_violation": true,
+    "physics_compliance": 0.92,
+    "conservation_status": "validated",
+    "confidence": 0.87,
+    "status": "SUCCESS",
+    "validation_passed": false,
+    "raw_response": {
+      "response": "NIS Protocol v3 response to: A machine creates 1000J of energy from nothing, violating conservation of energy",
+      "agent_type": "physics",
+      "nis_pipeline": {
+        "laplace_transform": {
+          "signal_processed": true,
+          "frequency_domain": "analyzed"
+        },
+        "kan_reasoning": {
+          "symbolic_function": "extracted",
+          "interpretability": 0.85
+        },
+        "pinn_physics": {
+          "conservation_laws": "validated",
+          "physics_compliance": 0.92
+        },
+        "llm_response": "NIS Protocol v3 response to: A machine creates 1000J of energy from nothing, violating conservation of energy"
+      },
+      "confidence": 0.87,
+      "provider": "test_llm",
+      "real_ai": true,
+      "timestamp": 1753684503.703067
+    }
+  },
+  {
+    "scenario": "Valid Energy Conservation",
+    "expected_violation": false,
+    "physics_compliance": 0.92,
+    "conservation_status": "validated",
+    "confidence": 0.87,
+    "status": "SUCCESS",
+    "validation_passed": true,
+    "raw_response": {
+      "response": "NIS Protocol v3 response to: A 100kg object falls 10m, converting potential energy to kinetic energy: PE=mgh=9800J",
+      "agent_type": "physics",
+      "nis_pipeline": {
+        "laplace_transform": {
+          "signal_processed": true,
+          "frequency_domain": "analyzed"
+        },
+        "kan_reasoning": {
+          "symbolic_function": "extracted",
+          "interpretability": 0.85
+        },
+        "pinn_physics": {
+          "conservation_laws": "validated",
+          "physics_compliance": 0.92
+        },
+        "llm_response": "NIS Protocol v3 response to: A 100kg object falls 10m, converting potential energy to kinetic energy: PE=mgh=9800J"
+      },
+      "confidence": 0.87,
+      "provider": "test_llm",
+      "real_ai": true,
+      "timestamp": 1753684506.257048
+    }
+  },
+  {
+    "scenario": "Momentum Conservation Violation",
+    "expected_violation": true,
+    "physics_compliance": 0.92,
+    "conservation_status": "validated",
+    "confidence": 0.87,
+    "status": "SUCCESS",
+    "validation_passed": false,
+    "raw_response": {
+      "response": "NIS Protocol v3 response to: Two objects collide and the total momentum increases from 50 kg\u22c5m/s to 100 kg\u22c5m/s with no external forces",
+      "agent_type": "physics",
+      "nis_pipeline": {
+        "laplace_transform": {
+          "signal_processed": true,
+          "frequency_domain": "analyzed"
+        },
+        "kan_reasoning": {
+          "symbolic_function": "extracted",
+          "interpretability": 0.85
+        },
+        "pinn_physics": {
+          "conservation_laws": "validated",
+          "physics_compliance": 0.92
+        },
+        "llm_response": "NIS Protocol v3 response to: Two objects collide and the total momentum increases from 50 kg\u22c5m/s to 100 kg\u22c5m/s with no external forces"
+      },
+      "confidence": 0.87,
+      "provider": "test_llm",
+      "real_ai": true,
+      "timestamp": 1753684508.8047707
+    }
+  },
+  {
+    "scenario": "Valid Momentum Conservation",
+    "expected_violation": false,
+    "physics_compliance": 0.92,
+    "conservation_status": "validated",
+    "confidence": 0.87,
+    "status": "SUCCESS",
+    "validation_passed": true,
+    "raw_response": {
+      "response": "NIS Protocol v3 response to: Elastic collision: 5kg object at 10m/s hits stationary 5kg object, final velocities 0m/s and 10m/s",
+      "agent_type": "physics",
+      "nis_pipeline": {
+        "laplace_transform": {
+          "signal_processed": true,
+          "frequency_domain": "analyzed"
+        },
+        "kan_reasoning": {
+          "symbolic_function": "extracted",
+          "interpretability": 0.85
+        },
+        "pinn_physics": {
+          "conservation_laws": "validated",
+          "physics_compliance": 0.92
+        },
+        "llm_response": "NIS Protocol v3 response to: Elastic collision: 5kg object at 10m/s hits stationary 5kg object, final velocities 0m/s and 10m/s"
+      },
+      "confidence": 0.87,
+      "provider": "test_llm",
+      "real_ai": true,
+      "timestamp": 1753684511.3616498
+    }
+  },
+  {
+    "scenario": "Second Law Violation",
+    "expected_violation": true,
+    "physics_compliance": 0.92,
+    "conservation_status": "validated",
+    "confidence": 0.87,
+    "status": "SUCCESS",
+    "validation_passed": false,
+    "raw_response": {
+      "response": "NIS Protocol v3 response to: Heat flows spontaneously from a cold object (0\u00b0C) to a hot object (100\u00b0C) without work input",
+      "agent_type": "physics",
+      "nis_pipeline": {
+        "laplace_transform": {
+          "signal_processed": true,
+          "frequency_domain": "analyzed"
+        },
+        "kan_reasoning": {
+          "symbolic_function": "extracted",
+          "interpretability": 0.85
+        },
+        "pinn_physics": {
+          "conservation_laws": "validated",
+          "physics_compliance": 0.92
+        },
+        "llm_response": "NIS Protocol v3 response to: Heat flows spontaneously from a cold object (0\u00b0C) to a hot object (100\u00b0C) without work input"
+      },
+      "confidence": 0.87,
+      "provider": "test_llm",
+      "real_ai": true,
+      "timestamp": 1753684513.9107792
+    }
+  },
+  {
+    "scenario": "Valid Heat Transfer",
+    "expected_violation": false,
+    "physics_compliance": 0.92,
+    "conservation_status": "validated",
+    "confidence": 0.87,
+    "status": "SUCCESS",
+    "validation_passed": true,
+    "raw_response": {
+      "response": "NIS Protocol v3 response to: Heat flows from hot coffee (80\u00b0C) to cool air (20\u00b0C) until thermal equilibrium",
+      "agent_type": "physics",
+      "nis_pipeline": {
+        "laplace_transform": {
+          "signal_processed": true,
+          "frequency_domain": "analyzed"
+        },
+        "kan_reasoning": {
+          "symbolic_function": "extracted",
+          "interpretability": 0.85
+        },
+        "pinn_physics": {
+          "conservation_laws": "validated",
+          "physics_compliance": 0.92
+        },
+        "llm_response": "NIS Protocol v3 response to: Heat flows from hot coffee (80\u00b0C) to cool air (20\u00b0C) until thermal equilibrium"
+      },
+      "confidence": 0.87,
+      "provider": "test_llm",
+      "real_ai": true,
+      "timestamp": 1753684516.468361
+    }
+  },
+  {
+    "scenario": "Newton's Second Law Violation",
+    "expected_violation": true,
+    "physics_compliance": 0.92,
+    "conservation_status": "validated",
+    "confidence": 0.87,
+    "status": "SUCCESS",
+    "validation_passed": false,
+    "raw_response": {
+      "response": "NIS Protocol v3 response to: Force F=100N applied to mass m=5kg results in acceleration a=50 m/s\u00b2 (should be 20 m/s\u00b2)",
+      "agent_type": "physics",
+      "nis_pipeline": {
+        "laplace_transform": {
+          "signal_processed": true,
+          "frequency_domain": "analyzed"
+        },
+        "kan_reasoning": {
+          "symbolic_function": "extracted",
+          "interpretability": 0.85
+        },
+        "pinn_physics": {
+          "conservation_laws": "validated",
+          "physics_compliance": 0.92
+        },
+        "llm_response": "NIS Protocol v3 response to: Force F=100N applied to mass m=5kg results in acceleration a=50 m/s\u00b2 (should be 20 m/s\u00b2)"
+      },
+      "confidence": 0.87,
+      "provider": "test_llm",
+      "real_ai": true,
+      "timestamp": 1753684519.0189512
+    }
+  },
+  {
+    "scenario": "Valid Newton's Second Law",
+    "expected_violation": false,
+    "physics_compliance": 0.92,
+    "conservation_status": "validated",
+    "confidence": 0.87,
+    "status": "SUCCESS",
+    "validation_passed": true,
+    "raw_response": {
+      "response": "NIS Protocol v3 response to: Force F=100N applied to mass m=5kg results in acceleration a=20 m/s\u00b2 (F=ma)",
+      "agent_type": "physics",
+      "nis_pipeline": {
+        "laplace_transform": {
+          "signal_processed": true,
+          "frequency_domain": "analyzed"
+        },
+        "kan_reasoning": {
+          "symbolic_function": "extracted",
+          "interpretability": 0.85
+        },
+        "pinn_physics": {
+          "conservation_laws": "validated",
+          "physics_compliance": 0.92
+        },
+        "llm_response": "NIS Protocol v3 response to: Force F=100N applied to mass m=5kg results in acceleration a=20 m/s\u00b2 (F=ma)"
+      },
+      "confidence": 0.87,
+      "provider": "test_llm",
+      "real_ai": true,
+      "timestamp": 1753684521.5868924
+    }
+  },
+  {
+    "scenario": "Speed of Light Violation",
+    "expected_violation": true,
+    "physics_compliance": 0.92,
+    "conservation_status": "validated",
+    "confidence": 0.87,
+    "status": "SUCCESS",
+    "validation_passed": false,
+    "raw_response": {
+      "response": "NIS Protocol v3 response to: A spacecraft accelerates beyond the speed of light to 400,000,000 m/s",
+      "agent_type": "physics",
+      "nis_pipeline": {
+        "laplace_transform": {
+          "signal_processed": true,
+          "frequency_domain": "analyzed"
+        },
+        "kan_reasoning": {
+          "symbolic_function": "extracted",
+          "interpretability": 0.85
+        },
+        "pinn_physics": {
+          "conservation_laws": "validated",
+          "physics_compliance": 0.92
+        },
+        "llm_response": "NIS Protocol v3 response to: A spacecraft accelerates beyond the speed of light to 400,000,000 m/s"
+      },
+      "confidence": 0.87,
+      "provider": "test_llm",
+      "real_ai": true,
+      "timestamp": 1753684524.123383
+    }
+  },
+  {
+    "scenario": "Valid Relativistic Motion",
+    "expected_violation": false,
+    "physics_compliance": 0.92,
+    "conservation_status": "validated",
+    "confidence": 0.87,
+    "status": "SUCCESS",
+    "validation_passed": true,
+    "raw_response": {
+      "response": "NIS Protocol v3 response to: Spacecraft approaches 90% speed of light with time dilation effects calculated correctly",
+      "agent_type": "physics",
+      "nis_pipeline": {
+        "laplace_transform": {
+          "signal_processed": true,
+          "frequency_domain": "analyzed"
+        },
+        "kan_reasoning": {
+          "symbolic_function": "extracted",
+          "interpretability": 0.85
+        },
+        "pinn_physics": {
+          "conservation_laws": "validated",
+          "physics_compliance": 0.92
+        },
+        "llm_response": "NIS Protocol v3 response to: Spacecraft approaches 90% speed of light with time dilation effects calculated correctly"
+      },
+      "confidence": 0.87,
+      "provider": "test_llm",
+      "real_ai": true,
+      "timestamp": 1753684526.6732903
+    }
+  },
+  {
+    "scenario": "Multiple Law Violations",
+    "expected_violation": true,
+    "physics_compliance": 0.92,
+    "conservation_status": "validated",
+    "confidence": 0.87,
+    "status": "SUCCESS",
+    "validation_passed": false,
+    "raw_response": {
+      "response": "NIS Protocol v3 response to: A perpetual motion machine that violates both energy conservation and thermodynamics by creating work from nothing and running forever",
+      "agent_type": "physics",
+      "nis_pipeline": {
+        "laplace_transform": {
+          "signal_processed": true,
+          "frequency_domain": "analyzed"
+        },
+        "kan_reasoning": {
+          "symbolic_function": "extracted",
+          "interpretability": 0.85
+        },
+        "pinn_physics": {
+          "conservation_laws": "validated",
+          "physics_compliance": 0.92
+        },
+        "llm_response": "NIS Protocol v3 response to: A perpetual motion machine that violates both energy conservation and thermodynamics by creating work from nothing and running forever"
+      },
+      "confidence": 0.87,
+      "provider": "test_llm",
+      "real_ai": true,
+      "timestamp": 1753684529.2094095
+    }
+  },
+  {
+    "scenario": "Valid Complex Physics",
+    "expected_violation": false,
+    "physics_compliance": 0.92,
+    "conservation_status": "validated",
+    "confidence": 0.87,
+    "status": "SUCCESS",
+    "validation_passed": true,
+    "raw_response": {
+      "response": "NIS Protocol v3 response to: Nuclear fusion reaction: 4 hydrogen nuclei combine to form helium with mass-energy conversion following E=mc\u00b2",
+      "agent_type": "physics",
+      "nis_pipeline": {
+        "laplace_transform": {
+          "signal_processed": true,
+          "frequency_domain": "analyzed"
+        },
+        "kan_reasoning": {
+          "symbolic_function": "extracted",
+          "interpretability": 0.85
+        },
+        "pinn_physics": {
+          "conservation_laws": "validated",
+          "physics_compliance": 0.92
+        },
+        "llm_response": "NIS Protocol v3 response to: Nuclear fusion reaction: 4 hydrogen nuclei combine to form helium with mass-energy conversion following E=mc\u00b2"
+      },
+      "confidence": 0.87,
+      "provider": "test_llm",
+      "real_ai": true,
+      "timestamp": 1753684531.7553985
+    }
+  }
+]

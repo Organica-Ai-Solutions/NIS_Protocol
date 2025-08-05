@@ -1,0 +1,120 @@
+{
+    "providers": {
+        "openai": {
+            "enabled": false,
+            "api_key": "YOUR_OPENAI_API_KEY",
+            "api_base": "https://api.openai.com/v1",
+            "organization": "YOUR_ORGANIZATION_ID",
+            "models": {
+                "chat": {
+                    "name": "gpt-4o",
+                    "max_tokens": 4096,
+                    "temperature": 0.7
+                },
+                "embedding": {
+                    "name": "text-embedding-3-small",
+                    "dimensions": 1536
+                }
+            }
+        },
+        "anthropic": {
+            "enabled": false,
+            "api_key": "YOUR_ANTHROPIC_API_KEY",
+            "api_base": "https://api.anthropic.com/v1",
+            "version": "2023-06-01",
+            "models": {
+                "chat": {
+                    "name": "claude-3-5-sonnet-20241022",
+                    "max_tokens": 4096,
+                    "temperature": 0.7
+                },
+                "embedding": {
+                    "note": "Anthropic doesn't provide embeddings - use OpenAI or another provider"
+                }
+            }
+        },
+        "deepseek": {
+            "enabled": false,
+            "api_key": "YOUR_DEEPSEEK_API_KEY",
+            "api_base": "https://api.deepseek.com/v1",
+            "models": {
+                "chat": {
+                    "name": "deepseek-chat",
+                    "max_tokens": 4096,
+                    "temperature": 0.7
+                },
+                "embedding": {
+                    "name": "deepseek-embed",
+                    "dimensions": 1536
+                }
+            }
+        },
+        "bitnet": {
+            "enabled": false,
+            "model_path": "./models/bitnet/model.bin",
+            "executable_path": "bitnet",
+            "context_length": 4096,
+            "cpu_threads": 8,
+            "batch_size": 1,
+            "quantization_bits": 1,
+            "models": {
+                "chat": {
+                    "name": "bitnet-b1.58-3b",
+                    "max_tokens": 2048,
+                    "temperature": 0.7
+                },
+                "embedding": {
+                    "name": "bitnet-embed",
+                    "dimensions": 768
+                }
+            }
+        }
+    },
+    "agent_llm_config": {
+        "default_provider": null,
+        "fallback_to_mock": true,
+        "perception_agent": {
+            "provider": null,
+            "model": "gpt-4o",
+            "temperature": 0.5,
+            "system_prompt": "You are a perception agent in a neural network, responsible for processing and understanding input data. Focus on pattern recognition and feature extraction."
+        },
+        "memory_agent": {
+            "provider": null,
+            "model": "claude-3-5-sonnet-20241022",
+            "temperature": 0.3,
+            "system_prompt": "You are a memory agent responsible for storing and retrieving information. Focus on organizing and consolidating knowledge."
+        },
+        "emotional_agent": {
+            "provider": null,
+            "model": "deepseek-chat",
+            "temperature": 0.8,
+            "system_prompt": "You are an emotional processing agent responsible for analyzing emotional content and context. Focus on sentiment analysis and emotional state tracking."
+        },
+        "executive_agent": {
+            "provider": null,
+            "model": "gpt-4o",
+            "temperature": 0.4,
+            "system_prompt": "You are an executive control agent responsible for decision making and planning. Focus on goal-oriented reasoning and action selection."
+        },
+        "motor_agent": {
+            "provider": null,
+            "model": "bitnet-b1.58-3b",
+            "temperature": 0.6,
+            "system_prompt": "You are a motor agent responsible for action execution and output generation. Focus on translating decisions into concrete actions."
+        }
+    },
+    "default_config": {
+        "max_retries": 3,
+        "retry_delay": 1,
+        "timeout": 30,
+        "cache_enabled": true,
+        "cache_ttl": 3600
+    },
+    "monitoring": {
+        "log_level": "INFO",
+        "track_usage": true,
+        "track_performance": true,
+        "alert_on_errors": true
+    }
+} 

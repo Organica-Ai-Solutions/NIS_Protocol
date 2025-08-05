@@ -3,6 +3,12 @@ Log Agent
 
 Records system events and performance metrics for analysis and debugging.
 Provides a historical record of system activity.
+
+Enhanced Features (v3):
+- Complete self-audit integration with real-time integrity monitoring
+- Mathematical validation of log operations with evidence-based metrics
+- Comprehensive integrity oversight for all log outputs
+- Auto-correction capabilities for log-related communications
 """
 
 from typing import Dict, Any, List, Optional, Union
@@ -11,10 +17,18 @@ import json
 import os
 import datetime
 import logging
-from collections import deque
+from collections import deque, defaultdict
 
 from src.core.registry import NISAgent, NISLayer, NISRegistry
 from src.emotion.emotional_state import EmotionalState, EmotionalDimension
+
+# Integrity metrics for actual calculations
+from src.utils.integrity_metrics import (
+    calculate_confidence, create_default_confidence_factors, ConfidenceFactors
+)
+
+# Self-audit capabilities for real-time integrity monitoring
+from src.utils.self_audit import self_audit_engine, ViolationType, IntegrityViolation
 
 
 class LogAgent(NISAgent):
@@ -35,7 +49,8 @@ class LogAgent(NISAgent):
         emotional_state: Optional[EmotionalState] = None,
         log_path: Optional[str] = None,
         memory_size: int = 1000,
-        log_level: int = logging.INFO
+        log_level: int = logging.INFO,
+        enable_self_audit: bool = True
     ):
         """
         Initialize a new Log Agent.
@@ -47,6 +62,7 @@ class LogAgent(NISAgent):
             log_path: Path to store log files
             memory_size: Maximum number of log entries to keep in memory
             log_level: Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+            enable_self_audit: Whether to enable real-time integrity monitoring
         """
         super().__init__(agent_id, NISLayer.MEMORY, description)
         self.emotional_state = emotional_state or EmotionalState()
@@ -78,7 +94,24 @@ class LogAgent(NISAgent):
             
             # Add handler to logger
             self.logger.addHandler(file_handler)
-    
+        
+        # Set up self-audit integration
+        self.enable_self_audit = enable_self_audit
+        self.integrity_monitoring_enabled = enable_self_audit
+        self.integrity_metrics = {
+            'monitoring_start_time': time.time(),
+            'total_outputs_monitored': 0,
+            'total_violations_detected': 0,
+            'auto_corrections_applied': 0,
+            'average_integrity_score': 100.0
+        }
+        
+        # Initialize confidence factors for mathematical validation
+        self.confidence_factors = create_default_confidence_factors()
+        
+        if self.logger:
+            self.logger.info(f"Log Agent initialized with self-audit: {enable_self_audit}")
+
     def process(self, message: Dict[str, Any]) -> Dict[str, Any]:
         """
         Process a log request.
@@ -287,4 +320,240 @@ class LogAgent(NISAgent):
             },
             "agent_id": self.agent_id,
             "timestamp": time.time()
+        } 
+    
+    # ==================== SELF-AUDIT CAPABILITIES ====================
+    
+    def audit_log_output(self, output_text: str, operation: str = "", context: str = "") -> Dict[str, Any]:
+        """
+        Perform real-time integrity audit on log operation outputs.
+        
+        Args:
+            output_text: Text output to audit
+            operation: Log operation type (log, retrieve, query, etc.)
+            context: Additional context for the audit
+            
+        Returns:
+            Audit results with violations and integrity score
+        """
+        if not self.enable_self_audit:
+            return {'integrity_score': 100.0, 'violations': [], 'total_violations': 0}
+        
+        if self.logger:
+            self.logger.info(f"Performing self-audit on log output for operation: {operation}")
+        
+        # Use proven audit engine
+        audit_context = f"log:{operation}:{context}" if context else f"log:{operation}"
+        violations = self_audit_engine.audit_text(output_text, audit_context)
+        integrity_score = self_audit_engine.get_integrity_score(output_text)
+        
+        # Log violations for log-specific analysis
+        if violations and self.logger:
+            self.logger.warning(f"Detected {len(violations)} integrity violations in log output")
+            for violation in violations:
+                self.logger.warning(f"  - {violation.severity}: {violation.text} -> {violation.suggested_replacement}")
+        
+        return {
+            'violations': violations,
+            'integrity_score': integrity_score,
+            'total_violations': len(violations),
+            'violation_breakdown': self._categorize_log_violations(violations),
+            'operation': operation,
+            'audit_timestamp': time.time()
+        }
+    
+    def auto_correct_log_output(self, output_text: str, operation: str = "") -> Dict[str, Any]:
+        """
+        systematically correct integrity violations in log outputs.
+        
+        Args:
+            output_text: Text to correct
+            operation: Log operation type
+            
+        Returns:
+            Corrected output with audit details
+        """
+        if not self.enable_self_audit:
+            return {'corrected_text': output_text, 'violations_fixed': [], 'improvement': 0}
+        
+        if self.logger:
+            self.logger.info(f"Performing self-correction on log output for operation: {operation}")
+        
+        corrected_text, violations = self_audit_engine.auto_correct_text(output_text)
+        
+        # Calculate improvement metrics with mathematical validation
+        original_score = self_audit_engine.get_integrity_score(output_text)
+        corrected_score = self_audit_engine.get_integrity_score(corrected_text)
+        improvement = calculate_confidence(corrected_score - original_score, self.confidence_factors)
+        
+        # Update integrity metrics
+        if hasattr(self, 'integrity_metrics'):
+            self.integrity_metrics['auto_corrections_applied'] += len(violations)
+        
+        return {
+            'original_text': output_text,
+            'corrected_text': corrected_text,
+            'violations_fixed': violations,
+            'original_integrity_score': original_score,
+            'corrected_integrity_score': corrected_score,
+            'improvement': improvement,
+            'operation': operation,
+            'correction_timestamp': time.time()
+        }
+    
+    def analyze_log_integrity_trends(self, time_window: int = 3600) -> Dict[str, Any]:
+        """
+        Analyze log operation integrity trends for self-improvement.
+        
+        Args:
+            time_window: Time window in seconds to analyze
+            
+        Returns:
+            Log integrity trend analysis with mathematical validation
+        """
+        if not self.enable_self_audit:
+            return {'integrity_status': 'MONITORING_DISABLED'}
+        
+        if self.logger:
+            self.logger.info(f"Analyzing log integrity trends over {time_window} seconds")
+        
+        # Get integrity report from audit engine
+        integrity_report = self_audit_engine.generate_integrity_report()
+        
+        # Calculate log-specific metrics
+        log_metrics = {
+            'log_memory_utilization': len(self.log_memory) / self.log_memory.maxlen if self.log_memory.maxlen else 0,
+            'log_path_configured': bool(self.log_path),
+            'total_log_entries': len(self.log_memory),
+            'logger_configured': bool(self.logger)
+        }
+        
+        # Generate log-specific recommendations
+        recommendations = self._generate_log_integrity_recommendations(
+            integrity_report, log_metrics
+        )
+        
+        return {
+            'integrity_status': integrity_report['integrity_status'],
+            'total_violations': integrity_report['total_violations'],
+            'log_metrics': log_metrics,
+            'integrity_trend': self._calculate_log_integrity_trend(),
+            'recommendations': recommendations,
+            'analysis_timestamp': time.time()
+        }
+    
+    def get_log_integrity_report(self) -> Dict[str, Any]:
+        """Generate comprehensive log integrity report"""
+        if not self.enable_self_audit:
+            return {'status': 'SELF_AUDIT_DISABLED'}
+        
+        # Get basic integrity report
+        base_report = self_audit_engine.generate_integrity_report()
+        
+        # Add log-specific metrics
+        log_report = {
+            'log_agent_id': self.agent_id,
+            'monitoring_enabled': self.integrity_monitoring_enabled,
+            'log_capacity_status': {
+                'log_memory': f"{len(self.log_memory)}/{self.log_memory.maxlen}" if self.log_memory.maxlen else "unlimited"
+            },
+            'logging_configuration': {
+                'path_configured': bool(self.log_path),
+                'path': self.log_path or "in_memory_only",
+                'logger_active': bool(self.logger)
+            },
+            'integrity_metrics': getattr(self, 'integrity_metrics', {}),
+            'base_integrity_report': base_report,
+            'report_timestamp': time.time()
+        }
+        
+        return log_report
+    
+    def _monitor_log_output_integrity(self, output_text: str, operation: str = "") -> str:
+        """
+        Internal method to monitor and potentially correct log output integrity.
+        
+        Args:
+            output_text: Output to monitor
+            operation: Log operation type
+            
+        Returns:
+            Potentially corrected output
+        """
+        if not getattr(self, 'integrity_monitoring_enabled', False):
+            return output_text
+        
+        # Perform audit
+        audit_result = self.audit_log_output(output_text, operation)
+        
+        # Update monitoring metrics
+        if hasattr(self, 'integrity_metrics'):
+            self.integrity_metrics['total_outputs_monitored'] += 1
+            self.integrity_metrics['total_violations_detected'] += audit_result['total_violations']
+        
+        # Auto-correct if violations detected
+        if audit_result['violations']:
+            correction_result = self.auto_correct_log_output(output_text, operation)
+            
+            if self.logger:
+                self.logger.info(f"Auto-corrected log output: {len(audit_result['violations'])} violations fixed")
+            
+            return correction_result['corrected_text']
+        
+        return output_text
+    
+    def _categorize_log_violations(self, violations: List[IntegrityViolation]) -> Dict[str, int]:
+        """Categorize integrity violations specific to log operations"""
+        categories = defaultdict(int)
+        
+        for violation in violations:
+            categories[violation.violation_type.value] += 1
+        
+        return dict(categories)
+    
+    def _generate_log_integrity_recommendations(self, integrity_report: Dict[str, Any], log_metrics: Dict[str, Any]) -> List[str]:
+        """Generate log-specific integrity improvement recommendations"""
+        recommendations = []
+        
+        if integrity_report.get('total_violations', 0) > 5:
+            recommendations.append("Consider implementing more rigorous input validation for log operations")
+        
+        if log_metrics.get('log_memory_utilization', 0) > 0.9:
+            recommendations.append("Log memory approaching capacity - consider increasing capacity or implementing cleanup")
+        
+        if not log_metrics.get('log_path_configured', False):
+            recommendations.append("Configure persistent log storage path for improved log reliability")
+        
+        if not log_metrics.get('logger_configured', False):
+            recommendations.append("Configure file-based logger for persistent log storage")
+        
+        if len(recommendations) == 0:
+            recommendations.append("Log integrity status is excellent - maintain current practices")
+        
+        return recommendations
+    
+    def _calculate_log_integrity_trend(self) -> Dict[str, Any]:
+        """Calculate log integrity trends with mathematical validation"""
+        if not hasattr(self, 'integrity_metrics'):
+            return {'trend': 'INSUFFICIENT_DATA'}
+        
+        monitoring_time = time.time() - self.integrity_metrics.get('monitoring_start_time', time.time())
+        total_outputs = self.integrity_metrics.get('total_outputs_monitored', 0)
+        total_violations = self.integrity_metrics.get('total_violations_detected', 0)
+        
+        if total_outputs == 0:
+            return {'trend': 'NO_OUTPUTS_MONITORED'}
+        
+        violation_rate = total_violations / total_outputs
+        violations_per_hour = (total_violations / monitoring_time) * 3600 if monitoring_time > 0 else 0
+        
+        # Calculate trend with mathematical validation
+        trend_score = calculate_confidence(1.0 - violation_rate, self.confidence_factors)
+        
+        return {
+            'trend': 'IMPROVING' if trend_score > 0.8 else 'STABLE' if trend_score > 0.6 else 'NEEDS_ATTENTION',
+            'violation_rate': violation_rate,
+            'violations_per_hour': violations_per_hour,
+            'trend_score': trend_score,
+            'monitoring_duration_hours': monitoring_time / 3600
         } 
