@@ -1014,6 +1014,54 @@
             background: linear-gradient(135deg, #059669, #0d9488);
             color: white;
         }
+
+        /* Secondary Menu Styles */
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin: 8px 0;
+        }
+
+        .checkbox-grid label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px;
+            border: 1px solid #475569;
+            border-radius: 6px;
+            background: rgba(17, 24, 39, 0.5);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 12px;
+            color: #e2e8f0;
+        }
+
+        .checkbox-grid label:hover {
+            border-color: #22d3ee;
+            background: rgba(34, 211, 238, 0.1);
+        }
+
+        .checkbox-grid input[type="checkbox"] {
+            margin: 0;
+            accent-color: #059669;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 12px 0;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            .checkbox-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1077,10 +1125,10 @@
                     <span class="quick-command" onclick="testOutputModes()">🎯 Test Formats</span>
                     <span class="quick-command" onclick="insertQuickCommand('Analyze your consciousness level')">🧠 Consciousness</span>
                     <span class="quick-command" onclick="insertQuickCommand('Solve a complex mathematical equation')">🧮 Math Reasoning</span>
-                    <span class="quick-command" onclick="testImageAnalysis()">🎨 Vision Analysis</span>
-                    <span class="quick-command" onclick="testDocumentAnalysis()">📄 Document AI</span>
-                    <span class="quick-command" onclick="testDeepResearch()">🔬 Deep Research</span>
-                    <span class="quick-command" onclick="testCollaborativeReasoning()">🧠 AI Reasoning</span>
+                    <span class="quick-command" onclick="showVisionAnalysisModal()">🎨 Vision Analysis</span>
+                    <span class="quick-command" onclick="showDocumentAnalysisModal()">📄 Document AI</span>
+                    <span class="quick-command" onclick="showDeepResearchModal()">🔬 Deep Research</span>
+                    <span class="quick-command" onclick="showReasoningModal()">🧠 AI Reasoning</span>
                     <span class="quick-command" onclick="showImageGenerationModal()">🎨 Generate Image</span>
                     <span class="quick-command" onclick="showEndpointDemo()">🚀 API Endpoints</span>
                 <span class="quick-command" onclick="showTrainingResults()">🔥 Training Results</span>
@@ -2010,6 +2058,214 @@
         
         function closeImageGenerationModal() {
             document.getElementById('imageGenerationModal').style.display = 'none';
+        }
+
+        // ====== SECONDARY MENU FUNCTIONS ======
+        function showVisionAnalysisModal() {
+            document.getElementById('visionAnalysisModal').style.display = 'flex';
+        }
+
+        function closeVisionAnalysisModal() {
+            document.getElementById('visionAnalysisModal').style.display = 'none';
+        }
+
+        function showDocumentAnalysisModal() {
+            document.getElementById('documentAnalysisModal').style.display = 'flex';
+        }
+
+        function closeDocumentAnalysisModal() {
+            document.getElementById('documentAnalysisModal').style.display = 'none';
+        }
+
+        function showDeepResearchModal() {
+            document.getElementById('deepResearchModal').style.display = 'flex';
+        }
+
+        function closeDeepResearchModal() {
+            document.getElementById('deepResearchModal').style.display = 'none';
+        }
+
+        function showReasoningModal() {
+            document.getElementById('reasoningModal').style.display = 'flex';
+        }
+
+        function closeReasoningModal() {
+            document.getElementById('reasoningModal').style.display = 'none';
+        }
+
+        // ====== MODAL EXECUTION FUNCTIONS ======
+        async function executeVisionAnalysis() {
+            const provider = document.getElementById('visionProvider').value;
+            const analysisType = document.getElementById('visionAnalysisType').value;
+            const imageFile = document.getElementById('visionImageFile').files[0];
+            const contextInput = document.getElementById('visionContext').value;
+            
+            closeVisionAnalysisModal();
+            
+            if (!imageFile) {
+                addMessage('error', '❌ Please select an image file for analysis', {});
+                return;
+            }
+            
+            addMessage('system', `🎨 Starting Vision Analysis with ${provider.toUpperCase()}...`, {});
+            
+            try {
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    const base64Data = e.target.result.split(',')[1];
+                    
+                    const response = await fetch('/vision/analyze', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            image_data: base64Data,
+                            analysis_type: analysisType,
+                            provider: provider,
+                            context: contextInput || "Comprehensive image analysis"
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    addMessage('assistant', JSON.stringify(result, null, 2), {
+                        format: 'json',
+                        endpoint: '/vision/analyze',
+                        provider: provider,
+                        analysis_type: analysisType
+                    });
+                };
+                reader.readAsDataURL(imageFile);
+            } catch (error) {
+                addMessage('error', `Vision Analysis Failed: ${error.message}`, {});
+            }
+        }
+
+        async function executeDocumentAnalysis() {
+            const provider = document.getElementById('documentProvider').value;
+            const docType = document.getElementById('documentType').value;
+            const documentFile = document.getElementById('documentFile').files[0];
+            const analysisMode = document.getElementById('documentAnalysisMode').value;
+            
+            closeDocumentAnalysisModal();
+            
+            if (!documentFile) {
+                addMessage('error', '❌ Please select a document file for analysis', {});
+                return;
+            }
+            
+            addMessage('system', `📄 Starting Document Analysis with ${provider.toUpperCase()}...`, {});
+            
+            try {
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    const documentContent = e.target.result;
+                    
+                    const response = await fetch('/document/analyze', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            document_data: documentContent,
+                            document_type: docType,
+                            processing_mode: analysisMode,
+                            provider: provider,
+                            extract_images: false,
+                            analyze_citations: true
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    addMessage('assistant', JSON.stringify(result, null, 2), {
+                        format: 'json',
+                        endpoint: '/document/analyze',
+                        provider: provider,
+                        document_type: docType
+                    });
+                };
+                reader.readAsText(documentFile);
+            } catch (error) {
+                addMessage('error', `Document Analysis Failed: ${error.message}`, {});
+            }
+        }
+
+        async function executeDeepResearch() {
+            const provider = document.getElementById('researchProvider').value;
+            const query = document.getElementById('researchQuery').value;
+            const depth = document.getElementById('researchDepth').value;
+            const sources = Array.from(document.querySelectorAll('input[name="researchSources"]:checked')).map(cb => cb.value);
+            
+            closeDeepResearchModal();
+            
+            if (!query.trim()) {
+                addMessage('error', '❌ Please enter a research query', {});
+                return;
+            }
+            
+            addMessage('system', `🔬 Starting Deep Research with ${provider.toUpperCase()}...`, {});
+            
+            try {
+                const response = await fetch('/research/deep', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        query: query,
+                        research_depth: depth,
+                        source_types: sources.length > 0 ? sources : ["arxiv", "semantic_scholar", "wikipedia"],
+                        provider: provider,
+                        min_sources: 3
+                    })
+                });
+                
+                const result = await response.json();
+                addMessage('assistant', JSON.stringify(result, null, 2), {
+                    format: 'json',
+                    endpoint: '/research/deep',
+                    provider: provider,
+                    query: query
+                });
+            } catch (error) {
+                addMessage('error', `Deep Research Failed: ${error.message}`, {});
+            }
+        }
+
+        async function executeReasoning() {
+            const provider = document.getElementById('reasoningProvider').value;
+            const problem = document.getElementById('reasoningProblem').value;
+            const reasoningType = document.getElementById('reasoningType').value;
+            const depth = document.getElementById('reasoningDepth').value;
+            const consensus = document.getElementById('requireConsensus').checked;
+            
+            closeReasoningModal();
+            
+            if (!problem.trim()) {
+                addMessage('error', '❌ Please enter a problem to reason about', {});
+                return;
+            }
+            
+            addMessage('system', `🧠 Starting AI Reasoning with ${provider.toUpperCase()}...`, {});
+            
+            try {
+                const response = await fetch('/reasoning/collaborative', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        problem: problem,
+                        reasoning_type: reasoningType,
+                        depth: depth,
+                        require_consensus: consensus,
+                        provider: provider,
+                        max_iterations: 3
+                    })
+                });
+                
+                const result = await response.json();
+                addMessage('assistant', JSON.stringify(result, null, 2), {
+                    format: 'json',
+                    endpoint: '/reasoning/collaborative',
+                    provider: provider,
+                    problem: problem
+                });
+            } catch (error) {
+                addMessage('error', `AI Reasoning Failed: ${error.message}`, {});
+            }
         }
         
         async function generateVisualsForMessage(originalMessage, responseContent = '') {
@@ -3551,6 +3807,237 @@ Examples:
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" onclick="closeImageGenerationModal()">Cancel</button>
                 <button type="button" class="btn btn-primary" onclick="generateImageFromModal()">🎨 Generate Image</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== VISION ANALYSIS MODAL ====== -->
+    <div id="visionAnalysisModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🎨 Advanced Vision Analysis</h2>
+                <span class="close" onclick="closeVisionAnalysisModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="visionAnalysisForm">
+                    <div class="form-group">
+                        <label for="visionImageFile">📸 Select Image:</label>
+                        <input type="file" id="visionImageFile" accept="image/*" required>
+                        <small style="color: #64748b; font-size: 12px;">💡 Supports JPG, PNG, GIF, WebP</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="visionContext">🔍 Analysis Context:</label>
+                        <textarea id="visionContext" placeholder="Physics experiment, medical diagram, scientific chart, etc..."></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="visionProvider">🤖 AI Provider:</label>
+                            <select id="visionProvider">
+                                <option value="claude">🧠 Claude 4 (Recommended)</option>
+                                <option value="openai">🔥 GPT-4V</option>
+                                <option value="google">🚀 Gemini 2.5 Flash</option>
+                                <option value="deepseek">🔬 DeepSeek R1</option>
+                                <option value="auto">⚡ Auto-Select Best</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="visionAnalysisType">🎯 Analysis Type:</label>
+                            <select id="visionAnalysisType">
+                                <option value="comprehensive">🔍 Comprehensive</option>
+                                <option value="scientific">🔬 Scientific</option>
+                                <option value="physics_focused">⚗️ Physics Focused</option>
+                                <option value="technical">⚙️ Technical</option>
+                                <option value="medical">🏥 Medical</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeVisionAnalysisModal()">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="executeVisionAnalysis()">🎨 Analyze Image</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== DOCUMENT ANALYSIS MODAL ====== -->
+    <div id="documentAnalysisModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📄 Intelligent Document Analysis</h2>
+                <span class="close" onclick="closeDocumentAnalysisModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="documentAnalysisForm">
+                    <div class="form-group">
+                        <label for="documentFile">📄 Select Document:</label>
+                        <input type="file" id="documentFile" accept=".pdf,.txt,.doc,.docx,.md" required>
+                        <small style="color: #64748b; font-size: 12px;">💡 Supports PDF, TXT, DOC, DOCX, MD</small>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="documentProvider">🤖 AI Provider:</label>
+                            <select id="documentProvider">
+                                <option value="claude">🧠 Claude 4 (Recommended)</option>
+                                <option value="openai">🔥 GPT-4</option>
+                                <option value="google">🚀 Gemini 2.5 Flash</option>
+                                <option value="deepseek">🔬 DeepSeek R1</option>
+                                <option value="auto">⚡ Auto-Select Best</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="documentType">📋 Document Type:</label>
+                            <select id="documentType">
+                                <option value="academic_paper">🎓 Academic Paper</option>
+                                <option value="research_report">🔬 Research Report</option>
+                                <option value="technical_manual">⚙️ Technical Manual</option>
+                                <option value="business_document">💼 Business Document</option>
+                                <option value="legal_document">⚖️ Legal Document</option>
+                                <option value="general">📝 General Document</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="documentAnalysisMode">🎯 Analysis Mode:</label>
+                        <select id="documentAnalysisMode">
+                            <option value="comprehensive">🔍 Comprehensive</option>
+                            <option value="summary">📝 Summary Only</option>
+                            <option value="structure">🏗️ Structure Analysis</option>
+                            <option value="key_points">🎯 Key Points</option>
+                            <option value="citations">📚 Citations & References</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeDocumentAnalysisModal()">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="executeDocumentAnalysis()">📄 Analyze Document</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== DEEP RESEARCH MODAL ====== -->
+    <div id="deepResearchModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🔬 Advanced Deep Research</h2>
+                <span class="close" onclick="closeDeepResearchModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="deepResearchForm">
+                    <div class="form-group">
+                        <label for="researchQuery">🔍 Research Query:</label>
+                        <textarea id="researchQuery" placeholder="Latest developments in quantum computing 2024..." required></textarea>
+                        <small style="color: #64748b; font-size: 12px;">💡 Be specific for better results</small>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="researchProvider">🤖 AI Provider:</label>
+                            <select id="researchProvider">
+                                <option value="claude">🧠 Claude 4 (Recommended)</option>
+                                <option value="openai">🔥 GPT-4</option>
+                                <option value="google">🚀 Gemini 2.5 Flash</option>
+                                <option value="deepseek">🔬 DeepSeek R1</option>
+                                <option value="auto">⚡ Auto-Select Best</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="researchDepth">📊 Research Depth:</label>
+                            <select id="researchDepth">
+                                <option value="comprehensive">🔍 Comprehensive</option>
+                                <option value="detailed">📚 Detailed</option>
+                                <option value="standard">📝 Standard</option>
+                                <option value="quick">⚡ Quick Overview</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>🌐 Research Sources:</label>
+                        <div class="checkbox-grid">
+                            <label><input type="checkbox" name="researchSources" value="arxiv" checked> 📖 ArXiv</label>
+                            <label><input type="checkbox" name="researchSources" value="semantic_scholar" checked> 🎓 Semantic Scholar</label>
+                            <label><input type="checkbox" name="researchSources" value="wikipedia" checked> 🌍 Wikipedia</label>
+                            <label><input type="checkbox" name="researchSources" value="pubmed"> 🏥 PubMed</label>
+                            <label><input type="checkbox" name="researchSources" value="ieee"> ⚡ IEEE</label>
+                            <label><input type="checkbox" name="researchSources" value="springer"> 📚 Springer</label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeDeepResearchModal()">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="executeDeepResearch()">🔬 Start Research</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== AI REASONING MODAL ====== -->
+    <div id="reasoningModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🧠 Advanced AI Reasoning</h2>
+                <span class="close" onclick="closeReasoningModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="reasoningForm">
+                    <div class="form-group">
+                        <label for="reasoningProblem">🧠 Problem to Solve:</label>
+                        <textarea id="reasoningProblem" placeholder="What are the philosophical implications of consciousness in AI systems?" required></textarea>
+                        <small style="color: #64748b; font-size: 12px;">💡 Complex problems benefit from multi-agent reasoning</small>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="reasoningProvider">🤖 Lead AI Provider:</label>
+                            <select id="reasoningProvider">
+                                <option value="claude">🧠 Claude 4 (Recommended)</option>
+                                <option value="openai">🔥 GPT-4</option>
+                                <option value="google">🚀 Gemini 2.5 Flash</option>
+                                <option value="deepseek">🔬 DeepSeek R1</option>
+                                <option value="consensus">🤝 Multi-Agent Consensus</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="reasoningType">🎯 Reasoning Type:</label>
+                            <select id="reasoningType">
+                                <option value="philosophical">🤔 Philosophical</option>
+                                <option value="analytical">🔍 Analytical</option>
+                                <option value="scientific">🔬 Scientific</option>
+                                <option value="logical">⚖️ Logical</option>
+                                <option value="creative">💡 Creative</option>
+                                <option value="ethical">🌿 Ethical</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="reasoningDepth">📊 Reasoning Depth:</label>
+                            <select id="reasoningDepth">
+                                <option value="comprehensive">🔍 Comprehensive</option>
+                                <option value="detailed">📚 Detailed</option>
+                                <option value="standard">📝 Standard</option>
+                                <option value="basic">⚡ Basic</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="requireConsensus" checked> 
+                                🤝 Require Multi-Agent Consensus
+                            </label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeReasoningModal()">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="executeReasoning()">🧠 Start Reasoning</button>
             </div>
         </div>
     </div>
