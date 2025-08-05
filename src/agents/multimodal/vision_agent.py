@@ -393,41 +393,232 @@ class MultimodalVisionAgent(NISAgent):
         provider: str, 
         context: Optional[str]
     ) -> Dict[str, Any]:
-        """Perform the actual image analysis (simplified mock)"""
+        """Perform actual image analysis using LLM providers with vision capabilities"""
         
-        # This is a simplified mock implementation
-        # In production, this would call the actual vision APIs
+        try:
+            # Use LLM Manager for real vision analysis if available
+            if self.llm_manager:
+                # Create analysis prompt based on type
+                analysis_prompt = self._create_analysis_prompt(analysis_type, context)
+                
+                # Prepare the image for LLM vision analysis
+                messages = [
+                    {
+                        "role": "user",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": analysis_prompt
+                            },
+                            {
+                                "type": "image_url",
+                                "image_url": {
+                                    "url": f"data:image/jpeg;base64,{image_data}"
+                                }
+                            }
+                        ]
+                    }
+                ]
+                
+                # Call LLM with vision capabilities (OpenAI GPT-4V, Claude 3, etc.)
+                try:
+                    # Try multiple LLM Manager method signatures for compatibility
+                    try:
+                        vision_result = await self.llm_manager.generate_response(
+                            messages=messages,
+                            temperature=0.3,
+                            agent_type='vision'
+                        )
+                    except AttributeError:
+                        # Fallback to alternative method if generate_response doesn't exist
+                        try:
+                            openai_provider = self.llm_manager.providers.get('openai')
+                            if openai_provider:
+                                vision_result = await self.llm_manager.generate_with_cache(
+                                    provider=openai_provider,
+                                    messages=messages,
+                                    temperature=0.3
+                                )
+                            else:
+                                raise Exception("No compatible LLM provider available")
+                        except Exception as provider_error:
+                            logger.warning(f"LLM provider fallback failed: {provider_error}")
+                            vision_result = None
+                    
+                    if vision_result and vision_result.get("response"):
+                        # Parse the structured response from the LLM
+                        analysis_text = vision_result["response"]
+                        
+                        return {
+                            "description": analysis_text,
+                            "analysis_provider": vision_result.get("provider", "llm_vision"),
+                            "objects_detected": self._extract_objects_from_text(analysis_text),
+                            "scene_type": self._determine_scene_type(analysis_text),
+                            "colors_dominant": self._extract_colors_from_text(analysis_text),
+                            "technical_elements": self._extract_technical_elements(analysis_text, analysis_type),
+                            "confidence_score": 0.85,
+                            "full_analysis": analysis_text,
+                            "analysis_method": "real_llm_vision"
+                        }
+                        
+                except Exception as e:
+                    logger.warning(f"LLM vision analysis failed: {e}, falling back to enhanced mock")
+            
+            # Enhanced fallback analysis (better than previous mock)
+            logger.info("Using enhanced fallback analysis - real vision APIs not available")
+            
+            # Analyze the actual image data for basic properties
+            image_size = len(image_data) * 3 / 4  # Approximate decoded size
+            
+            base_analysis = {
+                "description": f"Enhanced analysis of {analysis_type} image ({int(image_size)} bytes). Real vision API unavailable - using intelligent fallback.",
+                "objects_detected": self._predict_objects_by_type(analysis_type, context),
+                "scene_type": self._predict_scene_type(analysis_type, context),
+                "colors_dominant": ["varied", "context-dependent"],
+                "technical_elements": self._predict_technical_elements(analysis_type),
+                "confidence_score": 0.65,
+                "analysis_method": "enhanced_fallback",
+                "note": "Upgrade to full vision API for detailed object recognition"
+            }
+            
+            # Add analysis-type specific enhancements
+            if analysis_type == "scientific":
+                base_analysis.update({
+                    "scientific_elements": ["potential_data_visualization", "measurement_references"],
+                    "methodology_visible": "requires_vision_api_for_detection",
+                    "quantitative_data": "Vision API needed for numerical extraction"
+                })
+            elif analysis_type == "physics_focused":
+                base_analysis.update({
+                    "physics_concepts": ["requires_vision_api_for_detection"],
+                    "equations_detected": "vision_api_required",
+                    "measurement_accuracy": "not_available_without_vision_api"
+                })
+            elif analysis_type == "technical":
+                base_analysis.update({
+                    "technical_drawings": "vision_api_required_for_detection",
+                    "diagrams_detected": ["requires_vision_analysis"],
+                    "specifications_visible": "not_available_without_vision_api"
+                })
+            
+            return base_analysis
+            
+        except Exception as e:
+            logger.error(f"Image analysis completely failed: {e}")
+            return {
+                "description": f"Analysis failed: {str(e)}",
+                "error": str(e),
+                "confidence_score": 0.0,
+                "analysis_method": "error_fallback"
+            }
+    
+    def _create_analysis_prompt(self, analysis_type: str, context: Optional[str] = None) -> str:
+        """Create appropriate analysis prompt based on type"""
+        base_prompt = "Analyze this image in detail. "
         
-        base_analysis = {
-            "description": "Mock image analysis - detected various objects and scenes",
-            "objects_detected": ["object1", "object2", "background"],
-            "scene_type": "indoor" if "indoor" in str(context).lower() else "outdoor",
-            "colors_dominant": ["blue", "white", "gray"],
-            "technical_elements": [],
-            "confidence_score": 0.85
-        }
-        
-        # Enhance based on analysis type
-        if analysis_type == "scientific":
-            base_analysis.update({
-                "scientific_elements": ["data_visualization", "measurement_tools"],
-                "methodology_visible": True,
-                "quantitative_data": "Detected numerical values and scales"
-            })
+        if analysis_type == "comprehensive":
+            base_prompt += "Describe what you see, identify objects, analyze the scene composition, colors, and any technical elements."
+        elif analysis_type == "scientific":
+            base_prompt += "Focus on scientific elements: data visualizations, charts, measurements, experimental setups, or scientific instruments visible."
         elif analysis_type == "physics_focused":
-            base_analysis.update({
-                "physics_concepts": ["motion", "forces", "energy"],
-                "equations_detected": False,
-                "measurement_accuracy": "high"
-            })
+            base_prompt += "Analyze from a physics perspective: identify physical phenomena, forces, motion, energy, equations, or physics concepts demonstrated."
         elif analysis_type == "technical":
-            base_analysis.update({
-                "technical_drawings": True,
-                "diagrams_detected": ["schematic", "flowchart"],
-                "specifications_visible": True
-            })
+            base_prompt += "Focus on technical aspects: diagrams, schematics, technical drawings, specifications, engineering elements, or technical documentation."
+        elif analysis_type == "educational":
+            base_prompt += "Analyze for educational content: learning materials, textbook elements, educational diagrams, or instructional content."
         
-        return base_analysis
+        if context:
+            base_prompt += f" Additional context: {context}"
+            
+        return base_prompt
+    
+    def _extract_objects_from_text(self, text: str) -> List[str]:
+        """Extract object mentions from analysis text"""
+        # Simple keyword extraction - could be enhanced with NLP
+        common_objects = ["person", "people", "car", "building", "tree", "table", "chair", "computer", "book", "document", "chart", "graph", "diagram", "equipment", "instrument", "tool"]
+        detected = []
+        text_lower = text.lower()
+        
+        for obj in common_objects:
+            if obj in text_lower:
+                detected.append(obj)
+        
+        return detected[:5]  # Limit to top 5
+    
+    def _determine_scene_type(self, text: str) -> str:
+        """Determine scene type from analysis text"""
+        text_lower = text.lower()
+        
+        if any(word in text_lower for word in ["indoor", "room", "office", "laboratory", "inside"]):
+            return "indoor"
+        elif any(word in text_lower for word in ["outdoor", "outside", "landscape", "street", "park"]):
+            return "outdoor"
+        elif any(word in text_lower for word in ["document", "paper", "text", "diagram", "chart"]):
+            return "document"
+        else:
+            return "mixed"
+    
+    def _extract_colors_from_text(self, text: str) -> List[str]:
+        """Extract color mentions from analysis text"""
+        colors = ["red", "blue", "green", "yellow", "orange", "purple", "pink", "brown", "black", "white", "gray", "grey"]
+        detected = []
+        text_lower = text.lower()
+        
+        for color in colors:
+            if color in text_lower:
+                detected.append(color)
+        
+        return detected[:3]  # Top 3 colors
+    
+    def _extract_technical_elements(self, text: str, analysis_type: str) -> List[str]:
+        """Extract technical elements based on analysis text and type"""
+        elements = []
+        text_lower = text.lower()
+        
+        # Technical keywords based on analysis type
+        if analysis_type == "scientific":
+            keywords = ["graph", "chart", "data", "measurement", "scale", "axis", "plot", "experiment"]
+        elif analysis_type == "physics_focused":
+            keywords = ["equation", "formula", "force", "energy", "motion", "vector", "diagram"]
+        elif analysis_type == "technical":
+            keywords = ["schematic", "blueprint", "specification", "diagram", "circuit", "design"]
+        else:
+            keywords = ["diagram", "chart", "technical", "measurement"]
+        
+        for keyword in keywords:
+            if keyword in text_lower:
+                elements.append(keyword)
+        
+        return elements[:4]  # Top 4 elements
+    
+    def _predict_objects_by_type(self, analysis_type: str, context: Optional[str]) -> List[str]:
+        """Predict likely objects based on analysis type"""
+        if analysis_type == "scientific":
+            return ["scientific_instrument", "data_visualization", "measurement_tool"]
+        elif analysis_type == "physics_focused":
+            return ["physics_diagram", "equation", "experimental_setup"]
+        elif analysis_type == "technical":
+            return ["technical_diagram", "specification", "schematic"]
+        else:
+            return ["general_content", "mixed_elements"]
+    
+    def _predict_scene_type(self, analysis_type: str, context: Optional[str]) -> str:
+        """Predict scene type based on analysis type"""
+        if analysis_type in ["scientific", "physics_focused", "technical"]:
+            return "document_or_diagram"
+        else:
+            return "unknown"
+    
+    def _predict_technical_elements(self, analysis_type: str) -> List[str]:
+        """Predict technical elements based on analysis type"""
+        if analysis_type == "scientific":
+            return ["data_analysis", "measurements"]
+        elif analysis_type == "physics_focused":
+            return ["physics_concepts", "equations"]
+        elif analysis_type == "technical":
+            return ["technical_specifications", "diagrams"]
+        else:
+            return ["general_technical_content"]
     
     def _generate_analysis_insights(
         self, 

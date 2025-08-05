@@ -106,11 +106,28 @@ class DeepResearchAgent(NISAgent):
             
             messages = [{"role": "user", "content": prompt}]
             
-            response = await self.llm_manager.generate_response(
-                messages=messages,
-                agent_type='research',
-                temperature=0.3
-            )
+            # Try multiple LLM Manager method signatures for compatibility
+            try:
+                response = await self.llm_manager.generate_response(
+                    messages=messages,
+                    temperature=0.3,
+                    agent_type='research'
+                )
+            except AttributeError:
+                # Fallback to alternative method if generate_response doesn't exist
+                try:
+                    openai_provider = self.llm_manager.providers.get('openai')
+                    if openai_provider:
+                        response = await self.llm_manager.generate_with_cache(
+                            provider=openai_provider,
+                            messages=messages,
+                            temperature=0.3
+                        )
+                    else:
+                        raise Exception("No compatible LLM provider available")
+                except Exception as provider_error:
+                    logger.warning(f"LLM provider fallback failed: {provider_error}")
+                    response = None
             
             if response and response.get("response"):
                 content = response["response"]
