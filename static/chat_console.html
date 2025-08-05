@@ -3057,6 +3057,107 @@ This represents a **breakthrough in artificial intelligence** with measurable, r
             return html;
         }
         
+        function formatResearchResponse(data, metadata) {
+            const research = data.research;
+            if (!research) return formatRawResponse(data, metadata);
+            
+            let html = `<div class="research-response">`;
+            html += `<div class="research-header">
+                <h3>🔬 Deep Research Results</h3>
+                <span class="provider-badge">research_agent</span>
+            </div>`;
+            
+            // Research query
+            if (research.query) {
+                html += `<div class="research-query">
+                    <strong>📋 Query:</strong> ${research.query}
+                </div>`;
+            }
+            
+            // Research findings
+            if (research.findings && Array.isArray(research.findings)) {
+                html += `<div class="research-findings">
+                    <h4>📚 Key Findings:</h4>
+                    <ul class="findings-list">`;
+                
+                research.findings.forEach((finding, index) => {
+                    html += `<li class="finding-item">
+                        <span class="finding-number">${index + 1}.</span>
+                        <span class="finding-text">${finding}</span>
+                    </li>`;
+                });
+                
+                html += `</ul></div>`;
+            }
+            
+            // Sources consulted
+            if (research.sources_consulted && Array.isArray(research.sources_consulted)) {
+                html += `<div class="research-sources">
+                    <h4>🔗 Sources Consulted:</h4>
+                    <div class="sources-list">`;
+                
+                research.sources_consulted.forEach(source => {
+                    const sourceIcon = source === 'arxiv' ? '📄' : 
+                                     source === 'semantic_scholar' ? '🎓' :
+                                     source === 'wikipedia' ? '📖' : '🌐';
+                    html += `<span class="source-badge">${sourceIcon} ${source}</span>`;
+                });
+                
+                html += `</div></div>`;
+            }
+            
+            // Research metadata
+            html += `<div class="research-metadata">`;
+            if (research.confidence !== undefined) {
+                const confidencePercent = Math.round(research.confidence * 100);
+                html += `<span class="confidence-badge">🎯 Confidence: ${confidencePercent}%</span>`;
+            }
+            if (research.research_time !== undefined) {
+                const timeMs = Math.round(research.research_time * 1000);
+                html += `<span class="time-badge">⏱️ Research Time: ${timeMs}ms</span>`;
+            }
+            html += `</div>`;
+            
+            html += '</div>';
+            return html;
+        }
+
+        function formatAnalysisResponse(data, metadata) {
+            const analysis = data.analysis;
+            if (!analysis) return formatRawResponse(data, metadata);
+            
+            let html = `<div class="analysis-response">`;
+            html += `<div class="analysis-header">
+                <h3>🧮 Analysis Results</h3>
+                <span class="provider-badge">analysis_agent</span>
+            </div>`;
+            
+            // Analysis content
+            if (analysis.content || analysis.result) {
+                const content = analysis.content || analysis.result;
+                html += `<div class="analysis-content">
+                    <div class="analysis-text">${content.replace(/\n/g, '<br>')}</div>
+                </div>`;
+            }
+            
+            // Analysis metadata
+            if (analysis.confidence || analysis.processing_time) {
+                html += `<div class="analysis-metadata">`;
+                if (analysis.confidence !== undefined) {
+                    const confidencePercent = Math.round(analysis.confidence * 100);
+                    html += `<span class="confidence-badge">🎯 Confidence: ${confidencePercent}%</span>`;
+                }
+                if (analysis.processing_time !== undefined) {
+                    const timeMs = Math.round(analysis.processing_time * 1000);
+                    html += `<span class="time-badge">⏱️ Processing: ${timeMs}ms</span>`;
+                }
+                html += `</div>`;
+            }
+            
+            html += '</div>';
+            return html;
+        }
+        
         function formatRawResponse(data, metadata) {
             let html = `<div class="raw-response">`;
             html += `<div class="raw-indicator">

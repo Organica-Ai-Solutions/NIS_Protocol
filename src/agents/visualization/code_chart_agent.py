@@ -148,12 +148,16 @@ import base64
 # ... (create your chart)
 
 # REQUIRED: Save to base64 (keep this exact code)
-buffer = io.BytesIO()
-plt.savefig(buffer, format='png', dpi=150, bbox_inches='tight')
-buffer.seek(0)
-chart_base64 = base64.b64encode(buffer.getvalue()).decode()
-plt.close()
-print(f"CHART_DATA:{chart_base64}")
+try:
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format='png', dpi=150, bbox_inches='tight')
+    buffer.seek(0)
+    chart_base64 = base64.b64encode(buffer.getvalue()).decode()
+    plt.close()
+    print(f"CHART_DATA:{chart_base64}")
+except Exception as e:
+    print(f"CHART_ERROR:{str(e)}")
+    chart_base64 = ""
 ```
 
 Generate ONLY the Python code, no explanations. Make it production-ready and scientifically accurate.
