@@ -182,3 +182,4 @@ venv/
 
 # Private directories
 private/
+.env.backup
