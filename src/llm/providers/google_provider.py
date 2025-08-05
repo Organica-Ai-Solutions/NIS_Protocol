@@ -68,9 +68,21 @@ class GoogleProvider(BaseLLMProvider):
 
         if aiplatform and self.gcp_project_id:
             try:
-                aiplatform.init(project=self.gcp_project_id, location=self.gcp_location)
-                # The model is instantiated on-demand in generate_image
-                logger.info(f"Google Cloud AI Platform (Imagen) configured for project '{self.gcp_project_id}'.")
+                # Try service account authentication first
+                service_account_key = os.getenv("GOOGLE_SERVICE_ACCOUNT_KEY")
+                if service_account_key and os.path.exists(service_account_key):
+                    from google.oauth2 import service_account
+                    credentials = service_account.Credentials.from_service_account_file(service_account_key)
+                    aiplatform.init(
+                        project=self.gcp_project_id, 
+                        location=self.gcp_location,
+                        credentials=credentials
+                    )
+                    logger.info(f"Google Cloud AI Platform (Imagen) configured with service account for project '{self.gcp_project_id}'.")
+                else:
+                    # Fall back to application default credentials
+                    aiplatform.init(project=self.gcp_project_id, location=self.gcp_location)
+                    logger.info(f"Google Cloud AI Platform (Imagen) configured with default credentials for project '{self.gcp_project_id}'.")
             except Exception as e:
                 logger.error(f"Failed to configure Google Cloud AI Platform for Imagen: {e}. Image generation will be mocked.")
         else:
@@ -124,10 +136,69 @@ class GoogleProvider(BaseLLMProvider):
     # --- Helper and Abstract Method Implementations ---
 
     def _enhance_prompt_for_scientific_visuals(self, prompt: str, style: str) -> str:
-        """Enhances the prompt for hyperrealistic, scientific visuals."""
-        # This style guidance works very well with Imagen 2
-        style_prefix = "A ultra-realistic, scientific photograph, cinematic 8k resolution, of"
-        return f"{style_prefix} a {style} depicting: {prompt}"
+        """Enhances the prompt for hyperrealistic, scientific visuals using prompt templates."""
+        import json
+        import os
+        
+        # Load prompt templates
+        try:
+            template_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'system', 'prompts', 'imagen_prompt_templates.json')
+            with open(template_path, 'r') as f:
+                templates = json.load(f)
+        except Exception as e:
+            logger.warning(f"Could not load prompt templates: {e}")
+            # Fallback to basic enhancement
+            style_prefix = "A ultra-realistic, scientific photograph, cinematic 8k resolution, of"
+            return f"{style_prefix} a {style} depicting: {prompt}"
+        
+        # Analyze prompt to determine best template
+        prompt_lower = prompt.lower()
+        enhanced_prompt = ""
+        
+        # Determine template based on content
+        if "quantum" in prompt_lower or "consciousness" in prompt_lower:
+            template = templates.get("quantum_physics", {})
+            base = template.get("base_template", "Quantum physics visualization")
+            elements = template.get("specific_elements", [])
+            enhanced_prompt = f"{base}, {prompt}, featuring {', '.join(elements[:3])}"
+            
+        elif "neural" in prompt_lower or "brain" in prompt_lower or "neuroplasticity" in prompt_lower:
+            template = templates.get("neuroplasticity", {})
+            base = template.get("base_template", "Neural network visualization")
+            elements = template.get("neural_elements", [])
+            enhanced_prompt = f"{base}, {prompt}, showing {', '.join(elements[:3])}"
+            
+        elif "bouncing ball" in prompt_lower or "physics" in prompt_lower:
+            template = templates.get("physics_experiments", {}).get("bouncing_ball", {})
+            scenario = template.get("scenario", "Physics demonstration")
+            elements = template.get("elements", [])
+            enhanced_prompt = f"{scenario}, {prompt}, including {', '.join(elements[:3])}"
+            
+        elif "earth" in prompt_lower and ("space" in prompt_lower or "jupiter" in prompt_lower):
+            template = templates.get("earth_from_space", {})
+            base = template.get("base_template", "Earth from space view")
+            elements = template.get("astronomical_elements", [])
+            enhanced_prompt = f"{base}, {prompt}, with {', '.join(elements[:3])}"
+            
+        else:
+            # Use scientific visualization template
+            template = templates.get("scientific_visualization", {})
+            base = template.get("base_template", "Scientific visualization")
+            enhanced_prompt = f"{base}, {prompt}"
+        
+        # Add style modifiers
+        style_template = templates.get("style_modifiers", {}).get(style, {})
+        if style_template:
+            prefix = style_template.get("prefix", "")
+            camera = style_template.get("camera_settings", "")
+            enhanced_prompt = f"{prefix}, {enhanced_prompt}, {camera}"
+        
+        # Add quality enhancers
+        quality_enhancers = templates.get("quality_enhancers", [])
+        enhanced_prompt += f", {', '.join(quality_enhancers[:4])}"
+        
+        logger.info(f"Enhanced prompt: {enhanced_prompt[:100]}...")
+        return enhanced_prompt
 
     async def _generate_placeholder_image(self, prompt: str, style: str, size: str) -> Dict[str, Any]:
         """Generates a placeholder image."""
