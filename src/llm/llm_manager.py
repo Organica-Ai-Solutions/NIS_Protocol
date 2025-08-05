@@ -370,12 +370,21 @@ class LLMManager:
         for provider in self.providers.values():
             await provider.close() 
 
-# ====== ARCHAEOLOGICAL PATTERN: SIMPLE REAL LLM PROVIDER ======
-# Global provider config
+# ====== DYNAMIC PROVIDER ROUTER INTEGRATION ======
+# Try to use new Provider Router, fall back to static assignments
+PROVIDER_ROUTER_AVAILABLE = False
+try:
+    from src.core.provider_router import ProviderRouter, RoutingRequest
+    PROVIDER_ROUTER_AVAILABLE = True
+    logging.info("🎯 Dynamic Provider Router available - intelligent routing enabled")
+except ImportError:
+    logging.info("📋 Using static provider assignments (Provider Router not available)")
+
+# Static provider config (fallback)
 PROVIDER_ASSIGNMENTS = {
-    'consciousness': {'provider': os.getenv('CONSCIOUSNESS_PROVIDER', 'anthropic'), 'model': os.getenv('CONSCIOUSNESS_MODEL', 'claude-3-sonnet-20240229')},
+    'consciousness': {'provider': os.getenv('CONSCIOUSNESS_PROVIDER', 'anthropic'), 'model': os.getenv('CONSCIOUSNESS_MODEL', 'claude-sonnet-4-20250514')},
     'reasoning': {'provider': os.getenv('REASONING_PROVIDER', 'deepseek'), 'model': os.getenv('REASONING_MODEL', 'deepseek-chat')},
-    'default': {'provider': os.getenv('DEFAULT_PROVIDER', 'openai'), 'model': os.getenv('DEFAULT_MODEL', 'gpt-3.5-turbo')},
+    'default': {'provider': os.getenv('DEFAULT_PROVIDER', 'openai'), 'model': os.getenv('DEFAULT_MODEL', 'gpt-4o')},
     'physics': {'provider': os.getenv('PHYSICS_PROVIDER', 'deepseek'), 'model': os.getenv('PHYSICS_MODEL', 'deepseek-chat')},
     'research': {'provider': os.getenv('RESEARCH_PROVIDER', 'deepseek'), 'model': os.getenv('RESEARCH_MODEL', 'deepseek-chat')}
 }
@@ -392,6 +401,16 @@ class GeneralLLMProvider:
             'bitnet': BitNetProvider(config={}) # Initialize BitNet provider
         }
         self._validate_providers()
+        
+        # Initialize Provider Router if available
+        self.provider_router = None
+        if PROVIDER_ROUTER_AVAILABLE:
+            try:
+                self.provider_router = ProviderRouter()
+                logging.info("🎯 Provider Router initialized for intelligent routing")
+            except Exception as e:
+                logging.warning(f"Failed to initialize Provider Router: {e}")
+                self.provider_router = None
 
     def _validate_providers(self):
         for provider, config in self.providers.items():
@@ -415,19 +434,58 @@ class GeneralLLMProvider:
         for provider_name, config in self.providers.items():
             logging.info(f"Provider: {provider_name}, Type: {type(config)}")
             
-        # 🎯 PRIORITY: Honor explicit provider requests first
-        if requested_provider and requested_provider in self.providers:
-            providers_to_try = [requested_provider]
-            logging.info(f"🎯 Explicit provider requested: {requested_provider}")
+        # 🎯 INTELLIGENT ROUTING: Use Provider Router if available
+        if self.provider_router:
+            try:
+                routing_request = RoutingRequest(
+                    task_type=agent_type,
+                    requested_provider=requested_provider,
+                    requested_model=None  # Let router decide model
+                )
+                routing_result = self.provider_router.route_request(routing_request)
+                
+                # Use router's decision
+                providers_to_try = [routing_result.provider]
+                selected_model = routing_result.model
+                
+                logging.info(f"🎯 Router selected: {routing_result.provider}/{routing_result.model}")
+                logging.info(f"🎯 Routing reason: {routing_result.reason}")
+                
+                # Add fallbacks if router provides them
+                fallback_recommendations = self.provider_router.get_task_recommendations(agent_type)
+                for rec in fallback_recommendations:
+                    try:
+                        fallback_provider = rec.split('/')[0]
+                        if fallback_provider not in providers_to_try:
+                            providers_to_try.append(fallback_provider)
+                    except:
+                        pass
+                        
+            except Exception as e:
+                logging.warning(f"Provider Router failed: {e}, falling back to static assignments")
+                # Fall back to static routing
+                if requested_provider and requested_provider in self.providers:
+                    providers_to_try = [requested_provider]
+                    logging.info(f"🎯 Explicit provider requested: {requested_provider}")
+                else:
+                    providers_to_try = [PROVIDER_ASSIGNMENTS.get(agent_type, PROVIDER_ASSIGNMENTS['default'])['provider']]
+                selected_model = None
         else:
-            # Use agent_type routing as fallback
-            providers_to_try = [PROVIDER_ASSIGNMENTS.get(agent_type, PROVIDER_ASSIGNMENTS['default'])['provider']]
+            # Legacy routing (static assignments)
+            if requested_provider and requested_provider in self.providers:
+                providers_to_try = [requested_provider]
+                logging.info(f"🎯 Explicit provider requested: {requested_provider}")
+            else:
+                # Use agent_type routing as fallback
+                providers_to_try = [PROVIDER_ASSIGNMENTS.get(agent_type, PROVIDER_ASSIGNMENTS['default'])['provider']]
+            selected_model = None
             
-        # Add other providers as fallbacks (except the already chosen one)
-        all_fallbacks = ['openai', 'anthropic', 'google', 'deepseek', 'bitnet']
-        for p in all_fallbacks:
-            if p not in providers_to_try:
-                providers_to_try.append(p)
+            # Add other providers as fallbacks (except the already chosen one)
+            all_fallbacks = ['openai', 'anthropic', 'google', 'deepseek', 'bitnet']
+            for p in all_fallbacks:
+                if p not in providers_to_try:
+                    providers_to_try.append(p)
+        
         logging.info(f"Providers to try: {providers_to_try}")
 
         for provider in providers_to_try:
@@ -451,7 +509,22 @@ class GeneralLLMProvider:
 
                 elif self.providers.get(provider) and not self.providers[provider].get('disabled'):
                     config = self.providers[provider]
-                    model = PROVIDER_ASSIGNMENTS.get(agent_type, {}).get('model') or self.get_default_model(provider)
+                    # 🎯 INTELLIGENT MODEL SELECTION: Use router selection if available
+                    if selected_model and providers_to_try.index(provider) == 0:
+                        # Use router's selected model for the primary provider
+                        model = selected_model
+                        logging.info(f"🎯 Using router-selected model: {model}")
+                    elif requested_provider == provider:
+                        model = self.get_default_model(provider)
+                        logging.info(f"🎯 Using default model for explicitly requested provider {provider}: {model}")
+                    else:
+                        # For fallback providers, check if agent_type assignment matches
+                        agent_assignment = PROVIDER_ASSIGNMENTS.get(agent_type, {})
+                        if agent_assignment.get('provider') == provider:
+                            model = agent_assignment.get('model', self.get_default_model(provider))
+                        else:
+                            model = self.get_default_model(provider)
+                        logging.info(f"🔄 Using model for fallback provider {provider}: {model}")
                     
                     # Use mock if API key is missing
                     if config.get('mock_mode', False):
@@ -473,10 +546,45 @@ class GeneralLLMProvider:
 
                 logging.info(f"Success with {provider}")
                 logging.info(f"Returning result from {provider}: {type(result)} {result}")
+                
+                # Record success metrics for Provider Router
+                if self.provider_router:
+                    try:
+                        # Extract metrics from result
+                        response_time = result.get('response_time', 0)
+                        tokens_used = result.get('tokens_used', 0)
+                        estimated_cost = tokens_used * 0.001  # Rough estimate
+                        
+                        self.provider_router.record_request_result(
+                            provider=provider,
+                            model=model,
+                            success=True,
+                            latency_ms=response_time,
+                            cost=estimated_cost
+                        )
+                    except Exception as router_error:
+                        logging.debug(f"Failed to record router metrics: {router_error}")
+                
                 return result
 
             except Exception as e:
                 logging.warning(f"Provider {provider} failed: {e}. Trying next provider.")
+                
+                # Record failure metrics for Provider Router
+                if self.provider_router:
+                    try:
+                        # Use the model that was attempted
+                        attempted_model = model if 'model' in locals() else self.get_default_model(provider)
+                        self.provider_router.record_request_result(
+                            provider=provider,
+                            model=attempted_model,
+                            success=False,
+                            latency_ms=5000,  # Assume timeout
+                            cost=0.0
+                        )
+                    except Exception as router_error:
+                        logging.debug(f"Failed to record router failure metrics: {router_error}")
+                
                 continue
 
         # Fallback to mock if all real providers fail
@@ -486,10 +594,10 @@ class GeneralLLMProvider:
 
     def get_default_model(self, provider):
         return {
-            'openai': 'gpt-3.5-turbo',
-            'anthropic': 'claude-3-haiku-20240307',
-            'google': 'gemini-pro',
-            'deepseek': 'deepseek-chat'
+            'openai': 'gpt-4o',  # Latest GPT-4 model
+            'anthropic': 'claude-sonnet-4-20250514',  # Claude 4 Sonnet
+            'google': 'gemini-2.5-flash',  # Gemini 2.5 Flash - Latest Stable
+            'deepseek': 'deepseek-chat'  # DeepSeek R1 (API model name)
         }[provider]
 
     async def _call_anthropic_api(self, messages: List[Dict[str, str]], temperature: float, model: str) -> Dict[str, Any]:

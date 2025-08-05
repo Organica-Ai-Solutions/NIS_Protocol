@@ -70,7 +70,7 @@ class GoogleProvider(BaseLLMProvider):
             try:
                 # Try service account authentication first
                 service_account_key = os.getenv("GOOGLE_SERVICE_ACCOUNT_KEY")
-                if service_account_key and os.path.exists(service_account_key):
+                if service_account_key and os.path.exists(service_account_key) and os.path.isfile(service_account_key):
                     from google.oauth2 import service_account
                     credentials = service_account.Credentials.from_service_account_file(service_account_key)
                     aiplatform.init(
@@ -81,12 +81,17 @@ class GoogleProvider(BaseLLMProvider):
                     logger.info(f"Google Cloud AI Platform (Imagen) configured with service account for project '{self.gcp_project_id}'.")
                 else:
                     # Fall back to application default credentials
-                    aiplatform.init(project=self.gcp_project_id, location=self.gcp_location)
-                    logger.info(f"Google Cloud AI Platform (Imagen) configured with default credentials for project '{self.gcp_project_id}'.")
+                    try:
+                        aiplatform.init(project=self.gcp_project_id, location=self.gcp_location)
+                        logger.info(f"Google Cloud AI Platform (Imagen) configured with default credentials for project '{self.gcp_project_id}'.")
+                    except Exception as default_error:
+                        logger.warning(f"Google Cloud default credentials failed: {default_error}. Using mock mode.")
+                        self.use_mock = True
             except Exception as e:
-                logger.error(f"Failed to configure Google Cloud AI Platform for Imagen: {e}. Image generation will be mocked.")
+                logger.warning(f"Google Cloud AI Platform configuration failed: {e}. Using mock mode.")
+                self.use_mock = True
         else:
-            logger.warning("Imagen (google-cloud-aiplatform) not fully configured. Image generation will be mocked.")
+            logger.info("Google Cloud AI Platform not configured - using mock mode for image generation.")
             
         self.logger = logging.getLogger("google_provider")
 
@@ -100,9 +105,9 @@ class GoogleProvider(BaseLLMProvider):
         """
         Generates an image using the robust Imagen 2 API via AI Platform.
         """
-        if not self.gcp_project_id or not ImageGenerationModel:
-            self.logger.warning("Using placeholder image due to missing GCP/Imagen configuration.")
-            return await self._generate_placeholder_image(prompt, style, size)
+        if not self.gcp_project_id or not ImageGenerationModel or self.use_mock:
+            self.logger.info("Using enhanced placeholder image (GCP/Imagen not available).")
+            return await self._generate_enhanced_placeholder_image(prompt, style, size)
 
         enhanced_prompt = self._enhance_prompt_for_scientific_visuals(prompt, style)
         self.logger.info(f"🎨 Attempting REAL Imagen 2 Image Generation with prompt: {enhanced_prompt}")
@@ -131,7 +136,7 @@ class GoogleProvider(BaseLLMProvider):
 
         except Exception as e:
             self.logger.error(f"Definitive Imagen 2 image generation error: {e}")
-            return await self._generate_placeholder_image(prompt, style, size)
+            return await self._generate_enhanced_placeholder_image(prompt, style, size)
 
     # --- Helper and Abstract Method Implementations ---
 
@@ -200,21 +205,88 @@ class GoogleProvider(BaseLLMProvider):
         logger.info(f"Enhanced prompt: {enhanced_prompt[:100]}...")
         return enhanced_prompt
 
-    async def _generate_placeholder_image(self, prompt: str, style: str, size: str) -> Dict[str, Any]:
-        """Generates a placeholder image."""
-        # ... (rest of the placeholder implementation is the same)
-        if not Image:
-            return {"status": "error", "message": "PIL not installed"}
-        width, height = map(int, size.split('x'))
-        img = Image.new('RGB', (width, height), color = (20, 30, 40))
-        buffer = io.BytesIO()
-        img.save(buffer, format="PNG")
-        img_str = base64.b64encode(buffer.getvalue()).decode()
-        data_url = f"data:image/png;base64,{img_str}"
-        return {
-            "status": "success", "prompt": prompt,
-            "images": [{"url": data_url, "revised_prompt": "Placeholder Image"}]
-        }
+    async def _generate_enhanced_placeholder_image(self, prompt: str, style: str, size: str) -> Dict[str, Any]:
+        """Generates an enhanced placeholder image."""
+        try:
+            from PIL import Image, ImageDraw, ImageFont
+            import textwrap
+            
+            if not Image:
+                return {"status": "error", "message": "PIL not installed"}
+            
+            width, height = map(int, size.split('x'))
+            
+            # Create enhanced placeholder
+            bg_color = (245, 245, 250) if style == "scientific" else (248, 250, 252)
+            border_color = (99, 102, 241) if style == "scientific" else (8, 145, 178)
+            text_color = (55, 65, 81)
+            
+            img = Image.new('RGB', (width, height), color=bg_color)
+            draw = ImageDraw.Draw(img)
+            
+            # Draw decorative border
+            border_width = max(3, width // 150)
+            draw.rectangle([0, 0, width-1, height-1], outline=border_color, width=border_width)
+            
+            # Add content
+            try:
+                font = ImageFont.load_default()
+                
+                # Title
+                title = "🎨 Google Imagen Concept"
+                title_y = height // 5
+                title_bbox = draw.textbbox((0, 0), title, font=font)
+                title_x = (width - (title_bbox[2] - title_bbox[0])) // 2
+                draw.text((title_x, title_y), title, fill=text_color, font=font)
+                
+                # Prompt (wrapped)
+                prompt_text = f"Prompt: {prompt[:80]}{'...' if len(prompt) > 80 else ''}"
+                prompt_y = height // 2.5
+                wrapped_lines = textwrap.wrap(prompt_text, width=width//10)
+                
+                for i, line in enumerate(wrapped_lines[:3]):
+                    line_bbox = draw.textbbox((0, 0), line, font=font)
+                    line_x = (width - (line_bbox[2] - line_bbox[0])) // 2
+                    draw.text((line_x, prompt_y + i * 25), line, fill=text_color, font=font)
+                
+                # Status
+                status_text = "⚠️ Google Cloud configuration needed for real generation"
+                status_y = height - height // 4
+                status_bbox = draw.textbbox((0, 0), status_text, font=font)
+                status_x = (width - (status_bbox[2] - status_bbox[0])) // 2
+                draw.text((status_x, status_y), status_text, fill=(180, 83, 9), font=font)
+                
+            except Exception as font_error:
+                # Fallback without font
+                pass
+            
+            buffer = io.BytesIO()
+            img.save(buffer, format="PNG")
+            img_str = base64.b64encode(buffer.getvalue()).decode()
+            data_url = f"data:image/png;base64,{img_str}"
+            
+            return {
+                "status": "success", 
+                "prompt": prompt,
+                "images": [{
+                    "url": data_url, 
+                    "revised_prompt": f"Enhanced Google placeholder: {prompt}"
+                }],
+                "provider_used": "google_enhanced_placeholder",
+                "note": "Configure Google Cloud for real Imagen generation"
+            }
+            
+        except Exception as e:
+            # Final fallback
+            return {
+                "status": "success", 
+                "prompt": prompt,
+                "images": [{
+                    "url": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDUxMiA1MTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiBmaWxsPSIjRjVGNUZBIi8+Cjx0ZXh0IHg9IjI1NiIgeT0iMjU2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjMzc0MTUxIiBmb250LXNpemU9IjE2IiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiI+R29vZ2xlIEltYWdlbiBQbGFjZWhvbGRlcjwvdGV4dD4KPC9zdmc+",
+                    "revised_prompt": f"Simple Google placeholder: {prompt}"
+                }],
+                "provider_used": "google_simple_placeholder"
+            }
         
     async def generate(self, messages: List[LLMMessage], **kwargs) -> LLMResponse:
         # ... (Gemini text generation implementation remains the same)

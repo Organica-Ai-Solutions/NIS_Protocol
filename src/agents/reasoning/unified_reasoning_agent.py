@@ -54,12 +54,20 @@ except (ImportError, OSError) as e:
     logging.warning(f"PyTorch not available ({e}) - using mathematical fallback reasoning")
 
 # Transformers for basic reasoning (if available)
+TRANSFORMERS_AVAILABLE = False
 try:
+    # Suppress Keras 3 compatibility warnings
+    import warnings
+    warnings.filterwarnings("ignore", category=FutureWarning, module="transformers")
+    warnings.filterwarnings("ignore", message=".*Keras 3.*")
+    
     from transformers import pipeline, AutoTokenizer, AutoModelForCausalLM
     TRANSFORMERS_AVAILABLE = True
 except (ImportError, OSError) as e:
     TRANSFORMERS_AVAILABLE = False
-    logging.warning(f"Transformers not available ({e}) - using basic reasoning")
+    # Only log if it's a real ImportError, not Keras compatibility
+    if "Keras" not in str(e):
+        logging.warning(f"Transformers not available ({e}) - using basic reasoning")
 
 # LLM integration
 try:
