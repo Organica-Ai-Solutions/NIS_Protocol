@@ -49,16 +49,26 @@ class CodeChartAgent:
             'plotly.graph_objects', 'plotly.express', 'math', 'random'
         ]
         
-    async def generate_chart_from_content(self, content: str, topic: str, chart_type: str = "auto") -> Dict[str, Any]:
+    async def generate_chart_from_content(self, content: str, topic: str, chart_type: str = "auto", 
+                                         original_question: str = "", response_content: str = "") -> Dict[str, Any]:
         """
         Generate a chart by analyzing content and writing Python code
         This is the GPT-style approach: Content → Code → Execute → Chart
+        
+        Args:
+            content: Full context content (question + answer if available)
+            topic: Detected or provided topic
+            chart_type: Type of chart to generate
+            original_question: Original user question for context
+            response_content: NIS Protocol response content for context
         """
         try:
             self.logger.info(f"🎨 Generating dynamic chart for topic: {topic}")
+            if original_question and response_content:
+                self.logger.info(f"📝 Using full conversation context for chart generation")
             
             # Step 1: Analyze content and generate appropriate chart code (using Claude 4!)
-            chart_code = await self._generate_chart_code(content, topic, chart_type)
+            chart_code = await self._generate_chart_code(content, topic, chart_type, original_question, response_content)
             
             # Step 2: Execute the code safely
             chart_result = await self._execute_chart_code(chart_code, topic)
@@ -81,7 +91,8 @@ class CodeChartAgent:
             self.logger.error(f"Dynamic chart generation failed: {e}")
             return self._create_simple_svg_chart(topic, chart_type)
     
-    async def _generate_chart_code(self, content: str, topic: str, chart_type: str) -> str:
+    async def _generate_chart_code(self, content: str, topic: str, chart_type: str, 
+                                   original_question: str = "", response_content: str = "") -> str:
         """
         Generate Python code based on content analysis using Claude 4 intelligence
         This is where the 'intelligence' happens - like GPT analyzing what chart to make
@@ -89,18 +100,32 @@ class CodeChartAgent:
         
         # Use Claude 4 for intelligent code generation if available
         if self.llm_manager:
-            return await self._generate_intelligent_chart_code(content, topic, chart_type)
+            return await self._generate_intelligent_chart_code(content, topic, chart_type, original_question, response_content)
         else:
             # Fallback to hardcoded templates
             return self._generate_fallback_chart_code(content, topic, chart_type)
     
-    async def _generate_intelligent_chart_code(self, content: str, topic: str, chart_type: str) -> str:
+    async def _generate_intelligent_chart_code(self, content: str, topic: str, chart_type: str, 
+                                              original_question: str = "", response_content: str = "") -> str:
         """
         Use Claude 4 to intelligently generate Python visualization code
         """
         try:
+            # Build enhanced context for Claude 4
+            context_info = ""
+            if original_question and response_content:
+                context_info = f"""
+CONVERSATION CONTEXT:
+- User Question: {original_question}
+- NIS Protocol Response: {response_content[:500]}{'...' if len(response_content) > 500 else ''}
+
+ANALYSIS INSTRUCTION: Create a visualization that specifically illustrates the concepts, physics, or data mentioned in this conversation. Make the chart directly relevant to the question and answer content.
+"""
+            
             prompt = f"""
-You are an expert Python data visualization programmer. Based on the following content, generate precise Python code using matplotlib to create an appropriate visualization.
+You are an expert Python data visualization programmer specialized in creating scientifically accurate and contextually relevant charts.
+
+{context_info}
 
 CONTENT: {content}
 TOPIC: {topic}

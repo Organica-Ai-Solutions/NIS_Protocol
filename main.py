@@ -2042,11 +2042,15 @@ async def generate_dynamic_chart(request: dict):
         content = request.get("content", "")
         topic = request.get("topic", "Data Visualization")
         chart_type = request.get("chart_type", "auto")
+        original_question = request.get("original_question", "")
+        response_content = request.get("response_content", "")
         
         logger.info(f"🎨 Dynamic chart generation: {topic} ({chart_type})")
+        if original_question and response_content:
+            logger.info(f"📝 Using full conversation context (Q&A)")
         
         # Generate chart using GPT-style approach: analyze content → write code → execute
-        result = await code_chart_agent.generate_chart_from_content(content, topic, chart_type)
+        result = await code_chart_agent.generate_chart_from_content(content, topic, chart_type, original_question, response_content)
         
         if result.get("status") == "success":
             return {

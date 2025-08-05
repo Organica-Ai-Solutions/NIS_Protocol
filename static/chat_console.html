@@ -1546,7 +1546,7 @@
                 `;
                 visualButton.onmouseover = () => visualButton.style.transform = 'scale(1.05)';
                 visualButton.onmouseout = () => visualButton.style.transform = 'scale(1)';
-                visualButton.onclick = () => generateVisualsForMessage(options.original_message);
+                visualButton.onclick = () => generateVisualsForMessage(options.original_message, content);
                 messageDiv.appendChild(visualButton);
             }
             
@@ -2012,8 +2012,9 @@
             document.getElementById('imageGenerationModal').style.display = 'none';
         }
         
-        async function generateVisualsForMessage(originalMessage) {
+        async function generateVisualsForMessage(originalMessage, responseContent = '') {
             console.log('🎨 Generating PRECISION visuals for:', originalMessage);
+            console.log('📝 Using response context:', responseContent?.substring(0, 100) + '...');
             
             // Show loading message
             const loadingDiv = document.createElement('div');
@@ -2087,7 +2088,7 @@
                     // Try GPT-style dynamic generation first
                     try {
                         console.log('🎨 Attempting GPT-style dynamic chart generation...');
-                        await generateDynamicChart(originalMessage);
+                        await generateDynamicChart(originalMessage, null, responseContent);
                         return; // Success! Exit early
                     } catch (dynamicError) {
                         console.log('Dynamic generation failed, falling back to auto-detect:', dynamicError);
@@ -2196,8 +2197,9 @@
         }
         
         // GPT-Style Dynamic Chart Generation
-        async function generateDynamicChart(content, topic = null) {
+        async function generateDynamicChart(content, topic = null, responseContent = '') {
             console.log('🎨 Generating GPT-style dynamic chart for:', content);
+            console.log('📝 With response context:', responseContent?.substring(0, 150) + '...');
             
             const chartDiv = document.createElement('div');
             chartDiv.className = 'message assistant';
@@ -2206,30 +2208,43 @@
             chatMessages.scrollTop = chatMessages.scrollHeight;
             
             try {
-                // Detect topic from content if not provided
+                // Detect topic from both question and response context
                 if (!topic) {
                     const lowerContent = content.toLowerCase();
-                    if (lowerContent.includes('physics') || lowerContent.includes('ball') || lowerContent.includes('motion')) {
+                    const lowerResponse = responseContent?.toLowerCase() || '';
+                    const fullContext = lowerContent + ' ' + lowerResponse;
+                    
+                    if (fullContext.includes('physics') || fullContext.includes('shadow') || fullContext.includes('light') || 
+                        fullContext.includes('ball') || fullContext.includes('motion') || fullContext.includes('energy')) {
                         topic = 'Physics Visualization';
-                    } else if (lowerContent.includes('performance') || lowerContent.includes('metrics')) {
+                    } else if (fullContext.includes('performance') || fullContext.includes('metrics') || fullContext.includes('accuracy')) {
                         topic = 'Performance Analysis';
-                    } else if (lowerContent.includes('pipeline') || lowerContent.includes('nis')) {
+                    } else if (fullContext.includes('pipeline') || fullContext.includes('nis') || fullContext.includes('laplace') || fullContext.includes('kan')) {
                         topic = 'NIS Pipeline Overview';
-                    } else if (lowerContent.includes('comparison') || lowerContent.includes('vs')) {
+                    } else if (fullContext.includes('comparison') || fullContext.includes('vs') || fullContext.includes('versus')) {
                         topic = 'Comparison Analysis';
+                    } else if (fullContext.includes('air') || fullContext.includes('fluid') || fullContext.includes('atmospheric')) {
+                        topic = 'Atmospheric Physics';
                     } else {
-                        topic = 'Data Visualization';
+                        topic = 'Scientific Analysis';
                     }
                 }
+                
+                // Combine question and response for full context
+                const fullContext = responseContent ? 
+                    `Question: ${content}\n\nAnswer: ${responseContent}` : 
+                    content;
                 
                 // Call the new GPT-style dynamic endpoint
                 const response = await fetch('/visualization/dynamic', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        content: content,
+                        content: fullContext,
                         topic: topic,
-                        chart_type: 'auto'  // Let the system determine the best type
+                        chart_type: 'auto',  // Let the system determine the best type
+                        original_question: content,
+                        response_content: responseContent
                     })
                 });
                 
