@@ -55,7 +55,8 @@ services:
       - GOOGLE_APPLICATION_CREDENTIALS=/app/google-credentials.json
       - GOOGLE_SERVICE_ACCOUNT_KEY=/app/service-account-key.json
     volumes:
-      - ${APPDATA}/gcloud/application_default_credentials.json:/app/google-credentials.json:ro
+      # Commenting out Google credentials mount that's causing issues
+      # - ${APPDATA}/gcloud/application_default_credentials.json:/app/google-credentials.json:ro
       - ./configs/google-service-account.json:/app/service-account-key.json:ro
     depends_on:
       - redis
