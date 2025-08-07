@@ -698,8 +698,8 @@ For commercial deployments and enterprise support:
 
 ### **🌐 Connect With Us**
 - **Website**: https://organicaai.com
-- **GitHub**: https://github.com/pentius00/NIS_Protocol
-- **LinkedIn**: https://linkedin.com/company/organica-ai
+- **GitHub**: https://github.com/Organica-Ai-Solutions/NIS_Protocol
+- **LinkedIn**: https://www.linkedin.com/company/organica-ai-solutions/
 - **Twitter**: @OrganicaAI
 
 ---
