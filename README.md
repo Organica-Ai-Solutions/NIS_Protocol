@@ -197,6 +197,95 @@ cd NIS_Protocol
 - **10GB+ free disk space**
 - **Git** for cloning the repository
 
+### 🔑 Environment setup (.env)
+
+Before starting the system, configure your environment variables:
+
+1) Create your `.env` from the template
+
+```bash
+cp .env.example .env
+# then open .env and fill in your keys and settings
+```
+
+2) Required provider keys (at least one major LLM provider is needed)
+
+- OPENAI_API_KEY: required for OpenAI features
+- ANTHROPIC_API_KEY: required for Anthropic features
+- DEEPSEEK_API_KEY: optional
+- GOOGLE_API_KEY: optional (text via Gemini)
+
+3) Google Imagen (image generation) optional setup
+
+- GCP_PROJECT_ID: your GCP project ID
+- GCP_LOCATION: region for Vertex AI, e.g. `us-central1` (default)
+- Service account JSON: copy `configs/google-service-account.json.example` to `configs/google-service-account.json` and place your real credentials there
+
+Notes for credentials inside containers:
+- By default, the stack uses `configs/google-service-account.json` mounted into the backend container.
+- Application Default Credentials (ADC) via host path are disabled in the current compose for macOS compatibility. If you prefer ADC:
+  - macOS/Linux: configure Docker Desktop file sharing for your gcloud directory, then mount it and set `GOOGLE_APPLICATION_CREDENTIALS` to the in-container path.
+  - Windows: ensure `APPDATA` is set and points to your `%APPDATA%\gcloud\application_default_credentials.json`, then mount accordingly.
+
+4) Other common settings (already have sensible defaults)
+
+- KAFKA_BOOTSTRAP_SERVERS, REDIS_HOST/PORT
+- API_HOST, API_PORT
+- BITNET_MODEL_PATH (offline fallback models)
+
+Security: Do not commit `.env`. Keep secrets out of version control. Only share `.env.example` with placeholders.
+
+#### Example `.env.example`
+
+```bash
+# 🔑 NIS Protocol v3 - LLM Provider API Keys (REQUIRED)
+# Get your API keys from the respective provider websites:
+# • OpenAI: https://platform.openai.com/api-keys
+# • Anthropic: https://console.anthropic.com/
+# • DeepSeek: https://platform.deepseek.com/
+# • Google: https://makersuite.google.com/app/apikey
+
+OPENAI_API_KEY=your_openai_api_key
+ANTHROPIC_API_KEY=your_anthropic_api_key
+DEEPSEEK_API_KEY=your_deepseek_api_key
+GOOGLE_API_KEY=your_google_api_key
+
+# Infrastructure Configuration (Docker defaults)
+COMPOSE_PROJECT_NAME=nis-protocol-v3
+DATABASE_URL=postgresql://nis_user:nis_password_2025@postgres:5432/nis_protocol_v3
+KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+REDIS_HOST=redis
+REDIS_PORT=6379
+REDIS_DB=0
+
+# Application Configuration
+NIS_ENV=production
+LOG_LEVEL=INFO
+API_HOST=0.0.0.0
+API_PORT=8000
+DASHBOARD_PORT=5000
+
+# Monitoring Configuration
+GRAFANA_ADMIN_PASSWORD=nis_admin_2025
+
+# CDS (Copernicus Climate Data Store) API Configuration (optional)
+CDS_API_URL=https://cds.climate.copernicus.eu/api
+CDS_API_KEY=your_user_id:your_api_key
+
+# NVIDIA API (optional)
+NVIDIA_API_KEY=your_key_here
+
+# Google Imagen (optional)
+GCP_PROJECT_ID=your_project_id
+GCP_LOCATION=us-central1
+# Service account file is mounted at runtime via docker-compose
+# GOOGLE_SERVICE_ACCOUNT_KEY=/app/service-account-key.json
+```
+
+Tips:
+- Do not wrap values in quotes and avoid leading/trailing spaces.
+- Keep `.env` out of version control; only commit `.env.example` with placeholders.
+
 #### **Installation Options**
 
 ```bash
