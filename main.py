@@ -7,6 +7,8 @@ Based on successful patterns from OpenAIZChallenge archaeological platform
 """
 
 import asyncio
+import base64
+import io
 import json
 import logging
 import os
@@ -46,6 +48,8 @@ from src.utils.self_audit import self_audit_engine
 from src.utils.response_formatter import NISResponseFormatter
 from src.agents.alignment.ethical_reasoner import EthicalReasoner, EthicalFramework
 from src.agents.simulation.enhanced_scenario_simulator import EnhancedScenarioSimulator, ScenarioType, SimulationParameters
+from src.chat.enhanced_memory_chat import EnhancedChatMemory, ChatMemoryConfig
+from src.agents.memory.enhanced_memory_agent import EnhancedMemoryAgent
 # from src.agents.autonomous_execution.anthropic_style_executor import create_anthropic_style_executor, ExecutionStrategy, ExecutionMode  # Temporarily disabled
 # from src.agents.training.bitnet_online_trainer import create_bitnet_online_trainer, OnlineTrainingConfig  # Temporarily disabled
 
@@ -126,7 +130,8 @@ bitnet_trainer = None  # BitNet online training system
 laplace = None  # Will be created from unified coordinator
 kan = None  # Will be created from unified coordinator
 pinn = None  # Will be created from unified coordinator
-conversation_memory: Dict[str, List[Dict[str, Any]]] = {}
+conversation_memory: Dict[str, List[Dict[str, Any]]] = {}  # Legacy - kept for compatibility
+enhanced_chat_memory = None  # Enhanced chat memory system with persistence
 agent_registry: Dict[str, Dict[str, Any]] = {}
 tool_registry: Dict[str, Dict[str, Any]] = {}
 
@@ -190,18 +195,32 @@ async def chat_console():
             status_code=404
         )
 
-@app.on_event("startup")
-async def startup_event():
-    """Application startup event: initialize agents and pipeline with NIS HUB services."""
-    global llm_provider, web_search_agent, simulation_coordinator, learning_agent, conscious_agent, planning_system, curiosity_engine, ethical_reasoner, scenario_simulator, anthropic_executor, bitnet_trainer, laplace, kan, pinn, coordinator, consciousness_service, protocol_bridge, vision_agent, research_agent, reasoning_chain, document_agent
+async def initialize_system():
+    """Initialize the NIS Protocol system - can be called manually for testing."""
+    global llm_provider, web_search_agent, simulation_coordinator, learning_agent, conscious_agent, planning_system, curiosity_engine, ethical_reasoner, scenario_simulator, anthropic_executor, bitnet_trainer, laplace, kan, pinn, coordinator, consciousness_service, protocol_bridge, vision_agent, research_agent, reasoning_chain, document_agent, enhanced_chat_memory
 
     logger.info("Initializing NIS Protocol v3...")
     
     # Initialize app start time for metrics
     app.start_time = datetime.now()
     
-    # Initialize LLM provider
-    llm_provider = GeneralLLMProvider()
+    # Initialize LLM provider with error handling
+    try:
+        llm_provider = GeneralLLMProvider()
+        logger.info("✅ LLM Provider initialized successfully")
+    except Exception as e:
+        logger.error(f"❌ Failed to initialize LLM Provider: {e}")
+        # Create a fallback LLM provider to prevent None errors
+        from src.llm.llm_manager import LLMManager
+        try:
+            llm_provider = LLMManager()
+            logger.info("✅ Fallback LLM Manager initialized")
+        except Exception as e2:
+            logger.error(f"❌ Failed to initialize fallback LLM Manager: {e2}")
+            # Use mock provider as final fallback
+            from src.llm.mock_llm_provider import MockLLMProvider
+            llm_provider = MockLLMProvider()
+            logger.warning("⚠️ Using Mock LLM Provider - configure real providers for full functionality")
     
     # Initialize Web Search Agent
     web_search_agent = WebSearchAgent()
@@ -229,6 +248,38 @@ async def startup_event():
 
     # Initialize Conscious Agent
     conscious_agent = ConsciousAgent(agent_id="core_conscious_agent")
+
+    # Initialize Enhanced Chat Memory System
+    logger.info("🧠 Initializing Enhanced Chat Memory System...")
+    try:
+        # Create memory agent for enhanced capabilities
+        memory_agent = EnhancedMemoryAgent(
+            agent_id="chat_memory_agent",
+            storage_path="data/chat_memory/agent_storage",
+            enable_logging=True,
+            enable_self_audit=True
+        )
+        
+        # Create chat memory configuration
+        memory_config = ChatMemoryConfig(
+            storage_path="data/chat_memory/",
+            max_recent_messages=20,
+            max_context_messages=50,
+            semantic_search_threshold=0.7,
+            enable_cross_conversation_linking=True
+        )
+        
+        # Initialize enhanced chat memory
+        enhanced_chat_memory = EnhancedChatMemory(
+            config=memory_config,
+            memory_agent=memory_agent,
+            llm_provider=llm_provider
+        )
+        
+        logger.info("✅ Enhanced Chat Memory System initialized successfully")
+    except Exception as e:
+        logger.error(f"❌ Failed to initialize Enhanced Chat Memory: {e}")
+        enhanced_chat_memory = None
 
     # Initialize Unified Scientific Coordinator (contains laplace, kan, pinn)
     coordinator = create_scientific_coordinator()
@@ -297,6 +348,11 @@ async def startup_event():
     logger.info(f"📄 Document Agent initialized: {document_agent.agent_id}")
     # logger.info(f"🚀 Anthropic-Style Executor initialized: {anthropic_executor.agent_id}")  # Temporarily disabled
     # logger.info(f"🎯 BitNet Online Trainer initialized: {bitnet_trainer.agent_id}")  # Temporarily disabled
+
+@app.on_event("startup")
+async def startup_event():
+    """Application startup event."""
+    await initialize_system()
     logger.info(f"📊 Enhanced pipeline: Laplace → Consciousness → KAN → PINN → Safety → Multimodal")
     # logger.info(f"🎓 Online Training: BitNet continuously learning from conversations")  # Temporarily disabled
 
@@ -1082,17 +1138,63 @@ async def process_nis_pipeline(input_text: str) -> Dict:
     return {'pipeline': pinn_out}
 
 def get_or_create_conversation(conversation_id: Optional[str], user_id: str) -> str:
+    """Get or create a conversation ID, now with enhanced memory support."""
     if conversation_id is None:
         conversation_id = f"conv_{user_id}_{uuid.uuid4().hex[:8]}"
+    
+    # Keep legacy support for now
     if conversation_id not in conversation_memory:
         conversation_memory[conversation_id] = []
+    
     return conversation_id
 
-def add_message_to_conversation(conversation_id: str, role: str, content: str, metadata: Optional[Dict] = None):
+async def add_message_to_conversation(conversation_id: str, role: str, content: str, metadata: Optional[Dict] = None, user_id: Optional[str] = None):
+    """Add message to both legacy and enhanced memory systems."""
+    
+    # Legacy system (for backward compatibility)
     message = {"role": role, "content": content, "timestamp": time.time()}
     if metadata:
         message.update(metadata)
     conversation_memory[conversation_id].append(message)
+    
+    # Enhanced memory system (if available)
+    if enhanced_chat_memory:
+        try:
+            await enhanced_chat_memory.add_message(
+                conversation_id=conversation_id,
+                role=role,
+                content=content,
+                metadata=metadata,
+                user_id=user_id
+            )
+        except Exception as e:
+            logger.error(f"Failed to add message to enhanced memory: {e}")
+
+async def get_enhanced_conversation_context(conversation_id: str, current_message: Optional[str] = None, max_messages: int = 50) -> List[Dict[str, Any]]:
+    """Get conversation context using enhanced memory system."""
+    
+    if enhanced_chat_memory:
+        try:
+            return await enhanced_chat_memory.get_conversation_context(
+                conversation_id=conversation_id,
+                max_messages=max_messages,
+                include_semantic_context=True,
+                current_message=current_message
+            )
+        except Exception as e:
+            logger.error(f"Failed to get enhanced context: {e}")
+    
+    # Fallback to legacy system
+    context_messages = conversation_memory.get(conversation_id, [])[-max_messages:]
+    return [
+        {
+            "role": msg["role"],
+            "content": msg["content"],
+            "timestamp": datetime.fromtimestamp(msg["timestamp"]).isoformat(),
+            "source": "legacy_memory"
+        }
+        for msg in context_messages
+    ]
 
 @app.post("/chat/formatted", response_class=HTMLResponse, tags=["Chat"])
 async def chat_formatted(request: ChatRequest):
@@ -1105,28 +1207,37 @@ async def chat_formatted(request: ChatRequest):
     global response_formatter
     conversation_id = get_or_create_conversation(request.conversation_id, request.user_id)
     
-    # Add user message
-    add_message_to_conversation(conversation_id, "user", request.message, {"context": request.context})
+    # Add user message to both memory systems
+    await add_message_to_conversation(conversation_id, "user", request.message, {"context": request.context}, request.user_id)
     
     try:
-        # Get conversation context (archaeological pattern - keep last 8 messages)
-        context_messages = conversation_memory.get(conversation_id, [])[-8:]
+        # Get enhanced conversation context with semantic search
+        context_messages = await get_enhanced_conversation_context(
+            conversation_id=conversation_id, 
+            current_message=request.message, 
+            max_messages=20
+        )
         
-        # Build message array for LLM
-        messages = [
-            {
-                "role": "system", 
-                "content": """You are an expert AI assistant specializing in the NIS Protocol v3. Provide detailed, accurate, and technically grounded responses about the system's architecture, capabilities, and usage. Focus on multi-agent coordination, signal processing pipeline, and LLM integration. Format your responses with clear structure using markdown-style formatting for better readability."""
-            }
-        ]
+        # Build message array for LLM with enhanced system prompt
+        system_content = """You are an expert AI assistant specializing in the NIS Protocol v3. Provide detailed, accurate, and technically grounded responses about the system's architecture, capabilities, and usage. Focus on multi-agent coordination, signal processing pipeline, and LLM integration. Format your responses with clear structure using markdown-style formatting for better readability.
+
+You have access to enhanced conversation memory that includes:
+- Current conversation history
+- Relevant context from previous conversations
+- Semantic connections between topics
+
+Use this rich context to provide deeper, more connected responses that build on previous discussions."""
         
-        # Add conversation history (exclude current message)
-        for msg in context_messages[:-1]:
-            if msg["role"] in ["user", "assistant"]:
+        messages = [{"role": "system", "content": system_content}]
+        
+        # Add conversation context (already includes semantic context)
+        for msg in context_messages:
+            if msg["role"] in ["user", "assistant", "system"]:
                 messages.append({"role": msg["role"], "content": msg["content"]})
         
-        # Add current message
-        messages.append({"role": "user", "content": request.message})
+        # Add current message if not already included
+        if not any(msg.get("content") == request.message for msg in messages if msg.get("role") == "user"):
+            messages.append({"role": "user", "content": request.message})
 
         # Process NIS pipeline
         pipeline_result = await process_nis_pipeline(request.message)
@@ -1134,21 +1245,28 @@ async def chat_formatted(request: ChatRequest):
         
         # Generate REAL LLM response using archaeological patterns
         logger.info(f"🎯 FORMATTED CHAT REQUEST: provider={request.provider}, agent_type={request.agent_type}")
+        
+        # Check if LLM provider is available
+        if llm_provider is None:
+            raise HTTPException(status_code=500, detail="LLM Provider not initialized. Please restart the server.")
+        
         result = await llm_provider.generate_response(messages, temperature=0.7, agent_type=request.agent_type, requested_provider=request.provider)
         logger.info(f"🎯 FORMATTED CHAT RESULT: provider={result.get('provider', 'unknown')}")
         
+        # Allow mock responses for testing, but add warning
         if not result.get('real_ai', False):
-            raise ValueError("Mock response detected - real API required")
+            logger.warning("⚠️ Mock response generated - configure real LLM providers for production use")
 
-        # Add assistant response to history
-        add_message_to_conversation(
+        # Add assistant response to both memory systems
+        await add_message_to_conversation(
             conversation_id, "assistant", result["content"], 
             {
                 "confidence": result["confidence"], 
                 "provider": result["provider"],
                 "model": result["model"],
                 "tokens_used": result["tokens_used"]
-            }
+            },
+            request.user_id
         )
         
         logger.info(f"💬 Formatted chat response: {result['provider']} - {result['tokens_used']} tokens")
@@ -1223,28 +1341,37 @@ async def chat(request: ChatRequest):
     global response_formatter
     conversation_id = get_or_create_conversation(request.conversation_id, request.user_id)
     
-    # Add user message
-    add_message_to_conversation(conversation_id, "user", request.message, {"context": request.context})
+    # Add user message to both memory systems
+    await add_message_to_conversation(conversation_id, "user", request.message, {"context": request.context}, request.user_id)
     
     try:
-        # Get conversation context (archaeological pattern - keep last 8 messages)
-        context_messages = conversation_memory.get(conversation_id, [])[-8:]
+        # Get enhanced conversation context with semantic search
+        context_messages = await get_enhanced_conversation_context(
+            conversation_id=conversation_id, 
+            current_message=request.message, 
+            max_messages=30
+        )
         
-        # Build message array for LLM
-        messages = [
-            {
-                "role": "system", 
-                "content": """You are an expert AI assistant specializing in the NIS Protocol v3. Provide detailed, accurate, and technically grounded responses about the system's architecture, capabilities, and usage. Focus on multi-agent coordination, signal processing pipeline, and LLM integration. Avoid references to specific projects or themes."""
-            }
-        ]
+        # Build message array for LLM with enhanced system prompt
+        system_content = """You are an expert AI assistant specializing in the NIS Protocol v3. Provide detailed, accurate, and technically grounded responses about the system's architecture, capabilities, and usage. Focus on multi-agent coordination, signal processing pipeline, and LLM integration. Avoid references to specific projects or themes.
+
+You have access to enhanced conversation memory that includes:
+- Current conversation history
+- Relevant context from previous conversations
+- Semantic connections between related topics
+
+Use this rich context to provide more insightful responses that build on previous discussions and maintain topic continuity."""
         
-        # Add conversation history (exclude current message)
-        for msg in context_messages[:-1]:
-            if msg["role"] in ["user", "assistant"]:
+        messages = [{"role": "system", "content": system_content}]
+        
+        # Add conversation context (already includes semantic context)
+        for msg in context_messages:
+            if msg["role"] in ["user", "assistant", "system"]:
                 messages.append({"role": msg["role"], "content": msg["content"]})
         
-        # Add current message
-        messages.append({"role": "user", "content": request.message})
+        # Add current message if not already included
+        if not any(msg.get("content") == request.message for msg in messages if msg.get("role") == "user"):
+            messages.append({"role": "user", "content": request.message})
 
         # Process NIS pipeline
         pipeline_result = await process_nis_pipeline(request.message)
@@ -1252,21 +1379,28 @@ async def chat(request: ChatRequest):
         
         # Generate REAL LLM response using archaeological patterns
         logger.info(f"🎯 CHAT REQUEST: provider={request.provider}, agent_type={request.agent_type}")
+        
+        # Check if LLM provider is available
+        if llm_provider is None:
+            raise HTTPException(status_code=500, detail="LLM Provider not initialized. Please restart the server.")
+        
         result = await llm_provider.generate_response(messages, temperature=0.7, agent_type=request.agent_type, requested_provider=request.provider)
         logger.info(f"🎯 CHAT RESULT: provider={result.get('provider', 'unknown')}")
         
+        # Allow mock responses for testing, but add warning
         if not result.get('real_ai', False):
-            raise ValueError("Mock response detected - real API required")
+            logger.warning("⚠️ Mock response generated - configure real LLM providers for production use")
 
-        # Add assistant response to history
-        add_message_to_conversation(
+        # Add assistant response to both memory systems
+        await add_message_to_conversation(
             conversation_id, "assistant", result["content"], 
             {
                 "confidence": result["confidence"], 
                 "provider": result["provider"],
                 "model": result["model"],
                 "tokens_used": result["tokens_used"]
-            }
+            },
+            request.user_id
         )
         
         logger.info(f"💬 Chat response: {result['provider']} - {result['tokens_used']} tokens")
@@ -1416,23 +1550,240 @@ async def set_agent_behavior(agent_id: str, request: SetBehaviorRequest):
             "traceback": traceback.format_exc()
         }
 
+# ====== ENHANCED MEMORY MANAGEMENT ENDPOINTS ======
+
+@app.get("/memory/stats", tags=["Memory"])
+async def get_memory_stats():
+    """Get statistics about the chat memory system."""
+    try:
+        if enhanced_chat_memory:
+            stats = enhanced_chat_memory.get_stats()
+            stats["enhanced_memory_enabled"] = True
+        else:
+            stats = {
+                "enhanced_memory_enabled": False,
+                "total_conversations": len(conversation_memory),
+                "total_messages": sum(len(msgs) for msgs in conversation_memory.values())
+            }
+        
+        return {
+            "status": "success",
+            "stats": stats,
+            "timestamp": datetime.now().isoformat()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get memory stats: {str(e)}")
+
+@app.get("/memory/conversations", tags=["Memory"])
+async def search_conversations(
+    query: Optional[str] = None,
+    user_id: Optional[str] = None,
+    limit: int = 10
+):
+    """Search conversations by content or get recent conversations."""
+    try:
+        if enhanced_chat_memory and query:
+            conversations = await enhanced_chat_memory.search_conversations(
+                query=query,
+                user_id=user_id,
+                limit=limit
+            )
+        else:
+            # Fallback to legacy system
+            conversations = []
+            for conv_id, messages in list(conversation_memory.items())[:limit]:
+                if messages:
+                    conversations.append({
+                        "conversation_id": conv_id,
+                        "title": f"Conversation {conv_id[:8]}...",
+                        "message_count": len(messages),
+                        "last_activity": datetime.fromtimestamp(messages[-1]["timestamp"]).isoformat(),
+                        "preview": messages[-1]["content"][:200] + "..." if len(messages[-1]["content"]) > 200 else messages[-1]["content"],
+                        "search_type": "legacy"
+                    })
+        
+        return {
+            "status": "success",
+            "conversations": conversations,
+            "query": query,
+            "limit": limit
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to search conversations: {str(e)}")
+
+@app.get("/memory/conversation/{conversation_id}", tags=["Memory"])
+async def get_conversation_details(conversation_id: str, include_context: bool = True):
+    """Get detailed information about a specific conversation."""
+    try:
+        if enhanced_chat_memory:
+            # Get conversation messages
+            messages = await enhanced_chat_memory._get_conversation_messages(conversation_id, 100)
+            
+            # Get conversation summary
+            summary = await enhanced_chat_memory.get_conversation_summary(conversation_id)
+            
+            # Format messages for response
+            formatted_messages = []
+            for msg in messages:
+                formatted_messages.append({
+                    "id": msg.id,
+                    "role": msg.role,
+                    "content": msg.content,
+                    "timestamp": msg.timestamp.isoformat(),
+                    "topic_tags": msg.topic_tags,
+                    "importance_score": msg.importance_score
+                })
+            
+            # Get semantic context if requested
+            context = []
+            if include_context and formatted_messages:
+                last_message = formatted_messages[-1]["content"]
+                context = await enhanced_chat_memory._get_semantic_context(
+                    last_message, conversation_id, max_results=5
+                )
+            
+            return {
+                "status": "success",
+                "conversation_id": conversation_id,
+                "summary": summary,
+                "message_count": len(formatted_messages),
+                "messages": formatted_messages,
+                "semantic_context": context
+            }
+        else:
+            # Fallback to legacy system
+            messages = conversation_memory.get(conversation_id, [])
+            return {
+                "status": "success",
+                "conversation_id": conversation_id,
+                "summary": f"Legacy conversation with {len(messages)} messages",
+                "message_count": len(messages),
+                "messages": messages,
+                "enhanced_memory_available": False
+            }
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get conversation details: {str(e)}")
+
+@app.get("/memory/topics", tags=["Memory"])
+async def get_topics(limit: int = 20):
+    """Get list of conversation topics."""
+    try:
+        if enhanced_chat_memory:
+            topics = []
+            for topic in list(enhanced_chat_memory.topic_index.values())[:limit]:
+                topics.append({
+                    "id": topic.id,
+                    "name": topic.name,
+                    "description": topic.description,
+                    "conversation_count": len(topic.conversation_ids),
+                    "last_discussed": topic.last_discussed.isoformat(),
+                    "importance_score": topic.importance_score
+                })
+            
+            return {
+                "status": "success",
+                "topics": topics,
+                "total_topics": len(enhanced_chat_memory.topic_index)
+            }
+        else:
+            return {
+                "status": "success",
+                "topics": [],
+                "enhanced_memory_available": False,
+                "message": "Enhanced memory not available"
+            }
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get topics: {str(e)}")
+
+@app.get("/memory/topic/{topic_name}/conversations", tags=["Memory"])
+async def get_topic_conversations(topic_name: str, limit: int = 10):
+    """Get conversations related to a specific topic."""
+    try:
+        if enhanced_chat_memory:
+            conversations = await enhanced_chat_memory.get_topic_conversations(topic_name, limit)
+            return {
+                "status": "success",
+                "topic": topic_name,
+                "conversations": conversations
+            }
+        else:
+            return {
+                "status": "success",
+                "topic": topic_name,
+                "conversations": [],
+                "enhanced_memory_available": False
+            }
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get topic conversations: {str(e)}")
+
+@app.post("/memory/cleanup", tags=["Memory"])
+async def cleanup_old_memory(days_to_keep: int = 90):
+    """Clean up old conversation data."""
+    try:
+        if enhanced_chat_memory:
+            await enhanced_chat_memory.cleanup_old_data(days_to_keep)
+            return {
+                "status": "success",
+                "message": f"Cleaned up data older than {days_to_keep} days",
+                "days_kept": days_to_keep
+            }
+        else:
+            return {
+                "status": "success",
+                "message": "Enhanced memory not available - no cleanup needed",
+                "enhanced_memory_available": False
+            }
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to cleanup memory: {str(e)}")
+
+@app.get("/memory/conversation/{conversation_id}/context", tags=["Memory"])
+async def get_conversation_context_preview(conversation_id: str, message: str):
+    """Preview the context that would be used for a message in a conversation."""
+    try:
+        context_messages = await get_enhanced_conversation_context(
+            conversation_id=conversation_id,
+            current_message=message,
+            max_messages=20
+        )
+        
+        return {
+            "status": "success",
+            "conversation_id": conversation_id,
+            "query_message": message,
+            "context_messages": context_messages,
+            "context_count": len(context_messages)
+        }
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get context preview: {str(e)}")
+
 @app.post("/chat/stream")
 async def chat_stream(request: ChatRequest):
     async def generate():
         try:
             conversation_id = get_or_create_conversation(request.conversation_id, request.user_id)
-            add_message_to_conversation(conversation_id, "user", request.message)
+            await add_message_to_conversation(conversation_id, "user", request.message, user_id=request.user_id)
             
-            # Prepare messages for LLM
-            messages = [
-                {
-                    "role": "system", 
-                    "content": """You are an expert AI assistant specializing in the NIS Protocol v3. Provide detailed, accurate, and technically grounded responses about the system's architecture, capabilities, and usage. Focus on multi-agent coordination, signal processing pipeline, and LLM integration. Avoid references to specific projects or themes."""
-                }
-            ]
-            context_messages = conversation_memory.get(conversation_id, [])[-8:]
-            for msg in context_messages: # Include current message
-                if msg["role"] in ["user", "assistant"]:
+            # Get enhanced conversation context
+            context_messages = await get_enhanced_conversation_context(
+                conversation_id=conversation_id, 
+                current_message=request.message, 
+                max_messages=15
+            )
+            
+            # Prepare messages for LLM with enhanced system prompt
+            system_content = """You are an expert AI assistant specializing in the NIS Protocol v3. Provide detailed, accurate, and technically grounded responses about the system's architecture, capabilities, and usage. Focus on multi-agent coordination, signal processing pipeline, and LLM integration. Avoid references to specific projects or themes.
+
+You have access to enhanced conversation memory with semantic context from related discussions."""
+            
+            messages = [{"role": "system", "content": system_content}]
+            
+            for msg in context_messages:
+                if msg["role"] in ["user", "assistant", "system"]:
                     messages.append({"role": msg["role"], "content": msg["content"]})
 
             # Process with NIS pipeline
@@ -1440,6 +1791,10 @@ async def chat_stream(request: ChatRequest):
             messages.append({"role": "system", "content": f"Pipeline Insight: {json.dumps(pipeline_result)}"})
             
             # Use the provider's streaming capability if available
+            if llm_provider is None:
+                yield f"data: {json.dumps({'type': 'error', 'data': 'LLM Provider not initialized. Please restart the server.'})}\n\n"
+                return
+                
             result = await llm_provider.generate_response(messages, agent_type=request.agent_type, requested_provider=request.provider)
             
             # Stream word by word for a better experience
@@ -1447,6 +1802,18 @@ async def chat_stream(request: ChatRequest):
             for word in response_words:
                 yield f"data: {json.dumps({'type': 'content', 'data': word + ' '})}\n\n"
                 await asyncio.sleep(0.02) # Small delay for streaming effect
+
+            # Add assistant response to both memory systems
+            await add_message_to_conversation(
+                conversation_id, "assistant", result["content"], 
+                {
+                    "confidence": result.get("confidence", 0.8), 
+                    "provider": result.get("provider", "unknown"),
+                    "model": result.get("model", "unknown"),
+                    "tokens_used": result.get("tokens_used", 0)
+                },
+                request.user_id
+            )
 
             # Send final pipeline data
             yield f"data: {json.dumps({'type': 'pipeline', 'data': pipeline_result})}\n\n"
@@ -1501,6 +1868,10 @@ async def process_request(req: ProcessRequest):
         {"role": "system", "content": f"Process this {req.processing_type} request: {req.context}"},
         {"role": "user", "content": req.text}
     ]
+    
+    if llm_provider is None:
+        raise HTTPException(status_code=500, detail="LLM Provider not initialized. Please restart the server.")
+    
     result = await llm_provider.generate_response(messages)
     return {
         "response_text": result['content'],

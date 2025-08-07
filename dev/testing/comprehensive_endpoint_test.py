@@ -1,336 +1,426 @@
 #!/usr/bin/env python3
 """
-Comprehensive NIS Protocol v3.2 Endpoint Testing
-Tests all available endpoints for proper functionality
+Comprehensive Endpoint Testing Suite
+===================================
+
+This script tests all NIS Protocol v3 endpoints including the new Enhanced Memory System endpoints.
+It can run with or without a live server for testing purposes.
 """
 
-import requests
+import asyncio
 import json
+import sys
+import tempfile
 import time
-import base64
+from pathlib import Path
 from typing import Dict, Any, List
 
-BASE_URL = "http://localhost:8000"
+# Add project root to Python path
+project_root = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(project_root))
 
-class NISEndpointTester:
-    def __init__(self):
-        self.results = []
-        self.total_tests = 0
-        self.passed_tests = 0
-        self.failed_tests = 0
+# Import the FastAPI app and dependencies
+try:
+    from main import app
+    from fastapi.testclient import TestClient
+    from src.chat.enhanced_memory_chat import EnhancedChatMemory, ChatMemoryConfig
+    from src.agents.memory.enhanced_memory_agent import EnhancedMemoryAgent
+    print("✅ Successfully imported test components")
+except ImportError as e:
+    print(f"❌ Failed to import components: {e}")
+    sys.exit(1)
+
+class EndpointTester:
+    """Comprehensive endpoint testing suite."""
+    
+    def __init__(self, use_live_server: bool = False):
+        self.use_live_server = use_live_server
+        if use_live_server:
+            self.base_url = "http://localhost:8000"
+            import requests
+            self.client = requests
+        else:
+            # Use FastAPI test client for direct testing
+            self.client = TestClient(app)
+            self.base_url = ""
         
-    def log_result(self, endpoint: str, method: str, status: str, details: str, response_time: float = 0):
-        """Log test result"""
+        self.test_results = []
+        self.conversation_id = None
+        self.user_id = "test_user_endpoint_suite"
+    
+    def log_test(self, test_name: str, status: str, details: str = ""):
+        """Log test results."""
         result = {
-            "endpoint": endpoint,
-            "method": method,
+            "test": test_name,
             "status": status,
             "details": details,
-            "response_time": response_time,
             "timestamp": time.time()
         }
-        self.results.append(result)
-        self.total_tests += 1
+        self.test_results.append(result)
         
-        if status == "PASS":
-            self.passed_tests += 1
-            print(f"✅ {method} {endpoint} - {details} ({response_time:.3f}s)")
-        else:
-            self.failed_tests += 1
-            print(f"❌ {method} {endpoint} - {details}")
+        status_icon = "✅" if status == "PASS" else "❌" if status == "FAIL" else "⚠️"
+        print(f"{status_icon} {test_name}: {status}")
+        if details:
+            print(f"   {details}")
     
-    def test_basic_endpoints(self):
-        """Test basic system endpoints"""
-        print("\n🔧 Testing Basic Endpoints...")
-        
-        # Test root endpoint
+    def test_health_endpoint(self):
+        """Test the health check endpoint."""
+        print("\n🧪 Testing Health Endpoint")
         try:
-            start_time = time.time()
-            response = requests.get(f"{BASE_URL}/", timeout=10)
-            response_time = time.time() - start_time
+            if self.use_live_server:
+                response = self.client.get(f"{self.base_url}/health")
+                data = response.json()
+            else:
+                response = self.client.get("/health")
+                data = response.json()
             
             if response.status_code == 200:
-                data = response.json()
-                self.log_result("/", "GET", "PASS", 
-                    f"System operational - {len(data.get('real_llm_integrated', []))} providers", response_time)
+                self.log_test("Health Check", "PASS", f"Status: {data.get('status', 'unknown')}")
+                return True
             else:
-                self.log_result("/", "GET", "FAIL", f"Status code: {response.status_code}")
+                self.log_test("Health Check", "FAIL", f"Status code: {response.status_code}")
+                return False
         except Exception as e:
-            self.log_result("/", "GET", "FAIL", f"Error: {str(e)}")
-        
-        # Test health endpoint
-        try:
-            start_time = time.time()
-            response = requests.get(f"{BASE_URL}/health", timeout=10)
-            response_time = time.time() - start_time
-            
-            if response.status_code == 200:
-                data = response.json()
-                self.log_result("/health", "GET", "PASS", 
-                    f"Healthy - {data.get('conversations_active', 0)} conversations", response_time)
-            else:
-                self.log_result("/health", "GET", "FAIL", f"Status code: {response.status_code}")
-        except Exception as e:
-            self.log_result("/health", "GET", "FAIL", f"Error: {str(e)}")
+            self.log_test("Health Check", "FAIL", str(e))
+            return False
     
-    def test_chat_endpoints(self):
-        """Test chat functionality"""
-        print("\n💬 Testing Chat Endpoints...")
-        
-        # Test basic chat
-        chat_payload = {
-            "message": "Explain quantum entanglement in simple terms",
-            "user_id": "test_user",
-            "conversation_id": "test_conv_001",
-            "agent_type": "consciousness_agent",
-            "provider": "openai"
-        }
-        
+    def test_basic_chat_endpoint(self):
+        """Test basic chat functionality."""
+        print("\n🧪 Testing Basic Chat Endpoint")
         try:
-            start_time = time.time()
-            response = requests.post(f"{BASE_URL}/chat", json=chat_payload, timeout=30)
-            response_time = time.time() - start_time
+            chat_data = {
+                "message": "What is the NIS Protocol v3 architecture?",
+                "user_id": self.user_id,
+                "provider": "openai",
+                "agent_type": "general"
+            }
+            
+            if self.use_live_server:
+                response = self.client.post(f"{self.base_url}/chat", json=chat_data)
+                data = response.json()
+            else:
+                response = self.client.post("/chat", json=chat_data)
+                data = response.json()
             
             if response.status_code == 200:
-                data = response.json()
-                self.log_result("/chat", "POST", "PASS", 
-                    f"Response generated - Provider: {data.get('provider', 'unknown')}", response_time)
+                content = data.get('content', '')
+                self.conversation_id = data.get('conversation_id')
+                self.log_test("Basic Chat", "PASS", f"Response length: {len(content)}, Conv ID: {self.conversation_id}")
+                return True
             else:
-                self.log_result("/chat", "POST", "FAIL", f"Status code: {response.status_code}")
+                self.log_test("Basic Chat", "FAIL", f"Status code: {response.status_code}")
+                return False
         except Exception as e:
-            self.log_result("/chat", "POST", "FAIL", f"Error: {str(e)}")
-        
-        # Test formatted chat
-        formatted_payload = {
-            **chat_payload,
-            "output_mode": "eli5",
-            "audience_level": "beginner",
-            "include_visuals": True,
-            "show_confidence": True
-        }
-        
-        try:
-            start_time = time.time()
-            response = requests.post(f"{BASE_URL}/chat/formatted", json=formatted_payload, timeout=30)
-            response_time = time.time() - start_time
-            
-            if response.status_code == 200:
-                data = response.json()
-                self.log_result("/chat/formatted", "POST", "PASS", 
-                    f"Formatted response - Mode: {data.get('output_mode', 'unknown')}", response_time)
-            else:
-                self.log_result("/chat/formatted", "POST", "FAIL", f"Status code: {response.status_code}")
-        except Exception as e:
-            self.log_result("/chat/formatted", "POST", "FAIL", f"Error: {str(e)}")
+            self.log_test("Basic Chat", "FAIL", str(e))
+            return False
     
-    def test_image_endpoints(self):
-        """Test image generation and editing"""
-        print("\n🎨 Testing Image Endpoints...")
-        
-        # Test image generation
-        image_payload = {
-            "prompt": "A beautiful dragon flying over a cyberpunk city",
-            "style": "artistic",
-            "size": "1024x1024",
-            "provider": "google",
-            "quality": "high"
-        }
-        
+    def test_formatted_chat_endpoint(self):
+        """Test formatted chat endpoint."""
+        print("\n🧪 Testing Formatted Chat Endpoint")
         try:
-            start_time = time.time()
-            response = requests.post(f"{BASE_URL}/image/generate", json=image_payload, timeout=45)
-            response_time = time.time() - start_time
+            chat_data = {
+                "message": "How does the KAN reasoning layer work in detail?",
+                "user_id": self.user_id,
+                "conversation_id": self.conversation_id,
+                "provider": "openai",
+                "agent_type": "general"
+            }
+            
+            if self.use_live_server:
+                response = self.client.post(f"{self.base_url}/chat/formatted", json=chat_data)
+            else:
+                response = self.client.post("/chat/formatted", json=chat_data)
             
             if response.status_code == 200:
-                data = response.json()
-                generation = data.get("generation", {})
-                if generation.get("status") == "success":
-                    images = generation.get("images", [])
-                    self.log_result("/image/generate", "POST", "PASS", 
-                        f"Generated {len(images)} images - Provider: {generation.get('provider_used', 'unknown')}", response_time)
-                else:
-                    self.log_result("/image/generate", "POST", "FAIL", 
-                        f"Generation failed: {generation.get('status', 'unknown')}")
+                content = response.text if hasattr(response, 'text') else str(response.content)
+                self.log_test("Formatted Chat", "PASS", f"HTML response length: {len(content)}")
+                return True
             else:
-                self.log_result("/image/generate", "POST", "FAIL", f"Status code: {response.status_code}")
+                self.log_test("Formatted Chat", "FAIL", f"Status code: {response.status_code}")
+                return False
         except Exception as e:
-            self.log_result("/image/generate", "POST", "FAIL", f"Error: {str(e)}")
+            self.log_test("Formatted Chat", "FAIL", str(e))
+            return False
     
-    def test_vision_endpoints(self):
-        """Test vision analysis"""
-        print("\n👁️ Testing Vision Endpoints...")
-        
-        # Create a simple test image (1x1 red pixel)
-        test_image = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg=="
-        
-        vision_payload = {
-            "image_data": test_image,
-            "analysis_type": "comprehensive",
-            "provider": "auto",
-            "context": "Testing NIS Protocol vision analysis capabilities"
-        }
-        
+    def test_memory_stats_endpoint(self):
+        """Test memory statistics endpoint."""
+        print("\n🧪 Testing Memory Stats Endpoint")
         try:
-            start_time = time.time()
-            response = requests.post(f"{BASE_URL}/vision/analyze", json=vision_payload, timeout=30)
-            response_time = time.time() - start_time
+            if self.use_live_server:
+                response = self.client.get(f"{self.base_url}/memory/stats")
+                data = response.json()
+            else:
+                response = self.client.get("/memory/stats")
+                data = response.json()
             
             if response.status_code == 200:
-                data = response.json()
-                analysis = data.get("analysis", {})
-                self.log_result("/vision/analyze", "POST", "PASS", 
-                    f"Analysis complete - Confidence: {analysis.get('confidence', 0):.2f}", response_time)
+                stats = data.get('stats', {})
+                enhanced_enabled = stats.get('enhanced_memory_enabled', False)
+                total_messages = stats.get('total_messages', 0)
+                self.log_test("Memory Stats", "PASS", f"Enhanced: {enhanced_enabled}, Messages: {total_messages}")
+                return True
             else:
-                self.log_result("/vision/analyze", "POST", "FAIL", f"Status code: {response.status_code}")
+                self.log_test("Memory Stats", "FAIL", f"Status code: {response.status_code}")
+                return False
         except Exception as e:
-            self.log_result("/vision/analyze", "POST", "FAIL", f"Error: {str(e)}")
+            self.log_test("Memory Stats", "FAIL", str(e))
+            return False
     
-    def test_research_endpoints(self):
-        """Test research functionality"""
-        print("\n🔬 Testing Research Endpoints...")
-        
-        research_payload = {
-            "query": "quantum computing breakthroughs 2024",
-            "research_depth": "comprehensive",
-            "source_types": ["arxiv", "semantic_scholar", "wikipedia"],
-            "time_limit": 60,
-            "min_sources": 3
-        }
-        
+    def test_conversation_search_endpoint(self):
+        """Test conversation search endpoint."""
+        print("\n🧪 Testing Conversation Search Endpoint")
         try:
-            start_time = time.time()
-            response = requests.post(f"{BASE_URL}/research/deep", json=research_payload, timeout=90)
-            response_time = time.time() - start_time
+            params = {
+                "query": "architecture",
+                "user_id": self.user_id,
+                "limit": 5
+            }
+            
+            if self.use_live_server:
+                response = self.client.get(f"{self.base_url}/memory/conversations", params=params)
+                data = response.json()
+            else:
+                response = self.client.get("/memory/conversations", params=params)
+                data = response.json()
             
             if response.status_code == 200:
-                data = response.json()
-                research = data.get("research", {})
-                sources = research.get("sources", [])
-                self.log_result("/research/deep", "POST", "PASS", 
-                    f"Research complete - {len(sources)} sources found", response_time)
+                conversations = data.get('conversations', [])
+                self.log_test("Conversation Search", "PASS", f"Found {len(conversations)} conversations")
+                return True
             else:
-                self.log_result("/research/deep", "POST", "FAIL", f"Status code: {response.status_code}")
+                self.log_test("Conversation Search", "FAIL", f"Status code: {response.status_code}")
+                return False
         except Exception as e:
-            self.log_result("/research/deep", "POST", "FAIL", f"Error: {str(e)}")
+            self.log_test("Conversation Search", "FAIL", str(e))
+            return False
     
-    def test_reasoning_endpoints(self):
-        """Test collaborative reasoning"""
-        print("\n🧠 Testing Reasoning Endpoints...")
-        
-        reasoning_payload = {
-            "query": "What are the ethical implications of artificial general intelligence?",
-            "reasoning_depth": "comprehensive",
-            "include_multiple_perspectives": True,
-            "citation_required": True
-        }
+    def test_conversation_details_endpoint(self):
+        """Test conversation details endpoint."""
+        print("\n🧪 Testing Conversation Details Endpoint")
+        if not self.conversation_id:
+            self.log_test("Conversation Details", "SKIP", "No conversation ID available")
+            return False
         
         try:
-            start_time = time.time()
-            response = requests.post(f"{BASE_URL}/reasoning/collaborative", json=reasoning_payload, timeout=60)
-            response_time = time.time() - start_time
+            if self.use_live_server:
+                response = self.client.get(f"{self.base_url}/memory/conversation/{self.conversation_id}")
+                data = response.json()
+            else:
+                response = self.client.get(f"/memory/conversation/{self.conversation_id}")
+                data = response.json()
             
             if response.status_code == 200:
-                data = response.json()
-                self.log_result("/reasoning/collaborative", "POST", "PASS", 
-                    f"Reasoning complete - Multi-perspective analysis", response_time)
+                message_count = data.get('message_count', 0)
+                summary = data.get('summary', '')
+                self.log_test("Conversation Details", "PASS", f"Messages: {message_count}, Summary: {summary[:50]}...")
+                return True
             else:
-                self.log_result("/reasoning/collaborative", "POST", "FAIL", f"Status code: {response.status_code}")
+                self.log_test("Conversation Details", "FAIL", f"Status code: {response.status_code}")
+                return False
         except Exception as e:
-            self.log_result("/reasoning/collaborative", "POST", "FAIL", f"Error: {str(e)}")
+            self.log_test("Conversation Details", "FAIL", str(e))
+            return False
     
-    def test_specialized_endpoints(self):
-        """Test specialized endpoints"""
-        print("\n🚀 Testing Specialized Endpoints...")
+    def test_topics_endpoint(self):
+        """Test topics discovery endpoint."""
+        print("\n🧪 Testing Topics Endpoint")
+        try:
+            if self.use_live_server:
+                response = self.client.get(f"{self.base_url}/memory/topics")
+                data = response.json()
+            else:
+                response = self.client.get("/memory/topics")
+                data = response.json()
+            
+            if response.status_code == 200:
+                topics = data.get('topics', [])
+                total_topics = data.get('total_topics', 0)
+                self.log_test("Topics Discovery", "PASS", f"Found {len(topics)} topics, Total: {total_topics}")
+                return True
+            else:
+                self.log_test("Topics Discovery", "FAIL", f"Status code: {response.status_code}")
+                return False
+        except Exception as e:
+            self.log_test("Topics Discovery", "FAIL", str(e))
+            return False
+    
+    def test_context_preview_endpoint(self):
+        """Test context preview endpoint."""
+        print("\n🧪 Testing Context Preview Endpoint")
+        if not self.conversation_id:
+            self.log_test("Context Preview", "SKIP", "No conversation ID available")
+            return False
         
-        endpoints_to_test = [
-            ("/visualization/create", {
-                "data_type": "physics_simulation",
-                "parameters": {"scenario": "pendulum", "time_steps": 100}
-            }),
-            ("/document/analyze", {
-                "document_data": "This is a test document for analysis.",
-                "document_type": "text",
-                "processing_mode": "comprehensive"
-            }),
-            ("/agents/multimodal/status", {}),
-            ("/training/bitnet/status", {})
+        try:
+            params = {
+                "message": "Tell me more about the physics validation layer"
+            }
+            
+            if self.use_live_server:
+                response = self.client.get(f"{self.base_url}/memory/conversation/{self.conversation_id}/context", params=params)
+                data = response.json()
+            else:
+                response = self.client.get(f"/memory/conversation/{self.conversation_id}/context", params=params)
+                data = response.json()
+            
+            if response.status_code == 200:
+                context_count = data.get('context_count', 0)
+                self.log_test("Context Preview", "PASS", f"Context messages: {context_count}")
+                return True
+            else:
+                self.log_test("Context Preview", "FAIL", f"Status code: {response.status_code}")
+                return False
+        except Exception as e:
+            self.log_test("Context Preview", "FAIL", str(e))
+            return False
+    
+    def test_deep_conversation(self):
+        """Test deep conversation with memory continuity."""
+        print("\n🧪 Testing Deep Conversation with Memory")
+        
+        conversation_topics = [
+            "Explain the NIS Protocol v3 signal processing pipeline in detail",
+            "How does the Laplace transform layer specifically handle time-domain signals?", 
+            "What role does the KAN layer play in making the processing interpretable?",
+            "How does the PINN layer validate the physics constraints?",
+            "Can you connect all these layers and explain how they work together?",
+            "What are the key advantages of this architecture over traditional approaches?"
         ]
         
-        for endpoint, payload in endpoints_to_test:
+        conversation_results = []
+        
+        for i, topic in enumerate(conversation_topics):
             try:
-                start_time = time.time()
-                if payload:
-                    response = requests.post(f"{BASE_URL}{endpoint}", json=payload, timeout=30)
-                else:
-                    response = requests.get(f"{BASE_URL}{endpoint}", timeout=30)
-                response_time = time.time() - start_time
+                chat_data = {
+                    "message": topic,
+                    "user_id": self.user_id,
+                    "conversation_id": self.conversation_id,
+                    "provider": "openai",
+                    "agent_type": "general"
+                }
                 
-                method = "POST" if payload else "GET"
-                if response.status_code in [200, 201]:
-                    self.log_result(endpoint, method, "PASS", 
-                        f"Endpoint functional", response_time)
+                if self.use_live_server:
+                    response = self.client.post(f"{self.base_url}/chat", json=chat_data)
+                    data = response.json()
                 else:
-                    self.log_result(endpoint, method, "FAIL", 
-                        f"Status code: {response.status_code}")
+                    response = self.client.post("/chat", json=chat_data)
+                    data = response.json()
+                
+                if response.status_code == 200:
+                    content = data.get('content', '')
+                    self.conversation_id = data.get('conversation_id')
+                    conversation_results.append({
+                        "topic": topic,
+                        "response_length": len(content),
+                        "success": True
+                    })
+                    print(f"   ✅ Deep conversation {i+1}/6: {len(content)} chars")
+                else:
+                    conversation_results.append({
+                        "topic": topic,
+                        "error": f"Status {response.status_code}",
+                        "success": False
+                    })
+                    print(f"   ❌ Deep conversation {i+1}/6: Failed")
+                
+                # Small delay between messages
+                time.sleep(1)
+                
             except Exception as e:
-                method = "POST" if payload else "GET"
-                self.log_result(endpoint, method, "FAIL", f"Error: {str(e)}")
+                conversation_results.append({
+                    "topic": topic,
+                    "error": str(e),
+                    "success": False
+                })
+                print(f"   ❌ Deep conversation {i+1}/6: {str(e)}")
+        
+        successful_topics = sum(1 for r in conversation_results if r.get('success', False))
+        self.log_test("Deep Conversation", "PASS" if successful_topics >= 4 else "PARTIAL", 
+                     f"Completed {successful_topics}/6 topics successfully")
+        
+        return successful_topics >= 4
     
-    def run_all_tests(self):
-        """Run comprehensive endpoint testing"""
-        print("🧪 NIS Protocol v3.2 Comprehensive Endpoint Testing")
-        print("=" * 55)
+    def test_all_endpoints(self):
+        """Run comprehensive test suite."""
+        print("🚀 NIS Protocol v3 Comprehensive Endpoint Testing")
+        print("=" * 60)
         
-        start_time = time.time()
+        # Core endpoints
+        tests = [
+            self.test_health_endpoint,
+            self.test_basic_chat_endpoint,
+            self.test_formatted_chat_endpoint,
+            self.test_memory_stats_endpoint,
+            self.test_conversation_search_endpoint,
+            self.test_conversation_details_endpoint,
+            self.test_topics_endpoint,
+            self.test_context_preview_endpoint,
+            self.test_deep_conversation
+        ]
         
-        # Run all test suites
-        self.test_basic_endpoints()
-        self.test_chat_endpoints()
-        self.test_image_endpoints()
-        self.test_vision_endpoints()
-        self.test_research_endpoints()
-        self.test_reasoning_endpoints()
-        self.test_specialized_endpoints()
+        passed = 0
+        total = len(tests)
         
-        total_time = time.time() - start_time
+        for test_func in tests:
+            try:
+                if test_func():
+                    passed += 1
+            except Exception as e:
+                print(f"❌ Test {test_func.__name__} crashed: {e}")
         
-        # Print summary
-        print(f"\n📊 Testing Summary")
-        print("=" * 30)
-        print(f"Total Tests: {self.total_tests}")
-        print(f"✅ Passed: {self.passed_tests}")
-        print(f"❌ Failed: {self.failed_tests}")
-        print(f"🎯 Success Rate: {(self.passed_tests/self.total_tests*100):.1f}%")
-        print(f"⏱️ Total Time: {total_time:.2f}s")
+        print(f"\n📊 Test Results: {passed}/{total} tests passed")
         
-        if self.failed_tests > 0:
-            print(f"\n⚠️ Failed Endpoints:")
-            for result in self.results:
-                if result["status"] == "FAIL":
-                    print(f"   • {result['method']} {result['endpoint']} - {result['details']}")
+        # Print detailed results
+        print("\n📋 Detailed Results:")
+        for result in self.test_results:
+            status_icon = "✅" if result["status"] == "PASS" else "❌" if result["status"] == "FAIL" else "⚠️"
+            print(f"{status_icon} {result['test']}: {result['status']}")
+            if result["details"]:
+                print(f"   └─ {result['details']}")
         
-        # Save detailed results
-        with open("dev/testing/endpoint_test_results.json", "w") as f:
-            json.dump({
-                "summary": {
-                    "total_tests": self.total_tests,
-                    "passed_tests": self.passed_tests,
-                    "failed_tests": self.failed_tests,
-                    "success_rate": self.passed_tests/self.total_tests*100,
-                    "total_time": total_time
-                },
-                "results": self.results
-            }, f, indent=2)
+        return passed, total
+    
+    def generate_test_report(self):
+        """Generate a detailed test report."""
+        report = {
+            "test_suite": "NIS Protocol v3 Comprehensive Endpoint Testing",
+            "timestamp": time.time(),
+            "results": self.test_results,
+            "summary": {
+                "total_tests": len(self.test_results),
+                "passed": sum(1 for r in self.test_results if r["status"] == "PASS"),
+                "failed": sum(1 for r in self.test_results if r["status"] == "FAIL"),
+                "skipped": sum(1 for r in self.test_results if r["status"] == "SKIP")
+            }
+        }
         
-        print(f"\n💾 Detailed results saved to: dev/testing/endpoint_test_results.json")
-        
-        return self.passed_tests, self.failed_tests
+        return report
+
+def main():
+    """Run the comprehensive endpoint test suite."""
+    print("🧪 Starting Comprehensive Endpoint Testing...")
+    
+    # Test with FastAPI test client (doesn't require live server)
+    print("\n🔧 Testing with FastAPI Test Client (Direct)")
+    tester = EndpointTester(use_live_server=False)
+    passed, total = tester.test_all_endpoints()
+    
+    # Generate test report
+    report = tester.generate_test_report()
+    
+    # Save test report
+    with open("dev/testing/endpoint_test_report.json", "w") as f:
+        json.dump(report, f, indent=2)
+    
+    print(f"\n🎉 Testing Complete! {passed}/{total} tests passed")
+    print(f"📄 Detailed report saved to: dev/testing/endpoint_test_report.json")
+    
+    if passed == total:
+        print("✨ All endpoints are working perfectly!")
+    elif passed >= total * 0.8:
+        print("👍 Most endpoints working well with minor issues")
+    else:
+        print("⚠️  Some endpoints need attention")
 
 if __name__ == "__main__":
-    tester = NISEndpointTester()
-    passed, failed = tester.run_all_tests()
-    
-    if failed == 0:
-        print("\n🎉 All endpoints working perfectly!")
-    else:
-        print(f"\n🔧 Need to fix {failed} endpoint(s)")
+    main()

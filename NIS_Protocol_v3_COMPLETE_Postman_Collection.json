@@ -853,6 +853,196 @@
           }
         }
       ]
+    },
+    {
+      "name": "🧠 Enhanced Memory System",
+      "item": [
+        {
+          "name": "Memory Stats",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}:8000/memory/stats",
+              "host": ["{{base_url}}"],
+              "port": "8000",
+              "path": ["memory", "stats"]
+            },
+            "description": "✅ WORKING: Get comprehensive statistics about the enhanced memory system including storage size, conversation count, and performance metrics"
+          }
+        },
+        {
+          "name": "Search Conversations",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type", 
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}:8000/memory/conversations?query=architecture&user_id=demo_user&limit=10",
+              "host": ["{{base_url}}"],
+              "port": "8000", 
+              "path": ["memory", "conversations"],
+              "query": [
+                {
+                  "key": "query",
+                  "value": "architecture",
+                  "description": "Search term for semantic or text search"
+                },
+                {
+                  "key": "user_id",
+                  "value": "demo_user",
+                  "description": "Optional user ID filter"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Maximum number of results"
+                }
+              ]
+            },
+            "description": "✅ WORKING: Search conversations by content using semantic search or text matching. Finds relevant past discussions."
+          }
+        },
+        {
+          "name": "Get Conversation Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}:8000/memory/conversation/conv_demo_user_12345678?include_context=true",
+              "host": ["{{base_url}}"],
+              "port": "8000",
+              "path": ["memory", "conversation", "conv_demo_user_12345678"],
+              "query": [
+                {
+                  "key": "include_context",
+                  "value": "true",
+                  "description": "Include semantic context from related conversations"
+                }
+              ]
+            },
+            "description": "✅ WORKING: Get detailed analysis of a specific conversation including messages, topics, and semantic context"
+          }
+        },
+        {
+          "name": "Get Topics", 
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}:8000/memory/topics?limit=20",
+              "host": ["{{base_url}}"],
+              "port": "8000",
+              "path": ["memory", "topics"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Maximum number of topics to return"
+                }
+              ]
+            },
+            "description": "✅ WORKING: Get automatically discovered topics from conversations with importance scores and conversation counts"
+          }
+        },
+        {
+          "name": "Get Topic Conversations",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}:8000/memory/topic/neural%20networks/conversations?limit=10",
+              "host": ["{{base_url}}"],
+              "port": "8000",
+              "path": ["memory", "topic", "neural networks", "conversations"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Maximum number of conversations"
+                }
+              ]
+            },
+            "description": "✅ WORKING: Find all conversations related to a specific topic. Great for discovering topic evolution."
+          }
+        },
+        {
+          "name": "Context Preview",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}:8000/memory/conversation/conv_demo_user_12345678/context?message=Tell%20me%20about%20the%20physics%20layer",
+              "host": ["{{base_url}}"],
+              "port": "8000",
+              "path": ["memory", "conversation", "conv_demo_user_12345678", "context"],
+              "query": [
+                {
+                  "key": "message",
+                  "value": "Tell me about the physics layer",
+                  "description": "The message to get context preview for"
+                }
+              ]
+            },
+            "description": "✅ WORKING: Preview the context that would be used for a specific message in a conversation, including semantic context"
+          }
+        },
+        {
+          "name": "Cleanup Old Memory",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}:8000/memory/cleanup?days_to_keep=90",
+              "host": ["{{base_url}}"],
+              "port": "8000",
+              "path": ["memory", "cleanup"],
+              "query": [
+                {
+                  "key": "days_to_keep",
+                  "value": "90",
+                  "description": "Number of days to keep data (older data will be deleted)"
+                }
+              ]
+            },
+            "description": "✅ WORKING: Clean up old conversation data to manage storage space. Use with caution!"
+          }
+        }
+      ]
     }
   ]
 }

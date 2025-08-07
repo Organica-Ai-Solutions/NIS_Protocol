@@ -1,0 +1,66 @@
+{
+  "test_suite": "NIS Protocol v3 Comprehensive Endpoint Testing",
+  "timestamp": 1754449687.0804095,
+  "results": [
+    {
+      "test": "Health Check",
+      "status": "FAIL",
+      "details": "Status code: 500",
+      "timestamp": 1754449681.0401669
+    },
+    {
+      "test": "Basic Chat",
+      "status": "FAIL",
+      "details": "Status code: 500",
+      "timestamp": 1754449681.0451665
+    },
+    {
+      "test": "Formatted Chat",
+      "status": "FAIL",
+      "details": "Status code: 500",
+      "timestamp": 1754449681.0481658
+    },
+    {
+      "test": "Memory Stats",
+      "status": "PASS",
+      "details": "Enhanced: False, Messages: 2",
+      "timestamp": 1754449681.0506735
+    },
+    {
+      "test": "Conversation Search",
+      "status": "PASS",
+      "details": "Found 2 conversations",
+      "timestamp": 1754449681.054191
+    },
+    {
+      "test": "Conversation Details",
+      "status": "SKIP",
+      "details": "No conversation ID available",
+      "timestamp": 1754449681.054191
+    },
+    {
+      "test": "Topics Discovery",
+      "status": "PASS",
+      "details": "Found 0 topics, Total: 0",
+      "timestamp": 1754449681.057192
+    },
+    {
+      "test": "Context Preview",
+      "status": "SKIP",
+      "details": "No conversation ID available",
+      "timestamp": 1754449681.057192
+    },
+    {
+      "test": "Deep Conversation",
+      "status": "PARTIAL",
+      "details": "Completed 0/6 topics successfully",
+      "timestamp": 1754449687.078403
+    }
+  ],
+  "summary": {
+    "total_tests": 9,
+    "passed": 3,
+    "failed": 3,
+    "skipped": 2
+  }
+}

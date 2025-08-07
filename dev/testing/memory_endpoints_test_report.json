@@ -1,0 +1,198 @@
+{
+  "test_suite": "Enhanced Memory System Deep Testing",
+  "timestamp": 1754449842.79374,
+  "user_id": "deep_test_user_001",
+  "conversation_ids": [
+    "test_conv_deep_test_user_001_001",
+    "test_conv_deep_test_user_001_002"
+  ],
+  "results": [
+    {
+      "test": "Memory Stats Fields",
+      "status": "PASS",
+      "details": "All expected fields present",
+      "timestamp": 1754449842.7203503
+    },
+    {
+      "test": "Memory Stats Data",
+      "status": "PASS",
+      "details": "Convs: 2, Msgs: 8",
+      "timestamp": 1754449842.7203503
+    },
+    {
+      "test": "Search: architecture",
+      "status": "PASS",
+      "details": "Found 2 conversations",
+      "timestamp": 1754449842.7238574
+    },
+    {
+      "test": "Search: neural network",
+      "status": "PASS",
+      "details": "Found 2 conversations",
+      "timestamp": 1754449842.7273679
+    },
+    {
+      "test": "Search: signal processing",
+      "status": "PASS",
+      "details": "Found 2 conversations",
+      "timestamp": 1754449842.730368
+    },
+    {
+      "test": "Search: nonexistent_topic_xyz",
+      "status": "PARTIAL",
+      "details": "Expected few results, got 2",
+      "timestamp": 1754449842.7323723
+    },
+    {
+      "test": "Search: empty",
+      "status": "PASS",
+      "details": "Handled empty query, returned 2 results",
+      "timestamp": 1754449842.736401
+    },
+    {
+      "test": "Conversation Search Deep",
+      "status": "PARTIAL",
+      "details": "4/5 queries successful",
+      "timestamp": 1754449842.736401
+    },
+    {
+      "test": "Details: test_conv_deep_test_...",
+      "status": "PASS",
+      "details": "Messages: 4",
+      "timestamp": 1754449842.7404032
+    },
+    {
+      "test": "Details: test_conv_deep_test_...",
+      "status": "PASS",
+      "details": "Messages: 4",
+      "timestamp": 1754449842.7429068
+    },
+    {
+      "test": "Conversation Details Deep",
+      "status": "PASS",
+      "details": "2/2 conversations analyzed",
+      "timestamp": 1754449842.7444258
+    },
+    {
+      "test": "Topics limit 5",
+      "status": "PASS",
+      "details": "Returned 0/0 topics",
+      "timestamp": 1754449842.7474322
+    },
+    {
+      "test": "Topics limit 10",
+      "status": "PASS",
+      "details": "Returned 0/0 topics",
+      "timestamp": 1754449842.7504323
+    },
+    {
+      "test": "Topics limit 20",
+      "status": "PASS",
+      "details": "Returned 0/0 topics",
+      "timestamp": 1754449842.7549427
+    },
+    {
+      "test": "Topics limit 50",
+      "status": "PASS",
+      "details": "Returned 0/0 topics",
+      "timestamp": 1754449842.7582965
+    },
+    {
+      "test": "Topics Discovery Deep",
+      "status": "PASS",
+      "details": "4/4 limit tests passed",
+      "timestamp": 1754449842.7582965
+    },
+    {
+      "test": "Context: Tell me more about t...",
+      "status": "PASS",
+      "details": "Context: 4 messages",
+      "timestamp": 1754449842.7622933
+    },
+    {
+      "test": "Context: How does the physics...",
+      "status": "PASS",
+      "details": "Context: 4 messages",
+      "timestamp": 1754449842.7662244
+    },
+    {
+      "test": "Context: What about interpret...",
+      "status": "PASS",
+      "details": "Context: 4 messages",
+      "timestamp": 1754449842.7697055
+    },
+    {
+      "test": "Context: Can you explain the ...",
+      "status": "PASS",
+      "details": "Context: 4 messages",
+      "timestamp": 1754449842.772707
+    },
+    {
+      "test": "Context: Tell me more about t...",
+      "status": "PASS",
+      "details": "Context: 4 messages",
+      "timestamp": 1754449842.7747028
+    },
+    {
+      "test": "Context: How does the physics...",
+      "status": "PASS",
+      "details": "Context: 4 messages",
+      "timestamp": 1754449842.777206
+    },
+    {
+      "test": "Context: What about interpret...",
+      "status": "PASS",
+      "details": "Context: 4 messages",
+      "timestamp": 1754449842.7807128
+    },
+    {
+      "test": "Context: Can you explain the ...",
+      "status": "PASS",
+      "details": "Context: 4 messages",
+      "timestamp": 1754449842.782714
+    },
+    {
+      "test": "Context Preview Deep",
+      "status": "PASS",
+      "details": "8/8 context previews successful",
+      "timestamp": 1754449842.782714
+    },
+    {
+      "test": "Memory Cleanup",
+      "status": "PASS",
+      "details": "Enhanced memory not available - no cleanup needed",
+      "timestamp": 1754449842.7852213
+    },
+    {
+      "test": "Error: Non-existent conversation",
+      "status": "PASS",
+      "details": "Status: 200",
+      "timestamp": 1754449842.7877412
+    },
+    {
+      "test": "Error: Non-existent topic",
+      "status": "PASS",
+      "details": "Status: 200",
+      "timestamp": 1754449842.7907414
+    },
+    {
+      "test": "Error: Invalid conversation context",
+      "status": "PASS",
+      "details": "Status: 200",
+      "timestamp": 1754449842.79374
+    },
+    {
+      "test": "Error Handling",
+      "status": "PASS",
+      "details": "3/3 error cases handled properly",
+      "timestamp": 1754449842.79374
+    }
+  ],
+  "summary": {
+    "total_tests": 30,
+    "passed": 28,
+    "failed": 0,
+    "partial": 2,
+    "skipped": 0
+  }
+}
