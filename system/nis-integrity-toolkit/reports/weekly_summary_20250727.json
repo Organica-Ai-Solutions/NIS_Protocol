@@ -1,0 +1,19 @@
+{
+  "date": "2025-07-27",
+  "integrity_score": 0,
+  "score_change": 0,
+  "hype_instances": 144,
+  "hype_change": 0,
+  "hardcoded_values": 80,
+  "hardcoded_change": 0,
+  "test_coverage": 6,
+  "coverage_change": 0,
+  "commits_this_week": 35,
+  "recommendations": [
+    "Focus on improving overall integrity score",
+    "Reduce hype language usage in documentation",
+    "Replace hardcoded values with calculated metrics",
+    "Increase test coverage for better validation",
+    "Add benchmarks for performance claims"
+  ]
+}

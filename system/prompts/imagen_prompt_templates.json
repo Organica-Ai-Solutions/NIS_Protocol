@@ -1,0 +1,122 @@
+{
+  "scientific_visualization": {
+    "base_template": "Ultra-realistic scientific visualization, 8K resolution, professional laboratory photography style",
+    "physics_modifiers": [
+      "physically accurate",
+      "scientifically precise", 
+      "mathematically correct",
+      "peer-reviewed quality"
+    ],
+    "lighting": "diffused studio lighting, no harsh shadows, optimal contrast for scientific accuracy",
+    "camera": "macro lens, shallow depth of field, professional camera settings",
+    "post_processing": "color-corrected, high dynamic range, scientific publication quality"
+  },
+  "quantum_physics": {
+    "base_template": "Quantum physics visualization with particle interactions and wave functions",
+    "specific_elements": [
+      "quantum wave interference patterns",
+      "particle-wave duality representation", 
+      "quantum entanglement visualization",
+      "Schrödinger equation solutions",
+      "quantum field fluctuations"
+    ],
+    "color_scheme": "deep blues and purples for quantum fields, bright particles for measurements",
+    "mathematical_overlay": "quantum equations, probability distributions, eigenstate calculations"
+  },
+  "neuroplasticity": {
+    "base_template": "Detailed neural network with synaptic connections and plasticity changes",
+    "neural_elements": [
+      "dendrite branching patterns",
+      "synaptic vesicle release",
+      "neural spike propagation",
+      "myelin sheath detail",
+      "glial cell interactions"
+    ],
+    "activity_indicators": "electrical activity as glowing pathways, chemical signals as colored particles",
+    "temporal_aspect": "before/after comparison showing network adaptation"
+  },
+  "consciousness_representation": {
+    "base_template": "Abstract consciousness visualization with interconnected information flows",
+    "consciousness_elements": [
+      "information integration networks",
+      "recursive self-reference loops",
+      "attention spotlight mechanisms", 
+      "memory formation patterns",
+      "decision-making pathways"
+    ],
+    "visual_metaphors": "flowing data streams, interconnected nodes, recursive spirals",
+    "emergence_indicators": "complex patterns arising from simple interactions"
+  },
+  "physics_experiments": {
+    "bouncing_ball": {
+      "scenario": "Professional physics demonstration of ball bouncing with energy visualization",
+      "elements": [
+        "clear trajectory arc with motion blur",
+        "energy conservation diagram overlay",
+        "force vectors at impact point",
+        "velocity measurements at different heights",
+        "deformation visualization during contact"
+      ],
+      "measurement_tools": "high-speed camera setup, measurement rulers, laboratory environment",
+      "educational_overlay": "physics equations, energy graphs, force diagrams"
+    },
+    "pendulum_motion": {
+      "scenario": "Scientific pendulum experiment with phase space visualization",
+      "elements": [
+        "smooth pendulum swing with period markers",
+        "phase space plot overlay",
+        "energy transformation visualization",
+        "angular displacement measurements"
+      ]
+    }
+  },
+  "earth_from_space": {
+    "base_template": "Photorealistic Earth from space perspective with scientific accuracy",
+    "astronomical_elements": [
+      "accurate continental positioning",
+      "realistic atmospheric layer thickness",
+      "cloud formation patterns based on meteorology",
+      "aurora phenomena at polar regions",
+      "satellite orbital mechanics visualization"
+    ],
+    "lighting": "accurate solar illumination angle, terminator line precision",
+    "space_environment": "star field background, cosmic radiation visualization",
+    "scientific_instruments": "visible satellites, space stations, measurement overlays"
+  },
+  "style_modifiers": {
+    "photorealistic": {
+      "prefix": "Ultra-realistic photograph",
+      "camera_settings": "professional DSLR, perfect focus, studio lighting",
+      "post_processing": "RAW processing, color grading, professional retouching"
+    },
+    "scientific_diagram": {
+      "prefix": "Technical scientific illustration",
+      "style": "clean line art, precise measurements, educational clarity",
+      "annotations": "proper labeling, scale indicators, reference citations"
+    },
+    "artistic_scientific": {
+      "prefix": "Artistic interpretation of scientific concept",
+      "style": "beautiful yet accurate, inspiring but educational",
+      "balance": "artistic flair while maintaining scientific integrity"
+    }
+  },
+  "quality_enhancers": [
+    "8K resolution",
+    "HDR processing", 
+    "professional photography",
+    "scientific publication quality",
+    "peer-reviewed accuracy",
+    "laboratory standard",
+    "research-grade visualization",
+    "textbook illustration quality"
+  ],
+  "common_issues_to_avoid": [
+    "cartoon-like appearance",
+    "scientifically inaccurate representations",
+    "poor lighting or focus",
+    "low resolution or pixelation",
+    "artistic liberties that compromise accuracy",
+    "missing scale references",
+    "unclear or ambiguous elements"
+  ]
+}
