@@ -1,0 +1,123 @@
+version: '3.8'
+
+# NIS v3 Template - Customize ports via env vars like ZOOKEEPER_PORT=2182
+# For new versions, copy this file and adjust as needed
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.0
+    container_name: nis-zookeeper
+    networks:
+      - nis-network
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  kafka:
+    image: confluentinc/cp-kafka:7.4.0
+    container_name: nis-kafka
+    networks:
+      - nis-network
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    depends_on:
+      - zookeeper
+
+  redis:
+    image: redis:7-alpine
+    container_name: nis-redis
+    networks:
+      - nis-network
+    ports:
+      - "6379:6379"
+
+  backend:
+    build: .
+    container_name: nis-backend
+    networks:
+      - nis-network
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-your_openai_api_key_here}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-your_anthropic_api_key_here}
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY:-your_deepseek_api_key_here}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY:-your_google_api_key_here}
+      - GCP_PROJECT_ID=${GCP_PROJECT_ID:-organicaaisolutions}
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/google-credentials.json
+      - GOOGLE_SERVICE_ACCOUNT_KEY=/app/service-account-key.json
+    volumes:
+      # Commenting out Google credentials mount that's causing issues
+      # - ${APPDATA}/gcloud/application_default_credentials.json:/app/google-credentials.json:ro
+      - ./configs/google-service-account.json:/app/service-account-key.json:ro
+    depends_on:
+      - redis
+      - kafka
+    healthcheck:
+      test: ["CMD-SHELL", "python3 -c 'import urllib.request,sys;\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nimport urllib.request as u;\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nsys.exit(0 if u.urlopen(\"http://127.0.0.1:8000/health\", timeout=3).getcode()==200 else 1)' "]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+  nginx:
+    build:
+      context: .
+      dockerfile: system/config/Dockerfile.nginx
+    container_name: nis-nginx
+    networks:
+      - nis-network
+    ports:
+      - "80:80"
+    # Config now baked into the image to avoid host pread issues
+    depends_on:
+      - backend
+      - frontend
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    container_name: nis-frontend
+    networks:
+      - nis-network
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=http://nis-backend:8000
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  runner:
+    build: ./runner
+    container_name: nis-runner
+    networks:
+      - nis-network
+    volumes:
+      - ./runner/workspace:/app/workspace
+      - ./runner:/app:ro
+    environment:
+      - PYTHONUNBUFFERED=1
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
+
+volumes:
+  zookeeper_data:
+  zookeeper_log:
+  kafka_data:
+  redis_data:
+
+networks:
+  nis-network:
+    driver: bridge 
