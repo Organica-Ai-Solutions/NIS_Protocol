@@ -1,0 +1,13 @@
+{
+  "mcp": {
+    "base_url": "https://test-mcp-server.example.com",
+    "api_key": "test_mcp_key_123",
+    "tool_mappings": {
+      "file_editor_tool": {
+        "nis_agent": "action_agent",
+        "target_layer": "ACTION",
+        "permissions": ["read", "write", "execute"]
+      }
+    }
+  }
+} 

@@ -1,0 +1,33 @@
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile
+docker-compose.yml
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+venv/
+*.egg-info/
+# .env - ALLOW .env file for API keys
+
+# Cache and logs
+cache/
+dev/cache/
+logs/
+dev/logs/
+
+# Development and testing folders
+dev/
+benchmarks/
+backup/
+private/
+
+# Large assets and models not needed in the final image
+assets/
+models/bitnet/
+system/assets/
