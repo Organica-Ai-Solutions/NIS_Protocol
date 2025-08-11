@@ -21,4 +21,5 @@ RUN useradd -m runuser && chown -R runuser:runuser /app
 USER runuser
 
 # Default command
-CMD ["python", "exec.py"]
+EXPOSE 8001
+CMD ["python", "server.py"]

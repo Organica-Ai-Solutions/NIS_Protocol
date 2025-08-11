@@ -1,5 +1,3 @@
-version: '3.8'
-
 # NIS v3 Template - Customize ports via env vars like ZOOKEEPER_PORT=2182
 # For new versions, copy this file and adjust as needed
 services:
@@ -90,7 +88,7 @@ services:
     networks:
       - nis-network
     ports:
-      - "3000:3000"
+      - "3001:3000"
     environment:
       - NODE_ENV=production
       - NEXT_PUBLIC_API_URL=http://nis-backend:8000
@@ -105,9 +103,12 @@ services:
       - nis-network
     volumes:
       - ./runner/workspace:/app/workspace
-      - ./runner:/app:ro
+      # Remove the read-only mount that causes import deadlocks
+      # Code is already copied during build process
     environment:
       - PYTHONUNBUFFERED=1
+    ports:
+      - "8001:8001"
     stdin_open: true
     tty: true
     restart: unless-stopped
