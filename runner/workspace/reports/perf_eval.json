@@ -1,0 +1,15 @@
+{
+  "type": "perf_evaluation",
+  "metrics": {
+    "fps_p95": 60,
+    "draw_calls": 1400,
+    "gpu_ms_p95": 12.1
+  },
+  "budgets": {
+    "fps_p95": 55,
+    "draw_calls_max": 2000,
+    "gpu_ms_p95": 16.7
+  },
+  "pass": true,
+  "timestamp": 1754857989.0355752
+}

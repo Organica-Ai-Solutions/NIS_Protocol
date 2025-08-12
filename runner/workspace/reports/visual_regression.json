@@ -1,0 +1,7 @@
+{
+  "type": "visual_regression",
+  "ssim": 0.981,
+  "threshold": 0.97,
+  "pass": true,
+  "timestamp": 1754858015.626134
+}

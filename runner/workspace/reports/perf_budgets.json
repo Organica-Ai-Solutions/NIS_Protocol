@@ -1,0 +1,9 @@
+{
+  "type": "perf_budgets",
+  "budgets": {
+    "fps_p95": 55,
+    "draw_calls_max": 2000,
+    "gpu_ms_p95": 16.7
+  },
+  "timestamp": 1754857979.4344041
+}
