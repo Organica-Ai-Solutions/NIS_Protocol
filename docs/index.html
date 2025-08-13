@@ -4,387 +4,348 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NIS Protocol v3.2 Documentation</title>
-    <meta name="description" content="Complete documentation for NIS Protocol v3.2 - Revolutionary AI architecture with physics-informed reasoning.">
-    
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
+        
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             line-height: 1.6;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
-            color: #e2e8f0;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
         }
-
+        
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 2rem;
+            padding: 20px;
         }
-
+        
         .header {
             text-align: center;
-            margin-bottom: 3rem;
-            padding: 2rem 0;
-            border-bottom: 1px solid rgba(34, 211, 238, 0.2);
+            margin-bottom: 40px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
         }
-
+        
         .header h1 {
-            font-size: 3rem;
-            font-weight: 900;
-            background: linear-gradient(135deg, #22d3ee, #06b6d4, #0891b2);
+            font-size: 3em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 1rem;
         }
-
+        
         .version-badge {
             display: inline-block;
-            background: linear-gradient(135deg, #059669, #0d9488);
-            padding: 0.5rem 1rem;
-            border-radius: 50px;
+            background: #4CAF50;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin: 10px 5px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .stat {
+            text-align: center;
+            padding: 15px;
+            background: rgba(103, 126, 234, 0.1);
+            border-radius: 10px;
+            min-width: 150px;
+        }
+        
+        .stat-number {
+            font-size: 2em;
             font-weight: bold;
-            margin-bottom: 1rem;
-            font-size: 0.9rem;
+            color: #667eea;
         }
-
-        .description {
-            font-size: 1.1rem;
-            color: #94a3b8;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .docs-grid {
+        
+        .grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 2rem;
-            margin-top: 2rem;
+            gap: 20px;
+            margin: 40px 0;
         }
-
-        .doc-section {
-            background: rgba(51, 65, 85, 0.5);
-            border-radius: 1rem;
-            padding: 2rem;
-            border: 1px solid rgba(34, 211, 238, 0.2);
-            transition: all 0.3s;
+        
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-
-        .doc-section:hover {
+        
+        .card:hover {
             transform: translateY(-5px);
-            border-color: rgba(34, 211, 238, 0.5);
-            background: rgba(51, 65, 85, 0.7);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
         }
-
-        .doc-section h2 {
-            color: #22d3ee;
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
+        
+        .card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.4em;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 10px;
         }
-
-        .doc-section p {
-            color: #94a3b8;
-            margin-bottom: 1.5rem;
+        
+        .card-icon {
+            font-size: 1.5em;
         }
-
-        .doc-links {
+        
+        .card ul {
             list-style: none;
         }
-
-        .doc-links li {
-            margin-bottom: 0.5rem;
+        
+        .card li {
+            margin: 8px 0;
+            padding-left: 20px;
+            position: relative;
         }
-
-        .doc-links a {
-            color: #e2e8f0;
+        
+        .card li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+        
+        .card a {
+            color: #333;
             text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem;
-            border-radius: 0.5rem;
-            transition: all 0.3s;
+            transition: color 0.3s ease;
         }
-
-        .doc-links a:hover {
-            background: rgba(34, 211, 238, 0.1);
-            color: #22d3ee;
-            transform: translateX(5px);
-        }
-
-        .doc-links a::before {
-            content: '📄';
-            font-size: 0.9rem;
-        }
-
-        .quick-start {
-            background: linear-gradient(135deg, rgba(34, 211, 238, 0.1), rgba(5, 150, 105, 0.1));
-            border: 1px solid rgba(34, 211, 238, 0.3);
-            border-radius: 1rem;
-            padding: 2rem;
-            margin: 2rem 0;
-            text-align: center;
-        }
-
-        .quick-start h2 {
-            color: #22d3ee;
-            margin-bottom: 1rem;
-        }
-
-        .quick-start-buttons {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 1.5rem;
-        }
-
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 50px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #22d3ee, #06b6d4);
-            color: #0f172a;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(34, 211, 238, 0.3);
-        }
-
-        .btn-secondary {
-            background: rgba(34, 211, 238, 0.1);
-            color: #22d3ee;
-            border: 1px solid rgba(34, 211, 238, 0.3);
-        }
-
-        .btn-secondary:hover {
-            background: rgba(34, 211, 238, 0.2);
-            transform: translateY(-2px);
-        }
-
-        .breadcrumb {
-            margin-bottom: 2rem;
-        }
-
-        .breadcrumb a {
-            color: #22d3ee;
-            text-decoration: none;
-        }
-
-        .breadcrumb a:hover {
+        
+        .card a:hover {
+            color: #667eea;
             text-decoration: underline;
         }
-
-        .footer {
-            margin-top: 4rem;
-            text-align: center;
-            padding: 2rem 0;
-            border-top: 1px solid rgba(34, 211, 238, 0.2);
-            color: #64748b;
+        
+        .highlight-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
         }
-
+        
+        .highlight-card h3 {
+            color: white;
+        }
+        
+        .highlight-card a {
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .highlight-card a:hover {
+            color: white;
+        }
+        
+        .quick-start {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 40px 0;
+            border-left: 5px solid #4CAF50;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            color: #666;
+        }
+        
+        .new-badge {
+            background: #FF6B6B;
+            color: white;
+            font-size: 0.7em;
+            padding: 2px 6px;
+            border-radius: 8px;
+            margin-left: 8px;
+        }
+        
         @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
             .header h1 {
-                font-size: 2rem;
+                font-size: 2em;
             }
             
-            .docs-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .quick-start-buttons {
+            .stats {
                 flex-direction: column;
                 align-items: center;
+            }
+            
+            .grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="breadcrumb">
-            <a href="../">← Back to NIS Protocol</a>
-        </div>
-
         <div class="header">
-            <div class="version-badge">🎉 Version 3.2 STABLE Documentation</div>
             <h1>📚 NIS Protocol Documentation</h1>
-            <p class="description">
-                Comprehensive documentation for the Neural Intelligence System Protocol - 
-                Revolutionary AI architecture with physics-informed reasoning, multi-provider orchestration, 
-                and consciousness modeling.
+            <div class="version-badge">v3.2 Current</div>
+            <div class="version-badge">✅ Complete</div>
+            <div class="version-badge">🆕 Analytics</div>
+            <p style="margin-top: 20px; font-size: 1.2em; color: #666;">
+                Complete documentation for the Neural Intelligence System Protocol
             </p>
+            
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-number">89</div>
+                    <div>Documents</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">47</div>
+                    <div>Agents</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">8</div>
+                    <div>LLM Providers</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">75%</div>
+                    <div>Cost Savings</div>
+                </div>
+            </div>
         </div>
-
+        
         <div class="quick-start">
-            <h2>🚀 Quick Start</h2>
-            <p>Get started with NIS Protocol in minutes</p>
-            <div class="quick-start-buttons">
-                <a href="https://nis-protocol-demo.organicaai.com/console" class="btn btn-primary" target="_blank">
-                    🎮 Try Live Demo
-                </a>
-                <a href="https://github.com/Organica-Ai-Solutions/NIS_Protocol" class="btn btn-secondary" target="_blank">
-                    📦 Download from GitHub
-                </a>
-                <a href="WHATS_NEW_V3.2.html" class="btn btn-secondary">
-                    ✨ What's New in v3.2
-                </a>
-            </div>
+            <h3>🚀 Quick Start</h3>
+            <p><strong>New to NIS Protocol?</strong> Start with the <a href="organized/core/GETTING_STARTED.md">Getting Started Guide</a> → <a href="organized/core/HOW_TO_USE.md">How to Use</a> → <a href="organized/examples/INTEGRATION_EXAMPLES.md">Examples</a></p>
+            <p><strong>Need help now?</strong> Check the <a href="organized/troubleshooting/TROUBLESHOOTING_GUIDE.md">Troubleshooting Guide</a> or <a href="organized/api/COMPLETE_API_REFERENCE.md">API Reference</a></p>
         </div>
-
-        <div class="docs-grid">
-            <div class="doc-section">
-                <h2>🎯 Getting Started</h2>
-                <p>Essential guides to get you up and running with NIS Protocol v3.2</p>
-                <ul class="doc-links">
-                    <li><a href="WHATS_NEW_V3.2.html">What's New in v3.2</a></li>
-                    <li><a href="UPGRADE_GUIDE_V3.2.html">Upgrade Guide</a></li>
-                    <li><a href="RELEASE_NOTES_V3.2.html">Release Notes</a></li>
-                    <li><a href="V3.2_DOCUMENTATION_INDEX.html">Complete v3.2 Documentation</a></li>
+        
+        <div class="grid">
+            <div class="card highlight-card">
+                <h3><span class="card-icon">📊</span>Analytics & Optimization <span class="new-badge">NEW</span></h3>
+                <ul>
+                    <li><a href="organized/analytics/ANALYTICS_COMPLETE_GUIDE.md">Complete Analytics Guide</a></li>
+                    <li><a href="organized/setup/REDIS_ANALYTICS_SETUP.md">Redis Analytics Setup</a></li>
+                    <li><a href="organized/api/LLM_OPTIMIZATION_GUIDE.md">LLM Optimization Guide</a></li>
+                </ul>
+                <p style="margin-top: 15px; font-size: 0.9em; opacity: 0.9;">
+                    AWS CloudWatch style analytics with 60-75% cost reduction through intelligent caching and optimization.
+                </p>
+            </div>
+            
+            <div class="card">
+                <h3><span class="card-icon">🎯</span>Core Documentation</h3>
+                <ul>
+                    <li><a href="organized/core/GETTING_STARTED.md">Getting Started Guide</a></li>
+                    <li><a href="organized/core/HOW_TO_USE.md">How to Use</a></li>
+                    <li><a href="organized/core/QUICK_STATUS_FOR_USER.md">Quick Status Overview</a></li>
+                    <li><a href="organized/core/README.md">Project Overview</a></li>
                 </ul>
             </div>
-
-            <div class="doc-section">
-                <h2>🏗️ Architecture</h2>
-                <p>Deep dive into the revolutionary AI architecture and system design</p>
-                <ul class="doc-links">
-                    <li><a href="../system/docs/ARCHITECTURE.html">System Architecture</a></li>
-                    <li><a href="../system/docs/diagrams/system_flow/nis_complete_system_architecture.html">Complete System Flow</a></li>
-                    <li><a href="../system/docs/architecture/Agent_Architecture.html">Agent Architecture</a></li>
-                    <li><a href="../system/docs/architecture/SystemDataflow.html">Data Flow Patterns</a></li>
+            
+            <div class="card">
+                <h3><span class="card-icon">🔧</span>API Documentation</h3>
+                <ul>
+                    <li><a href="organized/api/COMPLETE_API_REFERENCE.md">Complete API Reference</a></li>
+                    <li><a href="organized/api/LLM_OPTIMIZATION_GUIDE.md">LLM Optimization <span class="new-badge">NEW</span></a></li>
+                    <li><a href="organized/api/MULTIMODAL_API_DOCUMENTATION.md">Multimodal API</a></li>
+                    <li><a href="organized/api/API_Reference.md">Legacy API Reference</a></li>
                 </ul>
             </div>
-
-            <div class="doc-section">
-                <h2>🤖 API Reference</h2>
-                <p>Complete API documentation with examples and testing guides</p>
-                <ul class="doc-links">
-                    <li><a href="../system/docs/COMPLETE_API_REFERENCE.html">Complete API Reference</a></li>
-                    <li><a href="../system/docs/HOW_TO_USE.html">Usage Examples</a></li>
-                    <li><a href="https://nis-protocol-demo.organicaai.com/docs" target="_blank">Interactive API Docs</a></li>
-                    <li><a href="../NIS_Protocol_v3_COMPLETE_Postman_Collection.json">Postman Collection</a></li>
+            
+            <div class="card">
+                <h3><span class="card-icon">🏗️</span>Architecture & Technical</h3>
+                <ul>
+                    <li><a href="organized/architecture/ARCHITECTURE.md">System Architecture</a></li>
+                    <li><a href="organized/architecture/DATA_FLOW_GUIDE.md">Data Flow Guide</a></li>
+                    <li><a href="organized/architecture/NIS_V3_AGENT_MASTER_INVENTORY.md">Agent Inventory</a></li>
+                    <li><a href="organized/technical/NIS_Protocol_V3_Technical_Whitepaper.md">Technical Whitepaper</a></li>
                 </ul>
             </div>
-
-            <div class="doc-section">
-                <h2>🧠 Core Features</h2>
-                <p>Understanding the revolutionary features that make NIS Protocol unique</p>
-                <ul class="doc-links">
-                    <li><a href="../system/docs/NIS_Protocol_V3_Technical_Whitepaper.html">Technical Whitepaper</a></li>
-                    <li><a href="../dev/documentation/NIS_Protocol_V3_Whitepaper.html">Comprehensive Whitepaper</a></li>
-                    <li><a href="../system/docs/ENHANCED_CHAT_MEMORY_GUIDE.html">🧠 Enhanced Chat Memory System</a></li>
-                    <li><a href="../system/docs/diagrams/system_flow/llm_provider_integration.html">Multi-LLM Integration</a></li>
-                    <li><a href="../src/adapters/README.html">Protocol Adapters</a></li>
+            
+            <div class="card">
+                <h3><span class="card-icon">📦</span>Setup & Installation</h3>
+                <ul>
+                    <li><a href="organized/setup/REDIS_ANALYTICS_SETUP.md">Redis Analytics Setup <span class="new-badge">NEW</span></a></li>
+                    <li><a href="organized/guides/LLM_SETUP_GUIDE.md">LLM Setup Guide</a></li>
+                    <li><a href="organized/guides/AWS_MIGRATION_QUICK_START.md">AWS Migration Guide</a></li>
+                    <li><a href="organized/guides/MULTI_PROVIDER_LLM_GUIDE.md">Multi-Provider LLM</a></li>
                 </ul>
             </div>
-
-            <div class="doc-section">
-                <h2>🚀 Deployment</h2>
-                <p>Production deployment guides and cloud migration strategies</p>
-                <ul class="doc-links">
-                    <li><a href="../system/docs/AWS_MIGRATION_QUICK_START.html">AWS Migration Guide</a></li>
-                    <li><a href="../dev/documentation/AWS_MIGRATION_ACCELERATOR_GUIDE.html">AWS Accelerator Guide</a></li>
-                    <li><a href="../docker-compose.yml">Docker Compose Configuration</a></li>
-                    <li><a href="../Dockerfile">Container Configuration</a></li>
+            
+            <div class="card">
+                <h3><span class="card-icon">💡</span>Examples & Integration</h3>
+                <ul>
+                    <li><a href="organized/examples/INTEGRATION_EXAMPLES.md">Integration Examples</a></li>
+                    <li><a href="organized/examples/INTEGRATION_GUIDE.md">Integration Guide</a></li>
+                    <li><a href="organized/examples/CHAT_CONSOLE_DEMO.md">Chat Console Demo</a></li>
                 </ul>
             </div>
-
-            <div class="doc-section">
-                <h2>📚 Version History</h2>
-                <p>Evolution of NIS Protocol across major versions</p>
-                <ul class="doc-links">
-                    <li><a href="VERSION_COMPARISON.html">Version Comparison</a></li>
-                    <li><a href="NIS_PROTOCOL_VERSION_EVOLUTION.html">Complete Evolution</a></li>
-                    <li><a href="VERSION_INDEX.html">Version Index</a></li>
-                    <li><a href="v3.2/">v3.2 Documentation</a></li>
-                    <li><a href="v3.1/">v3.1 Documentation</a></li>
-                    <li><a href="v3.0/">v3.0 Documentation</a></li>
+            
+            <div class="card">
+                <h3><span class="card-icon">🔍</span>Troubleshooting & Support</h3>
+                <ul>
+                    <li><a href="organized/troubleshooting/TROUBLESHOOTING_GUIDE.md">Troubleshooting Guide</a></li>
+                    <li><a href="organized/troubleshooting/ManualNVidiaFix.md">NVIDIA Fix Guide</a></li>
                 </ul>
             </div>
-
-            <div class="doc-section">
-                <h2>🛠️ Development</h2>
-                <p>Resources for developers and contributors</p>
-                <ul class="doc-links">
-                    <li><a href="https://github.com/Organica-Ai-Solutions/NIS_Protocol" target="_blank">GitHub Repository</a></li>
-                    <li><a href="https://github.com/Organica-Ai-Solutions/NIS_Protocol/issues" target="_blank">Issue Tracker</a></li>
-                    <li><a href="https://github.com/Organica-Ai-Solutions/NIS_Protocol/discussions" target="_blank">Discussions</a></li>
-                    <li><a href="../CHANGELOG.html">Changelog</a></li>
+            
+            <div class="card">
+                <h3><span class="card-icon">📈</span>Version History & Updates</h3>
+                <ul>
+                    <li><a href="organized/version-history/WHATS_NEW_V3.2.md">What's New v3.2 <span class="new-badge">NEW</span></a></li>
+                    <li><a href="organized/version-history/VERSION_COMPARISON.md">Version Comparison</a></li>
+                    <li><a href="organized/version-history/UPGRADE_GUIDE_V3.2.md">Upgrade Guide v3.2</a></li>
+                    <li><a href="organized/version-history/RELEASE_NOTES_V3.2.md">Release Notes</a></li>
                 </ul>
             </div>
-
-            <div class="doc-section">
-                <h2>🎯 Examples & Demos</h2>
-                <p>Live examples and demonstration applications</p>
-                <ul class="doc-links">
-                    <li><a href="https://nis-protocol-demo.organicaai.com/console" target="_blank">Live Console Demo</a></li>
-                    <li><a href="https://nis-protocol-demo.organicaai.com/" target="_blank">System Information</a></li>
-                    <li><a href="https://nis-protocol-demo.organicaai.com/health" target="_blank">Health Check</a></li>
-                    <li><a href="../dev/examples/">Code Examples</a></li>
+            
+            <div class="card">
+                <h3><span class="card-icon">🎓</span>Advanced Topics</h3>
+                <ul>
+                    <li><a href="organized/technical/COMPREHENSIVE_SYSTEM_IMPROVEMENTS_LIST.md">System Improvements</a></li>
+                    <li><a href="organized/technical/FILE_ORGANIZATION_RULES.md">File Organization</a></li>
+                    <li><a href="organized/technical/LICENSING_FAQ.md">Licensing FAQ</a></li>
+                </ul>
+            </div>
+            
+            <div class="card">
+                <h3><span class="card-icon">🔗</span>System Documentation</h3>
+                <ul>
+                    <li><a href="organized/system/AGI_FOUNDATION_ACHIEVEMENT.md">AGI Foundation</a></li>
+                    <li><a href="organized/system/COMPREHENSIVE_FEATURES_GUIDE.md">Features Guide</a></li>
+                    <li><a href="organized/system/v3_MATHEMATICAL_VISUALIZATION_GUIDE.md">Mathematical Visualization</a></li>
+                    <li><a href="organized/system/BITNET_KIMI_INTEGRATION_PLAN.md">BitNet Integration</a></li>
                 </ul>
             </div>
         </div>
-
+        
         <div class="footer">
-            <p>&copy; 2025 Organica AI Solutions. Licensed under MIT. NIS Protocol v3.2 - Advancing Trustworthy AI.</p>
+            <h3>📊 What's New in v3.2</h3>
+            <p><strong>Major Features:</strong> Redis Analytics Dashboard • Smart LLM Caching • User-Controllable Consensus • Rate Limiting • NVIDIA API Integration</p>
+            <p><strong>Cost Optimization:</strong> 60-75% reduction in API costs through intelligent caching and provider routing</p>
+            <p><strong>Analytics:</strong> Real-time monitoring • Token tracking • Performance analytics • Cost breakdown</p>
+            <br>
+            <p>📚 <strong>Documentation Status:</strong> ✅ Complete and Current • 🔄 Last Updated: January 2025 • 📋 89 organized documents</p>
+            <p>💡 <strong>Quick Help:</strong> <a href="organized/troubleshooting/TROUBLESHOOTING_GUIDE.md">Troubleshooting</a> • <a href="organized/api/COMPLETE_API_REFERENCE.md">API Docs</a> • <a href="organized/examples/INTEGRATION_EXAMPLES.md">Examples</a></p>
         </div>
     </div>
-
-    <script>
-        // Add smooth scrolling
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
-
-        // Add hover effects and animations
-        const docSections = document.querySelectorAll('.doc-section');
-        docSections.forEach((section, index) => {
-            section.style.animationDelay = `${index * 0.1}s`;
-            section.style.animation = 'fadeInUp 0.6s ease-out forwards';
-        });
-
-        // CSS animation
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes fadeInUp {
-                from {
-                    opacity: 0;
-                    transform: translateY(30px);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-            }
-        `;
-        document.head.appendChild(style);
-    </script>
 </body>
 </html>

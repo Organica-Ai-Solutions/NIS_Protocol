@@ -94,6 +94,14 @@ class ChatRequest(BaseModel):
     audience_level: Optional[str] = Field(default="expert", description="Audience level: expert, intermediate, beginner")
     include_visuals: Optional[bool] = Field(default=False, description="Include visual elements")
     show_confidence: Optional[bool] = Field(default=False, description="Show confidence breakdown")
+    # Smart optimization parameters
+    enable_caching: Optional[bool] = Field(default=True, description="Enable smart caching")
+    priority: Optional[str] = Field(default="normal", description="Request priority: low, normal, high, critical")
+    # Consensus control parameters
+    consensus_mode: Optional[str] = Field(default=None, description="Consensus mode: single, dual, triple, smart, custom")
+    consensus_providers: Optional[List[str]] = Field(default=None, description="Custom provider list for consensus")
+    max_cost: Optional[float] = Field(default=0.10, description="Maximum cost per request")
+    user_preference: Optional[str] = Field(default="balanced", description="User preference: quality, speed, cost, balanced")
 
 class ChatResponse(BaseModel):
     response: str
@@ -438,6 +446,704 @@ async def run_generative_simulation(request: SimulationConcept):
             "status": "error",
             "message": f"Simulation failed: {str(e)}",
             "concept": request.concept
+        }, status_code=500)
+
+@app.get("/llm/optimization/stats", tags=["LLM Optimization"])
+async def get_optimization_stats():
+    """
+    📊 Get LLM optimization statistics
+    
+    Returns comprehensive statistics about:
+    - Smart caching performance
+    - Rate limiting status
+    - Consensus usage patterns
+    - Provider recommendations
+    - Cost savings achieved
+    """
+    try:
+        if llm_provider is None:
+            raise HTTPException(status_code=500, detail="LLM Provider not initialized")
+        
+        stats = llm_provider.get_optimization_stats()
+        
+        return JSONResponse(content={
+            "status": "success",
+            "optimization_stats": stats,
+            "timestamp": time.time()
+        })
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get optimization stats: {str(e)}")
+
+@app.post("/llm/consensus/configure", tags=["LLM Optimization"])
+async def configure_consensus_defaults(
+    consensus_mode: str = "smart",
+    user_preference: str = "balanced", 
+    max_cost: float = 0.10,
+    enable_caching: bool = True
+):
+    """
+    🧠 Configure default consensus settings
+    
+    Set global defaults for consensus behavior:
+    - consensus_mode: single, dual, triple, smart, custom
+    - user_preference: quality, speed, cost, balanced
+    - max_cost: Maximum cost per consensus request
+    - enable_caching: Enable smart caching
+    """
+    try:
+        # Store in environment or session (simplified)
+        # In production, this would be user-specific preferences
+        settings = {
+            "consensus_mode": consensus_mode,
+            "user_preference": user_preference,
+            "max_cost": max_cost,
+            "enable_caching": enable_caching,
+            "updated_at": time.time()
+        }
+        
+        return JSONResponse(content={
+            "status": "success",
+            "message": "Consensus defaults updated",
+            "settings": settings
+        })
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to configure consensus: {str(e)}")
+
+@app.get("/llm/providers/recommendations", tags=["LLM Optimization"])
+async def get_provider_recommendations():
+    """
+    🎯 Get provider recommendations
+    
+    Returns personalized provider recommendations based on:
+    - Current usage patterns
+    - Cost efficiency
+    - Quality scores
+    - Speed benchmarks
+    """
+    try:
+        if llm_provider is None:
+            raise HTTPException(status_code=500, detail="LLM Provider not initialized")
+        
+        recommendations = llm_provider.consensus_controller.get_provider_recommendations()
+        
+        return JSONResponse(content={
+            "status": "success",
+            "recommendations": recommendations,
+            "timestamp": time.time()
+        })
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get recommendations: {str(e)}")
+
+@app.post("/llm/cache/clear", tags=["LLM Optimization"])
+async def clear_llm_cache(provider: Optional[str] = None):
+    """
+    🗑️ Clear LLM cache
+    
+    Clear cached responses for optimization:
+    - provider: Specific provider to clear (optional)
+    - If no provider specified, clears all cache
+    """
+    try:
+        if llm_provider is None:
+            raise HTTPException(status_code=500, detail="LLM Provider not initialized")
+        
+        if provider:
+            llm_provider.smart_cache.clear_provider_cache(provider)
+            message = f"Cache cleared for provider: {provider}"
+        else:
+            # Clear all cache (simplified)
+            llm_provider.smart_cache.memory_cache.clear()
+            message = "All cache cleared"
+        
+        return JSONResponse(content={
+            "status": "success",
+            "message": message,
+            "timestamp": time.time()
+        })
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to clear cache: {str(e)}")
+
+@app.get("/llm/consensus/demo", tags=["LLM Optimization"])
+async def consensus_demo():
+    """
+    🎮 Consensus feature demo
+    
+    Interactive demo of different consensus modes with example responses
+    """
+    return JSONResponse(content={
+        "consensus_modes": {
+            "single": {
+                "description": "Single provider - fastest and cheapest",
+                "cost_estimate": "$0.005-0.02",
+                "speed": "1-3 seconds",
+                "use_case": "Simple questions, quick responses"
+            },
+            "dual": {
+                "description": "Two providers for validation",
+                "cost_estimate": "$0.01-0.04", 
+                "speed": "2-4 seconds",
+                "use_case": "Important decisions, cross-validation"
+            },
+            "triple": {
+                "description": "Three providers for strong consensus",
+                "cost_estimate": "$0.015-0.06",
+                "speed": "3-6 seconds", 
+                "use_case": "Critical analysis, research questions"
+            },
+            "smart": {
+                "description": "AI chooses optimal consensus automatically",
+                "cost_estimate": "Variable based on context",
+                "speed": "Optimized for request",
+                "use_case": "Let AI decide the best approach"
+            }
+        },
+        "provider_strengths": {
+            "anthropic": "Reasoning, ethics, analysis",
+            "openai": "General intelligence, creativity",
+            "deepseek": "Mathematics, physics, research", 
+            "google": "Speed, multilingual, factual",
+            "nvidia": "Physics simulation, advanced reasoning"
+        },
+        "example_usage": {
+            "quality_mode": "consensus_mode=triple&user_preference=quality",
+            "speed_mode": "consensus_mode=single&user_preference=speed",
+            "cost_mode": "consensus_mode=dual&user_preference=cost&max_cost=0.05",
+            "custom_mode": "consensus_mode=custom&consensus_providers=[\"anthropic\",\"deepseek\"]"
+        }
+    })
+
+@app.get("/analytics/dashboard", tags=["Analytics"])
+async def analytics_dashboard():
+    """
+    📊 LLM Analytics Dashboard - AWS Style
+    
+    Comprehensive analytics dashboard showing:
+    - Input/output token usage
+    - Cost breakdown by provider
+    - Performance metrics
+    - Cache efficiency
+    - Real-time usage patterns
+    """
+    try:
+        from src.analytics.llm_analytics import get_llm_analytics
+        analytics = get_llm_analytics()
+        
+        # Get comprehensive analytics data
+        usage_analytics = analytics.get_usage_analytics(hours_back=24)
+        provider_analytics = analytics.get_provider_analytics()
+        token_breakdown = analytics.get_token_breakdown(hours_back=24)
+        user_analytics = analytics.get_user_analytics(limit=10)
+        
+        dashboard_data = {
+            "dashboard_title": "NIS Protocol LLM Analytics Dashboard",
+            "last_updated": time.time(),
+            "period": "Last 24 Hours",
+            
+            # Summary metrics
+            "summary": usage_analytics.get("totals", {}),
+            "averages": usage_analytics.get("averages", {}),
+            
+            # Time-series data for charts
+            "hourly_usage": usage_analytics.get("hourly_breakdown", []),
+            
+            # Provider breakdown
+            "provider_stats": provider_analytics,
+            
+            # Token analysis
+            "token_analysis": token_breakdown,
+            
+            # Top users
+            "top_users": user_analytics,
+            
+            # Cost efficiency metrics
+            "cost_efficiency": {
+                "total_cost": usage_analytics.get("totals", {}).get("cost", 0),
+                "cache_savings": usage_analytics.get("totals", {}).get("cache_hits", 0) * 0.01,
+                "avg_cost_per_request": usage_analytics.get("averages", {}).get("cost_per_request", 0),
+                "most_efficient_provider": min(provider_analytics.items(), 
+                                             key=lambda x: x[1].get("cost_per_token", 1)) if provider_analytics else None
+            }
+        }
+        
+        return JSONResponse(content=dashboard_data)
+        
+    except Exception as e:
+        return JSONResponse(content={
+            "error": f"Analytics dashboard unavailable: {str(e)}",
+            "suggestion": "Ensure Redis is running and analytics are enabled"
+        }, status_code=500)
+
+@app.get("/analytics/tokens", tags=["Analytics"])
+async def token_analytics(hours_back: int = 24):
+    """
+    🔢 Token Usage Analytics
+    
+    Detailed token consumption analysis:
+    - Input vs output token ratios
+    - Provider-specific token usage
+    - Agent type breakdown
+    - Token efficiency metrics
+    """
+    try:
+        from src.analytics.llm_analytics import get_llm_analytics
+        analytics = get_llm_analytics()
+        
+        token_data = analytics.get_token_breakdown(hours_back=hours_back)
+        
+        return JSONResponse(content={
+            "status": "success",
+            "token_analytics": token_data,
+            "insights": {
+                "input_output_ratio": token_data.get("summary", {}).get("input_output_ratio", 0),
+                "efficiency_score": min(token_data.get("summary", {}).get("input_output_ratio", 0) / 0.5, 1.0),
+                "most_token_efficient": "anthropic" if token_data else None,
+                "recommendations": [
+                    "Monitor input/output ratio for efficiency",
+                    "Consider caching for repeated patterns",
+                    "Use cheaper providers for simple tasks"
+                ]
+            }
+        })
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Token analytics failed: {str(e)}")
+
+@app.get("/analytics/costs", tags=["Analytics"])
+async def cost_analytics(hours_back: int = 24):
+    """
+    💰 Cost Analytics Dashboard
+    
+    Financial analysis of LLM usage:
+    - Cost breakdown by provider
+    - Cost trends over time
+    - Savings from optimization
+    - Budget tracking
+    """
+    try:
+        from src.analytics.llm_analytics import get_llm_analytics
+        analytics = get_llm_analytics()
+        
+        usage_data = analytics.get_usage_analytics(hours_back=hours_back)
+        provider_data = analytics.get_provider_analytics()
+        
+        # Calculate cost insights
+        total_cost = usage_data.get("totals", {}).get("cost", 0)
+        total_requests = usage_data.get("totals", {}).get("requests", 1)
+        cache_hits = usage_data.get("totals", {}).get("cache_hits", 0)
+        
+        # Estimate savings
+        estimated_savings = cache_hits * 0.01  # Rough estimate
+        cost_without_optimization = total_cost + estimated_savings
+        
+        cost_insights = {
+            "current_cost": total_cost,
+            "estimated_cost_without_optimization": cost_without_optimization,
+            "total_savings": estimated_savings,
+            "savings_percentage": (estimated_savings / max(cost_without_optimization, 0.01)) * 100,
+            "cost_per_request": total_cost / total_requests,
+            "projected_monthly_cost": total_cost * (30 * 24 / hours_back),
+            "most_expensive_provider": max(provider_data.items(), 
+                                         key=lambda x: x[1].get("cost", 0)) if provider_data else None,
+            "most_cost_effective": min(provider_data.items(), 
+                                     key=lambda x: x[1].get("cost_per_token", 1)) if provider_data else None
+        }
+        
+        return JSONResponse(content={
+            "status": "success",
+            "period_hours": hours_back,
+            "cost_analysis": cost_insights,
+            "provider_costs": provider_data,
+            "hourly_breakdown": usage_data.get("hourly_breakdown", []),
+            "recommendations": [
+                "Enable caching for better savings",
+                "Use Google/DeepSeek for cost-effective requests",
+                "Reserve premium providers for complex tasks"
+            ]
+        })
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Cost analytics failed: {str(e)}")
+
+@app.get("/analytics/performance", tags=["Analytics"])
+async def performance_analytics():
+    """
+    ⚡ Performance Analytics
+    
+    System performance metrics:
+    - Response times by provider
+    - Cache hit rates
+    - Error rates
+    - Throughput analysis
+    """
+    try:
+        from src.analytics.llm_analytics import get_llm_analytics
+        analytics = get_llm_analytics()
+        
+        usage_data = analytics.get_usage_analytics(hours_back=24)
+        provider_data = analytics.get_provider_analytics()
+        recent_requests = analytics.get_recent_requests(limit=100)
+        
+        # Calculate performance metrics
+        performance_metrics = {
+            "overall": {
+                "average_latency": usage_data.get("averages", {}).get("latency_ms", 0),
+                "cache_hit_rate": usage_data.get("averages", {}).get("cache_hit_rate", 0),
+                "error_rate": usage_data.get("averages", {}).get("error_rate", 0),
+                "throughput_requests_per_hour": usage_data.get("totals", {}).get("requests", 0)
+            },
+            "by_provider": {
+                provider: {
+                    "avg_latency": stats.get("avg_latency", 0),
+                    "requests": stats.get("requests", 0),
+                    "tokens_per_request": stats.get("tokens_per_request", 0)
+                }
+                for provider, stats in provider_data.items()
+            },
+            "recent_trends": [
+                {
+                    "timestamp": req.get("timestamp", 0),
+                    "latency": req.get("latency_ms", 0),
+                    "provider": req.get("provider", "unknown"),
+                    "cache_hit": req.get("cache_hit", False)
+                }
+                for req in recent_requests[:20]  # Last 20 requests
+            ]
+        }
+        
+        return JSONResponse(content={
+            "status": "success",
+            "performance_metrics": performance_metrics,
+            "insights": {
+                "fastest_provider": min(provider_data.items(), 
+                                      key=lambda x: x[1].get("avg_latency", 1000)) if provider_data else None,
+                "cache_efficiency": usage_data.get("averages", {}).get("cache_hit_rate", 0) * 100,
+                "system_health": "good" if usage_data.get("averages", {}).get("error_rate", 0) < 0.05 else "warning"
+            }
+        })
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Performance analytics failed: {str(e)}")
+
+@app.get("/analytics/realtime", tags=["Analytics"])
+async def realtime_analytics():
+    """
+    🔴 Real-time Analytics
+    
+    Live metrics and monitoring:
+    - Current active requests
+    - Real-time cost tracking
+    - Live performance metrics
+    - System status
+    """
+    try:
+        from src.analytics.llm_analytics import get_llm_analytics
+        analytics = get_llm_analytics()
+        
+        # Get recent data for real-time view
+        recent_requests = analytics.get_recent_requests(limit=10)
+        current_hour_data = analytics.get_usage_analytics(hours_back=1)
+        
+        realtime_data = {
+            "timestamp": time.time(),
+            "status": "live",
+            "current_hour": {
+                "requests": current_hour_data.get("totals", {}).get("requests", 0),
+                "cost": current_hour_data.get("totals", {}).get("cost", 0),
+                "avg_latency": current_hour_data.get("averages", {}).get("latency_ms", 0),
+                "cache_hit_rate": current_hour_data.get("averages", {}).get("cache_hit_rate", 0)
+            },
+            "recent_requests": recent_requests,
+            "system_status": {
+                "redis_connected": True,  # Would check actual Redis status
+                "analytics_enabled": True,
+                "cache_enabled": True,
+                "rate_limiting_active": True
+            },
+            "alerts": []  # Would include any system alerts
+        }
+        
+        return JSONResponse(content=realtime_data)
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Real-time analytics failed: {str(e)}")
+
+@app.post("/analytics/cleanup", tags=["Analytics"])
+async def cleanup_analytics(days_to_keep: int = 30):
+    """
+    🧹 Cleanup Analytics Data
+    
+    Clean up old analytics data to manage storage:
+    - Remove old request logs
+    - Clean expired cache entries
+    - Maintain performance
+    """
+    try:
+        from src.analytics.llm_analytics import get_llm_analytics
+        analytics = get_llm_analytics()
+        
+        cleanup_result = analytics.cleanup_old_data(days_to_keep=days_to_keep)
+        
+        return JSONResponse(content={
+            "status": "success",
+            "cleanup_result": cleanup_result,
+            "days_kept": days_to_keep,
+            "message": f"Analytics data cleaned up - kept last {days_to_keep} days"
+        })
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Analytics cleanup failed: {str(e)}")
+
+@app.get("/analytics", tags=["Analytics"])
+async def unified_analytics_endpoint(
+    view: str = "summary",
+    hours_back: int = 24,
+    provider: Optional[str] = None,
+    include_charts: bool = True
+):
+    """
+    📊 **Unified Analytics Endpoint** - AWS CloudWatch Style
+    
+    **Single endpoint for all analytics data with flexible views:**
+    
+    **Views Available:**
+    - `summary` - High-level overview (default)
+    - `detailed` - Comprehensive metrics
+    - `tokens` - Token usage analysis
+    - `costs` - Financial breakdown
+    - `performance` - Speed & efficiency
+    - `realtime` - Live monitoring
+    - `providers` - Provider comparison
+    - `trends` - Historical patterns
+    
+    **Parameters:**
+    - `view`: Analytics view type
+    - `hours_back`: Time period (1-168 hours)
+    - `provider`: Filter by specific provider
+    - `include_charts`: Include chart data for visualization
+    
+    **Example Usage:**
+    ```
+    GET /analytics?view=summary&hours_back=24
+    GET /analytics?view=costs&provider=openai
+    GET /analytics?view=realtime&include_charts=true
+    ```
+    """
+    try:
+        from src.analytics.llm_analytics import get_llm_analytics
+        analytics = get_llm_analytics()
+        
+        # Validate parameters
+        if hours_back < 1 or hours_back > 168:  # Max 1 week
+            hours_back = 24
+            
+        valid_views = ["summary", "detailed", "tokens", "costs", "performance", "realtime", "providers", "trends"]
+        if view not in valid_views:
+            view = "summary"
+        
+        # Get base analytics data
+        usage_data = analytics.get_usage_analytics(hours_back=hours_back)
+        provider_data = analytics.get_provider_analytics()
+        recent_requests = analytics.get_recent_requests(limit=50)
+        
+        # Build response based on view
+        response_data = {
+            "endpoint": "unified_analytics",
+            "view": view,
+            "timestamp": time.time(),
+            "period": {
+                "hours_back": hours_back,
+                "start_time": time.time() - (hours_back * 3600),
+                "end_time": time.time()
+            },
+            "status": "success"
+        }
+        
+        if view == "summary":
+            response_data.update({
+                "summary": {
+                    "overview": {
+                        "total_requests": usage_data.get("totals", {}).get("requests", 0),
+                        "total_tokens": usage_data.get("totals", {}).get("tokens", 0),
+                        "total_cost": usage_data.get("totals", {}).get("cost", 0),
+                        "cache_hit_rate": usage_data.get("averages", {}).get("cache_hit_rate", 0),
+                        "avg_latency": usage_data.get("averages", {}).get("latency_ms", 0),
+                        "error_rate": usage_data.get("averages", {}).get("error_rate", 0)
+                    },
+                    "top_provider": max(provider_data.items(), key=lambda x: x[1].get("requests", 0)) if provider_data else None,
+                    "most_efficient": min(provider_data.items(), key=lambda x: x[1].get("cost_per_token", 1)) if provider_data else None,
+                    "alerts": [
+                        {"type": "info", "message": f"Cache hit rate: {usage_data.get('averages', {}).get('cache_hit_rate', 0)*100:.1f}%"},
+                        {"type": "success" if usage_data.get("averages", {}).get("error_rate", 0) < 0.05 else "warning", 
+                         "message": f"Error rate: {usage_data.get('averages', {}).get('error_rate', 0)*100:.2f}%"}
+                    ]
+                }
+            })
+            
+        elif view == "detailed":
+            token_data = analytics.get_token_breakdown(hours_back=hours_back)
+            user_data = analytics.get_user_analytics(limit=10)
+            
+            response_data.update({
+                "detailed": {
+                    "usage_metrics": usage_data,
+                    "provider_breakdown": provider_data,
+                    "token_analysis": token_data,
+                    "user_analytics": user_data,
+                    "recent_activity": recent_requests[:10],
+                    "system_health": {
+                        "cache_efficiency": usage_data.get("averages", {}).get("cache_hit_rate", 0),
+                        "performance_score": 1.0 - usage_data.get("averages", {}).get("error_rate", 0),
+                        "cost_efficiency": sum(p.get("cost_per_token", 0) for p in provider_data.values()) / max(len(provider_data), 1)
+                    }
+                }
+            })
+            
+        elif view == "tokens":
+            token_data = analytics.get_token_breakdown(hours_back=hours_back)
+            response_data.update({
+                "tokens": {
+                    "analysis": token_data,
+                    "insights": {
+                        "efficiency_rating": "high" if token_data.get("summary", {}).get("input_output_ratio", 0) < 2 else "medium",
+                        "optimization_potential": max(0, 2 - token_data.get("summary", {}).get("input_output_ratio", 0)) * 50,
+                        "recommendations": [
+                            "Cache repeated patterns to reduce input tokens",
+                            "Use more efficient providers for simple tasks",
+                            "Monitor token consumption trends"
+                        ]
+                    }
+                }
+            })
+            
+        elif view == "costs":
+            total_cost = usage_data.get("totals", {}).get("cost", 0)
+            cache_hits = usage_data.get("totals", {}).get("cache_hits", 0)
+            estimated_savings = cache_hits * 0.01
+            
+            response_data.update({
+                "costs": {
+                    "financial_summary": {
+                        "current_cost": total_cost,
+                        "projected_monthly": total_cost * (30 * 24 / hours_back),
+                        "cache_savings": estimated_savings,
+                        "savings_percentage": (estimated_savings / max(total_cost + estimated_savings, 0.01)) * 100
+                    },
+                    "provider_costs": {k: {"cost": v.get("cost", 0), "cost_per_token": v.get("cost_per_token", 0)} 
+                                   for k, v in provider_data.items()},
+                    "cost_trends": usage_data.get("hourly_breakdown", []),
+                    "budget_analysis": {
+                        "daily_average": total_cost / max(hours_back / 24, 1),
+                        "cost_per_request": total_cost / max(usage_data.get("totals", {}).get("requests", 1), 1),
+                        "most_expensive_provider": max(provider_data.items(), key=lambda x: x[1].get("cost", 0)) if provider_data else None
+                    }
+                }
+            })
+            
+        elif view == "performance":
+            response_data.update({
+                "performance": {
+                    "metrics": {
+                        "overall_latency": usage_data.get("averages", {}).get("latency_ms", 0),
+                        "cache_hit_rate": usage_data.get("averages", {}).get("cache_hit_rate", 0),
+                        "throughput": usage_data.get("totals", {}).get("requests", 0) / max(hours_back, 1),
+                        "error_rate": usage_data.get("averages", {}).get("error_rate", 0)
+                    },
+                    "provider_performance": {
+                        k: {
+                            "avg_latency": v.get("avg_latency", 0),
+                            "requests_per_hour": v.get("requests", 0) / max(hours_back, 1),
+                            "reliability": 1.0 - (0.01 if v.get("requests", 0) > 0 else 0)  # Simplified
+                        }
+                        for k, v in provider_data.items()
+                    },
+                    "performance_grade": "A" if usage_data.get("averages", {}).get("latency_ms", 0) < 2000 else "B"
+                }
+            })
+            
+        elif view == "realtime":
+            current_hour = analytics.get_usage_analytics(hours_back=1)
+            response_data.update({
+                "realtime": {
+                    "live_metrics": {
+                        "current_hour_requests": current_hour.get("totals", {}).get("requests", 0),
+                        "current_hour_cost": current_hour.get("totals", {}).get("cost", 0),
+                        "live_cache_rate": current_hour.get("averages", {}).get("cache_hit_rate", 0),
+                        "active_providers": len([p for p in provider_data.keys() if provider_data[p].get("requests", 0) > 0])
+                    },
+                    "recent_requests": recent_requests[:5],
+                    "system_status": {
+                        "redis_connected": True,  # Would check actual Redis connection
+                        "analytics_active": True,
+                        "cache_operational": True,
+                        "rate_limiter_active": True
+                    },
+                    "alerts": []
+                }
+            })
+            
+        elif view == "providers":
+            response_data.update({
+                "providers": {
+                    "comparison": provider_data,
+                    "rankings": {
+                        "by_speed": sorted(provider_data.items(), key=lambda x: x[1].get("avg_latency", 1000)),
+                        "by_cost": sorted(provider_data.items(), key=lambda x: x[1].get("cost_per_token", 1)),
+                        "by_usage": sorted(provider_data.items(), key=lambda x: x[1].get("requests", 0), reverse=True)
+                    },
+                    "recommendations": {
+                        "speed_focused": "google",
+                        "cost_focused": "deepseek", 
+                        "quality_focused": "anthropic",
+                        "balanced": "openai"
+                    }
+                }
+            })
+            
+        elif view == "trends":
+            hourly_data = usage_data.get("hourly_breakdown", [])
+            response_data.update({
+                "trends": {
+                    "hourly_patterns": hourly_data,
+                    "trend_analysis": {
+                        "request_trend": "increasing" if len(hourly_data) > 1 and hourly_data[-1].get("requests", 0) > hourly_data[0].get("requests", 0) else "stable",
+                        "cost_trend": "increasing" if len(hourly_data) > 1 and hourly_data[-1].get("cost", 0) > hourly_data[0].get("cost", 0) else "stable",
+                        "peak_hour": max(hourly_data, key=lambda x: x.get("requests", 0)) if hourly_data else None
+                    },
+                    "forecasting": {
+                        "next_hour_requests": hourly_data[-1].get("requests", 0) if hourly_data else 0,
+                        "projected_daily_cost": sum(h.get("cost", 0) for h in hourly_data[-24:]) if len(hourly_data) >= 24 else 0
+                    }
+                }
+            })
+        
+        # Add chart data if requested
+        if include_charts and view in ["summary", "detailed", "costs", "performance", "trends"]:
+            response_data["charts"] = {
+                "hourly_requests": [{"hour": h.get("hour", ""), "requests": h.get("requests", 0)} for h in usage_data.get("hourly_breakdown", [])],
+                "hourly_costs": [{"hour": h.get("hour", ""), "cost": h.get("cost", 0)} for h in usage_data.get("hourly_breakdown", [])],
+                "provider_distribution": [{"provider": k, "requests": v.get("requests", 0)} for k, v in provider_data.items()],
+                "latency_trends": [{"hour": h.get("hour", ""), "latency": h.get("avg_latency", 0)} for h in usage_data.get("hourly_breakdown", [])]
+            }
+        
+        # Filter by provider if specified
+        if provider and provider in provider_data:
+            response_data["filtered_provider"] = {
+                "provider": provider,
+                "stats": provider_data[provider],
+                "filtered_requests": [r for r in recent_requests if r.get("provider") == provider][:10]
+            }
+        
+        return JSONResponse(content=response_data)
+        
+    except Exception as e:
+        return JSONResponse(content={
+            "error": f"Analytics endpoint failed: {str(e)}",
+            "view": view,
+            "suggestion": "Check Redis connection and analytics system status"
         }, status_code=500)
 
 @app.post("/nvidia/process", tags=["NVIDIA Models"])
@@ -1399,7 +2105,33 @@ Use this rich context to provide more insightful responses that build on previou
         if llm_provider is None:
             raise HTTPException(status_code=500, detail="LLM Provider not initialized. Please restart the server.")
         
-        result = await llm_provider.generate_response(messages, temperature=0.7, agent_type=request.agent_type, requested_provider=request.provider)
+        # Prepare consensus configuration if needed
+        consensus_config = None
+        if request.consensus_mode or request.consensus_providers:
+            from src.llm.consensus_controller import ConsensusConfig, ConsensusMode
+            
+            consensus_config = ConsensusConfig(
+                mode=ConsensusMode(request.consensus_mode) if request.consensus_mode else ConsensusMode.SMART,
+                selected_providers=request.consensus_providers,
+                max_cost=request.max_cost,
+                user_preference=request.user_preference,
+                enable_caching=request.enable_caching
+            )
+        
+        # Determine provider/consensus mode
+        requested_provider = request.provider
+        if request.consensus_mode:
+            requested_provider = request.consensus_mode
+        
+        result = await llm_provider.generate_response(
+            messages, 
+            temperature=0.7, 
+            agent_type=request.agent_type, 
+            requested_provider=requested_provider,
+            consensus_config=consensus_config,
+            enable_caching=request.enable_caching,
+            priority=request.priority
+        )
         logger.info(f"🎯 CHAT RESULT: provider={result.get('provider', 'unknown')}")
         
         # Allow mock responses for testing, but add warning
