@@ -203,6 +203,38 @@ async def chat_console():
             status_code=404
         )
 
+# Modern Chat endpoint
+@app.get("/modern-chat", response_class=HTMLResponse, tags=["Demo"])
+async def modern_chat():
+    """
+    🎯 NIS Protocol Modern Chat Interface
+    
+    Modern, sleek chat interface for demonstrating the NIS Protocol:
+    - Clean, responsive design
+    - Real-time interactions
+    - Enhanced user experience
+    - Access to classic chat interface
+    
+    Access at: http://localhost:8000/modern-chat
+    """
+    try:
+        with open("static/modern_chat.html", "r", encoding="utf-8") as f:
+            return HTMLResponse(content=f.read())
+    except FileNotFoundError:
+        return HTMLResponse(
+            content="""
+            <html>
+                <body>
+                    <h1>Modern Chat Not Found</h1>
+                    <p>The modern chat file is missing. Please ensure static/modern_chat.html exists.</p>
+                    <p><a href="/console">Go to Classic Chat</a></p>
+                    <p><a href="/docs">Go to API Documentation</a></p>
+                </body>
+            </html>
+            """,
+            status_code=404
+        )
+
 async def initialize_system():
     """Initialize the NIS Protocol system - can be called manually for testing."""
     global llm_provider, web_search_agent, simulation_coordinator, learning_agent, conscious_agent, planning_system, curiosity_engine, ethical_reasoner, scenario_simulator, anthropic_executor, bitnet_trainer, laplace, kan, pinn, coordinator, consciousness_service, protocol_bridge, vision_agent, research_agent, reasoning_chain, document_agent, enhanced_chat_memory

@@ -16,9 +16,6 @@ import logging
 
 from .base_llm_provider import BaseLLMProvider, LLMResponse, LLMMessage, LLMRole
 from .providers.bitnet_provider import BitNetProvider
-from .smart_cache import get_smart_cache, SmartLLMCache
-from .rate_limiter import get_rate_limiter, RequestPriority
-from .consensus_controller import get_consensus_controller, ConsensusMode, ConsensusConfig
 
 # Import env_config with error handling for different execution contexts
 try:
@@ -401,26 +398,9 @@ class GeneralLLMProvider:
             'anthropic': {'key': os.getenv('ANTHROPIC_API_KEY'), 'endpoint': 'https://api.anthropic.com/v1/messages'},
             'google': {'key': os.getenv('GOOGLE_API_KEY')},
             'deepseek': {'key': os.getenv('DEEPSEEK_API_KEY'), 'endpoint': 'https://api.deepseek.com/v1/chat/completions'},
-            'nvidia': {'key': os.getenv('NVIDIA_API_KEY'), 'endpoint': 'https://integrate.api.nvidia.com/v1'},
             'bitnet': BitNetProvider(config={}) # Initialize BitNet provider
         }
         self._validate_providers()
-        
-        # Initialize smart optimization systems
-        self.smart_cache = get_smart_cache()
-        self.rate_limiter = get_rate_limiter()
-        self.consensus_controller = get_consensus_controller()
-        
-        # Initialize analytics system
-        try:
-            from ..analytics.llm_analytics import get_llm_analytics
-            self.analytics = get_llm_analytics()
-            self.analytics_enabled = True
-            logging.info("📊 LLM Analytics enabled")
-        except Exception as e:
-            logging.warning(f"Analytics unavailable: {e}")
-            self.analytics = None
-            self.analytics_enabled = False
         
         # Initialize Provider Router if available
         self.provider_router = None
@@ -431,8 +411,6 @@ class GeneralLLMProvider:
             except Exception as e:
                 logging.warning(f"Failed to initialize Provider Router: {e}")
                 self.provider_router = None
-        
-        logging.info("🚀 GeneralLLMProvider initialized with smart caching and rate limiting")
 
     def _validate_providers(self):
         for provider, config in self.providers.items():
@@ -449,44 +427,12 @@ class GeneralLLMProvider:
                     config['disabled'] = False
                     config['mock_mode'] = False
 
-    async def generate_response(self, messages, temperature=0.7, agent_type='default', requested_provider=None, 
-                               consensus_config=None, enable_caching=True, priority="normal"):
-        """
-        Enhanced generate_response with smart caching, rate limiting, and consensus control
-        
-        Args:
-            messages: Conversation messages
-            temperature: LLM temperature
-            agent_type: Type of agent making request
-            requested_provider: Specific provider or consensus mode
-            consensus_config: Consensus configuration for multi-LLM
-            enable_caching: Whether to use smart caching
-            priority: Request priority (low, normal, high, critical)
-        """
-        logging.info(f"--- Enhanced generate_response called ---")
-        logging.info(f"Requested: {requested_provider}, Agent: {agent_type}, Priority: {priority}")
-        
-        start_time = time.time()
-        request_id = f"req_{int(time.time() * 1000)}"
-        
-        # Parse consensus mode if requested_provider is a consensus mode
-        if requested_provider in ["consensus", "multimodel", "dual", "triple", "smart"]:
-            return await self._handle_consensus_request(
-                messages, temperature, agent_type, requested_provider, 
-                consensus_config, enable_caching, priority, request_id
-            )
-        
-        # Check smart cache first
-        if enable_caching:
-            cached_response = self.smart_cache.get(
-                messages, 
-                requested_provider or "auto", 
-                "auto-model", 
-                temperature
-            )
-            if cached_response:
-                logging.info(f"🎯 Cache HIT for {requested_provider or 'auto'}")
-                return cached_response
+    async def generate_response(self, messages, temperature=0.7, agent_type='default', requested_provider=None):
+        logging.info(f"--- generate_response called ---")
+        logging.info(f"Requested provider: {requested_provider}")
+        logging.info(f"Providers dict: {self.providers}")
+        for provider_name, config in self.providers.items():
+            logging.info(f"Provider: {provider_name}, Type: {type(config)}")
             
         # 🎯 INTELLIGENT ROUTING: Use Provider Router if available
         if self.provider_router:
@@ -645,283 +591,6 @@ class GeneralLLMProvider:
         mock_result = await self._generate_enhanced_mock(messages, temperature)
         logging.info(f"Returning mock result: {type(mock_result)} {mock_result}")
         return mock_result
-    
-    async def _handle_consensus_request(self, messages, temperature, agent_type, 
-                                      consensus_mode, consensus_config, enable_caching, 
-                                      priority, request_id):
-        """Handle multi-LLM consensus requests"""
-        logging.info(f"🧠 Handling consensus request: {consensus_mode}")
-        
-        # Create consensus configuration
-        if not consensus_config:
-            consensus_config = ConsensusConfig(
-                mode=ConsensusMode(consensus_mode if consensus_mode != "consensus" else "smart"),
-                max_cost=0.20,  # Higher limit for consensus
-                enable_caching=enable_caching,
-                user_preference="balanced"
-            )
-        
-        # Determine optimal consensus approach
-        request_context = {
-            "message": messages[-1].get("content", "") if messages else "",
-            "agent_type": agent_type,
-            "priority": priority
-        }
-        optimal_config = self.consensus_controller.determine_optimal_consensus(
-            request_context, consensus_config
-        )
-        
-        # Select providers for consensus
-        providers = self.consensus_controller.select_providers_for_consensus(optimal_config)
-        
-        # Validate consensus request
-        valid, reason = self.consensus_controller.validate_consensus_request(
-            optimal_config, providers
-        )
-        if not valid:
-            logging.warning(f"Consensus validation failed: {reason}")
-            # Fall back to single provider
-            return await self._execute_single_provider_request(
-                messages, temperature, providers[0] if providers else "openai", 
-                request_id, enable_caching, priority
-            )
-        
-        # Execute consensus
-        async def provider_request_func(provider):
-            return await self._execute_single_provider_request(
-                messages, temperature, provider, f"{request_id}_{provider}", 
-                enable_caching, priority
-            )
-        
-        consensus_result = await self.consensus_controller.execute_consensus(
-            providers, provider_request_func, optimal_config
-        )
-        
-        # Cache consensus result if valuable
-        if enable_caching and consensus_result.total_cost > 0.02:
-            cache_response = {
-                "content": consensus_result.final_response,
-                "confidence": consensus_result.consensus_confidence,
-                "provider": f"consensus_{optimal_config.mode.value}",
-                "model": f"multi_{len(consensus_result.providers_used)}",
-                "real_ai": True,
-                "tokens_used": len(consensus_result.final_response.split()) * 1.3,
-                "consensus_metadata": {
-                    "providers_used": consensus_result.providers_used,
-                    "consensus_achieved": consensus_result.consensus_achieved,
-                    "strategy": consensus_result.strategy_used
-                }
-            }
-            
-            self.smart_cache.put(
-                messages, "consensus", "multi-llm", temperature, 
-                cache_response, consensus_result.total_cost
-            )
-        
-        logging.info(f"🧠 Consensus completed: {len(consensus_result.providers_used)} providers, "
-                    f"${consensus_result.total_cost:.4f}, {consensus_result.processing_time:.1f}s")
-        
-        return {
-            "content": consensus_result.final_response,
-            "confidence": consensus_result.consensus_confidence,
-            "provider": f"consensus_{optimal_config.mode.value}",
-            "model": f"multi_{len(consensus_result.providers_used)}",
-            "real_ai": True,
-            "tokens_used": len(consensus_result.final_response.split()) * 1.3,
-            "consensus_metadata": {
-                "providers_used": consensus_result.providers_used,
-                "individual_responses": consensus_result.individual_responses,
-                "consensus_achieved": consensus_result.consensus_achieved,
-                "total_cost": consensus_result.total_cost,
-                "processing_time": consensus_result.processing_time,
-                "strategy": consensus_result.strategy_used,
-                "quality_scores": consensus_result.quality_scores
-            }
-        }
-    
-    async def _execute_single_provider_request(self, messages, temperature, provider, 
-                                             request_id, enable_caching, priority):
-        """Execute request for single provider with rate limiting and caching"""
-        
-        # Convert priority string to RequestPriority enum
-        priority_map = {
-            "low": RequestPriority.LOW,
-            "normal": RequestPriority.NORMAL, 
-            "high": RequestPriority.HIGH,
-            "critical": RequestPriority.CRITICAL
-        }
-        request_priority = priority_map.get(priority, RequestPriority.NORMAL)
-        
-        # Estimate cost for rate limiting
-        estimated_tokens = sum(len(msg.get("content", "").split()) for msg in messages) * 1.5
-        cost_estimate = self._estimate_request_cost(provider, estimated_tokens)
-        
-        # Execute through rate limiter
-        async def single_request():
-            if provider == 'bitnet':
-                bitnet_provider = self.providers['bitnet']
-                llm_messages = [LLMMessage(role=LLMRole(msg['role']), content=msg['content']) for msg in messages]
-                response_obj = await bitnet_provider.generate(messages=llm_messages, temperature=temperature)
-                
-                return {
-                    "content": response_obj.content,
-                    "provider": response_obj.metadata.get("provider", "bitnet"),
-                    "model": response_obj.model,
-                    "real_ai": True,
-                    "tokens_used": response_obj.usage.get("total_tokens", 0),
-                    "confidence": response_obj.metadata.get('confidence', 0.85),
-                    "cost": 0.0  # BitNet is free
-                }
-            
-            elif self.providers.get(provider) and not self.providers[provider].get('disabled'):
-                config = self.providers[provider]
-                model = self.get_default_model(provider)
-                
-                # Use mock if API key is missing
-                if config.get('mock_mode', False):
-                    result = await self._call_mock_api(provider, messages, temperature, model)
-                elif provider == 'openai':
-                    result = await self._call_openai_api(messages, temperature, model)
-                elif provider == 'anthropic':
-                    result = await self._call_anthropic_api(messages, temperature, model)
-                elif provider == 'google':
-                    result = await self._call_google_api(messages, temperature, model)
-                elif provider == 'deepseek':
-                    result = await self._call_deepseek_api(messages, temperature, model)
-                elif provider == 'nvidia':
-                    result = await self._call_nvidia_api(messages, temperature, model)
-                else:
-                    raise Exception(f"Unknown provider: {provider}")
-                
-                # Add cost estimate to result
-                result["cost"] = cost_estimate
-                return result
-            else:
-                raise Exception(f"Provider {provider} not available")
-        
-        # Execute with rate limiting
-        result = await self.rate_limiter.execute_request(
-            provider, request_id, single_request, request_priority, cost_estimate
-        )
-        
-        # Cache successful result
-        if enable_caching and result.get("real_ai", False):
-            self.smart_cache.put(
-                messages, provider, result.get("model", "unknown"), 
-                temperature, result, cost_estimate
-            )
-        
-        # Record analytics
-        if self.analytics_enabled and self.analytics:
-            self._record_analytics(messages, provider, result, request_id, cache_hit=False)
-        
-        return result
-    
-    def _record_analytics(self, messages, provider, result, request_id, cache_hit=False):
-        """Record request analytics"""
-        try:
-            # Extract token information
-            input_tokens = sum(len(msg.get("content", "").split()) for msg in messages) * 1.3
-            output_tokens = len(result.get("content", "").split()) * 1.3
-            
-            # Calculate latency (simplified)
-            latency_ms = result.get("response_time", 1000)
-            
-            # Get other metrics
-            confidence = result.get("confidence", 0.0)
-            error = result.get("error")
-            
-            # Determine consensus info
-            consensus_mode = None
-            providers_used = None
-            if "consensus_metadata" in result:
-                consensus_mode = result["consensus_metadata"].get("strategy")
-                providers_used = result["consensus_metadata"].get("providers_used")
-            
-            # Record in analytics
-            self.analytics.record_request(
-                request_id=request_id,
-                user_id="system",  # Could be extracted from context
-                provider=provider,
-                model=result.get("model", "unknown"),
-                agent_type="default",  # Could be extracted from context
-                input_tokens=int(input_tokens),
-                output_tokens=int(output_tokens),
-                latency_ms=latency_ms,
-                cache_hit=cache_hit,
-                consensus_mode=consensus_mode,
-                providers_used=providers_used,
-                confidence=confidence,
-                error=error
-            )
-            
-        except Exception as e:
-            logging.debug(f"Failed to record analytics: {e}")
-    
-    def _estimate_request_cost(self, provider: str, estimated_tokens: int) -> float:
-        """Estimate cost for request"""
-        cost_per_1k = {
-            "openai": 0.005,
-            "anthropic": 0.008,
-            "google": 0.0015,
-            "deepseek": 0.0015,
-            "nvidia": 0.02,
-            "bitnet": 0.0
-        }
-        
-        cost_rate = cost_per_1k.get(provider, 0.01)
-        return (estimated_tokens / 1000) * cost_rate
-    
-    async def _call_nvidia_api(self, messages, temperature, model):
-        """Call NVIDIA API"""
-        try:
-            headers = {
-                "Authorization": f"Bearer {self.providers['nvidia']['key']}", 
-                "Content-Type": "application/json"
-            }
-            payload = {
-                "model": model or "nvidia/nemotron-4-340b-instruct",
-                "messages": messages,
-                "temperature": temperature,
-                "max_tokens": 1000
-            }
-            
-            timeout = aiohttp.ClientTimeout(total=30)
-            async with aiohttp.ClientSession(timeout=timeout) as session:
-                async with session.post(
-                    f"{self.providers['nvidia']['endpoint']}/chat/completions",
-                    headers=headers, 
-                    json=payload
-                ) as response:
-                    if response.status != 200:
-                        error = await response.text()
-                        logging.error(f"NVIDIA API error {response.status}: {error}")
-                        raise ValueError(error)
-                    
-                    data = await response.json()
-                    content = data["choices"][0]["message"]["content"]
-                    
-                    logging.info(f"✅ NVIDIA real response generated ({len(content)} chars)")
-                    
-                    return {
-                        "content": content,
-                        "confidence": 0.9,
-                        "provider": "nvidia",
-                        "model": model,
-                        "real_ai": True,
-                        "tokens_used": data["usage"]["total_tokens"]
-                    }
-        except Exception as e:
-            logging.error(f"NVIDIA API error: {e}")
-            raise
-    
-    def get_optimization_stats(self):
-        """Get optimization system statistics"""
-        return {
-            "smart_cache": self.smart_cache.get_cache_stats(),
-            "rate_limiter": self.rate_limiter.get_global_stats(),
-            "consensus_recommendations": self.consensus_controller.get_provider_recommendations()
-        }
 
     def get_default_model(self, provider):
         return {

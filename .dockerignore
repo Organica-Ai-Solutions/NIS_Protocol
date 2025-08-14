@@ -26,8 +26,32 @@ dev/
 benchmarks/
 backup/
 private/
+frontend/
+runner/
+monitoring/
 
 # Large assets and models not needed in the final image
 assets/
 models/bitnet/
 system/assets/
+system/utilities/
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.mp4
+*.mov
+
+# Documentation that's not needed at runtime
+*.md
+CHANGELOG.md
+LICENSE
+docs/
+CLAIMS_TO_EVIDENCE_MAPPING.md
+FRONTEND_BACKEND_INTEGRATION.md
+MCPUI_INTEGRATION_STATUS.md
+
+# Test and demo files
+test_*.py
+*_test.py
+demo_*.py

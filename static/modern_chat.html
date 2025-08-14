@@ -137,6 +137,38 @@
             animation: fadeIn 0.5s ease-out 0.3s both;
         }
 
+        .chat-toggle-container {
+            margin-top: 16px;
+            opacity: 0;
+            animation: fadeIn 0.5s ease-out 0.4s both;
+        }
+
+        .classic-chat-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .classic-chat-link:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.2);
+            color: rgba(255,255,255,0.9);
+            transform: translateY(-1px);
+        }
+
+        .classic-chat-link span {
+            font-size: 0.9rem;
+        }
+
         @keyframes fadeIn {
             to { opacity: 1; }
         }
@@ -780,6 +812,12 @@
                 <h1>How can I help today?</h1>
                 <div class="header-line"></div>
                 <p>Type a command or ask a question</p>
+                <div class="chat-toggle-container">
+                    <a href="/console" class="classic-chat-link">
+                        <span>🔄</span>
+                        Switch to Classic Chat
+                    </a>
+                </div>
             </div>
 
             <!-- Chat Box -->
