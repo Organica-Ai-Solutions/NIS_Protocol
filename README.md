@@ -1,7 +1,7 @@
 # 🧠 NIS Protocol v3.2 - Neural Intelligence Synthesis
 **Revolutionary AI Image Generation with Consciousness-Driven Physics Validation**
 
-*Version: 3.2 | Updated: 2025-08-03 | Status: Production Ready with AI Image Generation*
+*Version: 3.2 | Updated: 2025-08-13 | Status: Production Ready with Deep Agents + MCP + mcp-ui Integration*
 
 <div align="center">
 
@@ -18,14 +18,15 @@
 
 ## 🎯 **What is NIS Protocol v3.2?**
 
-The **Neural Intelligence Synthesis Protocol v3.2** is a revolutionary consciousness-driven AI framework that combines advanced reasoning with physics-informed validation and **cutting-edge AI image generation capabilities**. Unlike traditional AI systems that can hallucinate or produce impossible results, NIS Protocol ensures all outputs comply with fundamental physical laws while maintaining genuine consciousness-like awareness.
+The **Neural Intelligence Synthesis Protocol v3.2** is a revolutionary consciousness-driven AI framework that combines **Deep Agents multi-step reasoning** with **Model Context Protocol (MCP) integration** and **interactive UI components**. Featuring **LangChain Deep Agents** for complex workflow orchestration and **mcp-ui** for real-time visual interfaces, NIS Protocol delivers sophisticated AI capabilities with physics-informed validation and genuine consciousness-like awareness.
 
-### **🎨 NEW in v3.2: Revolutionary AI Image Generation**
-- **🖼️ DALL-E & Imagen Integration** - Professional text-to-image generation with dual AI providers
-- **✨ Multi-Style AI Art** - From photorealistic to scientific visualization  
-- **🔧 AI Image Editing** - Advanced image enhancement and modification capabilities
-- **📱 Multimodal Interface** - Seamless image upload, analysis, and generation
-- **🧠 Consciousness-Aware Visuals** - Physics-informed image generation validation
+### **🚀 NEW in v3.2: Deep Agents + MCP + mcp-ui Integration**
+- **🧠 LangChain Deep Agents** - Multi-step reasoning and complex workflow orchestration
+- **🔌 Model Context Protocol (MCP)** - External tool integration and data source connectivity
+- **🎨 Interactive UI Components** - Real-time visual interfaces with mcp-ui SDK
+- **🛠️ 24 Specialized Tools** - Dataset analysis, pipeline management, research synthesis, compliance auditing, code generation
+- **⚡ Production-Ready Deployment** - Docker containerization with real agent integration
+- **🖼️ AI Image Generation** - DALL-E & Imagen integration with consciousness-aware validation
 
 ### **🧠 Core Innovation: The v3.2 Revolutionary Multimodal Foundation**
 
@@ -38,6 +39,10 @@ The **Neural Intelligence Synthesis Protocol v3.2** is a revolutionary conscious
         ↓
 🔬 PINN PHYSICS (Real Physics Validation & Auto-Correction)
         ↓
+🧠 DEEP AGENTS (Multi-step Reasoning, Complex Workflow Orchestration)
+        ↓
+🔌 MCP INTEGRATION (External Tools, Data Sources, Interactive UI)
+        ↓
 🎨 MULTIMODAL AI (Image Generation, Vision Analysis, Document Processing)
         ↓
 🤖 LLM ENHANCEMENT (Multi-Provider Language Generation)
@@ -48,11 +53,35 @@ The **Neural Intelligence Synthesis Protocol v3.2** is a revolutionary conscious
 <div align="center">
 
 ![Mathematical Foundation](assets/images/v3_mathematical_foundation/v3map.png)
-*Complete mathematical pipeline: Laplace → KAN → PINN → LLM integration*
+*Complete mathematical pipeline: Laplace → KAN → PINN → Deep Agents → MCP → LLM integration*
 
 </div>
 
+## 🔌 **Deep Agents + MCP Integration Architecture**
+
+### **🧠 LangChain Deep Agents**
+- **Complex Workflow Orchestration**: Break down complex goals into manageable sub-tasks
+- **Multi-Step Planning**: Autonomous planning with dependency management and retry logic
+- **Specialized Skills**: 5 domain-specific skill agents (Dataset, Pipeline, Research, Audit, Code)
+- **Memory-Based Learning**: Persistent learning and adaptation across sessions
+
+### **🔌 Model Context Protocol (MCP) Server**
+- **24 Specialized Tools**: Ready-to-use tools across multiple domains
+- **JSON-RPC 2.0 Protocol**: Standards-compliant tool execution
+- **External Data Connectivity**: Real-time access to external APIs and databases
+- **Security Validation**: Intent validation and sandboxed execution
+
+### **🎨 mcp-ui Interactive Components**
+- **Data Grids**: Interactive tables with search, pagination, and sorting
+- **Progress Tracking**: Live progress bars with detailed logs
+- **Timeline Visualizations**: Step-by-step process visualization
+- **Code Diff Viewers**: Side-by-side code comparison and analysis
+- **Dashboard Layouts**: Customizable multi-panel interfaces
+
 **This is the only AI system that combines:**
+- 🧠 **Deep Agents Orchestration** - LangChain multi-step reasoning and complex workflows
+- 🔌 **MCP Protocol Integration** - External tool connectivity with 24 specialized tools
+- 🎨 **Interactive UI Components** - Real-time visual interfaces with mcp-ui SDK
 - 🧠 **Consciousness Architecture** - Self-aware meta-cognitive processing
 - 🔬 **Physics Validation** - Real conservation law enforcement (energy, momentum, mass)
 - 🧮 **Mathematically-Traceable Reasoning** - KAN networks for transparent logic
