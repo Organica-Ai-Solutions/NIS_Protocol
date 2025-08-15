@@ -171,6 +171,54 @@ app.add_middleware(
 # Mount static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+# ====== MCP + DEEP AGENTS + MCP-UI INTEGRATION ======
+# Initialize MCP integration globally
+mcp_integration = None
+
+@app.on_event("startup")
+async def setup_mcp_integration():
+    """Initialize MCP + Deep Agents + mcp-ui integration on startup."""
+    global mcp_integration
+    try:
+        from src.mcp.integration import setup_mcp_integration
+        from src.mcp.langgraph_bridge import create_langgraph_adapter
+        from src.mcp.mcp_ui_integration import setup_official_mcp_ui_integration
+        
+        logger.info("🚀 Initializing MCP + Deep Agents + mcp-ui integration...")
+        
+        # Setup MCP integration with NIS Protocol
+        mcp_integration = await setup_mcp_integration({
+            'mcp': {
+                'host': '0.0.0.0', 
+                'port': 8001,
+                'enable_ui': True,
+                'security': {'validate_intents': True, 'sandbox_ui': True}
+            },
+            'agent': {'provider': 'anthropic'},  # Use real agent provider
+            'memory': {'backend': 'sqlite', 'connection_string': 'data/mcp_memory.db'}
+        })
+        
+        # Setup LangGraph bridge for Agent Chat UI compatibility
+        langgraph_bridge = create_langgraph_adapter(mcp_integration)
+        
+        # Setup official mcp-ui integration
+        mcp_ui_adapter = setup_official_mcp_ui_integration(mcp_integration.mcp_server)
+        
+        # Store for use in endpoints
+        app.state.mcp_integration = mcp_integration
+        app.state.langgraph_bridge = langgraph_bridge
+        app.state.mcp_ui_adapter = mcp_ui_adapter
+        
+        logger.info("✅ MCP integration ready with:")
+        logger.info(f"   → {len(mcp_integration.get_tool_registry())} interactive tools")
+        logger.info(f"   → {len(mcp_integration.mcp_server.planner.skills)} Deep Agent skills")
+        logger.info(f"   → {len(mcp_ui_adapter.get_supported_content_types())} UI content types")
+        
+    except Exception as e:
+        logger.error(f"❌ MCP integration failed: {e}")
+        # Continue without MCP integration
+        app.state.mcp_integration = None
+
 # Chat Console endpoint
 @app.get("/console", response_class=HTMLResponse, tags=["Demo"])
 async def chat_console():
@@ -3890,11 +3938,198 @@ async def run_tool(request: dict):
         logger.error(f"Tool execution error: {e}")
         return {"error": str(e)}
 
+# ====== MCP + DEEP AGENTS API ENDPOINTS ======
+
+@app.post("/api/mcp/tools", tags=["MCP Integration"])
+async def handle_mcp_tool_request(request: dict):
+    """
+    🔧 Execute MCP tools with Deep Agents integration
+    
+    Supports all 25+ tools:
+    - dataset.search, dataset.preview, dataset.analyze
+    - pipeline.run, pipeline.status, pipeline.configure
+    - research.plan, research.search, research.synthesize
+    - audit.view, audit.analyze, audit.compliance
+    - code.edit, code.review, code.analyze
+    
+    Returns interactive UI resources compatible with @mcp-ui/client
+    """
+    if not hasattr(app.state, 'mcp_integration') or not app.state.mcp_integration:
+        return {"success": False, "error": "MCP integration not available"}
+    
+    try:
+        response = await app.state.mcp_integration.handle_mcp_request(request)
+        return response
+    except Exception as e:
+        logger.error(f"MCP tool request error: {e}")
+        return {"success": False, "error": str(e)}
+
+@app.post("/api/mcp/ui-action", tags=["MCP Integration"])
+async def handle_mcp_ui_action(action: dict):
+    """
+    🎨 Handle UI actions from mcp-ui components
+    
+    Processes actions like:
+    - tool: Execute tool from UI button/form
+    - intent: Handle generic UI intents
+    - prompt: Process prompts from UI
+    - notify: Handle notifications
+    - link: Process link clicks
+    """
+    if not hasattr(app.state, 'mcp_ui_adapter') or not app.state.mcp_ui_adapter:
+        return {"success": False, "error": "MCP UI adapter not available"}
+    
+    try:
+        message_id = action.get('messageId')
+        response = await app.state.mcp_ui_adapter.client_handler.handle_ui_action(action, message_id)
+        return response
+    except Exception as e:
+        logger.error(f"MCP UI action error: {e}")
+        return {"success": False, "error": str(e)}
+
+@app.post("/api/mcp/plans", tags=["MCP Integration"])
+async def create_execution_plan(request: dict):
+    """
+    🧠 Create Deep Agent execution plan
+    
+    Example:
+    {
+        "goal": "Analyze climate change impact on agriculture",
+        "context": {"region": "North America", "timeframe": "2020-2024"}
+    }
+    
+    Returns multi-step plan with dependencies and UI monitoring
+    """
+    if not hasattr(app.state, 'mcp_integration') or not app.state.mcp_integration:
+        return {"success": False, "error": "MCP integration not available"}
+    
+    try:
+        goal = request.get("goal")
+        context = request.get("context", {})
+        
+        if not goal:
+            return {"success": False, "error": "Goal required"}
+        
+        plan = await app.state.mcp_integration.create_execution_plan(goal, context)
+        return {"success": True, "plan": plan}
+    except Exception as e:
+        logger.error(f"Plan creation error: {e}")
+        return {"success": False, "error": str(e)}
+
+@app.post("/api/mcp/plans/{plan_id}/execute", tags=["MCP Integration"])
+async def execute_plan(plan_id: str):
+    """
+    ⚡ Execute Deep Agent plan
+    
+    Executes plan step-by-step with progress monitoring
+    and UI resource generation for each step
+    """
+    if not hasattr(app.state, 'mcp_integration') or not app.state.mcp_integration:
+        return {"success": False, "error": "MCP integration not available"}
+    
+    try:
+        result = await app.state.mcp_integration.execute_plan(plan_id)
+        return {"success": True, "execution": result}
+    except Exception as e:
+        logger.error(f"Plan execution error: {e}")
+        return {"success": False, "error": str(e)}
+
+@app.get("/api/mcp/plans/{plan_id}/status", tags=["MCP Integration"])
+async def get_plan_status(plan_id: str):
+    """
+    📊 Get Deep Agent plan status
+    
+    Returns current execution status, progress, and step results
+    """
+    if not hasattr(app.state, 'mcp_integration') or not app.state.mcp_integration:
+        return {"success": False, "error": "MCP integration not available"}
+    
+    try:
+        status = await app.state.mcp_integration.get_plan_status(plan_id)
+        return {"success": True, "status": status}
+    except Exception as e:
+        logger.error(f"Plan status error: {e}")
+        return {"success": False, "error": str(e)}
+
+@app.get("/api/mcp/info", tags=["MCP Integration"])
+async def get_mcp_info():
+    """
+    ℹ️ Get MCP integration information
+    
+    Returns available tools, capabilities, and status
+    """
+    if not hasattr(app.state, 'mcp_integration') or not app.state.mcp_integration:
+        return {"available": False, "error": "MCP integration not available"}
+    
+    try:
+        info = app.state.mcp_integration.get_server_info()
+        return {"available": True, "info": info}
+    except Exception as e:
+        logger.error(f"MCP info error: {e}")
+        return {"available": False, "error": str(e)}
+
+@app.post("/api/mcp/invoke", tags=["MCP Integration - LangGraph Compatibility"])
+async def langgraph_invoke(request: dict):
+    """
+    🔗 LangGraph Agent Chat UI compatibility endpoint
+    
+    Compatible with langchain-ai/agent-chat-ui
+    Processes messages and returns with UI resources
+    """
+    if not hasattr(app.state, 'langgraph_bridge') or not app.state.langgraph_bridge:
+        return {"error": "LangGraph bridge not available"}
+    
+    try:
+        input_data = request.get("input", {})
+        config = request.get("config", {})
+        
+        messages = input_data.get("messages", [])
+        if not messages:
+            return {"error": "No messages provided"}
+        
+        last_message = messages[-1].get("content", "")
+        session_id = config.get("configurable", {}).get("thread_id")
+        
+        # Collect streaming responses
+        responses = []
+        async for chunk in app.state.langgraph_bridge.handle_chat_message(last_message, session_id):
+            responses.append(chunk)
+        
+        return {
+            "output": {"messages": responses},
+            "metadata": {
+                "run_id": f"run_{int(time.time() * 1000)}",
+                "thread_id": session_id
+            }
+        }
+    except Exception as e:
+        logger.error(f"LangGraph invoke error: {e}")
+        return {"error": str(e)}
+
+@app.get("/api/mcp/demo", tags=["MCP Integration"])
+async def run_mcp_demo():
+    """
+    🧪 Run MCP + Deep Agents demo
+    
+    Tests all integrations and returns results
+    """
+    if not hasattr(app.state, 'mcp_integration') or not app.state.mcp_integration:
+        return {"success": False, "error": "MCP integration not available"}
+    
+    try:
+        # Run a quick demo
+        results = await app.state.mcp_integration.run_demo()
+        return {"success": True, "demo_results": results}
+    except Exception as e:
+        logger.error(f"MCP demo error: {e}")
+        return {"success": False, "error": str(e)}
+
 # ======  PATTERN: SIMPLE STARTUP ======
 if __name__ == "__main__":
-    logger.info("🏺 Starting NIS Protocol v3.2 with Enhanced Multimodal & Research capabilities")
+    logger.info("🏺 Starting NIS Protocol v3.2 with MCP + Deep Agents + mcp-ui Integration")
     logger.info("🚀 Based on proven success from OpenAIZChallenge heritage platform")
+    logger.info("🎨 Enhanced with interactive UI components and multi-step workflows")
     
     app.start_time = datetime.now() # Initialize app.start_time
 
-    uvicorn.run(app, host="0.0.0.0", port=8001) 
+    uvicorn.run(app, host="0.0.0.0", port=8000) 
