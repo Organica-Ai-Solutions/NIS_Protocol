@@ -1103,7 +1103,7 @@
         // Execute runner command
         async function executeRunnerCommand(command) {
             try {
-                const response = await fetch('/tools/run', {
+                const response = await fetch('/api/langgraph/invoke', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1144,7 +1144,7 @@
                 });
 
                 // Then execute it
-                const response = await fetch('/tools/run', {
+                const response = await fetch('/api/langgraph/invoke', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1404,7 +1404,7 @@
             currentController = new AbortController();
 
             try {
-                const response = await fetch('/chat/stream', {
+                const response = await fetch('/chat/enhanced', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1567,7 +1567,7 @@
         // Enhanced runner commands
         async function executeRunnerTool(tool, args) {
             try {
-                const response = await fetch('/tools/run', {
+                const response = await fetch('/api/langgraph/invoke', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

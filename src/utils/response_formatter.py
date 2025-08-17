@@ -7,8 +7,14 @@ import json
 import base64
 from typing import Dict, Any, List, Optional
 from datetime import datetime
-import matplotlib.pyplot as plt
-import matplotlib.animation as animation
+try:
+    import matplotlib.pyplot as plt
+    import matplotlib.animation as animation
+    MATPLOTLIB_AVAILABLE = True
+except ImportError:
+    plt = None
+    animation = None
+    MATPLOTLIB_AVAILABLE = False
 import numpy as np
 from io import BytesIO
 import asyncio

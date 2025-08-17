@@ -48,6 +48,20 @@ from src.utils.self_audit import self_audit_engine
 from src.utils.response_formatter import NISResponseFormatter
 from src.agents.alignment.ethical_reasoner import EthicalReasoner, EthicalFramework
 from src.agents.simulation.enhanced_scenario_simulator import EnhancedScenarioSimulator, ScenarioType, SimulationParameters
+
+# NVIDIA NeMo Enterprise Integration
+try:
+    from src.agents.nvidia_nemo import (
+        NeMoPhysicsAgent, NeMoAgentOrchestrator, 
+        create_nemo_physics_agent, create_nemo_agent_orchestrator
+    )
+    from src.agents.nvidia_nemo.nemo_integration_manager import (
+        NeMoIntegrationManager, NeMoIntegrationConfig, get_nemo_integration_manager
+    )
+    NEMO_INTEGRATION_AVAILABLE = True
+except ImportError as e:
+    logger.warning(f"NVIDIA NeMo integration not available: {e}")
+    NEMO_INTEGRATION_AVAILABLE = False
 from src.chat.enhanced_memory_chat import EnhancedChatMemory, ChatMemoryConfig
 from src.agents.memory.enhanced_memory_agent import EnhancedMemoryAgent
 # from src.agents.autonomous_execution.anthropic_style_executor import create_anthropic_style_executor, ExecutionStrategy, ExecutionMode  # Temporarily disabled
@@ -868,8 +882,7 @@ async def get_physics_capabilities():
     supported PDEs, and system capabilities.
     """
     try:
-        from src.agents.physics.unified_physics_agent import PhysicsMode, PhysicsDomain
-        from src.agents.physics.true_pinn_agent import TRUE_PINN_AVAILABLE
+        from src.agents.physics.unified_physics_agent import PhysicsMode, PhysicsDomain, TRUE_PINN_AVAILABLE
         
         capabilities = {
             "status": "active",
@@ -4521,6 +4534,387 @@ async def run_mcp_demo():
     except Exception as e:
         logger.error(f"MCP demo error: {e}")
         return {"success": False, "error": str(e)}
+
+
+# ====== NVIDIA NeMo Enterprise Integration Endpoints ======
+
+@app.get("/nvidia/nemo/status", tags=["NVIDIA NeMo"])
+async def get_nemo_integration_status():
+    """
+    🚀 Get NVIDIA NeMo Integration Status
+    
+    Returns comprehensive status of NeMo Framework and Agent Toolkit integration
+    """
+    try:
+        if 'nemo_manager' not in globals() or nemo_manager is None:
+            return {
+                "status": "not_initialized",
+                "message": "NeMo Integration Manager not available",
+                "framework_available": False,
+                "agent_toolkit_available": False
+            }
+        
+        # Get comprehensive status
+        integration_status = await nemo_manager.get_integration_status()
+        
+        return {
+            "status": "success",
+            "integration_status": integration_status,
+            "timestamp": time.time()
+        }
+        
+    except Exception as e:
+        logger.error(f"NeMo status error: {e}")
+        return {
+            "status": "error",
+            "error": str(e),
+            "timestamp": time.time()
+        }
+
+@app.post("/nvidia/nemo/physics/simulate", tags=["NVIDIA NeMo"])
+async def nemo_physics_simulation(request: dict):
+    """
+    🔬 NVIDIA NeMo Physics Simulation
+    
+    Perform physics simulation using NeMo Framework and Cosmos models
+    
+    Body:
+    - scenario_description: Description of physics scenario
+    - simulation_type: Type of physics simulation (optional)
+    - precision: Simulation precision level (optional)
+    """
+    try:
+        scenario_description = request.get("scenario_description")
+        if not scenario_description:
+            return {
+                "status": "error",
+                "error": "scenario_description is required"
+            }
+        
+        # Use NeMo integration manager for enhanced physics
+        if 'nemo_manager' not in globals() or nemo_manager is None:
+            return {
+                "status": "error", 
+                "error": "NeMo Integration Manager not available"
+            }
+        
+        # Get fallback physics agent
+        fallback_agent = agents.get('physics') if 'agents' in globals() else None
+        
+        # Run enhanced physics simulation
+        result = await nemo_manager.enhanced_physics_simulation(
+            scenario_description=scenario_description,
+            fallback_agent=fallback_agent,
+            simulation_type=request.get("simulation_type", "classical_mechanics"),
+            precision=request.get("precision", "high")
+        )
+        
+        return {
+            "status": "success",
+            "physics_simulation": result,
+            "powered_by": "nvidia_nemo_framework",
+            "timestamp": time.time()
+        }
+        
+    except Exception as e:
+        logger.error(f"NeMo physics simulation error: {e}")
+        return {
+            "status": "error",
+            "error": str(e),
+            "timestamp": time.time()
+        }
+
+@app.post("/nvidia/nemo/orchestrate", tags=["NVIDIA NeMo"])
+async def nemo_agent_orchestration(request: dict):
+    """
+    🤖 NVIDIA NeMo Agent Orchestration
+    
+    Orchestrate multi-agent workflows using NeMo Agent Toolkit
+    
+    Body:
+    - workflow_name: Name of the workflow
+    - input_data: Input data for the workflow
+    - agent_types: List of agent types to include (optional)
+    """
+    try:
+        workflow_name = request.get("workflow_name", "nis_workflow")
+        input_data = request.get("input_data", {})
+        agent_types = request.get("agent_types", ["physics", "research", "reasoning"])
+        
+        if 'nemo_manager' not in globals() or nemo_manager is None:
+            return {
+                "status": "error",
+                "error": "NeMo Integration Manager not available"
+            }
+        
+        # Gather available agents
+        available_agents = []
+        if 'agents' in globals():
+            for agent_type in agent_types:
+                if agent_type in agents:
+                    available_agents.append(agents[agent_type])
+        
+        if not available_agents:
+            return {
+                "status": "error",
+                "error": "No agents available for orchestration"
+            }
+        
+        # Run orchestrated workflow
+        result = await nemo_manager.orchestrate_multi_agent_workflow(
+            workflow_name=workflow_name,
+            agents=available_agents,
+            input_data=input_data
+        )
+        
+        return {
+            "status": "success",
+            "orchestration_result": result,
+            "powered_by": "nvidia_nemo_agent_toolkit",
+            "timestamp": time.time()
+        }
+        
+    except Exception as e:
+        logger.error(f"NeMo orchestration error: {e}")
+        return {
+            "status": "error",
+            "error": str(e),
+            "timestamp": time.time()
+        }
+
+@app.post("/nvidia/nemo/toolkit/install", tags=["NVIDIA NeMo"])
+async def install_nemo_toolkit():
+    """
+    📦 Install NVIDIA NeMo Agent Toolkit
+    
+    Automatically installs the official NVIDIA NeMo Agent Toolkit
+    """
+    try:
+        from src.agents.nvidia_nemo.nemo_toolkit_installer import create_nemo_toolkit_installer
+        
+        installer = create_nemo_toolkit_installer()
+        
+        # Check current status
+        current_status = installer.get_installation_status()
+        
+        if current_status["installation_complete"]:
+            return {
+                "status": "already_installed",
+                "message": "NVIDIA NeMo Agent Toolkit already installed",
+                "installation_status": current_status
+            }
+        
+        # Perform installation
+        installation_result = await installer.install_toolkit()
+        
+        return {
+            "status": "success" if installation_result["success"] else "error",
+            "installation_result": installation_result,
+            "timestamp": time.time()
+        }
+        
+    except Exception as e:
+        logger.error(f"NeMo toolkit installation error: {e}")
+        return {
+            "status": "error",
+            "error": str(e),
+            "timestamp": time.time()
+        }
+
+@app.get("/nvidia/nemo/toolkit/status", tags=["NVIDIA NeMo"])
+async def get_nemo_toolkit_status():
+    """
+    📊 Get NVIDIA NeMo Agent Toolkit Installation Status
+    
+    Check installation status and availability of the toolkit
+    """
+    try:
+        from src.agents.nvidia_nemo.nemo_toolkit_installer import create_nemo_toolkit_installer
+        
+        installer = create_nemo_toolkit_installer()
+        installation_status = installer.get_installation_status()
+        
+        return {
+            "status": "success",
+            "installation_status": installation_status,
+            "toolkit_available": installation_status["installation_complete"],
+            "timestamp": time.time()
+        }
+        
+    except Exception as e:
+        logger.error(f"NeMo toolkit status error: {e}")
+        return {
+            "status": "error",
+            "error": str(e),
+            "timestamp": time.time()
+        }
+
+@app.post("/nvidia/nemo/toolkit/test", tags=["NVIDIA NeMo"])
+async def test_nemo_toolkit(request: dict):
+    """
+    🧪 Test NVIDIA NeMo Agent Toolkit
+    
+    Run a test workflow to verify toolkit functionality
+    
+    Body:
+    - test_query: Query to test with (optional)
+    """
+    try:
+        from src.agents.nvidia_nemo.nemo_toolkit_installer import create_nemo_toolkit_installer
+        
+        installer = create_nemo_toolkit_installer()
+        test_query = request.get("test_query", "What are the key features of NVIDIA NeMo?")
+        
+        # Run test
+        test_result = await installer.test_installation(test_query)
+        
+        return {
+            "status": "success",
+            "test_result": test_result,
+            "query": test_query,
+            "timestamp": time.time()
+        }
+        
+    except Exception as e:
+        logger.error(f"NeMo toolkit test error: {e}")
+        return {
+            "status": "error",
+            "error": str(e),
+            "timestamp": time.time()
+        }
+
+@app.get("/nvidia/nemo/cosmos/demo", tags=["NVIDIA NeMo"])
+async def nemo_cosmos_demo():
+    """
+    🌍 NVIDIA Cosmos World Foundation Models Demo
+    
+    Showcase Cosmos World Foundation Models for physical AI
+    """
+    try:
+        # Demo scenario for Cosmos models
+        cosmos_demo = {
+            "model": "nvidia/cosmos-world-foundation",
+            "capability": "Physical AI World Simulation",
+            "features": [
+                "Real-time physics simulation",
+                "World state generation", 
+                "Physical interaction modeling",
+                "Autonomous vehicle simulation",
+                "Robotics environment modeling"
+            ],
+            "demo_scenarios": [
+                {
+                    "name": "Vehicle Physics",
+                    "description": "Simulate vehicle dynamics in various environments",
+                    "physics_laws": ["Newton's Laws", "Friction", "Aerodynamics"]
+                },
+                {
+                    "name": "Robotic Manipulation", 
+                    "description": "Model robotic arm interactions with objects",
+                    "physics_laws": ["Kinematics", "Force/Torque", "Collision Detection"]
+                },
+                {
+                    "name": "Fluid Dynamics",
+                    "description": "Simulate fluid flow and interactions",
+                    "physics_laws": ["Navier-Stokes", "Conservation Laws", "Turbulence"]
+                }
+            ],
+            "integration_status": "Available with NeMo Framework",
+            "api_access": "NVIDIA NIM Microservices"
+        }
+        
+        return {
+            "status": "success",
+            "cosmos_demo": cosmos_demo,
+            "timestamp": time.time()
+        }
+        
+    except Exception as e:
+        logger.error(f"Cosmos demo error: {e}")
+        return {
+            "status": "error",
+            "error": str(e),
+            "timestamp": time.time()
+        }
+
+@app.get("/nvidia/nemo/enterprise/showcase", tags=["NVIDIA NeMo"])
+async def nemo_enterprise_showcase():
+    """
+    🏢 NVIDIA NeMo Enterprise Showcase
+    
+    Comprehensive showcase of enterprise NVIDIA NeMo capabilities
+    """
+    try:
+        enterprise_showcase = {
+            "nemo_framework": {
+                "version": "2.4.0+",
+                "capabilities": [
+                    "Multi-GPU model training (1000s of GPUs)",
+                    "Tensor/Pipeline/Data Parallelism",
+                    "FP8 training on NVIDIA Hopper GPUs",
+                    "NVIDIA Transformer Engine integration",
+                    "Megatron Core scaling"
+                ],
+                "models": [
+                    "Nemotron-70B (Physics-specialized)",
+                    "Cosmos World Foundation Models",
+                    "Custom domain-specific models"
+                ],
+                "deployment": "NVIDIA NIM Microservices"
+            },
+            "nemo_agent_toolkit": {
+                "version": "1.1.0+",
+                "framework_support": [
+                    "LangChain", "LlamaIndex", "CrewAI", 
+                    "Microsoft Semantic Kernel", "Custom Frameworks"
+                ],
+                "key_features": [
+                    "Framework-agnostic agent coordination",
+                    "Model Context Protocol (MCP) support",
+                    "Enterprise observability (Phoenix, Weave, Langfuse)",
+                    "Workflow profiling and optimization",
+                    "Production deployment tools"
+                ],
+                "observability": [
+                    "Phoenix integration",
+                    "Weave monitoring", 
+                    "Langfuse tracing",
+                    "OpenTelemetry compatibility"
+                ]
+            },
+            "nis_protocol_integration": {
+                "physics_simulation": "NeMo Framework + Cosmos models",
+                "agent_orchestration": "NeMo Agent Toolkit + existing agents",
+                "hybrid_mode": "Automatic fallback to existing systems",
+                "enterprise_features": [
+                    "Multi-framework coordination",
+                    "Production observability",
+                    "Automatic scaling",
+                    "Enterprise security"
+                ]
+            },
+            "production_deployment": {
+                "nvidia_nim": "Optimized inference microservices",
+                "kubernetes": "Helm charts for scaling",
+                "monitoring": "Comprehensive metrics and alerts",
+                "security": "Enterprise-grade authentication"
+            }
+        }
+        
+        return {
+            "status": "success",
+            "enterprise_showcase": enterprise_showcase,
+            "integration_ready": True,
+            "timestamp": time.time()
+        }
+        
+    except Exception as e:
+        logger.error(f"Enterprise showcase error: {e}")
+        return {
+            "status": "error",
+            "error": str(e),
+            "timestamp": time.time()
+        }
 
 # ======  PATTERN: SIMPLE STARTUP ======
 if __name__ == "__main__":

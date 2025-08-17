@@ -120,6 +120,9 @@ class EnhancedMemoryAgent(NISAgent):
         super().__init__(agent_id, NISLayer.MEMORY, description)
         self.emotional_state = emotional_state or EmotionalState()
         
+        # Initialize logger
+        self.logger = logging.getLogger(f"{__name__}.{self.__class__.__name__}")
+        
         # Set up storage paths
         self.storage_path = storage_path
         if storage_path and not os.path.exists(storage_path):

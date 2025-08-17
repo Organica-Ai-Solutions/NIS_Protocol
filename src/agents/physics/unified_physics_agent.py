@@ -38,6 +38,16 @@ except ImportError:
     TRUE_PINN_AVAILABLE = False
     logging.warning("True PINN agent not available - using basic physics validation")
 
+# NVIDIA NeMo Framework Integration
+try:
+    import nemo
+    from nemo.collections.nlp.models import MegatronGPTModel
+    NEMO_AVAILABLE = True
+    logging.info("NVIDIA NeMo Framework available - enabling advanced physics models")
+except ImportError:
+    NEMO_AVAILABLE = False
+    logging.warning("NVIDIA NeMo Framework not available - using fallback physics")
+
 # Integrity and self-audit
 from src.utils.integrity_metrics import (
     calculate_confidence, create_default_confidence_factors, ConfidenceFactors

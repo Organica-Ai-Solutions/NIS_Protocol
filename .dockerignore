@@ -11,8 +11,12 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+*.so
 venv/
 *.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
 # .env - ALLOW .env file for API keys
 
 # Cache and logs
@@ -20,6 +24,7 @@ cache/
 dev/cache/
 logs/
 dev/logs/
+*.log
 
 # Development and testing folders
 dev/
@@ -29,18 +34,24 @@ private/
 frontend/
 runner/
 monitoring/
+scripts/
+endpoint_fixes_backup/
+nis-integrity-toolkit/
+logs/
 
 # Large assets and models not needed in the final image
 assets/
-models/bitnet/
+models/
 system/assets/
-system/utilities/
+system/utilities/reports/
 *.png
 *.jpg
 *.jpeg
 *.gif
 *.mp4
 *.mov
+*.webp
+*.svg
 
 # Documentation that's not needed at runtime
 *.md
@@ -50,8 +61,21 @@ docs/
 CLAIMS_TO_EVIDENCE_MAPPING.md
 FRONTEND_BACKEND_INTEGRATION.md
 MCPUI_INTEGRATION_STATUS.md
+AGENT_INTEGRATION_COMPLETE.md
 
 # Test and demo files
 test_*.py
 *_test.py
 demo_*.py
+**/test_*.py
+**/comprehensive_agent_test_suite.py
+
+# Exclude only test files, keep agent integration
+src/agents/comprehensive_agent_test_suite.py
+
+# Temporary and cache files
+*.tmp
+*.cache
+.pytest_cache/
+.coverage
+htmlcov/

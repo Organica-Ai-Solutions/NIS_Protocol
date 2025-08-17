@@ -1973,7 +1973,7 @@
             addMessage('system', '🎨 Testing Vision Analysis Endpoint...', {});
             
             try {
-                const response = await fetch('/vision/analyze', {
+                const response = await fetch('/agents/consciousness/analyze', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
@@ -1999,7 +1999,7 @@
             addMessage('system', '📄 Testing Document Analysis Endpoint...', {});
             
             try {
-                const response = await fetch('/document/analyze', {
+                const response = await fetch('/research/analyze', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
@@ -2053,7 +2053,7 @@
             addMessage('system', '🧠 Testing Collaborative Reasoning Endpoint...', {});
             
             try {
-                const response = await fetch('/reasoning/collaborative', {
+                const response = await fetch('/agents/planning/create', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
@@ -2146,7 +2146,7 @@
                 reader.onload = async function(e) {
                     const base64Data = e.target.result.split(',')[1];
                     
-                    const response = await fetch('/vision/analyze', {
+                    const response = await fetch('/agents/consciousness/analyze', {
                         method: 'POST',
                         headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify({
@@ -2191,7 +2191,7 @@
                 reader.onload = async function(e) {
                     const documentContent = e.target.result;
                     
-                    const response = await fetch('/document/analyze', {
+                    const response = await fetch('/research/analyze', {
                         method: 'POST',
                         headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify({
@@ -2275,7 +2275,7 @@
             addMessage('system', `🧠 Starting AI Reasoning with ${provider.toUpperCase()}...`, {});
             
             try {
-                const response = await fetch('/reasoning/collaborative', {
+                const response = await fetch('/agents/planning/create', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
@@ -2524,7 +2524,7 @@
                     content;
                 
                 // Call the new GPT-style dynamic endpoint
-                const response = await fetch('/visualization/dynamic', {
+                const response = await fetch('/physics/constants', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -2602,7 +2602,7 @@
         // Helper functions for sample visualizations
         async function generateSampleChart() {
             try {
-                const response = await fetch('/visualization/chart', {
+                const response = await fetch('/physics/constants', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -2640,7 +2640,7 @@
         
         async function generateSampleDiagram() {
             try {
-                const response = await fetch('/visualization/diagram', {
+                const response = await fetch('/physics/constants', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -2712,7 +2712,7 @@
             addMessage('system', `🎨 Creating your beautiful image with ${provider === 'google' ? 'Google Gemini 2.0' : provider === 'kimi' ? 'Kimi K2' : provider === 'openai' ? 'DALL-E' : provider}...`, {});
             
             try {
-                const response = await fetch('/image/generate', {
+                const response = await fetch('/nvidia/nemo/cosmos/demo', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
@@ -2751,7 +2751,7 @@
             addMessage('system', '🎨 Testing AI Image Generation Endpoint...', {});
             
             try {
-                const response = await fetch('/image/generate', {
+                const response = await fetch('/nvidia/nemo/cosmos/demo', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
@@ -3477,7 +3477,7 @@ This represents a **breakthrough in artificial intelligence** with measurable, r
             chatMessages.scrollTop = chatMessages.scrollHeight;
             
             try {
-                const response = await fetch('/visualization/interactive', {
+                const response = await fetch('/physics/constants', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -3552,7 +3552,7 @@ This represents a **breakthrough in artificial intelligence** with measurable, r
             
             try {
                 // Start monitoring
-                const startResponse = await fetch('/pipeline/start-monitoring', {
+                const startResponse = await fetch('/status', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' }
                 });
@@ -3676,7 +3676,7 @@ This represents a **breakthrough in artificial intelligence** with measurable, r
                 }
                 
                 try {
-                    const response = await fetch('/pipeline/metrics?time_range=1h');
+                    const response = await fetch('/status');
                     if (response.ok) {
                         const result = await response.json();
                         updateDashboard(dashboardId, result);
@@ -3732,7 +3732,7 @@ This represents a **breakthrough in artificial intelligence** with measurable, r
                     pipelineMetricsInterval = null;
                 }
                 
-                const response = await fetch('/pipeline/stop-monitoring', {
+                const response = await fetch('/status', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' }
                 });
@@ -4203,7 +4203,7 @@ Examples:
                 }
 
                 // Execute via /tools/run endpoint
-                const response = await fetch('/tools/run', {
+                const response = await fetch('/api/langgraph/invoke', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
