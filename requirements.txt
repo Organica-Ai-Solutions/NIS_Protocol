@@ -63,7 +63,7 @@ grpcio
 gymnasium
 h11
 h5py
-hnswlib
+# hnswlib==0.8.0  # Optional - fallback implementation available
 httpcore
 httpx
 huggingface-hub

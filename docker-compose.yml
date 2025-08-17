@@ -79,21 +79,6 @@ services:
     # Config now baked into the image to avoid host pread issues
     depends_on:
       - backend
-      - frontend
-    restart: unless-stopped
-
-  frontend:
-    build: ./frontend
-    container_name: nis-frontend
-    networks:
-      - nis-network
-    ports:
-      - "3001:3000"
-    environment:
-      - NODE_ENV=production
-      - NEXT_PUBLIC_API_URL=http://nis-backend:8000
-    depends_on:
-      - backend
     restart: unless-stopped
 
   runner:

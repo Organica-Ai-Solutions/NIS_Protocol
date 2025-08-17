@@ -34,8 +34,7 @@ try:
 except ImportError:
     TORCH_AVAILABLE = False
 
-from src.core.agent import NISAgent
-from src.core.registry import NISLayer, NISRegistry
+from src.core.registry import NISAgent, NISLayer, NISRegistry
 from src.emotion.emotional_state import EmotionalState, EmotionalDimension
 from src.memory.vector_store import VectorStore
 from src.memory.embedding_utils import get_embedding_provider, EmbeddingProvider
@@ -121,17 +120,6 @@ class EnhancedMemoryAgent(NISAgent):
         super().__init__(agent_id, NISLayer.MEMORY, description)
         self.emotional_state = emotional_state or EmotionalState()
         
-        # Set up logging FIRST before anything else that might need it
-        self.enable_logging = enable_logging
-        if enable_logging:
-            self.logger = logging.getLogger(f"nis_memory_agent_{agent_id}")
-            self.logger.setLevel(logging.INFO)
-        else:
-            # Create a null logger to avoid attribute errors
-            import logging
-            self.logger = logging.getLogger("null")
-            self.logger.disabled = True
-        
         # Set up storage paths
         self.storage_path = storage_path
         if storage_path and not os.path.exists(storage_path):
@@ -204,14 +192,19 @@ class EnhancedMemoryAgent(NISAgent):
         if not self.enable_lstm and enable_logging:
             self.logger.info("LSTM temporal modeling disabled - using traditional memory management")
         
-        # Set up file logging if storage path is provided
-        if enable_logging and storage_path:
-            log_file = os.path.join(storage_path, f"memory_{agent_id}.log")
-            handler = logging.FileHandler(log_file)
-            handler.setLevel(logging.INFO)
-            formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-            handler.setFormatter(formatter)
-            self.logger.addHandler(handler)
+        # Set up logging
+        self.enable_logging = enable_logging
+        if enable_logging:
+            self.logger = logging.getLogger(f"nis_memory_agent_{agent_id}")
+            self.logger.setLevel(logging.INFO)
+            
+            if storage_path:
+                log_file = os.path.join(storage_path, f"memory_{agent_id}.log")
+                handler = logging.FileHandler(log_file)
+                handler.setLevel(logging.INFO)
+                formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+                handler.setFormatter(formatter)
+                self.logger.addHandler(handler)
         
         # Set up self-audit integration
         self.enable_self_audit = enable_self_audit

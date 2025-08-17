@@ -127,7 +127,7 @@ class NISRedisManager:
     
     def __init__(
         self,
-        host: str = "redis",
+        host: str = None,
         port: int = 6379,
         db: int = 0,
         password: Optional[str] = None,
@@ -137,6 +137,19 @@ class NISRedisManager:
         config: Optional[Dict[str, Any]] = None
     ):
         """Initialize the enhanced Redis manager"""
+        
+        # Auto-detect Redis host
+        if host is None:
+            import os
+            # Try environment variable first
+            host = os.environ.get('REDIS_HOST')
+            if not host:
+                # Check if we're in a Docker environment
+                if os.path.exists('/.dockerenv'):
+                    host = "nis-redis"  # Docker container name
+                else:
+                    host = "localhost"  # Local development
+        
         self.host = host
         self.port = port
         self.db = db

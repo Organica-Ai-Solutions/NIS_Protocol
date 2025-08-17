@@ -71,6 +71,33 @@
             50% { opacity: 0.5; }
         }
 
+        .nav-button {
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 2px 4px rgba(6, 182, 212, 0.2);
+        }
+
+        .nav-button:hover {
+            background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(6, 182, 212, 0.3);
+        }
+
+        .nav-button:active {
+            transform: translateY(0);
+        }
+
         .chat-container {
             display: flex;
             flex-direction: column;
@@ -1079,6 +1106,12 @@
                 <span id="response-time">Response: --ms</span>
             </div>
             <!-- Removed unsubstantiated metric display -->
+            <a href="/chat/formatted" class="nav-button">
+                ✨ Modern Chat UI
+            </a>
+            <a href="/chat/enhanced" class="nav-button" style="margin-left: 8px;">
+                🚀 Enhanced Agent Chat
+            </a>
         </div>
     </div>
 

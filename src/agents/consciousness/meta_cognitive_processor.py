@@ -129,8 +129,22 @@ class MetaCognitiveProcessor:
         # Initialize Redis for caching
         try:
             redis_config = self.config.get("infrastructure", {}).get("memory_cache", {})
+            
+            # Auto-detect Redis host
+            redis_host = redis_config.get("host")
+            if not redis_host:
+                import os
+                # Try environment variable first
+                redis_host = os.environ.get('REDIS_HOST')
+                if not redis_host:
+                    # Check if we're in a Docker environment
+                    if os.path.exists('/.dockerenv'):
+                        redis_host = "nis-redis"  # Docker container name
+                    else:
+                        redis_host = "localhost"  # Local development
+            
             self.redis_client = redis.Redis(
-                host=redis_config.get("host", "localhost"),
+                host=redis_host,
                 port=redis_config.get("port", 6379),
                 db=redis_config.get("db", 0),
                 decode_responses=True

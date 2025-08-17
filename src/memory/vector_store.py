@@ -10,8 +10,17 @@ import time
 import json
 import numpy as np
 from typing import Dict, Any, List, Optional, Tuple, Union
-import hnswlib
 from collections import defaultdict
+
+# Try to import hnswlib, fall back to simple implementation if not available
+try:
+    import hnswlib
+    HNSWLIB_AVAILABLE = True
+except ImportError as e:
+    print(f"hnswlib not available ({e}), using simple vector store implementation")
+    HNSWLIB_AVAILABLE = False
+    # Import the simple fallback
+    from .simple_vector_store import SimpleVectorStore
 
 class VectorStore:
     """
@@ -20,6 +29,9 @@ class VectorStore:
     This class provides the ability to store and query memory embeddings
     for semantic similarity search, which is crucial for context-aware
     memory retrieval in the NIS Protocol.
+    
+    Automatically chooses between hnswlib (preferred) and simple numpy implementation
+    based on availability.
     """
     
     def __init__(self, dim: int = 768, max_elements: int = 100000, space: str = "cosine", ef_search: int = 50):
@@ -32,6 +44,56 @@ class VectorStore:
             space: Distance metric to use (cosine, l2, ip)
             ef_search: Query-time accuracy parameter
         """
+        if HNSWLIB_AVAILABLE:
+            self._impl = HNSWVectorStore(dim, max_elements, space, ef_search)
+        else:
+            # Map ip space to cosine for simple implementation
+            simple_space = "cosine" if space == "ip" else space
+            self._impl = SimpleVectorStore(dim, max_elements, simple_space)
+        
+        # Expose implementation attributes for compatibility
+        self.dim = self._impl.dim
+        self.max_elements = self._impl.max_elements
+        self.space = self._impl.space
+    
+    def add(self, memory_id: str, vector: np.ndarray, metadata: Dict[str, Any] = None) -> int:
+        """Add a vector embedding to the store."""
+        return self._impl.add(memory_id, vector, metadata)
+    
+    def search(self, 
+               query_vector: np.ndarray, 
+               top_k: int = 10, 
+               filter_categories: Dict[str, Any] = None) -> List[Tuple[str, float, Optional[Dict[str, Any]]]]:
+        """Search for vectors similar to the query vector."""
+        return self._impl.search(query_vector, top_k, filter_categories)
+    
+    def delete(self, memory_id: str) -> bool:
+        """Delete a vector from the store."""
+        return self._impl.delete(memory_id)
+    
+    def get_by_id(self, memory_id: str) -> Optional[Tuple[np.ndarray, Dict[str, Any]]]:
+        """Get a vector by memory ID."""
+        return self._impl.get_by_id(memory_id)
+    
+    def save(self, path: str) -> None:
+        """Save the vector store to disk."""
+        return self._impl.save(path)
+    
+    def load(self, path: str) -> bool:
+        """Load the vector store from disk."""
+        return self._impl.load(path)
+    
+    def get_stats(self) -> Dict[str, Any]:
+        """Get statistics about the vector store."""
+        return self._impl.get_stats()
+
+
+class HNSWVectorStore:
+    """
+    HNSW-based vector store implementation using hnswlib.
+    """
+    
+    def __init__(self, dim: int = 768, max_elements: int = 100000, space: str = "cosine", ef_search: int = 50):
         self.dim = dim
         self.max_elements = max_elements
         self.space = space
@@ -56,17 +118,6 @@ class VectorStore:
         self.categories = defaultdict(set)
     
     def add(self, memory_id: str, vector: np.ndarray, metadata: Dict[str, Any] = None) -> int:
-        """
-        Add a vector embedding to the store.
-        
-        Args:
-            memory_id: Unique identifier for the memory
-            vector: The embedding vector (numpy array)
-            metadata: Optional metadata to associate with the vector
-            
-        Returns:
-            The ID of the added vector
-        """
         # Ensure vector is the right shape and type
         if not isinstance(vector, np.ndarray):
             vector = np.array(vector, dtype=np.float32)
@@ -96,21 +147,7 @@ class VectorStore:
         
         return vector_id
     
-    def search(self, 
-               query_vector: np.ndarray, 
-               top_k: int = 10, 
-               filter_categories: Dict[str, Any] = None) -> List[Tuple[str, float, Optional[Dict[str, Any]]]]:
-        """
-        Search for vectors similar to the query vector.
-        
-        Args:
-            query_vector: The query embedding vector
-            top_k: Number of results to return
-            filter_categories: Optional category filters (e.g., {"tag": "important"})
-            
-        Returns:
-            List of (memory_id, similarity_score, metadata) tuples
-        """
+    def search(self, query_vector: np.ndarray, top_k: int = 10, filter_categories: Dict[str, Any] = None) -> List[Tuple[str, float, Optional[Dict[str, Any]]]]:
         if self.vector_count == 0:
             return []
         
@@ -137,11 +174,7 @@ class VectorStore:
             if candidate_set is None or len(candidate_set) == 0:
                 return []
             
-            # Convert to list for filtering
-            candidate_ids = list(candidate_set)
-            
-            # Search only among filtered vectors (requires separate implementation)
-            # For simplicity, we'll search all and filter after
+            # Search all and filter after
             labels, distances = self.index.knn_query(query_vector, k=min(self.vector_count, top_k * 10))
             
             # Filter to only include candidates
@@ -177,15 +210,6 @@ class VectorStore:
         return results
     
     def delete(self, memory_id: str) -> bool:
-        """
-        Delete a vector from the store.
-        
-        Args:
-            memory_id: ID of the memory to delete
-            
-        Returns:
-            True if deleted, False if not found
-        """
         if memory_id not in self.memory_id_to_vector:
             return False
         
@@ -206,39 +230,19 @@ class VectorStore:
             # Remove metadata
             del self.metadata[vector_id]
         
-        # Note: HNSW doesn't support true deletion, 
-        # so we just remove from our mappings. The vector space will still contain the vector
-        # but it won't be returned in searches.
-        
         return True
     
     def get_by_id(self, memory_id: str) -> Optional[Tuple[np.ndarray, Dict[str, Any]]]:
-        """
-        Get a vector by memory ID.
-        
-        Args:
-            memory_id: ID of the memory to retrieve
-            
-        Returns:
-            Tuple of (vector, metadata) or None if not found
-        """
         if memory_id not in self.memory_id_to_vector:
             return None
         
         vector_id = self.memory_id_to_vector[memory_id]
         meta = self.metadata.get(vector_id, {})
         
-        # HNSW doesn't provide direct access to vectors, so we'd normally track this separately
-        # Here, we'll just return None for the vector as an example
+        # HNSW doesn't provide direct access to vectors
         return (None, meta)
     
     def save(self, path: str) -> None:
-        """
-        Save the vector store to disk.
-        
-        Args:
-            path: Directory path to save to
-        """
         os.makedirs(path, exist_ok=True)
         
         # Save index
@@ -263,15 +267,6 @@ class VectorStore:
             json.dump(category_dict, f)
     
     def load(self, path: str) -> bool:
-        """
-        Load the vector store from disk.
-        
-        Args:
-            path: Directory path to load from
-            
-        Returns:
-            True if loaded successfully, False otherwise
-        """
         try:
             # Load mappings and metadata
             with open(os.path.join(path, "vector_mappings.json"), "r") as f:
@@ -297,16 +292,10 @@ class VectorStore:
             
             return True
         except Exception as e:
-            print(f"Error loading vector store: {e}")
+            print(f"Error loading HNSW vector store: {e}")
             return False
     
     def get_stats(self) -> Dict[str, Any]:
-        """
-        Get statistics about the vector store.
-        
-        Returns:
-            Dictionary of statistics
-        """
         return {
             "vector_count": self.vector_count,
             "dim": self.dim,

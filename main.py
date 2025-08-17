@@ -283,6 +283,47 @@ async def modern_chat():
             status_code=404
         )
 
+# Enhanced Agent Chat endpoint
+@app.get("/chat/enhanced", response_class=HTMLResponse, tags=["Demo"])
+async def enhanced_agent_chat():
+    """
+    🚀 NIS Protocol Enhanced Agent Chat Interface
+    
+    Professional-grade chat interface featuring:
+    - Tool calls visualization inspired by Agno Agent UI
+    - Reasoning steps display for transparent AI thinking
+    - References and sources support for credible information
+    - Artifacts side panel for interactive content (LangChain style)
+    - Modern design combining best of Agno and LangChain UIs
+    - Real-time streaming with enhanced feedback
+    
+    Access at: http://localhost:8000/chat/enhanced
+    """
+    try:
+        with open("static/enhanced_agent_chat.html", "r", encoding="utf-8") as f:
+            return HTMLResponse(content=f.read())
+    except FileNotFoundError:
+        return HTMLResponse(
+            content="""
+            <html>
+                <body>
+                    <h1>Enhanced Agent Chat Not Found</h1>
+                    <p>The enhanced agent chat file is missing. Please ensure static/enhanced_agent_chat.html exists.</p>
+                    <p><a href="/console">Go to Classic Chat</a></p>
+                    <p><a href="/chat/formatted">Go to Modern Chat</a></p>
+                    <p><a href="/docs">Go to API Documentation</a></p>
+                </body>
+            </html>
+            """,
+            status_code=404
+        )
+
+# Alternative route for consistency
+@app.get("/chat/formatted", response_class=HTMLResponse, tags=["Demo"])
+async def formatted_chat():
+    """Alternative route for modern chat - redirects to modern-chat"""
+    return await modern_chat()
+
 async def initialize_system():
     """Initialize the NIS Protocol system - can be called manually for testing."""
     global llm_provider, web_search_agent, simulation_coordinator, learning_agent, conscious_agent, planning_system, curiosity_engine, ethical_reasoner, scenario_simulator, anthropic_executor, bitnet_trainer, laplace, kan, pinn, coordinator, consciousness_service, protocol_bridge, vision_agent, research_agent, reasoning_chain, document_agent, enhanced_chat_memory
@@ -1825,6 +1866,7 @@ async def read_root():
             "api_docs": "/docs",
             "health_check": "/health",
             "formatted_chat": "/chat/formatted",
+            "enhanced_agent_chat": "/chat/enhanced",
             "vision_analysis": "/vision/analyze",
             "image_generation": "/image/generate",
             "image_editing": "/image/edit",

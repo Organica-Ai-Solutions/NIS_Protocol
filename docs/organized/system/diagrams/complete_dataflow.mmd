@@ -1,0 +1,141 @@
+graph TD
+    subgraph "🌐 External Interfaces"
+        A[👤 User via API/Chat]
+        A1[🔌 Third-Party Protocols]
+        A2[🌍 Web Search APIs]
+    end
+
+    subgraph "⚡ Web Server (FastAPI + Nginx)"
+        B[🛡️ API Endpoints]
+        B1[📊 /metrics]
+        B2[💬 /chat/stream]
+        B3[🧠 /agents/*]
+        B4[🧪 /simulation/*]
+        C[🔄 Request/Response Handler]
+    end
+
+    subgraph "🎯 Unified Coordination Layer"
+        D[🎪 UnifiedCoordinator]
+        D1[🧪 Scientific Pipeline]
+        D2[🤖 Agent Management]
+        D3[🏗️ Infrastructure Control]
+        D4[🧠 Meta Protocol Bridge]
+    end
+
+    subgraph "🧠 Core Intelligence"
+        E[🎛️ LLM Manager]
+        E1[🤖 OpenAI Provider]
+        E2[🎭 Anthropic Provider]
+        E3[🚀 DeepSeek Provider]
+        E4[⚡ BitNet Provider]
+        E5[🎪 Cognitive Orchestra]
+        F[🗂️ Agent Router]
+        G[🧠 Memory Manager]
+        H[🔗 Symbolic Bridge]
+    end
+
+    subgraph "🧪 Mathematical Pipeline (Laplace→KAN→PINN)"
+        I[📡 Unified Signal Agent]
+        I1[📊 Laplace Transform]
+        I2[🔍 Signal Processing]
+        J[🧮 Unified Reasoning Agent]
+        J1[🕸️ KAN Networks]
+        J2[🧠 Symbolic Reasoning]
+        K[⚗️ Unified Physics Agent]
+        K1[📐 PINN Validation]
+        K2[🔬 Physics Laws]
+    end
+
+    subgraph "🏗️ Infrastructure Layer"
+        L[📨 Kafka Streaming]
+        M[💾 Redis Cache]
+        N[🗄️ PostgreSQL]
+        O[📊 Monitoring]
+    end
+
+    subgraph "🤖 Specialized Agents"
+        P[😊 Emotion Agent]
+        Q[🎯 Goals Agent] 
+        R[🧪 Curiosity Agent]
+        S[⚖️ Ethics Agent]
+        T[💭 Memory Agent]
+        U[👁️ Vision Agent]
+        V[🔧 Engineering Agents]
+    end
+
+    %% Main Flow
+    A --> B
+    A1 --> B
+    A2 --> B
+    B --> C
+    C --> D
+    
+    %% Coordination Flow
+    D --> E
+    D --> F
+    D --> G
+    D --> H
+    
+    %% Mathematical Pipeline Flow
+    D --> I
+    I --> J
+    J --> K
+    
+    %% Signal Processing Details
+    I1 -.-> I2
+    I2 --> J1
+    J1 -.-> J2
+    J2 --> K1
+    K1 -.-> K2
+    
+    %% LLM Provider Management
+    E --> E1
+    E --> E2
+    E --> E3
+    E --> E4
+    E5 --> E1
+    E5 --> E2
+    E5 --> E3
+    
+    %% Agent Routing
+    F --> P
+    F --> Q
+    F --> R
+    F --> S
+    F --> T
+    F --> U
+    F --> V
+    
+    %% Infrastructure Connections
+    D --> L
+    G --> M
+    G --> N
+    D --> O
+    
+    %% Feedback Loops
+    K --> D
+    P --> F
+    Q --> F
+    R --> F
+    S --> F
+    T --> G
+    U --> F
+    V --> F
+    
+    %% Response Flow
+    D --> C
+    C --> B
+    B --> A
+
+    %% Styling
+    classDef coordinator fill:#ff9999,stroke:#333,stroke-width:3px
+    classDef mathPipeline fill:#99ccff,stroke:#333,stroke-width:2px
+    classDef infrastructure fill:#99ff99,stroke:#333,stroke-width:2px
+    classDef agents fill:#ffcc99,stroke:#333,stroke-width:2px
+    classDef llm fill:#cc99ff,stroke:#333,stroke-width:2px
+    
+    class D,D1,D2,D3,D4 coordinator
+    class I,I1,I2,J,J1,J2,K,K1,K2 mathPipeline
+    class L,M,N,O infrastructure
+    class P,Q,R,S,T,U,V agents
+    class E,E1,E2,E3,E4,E5 llm
