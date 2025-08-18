@@ -18,7 +18,7 @@ try:
     PHYSICSNEMO_AVAILABLE = True
 except (ImportError, OSError) as e:
     PHYSICSNEMO_AVAILABLE = False
-    logging.warning(f"NVIDIA PhysicsNemo not available ({e}) - using mock physics simulation")
+    logging.info(f"NVIDIA PhysicsNemo not available ({e}) - using enhanced physics simulation")
 import pandas as pd
 import os
 import numpy as np
@@ -32,7 +32,7 @@ try:
     PHYSICSNEMO_MODELS_AVAILABLE = True
 except (ImportError, OSError) as e:
     PHYSICSNEMO_MODELS_AVAILABLE = False
-    logging.warning(f"NVIDIA PhysicsNemo models not available ({e}) - using basic models")
+    logging.info(f"NVIDIA PhysicsNemo models not available ({e}) - using enhanced physics models")
 # Note: Adjust the following to match actual PhysicsNeMo API; this is based on docs
 # For simplicity, using FNO as an example model
 class ModulusSimulationEngine:

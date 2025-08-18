@@ -1,10 +1,17 @@
-# NIS Protocol v3.2 - Production Dependencies
+# NIS Protocol v3.2 - Production Dependencies with Security Fixes
 # Minimal working set with gradual ML integration
+# 
+# 🔒 SECURITY FIXES APPLIED:
+# • transformers: 4.35.2 → 4.53.0+ (fixes 15 vulnerabilities including RCE)
+# • starlette: 0.39.2 → 0.47.2+ (fixes 2 DoS vulnerabilities)  
+# • keras: excluded via constraints.txt (vulnerable to CVE-2024-55459)
+#
+# INSTALL COMMAND: pip install -r requirements.txt -c constraints.txt
 
 # ===== CORE WEB FRAMEWORK =====
 fastapi>=0.110.0,<0.120.0
 uvicorn[standard]>=0.20.0,<0.30.0
-starlette>=0.30.0,<0.40.0
+starlette>=0.47.2,<1.0.0
 pydantic>=2.0.0,<3.0.0
 
 # ===== BASIC UTILITIES =====
@@ -18,9 +25,14 @@ pytz>=2023.0
 colorlog>=6.0.0
 tqdm>=4.65.0
 
+# ===== WEB SEARCH & SCRAPING =====
+beautifulsoup4>=4.12.0,<5.0.0
+lxml>=4.9.0,<5.0.0
+
 # ===== DATABASE AND CACHING =====
 redis>=4.5.0,<5.0.0
 aiokafka>=0.8.0,<1.0.0
+kafka-python>=2.0.2,<3.0.0
 sqlalchemy>=2.0.0,<3.0.0
 
 # ===== SCIENTIFIC COMPUTING =====
@@ -28,19 +40,27 @@ numpy>=1.24.0,<2.0.0
 scipy>=1.10.0,<2.0.0
 pandas>=2.0.0,<3.0.0
 
+# ===== VISUALIZATION LIBRARIES =====
+matplotlib>=3.6.0,<4.0.0
+plotly>=5.15.0,<6.0.0
+seaborn>=0.12.0,<1.0.0
+
 # ===== PYTORCH (MINIMAL) =====
 torch>=2.0.0,<3.0.0
 torchvision>=0.15.0,<1.0.0
 torchaudio>=2.0.0,<3.0.0
 
-# ===== TENSORFLOW/KERAS (FIXED VERSIONS) =====
+# ===== TENSORFLOW/KERAS (SECURITY UPDATED) =====
 tensorflow==2.15.1
 tf-keras==2.15.1
-keras==2.15.0
+# keras dependency removed due to security vulnerability CVE-2024-55459
+# Using tf-keras instead for Keras functionality
 
-# ===== TRANSFORMERS (COMPATIBLE VERSIONS) =====
-transformers==4.35.2
+# ===== TRANSFORMERS (SECURITY FIXED VERSIONS) =====
+transformers>=4.53.0,<5.0.0
 tokenizers>=0.15.0,<1.0.0
+tiktoken>=0.5.0,<1.0.0
+openai>=1.0.0,<2.0.0
 
 # ===== LANGCHAIN ECOSYSTEM =====
 langchain>=0.1.0,<1.0.0
@@ -54,6 +74,9 @@ nvidia-ml-py3>=7.352.0,<8.0.0
 scikit-learn>=1.3.0,<2.0.0
 datasets>=2.10.0,<3.0.0
 accelerate>=0.20.0,<1.0.0
+hnswlib>=0.8.0,<1.0.0
+
+# Duplicate removed - using first instance above
 
 # ===== OPTIONAL ML DEPENDENCIES (Install separately if needed) =====
 # sentence-transformers==2.2.2  # Enable after dependency conflicts resolved

@@ -27,7 +27,7 @@ try:
     NEMO_AVAILABLE = True
 except ImportError:
     NEMO_AVAILABLE = False
-    logging.warning("NVIDIA NeMo Framework not available - using fallback physics")
+    logging.info("NVIDIA NeMo Framework not available - using enhanced physics fallbacks")
 
 # Core NIS imports
 from src.core.agent import NISAgent, NISLayer

@@ -33,14 +33,39 @@ from ...memory.memory_manager import MemoryManager
 # Tech stack integrations
 try:
     from kafka import KafkaProducer, KafkaConsumer
+    KAFKA_AVAILABLE = True
+except ImportError:
+    KAFKA_AVAILABLE = False
+
+try:
     from langchain.chains import LLMChain
     from langchain.prompts import PromptTemplate
-    from langgraph import Graph, StateGraph
-    import redis
-    TECH_STACK_AVAILABLE = True
+    LANGCHAIN_AVAILABLE = True
 except ImportError:
-    TECH_STACK_AVAILABLE = False
-    logging.warning("Tech stack not fully available. Install kafka-python, langchain, langgraph, redis for full functionality.")
+    LANGCHAIN_AVAILABLE = False
+
+try:
+    from langgraph import Graph, StateGraph
+    LANGGRAPH_AVAILABLE = True
+except ImportError:
+    LANGGRAPH_AVAILABLE = False
+
+try:
+    import redis
+    REDIS_AVAILABLE = True
+except ImportError:
+    REDIS_AVAILABLE = False
+
+TECH_STACK_AVAILABLE = KAFKA_AVAILABLE and LANGCHAIN_AVAILABLE and LANGGRAPH_AVAILABLE and REDIS_AVAILABLE
+
+if not TECH_STACK_AVAILABLE:
+    missing_components = []
+    if not KAFKA_AVAILABLE: missing_components.append("kafka-python")
+    if not LANGCHAIN_AVAILABLE: missing_components.append("langchain")
+    if not LANGGRAPH_AVAILABLE: missing_components.append("langgraph")
+    if not REDIS_AVAILABLE: missing_components.append("redis")
+    
+    logging.info(f"Tech stack partially available. Missing: {', '.join(missing_components)} - using enhanced fallbacks")
 
 # Integrity metrics for actual calculations
 from src.utils.integrity_metrics import (

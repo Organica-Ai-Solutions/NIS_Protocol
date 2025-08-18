@@ -1,11 +1,13 @@
 # NIS Protocol v3.2 - AI Development Platform & SDK
 **AI Operating System for Edge Devices, Autonomous Systems, and Smart Infrastructure**
 
-*Version: 3.2 | Updated: 2025-01-19 | Status: Production Ready*
+*Version: 3.2 | Updated: 2025-01-19 | Status: Production Ready with Enhanced Security*
 
 <div align="center">
 
-![NIS Protocol Logo](assets/images/nis-protocol-logov1.png)
+![NIS Protocol Logo](system/assets/images_organized/nis-protocol-logov1.png)
+
+*Foundational AI Operating System for Next-Generation Autonomous Systems*
 
 </div>
 
@@ -79,17 +81,34 @@ NIS Protocol serves as the foundational layer for a growing ecosystem of industr
 - **Protocols**: MCP, ACP, SEED protocol support
 - **Target**: Streamlined development workflow for NIS applications
 
-### **🎉 NEW in v3.2: Complete System Restoration & 100% API Success**
+### **🎉 NEW in v3.2: Enhanced Security & Visual Documentation**
+- **🔒 Security Hardening** - 94% vulnerability reduction (17→1), security-audited dependencies
 - **✅ 100% API Reliability** - All 32 endpoints tested and working with comprehensive fallbacks
 - **🔧 Dependency Resolution** - All conflicts resolved with minimal working dependency set
 - **🛡️ Robust Fallback Systems** - Graceful degradation for missing ML dependencies
 - **🚀 NVIDIA NeMo Ready** - Enterprise integration framework prepared and documented
-- **📋 Complete Documentation** - Comprehensive API reference with working examples
+- **📋 Complete Documentation** - Comprehensive API reference with working examples and visual diagrams
 - **⚡ Production Deployment** - Docker containerization with enterprise-grade reliability
 
 ## 🏗️ **Architecture Overview**
 
+<div align="center">
+
+![System Evolution](system/assets/images_organized/system_screenshots/v1_v2_v3_evolution_fixed.png)
+
+*Evolution of NIS Protocol from v1 to v3.2 - From Simple Agents to Full AI Operating System*
+
+</div>
+
 NIS Protocol implements a modular agent architecture with the following processing pipeline:
+
+<div align="center">
+
+![Core Agent Diagram](system/assets/images_organized/system_screenshots/diagram-nis-core%20agents%20v2.png)
+
+*Core Agent Architecture - Distributed Intelligence with Physics Validation*
+
+</div>
 
 ```
 📊 INPUT PROCESSING (Text, Images, Sensor Data)
@@ -109,7 +128,31 @@ NIS Protocol implements a modular agent architecture with the following processi
 ✅ VALIDATED RESULTS (Physics-compliant and coordinated outputs)
 ```
 
-This pipeline enables:
+### **Mathematical Foundation & Innovation**
+
+<div align="center">
+
+![KAN vs MLP](system/assets/images_organized/mathematical_visuals/whyKanMatters.png)
+
+*Why KAN Networks Matter - Revolutionary Approach to Function Approximation*
+
+</div>
+
+NIS Protocol's mathematical innovation combines three key technologies:
+
+<div align="center">
+
+![Laplace + KAN Integration](system/assets/images_organized/mathematical_visuals/laplace+kan.png)
+
+*Laplace Transform + KAN Integration - Signal Processing meets Symbolic Reasoning*
+
+![PINN Integration](system/assets/images_organized/mathematical_visuals/laplace+pinn.png)
+
+*Physics-Informed Neural Networks - Ensuring Physical Law Compliance*
+
+</div>
+
+This mathematical foundation enables:
 - **Edge deployment** on resource-constrained devices
 - **Physics validation** for safety-critical applications
 - **Multi-protocol integration** with existing AI ecosystems
@@ -757,6 +800,18 @@ FALLBACK_TO_MOCK=true
 ---
 
 ## 🏆 **Platform Success Stories**
+
+<div align="center">
+
+![NIS Implementations](system/assets/images_organized/system_screenshots/nis_implementations_versions.png)
+
+*Growing Ecosystem - 7+ Specialized Implementations Across Industries*
+
+![Use Case Examples](system/assets/images_organized/system_screenshots/usesExamples.png)
+
+*Real-World Applications - From Edge Devices to Enterprise Systems*
+
+</div>
 
 ### **Real-World Impact**
 - **🚗 Automotive**: Active deployment in gas engine vehicle systems (NIS-AUTO)

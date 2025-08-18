@@ -132,7 +132,7 @@ class PDESolver(ABC):
             return torch.autograd.grad(
                 outputs=u, inputs=x,
                 grad_outputs=torch.ones_like(u),
-                create_graph=True, retain_graph=True
+                create_graph=True, retain_graph=True, allow_unused=True
             )[0]
         elif order == 2:
             # Second derivative
@@ -140,7 +140,7 @@ class PDESolver(ABC):
             u_xx = torch.autograd.grad(
                 outputs=u_x, inputs=x,
                 grad_outputs=torch.ones_like(u_x),
-                create_graph=True, retain_graph=True
+                create_graph=True, retain_graph=True, allow_unused=True
             )[0]
             return u_xx
         else:
@@ -170,19 +170,19 @@ class HeatEquationSolver(PDESolver):
         u_t = torch.autograd.grad(
             outputs=u, inputs=t_coord,
             grad_outputs=torch.ones_like(u),
-            create_graph=True, retain_graph=True
+            create_graph=True, retain_graph=True, allow_unused=True
         )[0]
         
         u_x = torch.autograd.grad(
             outputs=u, inputs=x_coord,
             grad_outputs=torch.ones_like(u),
-            create_graph=True, retain_graph=True
+            create_graph=True, retain_graph=True, allow_unused=True
         )[0]
         
         u_xx = torch.autograd.grad(
             outputs=u_x, inputs=x_coord,
             grad_outputs=torch.ones_like(u_x),
-            create_graph=True, retain_graph=True
+            create_graph=True, retain_graph=True, allow_unused=True
         )[0]
         
         # Heat equation residual: ∂u/∂t - α * ∂²u/∂x²

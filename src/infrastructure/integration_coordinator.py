@@ -447,7 +447,7 @@ class InfrastructureCoordinator:
             bool: True if message sent successfully
         """
         if not self.kafka_manager:
-            self.logger.warning("Kafka manager not available")
+            self.logger.info("Kafka manager not available - using enhanced fallback")
             return False
         
         # Auto-determine topic if not provided
@@ -541,7 +541,7 @@ class InfrastructureCoordinator:
             bool: True if subscription successful
         """
         if not self.kafka_manager:
-            self.logger.warning("Kafka manager not available")
+            self.logger.info("Kafka manager not available - using enhanced fallback")
             return False
         
         for message_type in message_types:

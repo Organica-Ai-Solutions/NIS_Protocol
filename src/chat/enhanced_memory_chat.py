@@ -239,7 +239,7 @@ class EnhancedChatMemory:
         # Generate embedding if memory agent is available
         if self.memory_agent and hasattr(self.memory_agent, 'embedding_provider'):
             try:
-                embedding = await self.memory_agent.embedding_provider.get_embedding(content)
+                embedding = self.memory_agent.embedding_provider.get_embedding(content)
                 msg.embedding = embedding.tolist() if isinstance(embedding, np.ndarray) else embedding
             except Exception as e:
                 print(f"Warning: Could not generate embedding: {e}")
@@ -365,7 +365,7 @@ class EnhancedChatMemory:
         
         try:
             # Generate embedding for the query
-            query_embedding = await self.memory_agent.embedding_provider.get_embedding(query)
+            query_embedding = self.memory_agent.embedding_provider.get_embedding(query)
             if isinstance(query_embedding, np.ndarray):
                 query_embedding = query_embedding.tolist()
             
@@ -642,7 +642,7 @@ class EnhancedChatMemory:
         """Perform semantic search across conversations."""
         
         try:
-            query_embedding = await self.memory_agent.embedding_provider.get_embedding(query)
+            query_embedding = self.memory_agent.embedding_provider.get_embedding(query)
             if isinstance(query_embedding, np.ndarray):
                 query_embedding = query_embedding.tolist()
             

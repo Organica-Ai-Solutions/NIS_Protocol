@@ -67,7 +67,15 @@ class ConsciousAgent(NISAgent):
         # Meta-cognitive state
         self.current_focus: Optional[str] = None
         self.reflection_queue: List[Dict[str, Any]] = []
-        self.confidence_threshold = calculate_confidence([0.7, 0.8, 0.6])  # Dynamic based on factors
+        self.confidence_threshold = calculate_confidence([0.7, 0.8, 0.6])          # Dynamic based on factors
+        
+        # Initialize emotional state tracking
+        self.emotional_state = {
+            'stability': 0.8,
+            'confidence_level': 0.7,
+            'processing_satisfaction': 0.75,
+            'system_stress': 0.3
+        }
         
         self.logger.info(f"Initialized {self.__class__.__name__}")
     
@@ -1134,4 +1142,45 @@ class ConsciousAgent(NISAgent):
                 "success_rate": 0.85,
                 "errors": [],
                 "error": f"Collection failed: {str(e)}"
-            } 
+            }
+    
+    def _assess_emotional_impact(self, result: Dict[str, Any]) -> Dict[str, Any]:
+        """Assess emotional impact of processing results and update emotional state."""
+        try:
+            # Analyze the processing result for emotional indicators
+            success = result.get("status") == "success"
+            confidence = result.get("confidence", 0.5)
+            error_present = "error" in result
+            
+            # Calculate emotional response factors
+            satisfaction_factor = 0.8 if success else 0.3
+            confidence_factor = min(1.0, confidence * 1.2)
+            stress_factor = 0.7 if error_present else 0.2
+            
+            # Update emotional state
+            self.emotional_state['processing_satisfaction'] = (
+                0.7 * self.emotional_state['processing_satisfaction'] + 
+                0.3 * satisfaction_factor
+            )
+            self.emotional_state['confidence_level'] = (
+                0.8 * self.emotional_state['confidence_level'] + 
+                0.2 * confidence_factor
+            )
+            self.emotional_state['system_stress'] = (
+                0.6 * self.emotional_state['system_stress'] + 
+                0.4 * stress_factor
+            )
+            
+            # Recalculate stability based on current state
+            stability = (
+                self.emotional_state['processing_satisfaction'] * 0.4 +
+                self.emotional_state['confidence_level'] * 0.3 +
+                (1.0 - self.emotional_state['system_stress']) * 0.3
+            )
+            self.emotional_state['stability'] = stability
+            
+            return self.emotional_state
+            
+        except Exception as e:
+            self.logger.error(f"Emotional impact assessment failed: {e}")
+            return self.emotional_state 

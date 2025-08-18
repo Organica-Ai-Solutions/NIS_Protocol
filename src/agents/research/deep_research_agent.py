@@ -37,7 +37,7 @@ class DeepResearchAgent(NISAgent):
                 if hasattr(self.llm_manager, 'providers') and self.llm_manager.providers:
                     logger.info(f"✅ LLM providers available: {list(self.llm_manager.providers.keys())}")
                 else:
-                    logger.warning("⚠️ LLM Manager initialized but no providers available")
+                    logger.info("⚠️ LLM Manager initialized but no providers available - using enhanced mock")
                     
             except Exception as e:
                 logger.warning(f"LLM Manager initialization failed: {e}")

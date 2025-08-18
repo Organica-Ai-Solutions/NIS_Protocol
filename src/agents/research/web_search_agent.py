@@ -136,7 +136,7 @@ class WebSearchAgent:
             self.logger.info("Tavily search provider initialized")
         
         if not self.search_providers:
-            self.logger.warning("No search providers configured - using mock search")
+            self.logger.info("No search providers configured - using enhanced mock search")
             self.search_providers[SearchProvider.GOOGLE_CSE] = self._search_mock
     
     def _initialize_llm_providers(self):

@@ -1,62 +1,43 @@
 {
   "add_bos_token": true,
   "add_eos_token": false,
-  "add_prefix_space": true,
-  "added_tokens_decoder": {
-    "0": {
-      "content": "<unk>",
-      "lstrip": false,
-      "normalized": false,
-      "rstrip": false,
-      "single_word": false,
-      "special": true
-    },
-    "1": {
-      "content": "<s>",
-      "lstrip": false,
-      "normalized": false,
-      "rstrip": false,
-      "single_word": false,
-      "special": true
-    },
-    "2": {
-      "content": "</s>",
-      "lstrip": false,
-      "normalized": false,
-      "rstrip": false,
-      "single_word": false,
-      "special": true
-    },
-    "32000": {
-      "content": "<pad>",
-      "lstrip": false,
-      "normalized": false,
-      "rstrip": false,
-      "single_word": false,
-      "special": true
-    },
-    "32001": {
-      "content": "</line>",
-      "lstrip": false,
-      "normalized": false,
-      "rstrip": false,
-      "single_word": false,
-      "special": true
-    }
+  "bos_token": {
+    "__type": "AddedToken",
+    "content": "<s>",
+    "lstrip": false,
+    "normalized": false,
+    "rstrip": false,
+    "single_word": false
   },
-  "additional_special_tokens": [
-    "</line>"
-  ],
-  "bos_token": "<s>",
+  "chat_template": "{% for message in messages %}\n{% if message['role'] == 'user' %}\n{{ '<|user|>\n' + message['content'] + eos_token }}\n{% elif message['role'] == 'system' %}\n{{ '<|system|>\n' + message['content'] + eos_token }}\n{% elif message['role'] == 'assistant' %}\n{{ '<|assistant|>\n'  + message['content'] + eos_token }}\n{% endif %}\n{% if loop.last and add_generation_prompt %}\n{{ '<|assistant|>' }}\n{% endif %}\n{% endfor %}",
   "clean_up_tokenization_spaces": false,
-  "eos_token": "</s>",
-  "legacy": false,
-  "model_max_length": 1000000000000000019884624838656,
-  "pad_token": "<pad>",
-  "padding_side": "right",
+  "eos_token": {
+    "__type": "AddedToken",
+    "content": "</s>",
+    "lstrip": false,
+    "normalized": false,
+    "rstrip": false,
+    "single_word": false
+  },
+  "legacy": true,
+  "model_max_length": 4096,
+  "pad_token": {
+    "__type": "AddedToken",
+    "content": "<unk>",
+    "lstrip": false,
+    "normalized": false,
+    "rstrip": false,
+    "single_word": false
+  },
   "sp_model_kwargs": {},
-  "spaces_between_special_tokens": false,
-  "tokenizer_class": "BitnetTokenizer",
-  "unk_token": "<unk>",
+  "tokenizer_class": "LlamaTokenizer",
+  "unk_token": {
+    "__type": "AddedToken",
+    "content": "<unk>",
+    "lstrip": false,
+    "normalized": false,
+    "rstrip": false,
+    "single_word": false
+  },
   "use_default_system_prompt": false
 }

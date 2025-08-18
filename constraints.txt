@@ -1,0 +1,6 @@
+# Security constraints for NIS Protocol v3.3
+# Exclude vulnerable packages that are transitive dependencies
+
+# EXCLUDE: keras due to CVE-2024-55459 (file download vulnerability)
+# Use tf-keras instead for Keras functionality
+keras<0.0.0

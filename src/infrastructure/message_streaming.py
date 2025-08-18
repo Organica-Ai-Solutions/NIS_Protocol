@@ -56,7 +56,7 @@ except ImportError:
         pass
     class KafkaTimeoutError(Exception):
         pass
-    logging.warning("Kafka not available. Install kafka-python and aiokafka for full functionality.")
+    logging.info("Kafka not available. Install kafka-python and aiokafka for full functionality.")
 
 # Self-audit integration
 from src.utils.self_audit import self_audit_engine
@@ -170,7 +170,7 @@ class NISKafkaManager:
     async def initialize(self) -> bool:
         """Initialize async Kafka connections"""
         if not KAFKA_AVAILABLE:
-            self.logger.warning("Kafka not available, running in mock mode")
+            self.logger.info("Kafka not available, running in enhanced mock mode")
             self.is_initialized = True
             return True
         

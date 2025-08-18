@@ -13,9 +13,14 @@ Enhanced Features:
 - Integration with existing vector store infrastructure
 """
 
-# import torch
-# import torch.nn as nn
-# import torch.optim as optim
+# PyTorch for LSTM functionality
+try:
+    import torch
+    import torch.nn as nn
+    import torch.optim as optim
+    TORCH_AVAILABLE = True
+except ImportError:
+    TORCH_AVAILABLE = False
 import numpy as np
 import time
 import logging
@@ -107,73 +112,97 @@ class LSTMMemoryState:
 #         return context_vector, attention_weights
 
 
-# class LSTMMemoryNetwork(nn.Module):
-#     """
-#     LSTM Memory Network
-#     
-#     Core neural network for processing and predicting memory sequences.
-#     """
-#     
-#     def __init__(self, input_dim: int, hidden_dim: int, output_dim: int, num_layers: int, bidirectional: bool):
-#         super(LSTMMemoryNetwork, self).__init__()
-#         
-#         self.hidden_dim = hidden_dim
-#         self.num_layers = num_layers
-#         self.bidirectional = bidirectional
-#         
-#         # LSTM layer
-#         self.lstm = nn.LSTM(
-#             input_size=input_dim,
-#             hidden_size=hidden_dim,
-#             num_layers=num_layers,
-#             batch_first=True,
-#             bidirectional=bidirectional
-#         )
-#         
-#         # Attention mechanism
-#         lstm_output_dim = hidden_dim * 2 if bidirectional else hidden_dim
-#         # self.attention = TemporalAttentionMechanism(lstm_output_dim, input_dim) # This line was commented out
-#         
-#         # Output layers
-#         self.memory_predictor = nn.Linear(lstm_output_dim, output_dim)
-#         self.importance_predictor = nn.Linear(lstm_output_dim, 1)
-#         self.consolidation_predictor = nn.Linear(lstm_output_dim, 1)
-#         self.sigmoid = nn.Sigmoid()
-#         
-#     def forward(self, memory_sequences: torch.Tensor) -> Dict[str, torch.Tensor]:
-#         """
-#         Forward pass through LSTM network.
-#         
-#         Args:
-#             memory_sequences: Batch of memory sequences [batch_size, seq_len, input_dim]
-#             
-#         Returns:
-#             Dictionary of prediction results
-#         """
-#         # LSTM forward pass
-#         lstm_output, (hidden_state, cell_state) = self.lstm(memory_sequences)
-#         
-#         # Apply attention mechanism
-#         # context_vector, attention_weights = self.attention( # This line was commented out
-#         #     hidden_state[-1] if not self.bidirectional else torch.cat([hidden_state[-2], hidden_state[-1]], dim=-1),
-#         #     memory_sequences
-#         # )
-#         
-#         # Predictions
-#         next_memory = self.memory_predictor(lstm_output) # This line was commented out
-#         importance_scores = self.sigmoid(self.importance_predictor(lstm_output))
-#         consolidation_scores = self.sigmoid(self.consolidation_predictor(lstm_output))
-#         
-#         return {
-#             'hidden_state': hidden_state,
-#             'cell_state': cell_state,
-#             # 'context_vector': context_vector, # This line was commented out
-#             # 'attention_weights': attention_weights, # This line was commented out
-#             'next_memory_prediction': next_memory,
-#             'importance_scores': importance_scores,
-#             'consolidation_scores': consolidation_scores,
-#             'raw_lstm_output': lstm_output
-#         }
+class LSTMMemoryNetwork:
+    """
+    LSTM Memory Network - Fallback implementation for when PyTorch is not available
+    
+    Provides basic sequence modeling without neural networks
+    """
+    
+    def __init__(self, input_dim: int, hidden_dim: int, num_layers: int = 2, **kwargs):
+        self.input_dim = input_dim
+        self.hidden_dim = hidden_dim
+        self.num_layers = num_layers
+        
+        # Fallback state tracking
+        self.sequence_history = []
+        self.importance_weights = {}
+        
+    def forward(self, memory_sequences):
+        """Simple fallback forward pass"""
+        return {
+            'hidden_state': None,
+            'cell_state': None,
+            'next_memory_prediction': memory_sequences,  # Simple passthrough
+            'importance_scores': [0.5] * len(memory_sequences) if hasattr(memory_sequences, '__len__') else [0.5],
+            'consolidation_scores': [0.5] * len(memory_sequences) if hasattr(memory_sequences, '__len__') else [0.5],
+            'raw_lstm_output': memory_sequences
+        }
+    
+    def parameters(self):
+        """Fallback parameters method"""
+        return []
+
+
+# Real PyTorch implementation when available
+if TORCH_AVAILABLE:
+    class LSTMMemoryNetwork(nn.Module):
+        """
+        LSTM Memory Network - Real PyTorch implementation
+        
+        Core neural network for processing and predicting memory sequences.
+        """
+        
+        def __init__(self, input_dim: int, hidden_dim: int, num_layers: int = 2, output_dim: int = None, bidirectional: bool = False):
+            super(LSTMMemoryNetwork, self).__init__()
+            
+            self.hidden_dim = hidden_dim
+            self.num_layers = num_layers
+            self.bidirectional = bidirectional
+            output_dim = output_dim or input_dim
+            
+            # LSTM layer
+            self.lstm = nn.LSTM(
+                input_size=input_dim,
+                hidden_size=hidden_dim,
+                num_layers=num_layers,
+                batch_first=True,
+                bidirectional=bidirectional
+            )
+            
+            # Output layers
+            lstm_output_dim = hidden_dim * 2 if bidirectional else hidden_dim
+            self.memory_predictor = nn.Linear(lstm_output_dim, output_dim)
+            self.importance_predictor = nn.Linear(lstm_output_dim, 1)
+            self.consolidation_predictor = nn.Linear(lstm_output_dim, 1)
+            self.sigmoid = nn.Sigmoid()
+            
+        def forward(self, memory_sequences: torch.Tensor) -> Dict[str, torch.Tensor]:
+            """
+            Forward pass through LSTM network.
+            
+            Args:
+                memory_sequences: Batch of memory sequences [batch_size, seq_len, input_dim]
+                
+            Returns:
+                Dictionary of prediction results
+            """
+            # LSTM forward pass
+            lstm_output, (hidden_state, cell_state) = self.lstm(memory_sequences)
+            
+            # Predictions
+            next_memory = self.memory_predictor(lstm_output)
+            importance_scores = self.sigmoid(self.importance_predictor(lstm_output))
+            consolidation_scores = self.sigmoid(self.consolidation_predictor(lstm_output))
+            
+            return {
+                'hidden_state': hidden_state,
+                'cell_state': cell_state,
+                'next_memory_prediction': next_memory,
+                'importance_scores': importance_scores,
+                'consolidation_scores': consolidation_scores,
+                'raw_lstm_output': lstm_output
+            }
 
 
 class LSTMMemoryCore:
@@ -205,18 +234,33 @@ class LSTMMemoryCore:
         self.hidden_dim = hidden_dim
         self.num_layers = num_layers
         self.max_sequence_length = max_sequence_length
-        self.device = torch.device(device)
         
-        # Initialize LSTM network
-        self.lstm_network = LSTMMemoryNetwork(
-            input_dim=memory_dim,
-            hidden_dim=hidden_dim,
-            num_layers=num_layers
-        ).to(self.device)
-        
-        # Optimizer
-        self.optimizer = optim.Adam(self.lstm_network.parameters(), lr=learning_rate)
-        self.criterion = nn.MSELoss()
+        if TORCH_AVAILABLE:
+            self.device = torch.device(device)
+            
+            # Initialize LSTM network
+            self.lstm_network = LSTMMemoryNetwork(
+                input_dim=memory_dim,
+                hidden_dim=hidden_dim,
+                num_layers=num_layers
+            ).to(self.device)
+            
+            # Optimizer
+            self.optimizer = optim.Adam(self.lstm_network.parameters(), lr=learning_rate)
+            self.criterion = nn.MSELoss()
+        else:
+            self.device = device  # String fallback
+            
+            # Fallback LSTM network
+            self.lstm_network = LSTMMemoryNetwork(
+                input_dim=memory_dim,
+                hidden_dim=hidden_dim,
+                num_layers=num_layers
+            )
+            
+            # Fallback optimizer and criterion
+            self.optimizer = None
+            self.criterion = None
         
         # Memory sequences storage
         self.memory_sequences: Dict[str, MemorySequence] = {}
@@ -413,6 +457,11 @@ class LSTMMemoryCore:
         if len(sequence.memories) < 3:
             return
         
+        if not TORCH_AVAILABLE:
+            # Fallback to simple sequence tracking without PyTorch
+            sequence.consolidation_level = min(1.0, sequence.consolidation_level + 0.1)
+            return
+            
         # Prepare training data
         memory_tensors = []
         for memory in sequence.memories:
