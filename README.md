@@ -632,24 +632,6 @@ curl -X GET http://localhost/chat/sessions
 curl -X GET http://localhost/chat/memory/user_123
 ```
 
-### **📊 Complete Test Suite**
-
-Run the comprehensive test suite to validate all functionality:
-
-    ```bash
-# Fresh rebuild and test everything
-./rebuild_and_test.sh
-python test_endpoints.py
-
-# Run specific component tests
-python tests/comprehensive_nis_test_suite.py --component consciousness
-python tests/comprehensive_nis_test_suite.py --component physics
-python tests/comprehensive_nis_test_suite.py --component benchmark
-
-# Generate detailed report
-python tests/comprehensive_nis_test_suite.py --output test_report.json
-```
-
 ### **📋 Postman Collections**
 
 Import the complete API collections for interactive testing:
@@ -799,19 +781,6 @@ FALLBACK_TO_MOCK=true
 
 ---
 
-## 🏆 **Platform Success Stories**
-
-<div align="center">
-
-![NIS Implementations](system/assets/images_organized/system_screenshots/nis_implementations_versions.png)
-
-*Growing Ecosystem - 7+ Specialized Implementations Across Industries*
-
-![Use Case Examples](system/assets/images_organized/system_screenshots/usesExamples.png)
-
-*Real-World Applications - From Edge Devices to Enterprise Systems*
-
-</div>
 
 ### **Real-World Impact**
 - **🚗 Automotive**: Active deployment in gas engine vehicle systems (NIS-AUTO)
