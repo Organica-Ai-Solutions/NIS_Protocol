@@ -276,9 +276,6 @@ nis serve --port 8000
 
 <div align="center">
 
-![Laplace + PINN Integration](assets/images/v3_mathematical_foundation/laplace+pinn.png)
-*Laplace Transform + PINN Physics: Signal processing meets physics validation*
-
 </div>
 
 #### **🤖 Multi-LLM Coordination**
