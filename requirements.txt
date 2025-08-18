@@ -4,6 +4,11 @@
 # 🔒 SECURITY FIXES APPLIED:
 # • transformers: 4.35.2 → 4.53.0+ (fixes 15 vulnerabilities including RCE)
 # • starlette: 0.39.2 → 0.47.2+ (fixes 2 DoS vulnerabilities)  
+# • cryptography: updated to 43.0.0+ (latest secure version)
+# • urllib3: updated to 2.2.3+ (fixes multiple CVEs)
+# • pillow: updated to 10.4.0+ (fixes image processing vulnerabilities)
+# • requests: updated to 2.32.0+ (fixes auth bypass vulnerabilities)
+# • aiohttp: updated to 3.11.14+ (latest stable with security fixes)
 # • keras: excluded via constraints.txt (vulnerable to CVE-2024-55459)
 #
 # INSTALL COMMAND: pip install -r requirements.txt -c constraints.txt
@@ -16,8 +21,8 @@ pydantic>=2.0.0,<3.0.0
 
 # ===== BASIC UTILITIES =====
 python-dotenv>=1.0.0
-requests>=2.30.0,<3.0.0
-aiohttp>=3.8.0,<4.0.0
+requests>=2.32.0,<3.0.0
+aiohttp>=3.11.14,<4.0.0
 aiofiles>=23.0.0
 click>=8.0.0
 python-dateutil>=2.8.0
@@ -87,8 +92,10 @@ pytest>=7.0.0,<8.0.0
 pytest-asyncio>=0.21.0,<1.0.0
 
 # ===== SECURITY AND AUTHENTICATION =====
-cryptography>=40.0.0,<50.0.0
+cryptography>=43.0.0,<50.0.0
 pyjwt>=2.8.0,<3.0.0
+urllib3>=2.2.3,<3.0.0
+pillow>=10.4.0,<11.0.0
 
 # ===== ADDITIONAL UTILITIES =====
 msgpack>=1.0.0,<2.0.0
