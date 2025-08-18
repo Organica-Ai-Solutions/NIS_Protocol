@@ -94,9 +94,6 @@ NIS Protocol serves as the foundational layer for a growing ecosystem of industr
 
 <div align="center">
 
-![System Evolution](system/assets/images_organized/system_screenshots/v1_v2_v3_evolution_fixed.png)
-
-*Evolution of NIS Protocol from v1 to v3.2 - From Simple Agents to Full AI Operating System*
 
 </div>
 
@@ -709,7 +706,7 @@ graph TD
 
 <div align="center">
 
-![Use Cases Examples](assets/images/usesExamples.png)
+
 *Real-world applications across industries: Engineering, Healthcare, Finance, Research*
 
 </div>
@@ -885,33 +882,6 @@ For commercial deployments and enterprise support:
 
 ---
 
-## 🚀 **What's Next?**
-
-### **🗓️ Roadmap 2025**
-
-#### **Q1 2025: Enhanced Physics**
-- ⚡ Quantum mechanics validation
-- 🌌 Relativistic constraint enforcement  
-- 🔬 Advanced materials science validation
-- 📊 Real-time constraint monitoring
-
-#### **Q2 2025: Consciousness 2.0**
-- 🧠 Advanced meta-cognitive architectures
-- 💭 Multi-layered awareness systems
-- 🤔 Enhanced introspection capabilities
-- 📈 Consciousness evolution tracking
-
-#### **Q3 2025: Enterprise Features**
-- 🏢 Enterprise-grade security and compliance
-- 📊 Advanced analytics and reporting
-- 🔗 Enterprise system integrations
-- ⚡ High-availability deployments
-
-#### **Q4 2025: Research Frontiers**
-- 🔬 AGI consciousness research
-- 🧮 Advanced mathematical reasoning
-- 🌐 Distributed consciousness networks
-- 🚀 Next-generation architecture
 
 
 ## 🌟 **Why Choose NIS Protocol?**
