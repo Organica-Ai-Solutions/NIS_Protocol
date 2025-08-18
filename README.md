@@ -255,8 +255,6 @@ nis serve --port 8000
 
 <div align="center">
 
-![KAN vs MLP](assets/images/v3_mathematical_foundation/whyKanMatters.png)
-*Why KAN Networks matter: Mathematical interpretability vs black-box MLPs*
 
 </div>
 
