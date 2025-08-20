@@ -46,14 +46,22 @@ class GoogleProvider(BaseLLMProvider):
         
         # --- General Configuration ---
         self.api_key = config.get("api_key") or os.getenv("GOOGLE_API_KEY")
-        self.use_mock = True  # Default to mock if setup fails
+        self.use_mock = True  # 🛡️ SAFETY FIRST: Default to mock to prevent billing
 
         # --- Gemini (Text) Configuration ---
         self.model = config.get("model", "gemini-1.5-flash")
-        if google_genai_module and self.api_key:
+        # 🛡️ BILLING PROTECTION: Only enable real API if explicitly requested
+        force_mock = os.getenv("FORCE_MOCK_MODE", "true").lower() == "true"
+        disable_real_apis = os.getenv("DISABLE_REAL_API_CALLS", "true").lower() == "true"
+        
+        if force_mock or disable_real_apis:
+            logger.warning("🛡️ BILLING PROTECTION: Real Google API disabled by environment variables")
+            self.use_mock = True
+        elif google_genai_module and self.api_key:
             try:
                 google_genai_module.configure(api_key=self.api_key)
-                logger.info("Google Gemini (Text) API configured successfully.")
+                logger.warning("⚠️ BILLING RISK: Google Gemini (Text) API configured with REAL API KEY!")
+                logger.warning("💸 This will generate charges! Set FORCE_MOCK_MODE=true to disable.")
                 self.use_mock = False
             except Exception as e:
                 logger.error(f"Failed to configure Google Gemini API: {e}")

@@ -1,7 +1,7 @@
 # NIS Protocol v3.2 - AI Development Platform & SDK
 **AI Operating System for Edge Devices, Autonomous Systems, and Smart Infrastructure**
 
-*Version: 3.2 | Updated: 2025-01-19 | Status: Production Ready with Enhanced Security*
+*Version: 3.2 | Updated: 2025-01-19 | Status: Production Ready with Enhanced Security & Billing Protection*
 
 <div align="center">
 
@@ -17,6 +17,12 @@
 [![License](https://img.shields.io/badge/License-BSL-green)](LICENSE)
 
 ---
+
+## 🛡️ **BILLING PROTECTION NOTICE**
+
+**NEW IN v3.2**: Built-in protection against unexpected API charges. The system now defaults to mock responses to prevent billing surprises. Use `./start_safe.sh` for development.
+
+⚠️ **Important**: Real API calls can generate significant charges. Always monitor your usage and use safe mode for testing.
 
 ## 🎯 **What is NIS Protocol?**
 
@@ -328,10 +334,27 @@ nis serve --port 8000
 
 Get the complete NIS Protocol v3.2 infrastructure with **AI Image Generation** running in **under 5 minutes**:
 
+#### **🛡️ SAFE MODE (Recommended for Development)**
 ```bash
-# 1. Clone and start the complete system
+# 1. Clone and start in SAFE MODE (no billing risk)
 git clone https://github.com/pentius00/NIS_Protocol.git
 cd NIS_Protocol
+./start_safe.sh  # 🛡️ Uses mock responses only - NO API CHARGES
+```
+
+#### **⚠️ PRODUCTION MODE (Billing Risk)**
+
+```bash
+# ⚠️ WARNING: This mode uses REAL API keys and will generate charges!
+# 1. Clone the system
+git clone https://github.com/pentius00/NIS_Protocol.git
+cd NIS_Protocol
+
+# 2. Configure API keys (see .env.example)
+cp .env.example .env
+# Edit .env with your real API keys
+
+# 3. Start with billing risk
 ./start.sh
 
 # That's it! Your consciousness-driven AI system is now running with:
@@ -388,20 +411,29 @@ Notes for credentials inside containers:
 
 Security: Do not commit `.env`. Keep secrets out of version control. Only share `.env.example` with placeholders.
 
+🛡️ **BILLING PROTECTION**: The system defaults to mock responses to prevent unexpected API charges. Use `./start_safe.sh` for safe development.
+
 #### Example `.env.example`
 
 ```bash
-# 🔑 NIS Protocol v3 - LLM Provider API Keys (REQUIRED)
+# 🔑 NIS Protocol v3 - LLM Provider API Keys (BILLING RISK)
+# ⚠️ WARNING: Real API keys will generate charges!
+# 🛡️ For safe development, use ./start_safe.sh (mock responses only)
 # Get your API keys from the respective provider websites:
 # • OpenAI: https://platform.openai.com/api-keys
 # • Anthropic: https://console.anthropic.com/
 # • DeepSeek: https://platform.deepseek.com/
 # • Google: https://makersuite.google.com/app/apikey
 
-OPENAI_API_KEY=your_openai_api_key
-ANTHROPIC_API_KEY=your_anthropic_api_key
-DEEPSEEK_API_KEY=your_deepseek_api_key
-GOOGLE_API_KEY=your_google_api_key
+# 🛡️ BILLING PROTECTION (uncomment only for production)
+# OPENAI_API_KEY=your_openai_api_key
+# ANTHROPIC_API_KEY=your_anthropic_api_key
+# DEEPSEEK_API_KEY=your_deepseek_api_key
+# GOOGLE_API_KEY=your_google_api_key
+
+# Force mock mode for safety (set to false only for production)
+FORCE_MOCK_MODE=true
+DISABLE_REAL_API_CALLS=true
 
 # Infrastructure Configuration (Docker defaults)
 COMPOSE_PROJECT_NAME=nis-protocol-v3
@@ -930,9 +962,14 @@ For commercial deployments and enterprise support:
 **🎯 Ready to experience consciousness-driven AI with physics validation?**
 
 ```bash
+# 🛡️ SAFE MODE (Recommended)
 git clone https://github.com/pentius00/NIS_Protocol.git
 cd NIS_Protocol
-./start.sh
+./start_safe.sh  # Mock responses only - NO BILLING RISK
+
+# ⚠️ PRODUCTION MODE (Billing Risk)
+# Configure real API keys first, then:
+# ./start.sh
 ```
 
 **Welcome to the future of AI - where consciousness meets physics, multimodal AI generation meets scientific validation, and intelligence is both powerful and trustworthy.** 🚀🧠🎨⚡
@@ -941,5 +978,12 @@ cd NIS_Protocol
 
 *NIS Protocol v3.2 - AI Operating System & Development Platform for Edge Intelligence*  
 *© 2024-2025 Organica AI Solutions. Licensed under Business Source License.*
+
+## 🛡️ **Billing Protection Resources**
+
+- **Safe Start Guide**: Use `./start_safe.sh` for development
+- **Emergency Shutdown**: `./scripts/emergency/emergency_shutdown.sh`
+- **Billing Protection Setup**: `docs/organized/setup/BILLING_PROTECTION_SETUP.md`
+- **Full Protection Guide**: `README_BILLING_PROTECTION.md`
 
 **Commercial Use**: Available for commercial licensing. Contact [licensing@organicaai.com](mailto:licensing@organicaai.com) for enterprise deployments.
