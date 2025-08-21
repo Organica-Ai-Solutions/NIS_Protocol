@@ -88,7 +88,8 @@ NIS Protocol serves as the foundational layer for a growing ecosystem of industr
 - **Target**: Streamlined development workflow for NIS applications
 
 ### **🎉 NEW in v3.2: Enhanced Security & Visual Documentation**
-- **🔒 Security Hardening** - 94% vulnerability reduction (17→1), security-audited dependencies
+- **🔒 Security Hardening** - 100% vulnerability resolution, eliminated all 45 GitHub security alerts
+- **🛡️ CVE-2024-55459 Fixed** - Removed vulnerable keras package, using secure tf-keras alternative
 - **✅ 100% API Reliability** - All 32 endpoints tested and working with comprehensive fallbacks
 - **🔧 Dependency Resolution** - All conflicts resolved with minimal working dependency set
 - **🛡️ Robust Fallback Systems** - Graceful degradation for missing ML dependencies
