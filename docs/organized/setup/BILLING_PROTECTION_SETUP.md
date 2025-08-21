@@ -133,4 +133,4 @@ For billing protection issues:
 - Documentation: `README_BILLING_PROTECTION.md`
 - Google Cloud Console: https://console.cloud.google.com/billing
 
-**Remember: Your rent money is precious! Always use safe mode for development.** 🏠💰
+**Remember: Your budget is important! Always use safe mode for development.** 🏠💰

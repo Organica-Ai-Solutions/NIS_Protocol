@@ -126,4 +126,4 @@ gcloud compute project-info describe --project=organicaaisolutions
 
 **"Better safe than sorry"** - Always assume real APIs will cost money and protect accordingly!
 
-Your rent money is precious! 🏠💰
+Your budget is important! 🏠💰
