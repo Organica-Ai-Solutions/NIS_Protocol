@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-🚀 Anthropic-Style Autonomous Executor - NIS Protocol v3.1
+Autonomous Executor - NIS Protocol v3.1
 
 This module implements Anthropic-level autonomous execution capabilities:
 - Multi-step reasoning with tool orchestration
