@@ -1,19 +1,23 @@
 {
   "files_processed": 88,
-  "total_fixes": 14,
+  "total_fixes": 24,
   "files_changed": [
     "docs/legacy/versions/v3.2/README.md",
     "docs/legacy/versions/v3.1/README.md",
-    "docs/organized/version-history/VERSION_INDEX.md",
     "docs/organized/version-history/NIS_PROTOCOL_VERSION_EVOLUTION.md",
+    "docs/organized/core/QUICK_STATUS_FOR_USER.md",
     "docs/organized/architecture/ARCHITECTURE.md",
     "docs/organized/architecture/DATA_FLOW_GUIDE.md",
     "docs/organized/architecture/NIS_V3_AGENT_MASTER_INVENTORY.md",
+    "docs/organized/guides/LLM_SETUP_GUIDE.md",
     "docs/organized/guides/ENHANCED_KAFKA_REDIS_INTEGRATION_GUIDE.md",
-    "docs/organized/api/API_Reference.md",
     "docs/organized/technical/TOOLKIT_INTEGRATION_READINESS.md",
+    "docs/organized/technical/COMPREHENSIVE_SYSTEM_IMPROVEMENTS_LIST.md",
+    "system/docs/web_search_integration.md",
     "system/docs/diagrams/agent_hierarchy/communication_hierarchy.md",
-    "system/docs/diagrams/system_flow/nis_complete_system_architecture.md"
+    "system/docs/diagrams/system_flow/web_search_integration.md",
+    "system/docs/diagrams/system_flow/nis_complete_system_architecture.md",
+    "system/docs/memory_system/README.md"
   ],
   "files_not_found": [],
   "detailed_changes": {
@@ -21,14 +25,13 @@
       "Added evidence link for 'consciousness layer'"
     ],
     "docs/legacy/versions/v3.1/README.md": [
-      "Replaced '(\\d+\\.?\\d*)\\s*x\\s*(faster|better|more accurate)' pattern",
       "Added evidence link for 'consciousness layer'"
-    ],
-    "docs/organized/version-history/VERSION_INDEX.md": [
-      "Replaced '(\\d+\\.?\\d*)\\s*x\\s*(faster|better|more accurate)' pattern"
     ],
     "docs/organized/version-history/NIS_PROTOCOL_VERSION_EVOLUTION.md": [
       "Added evidence link for 'consciousness layer'"
+    ],
+    "docs/organized/core/QUICK_STATUS_FOR_USER.md": [
+      "Replaced '\\b[Ss]ystematic(ally)?\\b' pattern"
     ],
     "docs/organized/architecture/ARCHITECTURE.md": [
       "Added evidence link for 'scientific pipeline'"
@@ -39,21 +42,40 @@
     "docs/organized/architecture/NIS_V3_AGENT_MASTER_INVENTORY.md": [
       "Added evidence link for 'scientific pipeline'"
     ],
-    "docs/organized/guides/ENHANCED_KAFKA_REDIS_INTEGRATION_GUIDE.md": [
-      "Added evidence link for 'integrity score.*100'"
+    "docs/organized/guides/LLM_SETUP_GUIDE.md": [
+      "Replaced '\\b[Ss]ystematic(ally)?\\b' pattern",
+      "Replaced '\\b[Ss]ystematic(ally)?\\b' pattern",
+      "Replaced '\\b[Ss]ystematic(ally)?\\b' pattern",
+      "Replaced '\\b[Ss]ystematic(ally)?\\b' pattern",
+      "Replaced '\\b[Ss]ystematic(ally)?\\b' pattern"
     ],
-    "docs/organized/api/API_Reference.md": [
-      "Replaced '\\bmulti-agent system\\b' pattern",
-      "Replaced '\\bmulti-agent system\\b' pattern"
+    "docs/organized/guides/ENHANCED_KAFKA_REDIS_INTEGRATION_GUIDE.md": [
+      "Replaced '\\b[Ss]ystematic(ally)?\\b' pattern",
+      "Replaced '\\b[Ss]ystematic(ally)?\\b' pattern",
+      "Added evidence link for 'integrity score.*100'"
     ],
     "docs/organized/technical/TOOLKIT_INTEGRATION_READINESS.md": [
       "Added evidence link for 'scientific pipeline'"
     ],
+    "docs/organized/technical/COMPREHENSIVE_SYSTEM_IMPROVEMENTS_LIST.md": [
+      "Replaced '\\b[Ii]mprovement(s)?\\b' pattern"
+    ],
+    "system/docs/web_search_integration.md": [
+      "Replaced '\\b[Ss]ystematic(ally)?\\b' pattern",
+      "Replaced '\\b[Ss]ystematic(ally)?\\b' pattern"
+    ],
     "system/docs/diagrams/agent_hierarchy/communication_hierarchy.md": [
       "Added evidence link for 'scientific pipeline'"
     ],
+    "system/docs/diagrams/system_flow/web_search_integration.md": [
+      "Replaced '\\b[Ss]ystematic(ally)?\\b' pattern",
+      "Replaced '\\b[Ss]ystematic(ally)?\\b' pattern"
+    ],
     "system/docs/diagrams/system_flow/nis_complete_system_architecture.md": [
       "Added evidence link for 'consciousness layer'"
+    ],
+    "system/docs/memory_system/README.md": [
+      "Replaced '\\b[Ss]ystematic(ally)?\\b' pattern"
     ]
   }
 }
