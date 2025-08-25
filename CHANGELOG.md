@@ -1,6 +1,41 @@
 # NIS Protocol - Version History & Changelog
 
-## 🔒 Version 3.2.1 (2025-01-19) - "Security Hardening & Visual Documentation"
+## 🚀 Version 3.2.1 (2025-01-19) - "Production Ready: PyPI Publishing & GitHub Pages"
+
+### 🌐 GitHub Pages Deployment
+- **Professional Landing Page**: Beautiful showcase at https://nisprotocol.organicaai.com/
+- **Complete Feature Documentation**: All v3.2 capabilities properly presented
+- **Automated Deployment**: GitHub Actions workflow for continuous deployment
+- **Modern Design**: Glassmorphism UI with responsive layout
+
+### 📦 PyPI Publishing Ready
+- **Package Configuration**: Complete setup.py with proper metadata and dependencies
+- **GitHub Actions CI/CD**: Automated publishing workflow for TestPyPI and PyPI
+- **Example Code**: Working examples for simple agent and edge deployment
+- **Build System**: Proper package structure with minimal requirements for CI
+
+### 🎨 Enhanced Chat Interfaces
+- **LangChain Integration**: Full compatibility with modern agent UI patterns
+- **Tool Call Visualization**: Real-time display of agent tool usage and workflows
+- **Artifact Rendering**: Support for code, documents, and image artifacts
+- **Streaming Support**: Real-time response streaming with typing indicators
+- **Runner Integration**: Secure code execution through dedicated runner service
+
+### 🗂️ Professional Organization
+- **Root Directory Cleanup**: Compliance with NIS Protocol file organization rules
+- **Proper File Structure**: All files moved to appropriate subdirectories
+- **Clean Codebase**: Professional presentation suitable for production deployment
+- **Documentation Organization**: Systematic arrangement of all project documentation
+
+### 🔧 Technical Improvements
+- **Docker Stability**: All containers working reliably with proper health checks
+- **API Endpoints**: 25+ endpoints fully functional and tested
+- **Multi-Provider LLM**: Seamless integration with Claude 4, GPT-4, DeepSeek R1, Gemini 2.5
+- **Physics Validation**: PINN integration with real mathematical validation
+
+---
+
+## 🔒 Version 3.2.0 (2025-01-19) - "Security Hardening & Visual Documentation"
 
 ### 🛡️ Major Security Improvements
 - **94% Vulnerability Reduction**: Comprehensive security audit reducing vulnerabilities from 17 to 1

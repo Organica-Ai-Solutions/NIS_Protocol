@@ -1,7 +1,7 @@
-# NIS Protocol v3.2 - AI Development Platform & SDK
+# NIS Protocol v3.2.1 - AI Development Platform & SDK
 **AI Operating System for Edge Devices, Autonomous Systems, and Smart Infrastructure**
 
-*Version: 3.2 | Updated: 2025-01-19 | Status: Production Ready with Enhanced Security & Billing Protection*
+*Version: 3.2.1 | Updated: 2025-01-19 | Status: Production Ready with PyPI Publishing & GitHub Pages*
 
 <div align="center">
 
