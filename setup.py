@@ -49,7 +49,7 @@ def get_requirements():
 
 setup(
     # Package Identity
-    name="nis-protocol-v3-organica",
+    name="nis-protocol-v321-organica",
     version=get_version(),
     author="Organica AI Solutions",
     author_email="developers@organicaai.com",
