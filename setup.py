@@ -470,26 +470,6 @@ setup(
         ],
     },
     
-    # Keywords for Discovery
-    keywords=[
-        # Platform Terms
-        "ai-platform", "ai-sdk", "ai-framework", "ai-os",
-        "edge-ai", "autonomous-systems", "robotics-platform",
-        
-        # Technology Terms  
-        "artificial-intelligence", "machine-learning", "deep-learning",
-        "physics-informed", "consciousness-modeling", "multi-agent",
-        "neural-networks", "edge-computing", "iot", "robotics",
-        
-        # Use Cases
-        "smart-cities", "autonomous-vehicles", "drones", "industrial-automation",
-        "computer-vision", "natural-language-processing", "multimodal-ai",
-        
-        # Architecture
-        "microservices", "distributed-systems", "real-time", "hybrid-cloud",
-        "protocol-integration", "agent-coordination",
-    ],
-    
     # Metadata
     zip_safe=False,
     platforms=["any"],
