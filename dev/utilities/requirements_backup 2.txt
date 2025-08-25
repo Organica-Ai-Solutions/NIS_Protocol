@@ -213,7 +213,7 @@ nvidia-ml-py3>=7.352.0
 # Fix Keras/Transformers compatibility issue
 tf-keras>=2.15.0
 # Pin compatible versions to avoid conflicts
-transformers>=4.30.0,<4.40.0
+transformers>=4.30.0,<4.54.0
 sentence-transformers>=2.2.0,<3.0.0
 # Ensure TensorFlow compatibility
 tensorflow>=2.15.0,<2.17.0

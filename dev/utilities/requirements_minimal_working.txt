@@ -39,7 +39,7 @@ tf-keras==2.15.1
 keras==2.15.0
 
 # ===== TRANSFORMERS (COMPATIBLE VERSIONS) =====
-transformers==4.35.2
+transformers==4.53.0
 tokenizers>=0.15.0,<1.0.0
 # sentence-transformers==2.2.2  # Commented out temporarily
 
