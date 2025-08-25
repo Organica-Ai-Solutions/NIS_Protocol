@@ -31,7 +31,7 @@ tf-keras==2.15.1
 keras==2.15.0
 
 # Transformers - PINNED VERSIONS
-transformers==4.35.2
+transformers==4.53.0
 sentence-transformers==2.2.2
 tokenizers>=0.15.0
 
