@@ -774,6 +774,234 @@
             background: rgba(255,255,255,0.3);
         }
 
+        /* LangChain Agent UI Styles */
+        .tool-call {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            margin: 8px 0;
+            overflow: hidden;
+        }
+
+        .tool-header {
+            padding: 12px 16px;
+            background: rgba(59, 130, 246, 0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .tool-header:hover {
+            background: rgba(59, 130, 246, 0.15);
+        }
+
+        .tool-icon {
+            font-size: 16px;
+        }
+
+        .tool-name {
+            font-weight: 600;
+            font-size: 14px;
+            flex: 1;
+        }
+
+        .tool-status {
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 500;
+        }
+
+        .tool-status.running {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+
+        .tool-status.completed {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        .tool-status.error {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .tool-content {
+            padding: 16px;
+            font-family: 'SF Mono', 'Monaco', monospace;
+            font-size: 13px;
+            background: rgba(0,0,0,0.3);
+            display: none;
+        }
+
+        .tool-content.expanded {
+            display: block;
+        }
+
+        .tool-args, .tool-result {
+            margin-bottom: 12px;
+        }
+
+        .tool-result {
+            padding-top: 12px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .reasoning-step {
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 8px;
+            margin: 8px 0;
+            padding: 16px;
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .step-number {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(139, 92, 246, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .step-title {
+            font-weight: 600;
+            font-size: 14px;
+            color: #a78bfa;
+        }
+
+        .step-content {
+            font-size: 14px;
+            line-height: 1.5;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .artifact-container {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 8px;
+            margin: 8px 0;
+            overflow: hidden;
+        }
+
+        .artifact-header {
+            padding: 12px 16px;
+            background: rgba(16, 185, 129, 0.1);
+            border-bottom: 1px solid rgba(16, 185, 129, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .artifact-icon {
+            font-size: 16px;
+        }
+
+        .artifact-title {
+            font-weight: 600;
+            font-size: 14px;
+            color: #10b981;
+            flex: 1;
+        }
+
+        .artifact-action {
+            padding: 4px 12px;
+            background: rgba(16, 185, 129, 0.2);
+            border: none;
+            border-radius: 6px;
+            color: #10b981;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .artifact-action:hover {
+            background: rgba(16, 185, 129, 0.3);
+        }
+
+        .artifact-preview {
+            padding: 16px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Agent Workflow Visualization */
+        .agent-workflow {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+
+        .workflow-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .workflow-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .workflow-step {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 12px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .workflow-step.active {
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .workflow-step.completed {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .step-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .step-icon.active {
+            background: rgba(59, 130, 246, 0.3);
+            color: #3b82f6;
+        }
+
+        .step-icon.completed {
+            background: rgba(16, 185, 129, 0.3);
+            color: #10b981;
+        }
+
         /* Mobile Responsiveness */
         @media (max-width: 768px) {
             .chat-container {
@@ -1169,6 +1397,63 @@
             }
         }
 
+        // LangChain Agent UI - Tool Call Visualization
+        function createToolCallElement(toolCall) {
+            const toolElement = document.createElement('div');
+            toolElement.className = 'tool-call';
+            toolElement.innerHTML = `
+                <div class="tool-header">
+                    <span class="tool-icon">🔧</span>
+                    <span class="tool-name">${toolCall.name}</span>
+                    <span class="tool-status ${toolCall.status || 'running'}">${toolCall.status || 'Running'}</span>
+                </div>
+                <div class="tool-content">
+                    <div class="tool-args">
+                        <strong>Arguments:</strong>
+                        <pre>${JSON.stringify(toolCall.args || {}, null, 2)}</pre>
+                    </div>
+                    ${toolCall.result ? `
+                        <div class="tool-result">
+                            <strong>Result:</strong>
+                            <pre>${JSON.stringify(toolCall.result, null, 2)}</pre>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+            return toolElement;
+        }
+
+        // LangChain Agent UI - Reasoning Steps
+        function createReasoningElement(step, index) {
+            const stepElement = document.createElement('div');
+            stepElement.className = 'reasoning-step';
+            stepElement.innerHTML = `
+                <div class="step-header">
+                    <span class="step-number">${index + 1}</span>
+                    <span class="step-title">${step.title || 'Reasoning Step'}</span>
+                </div>
+                <div class="step-content">${step.content || step}</div>
+            `;
+            return stepElement;
+        }
+
+        // LangChain Agent UI - Artifact Rendering
+        function createArtifactElement(artifact) {
+            const artifactElement = document.createElement('div');
+            artifactElement.className = 'artifact-container';
+            artifactElement.innerHTML = `
+                <div class="artifact-header">
+                    <span class="artifact-icon">📄</span>
+                    <span class="artifact-title">${artifact.title || 'Artifact'}</span>
+                    <button class="artifact-action" onclick="openArtifact('${artifact.id}')">View</button>
+                </div>
+                <div class="artifact-preview">
+                    ${artifact.preview || artifact.content || 'No preview available'}
+                </div>
+            `;
+            return artifactElement;
+        }
+
         // Send message with streaming
         async function sendMessage() {
             const message = chatInput.value.trim();
@@ -1404,6 +1689,10 @@
             currentController = new AbortController();
 
             try {
+<<<<<<< HEAD
+=======
+                // Try enhanced agent chat first for better LangChain integration
+>>>>>>> feature/root-organization
                 const response = await fetch('/chat/enhanced', {
                     method: 'POST',
                     headers: {
@@ -1413,17 +1702,43 @@
                         message: message,
                         user_id: 'user_' + Date.now(),
                         agent_type: 'reasoning',
-                        provider: 'anthropic'
+                        provider: 'anthropic',
+                        stream: true,
+                        include_reasoning: true,
+                        include_tools: true
                     }),
                     signal: currentController.signal
                 });
 
                 if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    // Fallback to regular streaming
+                    const fallbackResponse = await fetch('/chat/stream', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            message: message,
+                            user_id: 'user_' + Date.now(),
+                            agent_type: 'reasoning',
+                            provider: 'anthropic'
+                        }),
+                        signal: currentController.signal
+                    });
+                    
+                    if (!fallbackResponse.ok) {
+                        throw new Error(`HTTP error! status: ${fallbackResponse.status}`);
+                    }
+                    
+                    return handleBasicStream(fallbackResponse);
                 }
 
+                // Handle enhanced agent response with LangChain features
                 const reader = response.body.getReader();
                 let assistantMessage = '';
+                let currentToolCalls = [];
+                let currentReasoningSteps = [];
+                let currentArtifacts = [];
                 let messageElement = null;
                 
                 // Hide typing indicator and create initial message
@@ -1434,7 +1749,7 @@
                 
                 const bubble = document.createElement('div');
                 bubble.className = 'message-bubble';
-                bubble.textContent = '';
+                bubble.innerHTML = '';
                 
                 const time = document.createElement('div');
                 time.className = 'message-time';
@@ -1456,10 +1771,42 @@
                         if (line.startsWith('data: ')) {
                             try {
                                 const data = JSON.parse(line.slice(6));
-                                if (data.type === 'content') {
-                                    assistantMessage += data.data;
-                                    bubble.textContent = assistantMessage;
-                                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                                
+                                switch (data.type) {
+                                    case 'content':
+                                        assistantMessage += data.data;
+                                        bubble.innerHTML = formatMessage(assistantMessage);
+                                        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                                        break;
+                                        
+                                    case 'tool_call':
+                                        currentToolCalls.push(data.data);
+                                        const toolElement = createToolCallElement(data.data);
+                                        messageDiv.appendChild(toolElement);
+                                        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                                        break;
+                                        
+                                    case 'reasoning_step':
+                                        currentReasoningSteps.push(data.data);
+                                        const reasoningElement = createReasoningElement(data.data, currentReasoningSteps.length - 1);
+                                        messageDiv.appendChild(reasoningElement);
+                                        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                                        break;
+                                        
+                                    case 'artifact':
+                                        currentArtifacts.push(data.data);
+                                        const artifactElement = createArtifactElement(data.data);
+                                        messageDiv.appendChild(artifactElement);
+                                        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                                        break;
+                                        
+                                    case 'workflow_update':
+                                        updateWorkflowVisualization(data.data);
+                                        break;
+                                        
+                                    case 'status':
+                                        updateAgentStatus(data.data);
+                                        break;
                                 }
                             } catch (e) {
                                 // Ignore JSON parse errors
@@ -1640,13 +1987,185 @@
             }
         });
 
+        // LangChain Agent UI Helper Functions
+        function handleBasicStream(response) {
+            // Fallback for basic streaming without LangChain features
+            const reader = response.body.getReader();
+            let assistantMessage = '';
+            
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message message-assistant';
+            
+            const bubble = document.createElement('div');
+            bubble.className = 'message-bubble';
+            bubble.textContent = '';
+            
+            const time = document.createElement('div');
+            time.className = 'message-time';
+            time.textContent = new Date().toLocaleTimeString();
+            
+            messageDiv.appendChild(bubble);
+            messageDiv.appendChild(time);
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            return reader.read().then(function processText({ done, value }) {
+                if (done) return;
+                
+                const chunk = new TextDecoder().decode(value);
+                const lines = chunk.split('\n');
+
+                for (const line of lines) {
+                    if (line.startsWith('data: ')) {
+                        try {
+                            const data = JSON.parse(line.slice(6));
+                            if (data.type === 'content') {
+                                assistantMessage += data.data;
+                                bubble.textContent = assistantMessage;
+                                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                            }
+                        } catch (e) {
+                            // Ignore JSON parse errors
+                        }
+                    }
+                }
+                
+                return reader.read().then(processText);
+            });
+        }
+
+        function updateWorkflowVisualization(workflowData) {
+            // Create or update workflow visualization
+            let workflowElement = document.querySelector('.agent-workflow');
+            if (!workflowElement) {
+                workflowElement = document.createElement('div');
+                workflowElement.className = 'agent-workflow';
+                const messagesContainer = document.getElementById('chatMessages');
+                messagesContainer.appendChild(workflowElement);
+            }
+            
+            workflowElement.innerHTML = `
+                <div class="workflow-header">
+                    <span>🔄</span>
+                    <span>Agent Workflow</span>
+                </div>
+                <div class="workflow-steps">
+                    ${workflowData.steps.map((step, index) => `
+                        <div class="workflow-step ${step.status}">
+                            <div class="step-icon ${step.status}">
+                                ${step.status === 'completed' ? '✓' : step.status === 'active' ? '⟳' : index + 1}
+                            </div>
+                            <span>${step.name}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function updateAgentStatus(statusData) {
+            // Update agent status in the UI
+            const statusElement = document.querySelector('.agent-status');
+            if (statusElement) {
+                statusElement.textContent = statusData.message;
+                statusElement.className = `agent-status ${statusData.type}`;
+            }
+        }
+
+        function openArtifact(artifactId) {
+            // Open artifact in a modal or side panel
+            console.log('Opening artifact:', artifactId);
+            // Implementation for artifact viewing
+        }
+
+        function formatMessage(content) {
+            if (typeof content !== 'string') {
+                content = JSON.stringify(content, null, 2);
+            }
+            
+            // Enhanced markdown-like formatting for LangChain
+            content = content
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/`(.*?)`/g, '<code style="background: rgba(255,255,255,0.1); padding: 2px 4px; border-radius: 4px;">$1</code>')
+                .replace(/```(\w+)?\n([\s\S]*?)```/g, '<div class="code-block"><div class="code-header"><span class="code-language">$1</span></div><pre>$2</pre></div>')
+                .replace(/\n/g, '<br>');
+
+            return content;
+        }
+
+        // Enhanced Terminal Integration
+        const terminalBtn = document.getElementById('terminalBtn');
+        const terminalSection = document.getElementById('terminalSection');
+        const terminalInput = document.getElementById('terminalInput');
+        const terminalOutput = document.getElementById('terminalOutput');
+        const clearTerminal = document.getElementById('clearTerminal');
+        const closeTerminal = document.getElementById('closeTerminal');
+
+        terminalBtn.addEventListener('click', () => {
+            terminalSection.classList.toggle('show');
+            if (terminalSection.classList.contains('show')) {
+                terminalInput.focus();
+            }
+        });
+
+        clearTerminal.addEventListener('click', () => {
+            terminalOutput.innerHTML = `
+                <div style="color: rgba(99, 102, 241, 0.8);">NIS Protocol Runner v1.0.0</div>
+                <div style="color: rgba(255,255,255,0.6);">Secure execution environment ready.</div>
+                <div style="color: rgba(255,255,255,0.4);">Type 'help' for available commands.</div>
+            `;
+        });
+
+        closeTerminal.addEventListener('click', () => {
+            terminalSection.classList.remove('show');
+        });
+
+        terminalInput.addEventListener('keypress', async (e) => {
+            if (e.key === 'Enter') {
+                const command = terminalInput.value.trim();
+                if (!command) return;
+
+                // Add command to terminal output
+                const commandLine = document.createElement('div');
+                commandLine.innerHTML = `<span style="color: rgba(99, 102, 241, 0.8);">runner $</span> ${command}`;
+                terminalOutput.appendChild(commandLine);
+
+                terminalInput.value = '';
+
+                try {
+                    const result = await executeRunnerTool('run_shell', { cmd: command });
+                    const outputLine = document.createElement('div');
+                    outputLine.style.color = 'rgba(255,255,255,0.8)';
+                    outputLine.textContent = result.stdout || 'Command executed successfully';
+                    terminalOutput.appendChild(outputLine);
+                } catch (error) {
+                    const errorLine = document.createElement('div');
+                    errorLine.style.color = '#ef4444';
+                    errorLine.textContent = `Error: ${error.message}`;
+                    terminalOutput.appendChild(errorLine);
+                }
+
+                terminalOutput.scrollTop = terminalOutput.scrollHeight;
+            }
+        });
+
+        // Tool call interaction handlers
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.tool-header')) {
+                const toolCall = e.target.closest('.tool-call');
+                const content = toolCall.querySelector('.tool-content');
+                content.classList.toggle('expanded');
+            }
+        });
+
         // Initial setup
         adjustTextareaHeight();
         updateSendButton();
         
-        // Welcome message
+        // Welcome message with LangChain features
         setTimeout(() => {
-            addMessage('Hello! I\'m your AI assistant. Type a command starting with "/" or ask me anything.', false);
+            addMessage('🚀 **NIS Protocol Modern Chat** - Enhanced with LangChain Agent UI\n\n**Features:**\n• Real-time tool call visualization\n• Agent reasoning steps\n• Artifact rendering\n• Workflow tracking\n• Terminal integration\n\nType a command starting with "/" or ask me anything!', false);
         }, 1000);
     </script>
 </body>

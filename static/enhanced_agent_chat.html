@@ -587,7 +587,7 @@
 
         sendButton.addEventListener('click', sendMessage);
 
-        // Send message function
+        // Enhanced send message function with LangChain integration
         async function sendMessage() {
             const message = chatInput.value.trim();
             if (!message) return;
@@ -601,8 +601,8 @@
             const typingId = addTypingIndicator();
 
             try {
-                // Send to NIS Protocol API
-                const response = await fetch(`${apiBaseUrl}/chat`, {
+                // Try enhanced agent endpoint first for better LangChain integration
+                const response = await fetch(`${apiBaseUrl}/chat/enhanced`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -610,18 +610,40 @@
                     body: JSON.stringify({
                         message: message,
                         conversation_id: 'enhanced_chat_' + Date.now(),
-                        stream: false
+                        stream: false,
+                        include_reasoning: true,
+                        include_tools: true,
+                        include_artifacts: true,
+                        agent_type: 'reasoning',
+                        provider: 'anthropic'
                     })
                 });
 
-                const data = await response.json();
+                let data;
+                if (response.ok) {
+                    data = await response.json();
+                } else {
+                    // Fallback to regular chat endpoint
+                    const fallbackResponse = await fetch(`${apiBaseUrl}/chat`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            message: message,
+                            conversation_id: 'enhanced_chat_' + Date.now(),
+                            stream: false
+                        })
+                    });
+                    data = await fallbackResponse.json();
+                }
                 
                 // Remove typing indicator
                 removeTypingIndicator(typingId);
 
-                // Process response
-                if (data.status === 'success') {
-                    addAgentMessage(data);
+                // Process response with enhanced features
+                if (data.status === 'success' || data.response) {
+                    addEnhancedAgentMessage(data);
                 } else {
                     addMessage('system', `Error: ${data.message || 'Unknown error occurred'}`);
                 }
@@ -659,8 +681,8 @@
             return messageDiv;
         }
 
-        // Add enhanced agent message with tool calls, reasoning, etc.
-        function addAgentMessage(data) {
+        // Enhanced agent message with full LangChain integration
+        function addEnhancedAgentMessage(data) {
             const messageDiv = addMessage('assistant', data.response || data.message || 'No response');
 
             // Add tool calls if present
@@ -682,6 +704,26 @@
             if (data.artifacts && data.artifacts.length > 0) {
                 addArtifacts(data.artifacts);
             }
+
+            // Add workflow visualization if present
+            if (data.workflow && data.workflow.steps) {
+                addWorkflowVisualization(messageDiv, data.workflow);
+            }
+
+            // Add agent status updates if present
+            if (data.agent_status) {
+                addAgentStatus(messageDiv, data.agent_status);
+            }
+
+            // Add performance metrics if present
+            if (data.performance_metrics) {
+                addPerformanceMetrics(messageDiv, data.performance_metrics);
+            }
+        }
+
+        // Legacy function for backward compatibility
+        function addAgentMessage(data) {
+            return addEnhancedAgentMessage(data);
         }
 
         // Add tool calls visualization
@@ -923,6 +965,129 @@
                     ]
                 });
             }, 2000);
+        }
+
+        // LangChain Agent UI Helper Functions
+        function addWorkflowVisualization(messageDiv, workflow) {
+            const workflowDiv = document.createElement('div');
+            workflowDiv.className = 'workflow-visualization';
+            workflowDiv.innerHTML = `
+                <div class="workflow-header">
+                    <h4 style="color: var(--accent-color); margin-bottom: 12px;">🔄 Agent Workflow</h4>
+                </div>
+                <div class="workflow-steps">
+                    ${workflow.steps.map((step, index) => `
+                        <div class="workflow-step ${step.status || 'pending'}">
+                            <div class="step-indicator">
+                                <span class="step-number">${index + 1}</span>
+                                <span class="step-status ${step.status || 'pending'}">
+                                    ${step.status === 'completed' ? '✓' : step.status === 'active' ? '⟳' : '○'}
+                                </span>
+                            </div>
+                            <div class="step-content">
+                                <div class="step-title">${step.name || `Step ${index + 1}`}</div>
+                                <div class="step-description">${step.description || ''}</div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            messageDiv.querySelector('.message-content').appendChild(workflowDiv);
+        }
+
+        function addAgentStatus(messageDiv, agentStatus) {
+            const statusDiv = document.createElement('div');
+            statusDiv.className = 'agent-status-update';
+            statusDiv.innerHTML = `
+                <div class="status-header">
+                    <span class="status-icon">🤖</span>
+                    <span class="status-title">Agent Status</span>
+                </div>
+                <div class="status-content">
+                    <div class="status-message ${agentStatus.type || 'info'}">${agentStatus.message}</div>
+                    ${agentStatus.details ? `<div class="status-details">${agentStatus.details}</div>` : ''}
+                </div>
+            `;
+            messageDiv.querySelector('.message-content').appendChild(statusDiv);
+        }
+
+        function addPerformanceMetrics(messageDiv, metrics) {
+            const metricsDiv = document.createElement('div');
+            metricsDiv.className = 'performance-metrics';
+            metricsDiv.innerHTML = `
+                <div class="metrics-header">
+                    <h4 style="color: var(--success-color); margin-bottom: 12px;">📊 Performance Metrics</h4>
+                </div>
+                <div class="metrics-grid">
+                    ${Object.entries(metrics).map(([key, value]) => `
+                        <div class="metric-item">
+                            <div class="metric-label">${key.replace(/_/g, ' ').toUpperCase()}</div>
+                            <div class="metric-value">${typeof value === 'number' ? value.toFixed(2) : value}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            messageDiv.querySelector('.message-content').appendChild(metricsDiv);
+        }
+
+        // Enhanced artifact handling
+        function addArtifacts(artifacts) {
+            const artifactsContent = document.getElementById('artifactsContent');
+            const artifactsPanel = document.getElementById('artifactsPanel');
+            const chatMain = document.getElementById('chatMain');
+
+            // Clear existing content
+            artifactsContent.innerHTML = '';
+
+            artifacts.forEach((artifact, index) => {
+                const artifactDiv = document.createElement('div');
+                artifactDiv.className = 'artifact-item';
+                artifactDiv.innerHTML = `
+                    <div class="artifact-header">
+                        <h3 style="margin-bottom: 16px; color: var(--text-primary);">${artifact.title || `Artifact ${index + 1}`}</h3>
+                        <div class="artifact-actions">
+                            <button onclick="copyArtifact('${artifact.id || index}')" class="artifact-btn">📋 Copy</button>
+                            <button onclick="downloadArtifact('${artifact.id || index}')" class="artifact-btn">💾 Download</button>
+                        </div>
+                    </div>
+                    <div class="artifact-content">
+                        ${artifact.type === 'code' ? 
+                            `<pre><code class="language-${artifact.language || 'text'}">${artifact.content}</code></pre>` :
+                            `<div>${artifact.content || artifact}</div>`
+                        }
+                    </div>
+                `;
+                artifactsContent.appendChild(artifactDiv);
+            });
+
+            // Show artifacts panel
+            artifactsPanel.classList.add('open');
+            chatMain.classList.add('with-artifact');
+        }
+
+        // Artifact utility functions
+        function copyArtifact(artifactId) {
+            const artifactElement = document.querySelector(`[data-artifact-id="${artifactId}"]`);
+            if (artifactElement) {
+                const content = artifactElement.querySelector('.artifact-content').textContent;
+                navigator.clipboard.writeText(content).then(() => {
+                    console.log('Artifact copied to clipboard');
+                });
+            }
+        }
+
+        function downloadArtifact(artifactId) {
+            const artifactElement = document.querySelector(`[data-artifact-id="${artifactId}"]`);
+            if (artifactElement) {
+                const content = artifactElement.querySelector('.artifact-content').textContent;
+                const blob = new Blob([content], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `artifact_${artifactId}.txt`;
+                a.click();
+                URL.revokeObjectURL(url);
+            }
         }
 
         // Show demo after page loads
