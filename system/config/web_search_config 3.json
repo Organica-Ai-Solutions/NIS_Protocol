@@ -1,0 +1,60 @@
+{
+    "web_search": {
+        "enabled": true,
+        "providers": {
+            "google_cse": {
+                "enabled": true,
+                "api_key": "${GOOGLE_API_KEY}",
+                "cse_id": "${GOOGLE_CSE_ID}",
+                "description": "Google Custom Search Engine - primary web search provider"
+            },
+            "serper": {
+                "enabled": false,
+                "api_key": "",
+                "description": "Serper API - disabled"
+            },
+            "tavily": {
+                "enabled": false,
+                "api_key": "",
+                "description": "Tavily API - disabled"
+            },
+            "bing": {
+                "enabled": false,
+                "api_key": "",
+                "description": "Bing Search API - disabled"
+            },
+            "mock": {
+                "enabled": true,
+                "description": "Enhanced mock search for fallback when Google API not available"
+            }
+        },
+        "settings": {
+            "max_results_per_provider": 10,
+            "timeout": 30,
+            "cultural_sensitivity": true,
+            "academic_priority": true,
+            "cache_ttl": 3600,
+            "fallback_to_mock": true
+        },
+        "domains": {
+            "cultural": {
+                "academic_sources": true,
+                "cultural_sensitivity": true,
+                "preferred_domains": ["unesco.org", "smithsonianmag.com"],
+                "keywords_boost": ["culture", "indigenous", "heritage"]
+            },
+            "scientific": {
+                "academic_sources": true,
+                "preferred_domains": ["arxiv.org", "nature.com", "science.org"],
+                "keywords_boost": ["research", "study", "analysis"]
+            }
+        }
+    },
+    "embedding": {
+        "provider": "simple",
+        "dimensions": 768,
+        "cache_enabled": true,
+        "cache_dir": ".embeddings_cache",
+        "normalize": true
+    }
+}

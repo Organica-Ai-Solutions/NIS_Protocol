@@ -1,0 +1,2893 @@
+{
+  "audit_timestamp": "2025-08-07T15:49:50.342952",
+  "project_path": ".",
+  "issues": [
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in CHANGELOG.md",
+      "details": {
+        "file": "CHANGELOG.md",
+        "term": "comprehensive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.391084"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in CHANGELOG.md",
+      "details": {
+        "file": "CHANGELOG.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.391112"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in CHANGELOG.md: ('Sub-second', 'response')",
+      "details": {
+        "file": "CHANGELOG.md",
+        "claim": [
+          "Sub-second",
+          "response"
+        ]
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-08-07T15:49:50.392257"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in README.md",
+      "details": {
+        "file": "README.md",
+        "term": "mathematically-traceable"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.392522"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in README.md",
+      "details": {
+        "file": "README.md",
+        "term": "meta-cognitive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.392539"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in README.md",
+      "details": {
+        "file": "README.md",
+        "term": "comprehensive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.393409"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in README.md",
+      "details": {
+        "file": "README.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.393647"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in README.md",
+      "details": {
+        "file": "models/bitnet/README.md",
+        "term": "systematic"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.398279"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in README.md",
+      "details": {
+        "file": "models/bitnet/README.md",
+        "term": "systematic"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.398293"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in README.md",
+      "details": {
+        "file": "docs/README.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.399847"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in DOCUMENTATION_ORGANIZATION_COMPLETE.md",
+      "details": {
+        "file": "docs/DOCUMENTATION_ORGANIZATION_COMPLETE.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.400896"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in DOCUMENTATION_ORGANIZATION_COMPLETE.md",
+      "details": {
+        "file": "docs/DOCUMENTATION_ORGANIZATION_COMPLETE.md",
+        "term": "efficient"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.401068"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in V3.2_DOCUMENTATION_INDEX.md",
+      "details": {
+        "file": "docs/legacy/V3.2_DOCUMENTATION_INDEX.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.402120"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in README.md",
+      "details": {
+        "file": "docs/legacy/versions/v2.0/README.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.404499"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in README.md",
+      "details": {
+        "file": "docs/legacy/versions/v2.0/README.md",
+        "term": "efficient"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.405120"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in README.md",
+      "details": {
+        "file": "docs/legacy/versions/v2.0/README.md",
+        "term": "robust"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.405205"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in README.md",
+      "details": {
+        "file": "docs/legacy/versions/v1.0/README.md",
+        "term": "meta-cognitive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.407351"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated multi-agent system claim in README.md",
+      "details": {
+        "file": "docs/legacy/versions/v1.0/README.md",
+        "term": "multi-agent system"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.407478"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in README.md",
+      "details": {
+        "file": "docs/legacy/versions/v1.0/README.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.407715"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in README.md",
+      "details": {
+        "file": "docs/legacy/versions/v1.0/README.md",
+        "term": "efficient"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.408049"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in README.md",
+      "details": {
+        "file": "docs/legacy/versions/v1.0/README.md",
+        "term": "robust"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.408100"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated multi-agent system claim in README.md",
+      "details": {
+        "file": "docs/legacy/versions/v3.2/README.md",
+        "term": "general intelligence"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.411227"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in README.md",
+      "details": {
+        "file": "docs/legacy/versions/v3.2/README.md",
+        "term": "comprehensive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.411357"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in README.md",
+      "details": {
+        "file": "docs/legacy/versions/v3.2/README.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.411751"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in README.md",
+      "details": {
+        "file": "docs/legacy/versions/v3.2/README.md",
+        "term": "robust"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.413706"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated interpretability claim in README.md",
+      "details": {
+        "file": "docs/legacy/versions/v3.2/README.md",
+        "term": "95%+"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.414895"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in README.md",
+      "details": {
+        "file": "docs/legacy/versions/v3.0/README.md",
+        "term": "meta-cognitive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.419932"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated multi-agent system claim in README.md",
+      "details": {
+        "file": "docs/legacy/versions/v3.0/README.md",
+        "term": "multi-agent system"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.420319"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in README.md",
+      "details": {
+        "file": "docs/legacy/versions/v3.0/README.md",
+        "term": "comprehensive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.420769"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in README.md",
+      "details": {
+        "file": "docs/legacy/versions/v3.0/README.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.420780"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in README.md",
+      "details": {
+        "file": "docs/legacy/versions/v3.1/README.md",
+        "term": "meta-cognitive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.425528"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in README.md",
+      "details": {
+        "file": "docs/legacy/versions/v3.1/README.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.426541"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in README.md",
+      "details": {
+        "file": "docs/legacy/versions/v3.1/README.md",
+        "term": "efficient"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.427587"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated interpretability claim in README.md",
+      "details": {
+        "file": "docs/legacy/versions/v3.1/README.md",
+        "term": "97.3%"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.428454"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in VERSION_INDEX.md",
+      "details": {
+        "file": "docs/organized/version-history/VERSION_INDEX.md",
+        "term": "meta-cognitive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.431456"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in VERSION_INDEX.md",
+      "details": {
+        "file": "docs/organized/version-history/VERSION_INDEX.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.432005"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in RELEASE_NOTES_V3.2.md",
+      "details": {
+        "file": "docs/organized/version-history/RELEASE_NOTES_V3.2.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.435280"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in RELEASE_NOTES_V3.2.md",
+      "details": {
+        "file": "docs/organized/version-history/RELEASE_NOTES_V3.2.md",
+        "term": "robust"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.435865"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated interpretability claim in RELEASE_NOTES_V3.2.md",
+      "details": {
+        "file": "docs/organized/version-history/RELEASE_NOTES_V3.2.md",
+        "term": "95%+"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.436203"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in UPGRADE_GUIDE_V3.2.md",
+      "details": {
+        "file": "docs/organized/version-history/UPGRADE_GUIDE_V3.2.md",
+        "term": "robust"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.438677"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in WHATS_NEW_V3.2.md",
+      "details": {
+        "file": "docs/organized/version-history/WHATS_NEW_V3.2.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.440239"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in WHATS_NEW_V3.2.md",
+      "details": {
+        "file": "docs/organized/version-history/WHATS_NEW_V3.2.md",
+        "term": "robust"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.440567"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in CHANGELOG.md",
+      "details": {
+        "file": "docs/organized/version-history/CHANGELOG.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.441883"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in NIS_PROTOCOL_VERSION_EVOLUTION.md",
+      "details": {
+        "file": "docs/organized/version-history/NIS_PROTOCOL_VERSION_EVOLUTION.md",
+        "term": "meta-cognitive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.443381"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in NIS_PROTOCOL_VERSION_EVOLUTION.md",
+      "details": {
+        "file": "docs/organized/version-history/NIS_PROTOCOL_VERSION_EVOLUTION.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.443941"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in NIS_PROTOCOL_VERSION_EVOLUTION.md",
+      "details": {
+        "file": "docs/organized/version-history/NIS_PROTOCOL_VERSION_EVOLUTION.md",
+        "term": "robust"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.444613"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in VERSION_COMPARISON.md",
+      "details": {
+        "file": "docs/organized/version-history/VERSION_COMPARISON.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.447045"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in VERSION_COMPARISON.md",
+      "details": {
+        "file": "docs/organized/version-history/VERSION_COMPARISON.md",
+        "term": "robust"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.447371"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in HOW_TO_USE.md",
+      "details": {
+        "file": "docs/organized/core/HOW_TO_USE.md",
+        "term": "mathematically-traceable"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.448490"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in HOW_TO_USE.md",
+      "details": {
+        "file": "docs/organized/core/HOW_TO_USE.md",
+        "term": "comprehensive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.449163"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in QUICK_STATUS_FOR_USER.md",
+      "details": {
+        "file": "docs/organized/core/QUICK_STATUS_FOR_USER.md",
+        "term": "comprehensive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.452456"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in QUICK_STATUS_FOR_USER.md",
+      "details": {
+        "file": "docs/organized/core/QUICK_STATUS_FOR_USER.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.452461"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in QUICK_STATUS_FOR_USER.md",
+      "details": {
+        "file": "docs/organized/core/QUICK_STATUS_FOR_USER.md",
+        "term": "systematic"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.452464"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in QUICK_STATUS_FOR_USER.md",
+      "details": {
+        "file": "docs/organized/core/QUICK_STATUS_FOR_USER.md",
+        "term": "systematic"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.452467"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in TROUBLESHOOTING_GUIDE.md",
+      "details": {
+        "file": "docs/organized/troubleshooting/TROUBLESHOOTING_GUIDE.md",
+        "term": "comprehensive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.454658"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in ARCHITECTURE.md",
+      "details": {
+        "file": "docs/organized/architecture/ARCHITECTURE.md",
+        "term": "mathematically-traceable"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.458828"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated multi-agent system claim in ARCHITECTURE.md",
+      "details": {
+        "file": "docs/organized/architecture/ARCHITECTURE.md",
+        "term": "multi-agent system"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.459068"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in ARCHITECTURE.md",
+      "details": {
+        "file": "docs/organized/architecture/ARCHITECTURE.md",
+        "term": "efficient"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.459771"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in ARCHITECTURE.md",
+      "details": {
+        "file": "docs/organized/architecture/ARCHITECTURE.md",
+        "term": "robust"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.459787"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated interpretability claim in ARCHITECTURE.md",
+      "details": {
+        "file": "docs/organized/architecture/ARCHITECTURE.md",
+        "term": "95%+"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.460098"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in NIS_V3_AGENT_MASTER_INVENTORY.md",
+      "details": {
+        "file": "docs/organized/architecture/NIS_V3_AGENT_MASTER_INVENTORY.md",
+        "term": "meta-cognitive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.463168"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated multi-agent system claim in NIS_V3_AGENT_MASTER_INVENTORY.md",
+      "details": {
+        "file": "docs/organized/architecture/NIS_V3_AGENT_MASTER_INVENTORY.md",
+        "term": "general intelligence"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.463442"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in NIS_V3_AGENT_MASTER_INVENTORY.md",
+      "details": {
+        "file": "docs/organized/architecture/NIS_V3_AGENT_MASTER_INVENTORY.md",
+        "term": "comprehensive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.463511"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in NIS_V3_AGENT_MASTER_INVENTORY.md",
+      "details": {
+        "file": "docs/organized/architecture/NIS_V3_AGENT_MASTER_INVENTORY.md",
+        "term": "systematic"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.463631"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in NIS_V3_AGENT_MASTER_INVENTORY.md",
+      "details": {
+        "file": "docs/organized/architecture/NIS_V3_AGENT_MASTER_INVENTORY.md",
+        "term": "systematic"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.463634"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in LLM_SETUP_GUIDE.md",
+      "details": {
+        "file": "docs/organized/guides/LLM_SETUP_GUIDE.md",
+        "term": "systematic"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.466518"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in LLM_SETUP_GUIDE.md",
+      "details": {
+        "file": "docs/organized/guides/LLM_SETUP_GUIDE.md",
+        "term": "systematic"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.466538"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in ENHANCED_KAFKA_REDIS_INTEGRATION_GUIDE.md",
+      "details": {
+        "file": "docs/organized/guides/ENHANCED_KAFKA_REDIS_INTEGRATION_GUIDE.md",
+        "term": "comprehensive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.468921"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in ENHANCED_KAFKA_REDIS_INTEGRATION_GUIDE.md",
+      "details": {
+        "file": "docs/organized/guides/ENHANCED_KAFKA_REDIS_INTEGRATION_GUIDE.md",
+        "term": "systematic"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.469219"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in ENHANCED_KAFKA_REDIS_INTEGRATION_GUIDE.md",
+      "details": {
+        "file": "docs/organized/guides/ENHANCED_KAFKA_REDIS_INTEGRATION_GUIDE.md",
+        "term": "systematic"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.469279"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in ENHANCED_KAFKA_REDIS_INTEGRATION_GUIDE.md",
+      "details": {
+        "file": "docs/organized/guides/ENHANCED_KAFKA_REDIS_INTEGRATION_GUIDE.md",
+        "term": "efficient"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.469670"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated interpretability claim in REAL_IMAGE_GENERATION_SETUP.md",
+      "details": {
+        "file": "docs/organized/guides/REAL_IMAGE_GENERATION_SETUP.md",
+        "term": "95%+"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.479316"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in MULTI_PROVIDER_LLM_GUIDE.md",
+      "details": {
+        "file": "docs/organized/guides/MULTI_PROVIDER_LLM_GUIDE.md",
+        "term": "efficient"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.480753"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in ENHANCED_CHAT_MEMORY_GUIDE.md",
+      "details": {
+        "file": "docs/organized/guides/ENHANCED_CHAT_MEMORY_GUIDE.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.482652"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated multi-agent system claim in INTEGRATION_EXAMPLES.md",
+      "details": {
+        "file": "docs/organized/examples/INTEGRATION_EXAMPLES.md",
+        "term": "general intelligence"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.487690"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in CHAT_CONSOLE_DEMO.md",
+      "details": {
+        "file": "docs/organized/examples/CHAT_CONSOLE_DEMO.md",
+        "term": "meta-cognitive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.492873"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in MULTIMODAL_API_DOCUMENTATION.md",
+      "details": {
+        "file": "docs/organized/api/MULTIMODAL_API_DOCUMENTATION.md",
+        "term": "comprehensive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.496663"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in COMPLETE_API_REFERENCE.md",
+      "details": {
+        "file": "docs/organized/api/COMPLETE_API_REFERENCE.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.500664"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in API_COMPLETE_REFERENCE.md",
+      "details": {
+        "file": "docs/organized/api/API_COMPLETE_REFERENCE.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.505098"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in ENDPOINT_TRAINING_SUMMARY.md",
+      "details": {
+        "file": "docs/organized/technical/ENDPOINT_TRAINING_SUMMARY.md",
+        "term": "comprehensive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.509007"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in ENDPOINT_TRAINING_SUMMARY.md",
+      "details": {
+        "file": "docs/organized/technical/ENDPOINT_TRAINING_SUMMARY.md",
+        "term": "robust"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.509278"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated interpretability claim in ENDPOINT_TRAINING_SUMMARY.md",
+      "details": {
+        "file": "docs/organized/technical/ENDPOINT_TRAINING_SUMMARY.md",
+        "term": "95%+"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.509403"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in V4_V5_V6_IMPLEMENTATION_TRACKER.md",
+      "details": {
+        "file": "docs/organized/technical/V4_V5_V6_IMPLEMENTATION_TRACKER.md",
+        "term": "efficient"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.511621"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in TESTING_SESSION_SUMMARY.md",
+      "details": {
+        "file": "docs/organized/technical/TESTING_SESSION_SUMMARY.md",
+        "term": "comprehensive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.516103"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in TESTING_SESSION_SUMMARY.md",
+      "details": {
+        "file": "docs/organized/technical/TESTING_SESSION_SUMMARY.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.516135"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in TESTING_SESSION_SUMMARY.md",
+      "details": {
+        "file": "docs/organized/technical/TESTING_SESSION_SUMMARY.md",
+        "term": "systematic"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.516137"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in TESTING_SESSION_SUMMARY.md",
+      "details": {
+        "file": "docs/organized/technical/TESTING_SESSION_SUMMARY.md",
+        "term": "systematic"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.516140"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in DOCUMENTATION_UPDATE_SUMMARY.md",
+      "details": {
+        "file": "docs/organized/technical/DOCUMENTATION_UPDATE_SUMMARY.md",
+        "term": "robust"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.522140"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated interpretability claim in FILE_ORGANIZATION_RULES.md",
+      "details": {
+        "file": "docs/organized/technical/FILE_ORGANIZATION_RULES.md",
+        "term": "95%+"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.526911"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in COMPREHENSIVE_SYSTEM_IMPROVEMENTS_LIST.md",
+      "details": {
+        "file": "docs/organized/technical/COMPREHENSIVE_SYSTEM_IMPROVEMENTS_LIST.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.528472"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in COMPREHENSIVE_SYSTEM_IMPROVEMENTS_LIST.md",
+      "details": {
+        "file": "docs/organized/technical/COMPREHENSIVE_SYSTEM_IMPROVEMENTS_LIST.md",
+        "term": "systematic"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.528475"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in COMPREHENSIVE_SYSTEM_IMPROVEMENTS_LIST.md",
+      "details": {
+        "file": "docs/organized/technical/COMPREHENSIVE_SYSTEM_IMPROVEMENTS_LIST.md",
+        "term": "systematic"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.528478"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in web_search_integration.md",
+      "details": {
+        "file": "system/docs/web_search_integration.md",
+        "term": "systematic"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.532646"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in web_search_integration.md",
+      "details": {
+        "file": "system/docs/web_search_integration.md",
+        "term": "systematic"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.532704"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in web_search_integration.md",
+      "details": {
+        "file": "system/docs/web_search_integration.md",
+        "term": "efficient"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.532904"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in web_search_integration.md",
+      "details": {
+        "file": "system/docs/web_search_integration.md",
+        "term": "robust"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.532985"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in V3.2_DOCUMENTATION_SUMMARY.md",
+      "details": {
+        "file": "system/docs/V3.2_DOCUMENTATION_SUMMARY.md",
+        "term": "comprehensive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.539220"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in V3.2_DOCUMENTATION_SUMMARY.md",
+      "details": {
+        "file": "system/docs/V3.2_DOCUMENTATION_SUMMARY.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.539246"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in V3.2_DOCUMENTATION_SUMMARY.md",
+      "details": {
+        "file": "system/docs/V3.2_DOCUMENTATION_SUMMARY.md",
+        "term": "robust"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.539581"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in laplace_kan_pinn_pipeline.md",
+      "details": {
+        "file": "system/docs/diagrams/pipelines/laplace_kan_pinn_pipeline.md",
+        "term": "mathematically-traceable"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.543666"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in error_handling_recovery.md",
+      "details": {
+        "file": "system/docs/diagrams/system_flow/error_handling_recovery.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.546701"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated interpretability claim in error_handling_recovery.md",
+      "details": {
+        "file": "system/docs/diagrams/system_flow/error_handling_recovery.md",
+        "term": "95%+"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.547298"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in web_search_integration.md",
+      "details": {
+        "file": "system/docs/diagrams/system_flow/web_search_integration.md",
+        "term": "systematic"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.549027"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in web_search_integration.md",
+      "details": {
+        "file": "system/docs/diagrams/system_flow/web_search_integration.md",
+        "term": "systematic"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.549082"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in web_search_integration.md",
+      "details": {
+        "file": "system/docs/diagrams/system_flow/web_search_integration.md",
+        "term": "efficient"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.549278"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in web_search_integration.md",
+      "details": {
+        "file": "system/docs/diagrams/system_flow/web_search_integration.md",
+        "term": "robust"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.549358"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in consciousness_monitoring_flow.md",
+      "details": {
+        "file": "system/docs/diagrams/system_flow/consciousness_monitoring_flow.md",
+        "term": "meta-cognitive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.551196"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in consciousness_monitoring_flow.md",
+      "details": {
+        "file": "system/docs/diagrams/system_flow/consciousness_monitoring_flow.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.551693"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in nis_v32_complete_system_architecture.md",
+      "details": {
+        "file": "system/docs/diagrams/system_flow/nis_v32_complete_system_architecture.md",
+        "term": "meta-cognitive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.554214"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated multi-agent system claim in nis_v32_complete_system_architecture.md",
+      "details": {
+        "file": "system/docs/diagrams/system_flow/nis_v32_complete_system_architecture.md",
+        "term": "general intelligence"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.554767"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in nis_v32_complete_system_architecture.md",
+      "details": {
+        "file": "system/docs/diagrams/system_flow/nis_v32_complete_system_architecture.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.555074"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in nis_v32_complete_system_architecture.md",
+      "details": {
+        "file": "system/docs/diagrams/system_flow/nis_v32_complete_system_architecture.md",
+        "term": "efficient"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.555738"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in nis_version_progression_architecture.md",
+      "details": {
+        "file": "system/docs/diagrams/system_flow/nis_version_progression_architecture.md",
+        "term": "meta-cognitive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.558428"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated multi-agent system claim in nis_version_progression_architecture.md",
+      "details": {
+        "file": "system/docs/diagrams/system_flow/nis_version_progression_architecture.md",
+        "term": "general intelligence"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.558759"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in nis_version_progression_architecture.md",
+      "details": {
+        "file": "system/docs/diagrams/system_flow/nis_version_progression_architecture.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.558863"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in nis_complete_system_architecture.md",
+      "details": {
+        "file": "system/docs/diagrams/system_flow/nis_complete_system_architecture.md",
+        "term": "meta-cognitive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.561119"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in nis_complete_system_architecture.md",
+      "details": {
+        "file": "system/docs/diagrams/system_flow/nis_complete_system_architecture.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.561637"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in nis_complete_system_architecture.md",
+      "details": {
+        "file": "system/docs/diagrams/system_flow/nis_complete_system_architecture.md",
+        "term": "systematic"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.561754"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in nis_complete_system_architecture.md",
+      "details": {
+        "file": "system/docs/diagrams/system_flow/nis_complete_system_architecture.md",
+        "term": "systematic"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.561872"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated interpretability claim in nis_complete_system_architecture.md",
+      "details": {
+        "file": "system/docs/diagrams/system_flow/nis_complete_system_architecture.md",
+        "term": "95%+"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.562483"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in memory_system_architecture.md",
+      "details": {
+        "file": "system/docs/diagrams/system_flow/memory_system_architecture.md",
+        "term": "meta-cognitive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.569630"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in memory_system_architecture.md",
+      "details": {
+        "file": "system/docs/diagrams/system_flow/memory_system_architecture.md",
+        "term": "efficient"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.570263"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated interpretability claim in memory_system_architecture.md",
+      "details": {
+        "file": "system/docs/diagrams/system_flow/memory_system_architecture.md",
+        "term": "95%+"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.570513"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in nis_complete_dataflow.md",
+      "details": {
+        "file": "system/docs/diagrams/system_flow/nis_complete_dataflow.md",
+        "term": "mathematically-traceable"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.571378"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in Agent_Architecture.md",
+      "details": {
+        "file": "system/docs/architecture/Agent_Architecture.md",
+        "term": "comprehensive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.573411"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in Agent_Architecture.md",
+      "details": {
+        "file": "system/docs/architecture/Agent_Architecture.md",
+        "term": "efficient"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.573689"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in Agent_Architecture.md",
+      "details": {
+        "file": "system/docs/architecture/Agent_Architecture.md",
+        "term": "robust"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.573714"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in SystemDataflow.md",
+      "details": {
+        "file": "system/docs/architecture/SystemDataflow.md",
+        "term": "efficient"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.574800"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in SystemDataflow.md",
+      "details": {
+        "file": "system/docs/architecture/SystemDataflow.md",
+        "term": "robust"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.574806"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in README.md",
+      "details": {
+        "file": "system/docs/examples/README.md",
+        "term": "comprehensive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.575483"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in README.md",
+      "details": {
+        "file": "system/docs/memory_system/README.md",
+        "term": "systematic"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.576445"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in README.md",
+      "details": {
+        "file": "system/docs/memory_system/README.md",
+        "term": "systematic"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.576457"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in COMPREHENSIVE_TESTING_SUMMARY.md",
+      "details": {
+        "file": "system/utilities/reports/COMPREHENSIVE_TESTING_SUMMARY.md",
+        "term": "comprehensive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.579793"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in COMPREHENSIVE_TESTING_SUMMARY.md",
+      "details": {
+        "file": "system/utilities/reports/COMPREHENSIVE_TESTING_SUMMARY.md",
+        "term": "robust"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.580292"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated quantum claim in COMPREHENSIVE_TESTING_SUMMARY.md",
+      "details": {
+        "file": "system/utilities/reports/COMPREHENSIVE_TESTING_SUMMARY.md",
+        "term": "quantum computing"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.580414"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in DEPENDENCY_FIXES_SUMMARY.md",
+      "details": {
+        "file": "system/utilities/reports/DEPENDENCY_FIXES_SUMMARY.md",
+        "term": "comprehensive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.582457"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in DEPENDENCY_FIXES_SUMMARY.md",
+      "details": {
+        "file": "system/utilities/reports/DEPENDENCY_FIXES_SUMMARY.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.582519"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in DEPENDENCY_FIXES_SUMMARY.md",
+      "details": {
+        "file": "system/utilities/reports/DEPENDENCY_FIXES_SUMMARY.md",
+        "term": "systematic"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.582522"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in DEPENDENCY_FIXES_SUMMARY.md",
+      "details": {
+        "file": "system/utilities/reports/DEPENDENCY_FIXES_SUMMARY.md",
+        "term": "systematic"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.582525"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in DEPENDENCY_FIXES_SUMMARY.md: ('10', 'x', 'faster')",
+      "details": {
+        "file": "system/utilities/reports/DEPENDENCY_FIXES_SUMMARY.md",
+        "claim": [
+          "10",
+          "x",
+          "faster"
+        ]
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-08-07T15:49:50.583169"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in DEPENDENCY_FIXES_SUMMARY.md: Processing",
+      "details": {
+        "file": "system/utilities/reports/DEPENDENCY_FIXES_SUMMARY.md",
+        "claim": "Processing"
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-08-07T15:49:50.583366"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in COMPREHENSIVE_FINAL_TESTING_REPORT.md",
+      "details": {
+        "file": "system/utilities/reports/COMPREHENSIVE_FINAL_TESTING_REPORT.md",
+        "term": "comprehensive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.584555"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in COMPREHENSIVE_FINAL_TESTING_REPORT.md",
+      "details": {
+        "file": "system/utilities/reports/COMPREHENSIVE_FINAL_TESTING_REPORT.md",
+        "term": "first-ever"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.585035"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in COMPREHENSIVE_FINAL_TESTING_REPORT.md",
+      "details": {
+        "file": "system/utilities/reports/COMPREHENSIVE_FINAL_TESTING_REPORT.md",
+        "term": "bulletproof"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.585332"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in COMPREHENSIVE_FINAL_TESTING_REPORT.md: ('93.8', 'accuracy')",
+      "details": {
+        "file": "system/utilities/reports/COMPREHENSIVE_FINAL_TESTING_REPORT.md",
+        "claim": [
+          "93.8",
+          "accuracy"
+        ]
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-08-07T15:49:50.585992"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in ENHANCED_MEMORY_IMPLEMENTATION_SUMMARY.md",
+      "details": {
+        "file": "system/utilities/reports/ENHANCED_MEMORY_IMPLEMENTATION_SUMMARY.md",
+        "term": "comprehensive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.587645"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in ENHANCED_MEMORY_IMPLEMENTATION_SUMMARY.md",
+      "details": {
+        "file": "system/utilities/reports/ENHANCED_MEMORY_IMPLEMENTATION_SUMMARY.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.587667"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in ULTIMATE_TESTING_ACHIEVEMENT_REPORT.md",
+      "details": {
+        "file": "system/utilities/reports/ULTIMATE_TESTING_ACHIEVEMENT_REPORT.md",
+        "term": "comprehensive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.589744"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in ULTIMATE_TESTING_ACHIEVEMENT_REPORT.md",
+      "details": {
+        "file": "system/utilities/reports/ULTIMATE_TESTING_ACHIEVEMENT_REPORT.md",
+        "term": "first-ever"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.590214"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in ULTIMATE_TESTING_ACHIEVEMENT_REPORT.md",
+      "details": {
+        "file": "system/utilities/reports/ULTIMATE_TESTING_ACHIEVEMENT_REPORT.md",
+        "term": "robust"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.590416"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in ULTIMATE_TESTING_ACHIEVEMENT_REPORT.md",
+      "details": {
+        "file": "system/utilities/reports/ULTIMATE_TESTING_ACHIEVEMENT_REPORT.md",
+        "term": "bulletproof"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.590423"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in ULTIMATE_TESTING_ACHIEVEMENT_REPORT.md: ('93.8', 'accuracy')",
+      "details": {
+        "file": "system/utilities/reports/ULTIMATE_TESTING_ACHIEVEMENT_REPORT.md",
+        "claim": [
+          "93.8",
+          "accuracy"
+        ]
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-08-07T15:49:50.591078"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in SESSION_COMPLETE_SUMMARY.md",
+      "details": {
+        "file": "system/utilities/reports/SESSION_COMPLETE_SUMMARY.md",
+        "term": "comprehensive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.592497"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in ROOT_CLEANUP_SUMMARY.md",
+      "details": {
+        "file": "system/utilities/reports/ROOT_CLEANUP_SUMMARY.md",
+        "term": "comprehensive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.593848"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in ROOT_CLEANUP_SUMMARY.md",
+      "details": {
+        "file": "system/utilities/reports/ROOT_CLEANUP_SUMMARY.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.593910"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in README.md",
+      "details": {
+        "file": "system/assets/images/first_contact_protocol/README.md",
+        "term": "comprehensive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.595392"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in README.md",
+      "details": {
+        "file": "system/nis-integrity-toolkit/README.md",
+        "term": "comprehensive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.596352"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in QUICK_START.md",
+      "details": {
+        "file": "system/nis-integrity-toolkit/QUICK_START.md",
+        "term": "comprehensive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.597697"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in NIS_Protocol_V3_Whitepaper.md",
+      "details": {
+        "file": "dev/documentation/NIS_Protocol_V3_Whitepaper.md",
+        "term": "comprehensive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.603015"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in NIS_Protocol_V3_Whitepaper.md: processing",
+      "details": {
+        "file": "dev/documentation/NIS_Protocol_V3_Whitepaper.md",
+        "claim": "processing"
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-08-07T15:49:50.605397"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in POSTMAN_IMPORT_GUIDE.md",
+      "details": {
+        "file": "dev/documentation/POSTMAN_IMPORT_GUIDE.md",
+        "term": "comprehensive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.606406"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated quantum claim in POSTMAN_IMPORT_GUIDE.md",
+      "details": {
+        "file": "dev/documentation/POSTMAN_IMPORT_GUIDE.md",
+        "term": "quantum computing"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.606953"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated interpretability claim in POSTMAN_IMPORT_GUIDE.md",
+      "details": {
+        "file": "dev/documentation/POSTMAN_IMPORT_GUIDE.md",
+        "term": "95%+"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.607005"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in READY_FOR_NEXT_SESSION.md",
+      "details": {
+        "file": "dev/documentation/READY_FOR_NEXT_SESSION.md",
+        "term": "comprehensive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.608191"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in READY_FOR_NEXT_SESSION.md",
+      "details": {
+        "file": "dev/documentation/READY_FOR_NEXT_SESSION.md",
+        "term": "efficient"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.608387"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in READY_FOR_NEXT_SESSION.md: monitoring",
+      "details": {
+        "file": "dev/documentation/READY_FOR_NEXT_SESSION.md",
+        "claim": "monitoring"
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-08-07T15:49:50.608826"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in AWS_QUOTA_SUCCESS_SUMMARY.md",
+      "details": {
+        "file": "dev/documentation/AWS_QUOTA_SUCCESS_SUMMARY.md",
+        "term": "comprehensive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.609317"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated multi-agent system claim in NEMOTRON_INTEGRATION_COMPLETE.md",
+      "details": {
+        "file": "dev/documentation/NEMOTRON_INTEGRATION_COMPLETE.md",
+        "term": "multi-agent system"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.610482"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in NEMOTRON_INTEGRATION_COMPLETE.md",
+      "details": {
+        "file": "dev/documentation/NEMOTRON_INTEGRATION_COMPLETE.md",
+        "term": "comprehensive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.610598"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in NEMOTRON_INTEGRATION_COMPLETE.md",
+      "details": {
+        "file": "dev/documentation/NEMOTRON_INTEGRATION_COMPLETE.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.610603"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in NEMOTRON_INTEGRATION_COMPLETE.md",
+      "details": {
+        "file": "dev/documentation/NEMOTRON_INTEGRATION_COMPLETE.md",
+        "term": "efficient"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.610898"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated interpretability claim in NEMOTRON_INTEGRATION_COMPLETE.md",
+      "details": {
+        "file": "dev/documentation/NEMOTRON_INTEGRATION_COMPLETE.md",
+        "term": "95%+"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.611168"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in NEMOTRON_INTEGRATION_COMPLETE.md: ('20', 'accuracy')",
+      "details": {
+        "file": "dev/documentation/NEMOTRON_INTEGRATION_COMPLETE.md",
+        "claim": [
+          "20",
+          "accuracy"
+        ]
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-08-07T15:49:50.611411"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in NEMOTRON_INTEGRATION_COMPLETE.md: ('20', 'Accuracy')",
+      "details": {
+        "file": "dev/documentation/NEMOTRON_INTEGRATION_COMPLETE.md",
+        "claim": [
+          "20",
+          "Accuracy"
+        ]
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-08-07T15:49:50.611414"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in NEMOTRON_INTEGRATION_COMPLETE.md: ('20', 'accuracy')",
+      "details": {
+        "file": "dev/documentation/NEMOTRON_INTEGRATION_COMPLETE.md",
+        "claim": [
+          "20",
+          "accuracy"
+        ]
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-08-07T15:49:50.611416"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in NEMOTRON_INTEGRATION_COMPLETE.md: ('20', 'interpretability')",
+      "details": {
+        "file": "dev/documentation/NEMOTRON_INTEGRATION_COMPLETE.md",
+        "claim": [
+          "20",
+          "interpretability"
+        ]
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-08-07T15:49:50.611418"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in NEMOTRON_INTEGRATION_COMPLETE.md: ('20', 'accuracy')",
+      "details": {
+        "file": "dev/documentation/NEMOTRON_INTEGRATION_COMPLETE.md",
+        "claim": [
+          "20",
+          "accuracy"
+        ]
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-08-07T15:49:50.611420"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in NEMOTRON_INTEGRATION_COMPLETE.md: ('20', 'Accuracy')",
+      "details": {
+        "file": "dev/documentation/NEMOTRON_INTEGRATION_COMPLETE.md",
+        "claim": [
+          "20",
+          "Accuracy"
+        ]
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-08-07T15:49:50.611422"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in NEMOTRON_INTEGRATION_COMPLETE.md: ('20', 'accuracy')",
+      "details": {
+        "file": "dev/documentation/NEMOTRON_INTEGRATION_COMPLETE.md",
+        "claim": [
+          "20",
+          "accuracy"
+        ]
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-08-07T15:49:50.611423"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in NEMOTRON_INTEGRATION_COMPLETE.md: ('20', 'accuracy')",
+      "details": {
+        "file": "dev/documentation/NEMOTRON_INTEGRATION_COMPLETE.md",
+        "claim": [
+          "20",
+          "accuracy"
+        ]
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-08-07T15:49:50.611427"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in NEMOTRON_INTEGRATION_COMPLETE.md: ('5', 'x', 'faster')",
+      "details": {
+        "file": "dev/documentation/NEMOTRON_INTEGRATION_COMPLETE.md",
+        "claim": [
+          "5",
+          "x",
+          "faster"
+        ]
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-08-07T15:49:50.611565"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in NEMOTRON_INTEGRATION_COMPLETE.md: ('4.5', 'x', 'faster')",
+      "details": {
+        "file": "dev/documentation/NEMOTRON_INTEGRATION_COMPLETE.md",
+        "claim": [
+          "4.5",
+          "x",
+          "faster"
+        ]
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-08-07T15:49:50.611567"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in NEMOTRON_INTEGRATION_COMPLETE.md: ('4.6', 'x', 'faster')",
+      "details": {
+        "file": "dev/documentation/NEMOTRON_INTEGRATION_COMPLETE.md",
+        "claim": [
+          "4.6",
+          "x",
+          "faster"
+        ]
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-08-07T15:49:50.611569"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in NEMOTRON_INTEGRATION_COMPLETE.md: ('4.8', 'x', 'faster')",
+      "details": {
+        "file": "dev/documentation/NEMOTRON_INTEGRATION_COMPLETE.md",
+        "claim": [
+          "4.8",
+          "x",
+          "faster"
+        ]
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-08-07T15:49:50.611571"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in NEMOTRON_INTEGRATION_COMPLETE.md: ('5', 'x', 'faster')",
+      "details": {
+        "file": "dev/documentation/NEMOTRON_INTEGRATION_COMPLETE.md",
+        "claim": [
+          "5",
+          "x",
+          "faster"
+        ]
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-08-07T15:49:50.611572"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in NEMOTRON_INTEGRATION_COMPLETE.md: Processing",
+      "details": {
+        "file": "dev/documentation/NEMOTRON_INTEGRATION_COMPLETE.md",
+        "claim": "Processing"
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-08-07T15:49:50.611808"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in AWS_MIGRATION_ACCELERATOR_GUIDE.md",
+      "details": {
+        "file": "dev/documentation/AWS_MIGRATION_ACCELERATOR_GUIDE.md",
+        "term": "comprehensive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.613424"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in AWS_MIGRATION_ACCELERATOR_GUIDE.md",
+      "details": {
+        "file": "dev/documentation/AWS_MIGRATION_ACCELERATOR_GUIDE.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.613431"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in AWS_MIGRATION_ACCELERATOR_GUIDE.md",
+      "details": {
+        "file": "dev/documentation/AWS_MIGRATION_ACCELERATOR_GUIDE.md",
+        "term": "robust"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.614413"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated interpretability claim in AWS_MIGRATION_ACCELERATOR_GUIDE.md",
+      "details": {
+        "file": "dev/documentation/AWS_MIGRATION_ACCELERATOR_GUIDE.md",
+        "term": "95%+"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.614983"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in AWS_MIGRATION_ACCELERATOR_GUIDE.md: ('20', 'Performance')",
+      "details": {
+        "file": "dev/documentation/AWS_MIGRATION_ACCELERATOR_GUIDE.md",
+        "claim": [
+          "20",
+          "Performance"
+        ]
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-08-07T15:49:50.615677"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in AWS_MIGRATION_ACCELERATOR_GUIDE.md: ('20', 'accuracy')",
+      "details": {
+        "file": "dev/documentation/AWS_MIGRATION_ACCELERATOR_GUIDE.md",
+        "claim": [
+          "20",
+          "accuracy"
+        ]
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-08-07T15:49:50.615679"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in AWS_MIGRATION_ACCELERATOR_GUIDE.md: ('20', 'accuracy')",
+      "details": {
+        "file": "dev/documentation/AWS_MIGRATION_ACCELERATOR_GUIDE.md",
+        "claim": [
+          "20",
+          "accuracy"
+        ]
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-08-07T15:49:50.615681"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in AWS_MIGRATION_ACCELERATOR_GUIDE.md: ('5', 'x', 'Faster')",
+      "details": {
+        "file": "dev/documentation/AWS_MIGRATION_ACCELERATOR_GUIDE.md",
+        "claim": [
+          "5",
+          "x",
+          "Faster"
+        ]
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-08-07T15:49:50.616122"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in AWS_MIGRATION_ACCELERATOR_GUIDE.md: ('10', 'x', 'faster')",
+      "details": {
+        "file": "dev/documentation/AWS_MIGRATION_ACCELERATOR_GUIDE.md",
+        "claim": [
+          "10",
+          "x",
+          "faster"
+        ]
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-08-07T15:49:50.616124"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in AWS_MIGRATION_ACCELERATOR_GUIDE.md: ('3', 'x', 'faster')",
+      "details": {
+        "file": "dev/documentation/AWS_MIGRATION_ACCELERATOR_GUIDE.md",
+        "claim": [
+          "3",
+          "x",
+          "faster"
+        ]
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-08-07T15:49:50.616126"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in AWS_MIGRATION_ACCELERATOR_GUIDE.md: monitoring",
+      "details": {
+        "file": "dev/documentation/AWS_MIGRATION_ACCELERATOR_GUIDE.md",
+        "claim": "monitoring"
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-08-07T15:49:50.616793"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in AWS_CREDITS_DEPLOYMENT_PLAN.md",
+      "details": {
+        "file": "dev/documentation/AWS_CREDITS_DEPLOYMENT_PLAN.md",
+        "term": "comprehensive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.618510"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated interpretability claim in AWS_CREDITS_DEPLOYMENT_PLAN.md",
+      "details": {
+        "file": "dev/documentation/AWS_CREDITS_DEPLOYMENT_PLAN.md",
+        "term": "95%+"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.618940"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in AWS_CREDITS_DEPLOYMENT_PLAN.md: ('95', 'interpretability')",
+      "details": {
+        "file": "dev/documentation/AWS_CREDITS_DEPLOYMENT_PLAN.md",
+        "claim": [
+          "95",
+          "interpretability"
+        ]
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-08-07T15:49:50.619096"
+    },
+    {
+      "type": "unverified_claim",
+      "description": "Technical claim needs verification in AWS_CREDITS_DEPLOYMENT_PLAN.md: monitoring",
+      "details": {
+        "file": "dev/documentation/AWS_CREDITS_DEPLOYMENT_PLAN.md",
+        "claim": "monitoring"
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-08-07T15:49:50.619341"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in README-NVIDIA-INTEGRITY.md",
+      "details": {
+        "file": "dev/documentation/README-NVIDIA-INTEGRITY.md",
+        "term": "comprehensive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.619932"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in README.md",
+      "details": {
+        "file": "dev/todo/autonomous_system/README.md",
+        "term": "comprehensive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.620902"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in README.md",
+      "details": {
+        "file": "dev/todo/autonomous_system/README.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.620931"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in MULTIMODAL_ENHANCEMENT_ROADMAP.md",
+      "details": {
+        "file": "dev/todo/autonomous_system/MULTIMODAL_ENHANCEMENT_ROADMAP.md",
+        "term": "comprehensive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.621976"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated interpretability claim in MULTIMODAL_ENHANCEMENT_ROADMAP.md",
+      "details": {
+        "file": "dev/todo/autonomous_system/MULTIMODAL_ENHANCEMENT_ROADMAP.md",
+        "term": "95%+"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.622596"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in AGI_GAPS_ROADMAP.md",
+      "details": {
+        "file": "dev/todo/autonomous_system/AGI_GAPS_ROADMAP.md",
+        "term": "meta-cognitive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.623596"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated multi-agent system claim in AGI_GAPS_ROADMAP.md",
+      "details": {
+        "file": "dev/todo/autonomous_system/AGI_GAPS_ROADMAP.md",
+        "term": "general intelligence"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.623828"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in AGI_GAPS_ROADMAP.md",
+      "details": {
+        "file": "dev/todo/autonomous_system/AGI_GAPS_ROADMAP.md",
+        "term": "comprehensive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.623882"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in AGI_GAPS_ROADMAP.md",
+      "details": {
+        "file": "dev/todo/autonomous_system/AGI_GAPS_ROADMAP.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.623891"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in AGI_GAPS_ROADMAP.md",
+      "details": {
+        "file": "dev/todo/autonomous_system/AGI_GAPS_ROADMAP.md",
+        "term": "efficient"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.624208"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in AGI_GAPS_ROADMAP.md",
+      "details": {
+        "file": "dev/todo/autonomous_system/AGI_GAPS_ROADMAP.md",
+        "term": "robust"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.624229"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated KAN interpretability claim in CONSOLE_ENHANCEMENT_ROADMAP.md",
+      "details": {
+        "file": "dev/todo/autonomous_system/CONSOLE_ENHANCEMENT_ROADMAP.md",
+        "term": "meta-cognitive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.625673"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in CONSOLE_ENHANCEMENT_ROADMAP.md",
+      "details": {
+        "file": "dev/todo/autonomous_system/CONSOLE_ENHANCEMENT_ROADMAP.md",
+        "term": "comprehensive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.626113"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in CONSOLE_ENHANCEMENT_ROADMAP.md",
+      "details": {
+        "file": "dev/todo/autonomous_system/CONSOLE_ENHANCEMENT_ROADMAP.md",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.626146"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in README.md",
+      "details": {
+        "file": "dev/examples/enhanced_memory_example/README.md",
+        "term": "comprehensive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.629674"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in README.md",
+      "details": {
+        "file": "dev/examples/enhanced_memory_example/README.md",
+        "term": "systematic"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.629734"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in README.md",
+      "details": {
+        "file": "dev/examples/enhanced_memory_example/README.md",
+        "term": "systematic"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.629741"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated perfection claim in README.md",
+      "details": {
+        "file": "dev/examples/enhanced_memory_example/README.md",
+        "term": "efficient"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.629812"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in README.md",
+      "details": {
+        "file": "dev/examples/basic_agent_communication/README.md",
+        "term": "comprehensive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.630920"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in agi_benchmark_results.txt",
+      "details": {
+        "file": "system/nis-integrity-toolkit/agi_benchmark_results.txt",
+        "term": "comprehensive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.636354"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in agi_benchmark_results.txt",
+      "details": {
+        "file": "system/nis-integrity-toolkit/agi_benchmark_results.txt",
+        "term": "improvement"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.636372"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in agi_benchmark_results.txt",
+      "details": {
+        "file": "system/nis-integrity-toolkit/agi_benchmark_results.txt",
+        "term": "systematic"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.636430"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in agi_benchmark_results.txt",
+      "details": {
+        "file": "system/nis-integrity-toolkit/agi_benchmark_results.txt",
+        "term": "systematic"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.636489"
+    },
+    {
+      "type": "documentation_hype",
+      "description": "Unsubstantiated comprehensive claim in requirements-minimal.txt",
+      "details": {
+        "file": "dev/requirements-minimal.txt",
+        "term": "comprehensive"
+      },
+      "severity": "HIGH",
+      "timestamp": "2025-08-07T15:49:50.638584"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in modeling_bitnet.py",
+      "details": {
+        "file": "models/bitnet/models/bitnet/modeling_bitnet.py",
+        "count": 7
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-08-07T15:49:50.661173"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in eval_utils.py",
+      "details": {
+        "file": "models/bitnet/models/bitnet/eval_utils.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-08-07T15:49:50.663024"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in full-audit.py",
+      "details": {
+        "file": "system/nis-integrity-toolkit/audit-scripts/full-audit.py",
+        "count": 4
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-08-07T15:49:50.677490"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in run_integrity_fixes.py",
+      "details": {
+        "file": "scripts/run_integrity_fixes.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-08-07T15:49:50.738312"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in autonomous_learning_system.py",
+      "details": {
+        "file": "dev/todo/autonomous_system/autonomous_learning_system.py",
+        "count": 4
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-08-07T15:49:50.761046"
+    },
+    {
+      "type": "incomplete_implementation",
+      "description": "Incomplete implementation markers in safety_monitor.py",
+      "details": {
+        "file": "src/agents/alignment/safety_monitor.py",
+        "count": 1
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-08-07T15:49:50.933749"
+    },
+    {
+      "type": "complex_dependencies",
+      "description": "Complex ML dependencies found: ['transformers', 'torch', 'tensorflow']. Are these actually used?",
+      "details": {
+        "dependencies": [
+          "transformers",
+          "torch",
+          "tensorflow"
+        ]
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-08-07T15:49:50.985814"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'mathematically-traceable' appears 2 times",
+      "details": {
+        "file": "README.md",
+        "term": "mathematically-traceable",
+        "count": 2
+      },
+      "severity": "LOW",
+      "timestamp": "2025-08-07T15:49:51.037526"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'meta-cognitive' appears 6 times",
+      "details": {
+        "file": "README.md",
+        "term": "meta-cognitive",
+        "count": 6
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-08-07T15:49:51.037684"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'comprehensive' appears 5 times",
+      "details": {
+        "file": "README.md",
+        "term": "comprehensive",
+        "count": 5
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-08-07T15:49:51.038695"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'improvement' appears 1 times",
+      "details": {
+        "file": "README.md",
+        "term": "improvement",
+        "count": 1
+      },
+      "severity": "LOW",
+      "timestamp": "2025-08-07T15:49:51.038994"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'systematic' appears 1 times",
+      "details": {
+        "file": "models/bitnet/README.md",
+        "term": "systematic",
+        "count": 1
+      },
+      "severity": "LOW",
+      "timestamp": "2025-08-07T15:49:51.041620"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'systematic' appears 1 times",
+      "details": {
+        "file": "models/bitnet/README.md",
+        "term": "systematic",
+        "count": 1
+      },
+      "severity": "LOW",
+      "timestamp": "2025-08-07T15:49:51.041640"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'improvement' appears 2 times",
+      "details": {
+        "file": "docs/README.md",
+        "term": "improvement",
+        "count": 2
+      },
+      "severity": "LOW",
+      "timestamp": "2025-08-07T15:49:51.042469"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'improvement' appears 5 times",
+      "details": {
+        "file": "docs/legacy/versions/v2.0/README.md",
+        "term": "improvement",
+        "count": 5
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-08-07T15:49:51.044243"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'efficient' appears 1 times",
+      "details": {
+        "file": "docs/legacy/versions/v2.0/README.md",
+        "term": "efficient",
+        "count": 1
+      },
+      "severity": "LOW",
+      "timestamp": "2025-08-07T15:49:51.044922"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'robust' appears 1 times",
+      "details": {
+        "file": "docs/legacy/versions/v2.0/README.md",
+        "term": "robust",
+        "count": 1
+      },
+      "severity": "LOW",
+      "timestamp": "2025-08-07T15:49:51.045039"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'meta-cognitive' appears 1 times",
+      "details": {
+        "file": "docs/legacy/versions/v1.0/README.md",
+        "term": "meta-cognitive",
+        "count": 1
+      },
+      "severity": "LOW",
+      "timestamp": "2025-08-07T15:49:51.045889"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'multi-agent system' appears 1 times",
+      "details": {
+        "file": "docs/legacy/versions/v1.0/README.md",
+        "term": "multi-agent system",
+        "count": 1
+      },
+      "severity": "LOW",
+      "timestamp": "2025-08-07T15:49:51.046041"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'improvement' appears 2 times",
+      "details": {
+        "file": "docs/legacy/versions/v1.0/README.md",
+        "term": "improvement",
+        "count": 2
+      },
+      "severity": "LOW",
+      "timestamp": "2025-08-07T15:49:51.046323"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'efficient' appears 1 times",
+      "details": {
+        "file": "docs/legacy/versions/v1.0/README.md",
+        "term": "efficient",
+        "count": 1
+      },
+      "severity": "LOW",
+      "timestamp": "2025-08-07T15:49:51.046686"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'robust' appears 2 times",
+      "details": {
+        "file": "docs/legacy/versions/v1.0/README.md",
+        "term": "robust",
+        "count": 2
+      },
+      "severity": "LOW",
+      "timestamp": "2025-08-07T15:49:51.046756"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'general intelligence' appears 1 times",
+      "details": {
+        "file": "docs/legacy/versions/v3.2/README.md",
+        "term": "general intelligence",
+        "count": 1
+      },
+      "severity": "LOW",
+      "timestamp": "2025-08-07T15:49:51.049388"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'comprehensive' appears 1 times",
+      "details": {
+        "file": "docs/legacy/versions/v3.2/README.md",
+        "term": "comprehensive",
+        "count": 1
+      },
+      "severity": "LOW",
+      "timestamp": "2025-08-07T15:49:51.049683"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'improvement' appears 7 times",
+      "details": {
+        "file": "docs/legacy/versions/v3.2/README.md",
+        "term": "improvement",
+        "count": 7
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-08-07T15:49:51.050211"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'robust' appears 3 times",
+      "details": {
+        "file": "docs/legacy/versions/v3.2/README.md",
+        "term": "robust",
+        "count": 3
+      },
+      "severity": "LOW",
+      "timestamp": "2025-08-07T15:49:51.052353"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: '95%+' appears 3 times",
+      "details": {
+        "file": "docs/legacy/versions/v3.2/README.md",
+        "term": "95%+",
+        "count": 3
+      },
+      "severity": "LOW",
+      "timestamp": "2025-08-07T15:49:51.053499"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'meta-cognitive' appears 17 times",
+      "details": {
+        "file": "docs/legacy/versions/v3.0/README.md",
+        "term": "meta-cognitive",
+        "count": 17
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-08-07T15:49:51.054632"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'multi-agent system' appears 2 times",
+      "details": {
+        "file": "docs/legacy/versions/v3.0/README.md",
+        "term": "multi-agent system",
+        "count": 2
+      },
+      "severity": "LOW",
+      "timestamp": "2025-08-07T15:49:51.055058"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'comprehensive' appears 1 times",
+      "details": {
+        "file": "docs/legacy/versions/v3.0/README.md",
+        "term": "comprehensive",
+        "count": 1
+      },
+      "severity": "LOW",
+      "timestamp": "2025-08-07T15:49:51.055535"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'improvement' appears 12 times",
+      "details": {
+        "file": "docs/legacy/versions/v3.0/README.md",
+        "term": "improvement",
+        "count": 12
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-08-07T15:49:51.055812"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'meta-cognitive' appears 4 times",
+      "details": {
+        "file": "docs/legacy/versions/v3.1/README.md",
+        "term": "meta-cognitive",
+        "count": 4
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-08-07T15:49:51.058425"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'improvement' appears 8 times",
+      "details": {
+        "file": "docs/legacy/versions/v3.1/README.md",
+        "term": "improvement",
+        "count": 8
+      },
+      "severity": "MEDIUM",
+      "timestamp": "2025-08-07T15:49:51.059706"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'efficient' appears 2 times",
+      "details": {
+        "file": "docs/legacy/versions/v3.1/README.md",
+        "term": "efficient",
+        "count": 2
+      },
+      "severity": "LOW",
+      "timestamp": "2025-08-07T15:49:51.060806"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: '97.3%' appears 1 times",
+      "details": {
+        "file": "docs/legacy/versions/v3.1/README.md",
+        "term": "97.3%",
+        "count": 1
+      },
+      "severity": "LOW",
+      "timestamp": "2025-08-07T15:49:51.061684"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'comprehensive' appears 1 times",
+      "details": {
+        "file": "system/docs/examples/README.md",
+        "term": "comprehensive",
+        "count": 1
+      },
+      "severity": "LOW",
+      "timestamp": "2025-08-07T15:49:51.063855"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'systematic' appears 1 times",
+      "details": {
+        "file": "system/docs/memory_system/README.md",
+        "term": "systematic",
+        "count": 1
+      },
+      "severity": "LOW",
+      "timestamp": "2025-08-07T15:49:51.064476"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'systematic' appears 1 times",
+      "details": {
+        "file": "system/docs/memory_system/README.md",
+        "term": "systematic",
+        "count": 1
+      },
+      "severity": "LOW",
+      "timestamp": "2025-08-07T15:49:51.064504"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'comprehensive' appears 1 times",
+      "details": {
+        "file": "system/assets/images/first_contact_protocol/README.md",
+        "term": "comprehensive",
+        "count": 1
+      },
+      "severity": "LOW",
+      "timestamp": "2025-08-07T15:49:51.065245"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'comprehensive' appears 3 times",
+      "details": {
+        "file": "system/nis-integrity-toolkit/README.md",
+        "term": "comprehensive",
+        "count": 3
+      },
+      "severity": "LOW",
+      "timestamp": "2025-08-07T15:49:51.065939"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README-NVIDIA-INTEGRITY.md: 'comprehensive' appears 2 times",
+      "details": {
+        "file": "dev/documentation/README-NVIDIA-INTEGRITY.md",
+        "term": "comprehensive",
+        "count": 2
+      },
+      "severity": "LOW",
+      "timestamp": "2025-08-07T15:49:51.066876"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'comprehensive' appears 1 times",
+      "details": {
+        "file": "dev/todo/autonomous_system/README.md",
+        "term": "comprehensive",
+        "count": 1
+      },
+      "severity": "LOW",
+      "timestamp": "2025-08-07T15:49:51.067480"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'improvement' appears 1 times",
+      "details": {
+        "file": "dev/todo/autonomous_system/README.md",
+        "term": "improvement",
+        "count": 1
+      },
+      "severity": "LOW",
+      "timestamp": "2025-08-07T15:49:51.067510"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'comprehensive' appears 1 times",
+      "details": {
+        "file": "dev/examples/enhanced_memory_example/README.md",
+        "term": "comprehensive",
+        "count": 1
+      },
+      "severity": "LOW",
+      "timestamp": "2025-08-07T15:49:51.068393"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'systematic' appears 2 times",
+      "details": {
+        "file": "dev/examples/enhanced_memory_example/README.md",
+        "term": "systematic",
+        "count": 2
+      },
+      "severity": "LOW",
+      "timestamp": "2025-08-07T15:49:51.068515"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'systematic' appears 2 times",
+      "details": {
+        "file": "dev/examples/enhanced_memory_example/README.md",
+        "term": "systematic",
+        "count": 2
+      },
+      "severity": "LOW",
+      "timestamp": "2025-08-07T15:49:51.068576"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'efficient' appears 2 times",
+      "details": {
+        "file": "dev/examples/enhanced_memory_example/README.md",
+        "term": "efficient",
+        "count": 2
+      },
+      "severity": "LOW",
+      "timestamp": "2025-08-07T15:49:51.068706"
+    },
+    {
+      "type": "marketing_hype",
+      "description": "Marketing language in README.md: 'comprehensive' appears 1 times",
+      "details": {
+        "file": "dev/examples/basic_agent_communication/README.md",
+        "term": "comprehensive",
+        "count": 1
+      },
+      "severity": "LOW",
+      "timestamp": "2025-08-07T15:49:51.069285"
+    }
+  ],
+  "metrics": {
+    "claimed_services": 0,
+    "actual_services": 5,
+    "service_directories": 17,
+    "total_hype_instances": 113,
+    "high_issues": 195,
+    "medium_issues": 45,
+    "low_issues": 33
+  },
+  "recommendations": [
+    {
+      "priority": "HIGH",
+      "action": "Replace hardcoded performance metrics with actual calculations",
+      "reason": "Found 195 high-severity issues that damage credibility"
+    },
+    {
+      "priority": "HIGH",
+      "action": "Rewrite marketing language with evidence-based descriptions",
+      "reason": "Found 113 instances of unsupported hype language"
+    },
+    {
+      "priority": "MEDIUM",
+      "action": "Implement pre-commit hooks with this audit tool",
+      "reason": "Prevent future integrity issues"
+    },
+    {
+      "priority": "LOW",
+      "action": "Add explicit limitations section to documentation",
+      "reason": "Transparent communication of constraints builds trust"
+    }
+  ],
+  "integrity_score": 0
+}

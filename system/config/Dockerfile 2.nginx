@@ -1,0 +1,12 @@
+FROM nginx:1.25-alpine
+
+# Copy static nginx configuration into the image to avoid host FS read issues
+COPY system/config/nginx.conf /etc/nginx/nginx.conf
+
+# Expose HTTP
+EXPOSE 80
+
+# Default command
+CMD ["nginx", "-g", "daemon off;"]
+
+

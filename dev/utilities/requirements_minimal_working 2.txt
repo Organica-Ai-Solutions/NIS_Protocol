@@ -1,0 +1,74 @@
+# NIS Protocol v3.2 - Minimal Working Dependencies
+# Tested and verified to work without conflicts
+
+# ===== CORE WEB FRAMEWORK =====
+fastapi>=0.110.0,<0.120.0
+uvicorn[standard]>=0.20.0,<0.30.0
+starlette>=0.30.0,<0.40.0
+pydantic>=2.0.0,<3.0.0
+
+# ===== BASIC UTILITIES =====
+python-dotenv>=1.0.0
+requests>=2.30.0,<3.0.0
+aiohttp>=3.8.0,<4.0.0
+aiofiles>=23.0.0
+click>=8.0.0
+python-dateutil>=2.8.0
+pytz>=2023.0
+colorlog>=6.0.0
+tqdm>=4.65.0
+
+# ===== DATABASE AND CACHING =====
+redis>=4.5.0,<5.0.0
+aiokafka>=0.8.0,<1.0.0
+sqlalchemy>=2.0.0,<3.0.0
+
+# ===== SCIENTIFIC COMPUTING =====
+numpy>=1.24.0,<2.0.0
+scipy>=1.10.0,<2.0.0
+pandas>=2.0.0,<3.0.0
+
+# ===== PYTORCH (MINIMAL) =====
+torch>=2.0.0,<3.0.0
+torchvision>=0.15.0,<1.0.0
+torchaudio>=2.0.0,<3.0.0
+
+# ===== TENSORFLOW/KERAS (FIXED VERSIONS) =====
+tensorflow==2.15.1
+tf-keras==2.15.1
+keras==2.15.0
+
+# ===== TRANSFORMERS (COMPATIBLE VERSIONS) =====
+transformers==4.35.2
+tokenizers>=0.15.0,<1.0.0
+# sentence-transformers==2.2.2  # Commented out temporarily
+
+# ===== LANGCHAIN ECOSYSTEM =====
+langchain>=0.1.0,<1.0.0
+langgraph>=0.1.0,<1.0.0
+langsmith>=0.1.0,<1.0.0
+
+# ===== NVIDIA PACKAGES =====
+nvidia-ml-py3>=7.352.0,<8.0.0
+
+# ===== ADDITIONAL ML PACKAGES =====
+scikit-learn>=1.3.0,<2.0.0
+datasets>=2.10.0,<3.0.0
+accelerate>=0.20.0,<1.0.0
+
+# ===== DEVELOPMENT AND TESTING =====
+pytest>=7.0.0,<8.0.0
+pytest-asyncio>=0.21.0,<1.0.0
+
+# ===== SECURITY AND AUTHENTICATION =====
+cryptography>=40.0.0,<50.0.0
+pyjwt>=2.8.0,<3.0.0
+
+# ===== SERIALIZATION =====
+msgpack>=1.0.0,<2.0.0
+orjson>=3.8.0,<4.0.0
+
+# ===== LOGGING AND MONITORING =====
+structlog>=23.0.0,<24.0.0
+prometheus-client>=0.16.0,<1.0.0
+
