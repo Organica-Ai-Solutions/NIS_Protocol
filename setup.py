@@ -1,15 +1,90 @@
 """
-NIS Protocol v3.2 - AI Development Platform & SDK
-=================================================
+NIS Protocol v3.2.1 - Production-Ready AI Development Platform
+==============================================================
 
-The foundational AI operating system for edge devices, autonomous systems, and smart infrastructure.
+🚀 **The Complete AI Operating System for Modern Applications**
 
-Build physics-validated, consciousness-aware AI applications with:
-- Edge-optimized agent architecture
-- Real-time differential equation solving
-- Multi-protocol ecosystem integration
-- Hybrid local+cloud intelligence
-- Industrial-grade deployment tools
+NIS Protocol is a production-ready AI development platform that enables developers to build 
+sophisticated AI applications with physics validation, multi-agent coordination, and 
+enterprise-grade deployment capabilities.
+
+## 🎯 **Key Features**
+
+### **🤖 Multi-Agent AI System**
+- **LLM Integration**: OpenAI, Anthropic, Google, DeepSeek, NVIDIA, BitNet support
+- **Agent Coordination**: Intelligent task distribution and collaboration
+- **Real-time Processing**: Sub-second response times with streaming support
+
+### **⚡ Physics-Informed AI**
+- **PINN Integration**: Physics-Informed Neural Networks for scientific computing
+- **KAN Networks**: Kolmogorov-Arnold Networks for symbolic reasoning
+- **Validation Engine**: Automatic physics constraint checking and correction
+
+### **🌐 Production Deployment**
+- **Docker Ready**: Complete containerization with docker-compose
+- **API Gateway**: FastAPI-based REST API with automatic documentation
+- **Web Interface**: Modern chat interfaces with LangChain agent visualization
+- **Security**: Enterprise-grade authentication, encryption, and audit logging
+
+### **🔧 Developer Experience**
+- **Easy Installation**: `pip install nis-protocol-v321-organica-fixed`
+- **Rich Documentation**: Comprehensive guides and API references
+- **Live Examples**: Ready-to-run demos and tutorials
+- **GitHub Pages**: https://nisprotocol.organicaai.com/
+
+## 📦 **Installation Options**
+
+```bash
+# Full platform installation
+pip install nis-protocol-v321-organica-fixed[platform]
+
+# Edge devices (Raspberry Pi, embedded)
+pip install nis-protocol-v321-organica-fixed[edge]
+
+# Cloud deployment
+pip install nis-protocol-v321-organica-fixed[cloud]
+
+# Minimal installation
+pip install nis-protocol-v321-organica-fixed[minimal]
+```
+
+## 🚀 **Quick Start**
+
+```python
+from nis_protocol import NISPlatform
+
+# Initialize the platform
+platform = NISPlatform()
+
+# Start the AI agents
+await platform.start_agents()
+
+# Process with physics validation
+result = await platform.process_with_physics(
+    query="Solve heat equation",
+    physics_constraints={"temperature_bounds": [0, 100]}
+)
+
+print(f"Result: {result.solution}")
+print(f"Physics Compliance: {result.physics_score}")
+```
+
+## 🌟 **Use Cases**
+
+- **🏭 Industrial IoT**: Smart manufacturing and predictive maintenance
+- **🚁 Autonomous Systems**: Drones, robotics, and self-driving vehicles  
+- **🏠 Smart Infrastructure**: Building automation and energy management
+- **🔬 Scientific Computing**: Physics simulations and research applications
+- **☁️ Enterprise AI**: Scalable AI services and microservices architecture
+
+## 📚 **Resources**
+
+- **Documentation**: https://nisprotocol.organicaai.com/
+- **GitHub**: https://github.com/Organica-Ai-Solutions/NIS_Protocol
+- **API Reference**: Auto-generated FastAPI docs at `/docs`
+- **Examples**: Complete working examples in `/examples` directory
+
+Built with ❤️ by Organica AI Solutions
 """
 
 from setuptools import setup, find_packages
@@ -21,7 +96,7 @@ def get_version():
         with open("VERSION", "r", encoding="utf-8") as f:
             return f.read().strip()
     except FileNotFoundError:
-        return "3.2.0"
+        return "3.2.1"  # Updated fallback to match VERSION file
 
 # Read long description from README
 def get_long_description():
@@ -53,22 +128,23 @@ setup(
     version=get_version(),
     author="Organica AI Solutions",
     author_email="developers@organicaai.com",
-    description="AI Development Platform & SDK for Edge Devices, Autonomous Systems, and Smart Infrastructure",
+    description="🚀 Production-Ready AI Development Platform with Physics Validation, Multi-Agent Coordination & Enterprise Deployment",
     long_description=get_long_description(),
     long_description_content_type="text/markdown",
     
     # URLs and Links
     url="https://github.com/Organica-Ai-Solutions/NIS_Protocol",
     project_urls={
-        "Documentation": "https://docs.nis-protocol.org",
-        "Platform Guide": "https://docs.nis-protocol.org/platform",
-        "Developer Portal": "https://developers.nis-protocol.org",
-        "API Reference": "https://api.nis-protocol.org",
+        "Documentation": "https://nisprotocol.organicaai.com/",
+        "Homepage": "https://nisprotocol.organicaai.com/",
         "Source Code": "https://github.com/Organica-Ai-Solutions/NIS_Protocol",
         "Bug Reports": "https://github.com/Organica-Ai-Solutions/NIS_Protocol/issues",
-        "Community Forum": "https://community.nis-protocol.org",
+        "Pull Requests": "https://github.com/Organica-Ai-Solutions/NIS_Protocol/pulls",
+        "Releases": "https://github.com/Organica-Ai-Solutions/NIS_Protocol/releases",
         "Examples": "https://github.com/Organica-Ai-Solutions/NIS_Protocol/tree/main/examples",
-        "Sponsor": "https://github.com/sponsors/Organica-Ai-Solutions",
+        "Docker Hub": "https://hub.docker.com/r/organicaai/nis-protocol",
+        "PyPI Package": "https://test.pypi.org/project/nis-protocol-v321-organica-fixed/",
+        "Live Demo": "https://nisprotocol.organicaai.com/",
     },
     
     # Package Structure
@@ -125,6 +201,33 @@ setup(
         # Frameworks
         "Framework :: AsyncIO",
         "Framework :: FastAPI",
+    ],
+    
+    # Keywords for PyPI search discoverability
+    keywords=[
+        # Core Technology
+        "ai", "artificial-intelligence", "machine-learning", "deep-learning",
+        "neural-networks", "llm", "large-language-models", "multi-agent",
+        
+        # Physics & Science
+        "physics-informed", "pinn", "kan", "kolmogorov-arnold", "differential-equations",
+        "scientific-computing", "numerical-methods", "physics-validation",
+        
+        # Platform & Framework
+        "platform", "framework", "sdk", "api", "fastapi", "asyncio", "microservices",
+        "containerization", "docker", "production-ready", "enterprise",
+        
+        # Applications
+        "robotics", "autonomous-systems", "iot", "edge-computing", "drones", "uav",
+        "smart-infrastructure", "industrial-automation", "predictive-maintenance",
+        
+        # Integration
+        "openai", "anthropic", "google-ai", "langchain", "langgraph", "streaming",
+        "real-time", "multi-provider", "hybrid-cloud", "edge-deployment",
+        
+        # Development
+        "developer-tools", "rapid-prototyping", "production-deployment",
+        "monitoring", "logging", "security", "authentication", "encryption"
     ],
     
     # Python Requirements
