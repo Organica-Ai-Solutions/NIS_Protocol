@@ -1,1 +1,0 @@
-{"camera":{"id":"cam","radius":8.0,"target":[0.0,0.0,0.0],"type":"arc"},"engine":"babylon","environment":null,"lights":[{"direction":[0.0,1.0,0.0],"id":"sun","type":"hemispheric"}],"materials":[],"meshes":[{"height":10.0,"id":"g","kind":"ground","physics":null,"width":10.0}],"physics":{"engine":"cannon-es","gravity":[0.0,-9.81,0.0]},"version":"1"}
