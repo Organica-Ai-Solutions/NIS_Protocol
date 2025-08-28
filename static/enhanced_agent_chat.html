@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NIS Protocol - Professional Agent Chat</title>
+    
+    <!-- NIS State Management System -->
+    <script src="/static/js/nis-state-client.js"></script>
+    
     <style>
         * {
             margin: 0;
@@ -34,6 +38,185 @@
             color: var(--text-primary);
             overflow: hidden;
             height: 100vh;
+        }
+
+        /* ====== BRAIN VISUALIZATION & AGENT ORCHESTRATION ====== */
+        .brain-mini-visualization {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 280px;
+            height: 200px;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px;
+            color: white;
+            font-size: 11px;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .brain-mini-visualization:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .brain-title {
+            color: #06b6d4;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .brain-svg {
+            width: 100%;
+            height: 140px;
+        }
+
+        .brain-region {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .brain-region.active {
+            filter: drop-shadow(0 0 8px currentColor);
+            opacity: 1;
+        }
+
+        .brain-region.inactive {
+            opacity: 0.3;
+        }
+
+        .core-region { fill: #10b981; }
+        .specialized-region { fill: #3b82f6; }
+        .protocol-region { fill: #8b5cf6; }
+        .learning-region { fill: #f59e0b; }
+
+        .neural-connection {
+            stroke: #06b6d4;
+            stroke-width: 1;
+            fill: none;
+            opacity: 0.3;
+            animation: flow 3s ease-in-out infinite;
+        }
+
+        .neural-connection.active {
+            opacity: 0.8;
+            stroke: #10b981;
+        }
+
+        @keyframes flow {
+            0%, 100% { stroke-dasharray: 0, 5; }
+            50% { stroke-dasharray: 3, 3; }
+        }
+
+        .agent-orchestration-panel {
+            position: fixed;
+            top: 240px;
+            left: 20px;
+            width: 280px;
+            max-height: 300px;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px;
+            color: white;
+            font-size: 11px;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .orchestration-title {
+            color: #06b6d4;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .agent-item-enhanced {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            margin: 6px 0;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            border-left: 3px solid;
+            transition: all 0.3s ease;
+            font-size: 10px;
+        }
+
+        .agent-item-enhanced:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(4px);
+        }
+
+        .agent-item-enhanced.core { border-left-color: #10b981; }
+        .agent-item-enhanced.specialized { border-left-color: #3b82f6; }
+        .agent-item-enhanced.protocol { border-left-color: #8b5cf6; }
+        .agent-item-enhanced.learning { border-left-color: #f59e0b; }
+
+        .agent-name-enhanced {
+            font-weight: 500;
+            font-size: 10px;
+        }
+
+        .agent-status-enhanced {
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-size: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .agent-status-enhanced.active {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        .agent-status-enhanced.busy {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+
+        .agent-status-enhanced.inactive {
+            background: rgba(107, 114, 128, 0.2);
+            color: #9ca3af;
+        }
+
+        .agent-status-enhanced.error {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .brain-controls {
+            display: flex;
+            gap: 6px;
+            margin-top: 10px;
+            justify-content: center;
+        }
+
+        .brain-btn {
+            padding: 4px 8px;
+            background: rgba(6, 182, 212, 0.2);
+            border: 1px solid #06b6d4;
+            border-radius: 4px;
+            color: #06b6d4;
+            font-size: 9px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .brain-btn:hover {
+            background: rgba(6, 182, 212, 0.3);
+            transform: translateY(-1px);
         }
 
         .app-container {
@@ -488,18 +671,125 @@
     </style>
 </head>
 <body>
+    <!-- Brain Visualization Panel -->
+    <div class="brain-mini-visualization" id="brainVisualization">
+        <div class="brain-title">🧠 Agent Brain Activity</div>
+        <svg class="brain-svg" viewBox="0 0 250 120">
+            <!-- Core Agents (Brain Stem) -->
+            <g class="brain-region core-region active" data-type="core">
+                <ellipse cx="125" cy="100" rx="50" ry="15" opacity="0.8"/>
+                <text x="125" y="105" text-anchor="middle" fill="white" font-size="8" font-weight="bold">CORE</text>
+            </g>
+
+            <!-- Specialized Agents (Cerebral Cortex) -->
+            <g class="brain-region specialized-region active" data-type="specialized">
+                <path d="M 60 40 Q 125 15 190 40 Q 170 65 150 55 Q 125 45 100 55 Q 80 65 60 40" opacity="0.8"/>
+                <text x="125" y="35" text-anchor="middle" fill="white" font-size="8" font-weight="bold">SPECIALIZED</text>
+            </g>
+
+            <!-- Protocol Agents (Nervous System) -->
+            <g class="brain-region protocol-region active" data-type="protocol">
+                <rect x="20" y="50" width="50" height="25" rx="5" opacity="0.8"/>
+                <text x="45" y="60" text-anchor="middle" fill="white" font-size="7" font-weight="bold">PROTOCOL</text>
+            </g>
+
+            <!-- Learning Agents (Hippocampus) -->
+            <g class="brain-region learning-region active" data-type="learning">
+                <rect x="180" y="50" width="50" height="25" rx="5" opacity="0.8"/>
+                <text x="205" y="60" text-anchor="middle" fill="white" font-size="7" font-weight="bold">LEARNING</text>
+            </g>
+
+            <!-- Neural Connections -->
+            <path class="neural-connection" d="M 125 85 L 125 65"/>
+            <path class="neural-connection" d="M 100 70 L 70 62"/>
+            <path class="neural-connection" d="M 150 70 L 180 62"/>
+        </svg>
+        <div class="brain-controls">
+            <button class="brain-btn" onclick="activateTestAgent()">Test Agent</button>
+            <button class="brain-btn" onclick="showAllAgents()">Show All</button>
+        </div>
+    </div>
+
+    <!-- Agent Orchestration Panel -->
+    <div class="agent-orchestration-panel" id="agentOrchestrationPanel">
+        <div class="orchestration-title">
+            🤖 Active Agents
+        </div>
+        <div id="enhancedAgentList">
+            <!-- Agents will be populated here -->
+        </div>
+    </div>
+
     <div class="app-container">
         <!-- Main Chat Area -->
         <div class="chat-main" id="chatMain">
             <!-- Header -->
             <div class="chat-header">
-                <div class="chat-title">🤖 NIS Protocol - Professional Agent Chat</div>
+                <div class="chat-title">
+                    🤖 NIS Protocol - Professional Agent Chat
+                    <span class="dev-badge">DEV MODE</span>
+                </div>
                 <div class="connection-status">
                     <div class="status-dot"></div>
                     <span id="connectionStatus">Connected to NIS Backend</span>
                     <a href="/console" style="margin-left: 16px; color: var(--accent-color); text-decoration: none; font-size: 14px;">
                         🔄 Classic Console
                     </a>
+                    <a href="/chat/formatted" style="margin-left: 16px; color: var(--accent-color); text-decoration: none; font-size: 14px;">
+                        ✨ Modern Chat
+                    </a>
+                    <button id="toggleDevTools" style="margin-left: 16px; background-color: #2a2a2a; color: var(--accent-color); border: 1px solid var(--border-color); border-radius: 4px; padding: 4px 8px; cursor: pointer;">
+                        🛠️ Dev Tools
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Development Tools Panel -->
+            <div id="devToolsPanel" style="display: none; position: absolute; top: 60px; right: 20px; width: 400px; background-color: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 1000; padding: 16px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+                    <h3 style="margin: 0; color: var(--accent-color);">🛠️ Development Tools</h3>
+                    <button id="closeDevTools" style="background: none; border: none; color: var(--text-secondary); font-size: 20px; cursor: pointer;">×</button>
+                </div>
+                
+                <div style="margin-bottom: 16px;">
+                    <h4 style="margin: 0 0 8px 0; color: var(--text-secondary);">Endpoint Testing</h4>
+                    <div style="display: flex; gap: 8px;">
+                        <select id="endpointSelect" style="flex: 1; background-color: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 4px; padding: 6px;">
+                            <option value="/chat">Standard Chat</option>
+                            <option value="/chat/stream" selected>Streaming Chat</option>
+                            <option value="/chat/formatted">Formatted Chat</option>
+                        </select>
+                        <button id="testEndpoint" style="background-color: var(--accent-color); color: white; border: none; border-radius: 4px; padding: 6px 12px; cursor: pointer;">Test</button>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 16px;">
+                    <h4 style="margin: 0 0 8px 0; color: var(--text-secondary);">Response Debug</h4>
+                    <div style="display: flex; gap: 16px;">
+                        <label style="display: flex; align-items: center; gap: 4px; color: var(--text-primary);">
+                            <input type="checkbox" id="showRawResponse"> Show Raw Responses
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 4px; color: var(--text-primary);">
+                            <input type="checkbox" id="showTimings"> Show Timings
+                        </label>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 16px;">
+                    <h4 style="margin: 0 0 8px 0; color: var(--text-secondary);">WebSocket Testing</h4>
+                    <div style="display: flex; gap: 8px;">
+                        <button id="testWebSocket" style="background-color: var(--accent-color); color: white; border: none; border-radius: 4px; padding: 6px 12px; cursor: pointer;">Test Connection</button>
+                        <button id="sendTestEvent" style="background-color: var(--accent-color); color: white; border: none; border-radius: 4px; padding: 6px 12px; cursor: pointer;">Send Test Event</button>
+                    </div>
+                    <div id="wsStatus" style="margin-top: 8px; color: var(--text-secondary);">WebSocket: Unknown</div>
+                </div>
+                
+                <div>
+                    <h4 style="margin: 0 0 8px 0; color: var(--text-secondary);">Network Monitor</h4>
+                    <div id="networkLog" style="max-height: 150px; overflow-y: auto; background-color: var(--bg-tertiary); border-radius: 4px; padding: 8px; font-family: monospace; font-size: 12px; color: var(--text-secondary);">
+                        <div>No requests logged yet</div>
+                    </div>
+                    <button id="clearNetworkLog" style="margin-top: 8px; background-color: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 4px; padding: 4px 8px; cursor: pointer; width: 100%;">Clear Log</button>
                 </div>
             </div>
 
@@ -563,6 +853,14 @@
         // Initialize the chat interface
         let messageCount = 0;
         const apiBaseUrl = window.location.origin;
+        
+        // Development mode settings
+        const devMode = {
+            showRawResponses: false,
+            showTimings: false,
+            selectedEndpoint: '/chat/stream',
+            networkLogs: []
+        };
 
         // Set current time
         document.getElementById('currentTime').textContent = new Date().toLocaleTimeString();
@@ -601,8 +899,9 @@
             const typingId = addTypingIndicator();
 
             try {
-                // Try enhanced agent endpoint first for better LangChain integration
-                const response = await fetch(`${apiBaseUrl}/chat/enhanced`, {
+                // Use standard chat endpoint 
+                // Use streaming endpoint for real-time responses
+                const response = await fetch(`${apiBaseUrl}/chat/stream`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -610,7 +909,7 @@
                     body: JSON.stringify({
                         message: message,
                         conversation_id: 'enhanced_chat_' + Date.now(),
-                        stream: false,
+                        stream: true,
                         include_reasoning: true,
                         include_tools: true,
                         include_artifacts: true,
@@ -619,34 +918,128 @@
                     })
                 });
 
-                let data;
+                // Create message container in advance for streaming
+                const messageDiv = addMessage('assistant', '');
+                
                 if (response.ok) {
-                    data = await response.json();
+                    // Process stream response
+                    const reader = response.body.getReader();
+                    const decoder = new TextDecoder();
+                    let fullResponse = '';
+                    let toolCalls = [];
+                    let reasoningSteps = [];
+                    let references = [];
+                    let artifacts = [];
+                    
+                    try {
+                        // Process the stream
+                        while (true) {
+                            const { value, done } = await reader.read();
+                            if (done) break;
+                            
+                            const chunk = decoder.decode(value, { stream: true });
+                            const lines = chunk.split('\n').filter(line => line.trim() !== '');
+                            
+                            for (const line of lines) {
+                                if (line.startsWith('data: ')) {
+                                    try {
+                                        const data = JSON.parse(line.slice(6));
+                                        
+                                        if (data.type === 'content') {
+                                            // Update message content
+                                            fullResponse += data.data;
+                                            messageDiv.querySelector('.message-content').textContent = fullResponse;
+                                        } else if (data.type === 'tool_call') {
+                                            toolCalls.push(data.data);
+                                        } else if (data.type === 'reasoning') {
+                                            reasoningSteps.push(data.data);
+                                        } else if (data.type === 'reference') {
+                                            references.push(data.data);
+                                        } else if (data.type === 'artifact') {
+                                            artifacts.push(data.data);
+                                        } else if (data.type === 'pipeline') {
+                                            // Process pipeline data (physics validation, etc.)
+                                            updateBrainVisualization(data.data);
+                                        } else if (data.type === 'error') {
+                                            addMessage('system', `Error: ${data.data}`);
+                                            break;
+                                        }
+                                    } catch (e) {
+                                        console.error('Error parsing stream data:', e);
+                                    }
+                                }
+                            }
+                        }
+                        
+                        // Add enhanced features after streaming is complete
+                        if (toolCalls.length > 0) {
+                            addToolCalls(messageDiv, toolCalls);
+                        }
+                        
+                        if (reasoningSteps.length > 0) {
+                            addReasoningSteps(messageDiv, reasoningSteps);
+                        }
+                        
+                        if (references.length > 0) {
+                            addReferences(messageDiv, references);
+                        }
+                        
+                        if (artifacts.length > 0) {
+                            addArtifacts(artifacts);
+                        }
+                        
+                    } catch (streamError) {
+                        console.error('Stream processing error:', streamError);
+                        messageDiv.querySelector('.message-content').textContent = 'Error processing stream response.';
+                    }
                 } else {
                     // Fallback to regular chat endpoint
-                    const fallbackResponse = await fetch(`${apiBaseUrl}/chat`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            message: message,
-                            conversation_id: 'enhanced_chat_' + Date.now(),
-                            stream: false
-                        })
-                    });
-                    data = await fallbackResponse.json();
+                    try {
+                        const fallbackResponse = await fetch(`${apiBaseUrl}/chat`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        conversation_id: 'enhanced_chat_' + Date.now(),
+                        stream: false
+                    })
+                });
+
+                        const data = await fallbackResponse.json();
+                        
+                        // Update the pre-created message div
+                        if (data.response) {
+                            messageDiv.querySelector('.message-content').textContent = data.response;
+                            
+                            // Add enhanced features
+                            if (data.tool_calls && data.tool_calls.length > 0) {
+                                addToolCalls(messageDiv, data.tool_calls);
+                            }
+                            
+                            if (data.reasoning_steps && data.reasoning_steps.length > 0) {
+                                addReasoningSteps(messageDiv, data.reasoning_steps);
+                            }
+                            
+                            if (data.references && data.references.length > 0) {
+                                addReferences(messageDiv, data.references);
+                            }
+                            
+                            if (data.artifacts && data.artifacts.length > 0) {
+                                addArtifacts(data.artifacts);
+                            }
+                } else {
+                            messageDiv.querySelector('.message-content').textContent = 'No response received.';
+                        }
+                    } catch (fallbackError) {
+                        console.error('Fallback error:', fallbackError);
+                        messageDiv.querySelector('.message-content').textContent = 'Error: Could not get response.';
+                    }
                 }
                 
                 // Remove typing indicator
                 removeTypingIndicator(typingId);
-
-                // Process response with enhanced features
-                if (data.status === 'success' || data.response) {
-                    addEnhancedAgentMessage(data);
-                } else {
-                    addMessage('system', `Error: ${data.message || 'Unknown error occurred'}`);
-                }
 
             } catch (error) {
                 removeTypingIndicator(typingId);
@@ -1094,6 +1487,597 @@
         window.addEventListener('load', () => {
             setTimeout(showDemo, 1000);
         });
+
+        // ====== NIS STATE MANAGEMENT INTEGRATION ======
+        
+        class EnhancedAgentChatComponent {
+            constructor() {
+                this.setupStateManagement();
+                this.setupAgentVisualization();
+                this.setupRealTimeUpdates();
+            }
+            
+            setupStateManagement() {
+                // Register with NIS State Manager
+                if (window.nisStateManager) {
+                    window.nisStateManager.registerComponent('enhanced_agent_chat', this);
+                    console.log('🧠 Enhanced Agent Chat registered with NIS State Manager');
+                } else {
+                    console.warn('⚠️ NIS State Manager not available');
+                }
+            }
+            
+            setupAgentVisualization() {
+                // Enhanced agent visualization
+                this.activeAgents = new Map();
+                this.agentPerformance = new Map();
+                this.workflowVisualization = new Map();
+            }
+            
+            setupRealTimeUpdates() {
+                // Listen for agent-specific events
+                if (window.nisStateManager) {
+                    window.nisStateManager.client.on('agent_status_change', ({ data }) => {
+                        this.updateAgentStatus(data);
+                    });
+                    
+                    window.nisStateManager.client.on('workflow_update', ({ data }) => {
+                        this.updateWorkflowVisualization(data);
+                    });
+                    
+                    window.nisStateManager.client.on('agent_performance_update', ({ data }) => {
+                        this.updateAgentPerformance(data);
+                    });
+                    
+                    window.nisStateManager.client.on('recommendation_generated', ({ data }) => {
+                        this.showAgentRecommendation(data);
+                    });
+                }
+            }
+            
+            onStateUpdate(state) {
+                console.log('📊 Enhanced Agent Chat received state update:', Object.keys(state));
+                
+                // Update agent status display
+                if (state.active_agents) {
+                    this.updateAgentStatusDisplay(state.active_agents);
+                }
+                
+                // Update agent performance metrics
+                if (state.agent_performance) {
+                    this.updateAgentPerformanceDisplay(state.agent_performance);
+                }
+                
+                // Update system health
+                if (state.system_health) {
+                    this.updateSystemHealthDisplay(state.system_health);
+                }
+            }
+            
+            onEvent(eventType, data) {
+                console.log('🎯 Enhanced Agent Chat received event:', eventType, data);
+                
+                switch (eventType) {
+                    case 'agent_activated':
+                        this.visualizeAgentActivation(data);
+                        break;
+                    case 'agent_deactivated':
+                        this.visualizeAgentDeactivation(data);
+                        break;
+                    case 'workflow_step_completed':
+                        this.addWorkflowStep(data);
+                        break;
+                    case 'agent_collaboration':
+                        this.visualizeAgentCollaboration(data);
+                        break;
+                }
+            }
+            
+            updateAgentStatusDisplay(agents) {
+                // Update the enhanced agent list
+                const agentListEl = document.getElementById('enhancedAgentList');
+                if (!agentListEl) return;
+                
+                agentListEl.innerHTML = '';
+                
+                Object.entries(agents).forEach(([agentId, agentData]) => {
+                    const status = agentData.status || 'inactive';
+                    const agentType = agentData.type || 'specialized';
+                    const activeInstances = agentData.active_instances || 0;
+                    const priority = agentData.priority || 5;
+                    
+                    const agentEl = document.createElement('div');
+                    agentEl.className = `agent-item-enhanced ${agentType}`;
+                    
+                    agentEl.innerHTML = `
+                        <div>
+                            <div class="agent-name-enhanced">
+                                ${this.formatAgentName(agentId)}
+                                ${activeInstances > 0 ? `<span style="color: #06b6d4;">(${activeInstances})</span>` : ''}
+                            </div>
+                            <div style="font-size: 8px; color: var(--text-muted);">
+                                Priority: ${priority} | Type: ${agentType}
+                            </div>
+                        </div>
+                        <div class="agent-status-enhanced ${status}">
+                            ${status}
+                        </div>
+                    `;
+                    
+                    // Add click handler for agent activation
+                    agentEl.addEventListener('click', () => {
+                        this.activateAgent(agentId);
+                    });
+                    
+                    agentListEl.appendChild(agentEl);
+                });
+                
+                // Update brain visualization
+                this.updateBrainVisualization(agents);
+            }
+            
+            updateBrainVisualization(agents) {
+                // Count active agents by type
+                const regionCounts = {
+                    core: 0,
+                    specialized: 0,
+                    protocol: 0,
+                    learning: 0
+                };
+                
+                Object.values(agents).forEach(agent => {
+                    if (agent.active_instances > 0) {
+                        regionCounts[agent.type] = (regionCounts[agent.type] || 0) + agent.active_instances;
+                    }
+                });
+                
+                // Update brain regions
+                Object.entries(regionCounts).forEach(([type, count]) => {
+                    const region = document.querySelector(`.brain-region[data-type="${type}"]`);
+                    if (region) {
+                        if (count > 0) {
+                            region.classList.add('active');
+                            region.classList.remove('inactive');
+                            // Add pulse effect for active regions
+                            region.style.animation = 'pulse 2s infinite';
+                        } else {
+                            region.classList.remove('active');
+                            region.classList.add('inactive');
+                            region.style.animation = '';
+                        }
+                    }
+                });
+                
+                // Animate neural connections when agents are active
+                const totalActiveAgents = Object.values(regionCounts).reduce((sum, count) => sum + count, 0);
+                const connections = document.querySelectorAll('.neural-connection');
+                connections.forEach(conn => {
+                    if (totalActiveAgents > 0) {
+                        conn.classList.add('active');
+                    } else {
+                        conn.classList.remove('active');
+                    }
+                });
+            }
+            
+            formatAgentName(agentId) {
+                // Convert agent_id to readable name
+                return agentId
+                    .replace(/_/g, ' ')
+                    .replace(/\b\w/g, l => l.toUpperCase());
+            }
+            
+            activateAgent(agentId) {
+                // Send agent activation request
+                fetch('/api/agents/activate', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        agent_id: agentId,
+                        context: 'user_interface_activation'
+                    })
+                }).then(response => response.json())
+                  .then(data => {
+                      if (data.success) {
+                          this.addAgentMessage(`✅ Activated agent: ${this.formatAgentName(agentId)}`, 'success');
+                      } else {
+                          this.addAgentMessage(`❌ Failed to activate agent: ${agentId}`, 'error');
+                      }
+                  })
+                  .catch(error => {
+                      this.addAgentMessage(`❌ Error activating agent: ${error.message}`, 'error');
+                  });
+            }
+            
+            getOrCreateAgentStatusPanel() {
+                let panel = document.querySelector('.agent-status-panel');
+                if (!panel) {
+                    panel = document.createElement('div');
+                    panel.className = 'agent-status-panel';
+                    panel.style.cssText = `
+                        position: fixed;
+                        top: 20px;
+                        left: 20px;
+                        width: 250px;
+                        max-height: 300px;
+                        overflow-y: auto;
+                        background: rgba(0, 0, 0, 0.9);
+                        border: 1px solid #333;
+                        border-radius: 8px;
+                        padding: 12px;
+                        color: white;
+                        font-size: 12px;
+                        z-index: 1000;
+                    `;
+                    document.body.appendChild(panel);
+                }
+                return panel;
+            }
+            
+            updateAgentPerformanceDisplay(performance) {
+                // Update performance metrics
+                const perfPanel = this.getOrCreatePerformancePanel();
+                
+                let perfHTML = '<h3>📊 Agent Performance</h3>';
+                Object.entries(performance).forEach(([agentId, metrics]) => {
+                    const score = Math.round((metrics.score || 0) * 100);
+                    const responseTime = Math.round(metrics.response_time || 0);
+                    
+                    perfHTML += `
+                        <div class="perf-item" style="
+                            padding: 6px; margin: 3px 0; background: rgba(255,255,255,0.03);
+                            border-radius: 4px;">
+                            <div style="font-weight: bold;">${agentId}</div>
+                            <div style="display: flex; justify-content: space-between; font-size: 11px;">
+                                <span>Score: ${score}%</span>
+                                <span>RT: ${responseTime}ms</span>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                perfPanel.innerHTML = perfHTML;
+            }
+            
+            getOrCreatePerformancePanel() {
+                let panel = document.querySelector('.performance-panel');
+                if (!panel) {
+                    panel = document.createElement('div');
+                    panel.className = 'performance-panel';
+                    panel.style.cssText = `
+                        position: fixed;
+                        top: 20px;
+                        right: 20px;
+                        width: 200px;
+                        max-height: 250px;
+                        overflow-y: auto;
+                        background: rgba(0, 0, 0, 0.9);
+                        border: 1px solid #333;
+                        border-radius: 8px;
+                        padding: 12px;
+                        color: white;
+                        font-size: 12px;
+                        z-index: 1000;
+                    `;
+                    document.body.appendChild(panel);
+                }
+                return panel;
+            }
+            
+            visualizeAgentActivation(data) {
+                // Show agent activation notification
+                this.addAgentMessage(`🟢 Agent ${data.agent_id} activated`, 'success');
+                
+                // Add to workflow visualization
+                this.addWorkflowStep({
+                    type: 'agent_activation',
+                    agent: data.agent_id,
+                    timestamp: Date.now(),
+                    message: `Agent ${data.agent_id} joined the workflow`
+                });
+            }
+            
+            visualizeAgentDeactivation(data) {
+                // Show agent deactivation notification
+                this.addAgentMessage(`🔴 Agent ${data.agent_id} deactivated`, 'warning');
+                
+                // Add to workflow visualization
+                this.addWorkflowStep({
+                    type: 'agent_deactivation',
+                    agent: data.agent_id,
+                    timestamp: Date.now(),
+                    message: `Agent ${data.agent_id} left the workflow`
+                });
+            }
+            
+            addWorkflowStep(stepData) {
+                // Add step to workflow visualization
+                const workflowElement = document.createElement('div');
+                workflowElement.className = 'workflow-step';
+                workflowElement.innerHTML = `
+                    <div style="background: rgba(59, 130, 246, 0.1); border-left: 3px solid #3b82f6; 
+                                padding: 10px; margin: 6px 0; border-radius: 0 6px 6px 0;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <strong>🔄 ${stepData.type.replace('_', ' ').toUpperCase()}</strong>
+                            <span style="font-size: 11px; color: #888;">
+                                ${new Date(stepData.timestamp).toLocaleTimeString()}
+                            </span>
+                        </div>
+                        <div style="margin-top: 4px; color: #ccc;">
+                            ${stepData.message}
+                        </div>
+                    </div>
+                `;
+                
+                const chatMessages = document.getElementById('chatMessages');
+                if (chatMessages) {
+                    chatMessages.appendChild(workflowElement);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }
+            }
+            
+            visualizeAgentCollaboration(data) {
+                // Show agent collaboration
+                this.addAgentMessage(`🤝 Agents ${data.agents.join(' & ')} collaborating on: ${data.task}`, 'info');
+            }
+            
+            showAgentRecommendation(recommendation) {
+                // Show agent-specific recommendation
+                this.addAgentMessage(`💡 **Agent Recommendation:** ${recommendation.message}`, 'recommendation');
+            }
+            
+            addAgentMessage(message, type = 'info') {
+                const colors = {
+                    info: '#3b82f6',
+                    success: '#10b981',
+                    warning: '#f59e0b',
+                    error: '#ef4444',
+                    recommendation: '#8b5cf6'
+                };
+                
+                const messageElement = document.createElement('div');
+                messageElement.className = `agent-message ${type}`;
+                messageElement.innerHTML = `
+                    <div style="background: rgba(${this.hexToRgb(colors[type])}, 0.1); 
+                                border: 1px solid ${colors[type]}; 
+                                border-radius: 8px; padding: 12px; margin: 8px 0; 
+                                color: ${colors[type]};">
+                        ${message}
+                    </div>
+                `;
+                
+                const chatMessages = document.getElementById('chatMessages');
+                if (chatMessages) {
+                    chatMessages.appendChild(messageElement);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }
+            }
+            
+            getStatusColor(status) {
+                const colors = {
+                    active: '#10b981',
+                    idle: '#f59e0b',
+                    busy: '#3b82f6',
+                    error: '#ef4444',
+                    offline: '#6b7280'
+                };
+                return colors[status] || colors.offline;
+            }
+            
+            hexToRgb(hex) {
+                const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                return result ? 
+                    `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : 
+                    '255, 255, 255';
+            }
+        }
+        
+        // Initialize Enhanced Agent Chat Component
+        document.addEventListener('DOMContentLoaded', () => {
+            window.enhancedAgentChatComponent = new EnhancedAgentChatComponent();
+            console.log('🚀 Enhanced Agent Chat Component initialized with real-time state management');
+            
+            // Initialize development tools
+            initializeDevTools();
+            
+            // Add DEV MODE indicator to title
+            document.title = "[DEV] " + document.title;
+        });
+        
+        // Global functions for brain controls
+        window.activateTestAgent = function() {
+            if (window.enhancedAgentChatComponent) {
+                window.enhancedAgentChatComponent.activateAgent('vision');
+            }
+        };
+        
+        // Development Tools Functions
+        function initializeDevTools() {
+            // Toggle dev tools panel
+            document.getElementById('toggleDevTools').addEventListener('click', () => {
+                const panel = document.getElementById('devToolsPanel');
+                panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+            });
+            
+            // Close dev tools panel
+            document.getElementById('closeDevTools').addEventListener('click', () => {
+                document.getElementById('devToolsPanel').style.display = 'none';
+            });
+            
+            // Endpoint selection
+            document.getElementById('endpointSelect').addEventListener('change', (e) => {
+                devMode.selectedEndpoint = e.target.value;
+                console.log(`[DEV] Endpoint changed to: ${devMode.selectedEndpoint}`);
+            });
+            
+            // Test endpoint
+            document.getElementById('testEndpoint').addEventListener('click', async () => {
+                const endpoint = devMode.selectedEndpoint;
+                logNetworkRequest('TEST', endpoint, 'Testing endpoint');
+                
+                try {
+                    const startTime = performance.now();
+                    const response = await fetch(endpoint, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            message: "TEST_MESSAGE_FROM_DEV_TOOLS",
+                            user_id: "dev_test_user",
+                            stream: endpoint === '/chat/stream'
+                        })
+                    });
+                    
+                    const endTime = performance.now();
+                    const duration = Math.round(endTime - startTime);
+                    
+                    if (response.ok) {
+                        if (endpoint === '/chat/stream') {
+                            logNetworkRequest('SUCCESS', endpoint, `Stream connection established (${duration}ms)`);
+                        } else {
+                            const data = await response.json();
+                            logNetworkRequest('SUCCESS', endpoint, `Response received (${duration}ms): ${JSON.stringify(data).substring(0, 100)}...`);
+                        }
+                    } else {
+                        logNetworkRequest('ERROR', endpoint, `Error ${response.status}: ${response.statusText} (${duration}ms)`);
+                    }
+                } catch (error) {
+                    logNetworkRequest('ERROR', endpoint, `Exception: ${error.message}`);
+                }
+            });
+            
+            // Debug options
+            document.getElementById('showRawResponse').addEventListener('change', (e) => {
+                devMode.showRawResponses = e.target.checked;
+                console.log(`[DEV] Show raw responses: ${devMode.showRawResponses}`);
+            });
+            
+            document.getElementById('showTimings').addEventListener('change', (e) => {
+                devMode.showTimings = e.target.checked;
+                console.log(`[DEV] Show timings: ${devMode.showTimings}`);
+            });
+            
+            // WebSocket testing
+            document.getElementById('testWebSocket').addEventListener('click', () => {
+                // Test WebSocket connection
+                const ws = new WebSocket(`ws://${window.location.host}/ws`);
+                
+                ws.onopen = () => {
+                    document.getElementById('wsStatus').textContent = 'WebSocket: Connected';
+                    document.getElementById('wsStatus').style.color = 'var(--success-color)';
+                    logNetworkRequest('WS', '/ws', 'WebSocket connection established');
+                };
+                
+                ws.onclose = () => {
+                    document.getElementById('wsStatus').textContent = 'WebSocket: Disconnected';
+                    document.getElementById('wsStatus').style.color = 'var(--error-color)';
+                    logNetworkRequest('WS', '/ws', 'WebSocket connection closed');
+                };
+                
+                ws.onerror = (error) => {
+                    document.getElementById('wsStatus').textContent = 'WebSocket: Error';
+                    document.getElementById('wsStatus').style.color = 'var(--error-color)';
+                    logNetworkRequest('WS_ERROR', '/ws', `WebSocket error: ${error.message || 'Unknown error'}`);
+                };
+                
+                // Close after 5 seconds
+                setTimeout(() => {
+                    if (ws.readyState === WebSocket.OPEN) {
+                        ws.close();
+                    }
+                }, 5000);
+            });
+            
+            // Send test event
+            document.getElementById('sendTestEvent').addEventListener('click', () => {
+                // Create a test event
+                const testEvent = {
+                    type: 'TEST_EVENT',
+                    data: {
+                        message: 'This is a test event from the dev tools',
+                        timestamp: new Date().toISOString()
+                    }
+                };
+                
+                // Send via fetch to a test endpoint
+                fetch('/api/test/event', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(testEvent)
+                })
+                .then(response => {
+                    if (response.ok) {
+                        logNetworkRequest('EVENT', '/api/test/event', 'Test event sent successfully');
+                    } else {
+                        logNetworkRequest('EVENT_ERROR', '/api/test/event', `Error ${response.status}: ${response.statusText}`);
+                    }
+                })
+                .catch(error => {
+                    logNetworkRequest('EVENT_ERROR', '/api/test/event', `Exception: ${error.message}`);
+                });
+            });
+            
+            // Clear network log
+            document.getElementById('clearNetworkLog').addEventListener('click', () => {
+                devMode.networkLogs = [];
+                document.getElementById('networkLog').innerHTML = '<div>No requests logged yet</div>';
+            });
+        }
+        
+        // Log network request to dev tools
+        function logNetworkRequest(type, url, message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = { type, url, message, timestamp };
+            
+            devMode.networkLogs.push(logEntry);
+            
+            // Keep only the last 50 logs
+            if (devMode.networkLogs.length > 50) {
+                devMode.networkLogs.shift();
+            }
+            
+            // Update the log display
+            const networkLog = document.getElementById('networkLog');
+            
+            // Clear if this is the first entry
+            if (networkLog.textContent.includes('No requests logged yet')) {
+                networkLog.innerHTML = '';
+            }
+            
+            // Create log entry
+            const entryDiv = document.createElement('div');
+            entryDiv.style.borderBottom = '1px solid var(--border-color)';
+            entryDiv.style.paddingBottom = '4px';
+            entryDiv.style.marginBottom = '4px';
+            
+            // Set color based on type
+            let typeColor = 'var(--text-secondary)';
+            if (type.includes('ERROR')) typeColor = 'var(--error-color)';
+            if (type === 'SUCCESS') typeColor = 'var(--success-color)';
+            
+            entryDiv.innerHTML = `
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: ${typeColor};">${type}</span>
+                    <span style="opacity: 0.7;">${timestamp}</span>
+                </div>
+                <div style="font-weight: bold;">${url}</div>
+                <div style="word-break: break-all;">${message}</div>
+            `;
+            
+            networkLog.appendChild(entryDiv);
+            networkLog.scrollTop = networkLog.scrollHeight;
+        }
+        
+        window.showAllAgents = function() {
+            fetch('/api/agents/status')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && window.enhancedAgentChatComponent) {
+                        window.enhancedAgentChatComponent.updateAgentStatusDisplay(data.agents);
+                        console.log('🔍 Refreshed all agent statuses');
+                    }
+                });
+        };
+        
     </script>
 </body>
 </html>

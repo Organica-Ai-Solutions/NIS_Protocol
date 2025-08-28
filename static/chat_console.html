@@ -8,6 +8,9 @@
     <!-- Include marked.js for Markdown parsing -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     
+    <!-- NIS State Management System -->
+    <script src="/static/js/nis-state-client.js"></script>
+    
     <style>
         * {
             margin: 0;
@@ -1093,7 +1096,7 @@
 </head>
 <body>
     <div class="header">
-                        <h1>🧠 NIS Protocol AI Assistant</h1>
+                        <h1>🧠 NIS Protocol AI Assistant <span class="dev-badge" style="font-size: 14px; background-color: #2a2a2a; color: #3b82f6; padding: 4px 8px; border-radius: 4px; margin-left: 10px;">DEV MODE</span></h1>
         <div class="status">
             <div class="status-item">
                 <div class="status-dot"></div>
@@ -1105,13 +1108,70 @@
             <div class="status-item">
                 <span id="response-time">Response: --ms</span>
             </div>
-            <!-- Removed unsubstantiated metric display -->
+            <div class="status-item">
+                <span id="dev-status" style="color: #3b82f6;">Development Mode</span>
+            </div>
             <a href="/chat/formatted" class="nav-button">
                 ✨ Modern Chat UI
             </a>
-            <a href="/chat/enhanced" class="nav-button" style="margin-left: 8px;">
+            <a href="/enhanced" class="nav-button" style="margin-left: 8px;">
                 🚀 Enhanced Agent Chat
             </a>
+            <button id="toggleDevTools" class="nav-button" style="margin-left: 8px; background-color: #2a2a2a; cursor: pointer;">
+                🛠️ Dev Tools
+            </button>
+        </div>
+    </div>
+    
+    <!-- Development Tools Panel -->
+    <div id="devToolsPanel" style="display: none; position: absolute; top: 70px; right: 20px; width: 400px; background-color: #1a1a1a; border: 1px solid #374151; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 1000; padding: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid #374151; padding-bottom: 8px;">
+            <h3 style="margin: 0; color: #3b82f6;">🛠️ Development Tools</h3>
+            <button id="closeDevTools" style="background: none; border: none; color: #a0a0a0; font-size: 20px; cursor: pointer;">×</button>
+        </div>
+        
+        <div style="margin-bottom: 16px;">
+            <h4 style="margin: 0 0 8px 0; color: #a0a0a0;">Endpoint Testing</h4>
+            <div style="display: flex; gap: 8px;">
+                <select id="endpointSelect" style="flex: 1; background-color: #2a2a2a; color: white; border: 1px solid #374151; border-radius: 4px; padding: 6px;">
+                    <option value="/chat">Standard Chat</option>
+                    <option value="/chat/stream" selected>Streaming Chat</option>
+                    <option value="/chat/formatted">Formatted Chat</option>
+                </select>
+                <button id="testEndpoint" style="background-color: #3b82f6; color: white; border: none; border-radius: 4px; padding: 6px 12px; cursor: pointer;">Test</button>
+            </div>
+        </div>
+        
+        <div style="margin-bottom: 16px;">
+            <h4 style="margin: 0 0 8px 0; color: #a0a0a0;">Debug Options</h4>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <label style="display: flex; align-items: center; gap: 4px; color: white;">
+                    <input type="checkbox" id="showRawResponse"> Show Raw JSON Responses
+                </label>
+                <label style="display: flex; align-items: center; gap: 4px; color: white;">
+                    <input type="checkbox" id="showTimings"> Show Network Timings
+                </label>
+                <label style="display: flex; align-items: center; gap: 4px; color: white;">
+                    <input type="checkbox" id="showDebugInfo"> Show Debug Information
+                </label>
+            </div>
+        </div>
+        
+        <div style="margin-bottom: 16px;">
+            <h4 style="margin: 0 0 8px 0; color: #a0a0a0;">Test Messages</h4>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <button class="test-message-btn" data-message="Test the streaming endpoint" style="text-align: left; background-color: #2a2a2a; color: white; border: 1px solid #374151; border-radius: 4px; padding: 6px; cursor: pointer;">Stream Test</button>
+                <button class="test-message-btn" data-message="Show system status" style="text-align: left; background-color: #2a2a2a; color: white; border: 1px solid #374151; border-radius: 4px; padding: 6px; cursor: pointer;">Status Request</button>
+                <button class="test-message-btn" data-message="Test error handling with invalid request" style="text-align: left; background-color: #2a2a2a; color: white; border: 1px solid #374151; border-radius: 4px; padding: 6px; cursor: pointer;">Error Test</button>
+            </div>
+        </div>
+        
+        <div>
+            <h4 style="margin: 0 0 8px 0; color: #a0a0a0;">Network Monitor</h4>
+            <div id="networkLog" style="max-height: 150px; overflow-y: auto; background-color: #2a2a2a; border-radius: 4px; padding: 8px; font-family: monospace; font-size: 12px; color: #a0a0a0;">
+                <div>No requests logged yet</div>
+            </div>
+            <button id="clearNetworkLog" style="margin-top: 8px; background-color: #2a2a2a; color: white; border: 1px solid #374151; border-radius: 4px; padding: 4px 8px; cursor: pointer; width: 100%;">Clear Log</button>
         </div>
     </div>
 
@@ -1448,8 +1508,9 @@
                     console.log('🔄 Using regular chat request');
                     // Use regular chat request
                     const responseFormat = document.getElementById('responseFormat').value;
-                    const endpoint = responseFormat === 'formatted' ? '/chat/formatted' : '/chat';
-                    console.log('🎯 Endpoint:', endpoint);
+                    // Use streaming endpoint for real-time responses
+                    const endpoint = '/chat/stream';
+                    console.log('🎯 Endpoint: Using streaming', endpoint);
                     
                     const requestData = {
                         message: message,
@@ -1495,56 +1556,68 @@
                         addMessage('assistant', content, metadata);
                         
                     } else {
-                        // Handle regular response
-                        const responseFormat = safeGetElement('responseFormat')?.value || 'formatted';
+                        // Create placeholder for streaming response
+                        const messageElement = addMessage('assistant', '', {
+                            response_time: responseTime,
+                            format: 'streaming',
+                            is_html: true
+                        });
                         
-                        if (responseFormat === 'formatted') {
-                            // Handle formatted HTML response
-                            let htmlContent = await response.text();
+                        // Get the content element
+                        const contentElement = messageElement.querySelector('.message-content');
+                        
+                        try {
+                            // Process the stream
+                            const reader = response.body.getReader();
+                            const decoder = new TextDecoder();
+                            let fullResponse = '';
+                            let metadata = {
+                                confidence: null,
+                                provider: null,
+                                model: null,
+                                tokens_used: 0,
+                                real_ai: false,
+                                response_time: responseTime
+                            };
                             
-                            // Clean up the HTML formatting
-                            htmlContent = cleanResponseHTML(htmlContent);
+                            // Process stream chunks
+                            while (true) {
+                                const { value, done } = await reader.read();
+                                if (done) break;
+                                
+                                const chunk = decoder.decode(value, { stream: true });
+                                const lines = chunk.split('\n').filter(line => line.trim() !== '');
+                                
+                                for (const line of lines) {
+                                    if (line.startsWith('data: ')) {
+                                        try {
+                                            const data = JSON.parse(line.slice(6));
+                                            
+                                            if (data.type === 'content') {
+                                                // Append to response
+                                                fullResponse += data.data;
+                                                contentElement.innerHTML = formatMessage(fullResponse);
+                                                scrollToBottom();
+                                            } else if (data.type === 'metadata') {
+                                                // Update metadata
+                                                Object.assign(metadata, data.data);
+                                            } else if (data.type === 'error') {
+                                                // Show error
+                                                contentElement.innerHTML = `<div class="error-message">Error: ${data.data}</div>`;
+                                            }
+                                        } catch (e) {
+                                            console.error('Error parsing stream data:', e);
+                                        }
+                                    }
+                                }
+                            }
                             
-                            // FIXED: Only offer visuals when explicitly requested
-                            // Auto-detection removed - user must explicitly select visuals
-                            const shouldOfferVisuals = (outputMode === 'visual' || includeVisuals);
+                            // Update message with final metadata
+                            updateMessageMetadata(messageElement, metadata);
                             
-                            addMessage('assistant', htmlContent, {
-                                response_time: responseTime,
-                                format: 'formatted',
-                                is_html: true,
-                                offer_visuals: shouldOfferVisuals,
-                                original_message: message
-                            });
-                        } else {
-                            // Handle JSON response
-                            const result = await response.json();
-                            
-                            // Update conversation ID
-                            conversationId = result.conversation_id;
-                            
-                            // Use enhanced response processing
-                            const enhancedContent = processResponse(result, {
-                                confidence: result.confidence,
-                                provider: result.provider,
-                                model: result.model,
-                                tokens_used: result.tokens_used,
-                                real_ai: result.real_ai,
-                                response_time: responseTime,
-                                format: 'enhanced'
-                            });
-                            
-                            // Add assistant response
-                            addMessage('assistant', enhancedContent, {
-                                confidence: result.confidence,
-                                provider: result.provider,
-                                model: result.model,
-                                tokens_used: result.tokens_used,
-                                real_ai: result.real_ai,
-                                response_time: responseTime,
-                                format: 'enhanced',
-                                is_html: true
-                            });
+                        } catch (streamError) {
+                            console.error('Stream processing error:', streamError);
+                            contentElement.innerHTML = '<div class="error-message">Error processing stream response</div>';
                         }
                     }
 
@@ -3783,6 +3856,76 @@ This represents a **breakthrough in artificial intelligence** with measurable, r
                 console.error('Refresh data error:', error);
             }
         }
+        
+        // Helper function to scroll chat to bottom
+        function scrollToBottom() {
+            if (chatMessages) {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        }
+        
+        // Helper function to format message text
+        function formatMessage(text) {
+            if (!text) return '';
+            
+            // Convert URLs to links
+            text = text.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
+            
+            // Add paragraph breaks
+            text = text.replace(/\n\n/g, '</p><p>');
+            
+            // Add line breaks
+            text = text.replace(/\n/g, '<br>');
+            
+            // Wrap in paragraph if not already
+            if (!text.startsWith('<p>')) {
+                text = '<p>' + text + '</p>';
+            }
+            
+            return text;
+        }
+        
+        // Helper function to update message metadata
+        function updateMessageMetadata(messageElement, metadata) {
+            if (!messageElement) return;
+            
+            // Update metadata attributes
+            if (metadata.confidence) {
+                messageElement.setAttribute('data-confidence', metadata.confidence);
+            }
+            
+            if (metadata.provider) {
+                messageElement.setAttribute('data-provider', metadata.provider);
+            }
+            
+            if (metadata.model) {
+                messageElement.setAttribute('data-model', metadata.model);
+            }
+            
+            // Update metadata display if present
+            const metadataElement = messageElement.querySelector('.message-metadata');
+            if (metadataElement) {
+                let metadataHtml = '';
+                
+                if (metadata.confidence) {
+                    metadataHtml += `<div class="metadata-item"><span class="metadata-label">Confidence:</span> ${(metadata.confidence * 100).toFixed(1)}%</div>`;
+                }
+                
+                if (metadata.provider) {
+                    metadataHtml += `<div class="metadata-item"><span class="metadata-label">Provider:</span> ${metadata.provider}</div>`;
+                }
+                
+                if (metadata.model) {
+                    metadataHtml += `<div class="metadata-item"><span class="metadata-label">Model:</span> ${metadata.model}</div>`;
+                }
+                
+                if (metadata.tokens_used) {
+                    metadataHtml += `<div class="metadata-item"><span class="metadata-label">Tokens:</span> ${metadata.tokens_used}</div>`;
+                }
+                
+                metadataElement.innerHTML = metadataHtml;
+            }
+        }
     </script>
 
     <!-- ====== BEAUTIFUL IMAGE GENERATION MODAL ====== -->
@@ -4294,6 +4437,444 @@ Examples:
                 closeTerminalModal();
             }
         }
+
+        // ====== NIS STATE MANAGEMENT INTEGRATION ======
+        
+        class ChatConsoleComponent {
+            constructor() {
+                this.setupStateManagement();
+                this.setupRealTimeUpdates();
+            }
+            
+            setupStateManagement() {
+                // Register with NIS State Manager
+                if (window.nisStateManager) {
+                    window.nisStateManager.registerComponent('chat_console', this);
+                    console.log('🧠 Chat Console registered with NIS State Manager');
+                } else {
+                    console.warn('⚠️ NIS State Manager not available');
+                }
+            }
+            
+            setupRealTimeUpdates() {
+                // Listen for chat messages
+                window.addEventListener('nis-chat-message', (event) => {
+                    this.handleIncomingMessage(event.detail);
+                });
+                
+                // Listen for system status changes
+                if (window.nisStateManager) {
+                    window.nisStateManager.client.on('system_status_change', ({ data }) => {
+                        this.updateSystemStatus(data);
+                    });
+                    
+                    window.nisStateManager.client.on('agent_status_change', ({ data }) => {
+                        this.updateAgentStatus(data);
+                    });
+                    
+                    window.nisStateManager.client.on('analytics_update', ({ data }) => {
+                        this.updateAnalytics(data);
+                    });
+                }
+            }
+            
+            onStateUpdate(state) {
+                console.log('📊 Chat Console received state update:', Object.keys(state));
+                
+                // Update system health indicator
+                if (state.system_health) {
+                    this.updateSystemHealthDisplay(state.system_health);
+                }
+                
+                // Update provider status
+                if (state.llm_providers) {
+                    this.updateProviderStatus(state.llm_providers);
+                }
+                
+                // Update active agents count
+                if (state.active_agents) {
+                    this.updateActiveAgentsCount(Object.keys(state.active_agents).length);
+                }
+                
+                // Update analytics
+                if (state.total_requests || state.average_response_time) {
+                    this.updateAnalyticsDisplay(state);
+                }
+            }
+            
+            onEvent(eventType, data) {
+                console.log('🎯 Chat Console received event:', eventType, data);
+                
+                switch (eventType) {
+                    case 'backend_instruction':
+                        this.handleBackendInstruction(data);
+                        break;
+                    case 'recommendation_generated':
+                        this.showRecommendation(data);
+                        break;
+                    case 'error_occurred':
+                        this.showError(data);
+                        break;
+                }
+            }
+            
+            updateSystemHealthDisplay(health) {
+                // Update status indicators in the header
+                const statusElements = document.querySelectorAll('.status-item');
+                statusElements.forEach(el => {
+                    if (el.textContent.includes('Secure Session')) {
+                        const icon = health === 'healthy' ? '✓' : '⚠️';
+                        const color = health === 'healthy' ? '#10b981' : '#f59e0b';
+                        el.style.color = color;
+                    }
+                });
+            }
+            
+            updateProviderStatus(providers) {
+                // Update provider count in status bar
+                const providerCount = Object.keys(providers).length;
+                const statusText = `${providerCount} Providers Active`;
+                
+                // Find and update provider status element
+                const statusElements = document.querySelectorAll('.status-item');
+                statusElements.forEach(el => {
+                    if (el.textContent.includes('Powered by')) {
+                        el.innerHTML = `<span style="color: #06b6d4;">⚡</span> ${statusText}`;
+                    }
+                });
+            }
+            
+            updateActiveAgentsCount(count) {
+                // Update agents count display
+                const statusElements = document.querySelectorAll('.status-item');
+                statusElements.forEach(el => {
+                    if (el.textContent.includes('Agent')) {
+                        el.innerHTML = `<span style="color: #8b5cf6;">🤖</span> ${count} Agents Active`;
+                    }
+                });
+            }
+            
+            updateAnalyticsDisplay(analytics) {
+                // Update response time display
+                if (analytics.average_response_time) {
+                    const responseTime = Math.round(analytics.average_response_time);
+                    const statusElements = document.querySelectorAll('.status-item');
+                    statusElements.forEach(el => {
+                        if (el.textContent.includes('ms') || el.textContent.includes('Response')) {
+                            el.innerHTML = `<span style="color: #f97316;">⚡</span> ${responseTime}ms avg`;
+                        }
+                    });
+                }
+            }
+            
+            handleIncomingMessage(messageData) {
+                // Handle real-time incoming messages
+                console.log('💬 Incoming message:', messageData);
+                
+                // Add message to chat if it's for this session
+                if (messageData.session_id === this.getSessionId()) {
+                    this.addMessageToChat(messageData);
+                }
+            }
+            
+            handleBackendInstruction(instruction) {
+                // Handle instructions from backend
+                console.log('📋 Backend instruction:', instruction);
+                
+                switch (instruction.type) {
+                    case 'update_ui':
+                        this.updateUIElements(instruction.data);
+                        break;
+                    case 'show_notification':
+                        this.showNotification(instruction.message, instruction.type);
+                        break;
+                    case 'refresh_data':
+                        this.refreshData();
+                        break;
+                }
+            }
+            
+            showRecommendation(recommendation) {
+                // Show AI recommendation
+                const notification = document.createElement('div');
+                notification.className = 'recommendation-notification';
+                notification.innerHTML = `
+                    <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; 
+                                border-radius: 8px; padding: 12px; margin: 8px 0; color: #10b981;">
+                        <strong>💡 AI Recommendation:</strong> ${recommendation.message}
+                    </div>
+                `;
+                
+                const chatMessages = document.getElementById('chatMessages');
+                if (chatMessages) {
+                    chatMessages.appendChild(notification);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }
+            }
+            
+            showError(error) {
+                // Show error notification
+                const notification = document.createElement('div');
+                notification.className = 'error-notification';
+                notification.innerHTML = `
+                    <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; 
+                                border-radius: 8px; padding: 12px; margin: 8px 0; color: #ef4444;">
+                        <strong>❌ System Alert:</strong> ${error.message}
+                    </div>
+                `;
+                
+                const chatMessages = document.getElementById('chatMessages');
+                if (chatMessages) {
+                    chatMessages.appendChild(notification);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }
+            }
+            
+            getSessionId() {
+                // Get or create session ID
+                let sessionId = localStorage.getItem('nis_session_id');
+                if (!sessionId) {
+                    sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+                    localStorage.setItem('nis_session_id', sessionId);
+                }
+                return sessionId;
+            }
+        }
+        
+        // Initialize Chat Console Component
+        document.addEventListener('DOMContentLoaded', () => {
+            window.chatConsoleComponent = new ChatConsoleComponent();
+            console.log('🚀 Chat Console Component initialized with real-time state management');
+            
+            // Initialize development tools
+            initializeDevTools();
+            
+            // Add DEV MODE indicator to title
+            document.title = "[DEV] " + document.title;
+        });
+        
+        // Development mode settings
+        const devMode = {
+            showRawResponses: false,
+            showTimings: false,
+            showDebugInfo: false,
+            selectedEndpoint: '/chat/stream',
+            networkLogs: []
+        };
+        
+        // Development Tools Functions
+        function initializeDevTools() {
+            // Toggle dev tools panel
+            document.getElementById('toggleDevTools').addEventListener('click', () => {
+                const panel = document.getElementById('devToolsPanel');
+                panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+            });
+            
+            // Close dev tools panel
+            document.getElementById('closeDevTools').addEventListener('click', () => {
+                document.getElementById('devToolsPanel').style.display = 'none';
+            });
+            
+            // Endpoint selection
+            document.getElementById('endpointSelect').addEventListener('change', (e) => {
+                devMode.selectedEndpoint = e.target.value;
+                console.log(`[DEV] Endpoint changed to: ${devMode.selectedEndpoint}`);
+            });
+            
+            // Test endpoint
+            document.getElementById('testEndpoint').addEventListener('click', async () => {
+                const endpoint = devMode.selectedEndpoint;
+                logNetworkRequest('TEST', endpoint, 'Testing endpoint');
+                
+                try {
+                    const startTime = performance.now();
+                    const response = await fetch(endpoint, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            message: "TEST_MESSAGE_FROM_DEV_TOOLS",
+                            user_id: "dev_test_user",
+                            stream: endpoint === '/chat/stream'
+                        })
+                    });
+                    
+                    const endTime = performance.now();
+                    const duration = Math.round(endTime - startTime);
+                    
+                    if (response.ok) {
+                        if (endpoint === '/chat/stream') {
+                            logNetworkRequest('SUCCESS', endpoint, `Stream connection established (${duration}ms)`);
+                        } else {
+                            const data = await response.json();
+                            logNetworkRequest('SUCCESS', endpoint, `Response received (${duration}ms): ${JSON.stringify(data).substring(0, 100)}...`);
+                        }
+                    } else {
+                        logNetworkRequest('ERROR', endpoint, `Error ${response.status}: ${response.statusText} (${duration}ms)`);
+                    }
+                } catch (error) {
+                    logNetworkRequest('ERROR', endpoint, `Exception: ${error.message}`);
+                }
+            });
+            
+            // Debug options
+            document.getElementById('showRawResponse').addEventListener('change', (e) => {
+                devMode.showRawResponses = e.target.checked;
+                console.log(`[DEV] Show raw responses: ${devMode.showRawResponses}`);
+            });
+            
+            document.getElementById('showTimings').addEventListener('change', (e) => {
+                devMode.showTimings = e.target.checked;
+                console.log(`[DEV] Show timings: ${devMode.showTimings}`);
+            });
+            
+            document.getElementById('showDebugInfo').addEventListener('change', (e) => {
+                devMode.showDebugInfo = e.target.checked;
+                console.log(`[DEV] Show debug info: ${devMode.showDebugInfo}`);
+                
+                // Toggle debug info display
+                const debugElements = document.querySelectorAll('.debug-info');
+                debugElements.forEach(el => {
+                    el.style.display = devMode.showDebugInfo ? 'block' : 'none';
+                });
+            });
+            
+            // Test message buttons
+            document.querySelectorAll('.test-message-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const message = btn.getAttribute('data-message');
+                    document.getElementById('messageInput').value = message;
+                    sendMessage();
+                });
+            });
+            
+            // Clear network log
+            document.getElementById('clearNetworkLog').addEventListener('click', () => {
+                devMode.networkLogs = [];
+                document.getElementById('networkLog').innerHTML = '<div>No requests logged yet</div>';
+            });
+        }
+        
+        // Log network request to dev tools
+        function logNetworkRequest(type, url, message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = { type, url, message, timestamp };
+            
+            devMode.networkLogs.push(logEntry);
+            
+            // Keep only the last 50 logs
+            if (devMode.networkLogs.length > 50) {
+                devMode.networkLogs.shift();
+            }
+            
+            // Update the log display
+            const networkLog = document.getElementById('networkLog');
+            
+            // Clear if this is the first entry
+            if (networkLog.textContent.includes('No requests logged yet')) {
+                networkLog.innerHTML = '';
+            }
+            
+            // Create log entry
+            const entryDiv = document.createElement('div');
+            entryDiv.style.borderBottom = '1px solid #374151';
+            entryDiv.style.paddingBottom = '4px';
+            entryDiv.style.marginBottom = '4px';
+            
+            // Set color based on type
+            let typeColor = '#a0a0a0';
+            if (type.includes('ERROR')) typeColor = '#ef4444';
+            if (type === 'SUCCESS') typeColor = '#10b981';
+            
+            entryDiv.innerHTML = `
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: ${typeColor};">${type}</span>
+                    <span style="opacity: 0.7;">${timestamp}</span>
+                </div>
+                <div style="font-weight: bold;">${url}</div>
+                <div style="word-break: break-all;">${message}</div>
+            `;
+            
+            networkLog.appendChild(entryDiv);
+            networkLog.scrollTop = networkLog.scrollHeight;
+        }
+        
+        // Override fetch for network logging in dev mode
+        const originalFetch = window.fetch;
+        window.fetch = async function(url, options) {
+            const startTime = performance.now();
+            
+            // Log the request
+            if (devMode.showTimings) {
+                logNetworkRequest('REQUEST', url, `Method: ${options?.method || 'GET'}`);
+            }
+            
+            try {
+                const response = await originalFetch(url, options);
+                
+                // Log the response
+                if (devMode.showTimings) {
+                    const endTime = performance.now();
+                    const duration = Math.round(endTime - startTime);
+                    logNetworkRequest('RESPONSE', url, `Status: ${response.status} (${duration}ms)`);
+                }
+                
+                return response;
+            } catch (error) {
+                // Log the error
+                if (devMode.showTimings) {
+                    logNetworkRequest('FETCH_ERROR', url, `Error: ${error.message}`);
+                }
+                throw error;
+            }
+        };
+        
+        // Extend the addMessage function to show raw responses
+        const originalAddMessage = addMessage;
+        addMessage = function(role, content, metadata = {}) {
+            // Call the original function
+            const messageElement = originalAddMessage(role, content, metadata);
+            
+            // Add raw response if enabled and this is an assistant message
+            if (devMode.showRawResponses && role === 'assistant' && metadata) {
+                const rawDataDiv = document.createElement('div');
+                rawDataDiv.className = 'raw-response debug-info';
+                rawDataDiv.style.display = devMode.showDebugInfo ? 'block' : 'none';
+                rawDataDiv.style.padding = '8px';
+                rawDataDiv.style.marginTop = '8px';
+                rawDataDiv.style.background = '#1a1a1a';
+                rawDataDiv.style.borderRadius = '4px';
+                rawDataDiv.style.fontSize = '12px';
+                rawDataDiv.style.fontFamily = 'monospace';
+                rawDataDiv.style.whiteSpace = 'pre-wrap';
+                rawDataDiv.style.overflow = 'auto';
+                rawDataDiv.style.maxHeight = '200px';
+                
+                let rawContent = '';
+                try {
+                    rawContent = JSON.stringify(metadata, null, 2);
+                } catch (e) {
+                    rawContent = 'Error parsing metadata: ' + e.message;
+                }
+                
+                rawDataDiv.textContent = rawContent;
+                
+                // Add a header
+                const rawHeader = document.createElement('div');
+                rawHeader.textContent = '🔍 Raw Response Data:';
+                rawHeader.style.fontWeight = 'bold';
+                rawHeader.style.marginBottom = '4px';
+                
+                rawDataDiv.prepend(rawHeader);
+                
+                // Add to the message element
+                const contentElement = messageElement.querySelector('.message-content');
+                if (contentElement) {
+                    contentElement.appendChild(rawDataDiv);
+                }
+            }
+            
+            return messageElement;
+        };
     </script>
 
 </body>

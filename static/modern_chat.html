@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NIS Protocol - Enhanced Modern Chat</title>
+    
+    <!-- NIS State Management System -->
+    <script src="/static/js/nis-state-client.js"></script>
+    
     <style>
         * {
             margin: 0;
@@ -1037,7 +1041,7 @@
         <div class="main-content">
             <!-- Header -->
             <div class="header">
-                <h1>🤖 NIS Protocol AI Assistant</h1>
+                <h1>🤖 NIS Protocol AI Assistant <span class="dev-badge" style="font-size: 14px; background-color: #2a2a2a; color: #3b82f6; padding: 4px 8px; border-radius: 4px; margin-left: 10px;">DEV MODE</span></h1>
                 <div class="header-line"></div>
                 <p>Intelligent system analysis and real-time insights</p>
                 <div class="chat-toggle-container">
@@ -1045,10 +1049,63 @@
                         <span>🔄</span>
                         Switch to Classic Chat
                     </a>
-                    <a href="/chat/enhanced" class="classic-chat-link" style="margin-left: 12px;">
+                    <a href="/enhanced" class="classic-chat-link" style="margin-left: 12px;">
                         <span>🚀</span>
                         Enhanced Agent Chat
                     </a>
+                    <button id="toggleDevTools" style="margin-left: 12px; background-color: #2a2a2a; color: #3b82f6; border: 1px solid #374151; border-radius: 4px; padding: 4px 8px; cursor: pointer;">
+                        <span>🛠️</span>
+                        Dev Tools
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Development Tools Panel -->
+            <div id="devToolsPanel" style="display: none; position: absolute; top: 120px; right: 20px; width: 400px; background-color: #1a1a1a; border: 1px solid #374151; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 1000; padding: 16px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid #374151; padding-bottom: 8px;">
+                    <h3 style="margin: 0; color: #3b82f6;">🛠️ Development Tools</h3>
+                    <button id="closeDevTools" style="background: none; border: none; color: #a0a0a0; font-size: 20px; cursor: pointer;">×</button>
+                </div>
+                
+                <div style="margin-bottom: 16px;">
+                    <h4 style="margin: 0 0 8px 0; color: #a0a0a0;">Endpoint Testing</h4>
+                    <div style="display: flex; gap: 8px;">
+                        <select id="endpointSelect" style="flex: 1; background-color: #2a2a2a; color: white; border: 1px solid #374151; border-radius: 4px; padding: 6px;">
+                            <option value="/chat">Standard Chat</option>
+                            <option value="/chat/stream" selected>Streaming Chat</option>
+                            <option value="/chat/formatted">Formatted Chat</option>
+                        </select>
+                        <button id="testEndpoint" style="background-color: #3b82f6; color: white; border: none; border-radius: 4px; padding: 6px 12px; cursor: pointer;">Test</button>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 16px;">
+                    <h4 style="margin: 0 0 8px 0; color: #a0a0a0;">Response Debug</h4>
+                    <div style="display: flex; gap: 16px;">
+                        <label style="display: flex; align-items: center; gap: 4px; color: white;">
+                            <input type="checkbox" id="showRawResponse"> Show Raw JSON
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 4px; color: white;">
+                            <input type="checkbox" id="showTimings"> Show Timings
+                        </label>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 16px;">
+                    <h4 style="margin: 0 0 8px 0; color: #a0a0a0;">WebSocket Testing</h4>
+                    <div style="display: flex; gap: 8px;">
+                        <button id="testWebSocket" style="background-color: #3b82f6; color: white; border: none; border-radius: 4px; padding: 6px 12px; cursor: pointer;">Test Connection</button>
+                        <button id="sendTestEvent" style="background-color: #3b82f6; color: white; border: none; border-radius: 4px; padding: 6px 12px; cursor: pointer;">Send Test Event</button>
+                    </div>
+                    <div id="wsStatus" style="margin-top: 8px; color: #a0a0a0;">WebSocket: Unknown</div>
+                </div>
+                
+                <div>
+                    <h4 style="margin: 0 0 8px 0; color: #a0a0a0;">Network Monitor</h4>
+                    <div id="networkLog" style="max-height: 150px; overflow-y: auto; background-color: #2a2a2a; border-radius: 4px; padding: 8px; font-family: monospace; font-size: 12px; color: #a0a0a0;">
+                        <div>No requests logged yet</div>
+                    </div>
+                    <button id="clearNetworkLog" style="margin-top: 8px; background-color: #2a2a2a; color: white; border: 1px solid #374151; border-radius: 4px; padding: 4px 8px; cursor: pointer; width: 100%;">Clear Log</button>
                 </div>
             </div>
 
@@ -1689,11 +1746,8 @@
             currentController = new AbortController();
 
             try {
-<<<<<<< HEAD
-=======
-                // Try enhanced agent chat first for better LangChain integration
->>>>>>> feature/root-organization
-                const response = await fetch('/chat/enhanced', {
+                // Use streaming endpoint for real-time responses
+                const response = await fetch('/chat/stream', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -2167,6 +2221,474 @@
         setTimeout(() => {
             addMessage('🚀 **NIS Protocol Modern Chat** - Enhanced with LangChain Agent UI\n\n**Features:**\n• Real-time tool call visualization\n• Agent reasoning steps\n• Artifact rendering\n• Workflow tracking\n• Terminal integration\n\nType a command starting with "/" or ask me anything!', false);
         }, 1000);
+
+        // ====== NIS STATE MANAGEMENT INTEGRATION ======
+        
+        class ModernChatComponent {
+            constructor() {
+                this.setupStateManagement();
+                this.setupRealTimeUpdates();
+                this.setupToolCallVisualization();
+            }
+            
+            setupStateManagement() {
+                // Register with NIS State Manager
+                if (window.nisStateManager) {
+                    window.nisStateManager.registerComponent('modern_chat', this);
+                    console.log('🧠 Modern Chat registered with NIS State Manager');
+                } else {
+                    console.warn('⚠️ NIS State Manager not available');
+                }
+            }
+            
+            setupRealTimeUpdates() {
+                // Listen for real-time events
+                if (window.nisStateManager) {
+                    window.nisStateManager.client.on('chat_message', ({ data }) => {
+                        this.handleRealTimeMessage(data);
+                    });
+                    
+                    window.nisStateManager.client.on('agent_status_change', ({ data }) => {
+                        this.updateAgentStatus(data);
+                    });
+                    
+                    window.nisStateManager.client.on('backend_instruction', ({ data }) => {
+                        this.handleBackendInstruction(data);
+                    });
+                    
+                    window.nisStateManager.client.on('recommendation_generated', ({ data }) => {
+                        this.showRecommendation(data);
+                    });
+                }
+            }
+            
+            setupToolCallVisualization() {
+                // Enhanced tool call visualization with real-time updates
+                this.activeToolCalls = new Map();
+                this.workflowSteps = [];
+            }
+            
+            onStateUpdate(state) {
+                console.log('📊 Modern Chat received state update:', Object.keys(state));
+                
+                // Update system status in header
+                if (state.system_health) {
+                    this.updateSystemStatus(state.system_health);
+                }
+                
+                // Update active agents display
+                if (state.active_agents) {
+                    this.updateActiveAgentsDisplay(state.active_agents);
+                }
+                
+                // Update performance metrics
+                if (state.average_response_time) {
+                    this.updatePerformanceDisplay(state.average_response_time);
+                }
+            }
+            
+            onEvent(eventType, data) {
+                console.log('🎯 Modern Chat received event:', eventType, data);
+                
+                switch (eventType) {
+                    case 'tool_call_started':
+                        this.visualizeToolCallStart(data);
+                        break;
+                    case 'tool_call_completed':
+                        this.visualizeToolCallComplete(data);
+                        break;
+                    case 'reasoning_step':
+                        this.addReasoningStep(data);
+                        break;
+                    case 'workflow_update':
+                        this.updateWorkflow(data);
+                        break;
+                }
+            }
+            
+            updateSystemStatus(health) {
+                // Update system status indicator
+                const statusIndicator = document.querySelector('.system-status') || this.createStatusIndicator();
+                statusIndicator.className = `system-status ${health}`;
+                statusIndicator.textContent = `System: ${health}`;
+            }
+            
+            createStatusIndicator() {
+                const indicator = document.createElement('div');
+                indicator.className = 'system-status';
+                indicator.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    padding: 8px 16px;
+                    border-radius: 20px;
+                    background: rgba(0, 0, 0, 0.8);
+                    color: white;
+                    font-size: 12px;
+                    z-index: 1000;
+                `;
+                document.body.appendChild(indicator);
+                return indicator;
+            }
+            
+            updateActiveAgentsDisplay(agents) {
+                // Show active agents in chat
+                const agentCount = Object.keys(agents).length;
+                const agentNames = Object.keys(agents).join(', ');
+                
+                this.addSystemMessage(`🤖 ${agentCount} agents active: ${agentNames}`);
+            }
+            
+            updatePerformanceDisplay(responseTime) {
+                // Update performance indicator
+                const perfIndicator = document.querySelector('.performance-indicator') || this.createPerformanceIndicator();
+                perfIndicator.textContent = `⚡ ${Math.round(responseTime)}ms`;
+            }
+            
+            createPerformanceIndicator() {
+                const indicator = document.createElement('div');
+                indicator.className = 'performance-indicator';
+                indicator.style.cssText = `
+                    position: fixed;
+                    top: 60px;
+                    right: 20px;
+                    padding: 4px 12px;
+                    border-radius: 15px;
+                    background: rgba(16, 185, 129, 0.2);
+                    color: #10b981;
+                    font-size: 11px;
+                    z-index: 1000;
+                `;
+                document.body.appendChild(indicator);
+                return indicator;
+            }
+            
+            handleRealTimeMessage(messageData) {
+                // Handle real-time incoming messages
+                if (messageData.type === 'tool_call') {
+                    this.visualizeToolCall(messageData);
+                } else if (messageData.type === 'reasoning') {
+                    this.addReasoningStep(messageData);
+                } else {
+                    this.addMessage(messageData.content, false);
+                }
+            }
+            
+            visualizeToolCall(toolCallData) {
+                // Create enhanced tool call visualization
+                const toolCallElement = document.createElement('div');
+                toolCallElement.className = 'tool-call enhanced';
+                toolCallElement.innerHTML = `
+                    <div class="tool-header">
+                        <span class="tool-icon">🔧</span>
+                        <span class="tool-name">${toolCallData.tool_name}</span>
+                        <span class="tool-status ${toolCallData.status}">${toolCallData.status}</span>
+                        <span class="tool-timestamp">${new Date().toLocaleTimeString()}</span>
+                    </div>
+                    <div class="tool-content">
+                        <div class="tool-input">
+                            <strong>Input:</strong>
+                            <pre>${JSON.stringify(toolCallData.input, null, 2)}</pre>
+                        </div>
+                        ${toolCallData.output ? `
+                            <div class="tool-output">
+                                <strong>Output:</strong>
+                                <pre>${JSON.stringify(toolCallData.output, null, 2)}</pre>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+                
+                const chatMessages = document.getElementById('chatMessages');
+                if (chatMessages) {
+                    chatMessages.appendChild(toolCallElement);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }
+            }
+            
+            addReasoningStep(stepData) {
+                // Add reasoning step visualization
+                const reasoningElement = document.createElement('div');
+                reasoningElement.className = 'reasoning-step';
+                reasoningElement.innerHTML = `
+                    <div style="background: rgba(139, 92, 246, 0.1); border-left: 3px solid #8b5cf6; 
+                                padding: 12px; margin: 8px 0; border-radius: 0 8px 8px 0;">
+                        <strong>🧠 Reasoning:</strong> ${stepData.step}
+                        ${stepData.confidence ? `<span style="float: right; color: #8b5cf6;">${Math.round(stepData.confidence * 100)}%</span>` : ''}
+                    </div>
+                `;
+                
+                const chatMessages = document.getElementById('chatMessages');
+                if (chatMessages) {
+                    chatMessages.appendChild(reasoningElement);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }
+            }
+            
+            showRecommendation(recommendation) {
+                // Show AI recommendation with enhanced styling
+                this.addSystemMessage(`💡 **AI Recommendation:** ${recommendation.message}`, 'recommendation');
+            }
+            
+            addSystemMessage(message, type = 'info') {
+                const colors = {
+                    info: '#06b6d4',
+                    recommendation: '#10b981',
+                    warning: '#f59e0b',
+                    error: '#ef4444'
+                };
+                
+                const messageElement = document.createElement('div');
+                messageElement.className = `system-message ${type}`;
+                messageElement.innerHTML = `
+                    <div style="background: rgba(${this.hexToRgb(colors[type])}, 0.1); 
+                                border: 1px solid ${colors[type]}; 
+                                border-radius: 8px; padding: 12px; margin: 8px 0; 
+                                color: ${colors[type]};">
+                        ${message}
+                    </div>
+                `;
+                
+                const chatMessages = document.getElementById('chatMessages');
+                if (chatMessages) {
+                    chatMessages.appendChild(messageElement);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }
+            }
+            
+            hexToRgb(hex) {
+                const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                return result ? 
+                    `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : 
+                    '255, 255, 255';
+            }
+        }
+        
+        // Initialize Modern Chat Component
+        document.addEventListener('DOMContentLoaded', () => {
+            window.modernChatComponent = new ModernChatComponent();
+            console.log('🚀 Modern Chat Component initialized with real-time state management');
+            
+            // Initialize development tools
+            initializeDevTools();
+            
+            // Add DEV MODE indicator to title
+            document.title = "[DEV] " + document.title;
+        });
+        
+        // Development mode settings
+        const devMode = {
+            showRawResponses: false,
+            showTimings: false,
+            selectedEndpoint: '/chat/stream',
+            networkLogs: []
+        };
+        
+        // Development Tools Functions
+        function initializeDevTools() {
+            // Toggle dev tools panel
+            document.getElementById('toggleDevTools').addEventListener('click', () => {
+                const panel = document.getElementById('devToolsPanel');
+                panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+            });
+            
+            // Close dev tools panel
+            document.getElementById('closeDevTools').addEventListener('click', () => {
+                document.getElementById('devToolsPanel').style.display = 'none';
+            });
+            
+            // Endpoint selection
+            document.getElementById('endpointSelect').addEventListener('change', (e) => {
+                devMode.selectedEndpoint = e.target.value;
+                console.log(`[DEV] Endpoint changed to: ${devMode.selectedEndpoint}`);
+            });
+            
+            // Test endpoint
+            document.getElementById('testEndpoint').addEventListener('click', async () => {
+                const endpoint = devMode.selectedEndpoint;
+                logNetworkRequest('TEST', endpoint, 'Testing endpoint');
+                
+                try {
+                    const startTime = performance.now();
+                    const response = await fetch(endpoint, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            message: "TEST_MESSAGE_FROM_DEV_TOOLS",
+                            user_id: "dev_test_user",
+                            stream: endpoint === '/chat/stream'
+                        })
+                    });
+                    
+                    const endTime = performance.now();
+                    const duration = Math.round(endTime - startTime);
+                    
+                    if (response.ok) {
+                        if (endpoint === '/chat/stream') {
+                            logNetworkRequest('SUCCESS', endpoint, `Stream connection established (${duration}ms)`);
+                        } else {
+                            const data = await response.json();
+                            logNetworkRequest('SUCCESS', endpoint, `Response received (${duration}ms): ${JSON.stringify(data).substring(0, 100)}...`);
+                        }
+                    } else {
+                        logNetworkRequest('ERROR', endpoint, `Error ${response.status}: ${response.statusText} (${duration}ms)`);
+                    }
+                } catch (error) {
+                    logNetworkRequest('ERROR', endpoint, `Exception: ${error.message}`);
+                }
+            });
+            
+            // Debug options
+            document.getElementById('showRawResponse').addEventListener('change', (e) => {
+                devMode.showRawResponses = e.target.checked;
+                console.log(`[DEV] Show raw responses: ${devMode.showRawResponses}`);
+            });
+            
+            document.getElementById('showTimings').addEventListener('change', (e) => {
+                devMode.showTimings = e.target.checked;
+                console.log(`[DEV] Show timings: ${devMode.showTimings}`);
+            });
+            
+            // WebSocket testing
+            document.getElementById('testWebSocket').addEventListener('click', () => {
+                // Test WebSocket connection
+                const ws = new WebSocket(`ws://${window.location.host}/ws`);
+                
+                ws.onopen = () => {
+                    document.getElementById('wsStatus').textContent = 'WebSocket: Connected';
+                    document.getElementById('wsStatus').style.color = '#10b981';
+                    logNetworkRequest('WS', '/ws', 'WebSocket connection established');
+                };
+                
+                ws.onclose = () => {
+                    document.getElementById('wsStatus').textContent = 'WebSocket: Disconnected';
+                    document.getElementById('wsStatus').style.color = '#ef4444';
+                    logNetworkRequest('WS', '/ws', 'WebSocket connection closed');
+                };
+                
+                ws.onerror = (error) => {
+                    document.getElementById('wsStatus').textContent = 'WebSocket: Error';
+                    document.getElementById('wsStatus').style.color = '#ef4444';
+                    logNetworkRequest('WS_ERROR', '/ws', `WebSocket error: ${error.message || 'Unknown error'}`);
+                };
+                
+                // Close after 5 seconds
+                setTimeout(() => {
+                    if (ws.readyState === WebSocket.OPEN) {
+                        ws.close();
+                    }
+                }, 5000);
+            });
+            
+            // Send test event
+            document.getElementById('sendTestEvent').addEventListener('click', () => {
+                // Create a test event
+                const testEvent = {
+                    type: 'TEST_EVENT',
+                    data: {
+                        message: 'This is a test event from the dev tools',
+                        timestamp: new Date().toISOString()
+                    }
+                };
+                
+                // Send via fetch to a test endpoint
+                fetch('/api/test/event', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(testEvent)
+                })
+                .then(response => {
+                    if (response.ok) {
+                        logNetworkRequest('EVENT', '/api/test/event', 'Test event sent successfully');
+                    } else {
+                        logNetworkRequest('EVENT_ERROR', '/api/test/event', `Error ${response.status}: ${response.statusText}`);
+                    }
+                })
+                .catch(error => {
+                    logNetworkRequest('EVENT_ERROR', '/api/test/event', `Exception: ${error.message}`);
+                });
+            });
+            
+            // Clear network log
+            document.getElementById('clearNetworkLog').addEventListener('click', () => {
+                devMode.networkLogs = [];
+                document.getElementById('networkLog').innerHTML = '<div>No requests logged yet</div>';
+            });
+        }
+        
+        // Log network request to dev tools
+        function logNetworkRequest(type, url, message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = { type, url, message, timestamp };
+            
+            devMode.networkLogs.push(logEntry);
+            
+            // Keep only the last 50 logs
+            if (devMode.networkLogs.length > 50) {
+                devMode.networkLogs.shift();
+            }
+            
+            // Update the log display
+            const networkLog = document.getElementById('networkLog');
+            
+            // Clear if this is the first entry
+            if (networkLog.textContent.includes('No requests logged yet')) {
+                networkLog.innerHTML = '';
+            }
+            
+            // Create log entry
+            const entryDiv = document.createElement('div');
+            entryDiv.style.borderBottom = '1px solid #374151';
+            entryDiv.style.paddingBottom = '4px';
+            entryDiv.style.marginBottom = '4px';
+            
+            // Set color based on type
+            let typeColor = '#a0a0a0';
+            if (type.includes('ERROR')) typeColor = '#ef4444';
+            if (type === 'SUCCESS') typeColor = '#10b981';
+            
+            entryDiv.innerHTML = `
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: ${typeColor};">${type}</span>
+                    <span style="opacity: 0.7;">${timestamp}</span>
+                </div>
+                <div style="font-weight: bold;">${url}</div>
+                <div style="word-break: break-all;">${message}</div>
+            `;
+            
+            networkLog.appendChild(entryDiv);
+            networkLog.scrollTop = networkLog.scrollHeight;
+        }
+        
+        // Override fetch for network logging in dev mode
+        const originalFetch = window.fetch;
+        window.fetch = async function(url, options) {
+            const startTime = performance.now();
+            
+            // Log the request
+            if (devMode.showTimings) {
+                logNetworkRequest('REQUEST', url, `Method: ${options?.method || 'GET'}`);
+            }
+            
+            try {
+                const response = await originalFetch(url, options);
+                
+                // Log the response
+                if (devMode.showTimings) {
+                    const endTime = performance.now();
+                    const duration = Math.round(endTime - startTime);
+                    logNetworkRequest('RESPONSE', url, `Status: ${response.status} (${duration}ms)`);
+                }
+                
+                return response;
+            } catch (error) {
+                // Log the error
+                if (devMode.showTimings) {
+                    logNetworkRequest('FETCH_ERROR', url, `Error: ${error.message}`);
+                }
+                throw error;
+            }
+        };
     </script>
 </body>
 </html>
