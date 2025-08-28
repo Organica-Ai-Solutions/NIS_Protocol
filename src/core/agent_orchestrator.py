@@ -1,0 +1,716 @@
+#!/usr/bin/env python3
+"""
+NIS Protocol Intelligent Agent Orchestrator
+Brain-like agent coordination with smart activation and real-time monitoring
+
+This system simulates human brain structure with:
+- Always-active core agents (like autonomic nervous system)
+- Context-activated specialized agents (like focused attention)
+- Real-time state management and performance monitoring
+"""
+
+import asyncio
+import logging
+import time
+import json
+from typing import Dict, List, Set, Optional, Any, Callable
+from dataclasses import dataclass, asdict
+from enum import Enum
+from collections import defaultdict, deque
+
+from .state_manager import nis_state_manager, StateEventType, emit_state_event
+
+logger = logging.getLogger(__name__)
+
+class AgentStatus(Enum):
+    """Agent status types"""
+    INACTIVE = "inactive"
+    INITIALIZING = "initializing"
+    ACTIVE = "active"
+    BUSY = "busy"
+    PROCESSING = "processing"
+    IDLE = "idle"
+    ERROR = "error"
+    SLEEPING = "sleeping"
+
+class AgentType(Enum):
+    """Agent classification types"""
+    CORE = "core"              # Always active (brain stem)
+    SPECIALIZED = "specialized" # Context activated (cerebral cortex)
+    PROTOCOL = "protocol"      # External communication (nervous system)
+    LEARNING = "learning"      # Adaptive functions (hippocampus)
+    MONITORING = "monitoring"  # System oversight (prefrontal cortex)
+
+class ActivationTrigger(Enum):
+    """How agents get activated"""
+    ALWAYS = "always"
+    CONTEXT = "context" 
+    ON_DEMAND = "on_demand"
+    SCHEDULED = "scheduled"
+    EVENT_DRIVEN = "event_driven"
+
+@dataclass
+class AgentMetrics:
+    """Performance metrics for an agent"""
+    activation_count: int = 0
+    total_processing_time: float = 0.0
+    average_response_time: float = 0.0
+    success_rate: float = 1.0
+    error_count: int = 0
+    last_active: Optional[float] = None
+    resource_usage: Dict[str, float] = None
+    
+    def __post_init__(self):
+        if self.resource_usage is None:
+            self.resource_usage = {"cpu": 0.0, "memory": 0.0, "tokens": 0}
+
+@dataclass
+class AgentDefinition:
+    """Complete agent definition"""
+    agent_id: str
+    name: str
+    agent_type: AgentType
+    activation_trigger: ActivationTrigger
+    status: AgentStatus = AgentStatus.INACTIVE
+    context_keywords: List[str] = None
+    dependencies: List[str] = None
+    max_concurrent: int = 1
+    timeout_seconds: float = 30.0
+    priority: int = 5  # 1-10, higher = more important
+    description: str = ""
+    
+    def __post_init__(self):
+        if self.context_keywords is None:
+            self.context_keywords = []
+        if self.dependencies is None:
+            self.dependencies = []
+
+class NISAgentOrchestrator:
+    """
+    🧠 Intelligent Agent Orchestrator
+    
+    Simulates human brain architecture:
+    - Core agents (brain stem): Always active, handle basic functions
+    - Specialized agents (cortex): Activated by context/need
+    - Protocol agents (nervous system): Handle external communication
+    - Learning agents (hippocampus): Adapt and improve
+    - Monitoring agents (prefrontal cortex): Oversight and control
+    """
+    
+    def __init__(self):
+        self.agents: Dict[str, AgentDefinition] = {}
+        self.agent_instances: Dict[str, Any] = {}
+        self.agent_metrics: Dict[str, AgentMetrics] = {}
+        self.active_agents: Set[str] = set()
+        self.processing_queue: deque = deque()
+        
+        # Performance tracking
+        self.orchestrator_metrics = {
+            "total_activations": 0,
+            "concurrent_agents": 0,
+            "queue_size": 0,
+            "average_activation_time": 0.0,
+            "error_rate": 0.0
+        }
+        
+        # Context analysis
+        self.context_analyzer = ContextAnalyzer()
+        self.dependency_resolver = DependencyResolver()
+        
+        # Initialize the brain structure
+        self._initialize_brain_structure()
+        
+        logger.info("🧠 NIS Agent Orchestrator initialized")
+    
+    def _initialize_brain_structure(self):
+        """Initialize the human brain-like agent structure"""
+        
+        # 🧠 CORE AGENTS (Always Active - Brain Stem Functions)
+        self.register_agent(AgentDefinition(
+            agent_id="signal_processing",
+            name="Signal Processing Agent (Laplace)",
+            agent_type=AgentType.CORE,
+            activation_trigger=ActivationTrigger.ALWAYS,
+            context_keywords=["input", "signal", "data", "preprocessing"],
+            priority=10,
+            description="Processes all incoming signals using Laplace transforms"
+        ))
+        
+        self.register_agent(AgentDefinition(
+            agent_id="reasoning",
+            name="Reasoning Agent (KAN)",
+            agent_type=AgentType.CORE,
+            activation_trigger=ActivationTrigger.ALWAYS,
+            dependencies=["signal_processing"],
+            context_keywords=["analyze", "reason", "think", "symbolic"],
+            priority=10,
+            description="Core reasoning using KAN networks"
+        ))
+        
+        self.register_agent(AgentDefinition(
+            agent_id="physics_validation",
+            name="Physics Validation Agent (PINN)",
+            agent_type=AgentType.CORE,
+            activation_trigger=ActivationTrigger.ALWAYS,
+            dependencies=["reasoning"],
+            context_keywords=["physics", "validate", "constraints", "laws"],
+            priority=9,
+            description="Validates outputs against physics laws"
+        ))
+        
+        self.register_agent(AgentDefinition(
+            agent_id="consciousness",
+            name="Consciousness Agent",
+            agent_type=AgentType.CORE,
+            activation_trigger=ActivationTrigger.ALWAYS,
+            context_keywords=["awareness", "meta", "self", "consciousness"],
+            priority=8,
+            description="Self-awareness and meta-cognitive processing"
+        ))
+        
+        self.register_agent(AgentDefinition(
+            agent_id="memory",
+            name="Memory Agent",
+            agent_type=AgentType.CORE,
+            activation_trigger=ActivationTrigger.ALWAYS,
+            context_keywords=["remember", "store", "recall", "memory"],
+            priority=8,
+            description="Memory storage and retrieval"
+        ))
+        
+        self.register_agent(AgentDefinition(
+            agent_id="coordination",
+            name="Meta Coordination Agent",
+            agent_type=AgentType.CORE,
+            activation_trigger=ActivationTrigger.ALWAYS,
+            context_keywords=["coordinate", "orchestrate", "manage"],
+            priority=9,
+            description="Meta-level coordination and oversight"
+        ))
+        
+        # 🎯 SPECIALIZED AGENTS (Context Activated - Cerebral Cortex)
+        self.register_agent(AgentDefinition(
+            agent_id="vision",
+            name="Vision Analysis Agent",
+            agent_type=AgentType.SPECIALIZED,
+            activation_trigger=ActivationTrigger.CONTEXT,
+            context_keywords=["image", "visual", "photo", "picture", "video", "analyze", "see"],
+            max_concurrent=2,
+            priority=7,
+            description="Computer vision and image analysis"
+        ))
+        
+        self.register_agent(AgentDefinition(
+            agent_id="document",
+            name="Document Analysis Agent",
+            agent_type=AgentType.SPECIALIZED,
+            activation_trigger=ActivationTrigger.CONTEXT,
+            context_keywords=["document", "pdf", "text", "file", "analyze", "read"],
+            max_concurrent=3,
+            priority=6,
+            description="Document processing and analysis"
+        ))
+        
+        self.register_agent(AgentDefinition(
+            agent_id="web_search",
+            name="Web Search Agent",
+            agent_type=AgentType.SPECIALIZED,
+            activation_trigger=ActivationTrigger.CONTEXT,
+            context_keywords=["search", "web", "internet", "research", "find", "lookup"],
+            max_concurrent=2,
+            priority=6,
+            description="Web search and research capabilities"
+        ))
+        
+        self.register_agent(AgentDefinition(
+            agent_id="nvidia_simulation",
+            name="NVIDIA Physics Simulation",
+            agent_type=AgentType.SPECIALIZED,
+            activation_trigger=ActivationTrigger.CONTEXT,
+            context_keywords=["simulation", "physics", "modeling", "nvidia", "compute"],
+            dependencies=["physics_validation"],
+            max_concurrent=1,
+            priority=7,
+            description="Advanced physics simulation using NVIDIA NeMo"
+        ))
+        
+        # 🌐 PROTOCOL AGENTS (External Communication - Nervous System)
+        self.register_agent(AgentDefinition(
+            agent_id="a2a_protocol",
+            name="Agent-to-Agent Protocol",
+            agent_type=AgentType.PROTOCOL,
+            activation_trigger=ActivationTrigger.EVENT_DRIVEN,
+            context_keywords=["agent", "communicate", "protocol", "a2a"],
+            priority=5,
+            description="Agent-to-agent communication protocol"
+        ))
+        
+        self.register_agent(AgentDefinition(
+            agent_id="mcp_protocol",
+            name="Model Context Protocol",
+            agent_type=AgentType.PROTOCOL,
+            activation_trigger=ActivationTrigger.EVENT_DRIVEN,
+            context_keywords=["model", "context", "mcp", "protocol"],
+            priority=5,
+            description="Model context protocol integration"
+        ))
+        
+        # 🧠 LEARNING AGENTS (Adaptive Functions - Hippocampus)
+        self.register_agent(AgentDefinition(
+            agent_id="learning",
+            name="Learning Agent",
+            agent_type=AgentType.LEARNING,
+            activation_trigger=ActivationTrigger.SCHEDULED,
+            context_keywords=["learn", "adapt", "improve", "train"],
+            priority=4,
+            description="Continuous learning and adaptation"
+        ))
+        
+        self.register_agent(AgentDefinition(
+            agent_id="bitnet_training",
+            name="BitNet Training Agent",
+            agent_type=AgentType.LEARNING,
+            activation_trigger=ActivationTrigger.ON_DEMAND,
+            context_keywords=["bitnet", "training", "optimize", "neural"],
+            max_concurrent=1,
+            priority=3,
+            description="BitNet neural network training"
+        ))
+        
+        logger.info(f"🧠 Initialized {len(self.agents)} agents in brain structure")
+    
+    def register_agent(self, agent_def: AgentDefinition) -> bool:
+        """Register a new agent in the orchestrator"""
+        try:
+            self.agents[agent_def.agent_id] = agent_def
+            self.agent_metrics[agent_def.agent_id] = AgentMetrics()
+            
+            logger.info(f"📝 Registered agent: {agent_def.agent_id} ({agent_def.agent_type.value})")
+            return True
+            
+        except Exception as e:
+            logger.error(f"Failed to register agent {agent_def.agent_id}: {e}")
+            return False
+    
+    async def start_orchestrator(self):
+        """Start the agent orchestrator system"""
+        logger.info("🚀 Starting NIS Agent Orchestrator...")
+        
+        # Start always-active core agents
+        await self._activate_core_agents()
+        
+        # Start background monitoring
+        asyncio.create_task(self._monitor_agents())
+        asyncio.create_task(self._process_queue())
+        asyncio.create_task(self._update_system_state())
+        
+        logger.info("✅ Agent Orchestrator started successfully")
+    
+    async def _activate_core_agents(self):
+        """Activate all core agents that should always be running"""
+        core_agents = [
+            agent_id for agent_id, agent in self.agents.items()
+            if agent.activation_trigger == ActivationTrigger.ALWAYS
+        ]
+        
+        for agent_id in core_agents:
+            await self.activate_agent(agent_id, context="system_startup")
+        
+        logger.info(f"🧠 Activated {len(core_agents)} core agents")
+    
+    async def activate_agent(self, agent_id: str, context: str = "", force: bool = False) -> bool:
+        """Activate a specific agent"""
+        if agent_id not in self.agents:
+            logger.warning(f"Unknown agent: {agent_id}")
+            return False
+        
+        agent = self.agents[agent_id]
+        
+        # Check if already active and at capacity
+        active_count = sum(1 for aid in self.active_agents if aid.startswith(agent_id))
+        if active_count >= agent.max_concurrent and not force:
+            logger.debug(f"Agent {agent_id} at max capacity ({active_count}/{agent.max_concurrent})")
+            return False
+        
+        try:
+            start_time = time.time()
+            
+            # Check dependencies
+            if not await self._check_dependencies(agent_id):
+                logger.warning(f"Dependencies not met for agent {agent_id}")
+                return False
+            
+            # Update status
+            agent.status = AgentStatus.INITIALIZING
+            
+            # Create unique instance ID for concurrent agents
+            instance_id = f"{agent_id}_{len(self.active_agents)}_{int(time.time())}"
+            
+            # Simulate agent activation (replace with actual agent instantiation)
+            await self._simulate_agent_activation(agent_id, instance_id, context)
+            
+            # Mark as active
+            self.active_agents.add(instance_id)
+            agent.status = AgentStatus.ACTIVE
+            
+            # Update metrics
+            metrics = self.agent_metrics[agent_id]
+            metrics.activation_count += 1
+            metrics.last_active = time.time()
+            
+            activation_time = time.time() - start_time
+            self.orchestrator_metrics["total_activations"] += 1
+            self.orchestrator_metrics["concurrent_agents"] = len(self.active_agents)
+            
+            # Emit state event
+            await emit_state_event(
+                StateEventType.AGENT_STATUS_CHANGE,
+                {
+                    "agent_id": agent_id,
+                    "instance_id": instance_id,
+                    "status": "activated",
+                    "context": context,
+                    "activation_time": activation_time,
+                    "agent_type": agent.agent_type.value
+                }
+            )
+            
+            logger.info(f"✅ Activated agent: {agent_id} (instance: {instance_id})")
+            return True
+            
+        except Exception as e:
+            agent.status = AgentStatus.ERROR
+            logger.error(f"Failed to activate agent {agent_id}: {e}")
+            return False
+    
+    async def deactivate_agent(self, instance_id: str) -> bool:
+        """Deactivate a specific agent instance"""
+        if instance_id not in self.active_agents:
+            return False
+        
+        try:
+            # Extract agent_id from instance_id
+            agent_id = instance_id.split('_')[0]
+            
+            # Remove from active set
+            self.active_agents.remove(instance_id)
+            
+            # Update agent status
+            if agent_id in self.agents:
+                active_count = sum(1 for aid in self.active_agents if aid.startswith(agent_id))
+                if active_count == 0:
+                    self.agents[agent_id].status = AgentStatus.IDLE
+            
+            # Update metrics
+            self.orchestrator_metrics["concurrent_agents"] = len(self.active_agents)
+            
+            # Emit state event
+            await emit_state_event(
+                StateEventType.AGENT_STATUS_CHANGE,
+                {
+                    "agent_id": agent_id,
+                    "instance_id": instance_id,
+                    "status": "deactivated"
+                }
+            )
+            
+            logger.info(f"🔴 Deactivated agent instance: {instance_id}")
+            return True
+            
+        except Exception as e:
+            logger.error(f"Failed to deactivate agent instance {instance_id}: {e}")
+            return False
+    
+    async def process_request(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Process a request through the agent orchestrator"""
+        request_id = f"req_{int(time.time())}_{len(self.processing_queue)}"
+        
+        try:
+            # Analyze context to determine which agents to activate
+            context_analysis = await self.context_analyzer.analyze(input_data)
+            
+            # Determine required agents
+            required_agents = await self._determine_required_agents(context_analysis)
+            
+            # Activate agents if needed
+            activated_agents = []
+            for agent_id in required_agents:
+                if await self.activate_agent(agent_id, context=context_analysis.get("primary_context", "")):
+                    activated_agents.append(agent_id)
+            
+            # Process through the pipeline
+            result = await self._process_through_pipeline(input_data, activated_agents, request_id)
+            
+            return {
+                "request_id": request_id,
+                "result": result,
+                "activated_agents": activated_agents,
+                "context_analysis": context_analysis,
+                "processing_time": time.time() - float(request_id.split('_')[1])
+            }
+            
+        except Exception as e:
+            logger.error(f"Failed to process request {request_id}: {e}")
+            return {"request_id": request_id, "error": str(e)}
+    
+    async def _determine_required_agents(self, context_analysis: Dict[str, Any]) -> List[str]:
+        """Determine which agents are needed based on context"""
+        required_agents = []
+        
+        # Always include core agents
+        core_agents = [
+            agent_id for agent_id, agent in self.agents.items()
+            if agent.activation_trigger == ActivationTrigger.ALWAYS
+        ]
+        required_agents.extend(core_agents)
+        
+        # Analyze context for specialized agents
+        context_text = context_analysis.get("text", "").lower()
+        keywords = context_analysis.get("keywords", [])
+        
+        for agent_id, agent in self.agents.items():
+            if agent.activation_trigger == ActivationTrigger.CONTEXT:
+                # Check if any agent keywords match the context
+                if any(keyword in context_text or keyword in keywords 
+                       for keyword in agent.context_keywords):
+                    required_agents.append(agent_id)
+        
+        return list(set(required_agents))  # Remove duplicates
+    
+    async def _simulate_agent_activation(self, agent_id: str, instance_id: str, context: str):
+        """Simulate agent activation (replace with actual agent instantiation)"""
+        # This is where you would actually instantiate and configure the real agent
+        await asyncio.sleep(0.1)  # Simulate initialization time
+        
+        # Store mock agent instance
+        self.agent_instances[instance_id] = {
+            "agent_id": agent_id,
+            "instance_id": instance_id,
+            "context": context,
+            "created_at": time.time(),
+            "status": "active"
+        }
+    
+    async def _check_dependencies(self, agent_id: str) -> bool:
+        """Check if agent dependencies are satisfied"""
+        agent = self.agents[agent_id]
+        
+        for dep_id in agent.dependencies:
+            # Check if dependency is active
+            dep_active = any(aid.startswith(dep_id) for aid in self.active_agents)
+            if not dep_active:
+                logger.debug(f"Dependency {dep_id} not active for agent {agent_id}")
+                return False
+        
+        return True
+    
+    async def _process_through_pipeline(self, input_data: Dict[str, Any], agents: List[str], request_id: str) -> Dict[str, Any]:
+        """Process data through the agent pipeline"""
+        # This is a simplified pipeline - implement actual agent processing
+        result = {"input": input_data, "processed_by": agents, "request_id": request_id}
+        
+        # Simulate processing time
+        await asyncio.sleep(0.2)
+        
+        return result
+    
+    async def _monitor_agents(self):
+        """Background task to monitor agent health and performance"""
+        while True:
+            try:
+                # Check agent health
+                for instance_id in list(self.active_agents):
+                    if await self._check_agent_health(instance_id):
+                        continue
+                    else:
+                        await self.deactivate_agent(instance_id)
+                
+                # Update performance metrics
+                await self._calculate_performance_metrics()
+                
+                await asyncio.sleep(5)  # Monitor every 5 seconds
+                
+            except Exception as e:
+                logger.error(f"Agent monitoring error: {e}")
+                await asyncio.sleep(5)
+    
+    async def _check_agent_health(self, instance_id: str) -> bool:
+        """Check if an agent instance is healthy"""
+        if instance_id not in self.agent_instances:
+            return False
+        
+        instance = self.agent_instances[instance_id]
+        
+        # Check if agent has been running too long (basic timeout)
+        agent_id = instance["agent_id"]
+        if agent_id in self.agents:
+            timeout = self.agents[agent_id].timeout_seconds
+            if time.time() - instance["created_at"] > timeout:
+                logger.warning(f"Agent {instance_id} timed out")
+                return False
+        
+        return True
+    
+    async def _calculate_performance_metrics(self):
+        """Calculate and update performance metrics"""
+        try:
+            total_agents = len(self.agents)
+            active_agents = len(self.active_agents)
+            
+            # Update orchestrator metrics
+            self.orchestrator_metrics.update({
+                "concurrent_agents": active_agents,
+                "queue_size": len(self.processing_queue),
+                "agent_utilization": active_agents / max(total_agents, 1)
+            })
+            
+        except Exception as e:
+            logger.error(f"Error calculating performance metrics: {e}")
+    
+    async def _process_queue(self):
+        """Background task to process the request queue"""
+        while True:
+            try:
+                if self.processing_queue:
+                    # Process next request in queue
+                    request = self.processing_queue.popleft()
+                    await self.process_request(request)
+                
+                await asyncio.sleep(0.1)
+                
+            except Exception as e:
+                logger.error(f"Queue processing error: {e}")
+                await asyncio.sleep(1)
+    
+    async def _update_system_state(self):
+        """Background task to update system state"""
+        while True:
+            try:
+                # Prepare agent status for state update
+                agent_status = {}
+                for agent_id, agent in self.agents.items():
+                    active_instances = [aid for aid in self.active_agents if aid.startswith(agent_id)]
+                    
+                    agent_status[agent_id] = {
+                        "status": agent.status.value,
+                        "type": agent.agent_type.value,
+                        "active_instances": len(active_instances),
+                        "max_concurrent": agent.max_concurrent,
+                        "priority": agent.priority,
+                        "metrics": asdict(self.agent_metrics[agent_id])
+                    }
+                
+                # Update global state
+                from .state_manager import update_system_state
+                await update_system_state({
+                    "active_agents": agent_status,
+                    "orchestrator_metrics": self.orchestrator_metrics,
+                    "total_agents": len(self.agents),
+                    "active_instances": len(self.active_agents)
+                })
+                
+                await asyncio.sleep(2)  # Update every 2 seconds
+                
+            except Exception as e:
+                logger.error(f"State update error: {e}")
+                await asyncio.sleep(2)
+    
+    def get_agent_status(self, agent_id: str = None) -> Dict[str, Any]:
+        """Get status of specific agent or all agents"""
+        if agent_id:
+            if agent_id not in self.agents:
+                return {}
+            
+            agent = self.agents[agent_id]
+            metrics = self.agent_metrics[agent_id]
+            active_instances = [aid for aid in self.active_agents if aid.startswith(agent_id)]
+            
+            return {
+                "agent_id": agent_id,
+                "status": agent.status.value,
+                "type": agent.agent_type.value,
+                "active_instances": len(active_instances),
+                "metrics": asdict(metrics),
+                "definition": asdict(agent)
+            }
+        else:
+            # Return all agents
+            return {
+                agent_id: self.get_agent_status(agent_id)
+                for agent_id in self.agents.keys()
+            }
+
+class ContextAnalyzer:
+    """Analyzes input context to determine required agents"""
+    
+    async def analyze(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Analyze input to determine context and requirements"""
+        try:
+            text = str(input_data.get("text", "")).lower()
+            
+            # Extract keywords
+            keywords = []
+            if "image" in text or "photo" in text or "picture" in text:
+                keywords.extend(["visual", "image", "analysis"])
+            if "document" in text or "pdf" in text or "file" in text:
+                keywords.extend(["document", "text", "analysis"])
+            if "search" in text or "research" in text or "find" in text:
+                keywords.extend(["web", "search", "research"])
+            
+            # Determine primary context
+            primary_context = "general"
+            if "visual" in keywords:
+                primary_context = "visual_analysis"
+            elif "document" in keywords:
+                primary_context = "document_analysis"
+            elif "search" in keywords:
+                primary_context = "web_research"
+            
+            return {
+                "text": text,
+                "keywords": keywords,
+                "primary_context": primary_context,
+                "complexity": len(text.split()),
+                "requires_vision": "visual" in keywords,
+                "requires_search": "search" in keywords,
+                "requires_documents": "document" in keywords
+            }
+            
+        except Exception as e:
+            logger.error(f"Context analysis error: {e}")
+            return {"text": "", "keywords": [], "primary_context": "general"}
+
+class DependencyResolver:
+    """Resolves agent dependencies and activation order"""
+    
+    def resolve_activation_order(self, agents: Dict[str, AgentDefinition], target_agents: List[str]) -> List[str]:
+        """Determine the order to activate agents based on dependencies"""
+        resolved = []
+        remaining = target_agents.copy()
+        
+        while remaining:
+            # Find agents with no unresolved dependencies
+            ready = []
+            for agent_id in remaining:
+                if agent_id not in agents:
+                    continue
+                
+                deps = agents[agent_id].dependencies
+                if all(dep in resolved for dep in deps):
+                    ready.append(agent_id)
+            
+            if not ready:
+                # Circular dependency or missing dependency
+                logger.warning(f"Cannot resolve dependencies for: {remaining}")
+                resolved.extend(remaining)
+                break
+            
+            # Add ready agents to resolved list
+            for agent_id in ready:
+                resolved.append(agent_id)
+                remaining.remove(agent_id)
+        
+        return resolved
+
+# Global orchestrator instance
+nis_agent_orchestrator = NISAgentOrchestrator()

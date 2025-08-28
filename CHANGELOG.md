@@ -1,6 +1,28 @@
 # NIS Protocol - Version History & Changelog
 
-## 🚀 Version 3.2.1 (2025-01-19) - "Production Ready: PyPI Publishing & GitHub Pages"
+## 🚀 Version 3.2.1 (2025-01-19) - "Brain Orchestration & Production Ready"
+
+### 🧠 Major Addition: Brain-like Agent Orchestration System
+- **NEW**: Intelligent agent orchestration system that mimics human brain architecture
+- **Core Agents (Brain Stem)**: Always-active agents for fundamental functions
+  - Signal Processing (Laplace Transform), Reasoning (KAN Networks), Physics Validation (PINN)
+  - Consciousness (Self-awareness), Memory (Storage & Retrieval), Meta Coordination
+- **Specialized Agents (Cerebral Cortex)**: Context-activated agents for Vision, Documents, Web Search, NVIDIA Simulation
+- **Protocol Agents (Nervous System)**: Event-driven A2A and MCP communication protocols
+- **Learning Agents (Hippocampus)**: Adaptive intelligence with Continuous Learning and BitNet Training
+
+### 🎨 Enhanced Frontend Integration
+- **Live Brain Visualization**: Added interactive brain interface to existing `enhanced_agent_chat.html`
+- **Real-time Agent Monitoring**: Live status updates for all 14 agents with performance metrics
+- **Interactive Controls**: Click-to-activate agents through visual brain regions
+- **Neural Animation**: Animated connections showing real-time agent communication
+- **WebSocket Integration**: Seamless backend-to-frontend state synchronization
+
+### 🚀 New Agent Control API
+- `GET /api/agents/status` - Get all agent statuses with detailed metrics
+- `GET /api/agents/{agent_id}/status` - Get specific agent status and performance
+- `POST /api/agents/activate` - Manually activate agents with context
+- `POST /api/agents/process` - Process requests through intelligent agent pipeline
 
 ### 🌐 GitHub Pages Deployment
 - **Professional Landing Page**: Beautiful showcase at https://nisprotocol.organicaai.com/

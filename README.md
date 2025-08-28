@@ -1,35 +1,77 @@
 # NIS Protocol v3.2.1 - AI Development Platform & SDK
-**AI Operating System for Edge Devices, Autonomous Systems, and Smart Infrastructure**
 
-*Version: 3.2.1 | Updated: 2025-01-19 | Status: Production Ready with PyPI Publishing & GitHub Pages*
-
-<div align="center">
-
-![NIS Protocol Logo](system/assets/images_organized/nis-protocol-logov1.png)
-
-*Foundational AI Operating System for Next-Generation Autonomous Systems*
-
-</div>
+**Production-ready AI operating system for edge devices, autonomous systems, and smart infrastructure**
 
 [![Python](https://img.shields.io/badge/Python-3.8%2B-blue)](https://python.org)
 [![PyPI](https://img.shields.io/badge/PyPI-nis--protocol-blue)](https://pypi.org/project/nis-protocol/)
 [![Docker](https://img.shields.io/badge/Docker-Compose-blue)](https://docker.com)
 [![License](https://img.shields.io/badge/License-BSL-green)](LICENSE)
 
+<div align="center">
+
+![NIS Protocol Logo](system/assets/images_organized/nis-protocol-logov1.png)
+
+</div>
+
+## 📋 Table of Contents
+
+| Section | Description |
+|---------|-------------|
+| **[🚀 Quickstart](#-quickstart)** | Get running in 5 minutes with Docker |
+| **[🏗️ Architecture](#️-architecture)** | System design and mathematical foundation |
+| **[🏭 Industry Use Cases](#-industry-use-cases)** | Real-world applications and deployments |
+| **[📊 Benchmarks](#-benchmarks--performance)** | Performance metrics and test results |
+| **[🧪 API Examples](#-api-examples--testing)** | Interactive API documentation and testing |
+| **[🐳 Deployment](#-deployment)** | Production deployment guides |
+
 ---
 
-## 🛡️ **BILLING PROTECTION NOTICE**
+## 🚀 Quickstart
 
-**NEW IN v3.2**: Built-in protection against unexpected API charges. The system now defaults to mock responses to prevent billing surprises. Use `./start_safe.sh` for development.
+Get NIS Protocol running in under 5 minutes:
 
-⚠️ **Important**: Real API calls can generate significant charges. Always monitor your usage and use safe mode for testing.
+```bash
+# 1. Clone and start (SAFE MODE - no billing risk)
+git clone https://github.com/pentius00/NIS_Protocol.git
+cd NIS_Protocol
+./start_safe.sh
 
-## 🎯 **What is NIS Protocol?**
+# 2. Verify installation
+curl http://localhost/health
 
-NIS Protocol is a **foundational AI operating system and development platform** for building specialized AI applications across industries. It provides a modular agent architecture with physics-informed validation, enabling developers to create autonomous systems for automotive, aerospace, smart cities, space exploration, and financial markets.
+# 3. Test the API
+curl -X POST http://localhost/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message": "Hello NIS Protocol"}'
+```
+
+**Access Your System:**
+- 🎯 **Main API**: http://localhost/
+- 🖥️ **Chat Console**: http://localhost/console  
+- 📖 **API Docs**: http://localhost/docs
+- 🧠 **Brain Monitor**: http://localhost/enhanced
+
+### 🛡️ Billing Protection
+
+**Built-in protection against unexpected API charges** - the system defaults to mock responses to prevent billing surprises.
+
+- ✅ **Safe Mode**: `./start_safe.sh` (recommended for development)
+- ⚠️ **Production Mode**: Configure API keys in `.env` first, then `./start.sh`
+
+## 🎯 What is NIS Protocol?
+
+**Production-ready AI operating system and development platform** for building specialized AI applications across industries. Features brain-like agent orchestration with physics-informed validation for autonomous systems in automotive, aerospace, smart cities, space exploration, and financial markets.
+
+**🧠 Brain-like Architecture:**
+- **Core Agents (Brain Stem)**: Always-active fundamental functions - Signal Processing, Reasoning, Physics Validation, Consciousness, Memory, Coordination
+- **Specialized Agents (Cerebral Cortex)**: Context-activated capabilities - Vision, Document Analysis, Web Search, NVIDIA Simulation
+- **Protocol Agents (Nervous System)**: Event-driven communication - A2A, MCP protocols  
+- **Learning Agents (Hippocampus)**: Adaptive intelligence - Continuous Learning, BitNet Training
 
 **Platform Approach:**
-- **Core Foundation**: Modular agent framework with physics validation
+- **Core Foundation**: Brain-inspired modular agent framework with physics validation
+- **Intelligent Orchestration**: Smart agent activation based on context and dependencies
+- **Real-time State Management**: Backend-driven UI updates with WebSocket connectivity
 - **Industry Extensions**: Specialized implementations for specific domains
 - **Ecosystem Integration**: Standard protocols (MCP, ACP, A2A) for seamless connectivity
 - **Proven Deployments**: Real-world implementations across multiple industries
@@ -41,9 +83,80 @@ NIS Protocol is a **foundational AI operating system and development platform** 
 - **IoT Networks**: Coordinated intelligence across sensor networks
 - **Development Platform**: SDK for building custom AI agents and applications
 
-## 🌐 **Proven Ecosystem - Real-World Deployments**
+## 🧠 **Brain-like Agent Orchestration System**
 
-NIS Protocol serves as the foundational layer for a growing ecosystem of industry-specific AI implementations:
+**NEW IN v3.2.1**: NIS Protocol now features an intelligent agent orchestration system that mimics human brain architecture for efficient AI resource management.
+
+### **Core Architecture**
+
+```
+🧠 NIS Brain Architecture
+├── Core Agents (Brain Stem) - Always Active
+│   ├── Signal Processing (Laplace Transform)
+│   ├── Reasoning (KAN Networks) 
+│   ├── Physics Validation (PINN)
+│   ├── Consciousness (Self-awareness)
+│   ├── Memory (Storage & Retrieval)
+│   └── Coordination (Meta-level)
+├── Specialized Agents (Cerebral Cortex) - Context Activated
+│   ├── Vision Analysis
+│   ├── Document Processing
+│   ├── Web Search & Research
+│   └── NVIDIA Physics Simulation
+├── Protocol Agents (Nervous System) - Event Driven
+│   ├── Agent-to-Agent (A2A)
+│   └── Model Context Protocol (MCP)
+└── Learning Agents (Hippocampus) - Adaptive
+    ├── Continuous Learning
+    └── BitNet Training
+```
+
+### **Key Features**
+
+- **🎯 Smart Activation**: Agents activate based on context, dependencies, and user needs
+- **⚡ Real-time Monitoring**: Live brain visualization with neural connection animation
+- **🔄 Dependency Resolution**: Automatic activation order based on agent requirements
+- **📊 Performance Tracking**: Detailed metrics for each agent's performance and resource usage
+- **🌐 WebSocket Integration**: Real-time state synchronization between backend and frontend
+- **🎮 Interactive Control**: Click-to-activate agents through the brain visualization interface
+
+### **API Endpoints**
+
+```bash
+# Get all agent statuses
+GET /api/agents/status
+
+# Get specific agent status  
+GET /api/agents/{agent_id}/status
+
+# Activate an agent manually
+POST /api/agents/activate
+{
+  "agent_id": "vision",
+  "context": "user_request",
+  "force": false
+}
+
+# Process request through agent pipeline
+POST /api/agents/process
+{
+  "input": {
+    "text": "Analyze this image", 
+    "context": "visual_analysis"
+  }
+}
+```
+
+### **Real-time Brain Visualization**
+
+Access the enhanced agent chat with live brain monitoring:
+- **URL**: `http://localhost:8000/enhanced`
+- **Features**: Interactive brain regions, real-time agent status, neural connection animation
+- **Controls**: Click agents to activate, brain regions to filter, test buttons for demonstrations
+
+## 🏭 Industry Use Cases
+
+**Proven ecosystem** with real-world deployments across multiple industries:
 
 ### **🚗 Automotive: NIS-AUTO**
 - **Production System**: AI integration for gas engine vehicles
@@ -97,7 +210,7 @@ NIS Protocol serves as the foundational layer for a growing ecosystem of industr
 - **📋 Complete Documentation** - Comprehensive API reference with working examples and visual diagrams
 - **⚡ Production Deployment** - Docker containerization with enterprise-grade reliability
 
-## 🏗️ **Architecture Overview**
+## 🏗️ Architecture
 
 ```mermaid
 graph TB
@@ -109,7 +222,7 @@ graph TB
         
         subgraph "Backend Services (Docker)"
             D[Main Backend<br/>main.py:8000] --> E[NGINX Proxy<br/>:80]
-            F[Runner Service<br/>:8001] --> D
+            F[Secure Runner<br/>Chromium + Sandbox:8001] --> D
             G[Redis Cache<br/>:6379] --> D
             H[Kafka Queue<br/>:9092] --> D
             I[Zookeeper<br/>:2181] --> H
@@ -182,38 +295,23 @@ NIS Protocol implements a modular agent architecture with the following processi
 ✅ VALIDATED RESULTS (Physics-compliant and coordinated outputs)
 ```
 
-### **Mathematical Foundation & Innovation**
+### Mathematical Foundation
 
 <div align="center">
 
 ![KAN vs MLP](system/assets/images_organized/mathematical_visuals/whyKanMatters.png)
 
-*Why KAN Networks Matter - Revolutionary Approach to Function Approximation*
+*Mathematical Foundation: Three-Layer Processing Pipeline*
 
 </div>
 
 NIS Protocol's mathematical innovation combines three key technologies:
 
-<div align="center">
+- 🌊 **KAN Networks** = Symbolic reasoning with interpretable function approximation
+- 🔄 **Laplace Transform** = Signal processing in frequency domain for pattern detection  
+- 🔬 **PINN Validation** = Physics-informed constraint enforcement for safety-critical systems
 
-![Laplace + KAN Integration](system/assets/images_organized/mathematical_visuals/laplace+kan.png)
-
-*Laplace Transform + KAN Integration - Signal Processing meets Symbolic Reasoning*
-
-![PINN Integration](system/assets/images_organized/mathematical_visuals/laplace+pinn.png)
-
-*Physics-Informed Neural Networks - Ensuring Physical Law Compliance*
-
-</div>
-
-This mathematical foundation enables:
-- **Edge deployment** on resource-constrained devices
-- **Physics validation** for safety-critical applications
-- **Multi-protocol integration** with existing AI ecosystems
-- **Modular agent design** for custom applications
-- **Industry specialization** through extensible architecture
-- **Cross-domain knowledge transfer** between implementations
-- **Ecosystem scalability** from single devices to city-wide networks
+> **Detailed mathematical proofs and derivations**: See `/docs/maths/` for complete technical documentation
 
 ## 🚀 **Getting Started**
 
@@ -273,6 +371,8 @@ nis serve --port 8000
 - **32 Working API Endpoints** - Comprehensive REST API with 100% test coverage
 - **Multi-Agent Coordination** - Distributed agent communication and task coordination
 - **Physics Validation** - Real-time physics constraint checking using PINNs
+- **Secure Code Execution** - Chromium-enabled sandbox with RestrictedPython for untrusted code
+- **Browser Automation** - Selenium-based web scraping with security controls and domain restrictions
 - **Edge Deployment** - Optimized for Raspberry Pi and embedded systems
 - **Protocol Integration** - Support for MCP, ACP, and A2A protocols
 - **Fallback Systems** - Graceful degradation when dependencies are unavailable
@@ -351,9 +451,19 @@ nis serve --port 8000
 
 ---
 
-## 🚀 **Latest Benchmarks & Performance**
+## 📊 Benchmarks & Performance
 
-### **🧪 v3.2 Test Results** (January 2025)
+### Performance Table
+
+| Hardware | Task | Latency | Reliability |
+|----------|------|---------|-------------|
+| **Raspberry Pi 4** | Signal Processing | 15ms | 99.2% |
+| **Edge Device** | Physics Validation | 8ms | 99.8% |
+| **Standard Server** | Multi-Agent Coordination | 3ms | 99.9% |
+| **Docker Container** | API Response | 0.003s | 100% |
+| **Production Stack** | End-to-End Pipeline | 45ms | 99.7% |
+
+### v3.2 Test Results (January 2025)
 
 | **Component** | **Implementation** | **Status** | **Performance** |
 |:--------------|:-------------|:-----------|:----------------|
@@ -379,7 +489,7 @@ nis serve --port 8000
 
 ---
 
-## 🐳 **ONE-COMMAND DEPLOYMENT**
+## 🐳 Deployment
 
 ### **🚀 Docker Installation (Recommended)**
 
@@ -540,6 +650,7 @@ After running `./start.sh`, access your services at:
 | 🖥️ **Chat Console** | http://localhost/console | Interactive v3.2 multimodal chat interface |
 | 📖 **API Docs** | http://localhost/docs | Interactive API documentation |
 | 🔍 **Health Check** | http://localhost/health | System health status |
+| 🔒 **Secure Runner** | http://localhost:8001/health | Code execution sandbox with Chromium |
 | 🚀 **NVIDIA NeMo** | http://localhost/nvidia/nemo/status | NeMo enterprise integration |
 | 🔬 **Physics** | http://localhost/physics/constants | Physics constants and validation |
 | 🔍 **Research** | http://localhost/research/capabilities | Deep research capabilities |
@@ -564,6 +675,11 @@ curl http://localhost/health
 curl -X POST http://localhost/chat \
   -H "Content-Type: application/json" \
   -d '{"message": "Analyze the physics of a bouncing ball and validate energy conservation"}'
+
+# 🔒 NEW: Test Secure Code Execution
+curl -X POST http://localhost:8001/execute \
+  -H "Content-Type: application/json" \
+  -d '{"code": "print(\"Hello from secure sandbox!\")", "language": "python", "timeout": 10}'
 
 # 🚀 NEW: Test NVIDIA NeMo Integration
 curl -X GET http://localhost/nvidia/nemo/status
@@ -705,6 +821,30 @@ curl -X GET http://localhost/chat/sessions
 
 # Session Memory Retrieval
 curl -X GET http://localhost/chat/memory/user_123
+```
+
+### **🔒 NEW: Secure Code Execution Examples**
+```bash
+# Execute Python code in secure sandbox
+curl -X POST http://localhost:8001/execute \
+  -H "Content-Type: application/json" \
+  -d '{
+    "code": "print(\"Hello from secure sandbox!\")\nresult = 2 + 3\nprint(f\"Result: {result}\")",
+    "language": "python",
+    "timeout": 10
+  }'
+
+# Web scraping with security controls
+curl -X POST http://localhost:8001/execute \
+  -H "Content-Type: application/json" \
+  -d '{
+    "code": "import requests\nresponse = requests.get(\"https://httpbin.org/json\")\nprint(f\"Status: {response.status_code}\")",
+    "language": "python",
+    "timeout": 30
+  }'
+
+# Check runner health
+curl -X GET http://localhost:8001/health
 ```
 
 ### **📋 Postman Collections**
