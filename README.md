@@ -99,6 +99,56 @@ NIS Protocol serves as the foundational layer for a growing ecosystem of industr
 
 ## 🏗️ **Architecture Overview**
 
+```mermaid
+graph TB
+    subgraph "🌐 NIS Protocol v3.2 Architecture"
+        subgraph "Frontend Layer"
+            A[Chat Console<br/>static/chat_console.html] --> B[Modern Chat<br/>static/modern_chat.html]
+            B --> C[Enhanced Agent Chat<br/>static/enhanced_agent_chat.html]
+        end
+        
+        subgraph "Backend Services (Docker)"
+            D[Main Backend<br/>main.py:8000] --> E[NGINX Proxy<br/>:80]
+            F[Runner Service<br/>:8001] --> D
+            G[Redis Cache<br/>:6379] --> D
+            H[Kafka Queue<br/>:9092] --> D
+            I[Zookeeper<br/>:2181] --> H
+        end
+        
+        subgraph "Core Agent System"
+            J[Master Agent Orchestrator<br/>src/agents/master_agent_orchestrator.py] --> K[Autonomous Executor<br/>src/agents/autonomous_execution/executor.py]
+            J --> L[Multi-LLM Agent<br/>src/agents/coordination/multi_llm_agent.py]
+            J --> M[Consciousness Agent<br/>src/agents/consciousness/]
+            J --> N[Physics Agent<br/>src/agents/physics/]
+            J --> O[Signal Processing<br/>src/agents/signal_processing/]
+        end
+        
+        subgraph "LLM Provider System"
+            P[LLM Manager<br/>src/llm/llm_manager.py] --> Q[OpenAI Provider]
+            P --> R[Anthropic Provider]
+            P --> S[DeepSeek Provider]
+            P --> T[Google Provider]
+            P --> U[NVIDIA Provider]
+            P --> V[BitNet Provider]
+        end
+        
+        subgraph "Specialized Agents"
+            W[Vision Agent<br/>src/agents/multimodal/vision_agent.py] --> X[Document Agent<br/>src/agents/document/]
+            Y[Research Agent<br/>src/agents/research/] --> Z[Web Search Agent<br/>src/agents/research/web_search_agent.py]
+            AA[Planning System<br/>src/agents/planning/] --> BB[Goal System<br/>src/agents/goals/]
+        end
+        
+        A --> D
+        B --> D
+        C --> D
+        D --> J
+        J --> P
+        J --> W
+        J --> Y
+        J --> AA
+    end
+```
+
 <div align="center">
 
 
