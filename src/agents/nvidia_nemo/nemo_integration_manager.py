@@ -72,15 +72,15 @@ class NVIDIAInceptionIntegration:
     NVIDIA Inception program integration for NIS Protocol.
     
     Leverages Inception benefits:
-    - $100k DGX Cloud Credits
+
     - NVIDIA NIM (Inference Microservices) access
     - NeMo Framework enterprise features
     - Omniverse Kit integration
     - TensorRT optimization
     """
     
-    def __init__(self, config: NeMoIntegrationConfig):
-        self.config = config
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
+        self.config = config or {}
         self.logger = logging.getLogger("nvidia_inception")
         
         # NVIDIA Inception resources
@@ -103,22 +103,22 @@ class NVIDIAInceptionIntegration:
         """Initialize NVIDIA Inception program resources"""
         try:
             # Initialize DGX Cloud client with $100k credits
-            if self.config.enable_dgx_cloud and self.config.dgx_cloud_endpoint:
+            if self.config.get('enable_dgx_cloud') and self.config.get('dgx_cloud_endpoint'):
                 self.dgx_cloud_client = await self._initialize_dgx_cloud()
                 self.logger.info("✅ DGX Cloud client initialized ($100k credits available)")
             
             # Initialize NIM (NVIDIA Inference Microservices)
-            if self.config.enable_nim_inference and self.config.nim_api_key:
+            if self.config.get('enable_nim_inference') and self.config.get('nim_api_key'):
                 self.nim_client = await self._initialize_nim_client()
                 self.logger.info("✅ NVIDIA NIM client initialized")
             
             # Initialize Omniverse integration
-            if self.config.enable_omniverse_integration:
+            if self.config.get('enable_omniverse_integration'):
                 self.omniverse_client = await self._initialize_omniverse()
                 self.logger.info("✅ Omniverse integration initialized")
             
             # Initialize TensorRT optimization
-            if self.config.enable_tensorrt_optimization:
+            if self.config.get('enable_tensorrt_optimization'):
                 self.tensorrt_optimizer = await self._initialize_tensorrt()
                 self.logger.info("✅ TensorRT optimization enabled")
             
@@ -130,7 +130,7 @@ class NVIDIAInceptionIntegration:
     
     async def _initialize_dgx_cloud(self):
         """Initialize DGX Cloud client for $100k credit access"""
-        if not self.config.dgx_cloud_endpoint:
+        if not self.config.get('dgx_cloud_endpoint'):
             raise NotImplementedError("DGX Cloud endpoint required - configure through NVIDIA Inception portal")
         
         # Real DGX Cloud integration would go here
@@ -148,11 +148,11 @@ class NVIDIAInceptionIntegration:
                 """Get current credit usage"""
                 return {"credits_remaining": self.credits_remaining, "credits_used": 100000.0 - self.credits_remaining}
         
-        return DGXCloudClient(self.config.dgx_cloud_endpoint)
+        return DGXCloudClient(self.config.get('dgx_cloud_endpoint'))
     
     async def _initialize_nim_client(self):
         """Initialize NVIDIA NIM (Inference Microservices) client"""
-        if not self.config.nim_api_key:
+        if not self.config.get('nim_api_key'):
             raise NotImplementedError("NIM API key required - obtain from NVIDIA Inception portal")
         
         # Real NIM integration would go here
@@ -169,7 +169,7 @@ class NVIDIAInceptionIntegration:
                 """Run inference using NIM"""
                 raise NotImplementedError("Real NVIDIA NIM API integration required")
         
-        return NIMClient(self.config.nim_api_key)
+        return NIMClient(self.config.get('nim_api_key'))
     
     async def _initialize_omniverse(self):
         """Initialize Omniverse Kit integration for digital twins"""
