@@ -209,28 +209,49 @@ class LangChainAgentWrapper:
     def _create_agent_tools(self):
         """Create LangChain tools from agent capabilities"""
         
-        # Standard agent processing tool
+        # Consolidated agent processing tool with optimized parameters
         @tool
-        def process_with_agent(input_data: str, context: str = "") -> str:
-            """Process input using the NIS agent"""
+        def nis_agent_process_with_context(
+            input_message: str,  # Clear, specific parameter name
+            context_data: str = "",  # Unambiguous parameter name
+            response_format: str = "detailed",  # Response format control
+            token_limit: int = 1000  # Token efficiency control
+        ) -> str:
+            """
+            Process input using NIS agent with optimized response formatting.
+            
+            Consolidates multiple operations: process, validate, format response.
+            Supports concise/detailed response formats for token efficiency.
+            """
             try:
-                if hasattr(self.agent, 'process'):
-                    result = asyncio.run(self.agent.process(
-                        {"input": input_data, "context": context}
-                    ))
-                elif hasattr(self.agent, 'execute'):
-                    result = asyncio.run(self.agent.execute(
-                        {"input": input_data, "context": context}
-                    ))
-                else:
-                    result = {"output": f"Processed by {self.config.agent_id}: {input_data}"}
+                # Prepare optimized input
+                agent_input = {
+                    "input": input_message, 
+                    "context": context_data,
+                    "response_format": response_format,
+                    "token_limit": token_limit
+                }
                 
-                return json.dumps(result) if isinstance(result, dict) else str(result)
+                if hasattr(self.agent, 'process'):
+                    result = asyncio.run(self.agent.process(agent_input))
+                elif hasattr(self.agent, 'execute'):
+                    result = asyncio.run(self.agent.execute(agent_input))
+                else:
+                    result = {"output": f"Processed by {self.config.agent_id}: {input_message}"}
+                
+                # Apply response optimization
+                if isinstance(result, dict) and response_format == "concise":
+                    # Return only essential information
+                    essential_keys = ['status', 'response', 'confidence', 'result', 'output']
+                    result = {k: v for k, v in result.items() if k in essential_keys}
+                
+                return json.dumps(result, separators=(',', ':')) if isinstance(result, dict) else str(result)
                 
             except Exception as e:
-                return f"Error processing with {self.config.agent_id}: {str(e)}"
+                return f"Error in {self.config.agent_id} processing: {str(e)}"
         
-        process_with_agent.name = f"{self.config.agent_id}_process"
+        # Use clear, namespaced tool name
+        process_with_agent.name = f"nis_{self.config.agent_id}_process_with_context"
         self.tools.append(process_with_agent)
         
         # Memory agent specific tools

@@ -13,10 +13,22 @@ from typing import Dict, Any, List, Optional, Callable
 from dataclasses import dataclass
 from abc import ABC, abstractmethod
 
-from ..agents.deep import DeepAgentPlanner, DatasetSkill, PipelineSkill, ResearchSkill, AuditSkill, CodeSkill
+try:
+    from ..agents.deep import DeepAgentPlanner, DatasetSkill, PipelineSkill, ResearchSkill, AuditSkill, CodeSkill
+except ImportError:
+    # Fallback if deep agents skills are not available
+    DeepAgentPlanner = None
+    DatasetSkill = None
+    PipelineSkill = None
+    ResearchSkill = None
+    AuditSkill = None
+    CodeSkill = None
 from ..core.agent import NISAgent
 from ..memory.memory_manager import MemoryManager
 from .schemas import ToolSchemas
+from .schemas.enhanced_tool_schemas import EnhancedToolSchemas
+from .enhanced_response_system import EnhancedResponseSystem, ResponseFormat
+from .token_efficiency_system import TokenEfficiencyManager
 from .ui_resources import UIResourceGenerator
 from .intent_validator import IntentValidator
 
@@ -227,17 +239,23 @@ class MCPServer:
         self.memory = memory_manager
         self.config = config or {}
         
-        # Initialize components
+        # Initialize optimization components
         self.schemas = ToolSchemas()
+        self.enhanced_schemas = EnhancedToolSchemas()
+        self.response_system = EnhancedResponseSystem()
+        self.token_manager = TokenEfficiencyManager()
         self.ui_generator = UIResourceGenerator()
         self.intent_validator = IntentValidator()
         
-        # Initialize Deep Agent system
-        self.planner = DeepAgentPlanner(agent, memory_manager)
-        self._setup_skills()
-        
-        # Initialize handlers
-        self.tool_handler = DeepAgentToolHandler(self.planner, self.ui_generator)
+        # Initialize Deep Agent system with fallback
+        if DeepAgentPlanner:
+            self.planner = DeepAgentPlanner(agent, memory_manager)
+            self._setup_skills()
+            self.tool_handler = DeepAgentToolHandler(self.planner, self.ui_generator)
+        else:
+            self.planner = None
+            self.tool_handler = None
+            logging.warning("Deep Agent system not available - using fallback mode")
         
         # Server state
         self.active_sessions = {}
@@ -327,7 +345,7 @@ class MCPServer:
             }
             
     async def _handle_tool_request(self, request_data: Dict[str, Any]) -> Dict[str, Any]:
-        """Handle MCP tool requests."""
+        """Handle optimized MCP tool requests with enhanced response formatting."""
         try:
             # Parse request
             tool_name = request_data.get("tool_name") or request_data.get("function", {}).get("name")
@@ -339,6 +357,13 @@ class MCPServer:
                     "success": False,
                     "error": "Missing tool_name in request"
                 }
+            
+            # Extract optimization parameters
+            response_format = parameters.pop("response_format", "detailed")
+            token_limit = parameters.pop("token_limit", None)
+            page = parameters.pop("page", 1)
+            page_size = parameters.pop("page_size", 20)
+            filters = parameters.pop("filters", None)
                 
             # Validate tool exists
             if tool_name not in self.request_handlers:
@@ -367,6 +392,34 @@ class MCPServer:
             
             # Handle request
             response = await self.tool_handler.handle(mcp_request)
+            
+            # Apply response optimizations
+            if response.success and response.data:
+                # Apply token efficiency for large responses
+                if isinstance(response.data, list) and (len(response.data) > page_size or token_limit):
+                    optimized_data = self.token_manager.create_efficient_response(
+                        tool_name=tool_name,
+                        raw_data=response.data,
+                        page=page,
+                        page_size=page_size,
+                        token_limit=token_limit,
+                        filters=filters
+                    )
+                    response.data = optimized_data
+                
+                # Apply response format optimization
+                try:
+                    format_enum = ResponseFormat(response_format.lower())
+                    optimized_response = self.response_system.create_response(
+                        tool_name=tool_name,
+                        raw_data=response.data if isinstance(response.data, dict) else {"result": response.data},
+                        response_format=format_enum,
+                        token_limit=token_limit
+                    )
+                    response.data = optimized_response
+                except ValueError:
+                    # Invalid response format, keep original
+                    pass
             
             # Format response
             result = {

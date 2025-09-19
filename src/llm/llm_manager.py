@@ -6,7 +6,7 @@ Provides a basic interface for LLM operations
 
 import asyncio
 import logging
-from typing import Dict, List, Optional, Any
+from typing import Dict, List, Optional, Any, Union
 
 logger = logging.getLogger(__name__)
 
@@ -41,35 +41,37 @@ class GeneralLLMProvider:
     
     async def generate_response(
         self, 
-        prompt_or_messages, 
-        provider: Optional[str] = None,
-        temperature: float = 0.7,
-        agent_type: Optional[str] = None,
-        requested_provider: Optional[str] = None,
-        consensus_config=None,
-        enable_caching: bool = True,
-        priority: int = 1,
-        **kwargs
+        input_messages: Union[str, List[Dict[str, str]]],  # Clear parameter name
+        llm_provider_name: Optional[str] = None,  # Unambiguous parameter name
+        response_temperature: float = 0.7,  # Specific parameter name
+        requesting_agent_type: Optional[str] = None,  # Clear parameter name
+        preferred_provider: Optional[str] = None,  # Semantic parameter name
+        consensus_configuration=None,  # Full parameter name
+        enable_response_caching: bool = True,  # Descriptive parameter name
+        request_priority: int = 1,  # Clear parameter name
+        response_format: str = "detailed",  # Response format control
+        token_limit: Optional[int] = None,  # Token efficiency control
+        **additional_options
     ) -> Dict[str, Any]:
         """Generate a response using the specified provider"""
         try:
             # Handle both string prompts and message arrays
-            if isinstance(prompt_or_messages, str):
-                prompt = prompt_or_messages
-                user_message = prompt_or_messages
-            elif isinstance(prompt_or_messages, list):
+            if isinstance(input_messages, str):
+                prompt = input_messages
+                user_message = input_messages
+            elif isinstance(input_messages, list):
                 # Extract user message (last user role message)
-                user_messages = [msg.get("content", "") for msg in prompt_or_messages if msg.get("role") == "user"]
+                user_messages = [msg.get("content", "") for msg in input_messages if msg.get("role") == "user"]
                 user_message = user_messages[-1] if user_messages else "Hello"
-                prompt = " ".join([msg.get("content", "") for msg in prompt_or_messages if msg.get("content")])
+                prompt = " ".join([msg.get("content", "") for msg in input_messages if msg.get("content")])
             else:
-                prompt = str(prompt_or_messages)
-                user_message = str(prompt_or_messages)
+                prompt = str(input_messages)
+                user_message = str(input_messages)
             
             # Calculate REAL confidence based on actual factors
             prompt_length = len(prompt.split())
             prompt_complexity = len([word for word in prompt.split() if len(word) > 6])
-            provider_reliability = 1.0 if provider in ["openai", "anthropic"] else 0.8
+            provider_reliability = 1.0 if (preferred_provider or llm_provider_name) in ["openai", "anthropic"] else 0.8
             
             # Real confidence calculation (not hardcoded!)
             base_confidence = min(0.9, 0.3 + (prompt_length / 100) * 0.4)  # Based on prompt analysis

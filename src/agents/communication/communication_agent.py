@@ -876,27 +876,36 @@ class CommunicationAgent:
             
             processing_time = time.time() - start_time
             
-            return {
-                "status": "success",
-                "original_content": content,
-                "response_text": response_text,
-                "audio_path": audio_path,
-                "quality_metrics": {
-                    "overall_quality": quality_metrics.overall_quality,
-                    "clarity_score": quality_metrics.clarity_score,
-                    "naturalness_score": quality_metrics.naturalness_score,
-                    "emotional_appropriateness": quality_metrics.emotional_appropriateness,
-                    "intelligibility_score": quality_metrics.intelligibility_score,
-                    "processing_time": quality_metrics.processing_time,
-                    "signal_to_noise_ratio": quality_metrics.signal_to_noise_ratio,
-                    "audio_artifacts": quality_metrics.audio_artifacts
-                },
-                "voice_profile_used": voice_profile.voice_id,
-                "interpretation": interpretation,
-                "agent_id": self.agent_id,
-                "total_processing_time": processing_time,
-                "timestamp": time.time()
-            }
+            # Create token-efficient response based on research principles
+            response_format = getattr(self, 'response_format', 'detailed')
+            
+            if response_format == "concise":
+                # Essential information only - prioritize meaningful context
+                return {
+                    "status": "success",
+                    "response_text": response_text,
+                    "audio_path": audio_path,
+                    "quality_score": quality_metrics.overall_quality,
+                    "processing_time": processing_time
+                }
+            else:
+                # Full response with semantic prioritization
+                return {
+                    "status": "success",
+                    "response_text": response_text,
+                    "audio_path": audio_path,
+                    "quality_metrics": {
+                        "overall_quality": quality_metrics.overall_quality,
+                        "clarity_score": quality_metrics.clarity_score,
+                        "naturalness_score": quality_metrics.naturalness_score,
+                        "emotional_appropriateness": quality_metrics.emotional_appropriateness
+                        # Removed low-priority technical metrics for token efficiency
+                    },
+                    "voice_profile_id": voice_profile.voice_id,  # Semantic name instead of object
+                    "interpretation_summary": interpretation[:200] if isinstance(interpretation, str) else str(interpretation)[:200],  # Truncated
+                    "agent_id": self.agent_id,
+                    "processing_time": processing_time
+                }
             
         except Exception as e:
             self.logger.error(f"Communication failed: {e}")

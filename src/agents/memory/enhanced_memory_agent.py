@@ -262,37 +262,34 @@ class EnhancedMemoryAgent(NISAgent):
 
         operation = message.get("operation", "").lower()
 
-        # Route to appropriate handler based on operation
+        # Route to consolidated operations following research principles
         try:
-            if operation == "store":
+            # Consolidated memory operations - reduce tool proliferation
+            if operation in ["store", "save", "remember"]:
                 result = self._store_memory(message)
-            elif operation == "retrieve":
+            elif operation in ["retrieve", "recall", "get", "fetch"]:
                 result = self._retrieve_memory(message)
-            elif operation == "query":
-                result = self._query_memory(message)
-            elif operation == "search":
-                result = self._semantic_search(message)
-            elif operation == "forget":
+            elif operation in ["query", "search", "find"]:
+                # Consolidated: query + semantic search + filtering
+                result = self._consolidated_memory_search(message)
+            elif operation in ["forget", "delete", "remove"]:
                 result = self._forget_memory(message)
-            elif operation == "consolidate":
-                result = self._manual_consolidate()
-            elif operation == "stats":
-                result = self._get_stats()
-            # LSTM-enhanced operations
-            elif operation == "predict_next":
-                result = self._predict_next_memory(message)
-            elif operation == "predict_sequence":
-                result = self._predict_memory_sequence(message)
-            elif operation == "lstm_stats":
-                result = self._get_lstm_stats()
-            elif operation == "temporal_context":
-                result = self._get_temporal_context(message)
+            elif operation in ["consolidate", "organize", "optimize"]:
+                # Consolidated: consolidate + stats + optimization
+                result = self._consolidated_memory_maintenance(message)
+            elif operation in ["predict", "forecast", "anticipate"]:
+                # Consolidated: LSTM prediction + sequence analysis
+                result = self._consolidated_memory_prediction(message)
+            elif operation in ["status", "stats", "info", "summary"]:
+                # Consolidated: stats + health + performance metrics
+                result = self._consolidated_memory_status(message)
             else:
                 result = {
                     "status": "error",
-                    "error": f"Unknown operation: {operation}",
+                    "error": f"Unknown operation: {operation}. Available: store, retrieve, query, forget, consolidate, predict, status",
                     "agent_id": self.agent_id,
-                    "timestamp": time.time()
+                    "timestamp": time.time(),
+                    "available_operations": ["store", "retrieve", "query", "forget", "consolidate", "predict", "status"]
                 }
             
             # Apply self-audit monitoring to all responses
@@ -1800,6 +1797,208 @@ class EnhancedMemoryAgent(NISAgent):
                 "agent_id": self.agent_id,
                 "timestamp": time.time()
             }
+    
+    # Consolidated operations following research principles
+    
+    def _consolidated_memory_search(self, message: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Consolidated search operation combining query + semantic search + filtering.
+        Reduces multiple tool calls into single operation.
+        """
+        # Extract search parameters
+        search_query = message.get("query", message.get("search_query", ""))
+        search_type = message.get("search_type", "semantic")
+        max_results = message.get("max_results", 10)
+        response_format = message.get("response_format", "detailed")
+        
+        results = []
+        
+        # Perform semantic search
+        if search_type in ["semantic", "all"]:
+            semantic_results = self._semantic_search(message)
+            if semantic_results.get("status") == "success":
+                results.extend(semantic_results.get("memories", []))
+        
+        # Perform keyword query
+        if search_type in ["keyword", "all"] and search_query:
+            query_results = self._query_memory(message)
+            if query_results.get("status") == "success":
+                results.extend(query_results.get("memories", []))
+        
+        # Remove duplicates and limit results
+        unique_results = []
+        seen_ids = set()
+        for result in results[:max_results]:
+            memory_id = result.get("memory_id", "")
+            if memory_id and memory_id not in seen_ids:
+                unique_results.append(result)
+                seen_ids.add(memory_id)
+        
+        # Apply response format optimization
+        if response_format == "concise":
+            # Return only essential information
+            unique_results = [
+                {
+                    "memory_id": r.get("memory_id"),
+                    "content": r.get("content", "")[:100],  # Truncate content
+                    "relevance": r.get("similarity", r.get("relevance", 0.0))
+                }
+                for r in unique_results
+            ]
+        
+        return {
+            "status": "success",
+            "memories": unique_results,
+            "total_found": len(unique_results),
+            "search_type": search_type,
+            "consolidated_operation": True,
+            "agent_id": self.agent_id,
+            "timestamp": time.time()
+        }
+    
+    def _consolidated_memory_maintenance(self, message: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Consolidated maintenance operation combining consolidate + stats + optimization.
+        """
+        maintenance_results = {}
+        
+        # Perform consolidation
+        consolidated_count = self._consolidate_memories()
+        maintenance_results["consolidation"] = {
+            "memories_consolidated": consolidated_count,
+            "consolidation_time": time.time()
+        }
+        
+        # Get performance stats
+        stats = self._get_stats()
+        maintenance_results["performance_stats"] = stats.get("data", {})
+        
+        # LSTM maintenance if available
+        if hasattr(self, 'lstm_core') and self.lstm_core:
+            lstm_stats = self._get_lstm_stats()
+            maintenance_results["lstm_maintenance"] = lstm_stats.get("data", {})
+        
+        # Apply response format
+        response_format = message.get("response_format", "detailed")
+        if response_format == "concise":
+            return {
+                "status": "success",
+                "consolidated_memories": consolidated_count,
+                "total_memories": stats.get("data", {}).get("total_memories", 0),
+                "maintenance_complete": True,
+                "timestamp": time.time()
+            }
+        
+        return {
+            "status": "success",
+            "maintenance_results": maintenance_results,
+            "consolidated_operation": True,
+            "agent_id": self.agent_id,
+            "timestamp": time.time()
+        }
+    
+    def _consolidated_memory_prediction(self, message: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Consolidated prediction operation combining LSTM prediction + sequence analysis.
+        """
+        if not hasattr(self, 'lstm_core') or not self.lstm_core:
+            return {
+                "status": "error",
+                "error": "LSTM prediction not available - core not initialized",
+                "agent_id": self.agent_id,
+                "timestamp": time.time()
+            }
+        
+        prediction_type = message.get("prediction_type", "next")
+        
+        if prediction_type == "next":
+            next_result = self._predict_next_memory(message)
+            sequence_context = self._get_temporal_context(message)
+            
+            return {
+                "status": "success",
+                "next_prediction": next_result.get("data", {}),
+                "temporal_context": sequence_context.get("data", {}),
+                "consolidated_prediction": True,
+                "agent_id": self.agent_id,
+                "timestamp": time.time()
+            }
+        
+        elif prediction_type == "sequence":
+            sequence_result = self._predict_memory_sequence(message)
+            return sequence_result
+        
+        return {
+            "status": "error",
+            "error": f"Unknown prediction type: {prediction_type}",
+            "available_types": ["next", "sequence"],
+            "agent_id": self.agent_id,
+            "timestamp": time.time()
+        }
+    
+    def _consolidated_memory_status(self, message: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Consolidated status operation combining stats + health + performance metrics.
+        """
+        # Get basic stats
+        stats_result = self._get_stats()
+        
+        # Get LSTM stats if available
+        lstm_stats = {}
+        if hasattr(self, 'lstm_core') and self.lstm_core:
+            lstm_result = self._get_lstm_stats()
+            lstm_stats = lstm_result.get("data", {})
+        
+        # Calculate health metrics
+        health_score = self._calculate_memory_health()
+        
+        response_format = message.get("response_format", "detailed")
+        
+        if response_format == "concise":
+            return {
+                "status": "success",
+                "health_score": health_score,
+                "total_memories": stats_result.get("data", {}).get("total_memories", 0),
+                "lstm_active": bool(lstm_stats),
+                "timestamp": time.time()
+            }
+        
+        return {
+            "status": "success",
+            "memory_stats": stats_result.get("data", {}),
+            "lstm_stats": lstm_stats,
+            "health_metrics": {
+                "overall_health": health_score,
+                "memory_utilization": stats_result.get("data", {}).get("total_memories", 0) / 100000,
+                "prediction_capability": bool(lstm_stats)
+            },
+            "consolidated_status": True,
+            "agent_id": self.agent_id,
+            "timestamp": time.time()
+        }
+    
+    def _calculate_memory_health(self) -> float:
+        """Calculate overall memory system health score"""
+        health_factors = []
+        
+        # Memory capacity utilization
+        total_memories = len(self.short_term) + len(self.working_memory)
+        capacity_utilization = total_memories / (self.short_term.maxlen + self.working_memory_limit)
+        health_factors.append(1.0 - min(0.9, capacity_utilization))  # Healthy if not over-utilized
+        
+        # LSTM functionality
+        if hasattr(self, 'lstm_core') and self.lstm_core:
+            health_factors.append(0.9)  # LSTM available
+        else:
+            health_factors.append(0.6)  # Basic functionality only
+        
+        # Vector store availability
+        if self.vector_stores:
+            health_factors.append(0.8)
+        else:
+            health_factors.append(0.4)
+        
+        return calculate_confidence(health_factors)
     
     # Helper methods for LSTM integration
     

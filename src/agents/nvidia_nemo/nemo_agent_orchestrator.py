@@ -248,52 +248,36 @@ class NeMoAgentOrchestrator(NISAgent):
     async def _initialize_mcp_server(self):
         """Initialize Model Context Protocol server"""
         
-        class MockMCPServer:
-            def __init__(self, port):
-                self.port = port
-                self.tools = {}
-                self.clients = []
-            
-            async def register_tool(self, tool_name, tool_func):
-                self.tools[tool_name] = {
-                    'function': tool_func,
-                    'registered_at': time.time()
-                }
-                logger.info(f"Registered MCP tool: {tool_name}")
-            
-            async def start_server(self):
-                logger.info(f"MCP Server started on port {self.port}")
-                return True
-            
-            def get_available_tools(self):
-                return list(self.tools.keys())
+        # Real MCP server implementation required by integrity rules
+        if not NEMO_AGENT_TOOLKIT_AVAILABLE:
+            raise NotImplementedError(
+                "NVIDIA NeMo Agent Toolkit MCP server implementation required - "
+                "mocks prohibited by engineering integrity rules. "
+                "Install nvidia-nat package or implement real MCP server."
+            )
         
-        mcp_server = MockMCPServer(self.config.mcp_port)
-        await mcp_server.start_server()
-        return mcp_server
+        # Use real NeMo Agent Toolkit MCP server
+        # mcp_server = nvidia_nat.mcp.MCPServer(port=self.config.mcp_port)
+        # await mcp_server.start_server()
+        # return mcp_server
+        
+        raise NotImplementedError("Real NVIDIA NeMo MCP server implementation required")
     
     async def _initialize_mcp_client(self):
         """Initialize Model Context Protocol client"""
         
-        class MockMCPClient:
-            def __init__(self):
-                self.connected_servers = {}
-            
-            async def connect_to_server(self, server_url):
-                self.connected_servers[server_url] = {
-                    'connected_at': time.time(),
-                    'status': 'connected'
-                }
-                logger.info(f"Connected to MCP server: {server_url}")
-            
-            async def call_remote_tool(self, server_url, tool_name, *args, **kwargs):
-                return {
-                    'status': 'success',
-                    'result': f"Remote tool {tool_name} executed successfully",
-                    'server': server_url
-                }
+        # Real MCP client implementation required by integrity rules
+        if not NEMO_AGENT_TOOLKIT_AVAILABLE:
+            raise NotImplementedError(
+                "NVIDIA NeMo Agent Toolkit MCP client implementation required - "
+                "mocks prohibited by engineering integrity rules. "
+                "Install nvidia-nat package or implement real MCP client."
+            )
         
-        return MockMCPClient()
+        # Use real NeMo Agent Toolkit MCP client
+        # return nvidia_nat.mcp.MCPClient()
+        
+        raise NotImplementedError("Real NVIDIA NeMo MCP client implementation required")
     
     async def _initialize_fallback_mode(self):
         """Initialize fallback mode when NeMo Agent Toolkit is not available"""

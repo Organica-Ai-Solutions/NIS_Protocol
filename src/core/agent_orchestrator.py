@@ -125,37 +125,37 @@ class NISAgentOrchestrator:
     def _initialize_brain_structure(self):
         """Initialize the human brain-like agent structure"""
         
-        # 🧠 CORE AGENTS (Always Active - Brain Stem Functions)
+        # 🧠 CORE AGENTS (Always Active - Optimized with clear namespacing)
         self.register_agent(AgentDefinition(
-            agent_id="signal_processing",
-            name="Signal Processing Agent (Laplace)",
+            agent_id="laplace_signal_processor",
+            name="Laplace Signal Processing Agent",
             agent_type=AgentType.CORE,
             activation_trigger=ActivationTrigger.ALWAYS,
-            context_keywords=["input", "signal", "data", "preprocessing"],
+            context_keywords=["input", "signal", "data", "preprocessing", "transform", "frequency"],
             priority=10,
-            description="Processes all incoming signals using Laplace transforms"
+            description="Processes incoming signals using optimized Laplace transform operations with token-efficient responses"
         ))
         
         self.register_agent(AgentDefinition(
-            agent_id="reasoning",
-            name="Reasoning Agent (KAN)",
+            agent_id="kan_reasoning_engine",
+            name="KAN Reasoning Engine",
             agent_type=AgentType.CORE,
             activation_trigger=ActivationTrigger.ALWAYS,
-            dependencies=["signal_processing"],
-            context_keywords=["analyze", "reason", "think", "symbolic"],
+            dependencies=["laplace_signal_processor"],
+            context_keywords=["analyze", "reason", "think", "symbolic", "interpret", "extract"],
             priority=10,
-            description="Core reasoning using KAN networks"
+            description="Performs symbolic reasoning using KAN networks with interpretable function extraction"
         ))
         
         self.register_agent(AgentDefinition(
-            agent_id="physics_validation",
+            agent_id="physics_validator",
             name="Physics Validation Agent (PINN)",
             agent_type=AgentType.CORE,
             activation_trigger=ActivationTrigger.ALWAYS,
-            dependencies=["reasoning"],
-            context_keywords=["physics", "validate", "constraints", "laws"],
+            dependencies=["kan_reasoning_engine"],
+            context_keywords=["physics", "validate", "constraints", "laws", "conservation", "correction"],
             priority=9,
-            description="Validates outputs against physics laws"
+            description="Validates outputs against physics laws with auto-correction capabilities using PINN networks"
         ))
         
         self.register_agent(AgentDefinition(
@@ -188,38 +188,27 @@ class NISAgentOrchestrator:
             description="Meta-level coordination and oversight"
         ))
         
-        # 🎯 SPECIALIZED AGENTS (Context Activated - Cerebral Cortex)
+        # 🎯 SPECIALIZED AGENTS (Context Activated - Consolidated per research principles)
         self.register_agent(AgentDefinition(
-            agent_id="vision",
-            name="Vision Analysis Agent",
+            agent_id="multimodal_analysis_engine",
+            name="Consolidated Multimodal Analysis Engine",
             agent_type=AgentType.SPECIALIZED,
             activation_trigger=ActivationTrigger.CONTEXT,
-            context_keywords=["image", "visual", "photo", "picture", "video", "analyze", "see"],
+            context_keywords=["image", "visual", "photo", "picture", "video", "analyze", "see", "document", "pdf", "text", "file"],
             max_concurrent=2,
             priority=7,
-            description="Computer vision and image analysis"
+            description="Consolidated vision and document analysis with optimized response formats and token efficiency"
         ))
         
         self.register_agent(AgentDefinition(
-            agent_id="document",
-            name="Document Analysis Agent",
+            agent_id="research_and_search_engine",
+            name="Consolidated Research and Search Engine", 
             agent_type=AgentType.SPECIALIZED,
             activation_trigger=ActivationTrigger.CONTEXT,
-            context_keywords=["document", "pdf", "text", "file", "analyze", "read"],
-            max_concurrent=3,
-            priority=6,
-            description="Document processing and analysis"
-        ))
-        
-        self.register_agent(AgentDefinition(
-            agent_id="web_search",
-            name="Web Search Agent",
-            agent_type=AgentType.SPECIALIZED,
-            activation_trigger=ActivationTrigger.CONTEXT,
-            context_keywords=["search", "web", "internet", "research", "find", "lookup"],
+            context_keywords=["search", "web", "internet", "research", "find", "lookup", "study", "investigate", "analyze"],
             max_concurrent=2,
             priority=6,
-            description="Web search and research capabilities"
+            description="Consolidated web search and deep research with semantic analysis and document processing capabilities"
         ))
         
         self.register_agent(AgentDefinition(

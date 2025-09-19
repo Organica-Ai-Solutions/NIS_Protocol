@@ -74,26 +74,37 @@ class LangGraphMCPBridge:
         # Simple pattern matching for tool calls
         # In production, use more sophisticated NLP parsing
         
+        # Optimized tool patterns using consolidated operations and clear namespacing
         tool_patterns = {
-            r"search (?:for )?datasets? (?:about |with |containing )?(.+)": {
-                "tool_name": "dataset.search",
-                "param_mapping": {"query": 1}
+            r"(?:search|find|look for) (?:datasets?|data) (?:about |with |containing |on )?(.+)": {
+                "tool_name": "dataset_search_and_preview",  # Consolidated operation
+                "param_mapping": {"search_query": 1},
+                "default_params": {"preview_samples": 3, "response_format": "concise"}
             },
-            r"run (?:a )?pipeline (?:called |named )?(.+)": {
-                "tool_name": "pipeline.run", 
-                "param_mapping": {"pipeline_id": 1}
+            r"(?:run|execute|start) (?:a )?(?:data )?pipeline (?:for |on |with )?(.+)": {
+                "tool_name": "pipeline_execute_workflow",  # Consolidated workflow
+                "param_mapping": {"workflow_description": 1},
+                "default_params": {"monitor_progress": True, "response_format": "detailed"}
             },
-            r"create (?:a )?research plan (?:for |about )?(.+)": {
-                "tool_name": "research.plan",
-                "param_mapping": {"goal": 1}
+            r"(?:validate|check|verify) (?:physics|physical laws|conservation) (?:for |of |in )?(.+)": {
+                "tool_name": "physics_validate",  # Clear namespaced tool
+                "param_mapping": {"physical_system_description": 1},
+                "default_params": {"auto_correct": True, "tolerance": 0.01}
             },
-            r"review (?:the )?code (?:in |at )?(.+)": {
-                "tool_name": "code.review",
-                "param_mapping": {"file_path": 1}
+            r"(?:analyze|reason about|understand) (?:the )?(?:relationship|pattern|function) (?:in |of |for )?(.+)": {
+                "tool_name": "kan_reason",  # Clear namespaced tool
+                "param_mapping": {"analysis_target": 1},
+                "default_params": {"reasoning_type": "hybrid", "extract_functions": True}
             },
-            r"show (?:me )?(?:the )?audit (?:trail|log) (?:for )?(.*)": {
-                "tool_name": "audit.view",
-                "param_mapping": {"component": 1}
+            r"(?:transform|process|analyze) (?:signal|audio|data) (?:from |in |of )?(.+)": {
+                "tool_name": "laplace_transform",  # Clear namespaced tool
+                "param_mapping": {"signal_description": 1},
+                "default_params": {"transform_type": "standard", "response_format": "detailed"}
+            },
+            r"(?:get|show|check) (?:system )?status (?:of |for )?(.*)": {
+                "tool_name": "nis_status",  # Core system tool
+                "param_mapping": {"component_filter": 1},
+                "default_params": {"detail_level": "summary", "response_format": "concise"}
             }
         }
         
@@ -102,16 +113,23 @@ class LangGraphMCPBridge:
             match = re.search(pattern, message, re.IGNORECASE)
             if match:
                 parameters = {}
+                
+                # Extract matched parameters
                 for param, group_idx in config["param_mapping"].items():
                     if group_idx <= len(match.groups()):
                         value = match.group(group_idx).strip()
                         if value:
                             parameters[param] = value
+                
+                # Add default parameters for optimization
+                if "default_params" in config:
+                    parameters.update(config["default_params"])
                             
                 return {
                     "tool_name": config["tool_name"],
                     "parameters": parameters,
-                    "original_message": message
+                    "original_message": message,
+                    "optimization_applied": True
                 }
                 
         return None

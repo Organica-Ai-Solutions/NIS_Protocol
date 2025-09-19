@@ -29,8 +29,8 @@ from RestrictedPython.PrintCollector import PrintCollector
 from security_config import SecurityConfig
 
 app = FastAPI(
-    title="NIS Protocol Secure Runner",
-    description="Sandboxed code execution environment",
+    title="NIS Protocol Optimized Secure Runner",
+    description="Sandboxed code execution environment with advanced tool optimization and token efficiency",
     version="3.2.1"
 )
 
@@ -53,22 +53,29 @@ MAX_PROCESSES = 5
 active_executions: Dict[str, Dict[str, Any]] = {}
 
 class CodeExecutionRequest(BaseModel):
-    code: str = Field(..., description="Code to execute")
-    language: str = Field(default="python", description="Programming language")
-    timeout: int = Field(default=30, description="Execution timeout in seconds")
-    memory_limit: int = Field(default=512, description="Memory limit in MB")
-    environment: Dict[str, str] = Field(default_factory=dict, description="Environment variables")
-    files: List[str] = Field(default_factory=list, description="Additional files to include")
+    code_content: str = Field(..., description="Code content to execute")  # Clear parameter name
+    programming_language: str = Field(default="python", description="Programming language (python, javascript, shell)")  # Unambiguous name
+    execution_timeout_seconds: int = Field(default=30, description="Maximum execution time in seconds")  # Descriptive name
+    memory_limit_mb: int = Field(default=512, description="Memory limit in megabytes")  # Clear units
+    environment_variables: Dict[str, str] = Field(default_factory=dict, description="Environment variables for execution")  # Descriptive name
+    additional_files: List[str] = Field(default_factory=list, description="Additional files to include in execution context")  # Clear purpose
+    response_format: str = Field(default="detailed", description="Response format: concise, detailed, structured")  # Tool optimization
+    token_limit: Optional[int] = Field(default=None, description="Maximum tokens for response (optimization feature)")  # Token efficiency
 
 class ExecutionResult(BaseModel):
     execution_id: str
     success: bool
     output: str
     error: str
-    execution_time: float
-    memory_used: int
+    execution_time_seconds: float  # Clear units
+    memory_used_mb: int  # Clear units
     exit_code: int
     security_violations: List[str]
+    
+    # Tool optimization metadata
+    response_format: str = "detailed"
+    token_estimate: Optional[int] = None
+    optimization_applied: bool = False
 
 class SecurityConfig:
     """Security configuration for code execution"""
@@ -203,40 +210,44 @@ def validate_code_security(code: str) -> List[str]:
     return violations
 
 async def execute_python_code(
-    code: str, 
+    code_content: str,  # Clear parameter name
     execution_id: str,
-    timeout: int = 30,
-    memory_limit: int = 512
+    timeout_seconds: int = 30,  # Clear units
+    memory_limit_mb: int = 512,  # Clear units
+    response_format: str = "detailed",  # Response optimization
+    token_limit: Optional[int] = None  # Token efficiency
 ) -> ExecutionResult:
     """Execute Python code in a restricted environment"""
     
     start_time = time.time()
     
-    # Security validation
-    security_violations = validate_code_security(code)
+    # Security validation with optimized parameter name
+    security_violations = validate_code_security(code_content)
     if security_violations:
         return ExecutionResult(
             execution_id=execution_id,
             success=False,
             output="",
             error="Security violations detected",
-            execution_time=0.0,
-            memory_used=0,
+            execution_time_seconds=0.0,  # Updated field name
+            memory_used_mb=0,  # Updated field name
             exit_code=-1,
-            security_violations=security_violations
+            security_violations=security_violations,
+            response_format=response_format,
+            optimization_applied=True
         )
     
     try:
         # Compile code with RestrictedPython
-        compiled_code = compile_restricted(code, '<string>', 'exec')
+        compiled_code = compile_restricted(code_content, '<string>', 'exec')  # Updated parameter name
         if compiled_code is None:
             return ExecutionResult(
                 execution_id=execution_id,
                 success=False,
                 output="",
                 error="Code compilation failed",
-                execution_time=time.time() - start_time,
-                memory_used=0,
+                execution_time_seconds=time.time() - start_time,  # Updated field name
+                memory_used_mb=0,  # Updated field name
                 exit_code=-1,
                 security_violations=["Compilation failed"]
             )
@@ -352,31 +363,37 @@ async def execute_code(request: CodeExecutionRequest):
     # Generate execution ID
     execution_id = str(uuid.uuid4())
     
-    # Track execution
+    # Track execution with optimization metadata
     active_executions[execution_id] = {
         "start_time": time.time(),
-        "language": request.language,
-        "status": "running"
+        "language": request.programming_language,
+        "status": "running",
+        "response_format": request.response_format,
+        "optimization_enabled": True
     }
     
     try:
-        if request.language.lower() == "python":
+        if request.programming_language.lower() == "python":
             result = await execute_python_code(
-                request.code,
+                request.code_content,  # Updated parameter name
                 execution_id,
-                min(request.timeout, MAX_EXECUTION_TIME),
-                min(request.memory_limit, MAX_MEMORY_MB)
+                min(request.execution_timeout_seconds, MAX_EXECUTION_TIME),
+                min(request.memory_limit_mb, MAX_MEMORY_MB),
+                request.response_format,  # Pass response format
+                request.token_limit  # Pass token limit
             )
         else:
             result = ExecutionResult(
                 execution_id=execution_id,
                 success=False,
                 output="",
-                error=f"Unsupported language: {request.language}",
-                execution_time=0.0,
-                memory_used=0,
+                error=f"Unsupported language: {request.programming_language}",  # Updated parameter name
+                execution_time_seconds=0.0,  # Updated field name
+                memory_used_mb=0,  # Updated field name
                 exit_code=-1,
-                security_violations=["Unsupported language"]
+                security_violations=["Unsupported language"],
+                response_format=request.response_format,
+                optimization_applied=True
             )
         
         return result

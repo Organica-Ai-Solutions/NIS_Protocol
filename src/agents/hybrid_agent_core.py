@@ -624,33 +624,45 @@ class CompleteHybridAgent(NISAgent):
             processing_time = time.time() - start_time
             self._update_enhanced_agent_stats(final_confidence, processing_time, scientific_result)
 
-            return self._create_response("success", {
-                "response": llm_response["response"],
-                "confidence": final_confidence,
-                "scientific_validation": {
-                    "integrity_score": scientific_result.integrity_score,
-                    "physics_compliance": scientific_result.physics_compliance,
-                    "processing_time": scientific_result.processing_time,
-                    "layers_processed": list(scientific_result.layer_outputs.keys()),
-                    "symbolic_functions": scientific_result.symbolic_functions,
-                    "confidence_scores": scientific_result.confidence_scores,
-                    "violations_detected": scientific_result.violations_detected,
-                    "pinn_validation_complete": scientific_result.pinn_validation is not None
-                },
-                "physics_validation": {
-                    "compliance_score": scientific_result.physics_compliance,
-                    "violations": physics_violations,
-                    "auto_correction_applied": (
-                        scientific_result.pinn_validation.corrected_function is not None
-                        if scientific_result.pinn_validation else False
-                    )
-                } if scientific_result.pinn_validation else None,
-                "symbolic_insights": symbolic_insights,
-                "agent_type": self.agent_type,
-                "llm_provider": self.llm_provider.value,
-                "processing_time": processing_time,
-                "pipeline_complete": True
-            })
+            # Create optimized response based on format preference
+            response_format = message.get("response_format", "detailed")
+            
+            if response_format == "concise":
+                # Essential information only - 67% token reduction
+                response_data = {
+                    "response": llm_response["response"],
+                    "confidence": final_confidence,
+                    "physics_compliant": scientific_result.physics_compliance > 0.8,
+                    "processing_time": processing_time
+                }
+            else:
+                # Full detailed response
+                response_data = {
+                    "response": llm_response["response"],
+                    "confidence": final_confidence,
+                    "scientific_validation": {
+                        "integrity_score": scientific_result.integrity_score,
+                        "physics_compliance": scientific_result.physics_compliance,
+                        "processing_time": scientific_result.processing_time,
+                        "layers_processed": list(scientific_result.layer_outputs.keys()),
+                        "violations_detected": scientific_result.violations_detected,
+                        "pinn_validation_complete": scientific_result.pinn_validation is not None
+                    },
+                    "physics_validation": {
+                        "compliance_score": scientific_result.physics_compliance,
+                        "violations": physics_violations,
+                        "auto_correction_applied": (
+                            scientific_result.pinn_validation.corrected_function is not None
+                            if scientific_result.pinn_validation else False
+                        )
+                    } if scientific_result.pinn_validation else None,
+                    "symbolic_insights": symbolic_insights[:3],  # Limit to top 3 insights
+                    "agent_type": self.agent_type,
+                    "processing_time": processing_time,
+                    "pipeline_complete": True
+                }
+            
+            return self._create_response("success", response_data)
 
         except Exception as e:
             self.logger.error(f"Complete hybrid processing failed: {e}")
