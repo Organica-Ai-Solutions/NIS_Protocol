@@ -30,33 +30,43 @@ class BaseSkill:
 class DatasetSkill(BaseSkill):
     """Dataset management and analysis skill"""
     
-    def __init__(self):
+    def __init__(self, agent=None, memory=None):
         super().__init__("dataset")
+        self.agent = agent
+        self.memory = memory
 
 
 class PipelineSkill(BaseSkill):
     """Data pipeline and processing skill"""
     
-    def __init__(self):
+    def __init__(self, agent=None, memory=None):
         super().__init__("pipeline")
+        self.agent = agent
+        self.memory = memory
 
 
 class ResearchSkill(BaseSkill):
     """Research and analysis skill"""
     
-    def __init__(self):
+    def __init__(self, agent=None, memory=None):
         super().__init__("research")
+        self.agent = agent
+        self.memory = memory
 
 
 class AuditSkill(BaseSkill):
     """System auditing and validation skill"""
     
-    def __init__(self):
+    def __init__(self, agent=None, memory=None):
         super().__init__("audit")
+        self.agent = agent
+        self.memory = memory
 
 
 class CodeSkill(BaseSkill):
     """Code analysis and generation skill"""
     
-    def __init__(self):
+    def __init__(self, agent=None, memory=None):
         super().__init__("code")
+        self.agent = agent
+        self.memory = memory

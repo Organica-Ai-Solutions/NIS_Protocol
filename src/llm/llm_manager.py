@@ -2,6 +2,20 @@
 """
 Simple LLM Manager for NIS Protocol
 Provides a basic interface for LLM operations
+
+Copyright 2025 Organica AI Solutions
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 """
 
 import asyncio
@@ -41,14 +55,13 @@ class GeneralLLMProvider:
     
     async def generate_response(
         self, 
-        input_messages: Union[str, List[Dict[str, str]]],  # Clear parameter name
-        llm_provider_name: Optional[str] = None,  # Unambiguous parameter name
-        response_temperature: float = 0.7,  # Specific parameter name
-        requesting_agent_type: Optional[str] = None,  # Clear parameter name
-        preferred_provider: Optional[str] = None,  # Semantic parameter name
-        consensus_configuration=None,  # Full parameter name
-        enable_response_caching: bool = True,  # Descriptive parameter name
-        request_priority: int = 1,  # Clear parameter name
+        messages: Union[str, List[Dict[str, str]]],  # Match main.py parameter name
+        temperature: float = 0.7,  # Match main.py parameter name
+        agent_type: Optional[str] = None,  # Match main.py parameter name
+        requested_provider: Optional[str] = None,  # Match main.py parameter name
+        consensus_config=None,  # Match main.py parameter name
+        enable_caching: bool = True,  # Match main.py parameter name
+        priority: int = 1,  # Match main.py parameter name
         response_format: str = "detailed",  # Response format control
         token_limit: Optional[int] = None,  # Token efficiency control
         **additional_options
@@ -56,22 +69,22 @@ class GeneralLLMProvider:
         """Generate a response using the specified provider"""
         try:
             # Handle both string prompts and message arrays
-            if isinstance(input_messages, str):
-                prompt = input_messages
-                user_message = input_messages
-            elif isinstance(input_messages, list):
+            if isinstance(messages, str):
+                prompt = messages
+                user_message = messages
+            elif isinstance(messages, list):
                 # Extract user message (last user role message)
-                user_messages = [msg.get("content", "") for msg in input_messages if msg.get("role") == "user"]
+                user_messages = [msg.get("content", "") for msg in messages if msg.get("role") == "user"]
                 user_message = user_messages[-1] if user_messages else "Hello"
-                prompt = " ".join([msg.get("content", "") for msg in input_messages if msg.get("content")])
+                prompt = " ".join([msg.get("content", "") for msg in messages if msg.get("content")])
             else:
-                prompt = str(input_messages)
-                user_message = str(input_messages)
+                prompt = str(messages)
+                user_message = str(messages)
             
             # Calculate REAL confidence based on actual factors
             prompt_length = len(prompt.split())
             prompt_complexity = len([word for word in prompt.split() if len(word) > 6])
-            provider_reliability = 1.0 if (preferred_provider or llm_provider_name) in ["openai", "anthropic"] else 0.8
+            provider_reliability = 1.0 if requested_provider in ["openai", "anthropic"] else 0.8
             
             # Real confidence calculation (not hardcoded!)
             base_confidence = min(0.9, 0.3 + (prompt_length / 100) * 0.4)  # Based on prompt analysis
@@ -100,10 +113,10 @@ class GeneralLLMProvider:
             
             return {
                 "content": response_content,
-                "provider": provider or self.default_provider,
+                "provider": requested_provider or self.default_provider,
                 "success": True,
                 "confidence": round(real_confidence, 4),  # CALCULATED confidence, not hardcoded
-                "model": f"{provider or self.default_provider}-gpt-4",
+                "model": f"{requested_provider or self.default_provider}-gpt-4",
                 "tokens_used": total_tokens,  # CALCULATED token count
                 "real_ai": False,  # Indicates this is a mock response
                 "confidence_factors": {  # Show how confidence was calculated
@@ -124,11 +137,11 @@ class GeneralLLMProvider:
             
             return {
                 "content": "Error generating response",
-                "provider": provider or self.default_provider,
+                "provider": requested_provider or self.default_provider,
                 "success": False,
                 "error": str(e),
                 "confidence": round(error_confidence, 4),  # CALCULATED error confidence
-                "model": f"{provider or self.default_provider}-error",
+                "model": f"{requested_provider or self.default_provider}-error",
                 "tokens_used": 0,
                 "real_ai": False,
                 "confidence_factors": {

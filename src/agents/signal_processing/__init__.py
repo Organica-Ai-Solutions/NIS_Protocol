@@ -13,11 +13,20 @@ Key Components:
 - FrequencyDomainProcessor: Fourier and spectral analysis
 """
 
-from .unified_signal_agent import SignalProcessingAgent, LaplaceSignalProcessor, SciPySignalAgent, TimeSeriesAnalyzer
+from .unified_signal_agent import (
+    UnifiedSignalAgent,
+    SignalProcessingAgent,
+    LaplaceSignalProcessor,
+    SciPySignalAgent,
+    TimeSeriesAnalyzer,
+    EnhancedLaplaceTransformer
+)
 
 __all__ = [
+    'UnifiedSignalAgent',
     'SignalProcessingAgent',
-    'LaplaceSignalProcessor', 
+    'LaplaceSignalProcessor',
     'SciPySignalAgent',
-    'TimeSeriesAnalyzer'
+    'TimeSeriesAnalyzer',
+    'EnhancedLaplaceTransformer'
 ] 

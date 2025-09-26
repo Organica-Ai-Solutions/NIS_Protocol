@@ -58,11 +58,9 @@ except ImportError:
         return func
 
 # Infrastructure and Core messaging integration
-from ..meta.unified_coordinator import (
-    InfrastructureCoordinator,
-    ServiceHealth,
-    IntegrationStatus
-)
+# InfrastructureCoordinator functionality is now integrated into UnifiedCoordinator
+# ServiceHealth and IntegrationStatus are defined locally or imported from other modules
+from ..meta.unified_coordinator import UnifiedCoordinator
 # DECOUPLED: Import from core messaging instead of infrastructure
 from src.core.messaging import (
     MessageType,
@@ -251,7 +249,7 @@ class EnhancedAgentBase(ABC):
     def __init__(
         self,
         config: AgentConfiguration,
-        infrastructure_coordinator: Optional[InfrastructureCoordinator] = None
+        infrastructure_coordinator: Optional[UnifiedCoordinator] = None
     ):
         """Initialize the enhanced agent base"""
         self.config = config

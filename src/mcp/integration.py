@@ -28,7 +28,7 @@ class MCPIntegration:
     def __init__(self, nis_config: Dict[str, Any] = None):
         self.nis_config = nis_config or {}
         self.mcp_server: Optional[MCPServer] = None
-        self.agent: Optional[Agent] = None
+        self.agent: Optional[NISAgent] = None
         self.memory_manager: Optional[MemoryManager] = None
         self.is_initialized = False
         

@@ -165,7 +165,7 @@ setup(
         "Intended Audience :: System Administrators",
         
         # License
-        "License :: OSI Approved :: MIT License",
+        "License :: OSI Approved :: Apache Software License",
         
         # Programming Language
         "Programming Language :: Python :: 3",
@@ -473,7 +473,7 @@ setup(
     # Metadata
     zip_safe=False,
     platforms=["any"],
-    license="MIT",
+    license="Apache-2.0",
     
     # Data Files - Only include existing files
     data_files=[

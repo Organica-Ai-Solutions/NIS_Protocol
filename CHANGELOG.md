@@ -245,7 +245,7 @@
 - **Documentation**: [Complete API docs and guides](./docs/)
 - **Issues**: [GitHub Issues](https://github.com/pentius00/NIS_Protocol/issues)
 - **Discussions**: [Community Forum](https://github.com/pentius00/NIS_Protocol/discussions)
-- **License**: [MIT License](./LICENSE)
+- **License**: [Apache License 2.0](./LICENSE)
 
 ---
 

@@ -186,6 +186,96 @@ curl "http://localhost/infrastructure/status"
 
 ---
 
+## 🎙️ **VOICE CONVERSATION ENDPOINTS (NEW)**
+
+### **POST /communication/synthesize** - Text-to-Speech Synthesis
+**Status**: 🆕 **NEW** - Microsoft VibeVoice integration with multi-speaker support
+
+```bash
+curl -X POST "http://localhost/communication/synthesize" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "text": "Hello, this is the NIS Protocol consciousness agent speaking.",
+    "speaker": "consciousness",
+    "emotion": "thoughtful"
+  }'
+```
+
+**Response**: High-quality WAV audio with agent-specific voice characteristics
+
+**Available Speakers**: `consciousness`, `physics`, `research`, `coordination`
+
+### **POST /communication/agent_dialogue** - Multi-Agent Voice Conversations
+**Status**: 🆕 **NEW** - Create conversations between NIS agents with distinct voices
+
+```bash
+curl -X POST "http://localhost/communication/agent_dialogue" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "agents_content": {
+      "consciousness": "System awareness at 94.2%",
+      "physics": "Energy conservation validated",
+      "research": "Analysis complete - 15 papers found",
+      "coordination": "All agents synchronized"
+    },
+    "dialogue_style": "conversation"
+  }'
+```
+
+**Response**: Multi-speaker dialogue audio with seamless voice transitions
+
+### **POST /communication/consciousness_voice** - Consciousness Status Vocalization
+**Status**: 🆕 **NEW** - Vocalize consciousness system status and metrics
+
+```bash
+curl -X POST "http://localhost/communication/consciousness_voice"
+```
+
+**Response**: Audio representation of consciousness levels and awareness metrics
+
+### **GET /communication/status** - Voice Communication Status
+**Status**: 🆕 **NEW** - Comprehensive voice system capabilities
+
+```bash
+curl "http://localhost/communication/status"
+```
+
+**Response**: VibeVoice model status, speaker capabilities, streaming features
+
+### **WebSocket /communication/stream** - Real-Time Voice Streaming
+**Status**: 🆕 **NEW** - Live multi-speaker audio streaming (GPT-5/Grok style)
+
+```javascript
+const ws = new WebSocket('ws://localhost/communication/stream');
+ws.send(JSON.stringify({
+  "type": "start_conversation",
+  "agents_content": {
+    "consciousness": "Analyzing system state",
+    "physics": "Validating physics constraints"
+  }
+}));
+```
+
+**Features**: <100ms latency, voice switching, real-time streaming
+
+### **WebSocket /voice-chat** - Interactive Voice Chat
+**Status**: 🆕 **NEW** - High-performance voice chat with <500ms latency
+
+```javascript
+const voiceWS = new WebSocket('ws://localhost/voice-chat');
+// Send audio chunks, receive real-time responses
+```
+
+**Features**: 
+- Wake word detection ("Hey NIS")
+- Voice commands for agent switching
+- Continuous conversation mode
+- Real-time STT/TTS processing
+
+**📖 Complete Voice Guide**: See [VOICE_CONVERSATION_COMPLETE_GUIDE.md](./VOICE_CONVERSATION_COMPLETE_GUIDE.md)
+
+---
+
 ## 🤖 **CORE AI CHAT ENDPOINTS**
 
 ### **POST /chat** - Single LLM Chat
@@ -523,6 +613,7 @@ curl -X POST "http://localhost/simulation/run" \
 |--------------|-------------|-------------|------------|-------------|
 | **System** | 5/5 ✅ | 0 | 0 | 0 |
 | **Chat** | 2/2 ✅ | 0 | 0 | 0 |
+| **Voice Communication** | 6/6 ✅ | 0 | 0 | 0 |
 | **Multi-LLM** | 1/1 ✅ | 0 | 0 | 0 |
 | **NVIDIA** | 0 | 1/1 ⚠️ | 0 | 0 |
 | **Agents** | 4/5 ✅ | 0 | 1/5 ❌ | 0 |

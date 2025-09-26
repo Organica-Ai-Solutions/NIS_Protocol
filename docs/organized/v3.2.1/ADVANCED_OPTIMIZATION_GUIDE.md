@@ -425,4 +425,4 @@ response = await local_model.generate_response_offline(
 ---
 
 *NIS Protocol v3.2.1 - The AI Operating System for Future Edge Devices*  
-*© 2024-2025 Organica AI Solutions. Licensed under Business Source License.*
+*© 2024-2025 Organica AI Solutions. Licensed under Apache License 2.0.*

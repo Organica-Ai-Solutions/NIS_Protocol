@@ -1,0 +1,664 @@
+# NIS Protocol Data Flow Diagram
+
+## Main Chat Flow
+```mermaid
+graph TB
+    A[User Input] --> B[Frontend Interface]
+    B --> C[POST /chat endpoint]
+    C --> D[Authentication & Validation]
+    D --> E[Conversation ID Generation]
+    E --> F[Memory Storage]
+    F --> G[Context Retrieval]
+    G --> H[NIS Pipeline Processing]
+    H --> I[LLM Provider Selection]
+    I --> J[Response Generation]
+    J --> K[Memory Update]
+    K --> L[Response Formatting]
+    L --> M[Client Delivery]
+
+    N[Error Handling] --> O[Fallback Response]
+    O --> M
+
+    style A fill:#e1f5fe
+    style B fill:#f3e5f5
+    style C fill:#e8f5e8
+    style D fill:#fff3e0
+    style E fill:#f3e5f5
+    style F fill:#e8f5e8
+    style G fill:#fff3e0
+    style H fill:#f3e5f5
+    style I fill:#e8f5e8
+    style J fill:#fff3e0
+    style K fill:#f3e5f5
+    style L fill:#e8f5e8
+    style M fill:#e1f5fe
+```
+
+## Voice Conversation Flow
+```mermaid
+graph TB
+    A[🎤 Voice Input] --> B[Audio Buffer]
+    B --> C[Wake Word Detection]
+    C --> D[Streaming STT]
+    D --> E[Voice Command Recognition]
+    E --> F[Agent Routing]
+    F --> G[Physics Agent]
+    F --> H[Consciousness Agent]
+    F --> I[Research Agent]
+    F --> J[Coordination Agent]
+    G --> K[VibeVoice Synthesis]
+    H --> K
+    I --> K
+    J --> K
+    K --> L[Audio Streaming]
+    L --> M[🔊 User Output]
+
+    style A fill:#ffebee
+    style B fill:#f3e5f5
+    style C fill:#e8f5e8
+    style D fill:#fff3e0
+    style E fill:#f3e5f5
+    style F fill:#e8f5e8
+    style G fill:#fff3e0
+    style H fill:#f3e5f5
+    style I fill:#e8f5e8
+    style J fill:#fff3e0
+    style K fill:#f3e5f5
+    style L fill:#e8f5e8
+    style M fill:#ffebee
+```
+
+## Memory System Flow
+```mermaid
+graph TB
+    A[User Input] --> B[Legacy Memory]
+    A --> C[Enhanced Memory]
+
+    B --> D[Simple Storage]
+    C --> E[Semantic Embedding]
+    E --> F[Vector Search]
+    F --> G[Context Retrieval]
+
+    G --> H[LLM Integration]
+    H --> I[Response Generation]
+    I --> J[Memory Update]
+
+    style A fill:#e1f5fe
+    style B fill:#f3e5f5
+    style C fill:#e8f5e8
+    style D fill:#fff3e0
+    style E fill:#f3e5f5
+    style F fill:#e8f5e8
+    style G fill:#fff3e0
+    style H fill:#f3e5f5
+    style I fill:#e8f5e8
+    style J fill:#fff3e0
+```
+
+## Real-Time Streaming Flow
+```mermaid
+graph TB
+    A[WebSocket Connection] --> B[Multi-Agent Content]
+    B --> C[Content Splitting]
+    C --> D[Speaker-Specific Synthesis]
+    D --> E[Audio Chunk Generation]
+    E --> F[Base64 Encoding]
+    F --> G[WebSocket Streaming]
+    G --> H[Client Audio Playback]
+
+    I[Voice Switching] --> D
+    J[Emotion Control] --> D
+    K[Pause Insertion] --> D
+
+    style A fill:#e1f5fe
+    style B fill:#f3e5f5
+    style C fill:#e8f5e8
+    style D fill:#fff3e0
+    style E fill:#f3e5f5
+    style F fill:#e8f5e8
+    style G fill:#fff3e0
+    style H fill:#e1f5fe
+    style I fill:#e8f5e8
+    style J fill:#f3e5f5
+    style K fill:#fff3e0
+```
+
+## NIS Pipeline Flow
+```mermaid
+graph TB
+    A[Input Data] --> B[Laplace Signal Processing]
+    B --> C[Frequency Domain Analysis]
+    C --> D[KAN Reasoning Engine]
+    D --> E[Symbolic Function Learning]
+    E --> F[Physics Validation - PINN]
+    F --> G[Physics-Informed Constraints]
+    G --> H[Multi-Agent Coordination]
+    H --> I[Consensus Formation]
+    I --> J[Final Response]
+
+    K[Auto-Correction] --> F
+    L[Conservation Laws] --> F
+    L --> K
+
+    style A fill:#e1f5fe
+    style B fill:#f3e5f5
+    style C fill:#e8f5e8
+    style D fill:#fff3e0
+    style E fill:#f3e5f5
+    style F fill:#e8f5e8
+    style G fill:#fff3e0
+    style H fill:#f3e5f5
+    style I fill:#e8f5e8
+    style J fill:#e1f5fe
+    style K fill:#e8f5e8
+    style L fill:#f3e5f5
+```
+
+## Agent Processing Flow
+```mermaid
+graph TB
+    A[User Query] --> B[Content Analysis]
+    B --> C[Intent Classification]
+    C --> D[Domain Detection]
+    D --> E[Agent Selection]
+
+    E --> F[Physics Agent]
+    E --> G[Consciousness Agent]
+    E --> H[Research Agent]
+    E --> I[Coordination Agent]
+
+    F --> J[Parallel Processing]
+    G --> J
+    H --> J
+    I --> J
+
+    J --> K[Result Aggregation]
+    K --> L[Quality Scoring]
+    L --> M[Response Synthesis]
+    M --> N[Final Output]
+
+    O[Error Handling] --> P[Fallback Response]
+    P --> N
+
+    style A fill:#e1f5fe
+    style B fill:#f3e5f5
+    style C fill:#e8f5e8
+    style D fill:#fff3e0
+    style E fill:#f3e5f5
+    style F fill:#e8f5e8
+    style G fill:#fff3e0
+    style H fill:#f3e5f5
+    style I fill:#e8f5e8
+    style J fill:#fff3e0
+    style K fill:#f3e5f5
+    style L fill:#e8f5e8
+    style M fill:#fff3e0
+    style N fill:#e1f5fe
+    style O fill:#e8f5e8
+    style P fill:#f3e5f5
+```
+
+## Complete System Architecture
+```mermaid
+graph TB
+    %% Input Layer
+    subgraph "🎯 User Input Layer"
+        A1[💬 Text Chat]
+        A2[🎤 Voice Input]
+        A3[📡 API Calls]
+        A4[🌐 WebSocket]
+    end
+
+    %% Processing Layer
+    subgraph "🔍 Processing Layer"
+        B1[Authentication]
+        B2[Request Parsing]
+        B3[Content Analysis]
+        B4[Route Logic]
+    end
+
+    %% Core Layer
+    subgraph "🧠 NIS Protocol Core"
+        C1[🎭 Agent Routing]
+        C2[🗃️ Memory Systems]
+        C3[🔬 NIS Pipeline]
+        C4[🤖 Multi-LLM]
+        C5[🎙️ Voice Engine]
+    end
+
+    %% Output Layer
+    subgraph "📤 Output Layer"
+        D1[TTS Synthesis]
+        D2[Response Format]
+        D3[Streaming Logic]
+        D4[Error Handling]
+    end
+
+    %% User Output Layer
+    subgraph "🎯 User Output Layer"
+        E1[🔊 Audio Output]
+        E2[📝 Text Response]
+        E3[🌊 Live Stream]
+        E4[📊 Visual Data]
+    end
+
+    %% Connections
+    A1 --> B1
+    A2 --> B1
+    A3 --> B2
+    A4 --> B2
+
+    B1 --> C1
+    B2 --> C1
+    B3 --> C1
+    B4 --> C1
+
+    C1 --> D1
+    C2 --> D1
+    C3 --> D1
+    C4 --> D1
+    C5 --> D1
+
+    D1 --> E1
+    D2 --> E2
+    D3 --> E3
+    D4 --> E4
+
+    %% Styling
+    style A1 fill:#ffebee
+    style A2 fill:#e8f5e8
+    style A3 fill:#e3f2fd
+    style A4 fill:#fff3e0
+
+    style B1 fill:#f3e5f5
+    style B2 fill:#e8f5e8
+    style B3 fill:#fff3e0
+    style B4 fill:#f3e5f5
+
+    style C1 fill:#e8f5e8
+    style C2 fill:#fff3e0
+    style C3 fill:#f3e5f5
+    style C4 fill:#e8f5e8
+    style C5 fill:#fff3e0
+
+    style D1 fill:#f3e5f5
+    style D2 fill:#e8f5e8
+    style D3 fill:#fff3e0
+    style D4 fill:#f3e5f5
+
+    style E1 fill:#ffebee
+    style E2 fill:#e8f5e8
+    style E3 fill:#e3f2fd
+    style E4 fill:#fff3e0
+```
+
+## Performance Metrics Flow
+```mermaid
+graph TB
+    %% Input Metrics
+    subgraph "📊 Input Metrics"
+        A1[User Requests/sec]
+        A2[Audio Chunks/min]
+        A3[WebSocket Connections]
+        A4[API Call Volume]
+    end
+
+    %% Processing Metrics
+    subgraph "⚡ Processing Metrics"
+        B1[Request Latency]
+        B2[Memory Access Time]
+        B3[Agent Processing Time]
+        B4[LLM Response Time]
+    end
+
+    %% Output Metrics
+    subgraph "🚀 Output Metrics"
+        C1[Response Delivery Time]
+        C2[Streaming Chunk Rate]
+        C3[Voice Synthesis Time]
+        C4[Error Rate]
+    end
+
+    %% Monitoring
+    subgraph "📈 Monitoring"
+        D1[Performance Dashboard]
+        D2[Real-time Alerts]
+        D3[Bottleneck Detection]
+        D4[Capacity Planning]
+    end
+
+    %% Connections
+    A1 --> B1
+    A2 --> B2
+    A3 --> B3
+    A4 --> B4
+
+    B1 --> C1
+    B2 --> C2
+    B3 --> C3
+    B4 --> C4
+
+    C1 --> D1
+    C2 --> D2
+    C3 --> D3
+    C4 --> D4
+
+    %% Styling
+    style A1 fill:#e1f5fe
+    style A2 fill:#f3e5f5
+    style A3 fill:#e8f5e8
+    style A4 fill:#fff3e0
+
+    style B1 fill:#f3e5f5
+    style B2 fill:#e8f5e8
+    style B3 fill:#fff3e0
+    style B4 fill:#f3e5f5
+
+    style C1 fill:#e8f5e8
+    style C2 fill:#fff3e0
+    style C3 fill:#f3e5f5
+    style C4 fill:#e8f5e8
+
+    style D1 fill:#fff3e0
+    style D2 fill:#f3e5f5
+    style D3 fill:#e8f5e8
+    style D4 fill:#fff3e0
+```
+
+## Error Handling Flow
+```mermaid
+graph TB
+    %% Error Detection
+    subgraph "⚠️ Error Detection"
+        A1[Health Checks]
+        A2[Performance Metrics]
+        A3[Exception Logging]
+        A4[User Feedback]
+    end
+
+    %% Error Classification
+    subgraph "🔄 Error Classification"
+        B1[Critical Errors]
+        B2[High Priority]
+        B3[Medium Priority]
+        B4[Low Priority]
+    end
+
+    %% Recovery Mechanisms
+    subgraph "🛠️ Recovery"
+        C1[Service Restart]
+        C2[Provider Failover]
+        C3[Memory Rebuild]
+        C4[User Notification]
+    end
+
+    %% Monitoring
+    subgraph "📊 Monitoring"
+        D1[Error Trends]
+        D2[System Health]
+        D3[Recovery Success]
+        D4[User Impact]
+    end
+
+    %% Connections
+    A1 --> B1
+    A2 --> B2
+    A3 --> B3
+    A4 --> B4
+
+    B1 --> C1
+    B2 --> C2
+    B3 --> C3
+    B4 --> C4
+
+    C1 --> D1
+    C2 --> D2
+    C3 --> D3
+    C4 --> D4
+
+    %% Styling
+    style A1 fill:#ffebee
+    style A2 fill:#f3e5f5
+    style A3 fill:#e8f5e8
+    style A4 fill:#fff3e0
+
+    style B1 fill:#f3e5f5
+    style B2 fill:#e8f5e8
+    style B3 fill:#fff3e0
+    style B4 fill:#f3e5f5
+
+    style C1 fill:#e8f5e8
+    style C2 fill:#fff3e0
+    style C3 fill:#f3e5f5
+    style C4 fill:#e8f5e8
+
+    style D1 fill:#fff3e0
+    style D2 fill:#f3e5f5
+    style D3 fill:#e8f5e8
+    style D4 fill:#fff3e0
+```
+
+## Data Storage Flow
+```mermaid
+graph TB
+    %% Data Sources
+    subgraph "📝 Data Sources"
+        A1[Chat Messages]
+        A2[Voice Conversations]
+        A3[API Interactions]
+        A4[System Events]
+        A5[Training Data]
+    end
+
+    %% Storage Systems
+    subgraph "🗃️ Storage Systems"
+        B1[PostgreSQL - Structured]
+        B2[Redis - Session Data]
+        B3[Vector DB - Embeddings]
+        B4[Object Storage - Audio]
+        B5[Log Files - Analytics]
+    end
+
+    %% Processing
+    subgraph "⚙️ Processing"
+        C1[Data Validation]
+        C2[Encryption]
+        C3[Compression]
+        C4[Indexing]
+        C5[Caching]
+    end
+
+    %% Access
+    subgraph "🔍 Access"
+        D1[Query Interface]
+        D2[Search Engine]
+        D3[Cache Layer]
+        D4[API Endpoints]
+        D5[Analytics Engine]
+    end
+
+    %% Connections
+    A1 --> B1
+    A2 --> B4
+    A3 --> B1
+    A4 --> B5
+    A5 --> B3
+
+    B1 --> C1
+    B2 --> C3
+    B3 --> C4
+    B4 --> C2
+    B5 --> C5
+
+    C1 --> D1
+    C2 --> D1
+    C3 --> D3
+    C4 --> D2
+    C5 --> D3
+
+    D1 --> B1
+    D2 --> B3
+    D3 --> B2
+    D4 --> B1
+    D5 --> B5
+
+    %% Styling
+    style A1 fill:#e1f5fe
+    style A2 fill:#f3e5f5
+    style A3 fill:#e8f5e8
+    style A4 fill:#fff3e0
+    style A5 fill:#f3e5f5
+
+    style B1 fill:#f3e5f5
+    style B2 fill:#e8f5e8
+    style B3 fill:#fff3e0
+    style B4 fill:#f3e5f5
+    style B5 fill:#e8f5e8
+
+    style C1 fill:#fff3e0
+    style C2 fill:#f3e5f5
+    style C3 fill:#e8f5e8
+    style C4 fill:#fff3e0
+    style C5 fill:#f3e5f5
+
+    style D1 fill:#e8f5e8
+    style D2 fill:#fff3e0
+    style D3 fill:#f3e5f5
+    style D4 fill:#e8f5e8
+    style D5 fill:#fff3e0
+```
+
+## Security Data Flow
+```mermaid
+graph TB
+    %% Input Security
+    subgraph "🔐 Input Security"
+        A1[Authentication]
+        A2[Authorization]
+        A3[Rate Limiting]
+        A4[Input Validation]
+        A5[Content Filtering]
+    end
+
+    %% Data Protection
+    subgraph "🛡️ Data Protection"
+        B1[Encryption at Rest]
+        B2[Encryption in Transit]
+        B3[Access Control]
+        B4[Audit Logging]
+        B5[Data Anonymization]
+    end
+
+    %% Monitoring
+    subgraph "📊 Security Monitoring"
+        C1[Threat Detection]
+        C2[Anomaly Analysis]
+        C3[Compliance Checks]
+        C4[Incident Response]
+        C5[Security Reporting]
+    end
+
+    %% Response Security
+    subgraph "🔒 Response Security"
+        D1[Output Sanitization]
+        D2[Response Filtering]
+        D3[Security Headers]
+        D4[Error Masking]
+        D5[Access Logging]
+    end
+
+    %% Connections
+    A1 --> B1
+    A2 --> B3
+    A3 --> C1
+    A4 --> D1
+    A5 --> D2
+
+    B1 --> C2
+    B2 --> C3
+    B3 --> C4
+    B4 --> C5
+    B5 --> C2
+
+    C1 --> B4
+    C2 --> C5
+    C3 --> C5
+    C4 --> C5
+
+    D1 --> A1
+    D2 --> A1
+    D3 --> B2
+    D4 --> A1
+    D5 --> B4
+
+    %% Styling
+    style A1 fill:#ffebee
+    style A2 fill:#f3e5f5
+    style A3 fill:#e8f5e8
+    style A4 fill:#fff3e0
+    style A5 fill:#f3e5f5
+
+    style B1 fill:#f3e5f5
+    style B2 fill:#e8f5e8
+    style B3 fill:#fff3e0
+    style B4 fill:#f3e5f5
+    style B5 fill:#e8f5e8
+
+    style C1 fill:#fff3e0
+    style C2 fill:#f3e5f5
+    style C3 fill:#e8f5e8
+    style C4 fill:#fff3e0
+    style C5 fill:#f3e5f5
+
+    style D1 fill:#e8f5e8
+    style D2 fill:#fff3e0
+    style D3 fill:#f3e5f5
+    style D4 fill:#e8f5e8
+    style D5 fill:#fff3e0
+```
+
+## Legend
+```mermaid
+graph TB
+    %% Legend
+    subgraph "🎯 Data Flow Legend"
+        L1[🎤 User Input - Text, Voice, API, WebSocket]
+        L2[🔍 Processing - Validation, Routing, Analysis]
+        L3[🧠 Core Processing - NIS Pipeline, Agents, Memory]
+        L4[📤 Output - Text, Audio, Streaming, Visual]
+        L5[⚠️ Error Handling - Detection, Recovery, Monitoring]
+        L6[📊 Monitoring - Metrics, Analytics, Optimization]
+        L7[🔐 Security - Authentication, Encryption, Access Control]
+        L8[🗃️ Storage - Memory, Database, File Systems]
+    end
+
+    %% Styling
+    style L1 fill:#e1f5fe
+    style L2 fill:#f3e5f5
+    style L3 fill:#e8f5e8
+    style L4 fill:#fff3e0
+    style L5 fill:#f3e5f5
+    style L6 fill:#e8f5e8
+    style L7 fill:#fff3e0
+    style L8 fill:#f3e5f5
+```
+
+## Flow Summary
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                      📊 NIS PROTOCOL DATA FLOW SUMMARY                  │
+├─────────────────────────────────────────────────────────────────────────┤
+│  🎤 User Input     → 🔍 Processing → 🧠 Core → 📤 Output                  │
+│  💬 Text Chat      → Authentication → NIS Pipeline → Text Response     │
+│  🎤 Voice Input    → STT Processing → Agent Routing → Audio Output      │
+│  📡 API Calls      → Validation → LLM Processing → API Response         │
+│  🌐 WebSocket      → Real-time → Streaming → Live Updates              │
+│                                                                         │
+│  🗃️ Memory System → Context → Enhanced Responses → Persistent Storage  │
+│  ⚠️ Error Handling → Detection → Recovery → User Notification          │
+│  📊 Monitoring     → Metrics → Analytics → Optimization                 │
+│  🔐 Security       → Authentication → Encryption → Access Control       │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+This Mermaid diagram collection provides a comprehensive visual representation of the NIS Protocol data flow architecture, showing how data moves through the system from input to output across all components and subsystems.

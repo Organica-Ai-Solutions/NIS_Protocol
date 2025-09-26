@@ -75,7 +75,7 @@ class AgentDefinition:
     context_keywords: List[str] = None
     dependencies: List[str] = None
     max_concurrent: int = 1
-    timeout_seconds: float = 30.0
+    timeout_seconds: float = 120.0  # Increased from 30 to 120 seconds for proper initialization
     priority: int = 5  # 1-10, higher = more important
     description: str = ""
     
@@ -469,16 +469,24 @@ class NISAgentOrchestrator:
     async def _simulate_agent_activation(self, agent_id: str, instance_id: str, context: str):
         """Simulate agent activation (replace with actual agent instantiation)"""
         # This is where you would actually instantiate and configure the real agent
-        await asyncio.sleep(0.1)  # Simulate initialization time
-        
-        # Store mock agent instance
+        await asyncio.sleep(0.2)  # Simulate initialization time (slightly longer)
+
+        # Store agent instance with proper status tracking
         self.agent_instances[instance_id] = {
             "agent_id": agent_id,
             "instance_id": instance_id,
             "context": context,
             "created_at": time.time(),
-            "status": "active"
+            "status": "active",
+            "last_health_check": time.time(),
+            "health_check_count": 0
         }
+
+        # Update agent metrics to show it's healthy
+        if agent_id in self.agent_metrics:
+            metrics = self.agent_metrics[agent_id]
+            metrics.last_active = time.time()
+            metrics.health_check_count += 1
     
     async def _check_dependencies(self, agent_id: str) -> bool:
         """Check if agent dependencies are satisfied"""
@@ -517,7 +525,7 @@ class NISAgentOrchestrator:
                 # Update performance metrics
                 await self._calculate_performance_metrics()
                 
-                await asyncio.sleep(5)  # Monitor every 5 seconds
+                await asyncio.sleep(15)  # Monitor every 15 seconds (reduced frequency)
                 
             except Exception as e:
                 logger.error(f"Agent monitoring error: {e}")
@@ -527,17 +535,30 @@ class NISAgentOrchestrator:
         """Check if an agent instance is healthy"""
         if instance_id not in self.agent_instances:
             return False
-        
+
         instance = self.agent_instances[instance_id]
-        
+
+        # Update health check timestamp
+        instance["last_health_check"] = time.time()
+        instance["health_check_count"] += 1
+
         # Check if agent has been running too long (basic timeout)
         agent_id = instance["agent_id"]
         if agent_id in self.agents:
             timeout = self.agents[agent_id].timeout_seconds
             if time.time() - instance["created_at"] > timeout:
-                logger.warning(f"Agent {instance_id} timed out")
+                logger.warning(f"Agent {instance_id} timed out after {timeout} seconds")
                 return False
-        
+
+        # Check if agent is currently processing (extend timeout if active)
+        if instance.get("is_processing", False):
+            # Extend timeout for active agents
+            extended_timeout = timeout * 2
+            if time.time() - instance["created_at"] > extended_timeout:
+                logger.warning(f"Active agent {instance_id} exceeded extended timeout")
+                return False
+
+        # Agent is healthy
         return True
     
     async def _calculate_performance_metrics(self):
@@ -616,18 +637,19 @@ class NISAgentOrchestrator:
             
             return {
                 "agent_id": agent_id,
-                "status": agent.status.value,
-                "type": agent.agent_type.value,
+                "status": agent.status.value if hasattr(agent.status, 'value') else str(agent.status),
+                "type": agent.agent_type.value if hasattr(agent.agent_type, 'value') else str(agent.agent_type),
                 "active_instances": len(active_instances),
                 "metrics": asdict(metrics),
                 "definition": asdict(agent)
             }
         else:
-            # Return all agents
-            return {
-                agent_id: self.get_agent_status(agent_id)
-                for agent_id in self.agents.keys()
-            }
+            # Return all agents - fix recursive call
+            agents_status = {}
+            for agent_id in self.agents.keys():
+                if agent_id in self.agents:
+                    agents_status[agent_id] = self.get_agent_status(agent_id)
+            return agents_status
 
 class ContextAnalyzer:
     """Analyzes input context to determine required agents"""

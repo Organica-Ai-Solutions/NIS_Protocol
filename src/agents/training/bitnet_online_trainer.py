@@ -99,36 +99,36 @@ class OnlineTrainingConfig:
 
 if TRAINING_AVAILABLE:
     class NISTrainingDataset(Dataset):
-    """Dataset for NIS Protocol training examples"""
-    
-    def __init__(self, examples: List[TrainingExample], tokenizer, max_length: int = 512):
-        self.examples = examples
-        self.tokenizer = tokenizer
-        self.max_length = max_length
+        """Dataset for NIS Protocol training examples"""
         
-    def __len__(self):
-        return len(self.examples)
-    
-    def __getitem__(self, idx):
-        example = self.examples[idx]
+        def __init__(self, examples: List[TrainingExample], tokenizer, max_length: int = 512):
+            self.examples = examples
+            self.tokenizer = tokenizer
+            self.max_length = max_length
         
-        # Format as conversation
-        text = f"Human: {example.prompt}\n\nAssistant: {example.response}"
+        def __len__(self):
+            return len(self.examples)
         
-        # Tokenize
-        encoding = self.tokenizer(
-            text,
-            truncation=True,
-            padding="max_length",
-            max_length=self.max_length,
-            return_tensors="pt"
-        )
-        
-        return {
-            "input_ids": encoding["input_ids"].squeeze(),
-            "attention_mask": encoding["attention_mask"].squeeze(),
-            "labels": encoding["input_ids"].squeeze().clone()
-        }
+        def __getitem__(self, idx):
+            example = self.examples[idx]
+            
+            # Format as conversation
+            text = f"Human: {example.prompt}\n\nAssistant: {example.response}"
+            
+            # Tokenize
+            encoding = self.tokenizer(
+                text,
+                truncation=True,
+                padding="max_length",
+                max_length=self.max_length,
+                return_tensors="pt"
+            )
+            
+            return {
+                "input_ids": encoding["input_ids"].squeeze(),
+                "attention_mask": encoding["attention_mask"].squeeze(),
+                "labels": encoding["input_ids"].squeeze().clone()
+            }
 
 
 class BitNetOnlineTrainer(NISAgent):

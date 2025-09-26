@@ -1,5 +1,6 @@
-# Optimized Multi-stage Dockerfile for NIS Protocol
-# Uses lightweight Python image instead of heavy NVIDIA CUDA (can be switched if GPU needed)
+# Production Multi-stage Dockerfile for NIS Protocol v3.2.1
+# Enhanced for NVIDIA NIM integration and real mathematical implementations
+# Supports both CPU and GPU deployment modes
 
 # Stage 1: Build stage (for compiling dependencies)
 FROM python:3.11-slim as builder
@@ -23,9 +24,18 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # Stage 2: Runtime stage (lightweight)
 FROM python:3.11-slim
 
-# Install only runtime dependencies
+# Install runtime dependencies including audio processing and NVIDIA tools
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
+    wget \
+    ffmpeg \
+    libsndfile1 \
+    libsndfile1-dev \
+    libasound2-dev \
+    portaudio19-dev \
+    libgomp1 \
+    libblas3 \
+    liblapack3 \
     && rm -rf /var/lib/apt/lists/*
 
 # Create non-root user
@@ -44,7 +54,7 @@ WORKDIR /home/nisuser/app
 COPY --chown=nisuser:nisuser . .
 
 # Create directories and set permissions
-RUN mkdir -p logs static && \
+RUN mkdir -p logs static cache models data/chat_memory && \
     chmod +x *.sh 2>/dev/null || true
 
 # Health check

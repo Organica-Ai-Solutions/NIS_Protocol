@@ -98,7 +98,34 @@ pyjwt>=2.10.0,<3.0.0
 urllib3>=2.5.0,<3.0.0
 pillow>=10.4.0,<11.0.0
 
+# ===== VIBEVOICE TTS DEPENDENCIES =====
+# Microsoft VibeVoice for real-time multi-speaker streaming
+diffusers>=0.25.0,<1.0.0
+soundfile>=0.12.0,<1.0.0
+librosa>=0.10.0,<1.0.0
+resampy>=0.4.0,<1.0.0
+torch>=2.0.0,<3.0.0
+torchaudio>=2.0.0,<3.0.0
+transformers>=4.30.0,<5.0.0
+accelerate>=0.20.0,<1.0.0
+huggingface_hub>=0.15.0,<1.0.0
+
+# ===== HIGH-PERFORMANCE AUDIO PROCESSING =====
+# Faster-whisper for optimized STT with <500ms latency
+faster-whisper>=1.2.0,<2.0.0
+ctranslate2>=4.6.0,<5.0.0
+pydub>=0.25.0,<1.0.0
+
 # ===== ADDITIONAL UTILITIES =====
 msgpack>=1.0.0,<2.0.0
 orjson>=3.8.0,<4.0.0
 structlog>=23.0.0,<24.0.0
+
+# ===== PRODUCTION ENHANCEMENTS =====
+# Real mathematical implementations for production NIS Pipeline
+sympy>=1.12.0,<2.0.0  # Symbolic mathematics for KAN symbolic extraction
+numba>=0.58.0,<1.0.0  # JIT compilation for performance optimization
+
+# ===== NVIDIA NIM INTEGRATION =====
+# Real LLM inference with GPU acceleration using NGC API
+# Note: NVIDIA NIM uses direct API calls via requests, no separate client package needed

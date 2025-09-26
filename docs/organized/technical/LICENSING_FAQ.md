@@ -1,25 +1,25 @@
 # ❓ NIS Protocol Licensing FAQ
 
-## Understanding Business Source License vs Commercial Licensing
+## Understanding Apache License 2.0 - Open Source for All
 
 ---
 
-## 🆓 **BSL (FREE) USAGE QUESTIONS**
+## 🆓 **APACHE 2.0 (FREE FOR ALL) USAGE**
 
 ### **Q: Can I use NIS Protocol for my university research?**
-**A:** ✅ **YES, completely free!** Educational and research use is fully covered under the BSL license. No restrictions or commercial license needed.
+**A:** ✅ **YES, completely free!** Educational and research use is fully covered under Apache 2.0. No restrictions.
 
 ### **Q: Can I experiment with NIS Protocol for personal projects?**
-**A:** ✅ **YES, completely free!** Personal learning, experimentation, and non-commercial projects are encouraged under BSL.
+**A:** ✅ **YES, completely free!** Personal learning, experimentation, and all projects are encouraged under Apache 2.0.
 
 ### **Q: Can I contribute to the open source development?**
-**A:** ✅ **YES, absolutely!** We welcome community contributions. Your contributions will also be under BSL license.
+**A:** ✅ **YES, absolutely!** We welcome community contributions. Your contributions will also be under Apache 2.0.
 
 ### **Q: Can I use it for my open source project?**
-**A:** ✅ **YES, if non-commercial!** Open source projects that don't generate revenue can use NIS Protocol freely under BSL.
+**A:** ✅ **YES, completely free!** Open source projects can use NIS Protocol freely under Apache 2.0 for any purpose.
 
 ### **Q: Can I teach a course using NIS Protocol?**
-**A:** ✅ **YES, for educational purposes!** Teaching, courses, and academic instruction are covered under BSL.
+**A:** ✅ **YES, completely free!** Teaching, courses, and academic instruction are fully covered under Apache 2.0.
 
 ---
 

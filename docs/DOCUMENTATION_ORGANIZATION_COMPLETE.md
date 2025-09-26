@@ -45,7 +45,11 @@ docs/
 │   │   ├── COMPREHENSIVE_FEATURES_GUIDE.md
 │   │   ├── v3_MATHEMATICAL_VISUALIZATION_GUIDE.md
 │   │   ├── BITNET_KIMI_INTEGRATION_PLAN.md
-│   │   └── [36 more system documents]
+│   │   ├── MOCK_ELIMINATION_TRANSFORMATION.md  # 🎯 Complete mock elimination documentation
+│   │   ├── DATAFLOW_COMPLETE_GUIDE.md         # 🆕 Complete data flow guide
+│   │   ├── DATAFLOW_INDEX.md                   # 🆕 Data flow documentation index
+│   │   ├── dataflow_diagram.mmd                # 🆕 Visual data flow diagrams
+│   │   └── [39 more system documents]
 │   ├── technical/                   # Technical specifications
 │   │   ├── NIS_Protocol_V3_Technical_Whitepaper.md
 │   │   ├── FILE_ORGANIZATION_RULES.md
