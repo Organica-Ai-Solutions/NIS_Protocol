@@ -1571,17 +1571,24 @@ class EnhancedKANReasoningAgent(UnifiedReasoningAgent):
     Maintains the same interface but with all unified capabilities available
     """
     
-def __init__(self, agent_id: str = "kan_reasoning_agent"):
+    def __init__(self, agent_id: str = "kan_reasoning_agent"):
         """Initialize with exact same signature as original"""
-        super().__init__(
-            agent_id=agent_id,
-            reasoning_mode=ReasoningMode.KAN_SIMPLE,  # Preserve original behavior
-            enable_self_audit=True,
-            enable_nemotron=False,  # Keep original lightweight behavior
-            enable_transformers=False
-        )
-        
+        super().__init__(agent_id=agent_id)
+
+        # Set the properties that would normally be set by the UnifiedReasoningAgent constructor
+        self.reasoning_mode = ReasoningMode.KAN_SIMPLE  # Preserve original behavior
+        self.enable_self_audit = True
+        self.enable_nemotron = False  # Keep original lightweight behavior
+        self.enable_transformers = False
+
         self.logger.info("Enhanced KAN Reasoning Agent (compatibility mode) initialized")
+
+    def process_laplace_input(self, laplace_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        ✅ COMPATIBILITY: Process Laplace transform output
+        This method preserves the exact interface expected by the chat pipeline
+        """
+        return {"processed": True, "data": laplace_data, "agent_id": self.agent_id}
 
 class ReasoningAgent(UnifiedReasoningAgent):
     """

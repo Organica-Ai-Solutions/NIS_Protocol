@@ -1622,28 +1622,35 @@
         let isTyping = false;
         let currentController = null;
 
-        // DOM elements
-        const chatInput = document.getElementById('chatInput');
-        const sendBtn = document.getElementById('sendBtn');
-        const attachBtn = document.getElementById('attachBtn');
-        const commandBtn = document.getElementById('commandBtn');
-        const commandPalette = document.getElementById('commandPalette');
-        const attachmentsContainer = document.getElementById('attachments');
-        const typingIndicator = document.getElementById('typingIndicator');
-        const focusGlow = document.getElementById('focusGlow');
-        const chatMessages = document.getElementById('chatMessages');
-        const sendIcon = document.getElementById('sendIcon');
+        // DOM elements - will be initialized when DOM is ready
+        let chatInput, sendBtn, attachBtn, commandBtn, commandPalette, attachmentsContainer, typingIndicator, focusGlow, chatMessages, sendIcon;
+
+        // Initialize DOM elements when ready
+        function initializeDOMElements() {
+            chatInput = document.getElementById('chatInput');
+            sendBtn = document.getElementById('sendBtn');
+            attachBtn = document.getElementById('attachBtn');
+            commandBtn = document.getElementById('commandBtn');
+            commandPalette = document.getElementById('commandPalette');
+            attachmentsContainer = document.getElementById('attachments');
+            typingIndicator = document.getElementById('typingIndicator');
+            focusGlow = document.getElementById('focusGlow');
+            chatMessages = document.getElementById('chatMessages');
+            sendIcon = document.getElementById('sendIcon');
+        }
 
         // Auto-resize textarea
         function adjustTextareaHeight() {
-            chatInput.style.height = '60px';
-            const newHeight = Math.max(60, Math.min(chatInput.scrollHeight, 200));
-            chatInput.style.height = newHeight + 'px';
+            if (chatInput) {
+                chatInput.style.height = '60px';
+                const newHeight = Math.max(60, Math.min(chatInput.scrollHeight, 200));
+                chatInput.style.height = newHeight + 'px';
+            }
         }
 
         // Show/hide command palette
         function showCommandPalette() {
-            if (!commandPalette) return;
+            if (!commandPalette || !chatInput) return;
             commandPalette.classList.add('show');
             updateActiveSuggestion();
         }
@@ -1680,8 +1687,10 @@
 
         // Update send button state
         function updateSendButton() {
-            const hasText = chatInput.value.trim().length > 0;
-            sendBtn.disabled = !hasText || isTyping;
+            if (chatInput && sendBtn) {
+                const hasText = chatInput.value.trim().length > 0;
+                sendBtn.disabled = !hasText || isTyping;
+            }
         }
 
         // Add attachment
@@ -1881,6 +1890,7 @@
 
         // Send message with streaming
         async function sendMessage() {
+            if (!chatInput) return;
             const message = chatInput.value.trim();
             if (!message || isTyping) return;
             
@@ -2347,8 +2357,8 @@
             }
         });
 
-        sendBtn.addEventListener('click', sendMessage);
-        attachBtn.addEventListener('click', addAttachment);
+        if (sendBtn) sendBtn.addEventListener('click', sendMessage);
+        if (attachBtn) attachBtn.addEventListener('click', addAttachment);
         
         // Modern AI Voice Input Component with Real Audio
         class ConversationalVoiceChat {
@@ -3198,16 +3208,18 @@
             }
         }
         
-        commandBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (commandPalette.classList.contains('show')) {
-                hideCommandPalette();
-            } else {
-                chatInput.value = '/';
-                chatInput.focus();
-                showCommandPalette();
-            }
-        });
+        if (commandBtn && chatInput && commandPalette) {
+            commandBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (commandPalette.classList.contains('show')) {
+                    hideCommandPalette();
+                } else {
+                    chatInput.value = '/';
+                    chatInput.focus();
+                    showCommandPalette();
+                }
+            });
+        }
 
         // Enhanced runner commands
         async function executeRunnerTool(tool, args) {
@@ -3733,14 +3745,21 @@
         
         // Initialize Modern Chat Component
         document.addEventListener('DOMContentLoaded', () => {
+            // Initialize DOM elements first
+            initializeDOMElements();
+
             window.modernChatComponent = new ModernChatComponent();
             console.log('🚀 Modern Chat Component initialized with real-time state management');
-            
+
             // Initialize development tools
             initializeDevTools();
-            
+
             // Add DEV MODE indicator to title
             document.title = "[DEV] " + document.title;
+
+            // Initial setup calls
+            adjustTextareaHeight();
+            updateSendButton();
         });
         
         // Development mode settings

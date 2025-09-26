@@ -560,11 +560,28 @@ window.NISStateClient = NISStateClient;
 window.NISStateManager = NISStateManager;
 
 // Auto-initialize if in browser environment
-if (typeof window !== 'undefined' && !window.nisStateManager) {
-    window.nisStateManager = new NISStateManager({
-        debug: true,
-        autoConnect: true
-    });
-    
-    console.log('🧠 NIS State Manager auto-initialized');
+if (typeof window !== 'undefined') {
+    // Wait for DOM to be ready before initializing
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!window.nisStateManager) {
+                window.nisStateManager = new NISStateManager({
+                    debug: true,
+                    autoConnect: true
+                });
+
+                console.log('🧠 NIS State Manager auto-initialized after DOM ready');
+            }
+        });
+    } else {
+        // DOM is already ready
+        if (!window.nisStateManager) {
+            window.nisStateManager = new NISStateManager({
+                debug: true,
+                autoConnect: true
+            });
+
+            console.log('🧠 NIS State Manager auto-initialized (DOM already ready)');
+        }
+    }
 }

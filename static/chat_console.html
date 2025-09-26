@@ -1374,24 +1374,37 @@
             try {
                 const response = await fetch('/health');
                 const health = await response.json();
-                
-                document.getElementById('provider-info').textContent = 
-                    `Providers: ${health.provider ? health.provider.join(', ') : 'None'}`;
-                
-                if (health.status === 'healthy') {
-                    document.getElementById('connection-status').textContent = 'Healthy';
-                } else {
-                    document.getElementById('connection-status').textContent = 'Degraded';
+
+                const providerInfo = document.getElementById('provider-info');
+                const connectionStatus = document.getElementById('connection-status');
+
+                if (providerInfo) {
+                    providerInfo.textContent =
+                        `Providers: ${health.provider ? health.provider.join(', ') : 'None'}`;
+                }
+
+                if (connectionStatus) {
+                    if (health.status === 'healthy') {
+                        connectionStatus.textContent = 'Healthy';
+                    } else {
+                        connectionStatus.textContent = 'Degraded';
+                    }
                 }
             } catch (error) {
-                document.getElementById('connection-status').textContent = 'Offline';
-                document.getElementById('provider-info').textContent = 'Connection Failed';
+                const connectionStatus = document.getElementById('connection-status');
+                const providerInfo = document.getElementById('provider-info');
+
+                if (connectionStatus) connectionStatus.textContent = 'Offline';
+                if (providerInfo) providerInfo.textContent = 'Connection Failed';
             }
         }
 
         function insertQuickCommand(command) {
-            document.getElementById('messageInput').value = command;
-            document.getElementById('messageInput').focus();
+            const messageInput = document.getElementById('messageInput');
+            if (messageInput) {
+                messageInput.value = command;
+                messageInput.focus();
+            }
             
             // Show performance preview for validated commands
             const commandMetrics = {
@@ -1531,6 +1544,12 @@
             console.log('🚀 sendMessage() called');
             const messageInput = document.getElementById('messageInput');
             const sendButton = document.getElementById('sendButton');
+
+            if (!messageInput || !sendButton) {
+                console.error('Required DOM elements not found');
+                return;
+            }
+
             const message = messageInput.value.trim();
             
             console.log('📝 Message:', message);
@@ -1573,7 +1592,10 @@
             // Disable input while processing
             messageInput.disabled = true;
             sendButton.disabled = true;
-            document.getElementById('typingIndicator').style.display = 'block';
+            const typingIndicator = document.getElementById('typingIndicator');
+            if (typingIndicator) {
+                typingIndicator.style.display = 'block';
+            }
 
             // Get formatting preferences
             const outputMode = safeGetElement('outputMode')?.value || 'technical';
@@ -1747,7 +1769,10 @@
                     }
 
                     // Update status
-                    document.getElementById('response-time').textContent = `Response: ${responseTime}ms`;
+                    const responseTimeElement = document.getElementById('response-time');
+                    if (responseTimeElement) {
+                        responseTimeElement.textContent = `Response: ${responseTime}ms`;
+                    }
                     
                 } else {
                     const errorContent = await response.text();
@@ -1769,7 +1794,10 @@
             // Re-enable input
             messageInput.disabled = false;
             sendButton.disabled = false;
-            document.getElementById('typingIndicator').style.display = 'none';
+            const typingIndicator = document.getElementById('typingIndicator');
+            if (typingIndicator) {
+                typingIndicator.style.display = 'none';
+            }
             messageInput.focus();
         }
 

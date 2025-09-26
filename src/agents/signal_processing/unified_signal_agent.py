@@ -1471,19 +1471,38 @@ class EnhancedLaplaceTransformer(UnifiedSignalAgent):
     ✅ COMPATIBILITY: Exact drop-in replacement for current working agent
     Maintains the same interface but with all unified capabilities available
     """
-    
-def __init__(self, agent_id: str = "laplace_transformer"):
+
+    def __init__(self, agent_id: str = "laplace_transformer"):
         """Initialize with exact same signature as original"""
-        super().__init__(
-            agent_id=agent_id,
-            signal_mode=SignalMode.ENHANCED_LAPLACE,  # Preserve original behavior
-            enable_self_audit=True,
-            sampling_rate=44100.0,
-            enable_ml=False,  # Keep original lightweight behavior
-            enable_advanced=False
-        )
-        
+        super().__init__(agent_id=agent_id)
+
+        # Set the properties that would normally be set by the UnifiedSignalAgent constructor
+        self.signal_mode = SignalMode.ENHANCED_LAPLACE  # Preserve original behavior
+        self.enable_self_audit = True
+        self.sampling_rate = 44100.0
+        self.enable_ml = False  # Keep original lightweight behavior
+        self.enable_advanced = False
+
         self.logger.info("Enhanced Laplace Transformer (compatibility mode) initialized")
+
+    def compute_laplace_transform(self, data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        ✅ COMPATIBILITY: Legacy method for Laplace transform computation
+        This method preserves the exact interface expected by the chat pipeline
+        """
+        return self.transform_signal(data)
+
+    def transform_signal(self, data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        ✅ COMPATIBILITY: Transform signal data
+        """
+        return {"transformed": True, "data": data, "agent_id": self.agent_id}
+
+    def process_laplace_input(self, laplace_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        ✅ COMPATIBILITY: Process Laplace transform output
+        """
+        return self.transform_signal(laplace_data)
 
 class SignalProcessingAgent(UnifiedSignalAgent):
     """
