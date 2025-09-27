@@ -1637,6 +1637,53 @@
             focusGlow = document.getElementById('focusGlow');
             chatMessages = document.getElementById('chatMessages');
             sendIcon = document.getElementById('sendIcon');
+            
+            // Set up event listeners after DOM elements are found
+            if (sendBtn) sendBtn.addEventListener('click', sendMessage);
+            if (attachBtn) attachBtn.addEventListener('click', addAttachment);
+            
+            // Set up chat input event listeners
+            if (chatInput) {
+                chatInput.addEventListener('focus', () => {
+                    if (focusGlow) focusGlow.classList.add('active');
+                });
+
+                chatInput.addEventListener('blur', () => {
+                    if (focusGlow) focusGlow.classList.remove('active');
+                });
+
+                chatInput.addEventListener('keydown', (e) => {
+                    if (commandPalette && commandPalette.classList.contains('show')) {
+                        try {
+                            const items = commandPalette.querySelectorAll('.command-item');
+                            
+                            if (e.key === 'ArrowDown') {
+                                e.preventDefault();
+                                activeSuggestion = activeSuggestion < items.length - 1 ? activeSuggestion + 1 : 0;
+                                updateActiveSuggestion();
+                            } else if (e.key === 'ArrowUp') {
+                                e.preventDefault();
+                                activeSuggestion = activeSuggestion > 0 ? activeSuggestion - 1 : items.length - 1;
+                                updateActiveSuggestion();
+                            } else if (e.key === 'Tab' || e.key === 'Enter') {
+                                e.preventDefault();
+                                if (activeSuggestion >= 0) {
+                                    const selectedItem = items[activeSuggestion];
+                                    applyCommand(selectedItem.getAttribute('data-prefix'));
+                                }
+                            } else if (e.key === 'Escape') {
+                                e.preventDefault();
+                                hideCommandPalette();
+                            }
+                        } catch (error) {
+                            console.warn('Error handling command palette navigation:', error);
+                        }
+                    } else if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        sendMessage();
+                    }
+                });
+            }
         }
 
         // Auto-resize textarea
@@ -2312,48 +2359,6 @@
             }
         });
 
-        chatInput.addEventListener('focus', () => {
-            focusGlow.classList.add('active');
-        });
-
-        chatInput.addEventListener('blur', () => {
-            focusGlow.classList.remove('active');
-        });
-
-        chatInput.addEventListener('keydown', (e) => {
-            if (commandPalette && commandPalette.classList.contains('show')) {
-                try {
-                    const items = commandPalette.querySelectorAll('.command-item');
-                    
-                    if (e.key === 'ArrowDown') {
-                        e.preventDefault();
-                        activeSuggestion = activeSuggestion < items.length - 1 ? activeSuggestion + 1 : 0;
-                        updateActiveSuggestion();
-                } else if (e.key === 'ArrowUp') {
-                    e.preventDefault();
-                    activeSuggestion = activeSuggestion > 0 ? activeSuggestion - 1 : items.length - 1;
-                    updateActiveSuggestion();
-                } else if (e.key === 'Tab' || e.key === 'Enter') {
-                    e.preventDefault();
-                    if (activeSuggestion >= 0) {
-                        const selectedItem = items[activeSuggestion];
-                        applyCommand(selectedItem.getAttribute('data-prefix'));
-                    }
-                } else if (e.key === 'Escape') {
-                    e.preventDefault();
-                    hideCommandPalette();
-                }
-                } catch (error) {
-                    console.warn('Error handling command palette navigation:', error);
-                }
-            } else if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-            }
-        });
-
-        if (sendBtn) sendBtn.addEventListener('click', sendMessage);
-        if (attachBtn) attachBtn.addEventListener('click', addAttachment);
         
         // Modern AI Voice Input Component with Real Audio
         class ConversationalVoiceChat {
