@@ -77,23 +77,18 @@ curl -X POST http://localhost/chat \
 - ✅ **Safe Mode**: `./start_safe.sh` (recommended for development)
 - ⚠️ **Production Mode**: Configure API keys in `.env` first, then `./start.sh`
 
-## 🎯 What is NIS Protocol?
+## 🎯 **Platform Overview**
 
-**The world's most comprehensive AI Operating System** - a complete platform that transforms how organizations deploy intelligent automation. Unlike fragmented AI tools, NIS Protocol provides a unified ecosystem combining scientific reasoning, multi-agent coordination, voice processing, persistent memory, and enterprise deployment in one production-ready platform.
+**Complete AI Operating System** with proven deployments across automotive, aerospace, smart cities, space exploration, and financial markets.
 
-**🏆 INDUSTRY RECOGNITION:** Proven across automotive, aerospace, smart cities, space exploration, and financial markets with real-world deployments and enterprise adoption.
-
-### **🏆 MATURE PLATFORM ACHIEVEMENTS (v3.2.1)**
-
-**From Prototype to Production-Ready AI Operating System:**
-- **📈 7,400+ Lines of Code** - Comprehensive enterprise-grade implementation
-- **🔧 30+ Working API Endpoints** - Complete functionality with 100% reliability
-- **🧠 Multi-Agent Orchestration** - Consciousness service, protocol bridge, agent coordination
-- **🎙️ Voice Processing Pipeline** - Multi-speaker synthesis with real-time streaming
-- **💾 Enhanced Memory System** - Persistent conversation intelligence and context management
-- **🔌 MCP Protocol Integration** - Industry-standard connectivity with LangGraph compatibility
-- **🐳 Production Deployment** - Docker containerization with enterprise reliability
-- **🚀 NVIDIA NeMo Ready** - Enterprise AI acceleration and GPU optimization
+**🏆 PRODUCTION-READY ACHIEVEMENTS:**
+- **📈 7,400+ Lines** - Enterprise-grade implementation
+- **🔧 30+ API Endpoints** - 100% reliability tested
+- **🧠 Multi-Agent System** - Consciousness service + protocol bridge
+- **🎙️ Voice Processing** - Multi-speaker real-time streaming
+- **💾 Enhanced Memory** - Persistent conversation intelligence
+- **🔌 MCP Integration** - Industry-standard connectivity
+- **🐳 Docker Deployment** - Production-ready containerization
 
 ### **🚀 NEW in v3.2.1: Advanced Tool Optimization**
 
@@ -129,152 +124,51 @@ Based on latest research in agent tool effectiveness, NIS Protocol now includes:
 - **IoT Networks**: Coordinated intelligence across sensor networks
 - **Development Platform**: SDK for building custom AI agents and applications
 
-## 🎙️ **VibeVoice Multi-Speaker Communication (NEW!)**
+## 🎙️ **Voice Processing System**
 
-### **🔊 Real-Time Audio Streaming (Like GPT-5/Grok)**
+**Multi-speaker voice synthesis** with real-time streaming capabilities:
 
-NIS Protocol now integrates **Microsoft VibeVoice** for frontier-level text-to-speech capabilities:
+- **🎭 4 Distinct Speakers** - Consciousness, Physics, Research, Coordination agents
+- **⚡ Real-time Streaming** - <50ms latency with WebSocket support
+- **🔄 Dynamic Switching** - Agent voice changes in conversations
+- **⏱️ Long-form Generation** - Up to 90-minute content support
 
 ```bash
-# Test communication status
-curl http://localhost:8000/communication/status
-
-# Synthesize speech with different speakers
+# Test voice synthesis
 curl -X POST http://localhost:8000/communication/synthesize \
   -H "Content-Type: application/json" \
-  -d '{"text": "Hello from consciousness agent", "speaker": "consciousness", "emotion": "thoughtful"}'
-
-# Create multi-agent dialogue
-curl -X POST http://localhost:8000/communication/agent_dialogue \
-  -H "Content-Type: application/json" \
-  -d '{
-    "agents_content": {
-      "consciousness": "I am analyzing the system state",
-      "physics": "Energy conservation is validated", 
-      "research": "Data analysis complete",
-      "coordination": "All agents synchronized"
-    },
-    "dialogue_style": "conversation"
-  }'
-
-# Real-time streaming demo
-curl -X POST http://localhost:8000/communication/stream/demo
+  -d '{"text": "Hello from NIS Protocol", "speaker": "consciousness"}'
 ```
 
-### **🎭 Speaker Voices & Capabilities**
+## 🧠 **Agent Architecture**
 
-| Speaker | Voice Profile | Use Case |
-|---------|---------------|----------|
-| **Consciousness** | Deep, thoughtful | System awareness, introspection |
-| **Physics** | Clear, authoritative | Physics validation, explanations |
-| **Research** | Analytical, precise | Research findings, data analysis |
-| **Coordination** | Warm, collaborative | Agent coordination, user interaction |
-
-**✨ VibeVoice Features:**
-- **🎭 4 Distinct Speakers** - Each agent has unique voice characteristics
-- **⏱️ 90-minute Generation** - Long-form content like podcasts
-- **⚡ Real-time Streaming** - <50ms latency like major AI models
-- **🔄 Voice Switching** - Dynamic speaker changes in conversations
-- **🎨 Emotion Control** - Thoughtful, explanatory, collaborative tones
-- **🔊 WebSocket Streaming** - Live audio like GPT-5/Grok
-
-## 🧠 **Brain-like Agent Orchestration System**
-
-**NEW IN v3.2.1**: NIS Protocol now features an intelligent agent orchestration system that mimics human brain architecture for efficient AI resource management.
-
-### **Core Architecture**
+**Brain-inspired orchestration system** with intelligent resource management:
 
 ```
-🧠 Optimized NIS Brain Architecture (v3.2.1)
-├── Core Agents (Brain Stem) - Always Active, Optimized Naming
-│   ├── laplace_signal_processor (Signal Processing with Token Efficiency)
-│   ├── kan_reasoning_engine (KAN Networks with Interpretable Functions) 
-│   ├── physics_validator (PINN with Auto-correction)
-│   ├── consciousness (Self-awareness with Response Optimization)
-│   ├── memory (Consolidated Storage & Retrieval Operations)
-│   └── coordination (Meta-level with Performance Tracking)
-├── Consolidated Specialized Agents (Cerebral Cortex) - Reduced Overlap
-│   ├── multimodal_analysis_engine (Vision + Document Analysis Combined)
-│   ├── research_and_search_engine (Web Search + Deep Research Combined)
-│   └── nvidia_simulation (Physics Simulation with Enhanced Integration)
-├── Protocol Agents (Nervous System) - Event Driven, Enhanced Responses
-│   ├── Agent-to-Agent (A2A) with Response Format Controls
-│   └── Model Context Protocol (MCP) with Token Efficiency
-└── Learning Agents (Hippocampus) - Adaptive, Consolidated Operations
-    ├── Continuous Learning with Performance Metrics
-    └── BitNet Training with Optimization Analytics
+🧠 NIS Protocol Architecture
+├── Core Agents (Always Active)
+│   ├── Signal Processing (Laplace transforms)
+│   ├── KAN Reasoning (Interpretable functions)
+│   ├── Physics Validator (PINN auto-correction)
+│   ├── Consciousness (Self-awareness)
+│   └── Memory & Coordination
+├── Specialized Agents (Context-Activated)
+│   ├── Multimodal Analysis (Vision + documents)
+│   ├── Research Engine (Web search + analysis)
+│   └── NVIDIA Simulation
+└── Protocol Integration
+    ├── MCP (Model Context Protocol)
+    └── WebSocket State Management
 ```
 
-### **🚀 Enhanced Key Features (v3.2.1)**
+**Key Features:**
+- **🎯 Smart Activation** - Context-based agent deployment
+- **⚡ Token Efficiency** - 67% reduction in response tokens
+- **🔄 Consolidated Workflows** - Multi-step operations combined
+- **📊 Performance Analytics** - Real-time optimization metrics
 
-- **🎯 Smart Activation**: Agents activate based on context, dependencies, and user needs
-- **🔧 Tool Optimization**: Clear namespacing and consolidated operations reduce agent confusion
-- **⚡ Token Efficiency**: 67% reduction in response tokens with intelligent format selection
-- **🔄 Consolidated Workflows**: Multi-step operations combined into single efficient tools
-- **📊 Performance Analytics**: Real-time tool usage metrics and optimization recommendations
-- **🧠 Agent Consolidation**: Reduced overlapping functionality with specialized engines
-- **🌐 WebSocket Integration**: Real-time state synchronization between backend and frontend
-- **🎮 Interactive Control**: Click-to-activate agents through the brain visualization interface
-- **📈 Response Optimization**: Context-aware information prioritization and semantic identifier resolution
-- **🎙️ VibeVoice TTS**: Microsoft VibeVoice integration for multi-speaker conversations (4 speakers, 90min)
-- **🔊 Real-time Streaming**: Live audio streaming like GPT-5/Grok with <50ms latency
-- **🗣️ Voice Switching**: Dynamic speaker switching in real-time conversations
-
-### **🔧 Tool Optimization API Endpoints**
-
-```bash
-# Get optimized tool definitions with clear namespacing
-GET /api/tools/enhanced
-
-# Get tool performance metrics and efficiency statistics
-GET /api/tools/optimization/metrics
-
-# Use optimized chat with token efficiency controls
-POST /chat/optimized
-{
-  "message": "Analyze this data",
-  "response_format": "concise",  # 67% token reduction
-  "token_limit": 500,
-  "page": 1,
-  "page_size": 20,
-  "filters": {"priority": "high"}
-}
-
-# Enhanced agent processing with consolidated operations
-POST /api/agents/process
-{
-  "input": {
-    "text": "Search datasets and analyze physics", 
-    "context": "research_workflow",
-    "response_format": "detailed"
-  }
-}
-```
-
-### **🧠 Brain Orchestration API Endpoints**
-
-```bash
-# Get all agent statuses with optimization metrics
-GET /api/agents/status
-
-# Get specific agent status with performance data
-GET /api/agents/{agent_id}/status
-
-# Activate consolidated agents
-POST /api/agents/activate
-{
-  "agent_id": "multimodal_analysis_engine",  # Consolidated vision + documents
-  "context": "user_request",
-  "force": false
-}
-```
-
-### **Real-time Brain Visualization**
-
-Access the enhanced agent chat with live brain monitoring:
-- **URL**: `http://localhost:8000/enhanced`
-- **Features**: Interactive brain regions, real-time agent status, neural connection animation
-- **Controls**: Click agents to activate, brain regions to filter, test buttons for demonstrations
+**Access Enhanced Interface:**
+- **URL**: `http://localhost:8000/enhanced` - Interactive brain visualization with real-time agent monitoring
 
 ## 🏭 Industry Use Cases
 
@@ -707,59 +601,24 @@ Security: Do not commit `.env`. Keep secrets out of version control. Only share 
 
 🛡️ **BILLING PROTECTION**: The system defaults to mock responses to prevent unexpected API charges. Use `./start_safe.sh` for safe development.
 
-#### Example `.env.example`
+#### Essential Configuration
 
 ```bash
-# 🔑 NIS Protocol v3 - LLM Provider API Keys (BILLING RISK)
-# ⚠️ WARNING: Real API keys will generate charges!
-# 🛡️ For safe development, use ./start_safe.sh (mock responses only)
-# Get your API keys from the respective provider websites:
-# • OpenAI: https://platform.openai.com/api-keys
-# • Anthropic: https://console.anthropic.com/
-# • DeepSeek: https://platform.deepseek.com/
-# • Google: https://makersuite.google.com/app/apikey
+# LLM Provider API Keys (at least one required)
+OPENAI_API_KEY=your_openai_api_key
+ANTHROPIC_API_KEY=your_anthropic_api_key
+DEEPSEEK_API_KEY=your_deepseek_api_key
 
-# 🛡️ BILLING PROTECTION (uncomment only for production)
-# OPENAI_API_KEY=your_openai_api_key
-# ANTHROPIC_API_KEY=your_anthropic_api_key
-# DEEPSEEK_API_KEY=your_deepseek_api_key
-# GOOGLE_API_KEY=your_google_api_key
+# Billing Protection (safe mode)
+FORCE_MOCK_MODE=true  # Set to false for production
 
-# Force mock mode for safety (set to false only for production)
-FORCE_MOCK_MODE=true
-DISABLE_REAL_API_CALLS=true
-
-# Infrastructure Configuration (Docker defaults)
-COMPOSE_PROJECT_NAME=nis-protocol-v3
+# Infrastructure (Docker defaults)
 DATABASE_URL=postgresql://nis_user:nis_password_2025@postgres:5432/nis_protocol_v3
 KAFKA_BOOTSTRAP_SERVERS=kafka:9092
 REDIS_HOST=redis
-REDIS_PORT=6379
-REDIS_DB=0
-
-# Application Configuration
-NIS_ENV=production
-LOG_LEVEL=INFO
-API_HOST=0.0.0.0
-API_PORT=8000
-DASHBOARD_PORT=5000
-
-# Monitoring Configuration
-GRAFANA_ADMIN_PASSWORD=nis_admin_2025
-
-# CDS (Copernicus Climate Data Store) API Configuration (optional)
-CDS_API_URL=https://cds.climate.copernicus.eu/api
-CDS_API_KEY=your_user_id:your_api_key
-
-# NVIDIA API (optional)
-NVIDIA_API_KEY=your_key_here
-
-# Google Imagen (optional)
-GCP_PROJECT_ID=your_project_id
-GCP_LOCATION=us-central1
-# Service account file is mounted at runtime via docker-compose
-# GOOGLE_SERVICE_ACCOUNT_KEY=/app/service-account-key.json
 ```
+
+See `.env.example` for complete configuration options.
 
 Tips:
 - Do not wrap values in quotes and avoid leading/trailing spaces.
