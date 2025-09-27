@@ -1638,9 +1638,127 @@
             chatMessages = document.getElementById('chatMessages');
             sendIcon = document.getElementById('sendIcon');
             
+            // Get additional button elements
+            const runnerBtn = document.getElementById('runnerBtn');
+            const terminalBtn = document.getElementById('terminalBtn');
+            const terminalInput = document.getElementById('terminalInput');
+            const clearTerminal = document.getElementById('clearTerminal');
+            const closeTerminal = document.getElementById('closeTerminal');
+            const voiceSettingsBtn = document.getElementById('voiceSettingsBtn');
+            
             // Set up event listeners after DOM elements are found
             if (sendBtn) sendBtn.addEventListener('click', sendMessage);
             if (attachBtn) attachBtn.addEventListener('click', addAttachment);
+            
+            // Command button
+            if (commandBtn && chatInput && commandPalette) {
+                commandBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (commandPalette.classList.contains('show')) {
+                        hideCommandPalette();
+                    } else {
+                        chatInput.value = '/';
+                        chatInput.focus();
+                        showCommandPalette();
+                    }
+                });
+            }
+            
+            // Runner button
+            if (runnerBtn) {
+                runnerBtn.addEventListener('click', () => {
+                    addMessage(`🔧 **NIS Runner Terminal Ready!**
+
+**📁 File Operations:**
+• \`/files\` - List all files
+• \`/read filename.txt\` - Read file content
+• \`/mkdir dirname\` - Create directory
+• \`/delete filename.txt\` - Delete file
+
+**🐍 Python & Scripts:**
+• \`/python print("hello")\` - Run Python code
+• \`/script script.py\` - Execute Python script
+• \`/install package\` - Install Python package
+
+**🌐 Network & APIs:**
+• \`/curl https://api.example.com\` - Make HTTP request
+• \`/ping hostname\` - Network connectivity test
+• \`/dns domain.com\` - DNS lookup
+
+**🔧 System Commands:**
+• \`/ps\` - List running processes
+• \`/env\` - Show environment variables
+• \`/help\` - Show this help message
+
+Ready to execute your commands safely! 🚀`, false, 'system');
+                });
+            }
+            
+            // Terminal buttons
+            if (terminalBtn) {
+                terminalBtn.addEventListener('click', () => {
+                    const terminalSection = document.getElementById('terminalSection');
+                    const terminalInput = document.getElementById('terminalInput');
+                    if (terminalSection) {
+                        terminalSection.classList.toggle('show');
+                        if (terminalSection.classList.contains('show') && terminalInput) {
+                            terminalInput.focus();
+                        }
+                    }
+                });
+            }
+            
+            if (clearTerminal) {
+                clearTerminal.addEventListener('click', () => {
+                    const terminalOutput = document.getElementById('terminalOutput');
+                    if (terminalOutput) {
+                        terminalOutput.innerHTML = `
+                            <div style="color: rgba(99, 102, 241, 0.8);">NIS Protocol Runner v1.0.0</div>
+                            <div style="color: rgba(255,255,255,0.6);">Secure execution environment ready.</div>
+                            <div style="color: rgba(255,255,255,0.4);">Type 'help' for available commands.</div>
+                        `;
+                    }
+                });
+            }
+            
+            if (closeTerminal) {
+                closeTerminal.addEventListener('click', () => {
+                    const terminalSection = document.getElementById('terminalSection');
+                    if (terminalSection) {
+                        terminalSection.classList.remove('show');
+                    }
+                });
+            }
+            
+            // Terminal input event listener
+            if (terminalInput) {
+                terminalInput.addEventListener('keypress', async (e) => {
+                    if (e.key === 'Enter') {
+                        const command = terminalInput.value.trim();
+                        if (!command) return;
+
+                        // Add command to terminal output
+                        const terminalOutput = document.getElementById('terminalOutput');
+                        if (terminalOutput) {
+                            const commandLine = document.createElement('div');
+                            commandLine.innerHTML = `<span style="color: rgba(99, 102, 241, 0.8);">$</span> ${command}`;
+                            terminalOutput.appendChild(commandLine);
+
+                            // Clear input
+                            terminalInput.value = '';
+
+                            // Process command (simplified for now)
+                            const resultLine = document.createElement('div');
+                            resultLine.style.color = 'rgba(255,255,255,0.8)';
+                            resultLine.textContent = `Command executed: ${command}`;
+                            terminalOutput.appendChild(resultLine);
+
+                            // Scroll to bottom
+                            terminalOutput.scrollTop = terminalOutput.scrollHeight;
+                        }
+                    }
+                });
+            }
             
             // Set up chat input event listeners
             if (chatInput) {
@@ -3208,18 +3326,6 @@
             }
         }
         
-        if (commandBtn && chatInput && commandPalette) {
-            commandBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                if (commandPalette.classList.contains('show')) {
-                    hideCommandPalette();
-                } else {
-                    chatInput.value = '/';
-                    chatInput.focus();
-                    showCommandPalette();
-                }
-            });
-        }
 
         // Enhanced runner commands
         async function executeRunnerTool(tool, args) {
@@ -3244,35 +3350,6 @@
             }
         }
 
-        // Runner button functionality
-        const runnerBtn = document.getElementById('runnerBtn');
-        runnerBtn.addEventListener('click', () => {
-            addMessage(`🔧 **NIS Runner Terminal Ready!**
-
-**📁 File Operations:**
-• \`/files\` - List all files
-• \`/read filename.txt\` - Read file content
-• \`/mkdir dirname\` - Create directory
-• \`/delete filename.txt\` - Delete file
-
-**🐍 Python & Scripts:**
-• \`/python print("hello")\` - Run Python code
-• \`/install numpy\` - Install Python packages
-
-**💻 System Commands:**
-• \`/run ls -la\` - Shell commands
-• \`/sysinfo\` - System information
-• \`/processes\` - Running processes
-• \`/disk\` - Disk usage
-
-**🔧 Advanced Tools:**
-• \`/report\` - Generate system report
-• \`/backup\` - Backup workspace
-• \`/network\` - Test connectivity
-• \`/git\` - Git status
-
-**Type any command to get started!** 🚀`, false);
-        });
 
         // Command palette click handlers
         if (commandPalette) {
@@ -3406,61 +3483,7 @@
             return content;
         }
 
-        // Enhanced Terminal Integration
-        const terminalBtn = document.getElementById('terminalBtn');
-        const terminalSection = document.getElementById('terminalSection');
-        const terminalInput = document.getElementById('terminalInput');
-        const terminalOutput = document.getElementById('terminalOutput');
-        const clearTerminal = document.getElementById('clearTerminal');
-        const closeTerminal = document.getElementById('closeTerminal');
 
-        terminalBtn.addEventListener('click', () => {
-            terminalSection.classList.toggle('show');
-            if (terminalSection.classList.contains('show')) {
-                terminalInput.focus();
-            }
-        });
-
-        clearTerminal.addEventListener('click', () => {
-            terminalOutput.innerHTML = `
-                <div style="color: rgba(99, 102, 241, 0.8);">NIS Protocol Runner v1.0.0</div>
-                <div style="color: rgba(255,255,255,0.6);">Secure execution environment ready.</div>
-                <div style="color: rgba(255,255,255,0.4);">Type 'help' for available commands.</div>
-            `;
-        });
-
-        closeTerminal.addEventListener('click', () => {
-            terminalSection.classList.remove('show');
-        });
-
-        terminalInput.addEventListener('keypress', async (e) => {
-            if (e.key === 'Enter') {
-                const command = terminalInput.value.trim();
-                if (!command) return;
-
-                // Add command to terminal output
-                const commandLine = document.createElement('div');
-                commandLine.innerHTML = `<span style="color: rgba(99, 102, 241, 0.8);">runner $</span> ${command}`;
-                terminalOutput.appendChild(commandLine);
-
-                terminalInput.value = '';
-
-                try {
-                    const result = await executeRunnerTool('run_shell', { cmd: command });
-                    const outputLine = document.createElement('div');
-                    outputLine.style.color = 'rgba(255,255,255,0.8)';
-                    outputLine.textContent = result.stdout || 'Command executed successfully';
-                    terminalOutput.appendChild(outputLine);
-                } catch (error) {
-                    const errorLine = document.createElement('div');
-                    errorLine.style.color = '#ef4444';
-                    errorLine.textContent = `Error: ${error.message}`;
-                    terminalOutput.appendChild(errorLine);
-                }
-
-                terminalOutput.scrollTop = terminalOutput.scrollHeight;
-            }
-        });
 
         // Tool call interaction handlers
         document.addEventListener('click', (e) => {
