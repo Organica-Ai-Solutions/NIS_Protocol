@@ -1648,13 +1648,7 @@
                     const requestData = {
                         message: message,
                         user_id: safeGetElement('userId')?.value || 'anonymous',
-                        conversation_id: conversationId,
-                        agent_type: safeGetElement('agentType')?.value || 'reasoning',
-                        provider: safeGetElement('provider')?.value || 'auto',
-                        output_mode: outputMode,
-                        audience_level: audienceLevel,
-                        include_visuals: includeVisuals,
-                        show_confidence: showConfidence
+                        conversation_id: conversationId || 'classic_chat_' + Date.now()
                     };
                     console.log('📦 Request data:', requestData);
                     

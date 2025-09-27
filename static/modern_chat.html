@@ -2152,11 +2152,7 @@
                     body: JSON.stringify({
                         message: message,
                         user_id: 'user_' + Date.now(),
-                        agent_type: 'reasoning',
-                        provider: 'anthropic',
-                        stream: true,
-                        include_reasoning: true,
-                        include_tools: true
+                        conversation_id: 'modern_chat_' + Date.now()
                     }),
                     signal: currentController.signal
                 });
@@ -2171,8 +2167,7 @@
                         body: JSON.stringify({
                             message: message,
                             user_id: 'user_' + Date.now(),
-                            agent_type: 'reasoning',
-                            provider: 'anthropic'
+                            conversation_id: 'modern_chat_' + Date.now()
                         }),
                         signal: currentController.signal
                     });

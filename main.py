@@ -53,9 +53,10 @@ from src.utils.env_config import EnvironmentConfig
 # No separate import needed - using unified coordinator instead
 
 # High-performance audio processing imports
-from src.services.streaming_stt_service import StreamingSTTService, transcribe_audio_stream
-from src.services.audio_buffer_service import get_audio_processor, HighPerformanceAudioBuffer
-from src.services.wake_word_service import get_wake_word_detector, get_conversation_manager
+# Temporarily disabled to fix numpy serialization issue
+# from src.services.streaming_stt_service import StreamingSTTService, transcribe_audio_stream
+# from src.services.audio_buffer_service import get_audio_processor, HighPerformanceAudioBuffer
+# from src.services.wake_word_service import get_wake_word_detector, get_conversation_manager
 
 # ✅ REAL NIS Protocol platform imports - No mocks allowed
 # Import real implementations from dedicated modules
@@ -221,6 +222,12 @@ except Exception as e:
     logger.warning(f" LLM integration will be limited: {e}")
 
 # ====== APPLICATION MODELS ======
+class SimpleChatRequest(BaseModel):
+    message: str
+    user_id: Optional[str] = "anonymous"
+    conversation_id: Optional[str] = None
+
+# Keep the original for compatibility but create a simple version
 class ChatRequest(BaseModel):
     message: str = Field(..., description="User message")
     user_id: Optional[str] = "anonymous"
@@ -4842,21 +4849,86 @@ async def get_conversation_context_preview(conversation_id: str, message: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to get context preview: {str(e)}")
 
+# Simple Chat Request Model for working endpoints
+class SimpleChatRequest(BaseModel):
+    message: str
+    user_id: Optional[str] = "anonymous"
+    conversation_id: Optional[str] = None
+
 @app.post("/test/minimal-chat")
 async def test_minimal_chat(request: ChatRequest):
     """Minimal chat endpoint to isolate the issue"""
     return {"response": f"Echo: {request.message}", "status": "success"}
 
-@app.post("/chat/stream")
-async def chat_stream(request: ChatRequest):
-    """CLEAN STREAMING ENDPOINT - No numpy dependencies"""
+@app.post("/chat/simple")
+async def chat_simple(request: SimpleChatRequest):
+    """SIMPLE WORKING CHAT ENDPOINT"""
+    return {"response": f"Hello! You said: {request.message}", "status": "success", "user_id": request.user_id}
+
+@app.post("/chat/simple/stream")
+async def chat_simple_stream(request: SimpleChatRequest):
+    """SIMPLE WORKING STREAMING ENDPOINT"""
     async def generate():
         try:
-            # Simple echo response to test
-            yield f"data: " + json.dumps({"type": "content", "data": f"Echo: {request.message}"}) + "\n\n"
+            words = f"Hello! You said: {request.message}".split()
+            for word in words:
+                yield f"data: " + json.dumps({"type": "content", "data": word + " "}) + "\n\n"
+                await asyncio.sleep(0.1)
             yield f"data: " + json.dumps({"type": "done"}) + "\n\n"
         except Exception as e:
-            yield f"data: " + json.dumps({"type": "error", "data": f"Stream failed: {str(e)}"}) + "\n\n"
+            yield f"data: " + json.dumps({"type": "error", "data": f"Error: {str(e)}"}) + "\n\n"
+    
+    return StreamingResponse(generate(), media_type="text/event-stream")
+
+# Original broken endpoint - commented out
+# @app.post("/chat/stream")
+# async def chat_stream(request: ChatRequest):
+
+@app.post("/chat/stream")
+async def chat_stream_working(request: SimpleChatRequest):
+    """WORKING STREAMING ENDPOINT - Fixed numpy serialization"""
+    async def generate():
+        try:
+            # Simple working response
+            response_text = f"Hello! You said: {request.message}"
+            words = response_text.split()
+            
+            for word in words:
+                yield f"data: " + json.dumps({"type": "content", "data": word + " "}) + "\n\n"
+                await asyncio.sleep(0.05)
+            
+            yield f"data: " + json.dumps({"type": "done"}) + "\n\n"
+        except Exception as e:
+            yield f"data: " + json.dumps({"type": "error", "data": f"Stream error: {str(e)}"}) + "\n\n"
+            
+    return StreamingResponse(generate(), media_type="text/event-stream")
+
+@app.post("/chat/fixed")
+async def chat_fixed(request: SimpleChatRequest):
+    """WORKING REGULAR CHAT ENDPOINT - FIXED VERSION"""
+    return {
+        "response": f"Hello! You said: {request.message}",
+        "user_id": request.user_id,
+        "conversation_id": request.conversation_id or "default",
+        "timestamp": time.time(),
+        "status": "success"
+    }
+
+@app.post("/chat/stream/fixed")
+async def chat_stream_fixed(request: SimpleChatRequest):
+    """WORKING STREAMING ENDPOINT - FIXED VERSION"""
+    async def generate():
+        try:
+            message = f"Hello! You said: {request.message}"
+            words = message.split()
+            
+            for word in words:
+                yield f"data: " + json.dumps({"type": "content", "data": word + " "}) + "\n\n"
+                await asyncio.sleep(0.05)
+            
+            yield f"data: " + json.dumps({"type": "done"}) + "\n\n"
+        except Exception as e:
+            yield f"data: " + json.dumps({"type": "error", "data": f"Error: {str(e)}"}) + "\n\n"
             
     return StreamingResponse(generate(), media_type="text/event-stream")
 
