@@ -1364,7 +1364,10 @@
             
             // Add keyboard shortcuts
             document.getElementById('messageInput').addEventListener('keydown', function(e) {
-                if (e.ctrlKey && e.key === 'Enter') {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                } else if (e.ctrlKey && e.key === 'Enter') {
                     sendMessage();
                 }
             });
