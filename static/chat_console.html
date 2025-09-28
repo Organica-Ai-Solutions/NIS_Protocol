@@ -1381,19 +1381,19 @@
             try {
                 const response = await fetch('/health');
                 const health = await response.json();
-
+                
                 const providerInfo = document.getElementById('provider-info');
                 const connectionStatus = document.getElementById('connection-status');
 
                 if (providerInfo) {
                     providerInfo.textContent =
-                        `Providers: ${health.provider ? health.provider.join(', ') : 'None'}`;
+                    `Providers: ${health.provider ? health.provider.join(', ') : 'None'}`;
                 }
-
+                
                 if (connectionStatus) {
-                    if (health.status === 'healthy') {
+                if (health.status === 'healthy') {
                         connectionStatus.textContent = 'Healthy';
-                    } else {
+                } else {
                         connectionStatus.textContent = 'Degraded';
                     }
                 }
@@ -1599,7 +1599,7 @@
             // Disable input while processing
             messageInput.disabled = true;
             sendButton.disabled = true;
-            const typingIndicator = document.getElementById('typingIndicator');
+            let typingIndicator = document.getElementById('typingIndicator');
             if (typingIndicator) {
                 typingIndicator.style.display = 'block';
             }
@@ -1795,7 +1795,7 @@
             // Re-enable input
             messageInput.disabled = false;
             sendButton.disabled = false;
-            const typingIndicator = document.getElementById('typingIndicator');
+            typingIndicator = document.getElementById('typingIndicator');
             if (typingIndicator) {
                 typingIndicator.style.display = 'none';
             }
