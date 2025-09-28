@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' http: https: data: blob: 'unsafe-inline'; connect-src 'self' ws: wss: http: https:; script-src 'self' 'unsafe-inline' 'unsafe-eval';">
     <title>NIS Protocol v3.2 - VibeVoice Chat Console</title>
     
     <!-- Include marked.js for Markdown parsing -->
@@ -1333,7 +1334,7 @@
                     <button id="voiceButton" title="Voice responses (like Grok/GPT)" style="margin-right: 8px; background: none; border: 1px solid #374151; color: #6b7280; font-size: 16px; cursor: pointer; padding: 8px 12px; border-radius: 4px;">
                         🎙️ Voice
                     </button>
-                    <button id="sendButton" onclick="sendMessage()">Send</button>
+                    <button id="sendButton">Send</button>
                 </div>
             </div>
             
@@ -1371,6 +1372,9 @@
                     sendMessage();
                 }
             });
+            
+            // Add send button event listener
+            document.getElementById('sendButton').addEventListener('click', sendMessage);
         });
 
         async function checkSystemHealth() {

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' http: https: data: blob: 'unsafe-inline'; connect-src 'self' ws: wss: http: https:; script-src 'self' 'unsafe-inline' 'unsafe-eval';">
     <title>NIS Protocol - VibeVoice Modern Chat</title>
     
     <!-- NIS State Management System -->
@@ -1625,6 +1626,31 @@
         // DOM elements - will be initialized when DOM is ready
         let chatInput, sendBtn, attachBtn, commandBtn, commandPalette, attachmentsContainer, typingIndicator, focusGlow, chatMessages, sendIcon;
 
+        // Add message to chat (defined early for use in event listeners)
+        function addMessage(content, isUser = false) {
+            const messagesContainer = document.getElementById('chatMessages');
+            if (messagesContainer) {
+                messagesContainer.classList.add('show');
+                
+                const message = document.createElement('div');
+                message.className = `message ${isUser ? 'message-user' : 'message-assistant'}`;
+                
+                const bubble = document.createElement('div');
+                bubble.className = 'message-bubble';
+                bubble.textContent = content;
+                
+                const time = document.createElement('div');
+                time.className = 'message-time';
+                time.textContent = new Date().toLocaleTimeString();
+                
+                message.appendChild(bubble);
+                message.appendChild(time);
+                messagesContainer.appendChild(message);
+                
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+        }
+
         // Initialize DOM elements when ready
         function initializeDOMElements() {
             chatInput = document.getElementById('chatInput');
@@ -1807,9 +1833,9 @@ Ready to execute your commands safely! 🚀`, false, 'system');
         // Auto-resize textarea
         function adjustTextareaHeight() {
             if (chatInput) {
-                chatInput.style.height = '60px';
-                const newHeight = Math.max(60, Math.min(chatInput.scrollHeight, 200));
-                chatInput.style.height = newHeight + 'px';
+            chatInput.style.height = '60px';
+            const newHeight = Math.max(60, Math.min(chatInput.scrollHeight, 200));
+            chatInput.style.height = newHeight + 'px';
             }
         }
 
@@ -1853,8 +1879,8 @@ Ready to execute your commands safely! 🚀`, false, 'system');
         // Update send button state
         function updateSendButton() {
             if (chatInput && sendBtn) {
-                const hasText = chatInput.value.trim().length > 0;
-                sendBtn.disabled = !hasText || isTyping;
+            const hasText = chatInput.value.trim().length > 0;
+            sendBtn.disabled = !hasText || isTyping;
             }
         }
 
@@ -1890,28 +1916,6 @@ Ready to execute your commands safely! 🚀`, false, 'system');
             }
         }
 
-        // Add message to chat
-        function addMessage(content, isUser = false) {
-            const messagesContainer = document.getElementById('chatMessages');
-            messagesContainer.classList.add('show');
-            
-            const message = document.createElement('div');
-            message.className = `message ${isUser ? 'message-user' : 'message-assistant'}`;
-            
-            const bubble = document.createElement('div');
-            bubble.className = 'message-bubble';
-            bubble.textContent = content;
-            
-            const time = document.createElement('div');
-            time.className = 'message-time';
-            time.textContent = new Date().toLocaleTimeString();
-            
-            message.appendChild(bubble);
-            message.appendChild(time);
-            messagesContainer.appendChild(message);
-            
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }
 
         // Show typing indicator
         function showTyping() {
@@ -3773,10 +3777,10 @@ Ready to execute your commands safely! 🚀`, false, 'system');
 
             window.modernChatComponent = new ModernChatComponent();
             console.log('🚀 Modern Chat Component initialized with real-time state management');
-
+            
             // Initialize development tools
             initializeDevTools();
-
+            
             // Add DEV MODE indicator to title
             document.title = "[DEV] " + document.title;
 
