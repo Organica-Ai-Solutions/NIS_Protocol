@@ -1115,9 +1115,6 @@
             <a href="/chat/formatted" class="nav-button">
                 ✨ Modern Chat UI
             </a>
-            <a href="/enhanced" class="nav-button" style="margin-left: 8px;">
-                🚀 Enhanced Agent Chat
-            </a>
             <button id="toggleDevTools" class="nav-button" style="margin-left: 8px; background-color: #2a2a2a; cursor: pointer;">
                 🛠️ Dev Tools
             </button>
@@ -1334,6 +1331,9 @@
                     <button id="voiceButton" title="Voice responses (like Grok/GPT)" style="margin-right: 8px; background: none; border: 1px solid #374151; color: #6b7280; font-size: 16px; cursor: pointer; padding: 8px 12px; border-radius: 4px;">
                         🎙️ Voice
                     </button>
+                    <button id="micButton" title="Speak to AI (Voice Input)" style="margin-right: 8px; background: none; border: 1px solid #374151; color: #6b7280; font-size: 16px; cursor: pointer; padding: 8px 12px; border-radius: 4px;">
+                        🎤 Mic
+                    </button>
                     <button id="sendButton">Send</button>
                 </div>
             </div>
@@ -1523,16 +1523,48 @@
                 if (response.ok) {
                     const result = await response.json();
                     
-                    if (result.success) {
-                        voiceIndicator.innerHTML = '✅ Voice synthesized';
-                        voiceIndicator.style.background = 'rgba(16, 185, 129, 0.9)';
+                    if (result.success && result.audio_data) {
+                        voiceIndicator.innerHTML = '🔊 Playing voice...';
+                        voiceIndicator.style.background = 'rgba(59, 130, 246, 0.9)';
+                        
+                        // Play audio using HTML5 Audio (simpler and more reliable for MP3)
+                        try {
+                            const audio = new Audio();
+                            audio.src = `data:audio/mp3;base64,${result.audio_data}`;
+                            
+                            audio.onplay = () => {
+                                voiceIndicator.innerHTML = '🔊 Playing...';
+                                console.log('🔊 Voice playback started');
+                            };
+                            
+                            audio.onended = () => {
+                                voiceIndicator.innerHTML = '✅ Voice played';
+                                voiceIndicator.style.background = 'rgba(16, 185, 129, 0.9)';
+                                console.log('✅ Voice playback completed');
+                            };
+                            
+                            audio.onerror = (e) => {
+                                console.error('Audio playback error:', e);
+                                voiceIndicator.innerHTML = '⚠️ Playback error';
+                                voiceIndicator.style.background = 'rgba(245, 158, 11, 0.9)';
+                            };
+                            
+                            await audio.play();
+                            
+                        } catch (audioError) {
+                            console.error('Audio playback error:', audioError);
+                            voiceIndicator.innerHTML = '⚠️ Playback unavailable';
+                            voiceIndicator.style.background = 'rgba(245, 158, 11, 0.9)';
+                        }
                     } else {
                         voiceIndicator.innerHTML = '❌ Voice failed';
                         voiceIndicator.style.background = 'rgba(239, 68, 68, 0.9)';
+                        console.error('Voice synthesis failed:', result);
                     }
                 } else {
                     voiceIndicator.innerHTML = '❌ Voice error';
                     voiceIndicator.style.background = 'rgba(239, 68, 68, 0.9)';
+                    console.error('Voice endpoint error:', response.status);
                 }
                 
                 // Remove indicator after delay
@@ -1544,6 +1576,123 @@
                 
             } catch (error) {
                 console.error('Voice synthesis error:', error);
+            }
+        }
+
+        // Microphone recording functionality
+        let isRecording = false;
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let micButton = null;
+
+        async function initMicrophone() {
+            micButton = document.getElementById('micButton');
+            if (!micButton) return;
+
+            micButton.addEventListener('click', async () => {
+                if (!isRecording) {
+                    await startRecording();
+                } else {
+                    await stopRecording();
+                }
+            });
+        }
+
+        async function startRecording() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                audioChunks = [];
+
+                mediaRecorder.ondataavailable = (event) => {
+                    audioChunks.push(event.data);
+                };
+
+                mediaRecorder.onstop = async () => {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                    await processVoiceInput(audioBlob);
+                    
+                    // Stop all tracks
+                    stream.getTracks().forEach(track => track.stop());
+                };
+
+                mediaRecorder.start();
+                isRecording = true;
+                
+                // Update button appearance
+                micButton.style.color = '#ef4444';
+                micButton.style.borderColor = '#ef4444';
+                micButton.innerHTML = '⏹️ Stop';
+                micButton.title = 'Stop recording';
+                
+                // Show recording indicator
+                addMessage('system', '🎤 Recording... Speak now!');
+                
+            } catch (error) {
+                console.error('Microphone error:', error);
+                addMessage('system', '❌ Microphone access denied. Please allow microphone permissions.');
+            }
+        }
+
+        async function stopRecording() {
+            if (mediaRecorder && isRecording) {
+                mediaRecorder.stop();
+                isRecording = false;
+                
+                // Reset button appearance
+                micButton.style.color = '#6b7280';
+                micButton.style.borderColor = '#374151';
+                micButton.innerHTML = '🎤 Mic';
+                micButton.title = 'Speak to AI (Voice Input)';
+            }
+        }
+
+        async function processVoiceInput(audioBlob) {
+            try {
+                // GPT-like voice transcription
+                addMessage('system', '🔄 Transcribing your voice...');
+                
+                const reader = new FileReader();
+                reader.onloadend = async () => {
+                    const base64Audio = reader.result.split(',')[1];
+                    
+                    // Send to Whisper STT endpoint
+                    const response = await fetch('/voice/transcribe', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ audio_data: base64Audio })
+                    });
+                    
+                    if (response.ok) {
+                        const result = await response.json();
+                        const transcribedText = result.text || result.transcription || '';
+                        const engine = result.engine || 'unknown';
+                        const confidence = result.confidence || 0;
+                        
+                        if (transcribedText) {
+                            // Show what was transcribed
+                            const engineLabel = engine === 'whisper' ? '✅ Whisper' : '🧪 Test Mode';
+                            addMessage('system', `${engineLabel} (${Math.round(confidence * 100)}% confident)`);
+                            addMessage('user', `📝 "${transcribedText}"`);
+                            
+                            // Fill input and auto-send
+                            const messageInput = document.getElementById('messageInput');
+                            if (messageInput) {
+                                messageInput.value = transcribedText;
+                                setTimeout(() => sendMessage(), 300);
+                            }
+                        } else {
+                            addMessage('system', '❌ Could not transcribe audio. Please try again.');
+                        }
+                    } else {
+                        addMessage('system', '❌ Voice processing failed. Please try typing instead.');
+                    }
+                };
+                reader.readAsDataURL(audioBlob);
+                
+            } catch (error) {
+                console.error('Voice processing error:', error);
+                addMessage('system', '❌ Error processing voice. Please try again.');
             }
         }
 
@@ -1707,7 +1856,11 @@
                         });
                         
                         // Get the content element
-                        const contentElement = messageElement.querySelector('.message-content');
+                        const contentElement = messageElement?.querySelector('.message-content');
+                        if (!contentElement) {
+                            console.error('Message content element not found');
+                            return;
+                        }
                         
                         try {
                             // Process the stream
@@ -1723,7 +1876,10 @@
                                 response_time: responseTime
                             };
                             
-                            // Process stream chunks
+                            // Process stream chunks with optimization
+                            let updateCounter = 0;
+                            let rafPending = false;
+                            
                             while (true) {
                                 const { value, done } = await reader.read();
                                 if (done) break;
@@ -1739,8 +1895,18 @@
                                             if (data.type === 'content') {
                                                 // Append to response
                                                 fullResponse += data.data;
-                                                contentElement.innerHTML = formatMessage(fullResponse);
-                                                scrollToBottom();
+                                                updateCounter++;
+                                                
+                                                // Batch updates every 5 chunks or use requestAnimationFrame
+                                                if (updateCounter >= 5 && !rafPending) {
+                                                    rafPending = true;
+                                                    requestAnimationFrame(() => {
+                                                        contentElement.textContent = fullResponse;
+                                                        scrollToBottom();
+                                                        rafPending = false;
+                                                        updateCounter = 0;
+                                                    });
+                                                }
                                             } else if (data.type === 'metadata') {
                                                 // Update metadata
                                                 Object.assign(metadata, data.data);
@@ -1754,6 +1920,9 @@
                                     }
                                 }
                             }
+                            
+                            // Final update to ensure all content is displayed
+                            contentElement.textContent = fullResponse;
                             
                             // Update message with final metadata
                             updateMessageMetadata(messageElement, metadata);
@@ -1840,19 +2009,22 @@
                 messageDiv.appendChild(providerBadge);
             }
             
+            let contentDiv;
             if (content.length > 500) {  // For long content, make collapsible
                 const details = document.createElement('details');
                 const summary = document.createElement('summary');
                 summary.textContent = 'Click to expand long response';
                 details.appendChild(summary);
                 
-                const contentDiv = document.createElement('div');
+                contentDiv = document.createElement('div');
+                contentDiv.className = 'message-content';
                 contentDiv.innerHTML = processedContent;
                 details.appendChild(contentDiv);
                 
                 messageDiv.appendChild(details);
             } else {
-                const contentDiv = document.createElement('div');
+                contentDiv = document.createElement('div');
+                contentDiv.className = 'message-content';
                 contentDiv.innerHTML = processedContent;
                 messageDiv.appendChild(contentDiv);
             }
@@ -1881,6 +2053,9 @@
             
             chatMessages.appendChild(messageDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // Return the message element for streaming updates
+            return messageDiv;
         }
 
         // Helper function to get provider display information
@@ -4708,6 +4883,28 @@ Examples:
                 });
             }
             
+            updateSystemStatus(data) {
+                // Handle system status changes
+                if (data.health) {
+                    this.updateSystemHealthDisplay(data.health);
+                }
+                if (data.llm_providers) {
+                    this.updateProviderStatus(data.llm_providers);
+                }
+            }
+            
+            updateAgentStatus(data) {
+                // Handle agent status changes
+                if (data.active_agents) {
+                    this.updateActiveAgentsCount(Object.keys(data.active_agents).length);
+                }
+            }
+            
+            updateAnalytics(data) {
+                // Handle analytics updates
+                this.updateAnalyticsDisplay(data);
+            }
+            
             updateAnalyticsDisplay(analytics) {
                 // Update response time display
                 if (analytics.average_response_time) {
@@ -5029,6 +5226,11 @@ Examples:
             
             return messageElement;
         };
+
+        // Initialize microphone after DOM is ready
+        window.addEventListener('load', function() {
+            setTimeout(initMicrophone, 100);
+        });
     </script>
 
 </body>

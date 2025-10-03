@@ -28,9 +28,11 @@ NIS Protocol is a **complete AI Operating System** featuring the industry's most
 **🧠 CORE AI CAPABILITIES:**
 - **✅ Multi-Agent Orchestration** - Consciousness-driven agent coordination with protocol bridge
 - **✅ Scientific Reasoning** - Real Laplace transforms, KAN networks, and PINN physics validation
+- **✅ Intelligent Query Router** - 83% faster responses with adaptive path selection (NEW!)
+- **✅ Real LLM Integration** - OpenAI, Anthropic, Google with smart consensus
 - **✅ Voice & Audio Processing** - Multi-speaker synthesis with real-time streaming
 - **✅ Enhanced Memory System** - Persistent conversation intelligence with context awareness
-- **✅ MCP Protocol Integration** - Industry-standard connectivity with LangGraph compatibility
+- **✅ Third-Party Protocols** - MCP, A2A, ACP integration for ecosystem connectivity
 
 **🚀 ENTERPRISE FEATURES:**
 - **✅ Production-Ready Deployment** - Docker containerization with enterprise reliability
@@ -90,16 +92,42 @@ curl -X POST http://localhost/chat \
 - **🔌 MCP Integration** - Industry-standard connectivity
 - **🐳 Docker Deployment** - Production-ready containerization
 
-### **🚀 NEW in v3.2.1: Advanced Tool Optimization**
+### **🚀 NEW in v3.2: Intelligent Query Router & Performance Revolution**
 
-Based on latest research in agent tool effectiveness, NIS Protocol now includes:
+**83% Faster Responses** with smart query routing - breakthrough performance optimization:
 
-- **🔧 Optimized Tool Architecture** - Clear namespacing (`nis_`, `physics_`, `kan_`, `laplace_`) reducing agent confusion
-- **⚡ Token Efficiency** - 67% reduction in response tokens with intelligent format selection
-- **🔄 Consolidated Operations** - Multi-step workflows combined into single tool calls
-- **🎯 Context-Aware Responses** - Prioritized meaningful information over technical metadata
-- **📊 Performance Metrics** - Real-time tool usage analytics and optimization recommendations
-- **🧠 Enhanced Agent Coordination** - Consolidated multimodal and research engines
+**🎯 Intelligent Query Router** (inspired by MoE pattern):
+- **⚡ FAST Path (2-3s)** - Simple queries skip heavy processing (83% faster!)
+- **⚙️ STANDARD Path (5-10s)** - Balanced processing for normal queries
+- **🔬 FULL Path (10-15s)** - Complete pipeline for complex analysis
+- **🧠 Smart Classification** - Auto-detects query type and complexity using pattern matching
+- **📊 Real-Time Routing** - Adaptive path selection based on query characteristics
+
+**Performance Results:**
+```
+Simple Chat:  17.8s → 2.97s  (83% faster ⚡)
+Technical:    15.5s → 10.24s (34% faster)
+Physics:      16.9s → 13.21s (22% faster)
+Average:      16.7s → 8.8s   (47% overall improvement)
+```
+
+**🌐 Third-Party Protocol Integration:**
+- **MCP (Model Context Protocol)** - Anthropic's standard for context exchange
+- **A2A (Agent2Agent)** - Google's protocol for agent collaboration  
+- **ACP (Agent Communication Protocol)** - IBM's standard for agent interoperability
+- **Production-Ready** - Error handling, retry logic, circuit breakers
+
+**🤖 Real LLM Integration:**
+- **OpenAI (GPT-4 Turbo)** - High-quality general responses
+- **Anthropic (Claude 3.5 Sonnet)** - Deep reasoning capabilities
+- **Google (Gemini Pro)** - Fast, efficient processing
+- **Smart Consensus** - Multi-provider response fusion
+
+**🔧 Advanced Tool Optimization:**
+- **Clear Namespacing** - (`nis_`, `physics_`, `kan_`, `laplace_`) reducing agent confusion
+- **Token Efficiency** - 67% reduction in response tokens
+- **Consolidated Operations** - Multi-step workflows combined
+- **Performance Analytics** - Real-time optimization metrics
 
 **🧠 Brain-Inspired Agent Architecture:**
 - **Core Agents**: Always-active fundamental functions - `laplace_signal_processor`, `kan_reasoning_engine`, `physics_validator`, algorithmic self-monitoring, memory, coordination

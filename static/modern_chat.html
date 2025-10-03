@@ -9,6 +9,9 @@
     <!-- NIS State Management System -->
     <script src="/static/js/nis-state-client.js"></script>
     
+    <!-- Markdown Support -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
     <style>
         * {
             margin: 0;
@@ -1372,10 +1375,6 @@
                         <span>🔄</span>
                         Switch to Classic Chat
                     </a>
-                    <a href="/enhanced" class="classic-chat-link" style="margin-left: 12px;">
-                        <span>🚀</span>
-                        Enhanced Agent Chat
-                    </a>
                     <button id="toggleDevTools" style="margin-left: 12px; background-color: #2a2a2a; color: #3b82f6; border: 1px solid #374151; border-radius: 4px; padding: 4px 8px; cursor: pointer;">
                         <span>🛠️</span>
                         Dev Tools
@@ -1535,7 +1534,7 @@
                             🔧
                         </button>
                     </div>
-                    <button class="send-btn" id="sendBtn" disabled>
+                    <button class="send-btn" id="sendBtn">
                         <span id="sendIcon">📤</span>
                         <span>Send</span>
                     </button>
@@ -1627,17 +1626,30 @@
         let chatInput, sendBtn, attachBtn, commandBtn, commandPalette, attachmentsContainer, typingIndicator, focusGlow, chatMessages, sendIcon;
 
         // Add message to chat (defined early for use in event listeners)
-        function addMessage(content, isUser = false) {
+        function addMessage(content, isUser = false, type = 'normal') {
             const messagesContainer = document.getElementById('chatMessages');
             if (messagesContainer) {
                 messagesContainer.classList.add('show');
                 
                 const message = document.createElement('div');
                 message.className = `message ${isUser ? 'message-user' : 'message-assistant'}`;
+                if (type === 'system') {
+                    message.className = 'message message-system';
+                }
                 
                 const bubble = document.createElement('div');
                 bubble.className = 'message-bubble';
-                bubble.textContent = content;
+                
+                // Use markdown rendering for assistant messages
+                if (!isUser && typeof marked !== 'undefined') {
+                    try {
+                        bubble.innerHTML = marked.parse(content);
+                    } catch (e) {
+                        bubble.textContent = content;
+                    }
+                } else {
+                    bubble.textContent = content;
+                }
                 
                 const time = document.createElement('div');
                 time.className = 'message-time';
@@ -1673,8 +1685,21 @@
             const voiceSettingsBtn = document.getElementById('voiceSettingsBtn');
             
             // Set up event listeners after DOM elements are found
-            if (sendBtn) sendBtn.addEventListener('click', sendMessage);
+            if (sendBtn) {
+                sendBtn.addEventListener('click', sendMessage);
+                // Enable send button initially if there's text
+                sendBtn.disabled = false;
+            }
             if (attachBtn) attachBtn.addEventListener('click', addAttachment);
+            
+            // Enable/disable send button based on input
+            if (chatInput && sendBtn) {
+                chatInput.addEventListener('input', () => {
+                    const hasText = chatInput.value.trim().length > 0;
+                    sendBtn.disabled = !hasText;
+                    adjustTextareaHeight();
+                });
+            }
             
             // Command button
             if (commandBtn && chatInput && commandPalette) {
@@ -1836,6 +1861,14 @@ Ready to execute your commands safely! 🚀`, false, 'system');
             chatInput.style.height = '60px';
             const newHeight = Math.max(60, Math.min(chatInput.scrollHeight, 200));
             chatInput.style.height = newHeight + 'px';
+            }
+        }
+
+        // Update send button state
+        function updateSendButton() {
+            if (sendBtn && chatInput) {
+                const hasText = chatInput.value.trim().length > 0;
+                sendBtn.disabled = !hasText;
             }
         }
 
@@ -2374,6 +2407,11 @@ Ready to execute your commands safely! 🚀`, false, 'system');
                 messagesContainer.appendChild(messageDiv);
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
+                // Optimization: batch updates
+                let updateCounter = 0;
+                let rafPending = false;
+                const batchSize = 5;
+
                 while (true) {
                     const { done, value } = await reader.read();
                     if (done) break;
@@ -2389,22 +2427,55 @@ Ready to execute your commands safely! 🚀`, false, 'system');
                                 switch (data.type) {
                                     case 'content':
                                         assistantMessage += data.data;
-                                        bubble.innerHTML = formatMessage(assistantMessage);
-                                        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                                        updateCounter++;
+                                        
+                                        // Batch DOM updates for better performance
+                                        if (updateCounter >= batchSize && !rafPending) {
+                                            rafPending = true;
+                                            requestAnimationFrame(() => {
+                                                // Use markdown rendering for formatted text
+                                                if (typeof marked !== 'undefined') {
+                                                    try {
+                                                        bubble.innerHTML = marked.parse(assistantMessage);
+                                                    } catch (e) {
+                                                        bubble.textContent = assistantMessage;
+                                                    }
+                                                } else {
+                                                    bubble.textContent = assistantMessage;
+                                                }
+                                                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                                                rafPending = false;
+                                                updateCounter = 0;
+                                            });
+                                        }
                                         break;
                                         
                                     case 'tool_call':
                                         currentToolCalls.push(data.data);
                                         const toolElement = createToolCallElement(data.data);
                                         messageDiv.appendChild(toolElement);
-                                        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                                        // Throttle scroll updates
+                                        if (!rafPending) {
+                                            rafPending = true;
+                                            requestAnimationFrame(() => {
+                                                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                                                rafPending = false;
+                                            });
+                                        }
                                         break;
                                         
                                     case 'reasoning_step':
                                         currentReasoningSteps.push(data.data);
                                         const reasoningElement = createReasoningElement(data.data, currentReasoningSteps.length - 1);
                                         messageDiv.appendChild(reasoningElement);
-                                        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                                        // Throttle scroll updates
+                                        if (!rafPending) {
+                                            rafPending = true;
+                                            requestAnimationFrame(() => {
+                                                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                                                rafPending = false;
+                                            });
+                                        }
                                         break;
                                         
                                     case 'artifact':
@@ -2428,6 +2499,18 @@ Ready to execute your commands safely! 🚀`, false, 'system');
                         }
                     }
                 }
+                
+                // Final update to display any remaining content with markdown
+                if (typeof marked !== 'undefined') {
+                    try {
+                        bubble.innerHTML = marked.parse(assistantMessage);
+                    } catch (e) {
+                        bubble.textContent = assistantMessage;
+                    }
+                } else {
+                    bubble.textContent = assistantMessage;
+                }
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
             } catch (error) {
                 hideTyping();
@@ -2546,7 +2629,7 @@ Ready to execute your commands safely! 🚀`, false, 'system');
             async initializeWebSocket() {
                 try {
                     console.log('🔌 Connecting to voice chat WebSocket...');
-                    this.socket = new WebSocket(`ws://${window.location.host}/voice-chat`);
+                    this.socket = new WebSocket(`ws://${window.location.host}/ws/voice-chat`);
                     
                     this.socket.onopen = () => {
                         console.log('✅ Connected to NIS voice backend');
@@ -2767,12 +2850,22 @@ Ready to execute your commands safely! 🚀`, false, 'system');
                     const audioBlob = new Blob(this.audioChunks, { type: 'audio/webm' });
                     console.log(`📤 Sending ${audioBlob.size} bytes of audio data`);
                     
-                    // Send audio to backend via WebSocket
+                    // Send audio to backend via WebSocket with new protocol
                     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
                         const reader = new FileReader();
                         reader.onload = () => {
-                            const arrayBuffer = reader.result;
-                            this.socket.send(arrayBuffer);
+                            // Convert to base64
+                            const base64Audio = btoa(
+                                new Uint8Array(reader.result)
+                                    .reduce((data, byte) => data + String.fromCharCode(byte), '')
+                            );
+                            
+                            // Send JSON message with audio_input type
+                            this.socket.send(JSON.stringify({
+                                type: 'audio_input',
+                                audio_data: base64Audio
+                            }));
+                            console.log('✅ Audio sent to backend');
                         };
                         reader.readAsArrayBuffer(audioBlob);
                     } else {
@@ -2798,23 +2891,54 @@ Ready to execute your commands safely! 🚀`, false, 'system');
 
             async handleVoiceResponse(event) {
                 try {
-                    if (event.data instanceof ArrayBuffer) {
-                        // Handle binary audio data
-                        console.log('📥 Received audio response');
-                        await this.playAudioResponse(event.data);
-                    } else {
-                        // Handle JSON responses
-                        const response = JSON.parse(event.data);
-                        console.log('📥 Received JSON response:', response);
-                        
-                        if (response.text) {
-                            // Add the response to the chat
+                    const response = JSON.parse(event.data);
+                    console.log('📥 Received:', response.type, response);
+                    
+                    switch(response.type) {
+                        case 'connected':
+                            console.log('✅ Connected to voice chat:', response.session_id);
+                            this.updateStatus('Voice chat ready', 'success');
+                            break;
+                            
+                        case 'transcription':
+                            console.log('📝 Transcription:', response.text);
+                            console.log(`⏱️ STT: ${response.latency_ms}ms`);
+                            addMessage(response.text, true, 'user');
+                            this.updateStatus('Transcribed', 'success');
+                            break;
+                            
+                        case 'text_response':
+                            console.log('💬 AI Response:', response.text);
+                            console.log(`⏱️ LLM: ${response.latency_ms}ms`);
                             addMessage(response.text, false, 'assistant');
-                        }
-                        
-                        if (response.status === 'end' && response.tts_time_ms) {
-                            console.log(`✅ Voice response completed in ${response.tts_time_ms}ms`);
-                        }
+                            break;
+                            
+                        case 'audio_response':
+                            console.log('🎵 Audio received');
+                            const latency = response.latency;
+                            console.log(`⏱️ Total: ${latency.total_ms}ms (STT: ${latency.stt_ms}ms, LLM: ${latency.llm_ms}ms, TTS: ${latency.tts_ms}ms)`);
+                            
+                            // Decode and play audio
+                            const audioData = atob(response.audio_data);
+                            const audioArray = new Uint8Array(audioData.length);
+                            for (let i = 0; i < audioData.length; i++) {
+                                audioArray[i] = audioData.charCodeAt(i);
+                            }
+                            await this.playAudioFromBytes(audioArray.buffer);
+                            break;
+                            
+                        case 'status':
+                            this.updateStatus(response.stage, 'processing');
+                            break;
+                            
+                        case 'error':
+                            console.error('❌ Error:', response.message);
+                            this.updateStatus(`Error: ${response.message}`, 'error');
+                            break;
+                            
+                        case 'status_response':
+                            console.log('📊 Status:', response);
+                            break;
                     }
                 } catch (error) {
                     console.error('Failed to handle voice response:', error);
@@ -2822,9 +2946,49 @@ Ready to execute your commands safely! 🚀`, false, 'system');
                 }
             }
 
-            async playAudioResponse(audioData) {
+            async playAudioFromBytes(audioData) {
                 try {
                     console.log('🔊 Playing audio response...');
+                    this.updateStatus('Playing response...', 'playing');
+                    
+                    // Use HTML5 Audio for MP3 playback (simpler than AudioContext for MP3)
+                    const audioBlob = new Blob([audioData], { type: 'audio/mpeg' });
+                    const audioUrl = URL.createObjectURL(audioBlob);
+                    const audio = new Audio(audioUrl);
+                    
+                    audio.onended = () => {
+                        console.log('✅ Audio playback completed');
+                        URL.revokeObjectURL(audioUrl);
+                        this.updateStatus('Listening...', 'listening');
+                        
+                        // Resume listening if in conversation mode
+                        if (this.conversationMode) {
+                            setTimeout(() => this.startListening(), 500);
+                        }
+                    };
+                    
+                    audio.onerror = (error) => {
+                        console.error('Audio playback error:', error);
+                        URL.revokeObjectURL(audioUrl);
+                        this.updateStatus('Playback failed', 'error');
+                    };
+                    
+                    await audio.play();
+                    
+                } catch (error) {
+                    console.error('Failed to play audio response:', error);
+                    this.updateStatus('Audio playback failed', 'error');
+                    
+                    // Fallback to listening mode
+                    if (this.conversationMode) {
+                        setTimeout(() => this.startListening(), 500);
+                    }
+                }
+            }
+
+            async playAudioResponse(audioData) {
+                try {
+                    console.log('🔊 Playing audio response (legacy method)...');
                     this.updateStatus('Playing response...', 'playing');
                     
                     if (!this.audioContext) {
@@ -3415,7 +3579,16 @@ Ready to execute your commands safely! 🚀`, false, 'system');
                             const data = JSON.parse(line.slice(6));
                             if (data.type === 'content') {
                                 assistantMessage += data.data;
-                                bubble.textContent = assistantMessage;
+                                // Use markdown rendering for formatted text
+                                if (typeof marked !== 'undefined') {
+                                    try {
+                                        bubble.innerHTML = marked.parse(assistantMessage);
+                                    } catch (e) {
+                                        bubble.textContent = assistantMessage;
+                                    }
+                                } else {
+                                    bubble.textContent = assistantMessage;
+                                }
                                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
                             }
                         } catch (e) {
@@ -3493,8 +3666,8 @@ Ready to execute your commands safely! 🚀`, false, 'system');
         document.addEventListener('click', (e) => {
             if (e.target.closest('.tool-header')) {
                 const toolCall = e.target.closest('.tool-call');
-                const content = toolCall.querySelector('.tool-content');
-                content.classList.toggle('expanded');
+                const content = toolCall?.querySelector('.tool-content');
+                if (content) content.classList.toggle('expanded');
             }
         });
 
@@ -4042,7 +4215,7 @@ Ready to execute your commands safely! 🚀`, false, 'system');
         };
 
         // WebSocket for real-time voice chat
-        const socket = new WebSocket(`ws://${window.location.host}/voice-chat`);
+        const socket = new WebSocket(`ws://${window.location.host}/ws/voice-chat`);
         let audioChunks = [];
 
         socket.onopen = () => {

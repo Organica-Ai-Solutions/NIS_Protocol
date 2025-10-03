@@ -2,14 +2,33 @@
 NIS Protocol ACP Adapter
 
 This module provides the adapter for IBM's Agent Communication Protocol (ACP).
+Enhanced with production-grade error handling, retry logic, and monitoring.
 """
 
 import json
 import time
+import uuid
+import asyncio
+import logging
 import requests
 from typing import Dict, Any, List, Optional, Union
 
 from .base_adapter import BaseAdapter
+from .protocol_errors import (
+    ProtocolError,
+    ProtocolConnectionError,
+    ProtocolTimeoutError,
+    ProtocolAuthError,
+    ProtocolValidationError,
+    get_error_from_response
+)
+from .protocol_utils import (
+    with_retry,
+    CircuitBreaker,
+    ProtocolMetrics
+)
+
+logger = logging.getLogger(__name__)
 
 
 class ACPAdapter(BaseAdapter):
@@ -30,8 +49,18 @@ class ACPAdapter(BaseAdapter):
         Args:
             config: Configuration for the adapter, including API endpoints and auth
         """
-        super().__init__("acp", config)
+        super().__init__(config or {})
+        self.protocol_name = "acp"
         self.session = requests.Session()
+        
+        # Error handling and monitoring (Week 2)
+        self.circuit_breaker = CircuitBreaker(
+            failure_threshold=config.get("failure_threshold", 5),
+            recovery_timeout=config.get("recovery_timeout", 60),
+            success_threshold=config.get("success_threshold", 2)
+        )
+        self.metrics = ProtocolMetrics(protocol_name="acp")
+        self.default_timeout = config.get("timeout", 30)
         
         # Set default headers for API requests
         if self.config.get("api_key"):
@@ -166,4 +195,237 @@ class ACPAdapter(BaseAdapter):
                     "error": str(e),
                     "error_type": type(e).__name__
                 }
-            } 
+            }
+    
+    # =============================================================================
+    # ACP AGENT CARD (Week 3 - Offline Discovery)
+    # =============================================================================
+    
+    def export_agent_card(self) -> Dict[str, Any]:
+        """
+        Export NIS Protocol Agent Card for offline discovery.
+        
+        Per IBM ACP spec, this metadata can be embedded in package.json
+        to enable scale-to-zero and offline discovery.
+        
+        Returns:
+            Agent Card dictionary with NIS Protocol capabilities
+        """
+        return {
+            "acp": {
+                "version": "1.0",
+                "agent": {
+                    "id": "nis_protocol_v3.2",
+                    "name": "NIS Protocol",
+                    "version": "3.2",
+                    "description": "Physics-informed AI protocol with Laplace→KAN→PINN→LLM pipeline",
+                    "capabilities": [
+                        "physics_validation",
+                        "symbolic_reasoning",
+                        "consciousness_assessment",
+                        "multi_llm_orchestration",
+                        "laplace_signal_processing",
+                        "kan_interpretability",
+                        "pinn_physics_constraints"
+                    ],
+                    "endpoints": {
+                        "base": self.config.get("base_url", "http://localhost:5000"),
+                        "execute": "/api/acp/execute",
+                        "status": "/api/acp/status",
+                        "capabilities": "/api/acp/capabilities"
+                    },
+                    "authentication": {
+                        "type": "bearer",
+                        "required": bool(self.config.get("api_key"))
+                    },
+                    "metadata": {
+                        "framework": "nis-protocol",
+                        "pipeline_stages": ["laplace", "kan", "pinn", "llm"],
+                        "supports_async": True,
+                        "supports_streaming": True,
+                        "language": "python",
+                        "runtime": "docker"
+                    }
+                }
+            }
+        }
+    
+    @with_retry(max_attempts=3, backoff_base=2.0)
+    async def execute_agent(
+        self,
+        agent_url: str,
+        message: Dict[str, Any],
+        async_mode: bool = True
+    ) -> Dict[str, Any]:
+        """
+        Execute ACP agent with proper REST conventions.
+        
+        ACP uses simple REST per IBM spec:
+        POST {agent_url}/execute
+        
+        Args:
+            agent_url: Base URL of the ACP agent
+            message: Message to send
+            async_mode: True for async execution (default per ACP spec)
+            
+        Returns:
+            Agent response
+            
+        Raises:
+            ProtocolConnectionError: Failed to connect
+            ProtocolTimeoutError: Request timed out
+        """
+        start_time = time.time()
+        
+        try:
+            result = await self.circuit_breaker.call(
+                self._do_execute_agent,
+                agent_url,
+                message,
+                async_mode
+            )
+            
+            response_time = time.time() - start_time
+            self.metrics.record_request(True, response_time)
+            self.metrics.circuit_state = self.circuit_breaker.state.value
+            
+            logger.info(f"ACP execute successful in {response_time:.3f}s")
+            
+            return result
+            
+        except requests.exceptions.Timeout as e:
+            response_time = time.time() - start_time
+            self.metrics.record_request(False, response_time, "timeout")
+            self.metrics.circuit_state = self.circuit_breaker.state.value
+            raise ProtocolTimeoutError(
+                "ACP execute timed out",
+                timeout=self.default_timeout
+            ) from e
+            
+        except requests.exceptions.ConnectionError as e:
+            response_time = time.time() - start_time
+            self.metrics.record_request(False, response_time, "connection")
+            self.metrics.circuit_state = self.circuit_breaker.state.value
+            raise ProtocolConnectionError(
+                f"Failed to connect to ACP agent: {e}"
+            ) from e
+        
+        except requests.exceptions.HTTPError as e:
+            response_time = time.time() - start_time
+            status_code = e.response.status_code if e.response else 0
+            
+            try:
+                error_data = e.response.json()
+                specific_error = get_error_from_response(status_code, error_data)
+            except:
+                specific_error = ProtocolError(f"HTTP {status_code}: {e}")
+            
+            self.metrics.record_request(False, response_time, type(specific_error).__name__)
+            self.metrics.circuit_state = self.circuit_breaker.state.value
+            raise specific_error from e
+        
+        except Exception as e:
+            response_time = time.time() - start_time
+            self.metrics.record_request(False, response_time, "unknown")
+            self.metrics.circuit_state = self.circuit_breaker.state.value
+            raise
+    
+    async def _do_execute_agent(
+        self,
+        agent_url: str,
+        message: Dict[str, Any],
+        async_mode: bool
+    ) -> Dict[str, Any]:
+        """Actual execution logic (called by circuit breaker)"""
+        if async_mode:
+            # Async execution (default for ACP)
+            response = self.session.post(
+                f"{agent_url}/execute",
+                json={
+                    "input": message,
+                    "mode": "async",
+                    "callback_url": f"{self.config.get('base_url', 'http://localhost:5000')}/callbacks"
+                },
+                timeout=self.default_timeout
+            )
+            response.raise_for_status()
+            result = response.json()
+            
+            # Poll for result if task_id provided
+            if result.get("task_id"):
+                return await self._poll_task_result(agent_url, result["task_id"])
+            
+            return result
+        else:
+            # Synchronous execution
+            response = self.session.post(
+                f"{agent_url}/execute",
+                json={
+                    "input": message,
+                    "mode": "sync"
+                },
+                timeout=self.default_timeout
+            )
+            response.raise_for_status()
+            return response.json()
+    
+    async def _poll_task_result(
+        self,
+        agent_url: str,
+        task_id: str,
+        poll_interval: float = 2.0,
+        timeout: float = 300.0
+    ) -> Dict[str, Any]:
+        """Poll for async task result"""
+        start_time = time.time()
+        
+        while True:
+            if (time.time() - start_time) > timeout:
+                raise ProtocolTimeoutError(f"Task {task_id} timed out", timeout=timeout)
+            
+            response = self.session.get(
+                f"{agent_url}/results/{task_id}",
+                timeout=self.default_timeout
+            )
+            response.raise_for_status()
+            result = response.json()
+            
+            if result.get("status") in ["completed", "failed"]:
+                return result
+            
+            await asyncio.sleep(poll_interval)
+    
+    # =============================================================================
+    # HEALTH & MONITORING (Week 2)
+    # =============================================================================
+    
+    def get_health_status(self) -> Dict[str, Any]:
+        """
+        Get adapter health status and metrics.
+        
+        Returns:
+            Health status dictionary
+        """
+        return {
+            "protocol": self.protocol_name,
+            "healthy": (
+                self.circuit_breaker.state.value == "closed" and
+                self.metrics.success_rate > 0.9
+            ),
+            "circuit_breaker": self.circuit_breaker.get_state(),
+            "metrics": self.metrics.to_dict(),
+            "agent_card": {
+                "id": "nis_protocol_v3.2",
+                "capabilities_count": 7
+            }
+        }
+    
+    def reset_metrics(self):
+        """Reset performance metrics"""
+        self.metrics.reset()
+        logger.info("ACP adapter metrics reset")
+    
+    def reset_circuit_breaker(self):
+        """Manually reset circuit breaker to closed state"""
+        self.circuit_breaker.reset()
+        logger.info("ACP adapter circuit breaker reset") 

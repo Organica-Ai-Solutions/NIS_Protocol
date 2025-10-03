@@ -34,6 +34,8 @@
 | Document | Purpose | Latest Updates |
 |----------|---------|---------------|
 | [Complete API Reference](organized/api/COMPLETE_API_REFERENCE.md) | All endpoints with examples | ✅ Current |
+| [Intelligent Query Router](../system/docs/QUERY_ROUTER_COMPLETE.md) | 83% faster responses with smart routing | 🆕 v3.2.2 |
+| [Third-Party Protocols](../system/docs/THIRD_PARTY_PROTOCOL_INTEGRATION.md) | MCP, A2A, ACP integration | 🆕 v3.2.2 |
 | [LLM Optimization Guide](organized/api/LLM_OPTIMIZATION_GUIDE.md) | Smart caching, rate limiting, consensus | 🆕 v3.2 |
 | [Multimodal API](organized/api/MULTIMODAL_API_DOCUMENTATION.md) | Image, voice, video processing | ✅ Current |
 
@@ -90,6 +92,25 @@
 ---
 
 ## 🎯 **What's New in v3.2**
+
+### **🚀 v3.2.2 PERFORMANCE REVOLUTION: Intelligent Query Router**
+- **✅ 83% Faster Responses** - Simple queries: 17.8s → 2.97s with smart routing
+- **✅ Intelligent Query Router** - Pattern-based routing inspired by MoE concept for optimal processing paths
+- **✅ Smart Path Selection** - FAST (2-3s), STANDARD (5-10s), FULL (10-15s) based on query classification
+- **✅ Real LLM Integration** - OpenAI, Anthropic, Google with smart consensus
+- **✅ Third-Party Protocols** - MCP, A2A, ACP production-ready integration
+- **✅ Protocol Adapters** - Complete error handling, retry logic, circuit breakers
+- **✅ Vector Store Production** - Pinecone, Weaviate support with HNSW fallback
+
+**Performance Results:**
+```
+Query Type      Before    After     Improvement
+─────────────────────────────────────────────
+Simple Chat:    17.8s  →  2.97s    (83% ⚡)
+Technical:      15.5s  →  10.24s   (34%)
+Physics:        16.9s  →  13.21s   (22%)
+Average:        16.7s  →  8.8s     (47%)
+```
 
 ### **🧠 AGI Foundation Achievement:**
 - **BitNet SEED Model** - Local AGI intelligence foundation with 1-bit quantization

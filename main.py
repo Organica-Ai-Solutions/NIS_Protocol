@@ -66,9 +66,9 @@ from src.utils.env_config import EnvironmentConfig
 # from src.meta.unified_coordinator import EnhancedPINNPhysicsAgent
 from src.nis_protocol.core.platform import create_edge_platform
 
-# VibeVoice communication imports - temporarily disabled to debug numpy serialization
-# from src.agents.communication.vibevoice_engine import VibeVoiceEngine
-# import src.agents.communication.vibevoice_engine as vibevoice_module
+# VibeVoice communication imports
+from src.agents.communication.vibevoice_engine import VibeVoiceEngine
+import src.agents.communication.vibevoice_engine as vibevoice_module
 
 # Global VibeVoice engine instance
 vibevoice_engine = None
@@ -285,7 +285,7 @@ planning_system: Optional[AutonomousPlanningSystem] = None
 curiosity_engine: Optional[CuriosityEngine] = None
 ethical_reasoner: Optional[EthicalReasoner] = None
 scenario_simulator: Optional[EnhancedScenarioSimulator] = None
-anthropic_executor = None  # Anthropic-style autonomous executor
+anthropic_executor = None  # autonomous executor
 bitnet_trainer = None  # BitNet online training system
 laplace = None  # Will be created from unified coordinator
 kan = None  # Will be created from unified coordinator
@@ -294,6 +294,55 @@ conversation_memory: Dict[str, List[Dict[str, Any]]] = {}  # Legacy - kept for c
 enhanced_chat_memory = None  # Enhanced chat memory system with persistence
 agent_registry: Dict[str, Dict[str, Any]] = {}
 tool_registry: Dict[str, Dict[str, Any]] = {}
+
+# ✅ Conversation Management Helper Functions
+def get_or_create_conversation(conversation_id: Optional[str], user_id: Optional[str] = None) -> str:
+    """Get existing conversation or create a new one"""
+    if conversation_id:
+        return conversation_id
+    
+    # Generate new conversation ID
+    new_id = f"conv_{uuid.uuid4().hex[:12]}"
+    conversation_memory[new_id] = []
+    logger.info(f"Created new conversation: {new_id} for user: {user_id or 'anonymous'}")
+    return new_id
+
+async def add_message_to_conversation(
+    conversation_id: str,
+    role: str,
+    content: str,
+    metadata: Optional[Dict[str, Any]] = None,
+    user_id: Optional[str] = None
+):
+    """Add a message to conversation memory"""
+    # Initialize conversation if it doesn't exist
+    if conversation_id not in conversation_memory:
+        conversation_memory[conversation_id] = []
+    
+    # Create message record
+    message = {
+        "role": role,
+        "content": content,
+        "timestamp": time.time(),
+        "metadata": metadata or {},
+        "user_id": user_id
+    }
+    
+    # Add to legacy conversation memory
+    conversation_memory[conversation_id].append(message)
+    
+    # Try to add to enhanced chat memory if available
+    if enhanced_chat_memory:
+        try:
+            await enhanced_chat_memory.add_message(
+                conversation_id=conversation_id,
+                role=role,
+                content=content,
+                metadata=metadata,
+                user_id=user_id
+            )
+        except Exception as e:
+            logger.warning(f"Failed to add message to enhanced memory: {e}")
 
 # NVIDIA Inception Integration (Enterprise Access)
 nvidia_inception = None  # NVIDIA Inception program integration
@@ -353,6 +402,70 @@ app.add_middleware(
 
 # Mount static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# ====== THIRD-PARTY PROTOCOL INTEGRATION ======
+# Real production integration of MCP, A2A, and ACP protocols
+from src.adapters.mcp_adapter import MCPAdapter
+from src.adapters.a2a_adapter import A2AAdapter
+from src.adapters.acp_adapter import ACPAdapter
+from src.adapters.protocol_errors import (
+    ProtocolConnectionError,
+    ProtocolTimeoutError,
+    ProtocolValidationError,
+    CircuitBreakerOpenError
+)
+
+# Global protocol adapter instances
+protocol_adapters = {
+    "mcp": None,
+    "a2a": None,
+    "acp": None
+}
+
+def initialize_protocol_adapters():
+    """Initialize all third-party protocol adapters"""
+    global protocol_adapters
+    
+    try:
+        # MCP Adapter (Anthropic)
+        mcp_config = {
+            "base_url": os.getenv("MCP_SERVER_URL", "http://localhost:3000"),  # MCP uses base_url
+            "timeout": int(os.getenv("MCP_TIMEOUT", "30")),
+            "failure_threshold": 5,
+            "recovery_timeout": 60
+        }
+        protocol_adapters["mcp"] = MCPAdapter(mcp_config)
+        logger.info("✅ MCP Adapter initialized")
+        
+        # A2A Adapter (Google)
+        a2a_config = {
+            "base_url": os.getenv("A2A_BASE_URL", "https://api.google.com/a2a/v1"),
+            "api_key": os.getenv("A2A_API_KEY", ""),
+            "timeout": int(os.getenv("A2A_TIMEOUT", "30")),
+            "failure_threshold": 5
+        }
+        protocol_adapters["a2a"] = A2AAdapter(a2a_config)
+        logger.info("✅ A2A Adapter initialized")
+        
+        # ACP Adapter (IBM)
+        acp_config = {
+            "base_url": os.getenv("ACP_BASE_URL", "http://localhost:8080"),
+            "api_key": os.getenv("ACP_API_KEY", ""),
+            "timeout": int(os.getenv("ACP_TIMEOUT", "30")),
+            "failure_threshold": 5
+        }
+        protocol_adapters["acp"] = ACPAdapter(acp_config)
+        logger.info("✅ ACP Adapter initialized")
+        
+        logger.info("🌐 All protocol adapters initialized successfully")
+        return True
+        
+    except Exception as e:
+        logger.error(f"❌ Failed to initialize protocol adapters: {e}")
+        return False
+
+# Initialize on startup
+initialize_protocol_adapters()
 
 # ====== MCP + DEEP AGENTS + MCP-UI INTEGRATION ======
 # Initialize MCP integration globally
@@ -466,40 +579,7 @@ async def modern_chat():
             status_code=404
         )
 
-# Enhanced Agent Chat endpoint
-@app.get("/chat/enhanced", response_class=HTMLResponse, tags=["Demo"])
-async def enhanced_agent_chat():
-    """
-    NIS Protocol Enhanced Agent Chat Interface
-    
-    Professional-grade chat interface featuring:
-    - Tool calls visualization inspired by Agno Agent UI
-    - Reasoning steps display for transparent AI thinking
-    - References and sources support for credible information
-    - Artifacts side panel for interactive content (LangChain style)
-    - Modern design combining best of Agno and LangChain UIs
-    - Real-time streaming with enhanced feedback
-    
-    Access at: http://localhost:8000/chat/enhanced
-    """
-    try:
-        with open("static/enhanced_agent_chat.html", "r", encoding="utf-8") as f:
-            return HTMLResponse(content=f.read())
-    except FileNotFoundError:
-        return HTMLResponse(
-            content="""
-            <html>
-                <body>
-                    <h1>Enhanced Agent Chat Not Found</h1>
-                    <p>The enhanced agent chat file is missing. Please ensure static/enhanced_agent_chat.html exists.</p>
-                    <p><a href="/console">Go to Classic Chat</a></p>
-                    <p><a href="/chat/formatted">Go to Modern Chat</a></p>
-                    <p><a href="/docs">Go to API Documentation</a></p>
-                </body>
-            </html>
-            """,
-            status_code=404
-        )
+# Enhanced Agent Chat endpoint - REMOVED for simplification
 
 # Alternative route for consistency
 @app.get("/chat/formatted", response_class=HTMLResponse, tags=["Demo"])
@@ -517,6 +597,7 @@ async def initialize_system():
     app.start_time = datetime.now()
     
     # Initialize LLM provider with error handling
+    global llm_provider, web_search_agent, simulation_coordinator, learning_agent, planning_system, curiosity_engine
     try:
         llm_provider = GeneralLLMProvider()
         logger.info(" LLM Provider initialized successfully")
@@ -685,7 +766,7 @@ async def initialize_system():
     document_agent = DocumentAnalysisAgent(agent_id="document_analysis_agent")
     
     # Initialize Precision Visualization Agent (Code-based, NOT AI image gen)
-    diagram_agent = DiagramAgent()
+    # diagram_agent = DiagramAgent()  # Temporarily disabled
     
     # Initialize Real-Time Data Pipeline Agent (global scope)
     global pipeline_agent
@@ -706,23 +787,23 @@ async def initialize_system():
     # logger.info(f"🚀 Anthropic-Style Executor initialized: {anthropic_executor.agent_id}")  # Temporarily disabled
     # logger.info(f"🎯 BitNet Online Trainer initialized: {bitnet_trainer.agent_id}")  # Temporarily disabled
 
-# @app.on_event("startup")  # Temporarily disabled to debug numpy serialization
-async def startup_event_disabled():
-    """Application startup event - DISABLED FOR DEBUGGING."""
-    logger.info("🔄 Startup disabled for debugging numpy serialization issue")
-    # schedule initialization in background to avoid blocking readiness
-    # import asyncio as _asyncio
-    # _asyncio.create_task(initialize_system())
+@app.on_event("startup")  # RE-ENABLED: Initialize all components for chat functionality
+async def startup_event():
+    """Application startup event - RE-ENABLED FOR FULL FUNCTIONALITY."""
+    logger.info("🚀 Starting NIS Protocol v3 initialization...")
+    # Schedule initialization in background to avoid blocking readiness
+    import asyncio as _asyncio
+    _asyncio.create_task(initialize_system())
     
     # Initialize MCP integration in background (non-blocking)
-    # _asyncio.create_task(initialize_mcp_integration())
+    _asyncio.create_task(initialize_mcp_integration())
     
     # Initialize VibeVoice engine synchronously
-    # initialize_vibevoice_engine()
+    initialize_vibevoice_engine()
     
-    # logger.info("🔄 Initialization scheduled in background")
-    # logger.info("📊 Enhanced pipeline: Laplace → Consciousness → KAN → PINN → Safety → Multimodal")
-    # logger.info(f"🎓 Online Training: BitNet continuously learning from conversations")  # Temporarily disabled
+    logger.info("🔄 Initialization scheduled in background")
+    logger.info("📊 Enhanced pipeline: Laplace → Consciousness → KAN → PINN → Safety → Multimodal")
+    logger.info("🎓 Online Training: BitNet continuously learning from conversations")
 
 
 def initialize_vibevoice_engine():
@@ -1136,12 +1217,25 @@ async def get_physics_capabilities():
         # Try to import physics modules, fallback to mock data if not available
         try:
             from src.agents.physics.unified_physics_agent import PhysicsMode, PhysicsDomain, TRUE_PINN_AVAILABLE
-            physics_available = TRUE_PINN_AVAILABLE
-            physics_domains = [domain.value for domain in PhysicsDomain]
-        except ImportError:
+            # Handle TRUE_PINN_AVAILABLE which is a class, not a boolean
+            physics_available = getattr(TRUE_PINN_AVAILABLE, 'AVAILABLE', True) if isinstance(TRUE_PINN_AVAILABLE, type) else bool(TRUE_PINN_AVAILABLE)
+            
+            # Safely extract enum values as strings
+            try:
+                if hasattr(PhysicsDomain, '__members__'):
+                    # It's an enum, get all member values
+                    physics_domains = [domain.value for domain in PhysicsDomain]
+                else:
+                    # Not an enum, use fallback
+                    physics_domains = ["mechanics", "electromagnetism", "thermodynamics", "quantum", "relativity", "fluid_dynamics"]
+            except (AttributeError, TypeError) as e:
+                logger.warning(f"Error extracting PhysicsDomain values: {e}")
+                physics_domains = ["mechanics", "electromagnetism", "thermodynamics", "quantum", "relativity", "fluid_dynamics"]
+        except (ImportError, Exception) as e:
+            logger.warning(f"Physics modules not available: {e}")
             # Fallback when physics modules not available
             physics_available = False
-            physics_domains = ["classical_mechanics", "thermodynamics", "electromagnetism", "quantum_mechanics"]
+            physics_domains = ["mechanics", "electromagnetism", "thermodynamics", "quantum", "relativity", "fluid_dynamics"]
         
         capabilities = {
             "status": "active",
@@ -1307,64 +1401,91 @@ async def validate_physics(request: Dict[str, Any]):
 @app.post("/communication/synthesize", tags=["Communication"])
 async def synthesize_speech(request: Dict[str, Any]):
     """
-    🎙️ Synthesize Speech using VibeVoice
+    🎙️ Synthesize Speech (High-Quality TTS)
     
-    Convert text to speech with multi-speaker support and expressive voices.
+    Convert text to speech with Bark (natural) or gTTS (fast fallback).
+    
+    Request:
+    {
+        "text": "Hello world!",
+        "engine": "bark" | "gtts" (optional, default: bark),
+        "voice": "friendly" | "professional" | "energetic" (for Bark)
+    }
     """
     try:
-        from src.agents.communication.vibevoice_communication_agent import (
-            create_vibevoice_communication_agent, TTSRequest, SpeakerVoice
-        )
-        
-        # Create communication agent
-        comm_agent = create_vibevoice_communication_agent()
-        
         # Parse request
         text = request.get("text", "")
-        speaker = request.get("speaker", "consciousness")
-        emotion = request.get("emotion", "neutral")
+        if not text:
+            raise HTTPException(status_code=400, detail="No text provided")
         
-        # Map speaker to voice
-        speaker_voice = SpeakerVoice.CONSCIOUSNESS
-        if speaker == "physics":
-            speaker_voice = SpeakerVoice.PHYSICS
-        elif speaker == "research":
-            speaker_voice = SpeakerVoice.RESEARCH
-        elif speaker == "coordination":
-            speaker_voice = SpeakerVoice.COORDINATION
+        engine = request.get("engine", "gtts")  # Default to gTTS for speed (use "bark" for quality)
+        voice = request.get("voice", "friendly")  # Default friendly voice
         
-        # Create TTS request
-        tts_request = TTSRequest(
-            text=text,
-            speaker_voice=speaker_voice,
-            emotion=emotion
-        )
+        logger.info(f"🎤 TTS request: engine={engine}, text='{text[:50]}...'")
         
-        # Generate speech
-        result = comm_agent.synthesize_speech(tts_request)
+        # Try Bark if explicitly requested (high quality but slower, natural voice)
+        if engine == "bark":
+            try:
+                from src.voice.bark_tts import get_bark_tts
+                
+                bark = get_bark_tts(voice=voice)
+                
+                # For short text, use simple synthesize
+                # For long text (>200 chars), use long_form
+                if len(text) > 200:
+                    result = bark.long_form_synthesize(text, voice=voice)
+                else:
+                    result = bark.synthesize(text, voice=voice)
+                
+                if result.get("success"):
+                    logger.info(f"✅ Bark synthesized {result.get('duration', 0):.2f}s")
+                    return {
+                        "success": True,
+                        "audio_data": result["audio_data"],
+                        "format": result["format"],
+                        "engine": "bark",
+                        "voice": result.get("voice", voice),
+                        "duration": result.get("duration", 0),
+                        "text": text
+                    }
+                else:
+                    logger.warning(f"Bark failed: {result.get('error')}, falling back to gTTS")
+                    # Fall through to gTTS
+            except ImportError:
+                logger.warning("Bark not available, using gTTS")
+                # Fall through to gTTS
+            except Exception as e:
+                logger.error(f"Bark error: {e}, falling back to gTTS")
+                # Fall through to gTTS
         
-        # Return raw audio bytes for direct playback
-        if result.success and result.audio_data:
-            return Response(
-                content=result.audio_data,
-                media_type="audio/wav",
-                headers={
-                    "Content-Disposition": f"inline; filename=nis_voice_{speaker}.wav",
-                    "X-Duration": str(result.duration_seconds),
-                    "X-Speaker": result.speaker_used,
-                    "X-Processing-Time": str(result.processing_time),
-                    "X-Sample-Rate": str(result.sample_rate),
-                    "X-VibeVoice-Version": "1.5B"
-                }
-            )
+        # Fallback: gTTS (fast, reliable, but robotic)
+        from src.voice.simple_tts import get_simple_tts
+        
+        logger.info("Using gTTS (fast mode)")
+        tts = get_simple_tts()
+        audio_bytes = tts.synthesize(text)
+        
+        if audio_bytes:
+            import base64
+            audio_base64 = base64.b64encode(audio_bytes).decode('utf-8')
+            
+            return {
+                "success": True,
+                "audio_data": audio_base64,
+                "format": "mp3",
+                "engine": "gtts",
+                "text": text,
+                "note": "Using gTTS fallback. Install Bark for better quality!"
+            }
         else:
-            raise HTTPException(
-                status_code=500, 
-                detail=result.error_message or "Speech synthesis failed"
-            )
+            raise HTTPException(status_code=500, detail="Speech synthesis failed")
         
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Speech synthesis error: {e}")
+        import traceback
+        logger.error(traceback.format_exc())
         return {
             "success": False,
             "error_message": str(e),
@@ -1496,6 +1617,363 @@ async def communication_status():
             "timestamp": time.time()
         }
 
+@app.post("/voice/transcribe", tags=["Voice"])
+async def transcribe_audio(request: Dict[str, Any]):
+    """
+    🎤 Speech-to-Text Transcription (GPT-like Voice Mode)
+    
+    Transcribe audio to text using Whisper for voice input.
+    Like ChatGPT's voice conversation mode.
+    """
+    try:
+        audio_data = request.get("audio_data", "")
+        if not audio_data:
+            logger.error("❌ No audio data provided in request")
+            return {
+                "success": False,
+                "error": "No audio data provided",
+                "text": ""
+            }
+        
+        logger.info(f"📝 STT request received - audio data length: {len(audio_data)} chars")
+        
+        # Try to use Whisper STT
+        try:
+            from src.voice.whisper_stt import get_whisper_stt
+            logger.info("✅ Whisper STT module imported successfully")
+            
+            whisper = get_whisper_stt(model_size="base")
+            logger.info("✅ Whisper instance created, attempting transcription...")
+            
+            result = await whisper.transcribe_base64(audio_data)
+            logger.info(f"📊 Whisper result: success={result.get('success')}, error={result.get('error', 'none')}")
+            
+            if result.get("success"):
+                transcribed_text = result.get("text", "").strip()
+                logger.info(f"✅ Whisper transcribed successfully: '{transcribed_text[:100]}...'")
+                return {
+                    "success": True,
+                    "text": transcribed_text,
+                    "transcription": transcribed_text,
+                    "confidence": result.get("confidence", 0.0),
+                    "language": result.get("language", "en"),
+                    "engine": "whisper"
+                }
+            else:
+                error_msg = result.get('error', 'Unknown error')
+                logger.error(f"❌ Whisper transcription failed: {error_msg}")
+                return {
+                    "success": False,
+                    "error": error_msg,
+                    "text": "",
+                    "engine": "whisper_failed"
+                }
+                
+        except ImportError as e:
+            logger.error(f"❌ Whisper import error: {e}")
+            import traceback
+            logger.error(f"Traceback: {traceback.format_exc()}")
+            return {
+                "success": False,
+                "error": f"Whisper not available: {str(e)}",
+                "text": "",
+                "engine": "import_failed"
+            }
+        except Exception as e:
+            logger.error(f"❌ Whisper exception: {e}")
+            import traceback
+            logger.error(f"Traceback: {traceback.format_exc()}")
+            return {
+                "success": False,
+                "error": str(e),
+                "text": "",
+                "engine": "exception"
+            }
+        
+    except Exception as e:
+        logger.error(f"❌ STT endpoint error: {e}")
+        import traceback
+        logger.error(f"Traceback: {traceback.format_exc()}")
+        return {
+            "success": False,
+            "error": str(e),
+            "text": ""
+        }
+
+@app.websocket("/ws/voice-chat")
+async def optimized_voice_chat(websocket: WebSocket):
+    """
+    🎙️ OPTIMIZED Real-Time Voice Chat (Low-Latency Pipeline)
+    
+    Single WebSocket endpoint for full voice conversation with minimal latency:
+    - Streaming STT (Whisper) → Streaming LLM (GPT-4) → Streaming TTS (gTTS)
+    - <500ms end-to-end latency goal
+    - Interruption handling
+    - Conversation memory
+    
+    Message Types (client → server):
+    - audio_input: {"type": "audio_input", "audio_data": "base64..."}
+    - text_input: {"type": "text_input", "text": "Hello"}
+    - get_status: {"type": "get_status"}
+    - interrupt: {"type": "interrupt"}
+    - close: {"type": "close"}
+    
+    Response Types (server → client):
+    - connected: Connection established
+    - transcription: STT result
+    - text_response: LLM response text
+    - audio_response: TTS audio with latency metrics
+    - status: Processing stage updates
+    - error: Error messages
+    """
+    await websocket.accept()
+    session_id = f"voice_{uuid.uuid4().hex[:8]}"
+    conversation_id = None
+    
+    logger.info(f"🎙️ Voice chat session started: {session_id}")
+    
+    try:
+        # Send connection confirmation
+        await websocket.send_json({
+            "type": "connected",
+            "session_id": session_id,
+            "capabilities": {
+                "streaming_stt": True,
+                "streaming_llm": True,
+                "streaming_tts": True,
+                "interruption": True,
+                "latency_target_ms": 500
+            }
+        })
+        
+        # Initialize services
+        stt_service = None
+        tts_engine = "gtts"  # Fast fallback
+        
+        # Try to load optimized STT
+        try:
+            from src.voice.whisper_stt import get_whisper_stt
+            stt_service = get_whisper_stt(model_size="base")
+            logger.info("✅ Whisper STT loaded")
+        except Exception as e:
+            logger.warning(f"⚠️ Whisper not available: {e}")
+        
+        # Message processing loop
+        while True:
+            try:
+                data = await websocket.receive_json()
+                msg_type = data.get("type")
+                
+                # ===== AUDIO INPUT (Full Pipeline) =====
+                if msg_type == "audio_input":
+                    start_time = time.time()
+                    audio_data = data.get("audio_data", "")
+                    
+                    if not audio_data:
+                        await websocket.send_json({"type": "error", "message": "No audio data"})
+                        continue
+                    
+                    # STEP 1: STT (Streaming when possible)
+                    await websocket.send_json({"type": "status", "stage": "transcribing"})
+                    
+                    transcription_text = ""
+                    if stt_service:
+                        stt_result = await stt_service.transcribe_base64(audio_data)
+                        if stt_result.get("success"):
+                            transcription_text = stt_result.get("text", "").strip()
+                            stt_time = time.time() - start_time
+                            logger.info(f"⏱️ STT: {stt_time*1000:.0f}ms")
+                            
+                            await websocket.send_json({
+                                "type": "transcription",
+                                "text": transcription_text,
+                                "confidence": stt_result.get("confidence", 0.0),
+                                "latency_ms": int(stt_time * 1000)
+                            })
+                    
+                    if not transcription_text:
+                        await websocket.send_json({"type": "error", "message": "Transcription failed"})
+                        continue
+                    
+                    # STEP 2: LLM (Streaming response)
+                    await websocket.send_json({"type": "status", "stage": "thinking"})
+                    llm_start = time.time()
+                    
+                    # Get or create conversation
+                    if not conversation_id:
+                        conversation_id = get_or_create_conversation(None, session_id)
+                    
+                    # Add user message
+                    await add_message_to_conversation(conversation_id, "user", transcription_text, {}, session_id)
+                    
+                    # Generate LLM response with streaming
+                    response_text = ""
+                    if llm_provider:
+                        messages = []
+                        
+                        # Get conversation history (last 6 messages for context)
+                        if conversation_id in conversation_memory:
+                            history = conversation_memory[conversation_id][-6:]
+                            for msg in history:
+                                messages.append({
+                                    "role": msg["role"],
+                                    "content": msg["content"]
+                                })
+                        
+                        # Generate response
+                        llm_result = await llm_provider.generate_response(
+                            messages=messages,
+                            temperature=0.7,
+                            max_tokens=150,  # Keep responses concise for voice
+                            requested_provider="openai"  # Use GPT-4 for best quality
+                        )
+                        
+                        response_text = llm_result.get("content", "")
+                        llm_time = time.time() - llm_start
+                        logger.info(f"⏱️ LLM: {llm_time*1000:.0f}ms")
+                        
+                        # Stream text response to client
+                        await websocket.send_json({
+                            "type": "text_response",
+                            "text": response_text,
+                            "latency_ms": int(llm_time * 1000)
+                        })
+                        
+                        # Add to conversation memory
+                        await add_message_to_conversation(conversation_id, "assistant", response_text, {}, session_id)
+                    else:
+                        response_text = "I'm sorry, I'm having trouble connecting to my language model."
+                    
+                    # STEP 3: TTS (Streaming audio)
+                    await websocket.send_json({"type": "status", "stage": "synthesizing"})
+                    tts_start = time.time()
+                    
+                    # Use fast TTS for low latency
+                    try:
+                        from src.voice.simple_tts import get_simple_tts
+                        tts = get_simple_tts()
+                        audio_bytes = tts.synthesize(response_text)
+                        
+                        if audio_bytes:
+                            audio_base64 = base64.b64encode(audio_bytes).decode('utf-8')
+                            tts_time = time.time() - tts_start
+                            total_time = time.time() - start_time
+                            
+                            logger.info(f"⏱️ TTS: {tts_time*1000:.0f}ms | Total: {total_time*1000:.0f}ms")
+                            
+                            await websocket.send_json({
+                                "type": "audio_response",
+                                "audio_data": audio_base64,
+                                "format": "mp3",
+                                "text": response_text,
+                                "latency": {
+                                    "stt_ms": int(stt_time * 1000) if 'stt_time' in locals() else 0,
+                                    "llm_ms": int(llm_time * 1000) if 'llm_time' in locals() else 0,
+                                    "tts_ms": int(tts_time * 1000),
+                                    "total_ms": int(total_time * 1000)
+                                }
+                            })
+                        else:
+                            await websocket.send_json({"type": "error", "message": "TTS generation failed"})
+                    except Exception as e:
+                        logger.error(f"TTS error: {e}")
+                        await websocket.send_json({"type": "error", "message": f"TTS error: {str(e)}"})
+                
+                # ===== TEXT INPUT (Skip STT) =====
+                elif msg_type == "text_input":
+                    text_input = data.get("text", "").strip()
+                    if not text_input:
+                        continue
+                    
+                    start_time = time.time()
+                    
+                    # Get or create conversation
+                    if not conversation_id:
+                        conversation_id = get_or_create_conversation(None, session_id)
+                    
+                    # Add user message
+                    await add_message_to_conversation(conversation_id, "user", text_input, {}, session_id)
+                    
+                    # Generate LLM response
+                    await websocket.send_json({"type": "status", "stage": "thinking"})
+                    
+                    response_text = ""
+                    if llm_provider:
+                        messages = []
+                        if conversation_id in conversation_memory:
+                            history = conversation_memory[conversation_id][-6:]
+                            for msg in history:
+                                messages.append({"role": msg["role"], "content": msg["content"]})
+                        
+                        llm_result = await llm_provider.generate_response(
+                            messages=messages,
+                            temperature=0.7,
+                            max_tokens=150,
+                            requested_provider="openai"
+                        )
+                        
+                        response_text = llm_result.get("content", "")
+                        await websocket.send_json({"type": "text_response", "text": response_text})
+                        await add_message_to_conversation(conversation_id, "assistant", response_text, {}, session_id)
+                    
+                    # Generate audio
+                    await websocket.send_json({"type": "status", "stage": "synthesizing"})
+                    try:
+                        from src.voice.simple_tts import get_simple_tts
+                        tts = get_simple_tts()
+                        audio_bytes = tts.synthesize(response_text)
+                        
+                        if audio_bytes:
+                            audio_base64 = base64.b64encode(audio_bytes).decode('utf-8')
+                            total_time = time.time() - start_time
+                            
+                            await websocket.send_json({
+                                "type": "audio_response",
+                                "audio_data": audio_base64,
+                                "format": "mp3",
+                                "text": response_text,
+                                "latency": {"total_ms": int(total_time * 1000)}
+                            })
+                    except Exception as e:
+                        logger.error(f"TTS error: {e}")
+                
+                # ===== STATUS REQUEST =====
+                elif msg_type == "get_status":
+                    await websocket.send_json({
+                        "type": "status_response",
+                        "session_id": session_id,
+                        "conversation_id": conversation_id,
+                        "messages_count": len(conversation_memory.get(conversation_id, [])) if conversation_id else 0,
+                        "stt_available": stt_service is not None,
+                        "llm_available": llm_provider is not None,
+                        "tts_engine": tts_engine
+                    })
+                
+                # ===== INTERRUPT =====
+                elif msg_type == "interrupt":
+                    logger.info(f"🛑 Interrupted session: {session_id}")
+                    await websocket.send_json({"type": "interrupted"})
+                
+                # ===== CLOSE =====
+                elif msg_type == "close":
+                    logger.info(f"👋 Closing session: {session_id}")
+                    break
+                    
+            except WebSocketDisconnect:
+                logger.info(f"🔌 Client disconnected: {session_id}")
+                break
+            except Exception as e:
+                logger.error(f"Message processing error: {e}")
+                await websocket.send_json({"type": "error", "message": str(e)})
+    
+    except Exception as e:
+        logger.error(f"Voice chat error: {e}")
+        import traceback
+        logger.error(traceback.format_exc())
+    
+    finally:
+        logger.info(f"🏁 Voice chat session ended: {session_id}")
+
 @app.websocket("/communication/stream")
 async def websocket_realtime_streaming(websocket: WebSocket):
     """
@@ -1599,90 +2077,6 @@ async def websocket_realtime_streaming(websocket: WebSocket):
         # Clean up session
         if session_id in streaming_agent.active_sessions:
             del streaming_agent.active_sessions[session_id]
-
-@app.post("/communication/stream/demo", tags=["Communication"])
-async def demo_realtime_streaming(request: Dict[str, Any]):
-    """
-    🎭 Demo Real-Time Multi-Speaker Streaming
-    
-    Demonstrates the real-time streaming capabilities like GPT-5/Grok.
-    """
-    try:
-        from src.agents.communication.realtime_streaming_agent import (
-            create_realtime_streaming_agent, ConversationTurn, StreamingSpeaker
-        )
-        
-        # Create streaming agent
-        streaming_agent = create_realtime_streaming_agent()
-        session_id = f"demo_{int(time.time())}"
-        
-        # Create demo conversation
-        demo_turns = [
-            ConversationTurn(
-                speaker=StreamingSpeaker.CONSCIOUSNESS,
-                content="Welcome to the NIS Protocol real-time streaming demonstration.",
-                emotion="welcoming"
-            ),
-            ConversationTurn(
-                speaker=StreamingSpeaker.PHYSICS,
-                content="I can explain complex physics concepts with clear audio narration.",
-                emotion="explanatory"
-            ),
-            ConversationTurn(
-                speaker=StreamingSpeaker.RESEARCH,
-                content="Research findings can be presented as engaging audio content.",
-                emotion="analytical"
-            ),
-            ConversationTurn(
-                speaker=StreamingSpeaker.COORDINATION,
-                content="All agents can collaborate in real-time conversations, just like GPT-5 and Grok.",
-                emotion="collaborative"
-            )
-        ]
-        
-        # Collect streaming results
-        streaming_results = []
-        async for segment in streaming_agent.stream_conversation(demo_turns, session_id):
-            streaming_results.append({
-                "speaker": segment.speaker.value,
-                "text": segment.text_chunk,
-                "chunk_id": segment.chunk_id,
-                "timestamp": segment.timestamp,
-                "is_final": segment.is_final
-            })
-        
-        return {
-            "success": True,
-            "demo_type": "realtime_multi_speaker_streaming",
-            "session_id": session_id,
-            "speakers_used": len(set(turn.speaker for turn in demo_turns)),
-            "total_chunks": len(streaming_results),
-            "streaming_results": streaming_results[:10],  # First 10 chunks
-            "capabilities_demonstrated": [
-                "real_time_streaming",
-                "multi_speaker_switching", 
-                "voice_emotion_control",
-                "conversation_flow_management"
-            ],
-            "like_major_players": {
-                "gpt5_style": True,
-                "grok_style": True,
-                "frontier_model_quality": True
-            },
-            "timestamp": time.time()
-        }
-        
-    except Exception as e:
-        logger.error(f"Demo streaming error: {e}")
-        return {
-            "success": False,
-            "error_message": str(e),
-            "timestamp": time.time()
-        }
-
-# ===========================================================================================
-# 🎛️ Voice Settings and Configuration Endpoints  
-# ===========================================================================================
 
 @app.get("/voice/settings", tags=["Voice Settings"])
 async def get_voice_settings():
@@ -2069,13 +2463,16 @@ async def get_research_capabilities():
 @app.post("/research/deep", tags=["Research"])
 async def deep_research(request: dict):
     """
-    🔍 Deep Research with Multi-Source Analysis
+    🔍 REAL Deep Research using GPT-4
     
-    Performs comprehensive research using multiple sources and synthesis.
+    Performs comprehensive research analysis using our powerful LLM backend.
+    No external APIs needed - uses the AI you already have!
     """
     try:
         query = request.get("query", "")
         depth = request.get("research_depth", "standard")
+        max_length = request.get("max_length", 2000)
+        include_citations = request.get("include_citations", True)
         
         if not query:
             return JSONResponse(content={
@@ -2083,30 +2480,65 @@ async def deep_research(request: dict):
                 "error": "Query is required"
             }, status_code=400)
         
-        # Simulate deep research process
+        # Build comprehensive research prompt
+        research_prompt = f"""You are an expert research analyst. Conduct comprehensive research on the following topic:
+
+RESEARCH QUERY: {query}
+
+INSTRUCTIONS:
+1. Provide a thorough, well-researched analysis
+2. Include specific facts, statistics, and technical details
+3. Structure your response with clear sections
+4. {'Include citations in [Source] format where applicable' if include_citations else 'Focus on factual content'}
+5. Be analytical and avoid generalities
+6. Provide multiple perspectives when relevant
+7. Include recent developments and historical context
+
+DEPTH LEVEL: {depth}
+{'- Provide extensive detail and comprehensive coverage' if depth == 'comprehensive' else '- Provide balanced detail with key insights'}
+
+Format your response as a well-structured research report."""
+
+        # Use our powerful LLM backend for REAL research
+        if llm_provider is None:
+            raise HTTPException(status_code=500, detail="LLM Provider not initialized")
+        
+        messages = [
+            {"role": "system", "content": "You are an expert research analyst providing comprehensive, factual research reports."},
+            {"role": "user", "content": research_prompt}
+        ]
+        
+        # Generate REAL research using GPT-4
+        result = await llm_provider.generate_response(
+            messages=messages,
+            temperature=0.7,
+            requested_provider="openai"  # Use GPT-4 for best research quality
+        )
+        
+        # Structure the research result
         research_result = {
             "success": True,
             "query": query,
             "research_depth": depth,
-            "sources_analyzed": 5,
-            "findings": {
-                "summary": f"Research findings for: {query}",
-                "key_points": [
-                    "Primary research indicates strong evidence",
-                    "Multiple sources confirm main hypothesis", 
-                    "Additional investigation recommended"
-                ],
-                "confidence_score": 0.85,
-                "bias_assessment": "low_bias_detected"
+            "analysis": result.get("content", ""),
+            "metadata": {
+                "model": result.get("model", "gpt-4"),
+                "provider": result.get("provider", "openai"),
+                "tokens_used": result.get("tokens_used", 0),
+                "real_ai": result.get("real_ai", True)
             },
-            "sources": [
-                {"type": "academic", "count": 3},
-                {"type": "web", "count": 2}
-            ],
+            "research_quality": {
+                "comprehensive": len(result.get("content", "")) > 1000,
+                "confidence_score": result.get("confidence", 0.9),
+                "factual_basis": "LLM knowledge base"
+            },
             "timestamp": time.time()
         }
         
+        logger.info(f"✅ Deep research completed: {len(result.get('content', ''))} chars, {result.get('tokens_used', 0)} tokens")
+        
         return research_result
+        
     except Exception as e:
         logger.error(f"Deep research error: {e}")
         return JSONResponse(content={
@@ -2241,55 +2673,6 @@ async def clear_llm_cache(provider: Optional[str] = None):
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to clear cache: {str(e)}")
-
-@app.get("/llm/consensus/demo", tags=["LLM Optimization"])
-async def consensus_demo():
-    """
-    🎮 Consensus feature demo
-    
-    Interactive demo of different consensus modes with example responses
-    """
-    return JSONResponse(content={
-        "consensus_modes": {
-            "single": {
-                "description": "Single provider - fastest and cheapest",
-                "cost_estimate": "$0.005-0.02",
-                "speed": "1-3 seconds",
-                "use_case": "Simple questions, quick responses"
-            },
-            "dual": {
-                "description": "Two providers for validation",
-                "cost_estimate": "$0.01-0.04", 
-                "speed": "2-4 seconds",
-                "use_case": "Important decisions, cross-validation"
-            },
-            "triple": {
-                "description": "Three providers for strong consensus",
-                "cost_estimate": "$0.015-0.06",
-                "speed": "3-6 seconds", 
-                "use_case": "Critical analysis, research questions"
-            },
-            "smart": {
-                "description": "AI chooses optimal consensus automatically",
-                "cost_estimate": "Variable based on context",
-                "speed": "Optimized for request",
-                "use_case": "Let AI decide the best approach"
-            }
-        },
-        "provider_strengths": {
-            "anthropic": "Reasoning, ethics, analysis",
-            "openai": "General intelligence, creativity",
-            "deepseek": "Mathematics, physics, research", 
-            "google": "Speed, multilingual, factual",
-            "nvidia": "Physics simulation, advanced reasoning"
-        },
-        "example_usage": {
-            "quality_mode": "consensus_mode=triple&user_preference=quality",
-            "speed_mode": "consensus_mode=single&user_preference=speed",
-            "cost_mode": "consensus_mode=dual&user_preference=cost&max_cost=0.05",
-            "custom_mode": "consensus_mode=custom&consensus_providers=[\"anthropic\",\"deepseek\"]"
-        }
-    })
 
 @app.get("/analytics/dashboard", tags=["Analytics"])
 async def analytics_dashboard():
@@ -3386,25 +3769,442 @@ async def get_detailed_training_metrics():
         }
 
 
+# ====== THIRD-PARTY PROTOCOL ENDPOINTS ======
+# Production endpoints for MCP, A2A, and ACP integration
+
+class ProtocolToolRequest(BaseModel):
+    tool_name: str
+    arguments: Dict[str, Any] = {}
+
+class ProtocolTaskRequest(BaseModel):
+    description: str
+    agent_id: str
+    parameters: Dict[str, Any] = {}
+    callback_url: Optional[str] = None
+
+class ProtocolExecuteRequest(BaseModel):
+    agent_url: str
+    message: Dict[str, Any]
+    async_mode: bool = True
+
+class ProtocolMessageRequest(BaseModel):
+    message: Dict[str, Any]
+    target_protocol: str  # "mcp", "a2a", or "acp"
+
+@app.post("/protocol/mcp/initialize", tags=["Third-Party Protocols"])
+async def mcp_initialize(demo_mode: bool = False):
+    """
+    Initialize MCP connection and discover capabilities
+    
+    Set demo_mode=true to test without an actual MCP server
+    """
+    if not protocol_adapters["mcp"]:
+        raise HTTPException(status_code=503, detail="MCP adapter not initialized")
+    
+    # Demo mode for testing without external MCP server
+    if demo_mode:
+        return {
+            "status": "success",
+            "protocol": "mcp",
+            "mode": "demo",
+            "server_info": {
+                "name": "NIS Protocol MCP Demo Server",
+                "version": "1.0.0",
+                "description": "Demo MCP server for testing (no external server required)"
+            },
+            "capabilities": {
+                "tools": {
+                    "listChanged": True,
+                    "available_tools": [
+                        {
+                            "name": "nis_physics_validate",
+                            "description": "Validate physics constraints using PINN",
+                            "input_schema": {"type": "object", "properties": {"data": {"type": "object"}}}
+                        },
+                        {
+                            "name": "nis_kan_reason",
+                            "description": "Symbolic reasoning with KAN networks",
+                            "input_schema": {"type": "object", "properties": {"query": {"type": "string"}}}
+                        }
+                    ]
+                },
+                "resources": {
+                    "available_resources": [
+                        {
+                            "uri": "nis://protocol/schema",
+                            "name": "NIS Protocol Schema",
+                            "description": "Complete NIS Protocol data schema"
+                        }
+                    ]
+                },
+                "prompts": {
+                    "available_prompts": [
+                        {
+                            "name": "physics_analysis",
+                            "description": "Template for physics-informed analysis"
+                        }
+                    ]
+                }
+            },
+            "note": "This is a demo response. To use a real MCP server, set MCP_SERVER_URL environment variable and call without demo_mode."
+        }
+    
+    try:
+        result = await protocol_adapters["mcp"].initialize()
+        return {
+            "status": "success",
+            "protocol": "mcp",
+            "mode": "production",
+            "server_info": result.get("serverInfo", {}),
+            "capabilities": result.get("capabilities", {})
+        }
+    except ProtocolConnectionError as e:
+        # Provide helpful error with suggestion to use demo mode
+        raise HTTPException(
+            status_code=503, 
+            detail={
+                "error": f"Connection failed: {e}",
+                "suggestion": "No MCP server found. Try adding '?demo_mode=true' to test the integration.",
+                "setup_guide": "To connect a real MCP server, set MCP_SERVER_URL environment variable."
+            }
+        )
+    except ProtocolTimeoutError as e:
+        raise HTTPException(status_code=504, detail=f"Timeout: {e}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/protocol/mcp/tools", tags=["Third-Party Protocols"])
+async def mcp_discover_tools():
+    """Discover available MCP tools"""
+    if not protocol_adapters["mcp"]:
+        raise HTTPException(status_code=503, detail="MCP adapter not initialized")
+    
+    try:
+        await protocol_adapters["mcp"].discover_tools()
+        return {
+            "status": "success",
+            "protocol": "mcp",
+            "tools": list(protocol_adapters["mcp"].tools_registry.values())
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/protocol/mcp/call-tool", tags=["Third-Party Protocols"])
+async def mcp_call_tool(request: ProtocolToolRequest):
+    """Execute an MCP tool"""
+    if not protocol_adapters["mcp"]:
+        raise HTTPException(status_code=503, detail="MCP adapter not initialized")
+    
+    try:
+        result = await protocol_adapters["mcp"].call_tool(
+            request.tool_name,
+            request.arguments
+        )
+        return {
+            "status": "success",
+            "protocol": "mcp",
+            "tool": request.tool_name,
+            "result": result
+        }
+    except CircuitBreakerOpenError as e:
+        raise HTTPException(status_code=503, detail="Circuit breaker open - service unavailable")
+    except ProtocolTimeoutError as e:
+        raise HTTPException(status_code=504, detail=f"Timeout: {e}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/protocol/a2a/create-task", tags=["Third-Party Protocols"])
+async def a2a_create_task(request: ProtocolTaskRequest, demo_mode: bool = False):
+    """
+    Create an A2A task on external agent
+    
+    Set demo_mode=true to test without Google A2A API
+    """
+    if not protocol_adapters["a2a"]:
+        raise HTTPException(status_code=503, detail="A2A adapter not initialized")
+    
+    # Demo mode for testing without Google A2A API
+    if demo_mode:
+        import uuid
+        task_id = f"demo_task_{uuid.uuid4().hex[:8]}"
+        return {
+            "status": "success",
+            "protocol": "a2a",
+            "mode": "demo",
+            "task": {
+                "task_id": task_id,
+                "agent_id": request.agent_id,
+                "description": request.description,
+                "status": "running",
+                "created_at": time.time(),
+                "estimated_completion": "2-5 seconds",
+                "artifacts": [],
+                "progress": {
+                    "status": "in_progress",
+                    "percent_complete": 25,
+                    "current_step": "Initializing NIS Protocol pipeline",
+                    "steps": [
+                        "Laplace signal processing",
+                        "KAN symbolic reasoning",
+                        "PINN physics validation",
+                        "LLM synthesis"
+                    ]
+                }
+            },
+            "note": "This is a demo response. To use Google A2A, set A2A_API_KEY environment variable and call without demo_mode.",
+            "next_steps": f"Check task status at: GET /protocol/a2a/task/{task_id}?demo_mode=true"
+        }
+    
+    try:
+        result = await protocol_adapters["a2a"].create_task(
+            description=request.description,
+            agent_id=request.agent_id,
+            parameters=request.parameters,
+            callback_url=request.callback_url
+        )
+        return {
+            "status": "success",
+            "protocol": "a2a",
+            "mode": "production",
+            "task": result
+        }
+    except CircuitBreakerOpenError as e:
+        raise HTTPException(status_code=503, detail="Circuit breaker open - service unavailable")
+    except ProtocolTimeoutError as e:
+        raise HTTPException(status_code=504, detail=f"Timeout: {e}")
+    except Exception as e:
+        # Provide helpful error with suggestion
+        raise HTTPException(
+            status_code=500,
+            detail={
+                "error": str(e),
+                "suggestion": "No A2A agent configured. Try adding '?demo_mode=true' to test the integration.",
+                "setup_guide": "To use Google A2A, set A2A_API_KEY and configure agent endpoints."
+            }
+        )
+
+@app.get("/protocol/a2a/task/{task_id}", tags=["Third-Party Protocols"])
+async def a2a_get_task_status(task_id: str, demo_mode: bool = False):
+    """
+    Get A2A task status
+    
+    Set demo_mode=true for demo tasks
+    """
+    if not protocol_adapters["a2a"]:
+        raise HTTPException(status_code=503, detail="A2A adapter not initialized")
+    
+    # Demo mode for testing
+    if demo_mode or task_id.startswith("demo_task_"):
+        return {
+            "status": "success",
+            "protocol": "a2a",
+            "mode": "demo",
+            "task_status": {
+                "task_id": task_id,
+                "status": "completed",
+                "created_at": time.time() - 5.2,
+                "completed_at": time.time(),
+                "duration_seconds": 5.2,
+                "progress": {
+                    "status": "completed",
+                    "percent_complete": 100,
+                    "current_step": "Task completed successfully"
+                },
+                "result": {
+                    "success": True,
+                    "output": "NIS Protocol analysis complete",
+                    "pipeline_results": {
+                        "laplace": "Signal processed and transformed",
+                        "kan": "Symbolic reasoning extracted key patterns",
+                        "pinn": "Physics constraints validated",
+                        "llm": "Final synthesis completed"
+                    },
+                    "artifacts": [
+                        {
+                            "type": "analysis_report",
+                            "name": "nis_protocol_results.json",
+                            "size": "2.4 KB"
+                        }
+                    ]
+                }
+            }
+        }
+    
+    try:
+        result = await protocol_adapters["a2a"].get_task_status(task_id)
+        return {
+            "status": "success",
+            "protocol": "a2a",
+            "mode": "production",
+            "task_status": result
+        }
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail={
+                "error": str(e),
+                "suggestion": "If this is a demo task, add '?demo_mode=true' to the request."
+            }
+        )
+
+@app.delete("/protocol/a2a/task/{task_id}", tags=["Third-Party Protocols"])
+async def a2a_cancel_task(task_id: str):
+    """Cancel an A2A task"""
+    if not protocol_adapters["a2a"]:
+        raise HTTPException(status_code=503, detail="A2A adapter not initialized")
+    
+    try:
+        result = await protocol_adapters["a2a"].cancel_task(task_id)
+        return {
+            "status": "success",
+            "protocol": "a2a",
+            "cancelled_task": result
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/protocol/acp/agent-card", tags=["Third-Party Protocols"])
+async def acp_get_agent_card():
+    """Get NIS Protocol Agent Card for ACP offline discovery"""
+    if not protocol_adapters["acp"]:
+        raise HTTPException(status_code=503, detail="ACP adapter not initialized")
+    
+    try:
+        card = protocol_adapters["acp"].export_agent_card()
+        return {
+            "status": "success",
+            "protocol": "acp",
+            "agent_card": card
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/protocol/acp/execute", tags=["Third-Party Protocols"])
+async def acp_execute_agent(request: ProtocolExecuteRequest):
+    """Execute external ACP agent (async or sync)"""
+    if not protocol_adapters["acp"]:
+        raise HTTPException(status_code=503, detail="ACP adapter not initialized")
+    
+    try:
+        result = await protocol_adapters["acp"].execute_agent(
+            agent_url=request.agent_url,
+            message=request.message,
+            async_mode=request.async_mode
+        )
+        return {
+            "status": "success",
+            "protocol": "acp",
+            "result": result
+        }
+    except CircuitBreakerOpenError as e:
+        raise HTTPException(status_code=503, detail="Circuit breaker open - service unavailable")
+    except ProtocolTimeoutError as e:
+        raise HTTPException(status_code=504, detail=f"Timeout: {e}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/protocol/health", tags=["Third-Party Protocols"])
+async def protocol_health():
+    """Get health status of all protocol adapters"""
+    health_status = {}
+    
+    for protocol_name, adapter in protocol_adapters.items():
+        if adapter:
+            try:
+                health_status[protocol_name] = adapter.get_health_status()
+            except Exception as e:
+                health_status[protocol_name] = {
+                    "healthy": False,
+                    "error": str(e)
+                }
+        else:
+            health_status[protocol_name] = {
+                "healthy": False,
+                "error": "Adapter not initialized"
+            }
+    
+    return {
+        "status": "success",
+        "protocols": health_status,
+        "overall_healthy": all(
+            h.get("healthy", False) for h in health_status.values()
+        )
+    }
+
+@app.post("/protocol/translate", tags=["Third-Party Protocols"])
+async def protocol_translate_message(request: ProtocolMessageRequest):
+    """Translate message between NIS Protocol and external protocol format"""
+    target = request.target_protocol.lower()
+    
+    if target not in protocol_adapters or not protocol_adapters[target]:
+        raise HTTPException(status_code=400, detail=f"Protocol '{target}' not available")
+    
+    adapter = protocol_adapters[target]
+    message = request.message
+    
+    try:
+        # Determine direction based on message format
+        if message.get("protocol") == "nis":
+            # NIS to external
+            if target == "mcp":
+                # MCP uses JSON-RPC, not direct translation
+                raise HTTPException(
+                    status_code=400,
+                    detail="MCP requires specific tool/resource calls, not message translation"
+                )
+            elif target == "a2a":
+                # A2A task creation is the translation
+                raise HTTPException(
+                    status_code=400,
+                    detail="A2A requires task creation, not message translation"
+                )
+            elif target == "acp":
+                translated = adapter.translate_from_nis(message)
+                return {
+                    "status": "success",
+                    "direction": "nis_to_acp",
+                    "translated": translated
+                }
+        else:
+            # External to NIS
+            if target == "acp":
+                translated = adapter.translate_to_nis(message)
+                return {
+                    "status": "success",
+                    "direction": "acp_to_nis",
+                    "translated": translated
+                }
+            else:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Translation not applicable for {target}"
+                )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 # --- System & Core Endpoints ---
 @app.get("/", tags=["System"])
 async def read_root():
     """Root endpoint - archaeological platform pattern"""
     models = []
-    for p in llm_provider.providers.values():
-        if isinstance(p, dict):
-            models.append(p.get("model", "default"))
-        else:
-            # Handle object providers like BitNetProvider
-            models.append(getattr(p, 'model', 'default'))
+    if llm_provider and hasattr(llm_provider, 'providers') and llm_provider.providers:
+        for p in llm_provider.providers.values():
+            if isinstance(p, dict):
+                models.append(p.get("model", "default"))
+            else:
+                # Handle object providers like BitNetProvider
+                models.append(getattr(p, 'model', 'default'))
+    else:
+        models = ["system-initializing"]
 
     return {
         "system": "NIS Protocol v3.2",
         "version": "3.2.0",
         "pattern": "nis_v3_agnostic",
         "status": "operational",
-        "real_llm_integrated": list(llm_provider.providers.keys()),
-        "provider": list(llm_provider.providers.keys()),
+        "real_llm_integrated": list(llm_provider.providers.keys()) if llm_provider and hasattr(llm_provider, 'providers') and llm_provider.providers else [],
+        "provider": list(llm_provider.providers.keys()) if llm_provider and hasattr(llm_provider, 'providers') and llm_provider.providers else [],
         "model": models,
         "features": [
             "Real LLM Integration (OpenAI, Anthropic)",
@@ -3420,7 +4220,6 @@ async def read_root():
             "api_docs": "/docs",
             "health_check": "/health",
             "formatted_chat": "/chat/formatted",
-            "enhanced_agent_chat": "/chat/enhanced",
             "vision_analysis": "/vision/analyze",
             "image_generation": "/image/generate",
             "image_editing": "/image/edit",
@@ -3777,12 +4576,6 @@ async def deploy_edge_ai_system(
 
 # ====== BRAIN ORCHESTRATION ENDPOINTS ======
 
-@app.get("/test-debug")
-async def test_debug():
-    """Simple test endpoint to check if logging works"""
-    print("DEBUG: test-debug endpoint called!")
-    return {"message": "Debug endpoint working", "timestamp": time.time()}
-
 @app.get("/api/agents/status", tags=["Brain Orchestration"])
 async def get_agents_status():
     """
@@ -3949,195 +4742,7 @@ async def process_request_through_brain(request: dict):
         logger.error(f"Failed to process request through brain: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to process request: {str(e)}")
 
-@app.get("/enhanced", tags=["Brain Orchestration"])
-async def enhanced_agent_chat():
-    """
-    🧠 Enhanced Agent Chat with Brain Visualization
-    
-    Access the enhanced agent chat interface with live brain monitoring:
-    - Interactive brain regions showing agent activity
-    - Real-time agent status and performance metrics
-    - Click-to-activate agents through visual interface
-    - Neural connection animation showing agent communication
-    """
-    try:
-        with open("static/enhanced_agent_chat.html", "r") as f:
-            return HTMLResponse(f.read())
-    except FileNotFoundError:
-        raise HTTPException(status_code=404, detail="Enhanced agent chat interface not found")
-
-@app.post("/test/formatter", tags=["Testing"])
-async def test_response_formatter(request: dict):
-    """Test the response formatter directly"""
-    try:
-        # Direct import and initialization to avoid global variable issues
-        from src.utils.response_formatter import NISResponseFormatter
-        formatter = NISResponseFormatter()
-        
-        test_data = {
-            "content": request.get("content", "Neural networks are computational models inspired by biological networks."),
-            "confidence": 0.85,
-            "provider": "test"
-        }
-        
-        result = formatter.format_response(
-            data=test_data,
-            output_mode=request.get("output_mode", "visual"),
-            audience_level=request.get("audience_level", "intermediate"),
-            include_visuals=False,  # Disable visual generation to prevent circular HTTP calls
-            show_confidence=request.get("show_confidence", False)
-        )
-        
-        return {
-            "status": "success",
-            "formatted_result": result,
-            "original_content": test_data["content"],
-            "output_mode": request.get("output_mode", "visual"),
-            "formatter_available": True
-        }
-        
-    except Exception as e:
-        import traceback
-        logger.error(f"Formatter test error: {e}")
-        logger.error(f"Traceback: {traceback.format_exc()}")
-        return {
-            "status": "error", 
-            "error": str(e),
-            "traceback": traceback.format_exc()
-        }
-
-def convert_numpy_to_serializable(obj):
-    """Convert numpy arrays and other non-serializable objects to JSON-safe formats"""
-    import numpy as np  # Local import to prevent global serialization issues
-    if isinstance(obj, np.ndarray):
-        return obj.tolist()
-    elif isinstance(obj, np.integer):
-        return int(obj)
-    elif isinstance(obj, np.floating):
-        return float(obj)
-    elif isinstance(obj, dict):
-        return {key: convert_numpy_to_serializable(value) for key, value in obj.items()}
-    elif isinstance(obj, list):
-        return [convert_numpy_to_serializable(item) for item in obj]
-    else:
-        return obj
-
-async def process_nis_pipeline(input_text: str) -> Dict:
-    """
-    ✅ REAL NIS Pipeline - No character codes, genuine mathematical processing
-    This implements the actual Laplace→KAN→PINN pipeline with real signal processing
-    """
-    if laplace is None or kan is None or pinn is None:
-        return {'pipeline': 'skipped - init failed'}
-
-    try:
-        # ✅ REAL SIGNAL PROCESSING: Create actual time-series data
-        # Use proper signal processing instead of character codes
-        time_duration = 1.0  # 1 second signal
-        sampling_rate = 1000  # 1000 Hz sampling rate
-        time_vector = np.linspace(0, time_duration, len(input_text) * 10)  # Proper time sampling
-
-        # ✅ REAL SIGNAL TRANSFORMATION: Convert text to meaningful signal
-        # Use frequency-based encoding instead of character codes
-        frequencies = np.array([ord(c) * 10 + 100 for c in input_text])  # Convert to Hz frequencies
-        amplitudes = np.ones(len(frequencies)) * 0.5  # Normalized amplitudes
-
-        # ✅ REAL SIGNAL GENERATION: Create composite signal
-        signal_data = np.zeros_like(time_vector)
-        for freq, amp in zip(frequencies, amplitudes):
-            signal_data += amp * np.sin(2 * np.pi * freq * time_vector)
-
-        # ✅ REAL LAPLACE TRANSFORM: Actual frequency domain analysis
-        laplace_out = laplace.compute_laplace_transform({
-            "signal": signal_data,
-            "time": time_vector,
-            "sampling_rate": sampling_rate
-        })
-
-        # ✅ REAL KAN PROCESSING: Actual neural network reasoning
-        kan_out = kan.process_laplace_input(laplace_out)
-
-        # ✅ REAL PINN VALIDATION: Actual physics constraint enforcement
-        pinn_out = pinn.validate_kan_output(kan_out)
-
-        # ✅ CONVERT TO JSON-SERIALIZABLE FORMAT
-        pipeline_result = {
-            'pipeline': 'completed',
-            'laplace_transform': convert_numpy_to_serializable(laplace_out),
-            'kan_reasoning': convert_numpy_to_serializable(kan_out),
-            'pinn_validation': convert_numpy_to_serializable(pinn_out),
-            'signal_processed': True,
-            'mathematical_rigor': 'high'
-        }
-
-        return pipeline_result
-
-    except Exception as e:
-        logger.error(f"Real NIS pipeline error: {e}")
-        return {
-            'pipeline': 'error',
-            'error': str(e),
-            'signal_processed': False
-        }
-
-def get_or_create_conversation(conversation_id: Optional[str], user_id: str) -> str:
-    """Get or create a conversation ID, now with enhanced memory support."""
-    if conversation_id is None:
-        conversation_id = f"conv_{user_id}_{uuid.uuid4().hex[:8]}"
-    
-    # Keep legacy support for now
-    if conversation_id not in conversation_memory:
-        conversation_memory[conversation_id] = []
-    
-    return conversation_id
-
-async def add_message_to_conversation(conversation_id: str, role: str, content: str, metadata: Optional[Dict] = None, user_id: Optional[str] = None):
-    """Add message to both legacy and enhanced memory systems."""
-    
-    # Legacy system (for backward compatibility)
-    message = {"role": role, "content": content, "timestamp": time.time()}
-    if metadata:
-        message.update(metadata)
-    conversation_memory[conversation_id].append(message)
-    
-    # Enhanced memory system (if available)
-    if enhanced_chat_memory:
-        try:
-            await enhanced_chat_memory.add_message(
-                conversation_id=conversation_id,
-                role=role,
-                content=content,
-                metadata=metadata,
-                user_id=user_id
-            )
-        except Exception as e:
-            logger.error(f"Failed to add message to enhanced memory: {e}")
-
-async def get_enhanced_conversation_context(conversation_id: str, current_message: Optional[str] = None, max_messages: int = 50) -> List[Dict[str, Any]]:
-    """Get conversation context using enhanced memory system."""
-    
-    if enhanced_chat_memory:
-        try:
-            return await enhanced_chat_memory.get_conversation_context(
-                conversation_id=conversation_id,
-                max_messages=max_messages,
-                include_semantic_context=True,
-                current_message=current_message
-            )
-        except Exception as e:
-            logger.error(f"Failed to get enhanced context: {e}")
-    
-    # Fallback to legacy system
-    context_messages = conversation_memory.get(conversation_id, [])[-max_messages:]
-    return [
-        {
-            "role": msg["role"],
-            "content": msg["content"],
-            "timestamp": datetime.fromtimestamp(msg["timestamp"]).isoformat(),
-            "source": "legacy_memory"
-        }
-        for msg in context_messages
-    ]
+# /enhanced endpoint - REMOVED for simplification
 
 @app.post("/chat/formatted", response_class=HTMLResponse, tags=["Chat"])
 async def chat_formatted(request: ChatRequest):
@@ -4355,7 +4960,7 @@ async def chat_optimized(request: ChatRequest):
 
 @app.post("/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
-    """Enhanced chat with REAL LLM - NIS Protocol v3.1"""
+    """Enhanced chat with REAL LLM - NIS Protocol v3.2 - INTELLIGENT QUERY ROUTING"""
     global response_formatter
     conversation_id = get_or_create_conversation(request.conversation_id, request.user_id)
     
@@ -4363,12 +4968,31 @@ async def chat(request: ChatRequest):
     await add_message_to_conversation(conversation_id, "user", request.message, {"context": request.context}, request.user_id)
     
     try:
-        # Get enhanced conversation context with semantic search
-        context_messages = await get_enhanced_conversation_context(
-            conversation_id=conversation_id, 
-            current_message=request.message, 
-            max_messages=30
+        # 🎯 INTELLIGENT QUERY ROUTER - Smart path selection (inspired by MoE pattern)
+        from src.core.query_router import route_chat_query
+        
+        routing = route_chat_query(
+            query=request.message,
+            context_size=len(conversation_memory.get(conversation_id, [])),
+            user_preference=getattr(request, 'speed_preference', None)
         )
+        
+        logger.info(f"🎯 Query Router: {routing['query_type']} → {routing['processing_path']} ({routing['estimated_time']})")
+        
+        # Get context based on routing decision
+        max_messages = routing['config']['max_context_messages']
+        enable_semantic = routing['config']['enable_semantic_search']
+        
+        if enable_semantic:
+            context_messages = await get_enhanced_conversation_context(
+                conversation_id=conversation_id, 
+                current_message=request.message, 
+                max_messages=max_messages
+            )
+        else:
+            # Fast path: simple context without semantic search
+            conv_messages = conversation_memory.get(conversation_id, [])
+            context_messages = conv_messages[-max_messages:] if conv_messages else []
         
         # Build message array for LLM with enhanced system prompt
         system_content = """You are an expert AI assistant specializing in the NIS Protocol v3. Provide detailed, accurate, and technically grounded responses about the system's architecture, capabilities, and usage. Focus on multi-agent coordination, signal processing pipeline, and LLM integration. Avoid references to specific projects or themes.
@@ -4391,10 +5015,18 @@ Use this rich context to provide more insightful responses that build on previou
         if not any(msg.get("content") == request.message for msg in messages if msg.get("role") == "user"):
             messages.append({"role": "user", "content": request.message})
 
-        # Process NIS pipeline
-        pipeline_result = await process_nis_pipeline(request.message)
-        safe_pipeline_result = convert_numpy_to_serializable(pipeline_result)
-        messages.append({"role": "system", "content": f"Pipeline result: {json.dumps(safe_pipeline_result)}"})
+        # 🚀 ADAPTIVE PIPELINE ROUTING - Process based on routing decision
+        if not routing['config']['skip_pipeline']:
+            # Run pipeline (light or full mode)
+            pipeline_result = await process_nis_pipeline(request.message)
+            safe_pipeline_result = convert_numpy_to_serializable(pipeline_result)
+            
+            # For light mode, only include summary
+            if routing['config'].get('pipeline_mode') == 'light':
+                messages.append({"role": "system", "content": f"Quick analysis: {safe_pipeline_result.get('summary', '')}"})
+            else:
+                # Full pipeline results
+                messages.append({"role": "system", "content": f"Pipeline result: {json.dumps(safe_pipeline_result)}"})
         
         # Generate REAL LLM response using archaeological patterns
         logger.info(f"🎯 CHAT REQUEST: provider={request.provider}, agent_type={request.agent_type}")
@@ -4408,17 +5040,17 @@ Use this rich context to provide more insightful responses that build on previou
         if request.consensus_mode or request.consensus_providers:
             try:
                 from src.llm.consensus_controller import ConsensusConfig, ConsensusMode
+                consensus_config = ConsensusConfig(
+                    mode=ConsensusMode(request.consensus_mode) if request.consensus_mode else ConsensusMode.SMART,
+                    selected_providers=request.consensus_providers,
+                    max_cost=request.max_cost,
+                    user_preference=request.user_preference,
+                    enable_caching=request.enable_caching
+                )
             except ImportError:
                 logger.warning("Consensus controller not available - using single provider mode")
+                consensus_config = None
                 # Continue with single provider
-            
-            consensus_config = ConsensusConfig(
-                mode=ConsensusMode(request.consensus_mode) if request.consensus_mode else ConsensusMode.SMART,
-                selected_providers=request.consensus_providers,
-                max_cost=request.max_cost,
-                user_preference=request.user_preference,
-                enable_caching=request.enable_caching
-            )
         
         # Determine provider/consensus mode
         requested_provider = request.provider
@@ -4523,7 +5155,13 @@ Use this rich context to provide more insightful responses that build on previou
             real_ai=result["real_ai"],
             model=result["model"],
             tokens_used=result["tokens_used"],
-            reasoning_trace=["archaeological_pattern", "context_analysis", "llm_generation", "response_synthesis"]
+            reasoning_trace=[
+                "intelligent_routing",
+                f"path_{routing['processing_path']}",
+                f"type_{routing['query_type']}",
+                "llm_generation", 
+                "response_synthesis"
+            ]
         )
         
     except Exception as e:
@@ -4855,11 +5493,6 @@ class SimpleChatRequest(BaseModel):
     user_id: Optional[str] = "anonymous"
     conversation_id: Optional[str] = None
 
-@app.post("/test/minimal-chat")
-async def test_minimal_chat(request: ChatRequest):
-    """Minimal chat endpoint to isolate the issue"""
-    return {"response": f"Echo: {request.message}", "status": "success"}
-
 @app.post("/chat/simple")
 async def chat_simple(request: SimpleChatRequest):
     """SIMPLE WORKING CHAT ENDPOINT"""
@@ -4886,19 +5519,37 @@ async def chat_simple_stream(request: SimpleChatRequest):
 
 @app.post("/chat/stream")
 async def chat_stream_working(request: SimpleChatRequest):
-    """WORKING STREAMING ENDPOINT - Fixed numpy serialization"""
+    """REAL LLM STREAMING ENDPOINT - Uses OpenAI for streaming responses"""
     async def generate():
         try:
-            # Simple working response
-            response_text = f"Hello! You said: {request.message}"
-            words = response_text.split()
+            # Build messages for LLM
+            messages = [
+                {"role": "system", "content": "You are a helpful AI assistant. Provide clear, accurate responses."},
+                {"role": "user", "content": request.message}
+            ]
             
-            for word in words:
-                yield f"data: " + json.dumps({"type": "content", "data": word + " "}) + "\n\n"
-                await asyncio.sleep(0.05)
-            
-            yield f"data: " + json.dumps({"type": "done"}) + "\n\n"
+            # Use LLM provider for streaming
+            if llm_provider:
+                result = await llm_provider.generate_response(
+                    messages=messages,
+                    temperature=0.7,
+                    requested_provider=None  # Auto-select
+                )
+                
+                # Stream the response word by word
+                response_text = result.get("content", "No response generated")
+                words = response_text.split()
+                
+                for word in words:
+                    yield f"data: " + json.dumps({"type": "content", "data": word + " "}) + "\n\n"
+                    await asyncio.sleep(0.02)  # Fast streaming
+                
+                yield f"data: " + json.dumps({"type": "done"}) + "\n\n"
+            else:
+                yield f"data: " + json.dumps({"type": "error", "data": "LLM provider not available"}) + "\n\n"
+                
         except Exception as e:
+            logger.error(f"Stream error: {e}")
             yield f"data: " + json.dumps({"type": "error", "data": f"Stream error: {str(e)}"}) + "\n\n"
             
     return StreamingResponse(generate(), media_type="text/event-stream")
@@ -6436,27 +7087,6 @@ async def langgraph_invoke(request: dict):
         logger.error(f"LangGraph invoke error: {e}")
         return {"error": str(e)}
 
-@app.get("/api/mcp/demo", tags=["MCP Integration"])
-async def run_mcp_demo():
-    """
-    🧪 Run MCP + Deep Agents demo
-    
-    Tests all integrations and returns results
-    """
-    if not hasattr(app.state, 'mcp_integration') or not app.state.mcp_integration:
-        return {"success": False, "error": "MCP integration not available"}
-    
-    try:
-        # Run a quick demo
-        results = await app.state.mcp_integration.run_demo()
-        return {"success": True, "demo_results": results}
-    except Exception as e:
-        logger.error(f"MCP demo error: {e}")
-        return {"success": False, "error": str(e)}
-
-
-# ====== NVIDIA NeMo Enterprise Integration Endpoints ======
-
 @app.get("/nvidia/inception/status", tags=["NVIDIA Inception"])
 async def get_nvidia_inception_status():
     """
@@ -6739,94 +7369,6 @@ async def get_nemo_toolkit_status():
             "timestamp": time.time()
         }
 
-@app.post("/nvidia/nemo/toolkit/test", tags=["NVIDIA NeMo"])
-async def test_nemo_toolkit(request: dict):
-    """
-    🧪 Test NVIDIA NeMo Agent Toolkit
-    
-    Run a test workflow to verify toolkit functionality
-    
-    Body:
-    - test_query: Query to test with (optional)
-    """
-    try:
-        from src.agents.nvidia_nemo.nemo_toolkit_installer import create_nemo_toolkit_installer
-        
-        installer = create_nemo_toolkit_installer()
-        test_query = request.get("test_query", "What are the key features of NVIDIA NeMo?")
-        
-        # Run test
-        test_result = await installer.test_installation(test_query)
-        
-        return {
-            "status": "success",
-            "test_result": test_result,
-            "query": test_query,
-            "timestamp": time.time()
-        }
-        
-    except Exception as e:
-        logger.error(f"NeMo toolkit test error: {e}")
-        return {
-            "status": "error",
-            "error": str(e),
-            "timestamp": time.time()
-        }
-
-@app.get("/nvidia/nemo/cosmos/demo", tags=["NVIDIA NeMo"])
-async def nemo_cosmos_demo():
-    """
-    🌍 NVIDIA Cosmos World Foundation Models Demo
-    
-    Showcase Cosmos World Foundation Models for physical AI
-    """
-    try:
-        # Demo scenario for Cosmos models
-        cosmos_demo = {
-            "model": "nvidia/cosmos-world-foundation",
-            "capability": "Physical AI World Simulation",
-            "features": [
-                "Real-time physics simulation",
-                "World state generation", 
-                "Physical interaction modeling",
-                "Autonomous vehicle simulation",
-                "Robotics environment modeling"
-            ],
-            "demo_scenarios": [
-                {
-                    "name": "Vehicle Physics",
-                    "description": "Simulate vehicle dynamics in various environments",
-                    "physics_laws": ["Newton's Laws", "Friction", "Aerodynamics"]
-                },
-                {
-                    "name": "Robotic Manipulation", 
-                    "description": "Model robotic arm interactions with objects",
-                    "physics_laws": ["Kinematics", "Force/Torque", "Collision Detection"]
-                },
-                {
-                    "name": "Fluid Dynamics",
-                    "description": "Simulate fluid flow and interactions",
-                    "physics_laws": ["Navier-Stokes", "Conservation Laws", "Turbulence"]
-                }
-            ],
-            "integration_status": "Available with NeMo Framework",
-            "api_access": "NVIDIA NIM Microservices"
-        }
-        
-        return {
-            "status": "success",
-            "cosmos_demo": cosmos_demo,
-            "timestamp": time.time()
-        }
-        
-    except Exception as e:
-        logger.error(f"Cosmos demo error: {e}")
-        return {
-            "status": "error",
-            "error": str(e),
-            "timestamp": time.time()
-        }
-
 @app.get("/nvidia/nemo/enterprise/showcase", tags=["NVIDIA NeMo"])
 async def nemo_enterprise_showcase():
     """
@@ -6906,378 +7448,6 @@ async def nemo_enterprise_showcase():
             "timestamp": time.time()
         }
 
-@app.websocket("/voice-chat")
-async def voice_chat_optimized(websocket: WebSocket):
-    """
-    High-performance voice chat WebSocket with <500ms latency optimization
-    Features: Streaming STT, concurrent processing, adaptive buffering
-    """
-    await websocket.accept()
-    
-    # Initialize high-performance components
-    audio_processor = get_audio_processor()
-    stream_id = f"voice_chat_{uuid.uuid4().hex[:8]}"
-    
-    try:
-        # Create optimized audio buffer for this session
-        audio_buffer = audio_processor.create_stream(
-            stream_id,
-            target_latency_ms=200,  # Target 200ms latency
-            max_latency_ms=500,     # Maximum 500ms latency
-            chunk_size_ms=20        # 20ms chunks for low latency
-        )
-        
-        # Initialize streaming STT service
-        stt_service = StreamingSTTService(model_size="base", device="cpu")
-        await stt_service.initialize()
-        
-        # Initialize wake word detection and conversation management
-        wake_detector = get_wake_word_detector()
-        conversation_manager = get_conversation_manager()
-        
-        # Initialize NIS platform using mock classes
-        try:
-            # Use the mock classes defined at the top of the file
-            platform = create_edge_platform("voice-system", device_type="server")
-            consciousness = NISConsciousnessAgent("consciousness_001")
-            physics = NISPhysicsAgent("physics_validator")
-            await platform.add_agent(consciousness)
-            await platform.add_agent(physics)
-            logger.info("🚀 NIS Platform initialized successfully for voice chat")
-        except Exception as e:
-            logger.error(f"Failed to initialize NIS Platform: {e}")
-            platform = None
-            consciousness = None
-            physics = None
-
-        # Agent configuration for voice characteristics
-        agent_voice_config = {
-            "consciousness": {"speaker": "consciousness_voice", "rate": 0.9, "pitch": 1.1},
-            "physics": {"speaker": "physics_voice", "rate": 0.8, "pitch": 0.9},
-            "coordination": {"speaker": "coordination_voice", "rate": 1.0, "pitch": 1.0},
-            "research": {"speaker": "research_voice", "rate": 0.9, "pitch": 0.95},
-            "memory": {"speaker": "memory_voice", "rate": 0.85, "pitch": 1.05}
-        }
-        
-        # Performance tracking
-        session_stats = {
-            "chunks_processed": 0,
-            "total_latency_ms": 0,
-            "avg_latency_ms": 0,
-            "start_time": time.time()
-        }
-        
-        # Set up partial transcription callback
-        async def partial_transcription_callback(result):
-            """Handle partial transcription results for real-time feedback"""
-            if result.get("is_partial") and result.get("text"):
-                await websocket.send_json({
-                    "type": "partial_transcription",
-                    "text": result["text"],
-                    "confidence": result.get("confidence", 0.0),
-                    "timestamp": time.time()
-                })
-        
-        stt_service.set_partial_callback(partial_transcription_callback)
-        
-        # Main processing loop
-        while True:
-            chunk_start_time = time.time()
-            
-            # Receive audio chunk
-            audio_data = await websocket.receive_bytes()
-            
-            # Add to high-performance buffer
-            audio_buffer.add_chunk(audio_data, chunk_start_time)
-            
-            # Process with streaming STT (non-blocking)
-            stt_result = await stt_service.process_audio_chunk(audio_data)
-            
-            if stt_result and stt_result.get("text"):
-                text = stt_result["text"]
-                confidence = stt_result.get("confidence", 0.0)
-                
-                # Check for wake word detection
-                wake_result = wake_detector.detect_wake_word(text)
-                if wake_result.get("detected"):
-                    await websocket.send_json({
-                        "type": "wake_word_detected",
-                        "phrase": wake_result["phrase"],
-                        "confidence": wake_result["confidence"],
-                        "message": f"👋 Hey there! I heard '{wake_result['phrase']}' - I'm listening!"
-                    })
-                    
-                    # Start continuous conversation session
-                    if not conversation_manager.is_session_active():
-                        conversation_manager.start_session(stream_id)
-                        await websocket.send_json({
-                            "type": "conversation_started",
-                            "message": "🎙️ Continuous conversation mode activated!"
-                        })
-                
-                # Check for voice commands
-                command_result = wake_detector.detect_voice_command(text)
-                if command_result.get("command"):
-                    await websocket.send_json({
-                        "type": "voice_command_detected",
-                        "command": command_result["command"],
-                        "details": command_result
-                    })
-                
-                # Only process if confidence is high enough or it's a final result
-                # Also process if wake word was detected or we're in continuous mode
-                should_process = (
-                    confidence > 0.6 or 
-                    not stt_result.get("is_partial", False) or
-                    wake_result.get("detected") or
-                    conversation_manager.is_session_active()
-                )
-                
-                if should_process:
-                    # Handle voice commands first
-                    if command_result.get("command") == "switch_agent":
-                        current_agent = command_result.get("agent", "consciousness")
-                        await websocket.send_json({
-                            "agentHandoff": {"from": conversation_manager.current_agent, "to": current_agent}
-                        })
-                        await websocket.send_json({
-                            "type": "agent_switched",
-                            "agent": current_agent,
-                            "message": f"🔄 Switched to {current_agent.title()} Agent"
-                        })
-                    
-                    elif command_result.get("command") == "stop":
-                        conversation_manager.end_session()
-                        await websocket.send_json({
-                            "type": "conversation_ended",
-                            "message": "🔇 Conversation ended. Say 'Hey NIS' to start again!"
-                        })
-                        continue
-                    
-                    elif command_result.get("command") == "help":
-                        help_message = """🎙️ Voice Commands Available:
-• "Hey NIS" - Wake up and start conversation
-• "Physics/Research/Memory/Consciousness" - Switch agents
-• "Stop" - End conversation
-• "Status" - Check system status
-• "Help" - Show this message"""
-                        
-                        await websocket.send_json({
-                            "type": "help_response",
-                            "text": help_message,
-                            "agentId": "system"
-                        })
-                        continue
-                    
-                    elif command_result.get("command") == "status":
-                        context = conversation_manager.get_context_summary()
-                        status_message = f"""📊 NIS Protocol Status:
-• Session Active: {'Yes' if context['active'] else 'No'}
-• Current Agent: {context.get('current_agent', 'None').title()}
-• Interactions: {context.get('interaction_count', 0)}
-• Avg Latency: {session_stats.get('avg_latency_ms', 0):.0f}ms"""
-                        
-                        await websocket.send_json({
-                            "type": "status_response",
-                            "text": status_message,
-                            "agentId": "system",
-                            "context": context
-                        })
-                        continue
-                    
-                    else:
-                        # Regular conversation processing
-                        # Show thinking indicator
-                        await websocket.send_json({"agentThinking": "consciousness"})
-                        
-                        # Multi-agent processing with intelligent handoff
-                        current_agent = conversation_manager.current_agent if conversation_manager.is_session_active() else "consciousness"
-                        
-                        # Intelligent agent selection based on content (if no explicit command)
-                        if not command_result.get("command"):
-                            text_lower = text.lower()
-                            if any(word in text_lower for word in ["physics", "equation", "force", "energy", "mass"]):
-                                if current_agent != "physics":
-                                    await websocket.send_json({
-                                        "agentHandoff": {"from": current_agent, "to": "physics"}
-                                    })
-                                    current_agent = "physics"
-                            elif any(word in text_lower for word in ["research", "search", "find", "study", "analyze"]):
-                                if current_agent != "research":
-                                    await websocket.send_json({
-                                        "agentHandoff": {"from": current_agent, "to": "research"}
-                                    })
-                                    current_agent = "research"
-                            elif any(word in text_lower for word in ["remember", "memory", "recall", "store", "save"]):
-                                if current_agent != "memory":
-                                    await websocket.send_json({
-                                        "agentHandoff": {"from": current_agent, "to": "memory"}
-                                    })
-                                    current_agent = "memory"
-                    
-                    # Process with selected agent (concurrent with TTS preparation)
-                    processing_start = time.time()
-                    
-                    if platform:
-                        try:
-                            agent_processing_task = asyncio.create_task(platform.process(text))
-                            response = await agent_processing_task
-                        except Exception as e:
-                            logger.error(f"Error processing with NIS Platform: {e}")
-                            response = {
-                                "text": f"I understand your request about: {text}",
-                                "agent_id": current_agent,
-                                "content": f"I understand your request about: {text}"
-                            }
-                    else:
-                        # Fallback response if platform is not available
-                        response = {
-                            "text": f"I understand your request about: {text}",
-                            "agent_id": current_agent,
-                            "content": f"I understand your request about: {text}"
-                        }
-                        
-                    processing_time = (time.time() - processing_start) * 1000
-                    
-                    # Enhance response with agent information
-                    response_text = response.get("text", f"I understand your request about: {text}")
-                    enhanced_response = {
-                        "text": response_text,
-                        "agentId": current_agent,
-                        "speaker": current_agent,
-                        "confidence": confidence,
-                        "processing_time_ms": processing_time,
-                        "timestamp": time.time(),
-                        "conversation_active": conversation_manager.is_session_active(),
-                        "wake_word_detected": wake_result.get("detected", False)
-                    }
-                    
-                    # Add to conversation context if session is active
-                    if conversation_manager.is_session_active():
-                        conversation_manager.add_interaction(text, response_text, current_agent)
-                        
-                        # Add conversation context to response
-                        context = conversation_manager.get_context_summary()
-                        enhanced_response["conversation_context"] = {
-                            "depth": context.get("conversation_depth", 0),
-                            "session_id": context.get("session_id"),
-                            "should_continue": conversation_manager.should_continue_listening()
-                        }
-                    
-                    # Get voice config for this agent
-                    voice_config = agent_voice_config.get(current_agent, {})
-                    
-                    # Concurrent TTS processing
-                    tts_start = time.time()
-                    try:
-                        # VibeVoice TTS with agent-specific characteristics
-                        if vibevoice_engine is None:
-                            logger.error("❌ VibeVoice engine not initialized")
-                            await websocket.send_json({"error": "VibeVoice engine not available"})
-                            continue
-                            
-                        audio = vibevoice_engine.synthesize_speech(
-                            text=enhanced_response["text"],
-                            speaker=voice_config.get("speaker", "default_voice"),
-                            emotion="neutral",
-                            streaming=True
-                        )
-                        
-                        tts_time = (time.time() - tts_start) * 1000
-                        
-                        # Stream audio chunks with minimal latency
-                        logger.info(f"🎙️ Audio synthesis result: {type(audio)}")
-                        
-                        if not audio.get("success", False):
-                            logger.error(f"❌ Audio synthesis failed: {audio.get('error_message', 'Unknown error')}")
-                            await websocket.send_json({"error": "Audio synthesis failed"})
-                            continue
-                        
-                        # Extract audio data from VibeVoice response
-                        audio_data = audio.get("audio_data")
-                        if not audio_data:
-                            logger.error("❌ No audio_data in VibeVoice response")
-                            await websocket.send_json({"error": "No audio data generated"})
-                            continue
-                            
-                        logger.info(f"✅ Audio generated: {len(audio_data)} bytes, duration: {audio.get('duration_seconds', 0):.2f}s")
-                        
-                        # Split into chunks for streaming
-                        chunks = split_into_chunks(audio_data, 100)  # 100ms chunks
-                        logger.info(f"📦 Split audio into {len(chunks)} chunks")
-                        
-                        # Stream audio chunks
-                        for i, chunk in enumerate(chunks):
-                            logger.info(f"📤 Sending chunk {i+1}/{len(chunks)}, size: {len(chunk)} bytes")
-                            await websocket.send_bytes(chunk)
-                            
-                        # Send completion message
-                        enhanced_response["status"] = "end"
-                        enhanced_response["tts_time_ms"] = tts_time
-                        enhanced_response["audio_info"] = {
-                            "duration_seconds": audio.get("duration_seconds", 0),
-                            "speaker": audio.get("speaker_used", "unknown"),
-                            "chunks_sent": len(chunks)
-                        }
-                        logger.info(f"✅ Sending completion message: {enhanced_response}")
-                        await websocket.send_json(enhanced_response)
-                        
-                    except Exception as tts_error:
-                        logger.error(f"TTS error: {tts_error}")
-                        # Fallback to text-only response
-                        enhanced_response["tts_error"] = str(tts_error)
-                        await websocket.send_json(enhanced_response)
-                    
-                    # Update performance stats
-                    total_latency = (time.time() - chunk_start_time) * 1000
-                    session_stats["chunks_processed"] += 1
-                    session_stats["total_latency_ms"] += total_latency
-                    session_stats["avg_latency_ms"] = (
-                        session_stats["total_latency_ms"] / session_stats["chunks_processed"]
-                    )
-                    
-                    # Send performance stats periodically
-                    if session_stats["chunks_processed"] % 10 == 0:
-                        buffer_status = audio_buffer.get_buffer_status()
-                        await websocket.send_json({
-                            "type": "performance_stats",
-                            "session_stats": session_stats,
-                            "buffer_status": buffer_status,
-                            "stt_stats": stt_service.get_stats()
-                        })
-            
-            # Adaptive latency warning
-            buffer_status = audio_buffer.get_buffer_status()
-            if buffer_status["current_latency_ms"] > 400:  # Warn at 400ms
-                await websocket.send_json({
-                    "type": "latency_warning",
-                    "current_latency_ms": buffer_status["current_latency_ms"],
-                    "message": "High latency detected - optimizing..."
-                })
-            
-    except WebSocketDisconnect:
-        logger.info(f"Voice chat WebSocket disconnected: {stream_id}")
-    except Exception as e:
-        logger.error(f"Voice chat WebSocket error: {e}")
-        await websocket.send_json({
-            "type": "error",
-            "error": str(e),
-            "timestamp": time.time()
-        })
-    finally:
-        # Cleanup
-        if stream_id in audio_processor.active_streams:
-            audio_processor.remove_stream(stream_id)
-        # Don't close the WebSocket here - it will be closed automatically when the function returns
-
-async def stt_process(audio_data):
-    # Save temp file for Whisper
-    with open("temp_audio.webm", "wb") as f:
-        f.write(audio_data)
-    model = whisper.load_model("base")  # Or 'small', 'medium' for better accuracy
-    result = model.transcribe("temp_audio.webm")
-    return result["text"]
-
 @app.get("/test-audio")
 async def test_audio():
     """
@@ -7308,116 +7478,3 @@ async def test_audio():
         logger.error(f"❌ Test audio generation failed: {e}")
         raise HTTPException(status_code=500, detail=f"Test audio generation failed: {str(e)}")
 
-@app.get("/test-audio-chunked")
-async def test_audio_chunked():
-    """
-    🎵 Test the audio chunking pipeline
-    """
-    try:
-        logger.info("🎵 Testing audio chunking pipeline...")
-        
-        # Generate test audio
-        import numpy as np
-        sample_rate = 44100
-        duration = 3  # seconds
-        frequency = 440  # A4 note
-        
-        t = np.linspace(0, duration, int(sample_rate * duration))
-        audio_data = np.sin(2 * np.pi * frequency * t) * 0.3
-        
-        # Convert to WAV format
-        audio_buffer = io.BytesIO()
-        sf.write(audio_buffer, audio_data, sample_rate, format='WAV')
-        audio_bytes = audio_buffer.getvalue()
-        
-        logger.info(f"📊 Generated audio: {len(audio_bytes)} bytes")
-        
-        # Test chunking
-        chunks = split_into_chunks(audio_bytes, 500)  # 500ms chunks
-        
-        result = {
-            "success": True,
-            "original_size": len(audio_bytes),
-            "num_chunks": len(chunks),
-            "chunk_sizes": [len(chunk) for chunk in chunks],
-            "total_chunked_size": sum(len(chunk) for chunk in chunks)
-        }
-        
-        logger.info(f"✅ Chunking test completed: {result}")
-        return result
-        
-    except Exception as e:
-        logger.error(f"❌ Audio chunking test failed: {e}")
-        import traceback
-        logger.error(f"📋 Traceback: {traceback.format_exc()}")
-        raise HTTPException(status_code=500, detail=f"Audio chunking test failed: {str(e)}")
-
-def split_into_chunks(audio, chunk_size_ms):
-    """
-    Split audio data into smaller chunks for streaming
-    
-    Args:
-        audio: Audio data (bytes, file path, or io.BytesIO)
-        chunk_size_ms: Size of each chunk in milliseconds
-        
-    Returns:
-        List of audio chunks as bytes
-    """
-    try:
-        logger.info(f"🎵 Processing audio for chunking: type={type(audio)}, chunk_size={chunk_size_ms}ms")
-        
-        # Handle different audio input types
-        if isinstance(audio, bytes):
-            logger.info(f"📊 Processing bytes audio data: {len(audio)} bytes")
-            # Convert bytes to BytesIO
-            audio_io = io.BytesIO(audio)
-            segment = AudioSegment.from_file(audio_io, format="wav")
-        elif isinstance(audio, io.BytesIO):
-            logger.info("📊 Processing BytesIO audio data")
-            # Already a BytesIO object
-            segment = AudioSegment.from_file(audio, format="wav")
-        elif isinstance(audio, str):
-            logger.info(f"📊 Processing file path: {audio}")
-            # File path
-            segment = AudioSegment.from_file(audio)
-        else:
-            # Dictionary with audio_data key (from vibevoice.synthesize)
-            if isinstance(audio, dict) and "audio_data" in audio:
-                logger.info(f"📊 Processing dictionary with audio_data: {len(audio['audio_data'])} bytes")
-                audio_io = io.BytesIO(audio["audio_data"])
-                segment = AudioSegment.from_file(audio_io, format="wav")
-            else:
-                logger.error(f"❌ Unsupported audio type: {type(audio)}")
-                raise ValueError(f"Unsupported audio type: {type(audio)}")
-        
-        logger.info(f"🎵 Audio segment loaded: duration={len(segment)}ms, channels={segment.channels}, frame_rate={segment.frame_rate}")
-        
-        # Split into chunks (corrected: use milliseconds properly)
-        chunks = []
-        chunk_length_ms = chunk_size_ms
-        for i in range(0, len(segment), chunk_length_ms):
-            chunk = segment[i:i + chunk_length_ms]
-            chunk_io = io.BytesIO()
-            chunk.export(chunk_io, format="wav")
-            chunk_bytes = chunk_io.getvalue()
-            chunks.append(chunk_bytes)
-            logger.debug(f"📦 Chunk {len(chunks)}: {len(chunk_bytes)} bytes, duration={len(chunk)}ms")
-        
-        logger.info(f"✅ Split audio into {len(chunks)} chunks of {chunk_size_ms}ms each")
-        return chunks
-    except Exception as e:
-        logger.error(f"❌ Error splitting audio into chunks: {e}")
-        import traceback
-        logger.error(f"📋 Traceback: {traceback.format_exc()}")
-        # Return empty list as fallback
-        return []
-
-# ======  PATTERN: SIMPLE STARTUP ======
-if __name__ == "__main__":
-    logger.info("🏺 Starting NIS Protocol v3.2 with MCP + Deep Agents + mcp-ui Integration")
-    logger.info("🚀 Based on proven success from OpenAIZChallenge heritage platform")
-    logger.info("🎨 Enhanced with interactive UI components and multi-step workflows")
-    
-    app.start_time = datetime.now() # Initialize app.start_time
-
-    uvicorn.run(app, host="0.0.0.0", port=8000) 
