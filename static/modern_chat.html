@@ -2703,12 +2703,16 @@ Ready to execute your commands safely! 🚀`, false, 'system');
                     
                     this.dataArray = new Uint8Array(this.analyser.frequencyBinCount);
                     
-                    this.updateStatus('Voice mode active - Ready to chat!', 'success');
+                    // Show helpful message
+                    this.updateStatus('👂 Listening... Just start speaking!', 'success');
+                    addMessage('🎙️ Voice chat activated! I\'m listening - just start talking and I\'ll respond automatically.', false, 'system');
+                    
                     this.startListening();
                     
                 } catch (error) {
                     console.error('Failed to start voice mode:', error);
                     this.updateStatus('Microphone access denied', 'error');
+                    addMessage('❌ Microphone access denied. Please allow microphone permissions and try again.', false, 'system');
                     this.voiceEnabled = false;
                     this.conversationMode = false;
                 }
@@ -2732,6 +2736,7 @@ Ready to execute your commands safely! 🚀`, false, 'system');
                 }
                 
                 this.updateStatus('Voice mode disabled', 'info');
+                addMessage('🔇 Voice chat deactivated. Click the microphone to start again.', false, 'system');
             }
 
             startListening() {
@@ -3056,11 +3061,11 @@ Ready to execute your commands safely! 🚀`, false, 'system');
                     this.micIcon.textContent = '🎤';
                 }
                 
-                // Update button title
-                const status = this.isRecording ? 'Recording...' : 
-                             this.isProcessing ? 'Processing...' :
-                             this.conversationMode ? 'Voice chat active (Ctrl+V to toggle)' :
-                             'Start voice chat (Ctrl+V)';
+                // Update button title with clear instructions
+                const status = this.isRecording ? '🔴 Recording your voice...' :
+                             this.isProcessing ? '⏳ Processing your message...' :
+                             this.conversationMode ? '👂 Listening - just start talking! (Click to stop)' :
+                             '🎤 Click to start voice chat - I\'ll listen continuously';
                 this.voiceButton.title = status;
             }
 
