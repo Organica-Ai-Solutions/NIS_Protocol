@@ -45,7 +45,7 @@ except ImportError:
     LANGCHAIN_AVAILABLE = False
 
 try:
-    from langgraph import Graph, StateGraph
+    from langgraph.graph import StateGraph
     LANGGRAPH_AVAILABLE = True
 except ImportError:
     LANGGRAPH_AVAILABLE = False

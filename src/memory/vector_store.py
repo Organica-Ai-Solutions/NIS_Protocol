@@ -22,6 +22,19 @@ except ImportError as e:
     # Import the simple fallback
     from .simple_vector_store import SimpleVectorStore
 
+# Try to import production vector databases
+try:
+    import pinecone
+    PINECONE_AVAILABLE = True
+except ImportError:
+    PINECONE_AVAILABLE = False
+
+try:
+    import weaviate
+    WEAVIATE_AVAILABLE = True
+except ImportError:
+    WEAVIATE_AVAILABLE = False
+
 class VectorStore:
     """
     Vector database implementation for semantic search of memories.
@@ -36,7 +49,13 @@ class VectorStore:
     
     def __init__(self, dim: int = 768, max_elements: int = 100000, space: str = "cosine", ef_search: int = 50):
         """
-        Initialize the vector store.
+        Initialize the vector store with automatic backend selection.
+        
+        Backend Priority:
+        1. Pinecone (if PINECONE_API_KEY set)
+        2. Weaviate (if WEAVIATE_URL set)
+        3. HNSW (if hnswlib available)
+        4. Simple (fallback)
         
         Args:
             dim: Dimensionality of the embedding vectors
@@ -44,9 +63,23 @@ class VectorStore:
             space: Distance metric to use (cosine, l2, ip)
             ef_search: Query-time accuracy parameter
         """
-        if HNSWLIB_AVAILABLE:
+        # Check for production vector DB config
+        vector_backend = os.getenv("VECTOR_STORE_BACKEND", "auto").lower()
+        pinecone_key = os.getenv("PINECONE_API_KEY", "")
+        weaviate_url = os.getenv("WEAVIATE_URL", "")
+        
+        # Auto-select best available backend
+        if vector_backend == "pinecone" or (vector_backend == "auto" and pinecone_key and PINECONE_AVAILABLE):
+            print(f"✅ Using Pinecone vector database (production)")
+            self._impl = PineconeVectorStore(dim, max_elements, space)
+        elif vector_backend == "weaviate" or (vector_backend == "auto" and weaviate_url and WEAVIATE_AVAILABLE):
+            print(f"✅ Using Weaviate vector database (production)")
+            self._impl = WeaviateVectorStore(dim, max_elements, space)
+        elif HNSWLIB_AVAILABLE:
+            print(f"✅ Using HNSW vector store (local)")
             self._impl = HNSWVectorStore(dim, max_elements, space, ef_search)
         else:
+            print(f"⚠️  Using simple vector store (fallback)")
             # Map ip space to cosine for simple implementation
             simple_space = "cosine" if space == "ip" else space
             self._impl = SimpleVectorStore(dim, max_elements, simple_space)

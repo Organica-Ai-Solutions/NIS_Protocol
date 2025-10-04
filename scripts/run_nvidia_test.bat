@@ -1,6 +1,0 @@
-@echo off
-echo Running NVIDIA API Test...
-"C:\Users\penti\OneDrive\Desktop\NIS_Protocol\.venv\Scripts\python.exe" "%~dp0quick_nvidia_test.py"
-echo.
-echo Test complete! Press any key to exit...
-pause > nul

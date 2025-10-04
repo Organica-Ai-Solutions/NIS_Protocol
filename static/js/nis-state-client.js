@@ -9,7 +9,7 @@
 class NISStateClient {
     constructor(options = {}) {
         this.options = {
-            baseUrl: options.baseUrl || 'ws://localhost:8000',
+            baseUrl: options.baseUrl || `ws://${window.location.host}`,
             connectionType: options.connectionType || 'dashboard',
             userId: options.userId || null,
             sessionId: options.sessionId || `session_${Date.now()}`,

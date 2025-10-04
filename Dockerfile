@@ -20,6 +20,15 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir --user -r requirements.txt
 
+# Install Whisper STT for GPT-like voice chat
+RUN pip install --no-cache-dir --user openai-whisper soundfile librosa ffmpeg-python
+
+# Install gTTS for simple, reliable voice output
+RUN pip install --no-cache-dir --user gtts
+
+# Install Bark TTS for natural, conversational voice (ChatGPT/Grok-like)
+RUN pip install --no-cache-dir --user suno-bark transformers scipy encodec nltk einops boto3
+
 
 # Stage 2: Runtime stage (lightweight)
 FROM python:3.11-slim

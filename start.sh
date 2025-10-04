@@ -366,12 +366,12 @@ fi
 echo ""
 
 # 5. Build Docker Images
-print_info "Building Docker images (this may take several minutes on the first run)..."
+print_info "Building Docker images with Whisper STT (this may take several minutes on the first run)..."
 docker-compose -f "$COMPOSE_FILE" -p "$PROJECT_NAME" build --progress=plain
 if [ $? -ne 0 ]; then
     print_error "Docker build failed. Please check the output above for errors."
 fi
-print_success "Docker images built successfully."
+print_success "Docker images built successfully with Whisper STT for GPT-like voice chat."
 
 # 6. Start Docker Compose
 print_info "Starting NIS Protocol v3.2 services in detached mode..."

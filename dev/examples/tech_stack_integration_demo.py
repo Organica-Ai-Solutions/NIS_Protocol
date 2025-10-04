@@ -155,7 +155,7 @@ async def demo_langgraph_consciousness_workflow():
     logger.info("🔄 DEMO: LangGraph Consciousness Workflow")
     
     try:
-        from langgraph import StateGraph
+        from langgraph.graph import StateGraph
         
         # Define workflow state
         class CognitiveState:

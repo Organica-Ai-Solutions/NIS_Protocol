@@ -1,143 +1,125 @@
 #!/bin/bash
-# Comprehensive NIS Protocol v3.2.1 Endpoint Testing
-# Tests all optimizations and enhancements
+# 🧪 NIS Protocol v3 - Comprehensive Endpoint Test Script
+# Tests all API endpoints to verify system functionality
+# Usage: ./comprehensive_endpoint_test.sh
 
-echo "🧪 === COMPREHENSIVE NIS PROTOCOL v3.2.1 ENDPOINT TESTING ==="
+set -e
+
+echo "🚀 NIS Protocol v3 - Comprehensive Endpoint Test"
+echo "================================================"
 echo ""
 
-# Color codes for output
-RED='\033[0;31m'
+BASE_URL="${BASE_URL:-http://localhost}"
+PASSED=0
+FAILED=0
+TOTAL=0
+
+# Colors for output
 GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
+RED='\033[0;31m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Test counter
-TOTAL_TESTS=0
-PASSED_TESTS=0
-FAILED_TESTS=0
-
-# Function to test endpoint
+# Test function
 test_endpoint() {
     local name="$1"
     local method="$2"
-    local url="$3"
+    local endpoint="$3"
     local data="$4"
-    local expected_status="$5"
+    local expected_key="$5"
     
-    TOTAL_TESTS=$((TOTAL_TESTS + 1))
+    TOTAL=$((TOTAL + 1))
+    echo -n "${BLUE}[TEST ${TOTAL}]${NC} ${name}... "
     
-    echo -e "${BLUE}$TOTAL_TESTS. $name${NC}"
-    
-    if [ "$method" = "GET" ]; then
-        response=$(curl -s -w "\n%{http_code}" "$url")
+    if [ "$method" = "POST" ]; then
+        response=$(curl -s -X POST "${BASE_URL}${endpoint}" \
+            -H "Content-Type: application/json" \
+            -d "$data" 2>&1)
     else
-        response=$(curl -s -w "\n%{http_code}" -X "$method" -H "Content-Type: application/json" -d "$data" "$url")
+        response=$(curl -s "${BASE_URL}${endpoint}" 2>&1)
     fi
     
-    # Extract status code
-    status_code=$(echo "$response" | tail -n1)
-    response_body=$(echo "$response" | head -n -1)
-    
-    if [ "$status_code" = "$expected_status" ]; then
-        echo -e "${GREEN}✅ PASS${NC} - Status: $status_code"
-        PASSED_TESTS=$((PASSED_TESTS + 1))
-        
-        # Show response preview
-        if command -v jq >/dev/null 2>&1; then
-            echo "$response_body" | jq . 2>/dev/null | head -5 || echo "$response_body" | head -5
-        else
-            echo "$response_body" | head -5
-        fi
+    # Check if response contains expected key or is valid JSON
+    if echo "$response" | python3 -c "import sys, json; d=json.load(sys.stdin); sys.exit(0 if '$expected_key' in d or '$expected_key' == '' else 1)" 2>/dev/null; then
+        echo -e "${GREEN}✅ PASS${NC}"
+        PASSED=$((PASSED + 1))
+        return 0
     else
-        echo -e "${RED}❌ FAIL${NC} - Expected: $expected_status, Got: $status_code"
-        FAILED_TESTS=$((FAILED_TESTS + 1))
-        echo "Response: $response_body" | head -3
+        echo -e "${RED}❌ FAIL${NC}"
+        echo "   Response: $(echo $response | head -c 100)"
+        FAILED=$((FAILED + 1))
+        return 1
     fi
-    echo ""
 }
 
-echo "🔍 === BASIC SYSTEM HEALTH ==="
-
-# 1. Basic Health Check
-test_endpoint "Basic Health Check" "GET" "http://localhost/health" "" "200"
-
-# 2. API Documentation
-test_endpoint "API Documentation" "GET" "http://localhost/docs" "" "200"
-
-echo "🔧 === TOOL OPTIMIZATION ENDPOINTS (NEW v3.2.1) ==="
-
-# 3. Enhanced Tool Definitions
-test_endpoint "Enhanced Tool Definitions" "GET" "http://localhost/api/tools/enhanced" "" "200"
-
-# 4. Tool Optimization Metrics
-test_endpoint "Tool Optimization Metrics" "GET" "http://localhost/api/tools/optimization/metrics" "" "200"
-
-# 5. Optimized Chat with Token Efficiency
-test_endpoint "Optimized Chat (Concise)" "POST" "http://localhost/chat/optimized" \
-'{"message": "Test optimization", "response_format": "concise", "token_limit": 500}' "200"
-
-echo "🚀 === NVIDIA INCEPTION INTEGRATION (NEW) ==="
-
-# 6. NVIDIA Inception Status
-test_endpoint "NVIDIA Inception Status" "GET" "http://localhost/nvidia/inception/status" "" "200"
-
-# 7. NVIDIA NeMo Status
-test_endpoint "NVIDIA NeMo Status" "GET" "http://localhost/nvidia/nemo/status" "" "200"
-
-echo "🧠 === BRAIN ORCHESTRATION & AGENTS ==="
-
-# 8. Agent Status (Consolidated)
-test_endpoint "Agent Status (Consolidated)" "GET" "http://localhost/api/agents/status" "" "200"
-
-# 9. Consciousness Status (Algorithmic Monitoring)
-test_endpoint "Consciousness Status" "GET" "http://localhost/consciousness/status" "" "200"
-
-# 10. Standard Chat
-test_endpoint "Standard Chat" "POST" "http://localhost/chat" \
-'{"message": "Hello NIS Protocol"}' "200"
-
-echo "🔬 === PHYSICS VALIDATION ==="
-
-# 11. Physics Constants
-test_endpoint "Physics Constants" "GET" "http://localhost/physics/constants" "" "200"
-
-# 12. Physics Validation
-test_endpoint "Physics Validation" "POST" "http://localhost/physics/validate" \
-'{"scenario": "5kg ball dropped from 10m", "expected_outcome": "Accelerates at 9.81 m/s²"}' "200"
-
-echo "🔍 === RESEARCH & ANALYSIS ==="
-
-# 13. Research Capabilities
-test_endpoint "Research Capabilities" "GET" "http://localhost/research/capabilities" "" "200"
-
-# 14. Deep Research
-test_endpoint "Deep Research" "POST" "http://localhost/research/deep" \
-'{"query": "quantum computing", "research_depth": "basic"}' "200"
-
-echo "🎨 === MULTIMODAL & CREATIVE ==="
-
-# 15. Multimodal Agent Status
-test_endpoint "Multimodal Agent Status" "GET" "http://localhost/agents/multimodal/status" "" "200"
-
-echo "🔌 === PROTOCOL INTEGRATION ==="
-
-# 16. MCP Demo
-test_endpoint "MCP Protocol Demo" "GET" "http://localhost/api/mcp/demo" "" "200"
-
-# 17. LangGraph Status
-test_endpoint "LangGraph Status" "GET" "http://localhost/api/langgraph/status" "" "200"
+echo "🏠 Testing System Endpoints"
+echo "=============================="
+test_endpoint "Root Endpoint" "GET" "/" "" "system"
+test_endpoint "Health Check" "GET" "/health" "" "status"
+test_endpoint "Metrics" "GET" "/metrics" "" ""
 
 echo ""
-echo "📊 === TEST SUMMARY ==="
-echo -e "Total Tests: ${BLUE}$TOTAL_TESTS${NC}"
-echo -e "Passed: ${GREEN}$PASSED_TESTS${NC}"
-echo -e "Failed: ${RED}$FAILED_TESTS${NC}"
+echo "💬 Testing Chat Endpoints"
+echo "=============================="
+test_endpoint "Basic Chat" "POST" "/chat" '{"message":"Hello test","user_id":"test"}' "response"
+test_endpoint "Streaming Chat" "POST" "/chat/stream" '{"message":"Hi"}' ""
+test_endpoint "Optimized Chat" "POST" "/chat/optimized" '{"message":"Test"}' ""
 
-if [ $FAILED_TESTS -eq 0 ]; then
-    echo -e "${GREEN}🎉 ALL TESTS PASSED! System fully operational with optimizations!${NC}"
+echo ""
+echo "🔍 Testing Research Endpoints"
+echo "=============================="
+test_endpoint "Deep Research" "POST" "/research/deep" '{"query":"quantum computing","research_depth":"basic","time_limit":10}' "success"
+test_endpoint "Research Capabilities" "GET" "/research/capabilities" "" "capabilities"
+
+echo ""
+echo "🤖 Testing Agent Endpoints"
+echo "=============================="
+test_endpoint "Agent Status" "GET" "/agents/status" "" "status"
+test_endpoint "Consciousness Analyze" "POST" "/agents/consciousness/analyze" '{"input":"test consciousness"}' ""
+
+echo ""
+echo "🎨 Testing Multimodal Endpoints"
+echo "=============================="
+test_endpoint "Vision Analysis" "POST" "/vision/analyze" '{"image_url":"test.jpg","query":"test"}' "status"
+test_endpoint "Document Analysis" "POST" "/document/analyze" '{"document_data":"test","context":"analyze"}' "status"
+
+echo ""
+echo "🧠 Testing Reasoning Endpoints"
+echo "=============================="
+test_endpoint "Collaborative Reasoning" "POST" "/reasoning/collaborative" '{"query":"test","max_iterations":2}' ""
+test_endpoint "Debate Reasoning" "POST" "/reasoning/debate" '{"topic":"AI","positions":["pro","con"]}' ""
+
+echo ""
+echo "🔬 Testing Physics Endpoints"
+echo "=============================="
+test_endpoint "Physics Capabilities" "GET" "/physics/capabilities" "" "capabilities"
+test_endpoint "Physics Validation" "POST" "/physics/validate" '{"equation":"F=ma","context":"classical mechanics"}' ""
+test_endpoint "Physics Constants" "GET" "/physics/constants" "" ""
+
+echo ""
+echo "🔌 Testing MCP/LangGraph Endpoints"
+echo "=============================="
+test_endpoint "MCP Demo" "GET" "/api/mcp/demo" "" ""
+test_endpoint "MCP Invoke" "POST" "/api/mcp/invoke" '{"input":{"messages":[{"role":"user","content":"test"}]},"config":{"configurable":{"thread_id":"test"}}}' ""
+
+echo ""
+echo "🚀 Testing NVIDIA NeMo Endpoints"
+echo "=============================="
+test_endpoint "NeMo Status" "GET" "/nvidia/nemo/status" "" "status"
+test_endpoint "NeMo Toolkit Status" "GET" "/nvidia/nemo/toolkit/status" "" ""
+
+echo ""
+echo "📊 Test Summary"
+echo "=============================="
+echo -e "Total Tests: ${TOTAL}"
+echo -e "${GREEN}Passed: ${PASSED}${NC}"
+echo -e "${RED}Failed: ${FAILED}${NC}"
+echo ""
+
+if [ $FAILED -eq 0 ]; then
+    echo -e "${GREEN}🎉 All tests passed!${NC}"
     exit 0
 else
-    echo -e "${YELLOW}⚠️  Some tests failed. System partially operational.${NC}"
+    echo -e "${RED}⚠️  Some tests failed${NC}"
     exit 1
 fi

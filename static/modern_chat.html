@@ -9,8 +9,7 @@
     <!-- NIS State Management System -->
     <script src="/static/js/nis-state-client.js"></script>
     
-    <!-- Markdown Support -->
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Markdown Support - Simple inline parser (no external CDN needed) -->
     
     <style>
         * {
@@ -392,42 +391,166 @@
             min-width: 200px;
         }
 
+        /* 🎨 AMAZING VOICE VISUALIZER - GPT + GROK + APPLE HYBRID */
+        .voice-visualizer-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 320px;
+            height: 320px;
+            display: none;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        .voice-visualizer-container.active {
+            display: block;
+        }
+
+        #voiceVisualizerCanvas {
+            width: 100%;
+            height: 100%;
+            filter: blur(0.5px);
+        }
+
+        .visualizer-glow {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, transparent 70%);
+            filter: blur(40px);
+            animation: glow-pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes glow-pulse {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.1); }
+        }
+
         .voice-button {
-            width: 64px;
-            height: 64px;
-            border-radius: 12px;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
             border: none;
-            background: transparent;
+            background: rgba(20, 20, 30, 0.8);
+            backdrop-filter: blur(20px);
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .voice-button::before {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 50%;
+            padding: 3px;
+            background: linear-gradient(135deg, 
+                rgba(59, 130, 246, 0.8),
+                rgba(147, 51, 234, 0.8),
+                rgba(236, 72, 153, 0.8),
+                rgba(251, 146, 60, 0.8)
+            );
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .voice-button:hover::before {
+            opacity: 0.6;
+            animation: edge-glow 3s linear infinite;
+        }
+
+        .voice-button.listening::before,
+        .voice-button.recording::before,
+        .voice-button.processing::before,
+        .voice-button.playing::before {
+            opacity: 1;
+            animation: edge-glow 3s linear infinite;
+        }
+
+        @keyframes edge-glow {
+            0% { 
+                background: linear-gradient(0deg, 
+                    rgba(59, 130, 246, 0.9),
+                    rgba(147, 51, 234, 0.9),
+                    rgba(236, 72, 153, 0.9),
+                    rgba(251, 146, 60, 0.9)
+                );
+            }
+            25% { 
+                background: linear-gradient(90deg, 
+                    rgba(59, 130, 246, 0.9),
+                    rgba(147, 51, 234, 0.9),
+                    rgba(236, 72, 153, 0.9),
+                    rgba(251, 146, 60, 0.9)
+                );
+            }
+            50% { 
+                background: linear-gradient(180deg, 
+                    rgba(59, 130, 246, 0.9),
+                    rgba(147, 51, 234, 0.9),
+                    rgba(236, 72, 153, 0.9),
+                    rgba(251, 146, 60, 0.9)
+                );
+            }
+            75% { 
+                background: linear-gradient(270deg, 
+                    rgba(59, 130, 246, 0.9),
+                    rgba(147, 51, 234, 0.9),
+                    rgba(236, 72, 153, 0.9),
+                    rgba(251, 146, 60, 0.9)
+                );
+            }
+            100% { 
+                background: linear-gradient(360deg, 
+                    rgba(59, 130, 246, 0.9),
+                    rgba(147, 51, 234, 0.9),
+                    rgba(236, 72, 153, 0.9),
+                    rgba(251, 146, 60, 0.9)
+                );
+            }
         }
 
         .voice-button:hover {
-            background: rgba(255,255,255,0.1);
+            transform: scale(1.05);
+            box-shadow: 0 12px 40px rgba(59, 130, 246, 0.4);
         }
 
         .voice-button.recording {
-            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
-            animation: pulse-red 1s ease-in-out infinite;
+            background: rgba(220, 38, 38, 0.2);
+            box-shadow: 0 0 40px rgba(220, 38, 38, 0.6);
+            animation: pulse-scale 1s ease-in-out infinite;
         }
         
         .voice-button.listening {
-            background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
-            animation: pulse-green 2s ease-in-out infinite;
+            background: rgba(34, 197, 94, 0.2);
+            box-shadow: 0 0 40px rgba(34, 197, 94, 0.6);
+            animation: pulse-scale 2s ease-in-out infinite;
         }
         
         .voice-button.processing {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            animation: pulse-yellow 1.5s ease-in-out infinite;
+            background: rgba(251, 146, 60, 0.2);
+            box-shadow: 0 0 40px rgba(251, 146, 60, 0.6);
+            animation: pulse-scale 1.5s ease-in-out infinite;
         }
         
         .voice-button.playing {
-            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-            animation: pulse-purple 1s ease-in-out infinite;
+            background: rgba(147, 51, 234, 0.2);
+            box-shadow: 0 0 40px rgba(147, 51, 234, 0.6);
+            animation: pulse-scale 1s ease-in-out infinite;
+        }
+
+        @keyframes pulse-scale {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
         }
         
         @keyframes pulse-red {
@@ -1350,9 +1473,557 @@
                 flex-direction: column;
             }
         }
+
+        /* ⚙️ Voice Settings Panel Styles */
+        .voice-settings-panel {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, rgba(30, 30, 50, 0.98), rgba(40, 40, 70, 0.98));
+            border: 1px solid rgba(138, 118, 255, 0.3);
+            border-radius: 16px;
+            padding: 24px;
+            min-width: 400px;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(138, 118, 255, 0.2);
+            z-index: 10000;
+            backdrop-filter: blur(20px);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -60%);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        .settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(138, 118, 255, 0.2);
+            padding-bottom: 12px;
+        }
+
+        .settings-header h3 {
+            margin: 0;
+            color: #8a76ff;
+            font-size: 1.3rem;
+        }
+
+        .close-settings-btn {
+            background: none;
+            border: none;
+            color: #999;
+            font-size: 2rem;
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            line-height: 32px;
+            text-align: center;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+
+        .close-settings-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .settings-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .setting-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .setting-group label {
+            color: #aaa;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .setting-select {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(138, 118, 255, 0.3);
+            border-radius: 8px;
+            padding: 10px 12px;
+            color: #fff;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .setting-select:hover {
+            border-color: rgba(138, 118, 255, 0.5);
+            background: rgba(138, 118, 255, 0.1);
+        }
+
+        .setting-select:focus {
+            outline: none;
+            border-color: #8a76ff;
+            box-shadow: 0 0 0 3px rgba(138, 118, 255, 0.2);
+        }
+
+        .setting-hint {
+            color: #777;
+            font-size: 0.8rem;
+            margin: 0;
+            font-style: italic;
+        }
+
+        .preset-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .preset-btn {
+            flex: 1;
+            background: rgba(138, 118, 255, 0.15);
+            border: 1px solid rgba(138, 118, 255, 0.3);
+            border-radius: 8px;
+            padding: 10px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .preset-btn:hover {
+            background: rgba(138, 118, 255, 0.3);
+            border-color: #8a76ff;
+            transform: translateY(-2px);
+        }
+
+        .preset-btn:active {
+            transform: translateY(0);
+        }
+
+        .apply-settings-btn {
+            background: linear-gradient(135deg, #8a76ff, #6b5bd8);
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 8px;
+        }
+
+        .apply-settings-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(138, 118, 255, 0.4);
+        }
+
+        .apply-settings-btn:active {
+            transform: translateY(0);
+        }
+
+        /* 🛑 Voice Stop Button */
+        .voice-stop-btn {
+            background: linear-gradient(135deg, #ff4444, #cc0000) !important;
+            animation: pulse-stop 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-stop {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(255, 68, 68, 0.7);
+            }
+            50% {
+                box-shadow: 0 0 0 10px rgba(255, 68, 68, 0);
+            }
+        }
+
+        .voice-stop-btn:hover {
+            background: linear-gradient(135deg, #ff6666, #ee2222) !important;
+            transform: translateY(-2px);
+        }
+
+        /* 🔊 Audio Control Bar */
+        .audio-control-bar {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.98));
+            padding: 12px 24px;
+            border-radius: 24px;
+            display: none;
+            gap: 12px;
+            align-items: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 20px rgba(59, 130, 246, 0.3);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            z-index: 10001;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translate(-50%, 20px); opacity: 0; }
+            to { transform: translate(-50%, 0); opacity: 1; }
+        }
+
+        .audio-control-bar.visible { display: flex; }
+
+        .audio-control-btn {
+            background: none;
+            border: none;
+            color: #38bdf8;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px;
+            transition: all 0.2s;
+            border-radius: 8px;
+        }
+
+        .audio-control-btn:hover {
+            color: #7dd3fc;
+            background: rgba(59, 130, 246, 0.1);
+            transform: scale(1.1);
+        }
+
+        .audio-progress-container {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 200px;
+        }
+
+        .audio-time-display {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: #94a3b8;
+            font-family: monospace;
+        }
+
+        .audio-progress-bar {
+            width: 200px;
+            height: 6px;
+            background: rgba(59, 130, 246, 0.2);
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .audio-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #38bdf8, #7dd3fc);
+            border-radius: 3px;
+            transition: width 0.1s linear;
+            position: relative;
+        }
+
+        .audio-progress-fill::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 12px;
+            height: 12px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .volume-slider {
+            width: 80px;
+            height: 4px;
+            -webkit-appearance: none;
+            background: rgba(59, 130, 246, 0.3);
+            border-radius: 2px;
+            cursor: pointer;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            background: #38bdf8;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .audio-now-playing {
+            color: #94a3b8;
+            font-size: 12px;
+        }
+
+        .audio-now-playing::before {
+            content: '🎵';
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+
+        /* ⚡ Quick Actions Panel */
+        .quick-actions-panel {
+            position: fixed;
+            right: 24px;
+            bottom: 100px;
+            background: linear-gradient(135deg, rgba(30, 30, 50, 0.98), rgba(40, 40, 70, 0.98));
+            border: 1px solid rgba(138, 118, 255, 0.4);
+            border-radius: 16px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 20px rgba(138, 118, 255, 0.2);
+            backdrop-filter: blur(20px);
+            z-index: 9998;
+            animation: slideInRight 0.3s ease-out;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(120%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .quick-actions-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 4px;
+            border-bottom: 1px solid rgba(138, 118, 255, 0.2);
+            margin-bottom: 8px;
+        }
+
+        .quick-actions-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #a78bfa;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .quick-action-toggle {
+            background: none;
+            border: none;
+            color: #a78bfa;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 4px;
+            transition: all 0.2s;
+            border-radius: 4px;
+        }
+
+        .quick-action-toggle:hover {
+            background: rgba(167, 139, 250, 0.1);
+            transform: rotate(90deg);
+        }
+
+        .quick-action-btn {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #e2e8f0;
+            padding: 10px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 180px;
+        }
+
+        .quick-action-btn:hover {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: #38bdf8;
+            transform: translateX(-4px);
+            box-shadow: 4px 0 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .quick-action-icon { font-size: 18px; min-width: 24px; text-align: center; }
+        .quick-action-text { flex: 1; font-weight: 500; }
+        .quick-action-badge {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        /* 🤖 Provider Selector */
+        .provider-select {
+            background: rgba(30, 30, 50, 0.8);
+            border: 1px solid rgba(138, 118, 255, 0.3);
+            color: #e2e8f0;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        .provider-select:hover {
+            border-color: rgba(138, 118, 255, 0.5);
+            background: rgba(40, 40, 60, 0.9);
+        }
+
+        .provider-select:focus {
+            border-color: #8a76ff;
+            box-shadow: 0 0 0 3px rgba(138, 118, 255, 0.1);
+        }
+
+        .provider-select option {
+            background: #1a1a2e;
+            color: #e2e8f0;
+            padding: 8px;
+        }
     </style>
 </head>
 <body>
+    <!-- 🎨 AMAZING VOICE VISUALIZER -->
+    <div class="voice-visualizer-container" id="voiceVisualizerContainer">
+        <div class="visualizer-glow"></div>
+        <canvas id="voiceVisualizerCanvas" width="640" height="640"></canvas>
+    </div>
+
+    <!-- ⚙️ VOICE SETTINGS PANEL -->
+    <div id="voiceSettingsPanel" class="voice-settings-panel" style="display: none;">
+        <div class="settings-header">
+            <h3>🎤 Voice Settings</h3>
+            <button class="close-settings-btn" id="closeVoiceSettings">×</button>
+        </div>
+        <div class="settings-content">
+            <!-- TTS Engine Selection -->
+            <div class="setting-group">
+                <label>🔊 Voice Engine</label>
+                <select id="ttsEngineSelect" class="setting-select">
+                    <option value="gtts" selected>Google TTS (Fast) - ~200ms</option>
+                    <option value="bark">Bark TTS (Natural) - ~1.5s</option>
+                    <option value="vibevoice">🎙️ VibeVoice (AI Agents) - ~1s</option>
+                </select>
+                <p class="setting-hint">Fast for quick responses, Natural for quality, AI Agents for personality</p>
+            </div>
+
+            <!-- Voice Selection (changes based on engine) -->
+            <div class="setting-group">
+                <label id="voiceSelectLabel">🗣️ Voice</label>
+                <select id="voiceSelect" class="setting-select">
+                    <!-- Options populated by JavaScript -->
+                </select>
+                <p class="setting-hint" id="voiceHint">Select your preferred voice</p>
+            </div>
+
+            <!-- Whisper Model Selection -->
+            <div class="setting-group">
+                <label>🎙️ Speech Recognition</label>
+                <select id="whisperModelSelect" class="setting-select">
+                    <option value="tiny">Tiny (Very Fast)</option>
+                    <option value="base" selected>Base (Balanced)</option>
+                    <option value="small">Small (Accurate)</option>
+                    <option value="medium">Medium (Best Quality)</option>
+                </select>
+                <p class="setting-hint">Higher quality = slower processing</p>
+            </div>
+
+            <!-- Quick Presets -->
+            <div class="setting-group">
+                <label>⚡ Quick Presets</label>
+                <div class="preset-buttons">
+                    <button class="preset-btn" data-preset="fastest">⚡ Fastest</button>
+                    <button class="preset-btn" data-preset="balanced">⚖️ Balanced</button>
+                    <button class="preset-btn" data-preset="quality">🎯 Best Quality</button>
+                </div>
+            </div>
+
+            <!-- Apply Button -->
+            <button class="apply-settings-btn" id="applyVoiceSettings">
+                ✅ Apply Settings
+            </button>
+        </div>
+    </div>
+
+    <!-- 🔊 AUDIO CONTROL BAR -->
+    <div id="audioControlBar" class="audio-control-bar">
+        <div class="audio-now-playing">Now Playing</div>
+        <button id="audioPauseBtn" class="audio-control-btn" title="Pause/Resume">
+            ⏸️
+        </button>
+        <button id="audioStopBtn" class="audio-control-btn" title="Stop">
+            ⏹️
+        </button>
+        <div class="audio-progress-container">
+            <div class="audio-time-display">
+                <span id="audioCurrentTime">0:00</span>
+                <span id="audioDuration">0:00</span>
+            </div>
+            <div class="audio-progress-bar" id="audioProgressBar">
+                <div class="audio-progress-fill" id="audioProgressFill" style="width: 0%"></div>
+            </div>
+        </div>
+        <div class="volume-control">
+            <span style="font-size: 16px;">🔊</span>
+            <input type="range" id="volumeSlider" class="volume-slider" min="0" max="100" value="100">
+        </div>
+    </div>
+
+    <!-- ⚡ QUICK ACTIONS PANEL -->
+    <div id="quickActionsPanel" class="quick-actions-panel">
+        <div class="quick-actions-header">
+            <div class="quick-actions-title">
+                <span>⚡</span>
+                <span>Quick Actions</span>
+            </div>
+            <button id="quickActionsToggle" class="quick-action-toggle" title="Minimize">−</button>
+        </div>
+        <div class="quick-actions-content">
+            <button class="quick-action-btn" onclick="window.clearChat()">
+                <span class="quick-action-icon">🗑️</span>
+                <span class="quick-action-text">Clear Chat</span>
+            </button>
+            <button class="quick-action-btn" onclick="window.exportChat()">
+                <span class="quick-action-icon">💾</span>
+                <span class="quick-action-text">Export Chat</span>
+            </button>
+            <button class="quick-action-btn" onclick="window.runCodeDemo()">
+                <span class="quick-action-icon">💻</span>
+                <span class="quick-action-text">Code Execution</span>
+                <span class="quick-action-badge">NEW</span>
+            </button>
+            <button class="quick-action-btn" onclick="window.runPhysicsDemo()">
+                <span class="quick-action-icon">🔬</span>
+                <span class="quick-action-text">Physics Demo</span>
+                <span class="quick-action-badge">PINN</span>
+            </button>
+            <button class="quick-action-btn" onclick="window.runDeepResearch()">
+                <span class="quick-action-icon">📚</span>
+                <span class="quick-action-text">Deep Research</span>
+            </button>
+            <button class="quick-action-btn" onclick="window.showKeyboardShortcuts()">
+                <span class="quick-action-icon">⌨️</span>
+                <span class="quick-action-text">Shortcuts</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ⚡ QUICK ACTIONS FAB (Floating Action Button) -->
+    <button id="quickActionsFab" class="quick-actions-fab" title="Quick Actions">
+        ⚡
+    </button>
+
     <div class="chat-container">
         <!-- Animated Background -->
         <div class="bg-gradient">
@@ -1527,6 +2198,9 @@
                         <button class="control-btn" id="voiceSettingsBtn" title="Voice Settings">
                             🎛️
                         </button>
+                        <button class="control-btn voice-stop-btn" id="voiceStopBtn" title="Stop Voice Chat" style="display: none;">
+                            🛑
+                        </button>
                         <button class="control-btn" id="commandBtn" title="Commands">
                             ⌘
                         </button>
@@ -1534,6 +2208,28 @@
                             🔧
                         </button>
                     </div>
+                    
+                    <!-- Provider Selector -->
+                    <div class="provider-selector" style="display: flex; flex-direction: column; gap: 4px; min-width: 200px;">
+                        <select id="provider" class="provider-select" onchange="updateProviderSelection()">
+                            <option value="">🤖 Auto-Select Provider</option>
+                            <option value="smart">🧠 Smart Consensus</option>
+                            <option value="openai">🧠 OpenAI (GPT-4o)</option>
+                            <option value="anthropic">🎭 Claude 4 Sonnet</option>
+                            <option value="deepseek">🔬 DeepSeek R1</option>
+                            <option value="google">🌟 Gemini 2.5 Flash</option>
+                            <option value="kimi">🌙 Kimi K2 (Long Context)</option>
+                            <option value="bitnet">⚡ BitNet (Local)</option>
+                        </select>
+                        <div id="provider-indicator" style="
+                            font-size: 10px; 
+                            color: #94a3b8; 
+                            margin-top: 2px;
+                            min-height: 14px;
+                            text-align: center;
+                        "></div>
+                    </div>
+                    
                     <button class="send-btn" id="sendBtn">
                         <span id="sendIcon">📤</span>
                         <span>Send</span>
@@ -1616,6 +2312,16 @@
     </div>
 
     <script>
+        // 🎨 NIS Protocol Modern Chat - v3.3.0-voice-settings-complete
+        // Cache version: 2025-10-04-02:00 - Voice Settings & Enhanced Debugging
+        // 🆕 Voice Settings Panel with TTS/Voice/Whisper selection
+        // 🆕 Quick presets (Fastest/Balanced/Best Quality)
+        // 🆕 Dedicated STOP button to exit voice mode
+        // 🆕 Visualizer and stop button show/hide properly
+        // 🆕 Enhanced audio debugging with detailed logs
+        // ✅ Fixed CSP error, AudioContext close error, manual recording
+        // ✅ Clear user instructions
+        
         // Global state
         let attachments = [];
         let activeSuggestion = -1;
@@ -1645,7 +2351,7 @@
                     try {
                         bubble.innerHTML = marked.parse(content);
                     } catch (e) {
-                        bubble.textContent = content;
+                bubble.textContent = content;
                     }
                 } else {
                     bubble.textContent = content;
@@ -1660,6 +2366,152 @@
                 messagesContainer.appendChild(message);
                 
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+        }
+
+        // 🎤 Voice Settings Global State
+        let voiceSettings = {
+            engine: 'gtts',
+            voice: 'en',
+            whisperModel: 'base',
+            speed: 1.0,
+            volume: 1.0
+        };
+
+        let availableVoiceSettings = null;
+
+        // 🎤 Load Voice Settings from Backend
+        async function loadVoiceSettings() {
+            try {
+                const response = await fetch('/voice/settings');
+                const data = await response.json();
+                availableVoiceSettings = data;
+                
+                // Populate voice options based on current engine
+                updateVoiceOptions(voiceSettings.engine);
+                
+                console.log('✅ Voice settings loaded:', data);
+            } catch (error) {
+                console.error('❌ Failed to load voice settings:', error);
+                addMessage('⚠️ Could not load voice settings from backend', false, 'system');
+            }
+        }
+
+        // 🎤 Update Voice Options Based on Engine
+        function updateVoiceOptions(engine) {
+            if (!availableVoiceSettings) return;
+            
+            const voiceSelect = document.getElementById('voiceSelect');
+            const voiceHint = document.getElementById('voiceHint');
+            
+            if (!voiceSelect) return;
+            
+            voiceSelect.innerHTML = '';
+            
+            const engineData = availableVoiceSettings.tts_engines.find(e => e.id === engine);
+            if (!engineData) return;
+            
+            engineData.voices.forEach(voice => {
+                const option = document.createElement('option');
+                option.value = voice.id;
+                option.textContent = voice.name;
+                if (voice.description) {
+                    option.title = voice.description;
+                }
+                voiceSelect.appendChild(option);
+            });
+            
+            // Update hint
+            if (voiceHint) {
+                voiceHint.textContent = `${engineData.voices.length} voices available for ${engineData.name}`;
+            }
+            
+            // Select current voice if available
+            if (voiceSettings.voice) {
+                voiceSelect.value = voiceSettings.voice;
+            }
+        }
+
+        // 🎤 Apply Preset Configuration
+        function applyPreset(presetName) {
+            if (!availableVoiceSettings || !availableVoiceSettings.recommendations) return;
+            
+            const preset = availableVoiceSettings.recommendations[presetName];
+            if (!preset) return;
+            
+            // Update UI
+            const ttsEngineSelect = document.getElementById('ttsEngineSelect');
+            const voiceSelect = document.getElementById('voiceSelect');
+            const whisperModelSelect = document.getElementById('whisperModelSelect');
+            
+            if (ttsEngineSelect) {
+                ttsEngineSelect.value = preset.engine;
+                updateVoiceOptions(preset.engine);
+            }
+            
+            if (voiceSelect) {
+                voiceSelect.value = preset.voice;
+            }
+            
+            if (whisperModelSelect) {
+                whisperModelSelect.value = preset.whisper;
+            }
+            
+            console.log(`✅ Applied preset: ${presetName}`, preset);
+            addMessage(`⚡ Applied ${presetName} preset`, false, 'system');
+        }
+
+        // 🎤 Apply Current Settings
+        function applySettings() {
+            const ttsEngineSelect = document.getElementById('ttsEngineSelect');
+            const voiceSelect = document.getElementById('voiceSelect');
+            const whisperModelSelect = document.getElementById('whisperModelSelect');
+            
+            if (ttsEngineSelect) voiceSettings.engine = ttsEngineSelect.value;
+            if (voiceSelect) voiceSettings.voice = voiceSelect.value;
+            if (whisperModelSelect) voiceSettings.whisperModel = whisperModelSelect.value;
+            
+            console.log('✅ Voice settings updated:', voiceSettings);
+            
+            // If voice mode is active, inform the user to restart for changes to take effect
+            if (conversationalVoice && conversationalVoice.voiceEnabled) {
+                addMessage('ℹ️ Settings will apply to your next voice session. Stop and restart voice chat to use the new settings.', false, 'system');
+            }
+        }
+
+        // 🤖 Provider Selection Functions
+        function getProviderDisplayInfo(provider) {
+            const providerMap = {
+                'openai': { name: 'OpenAI GPT-4o', icon: '🧠', color: '#10a37f' },
+                'anthropic': { name: 'Claude 4 Sonnet', icon: '🎭', color: '#d4772d' },
+                'deepseek': { name: 'DeepSeek R1', icon: '🔬', color: '#1e40af' },
+                'google': { name: 'Gemini 2.5 Flash', icon: '🌟', color: '#4285f4' },
+                'kimi': { name: 'Kimi K2', icon: '🌙', color: '#8b5cf6' },
+                'bitnet': { name: 'BitNet Local', icon: '⚡', color: '#059669' },
+                'smart': { name: 'Smart Consensus', icon: '🧠', color: '#7c3aed' },
+                'auto': { name: 'Auto-Selected', icon: '🤖', color: '#6b7280' }
+            };
+            
+            return providerMap[provider] || { 
+                name: provider.toUpperCase(), 
+                icon: '🤖', 
+                color: '#6b7280' 
+            };
+        }
+
+        function updateProviderSelection() {
+            const providerSelect = document.getElementById('provider');
+            const indicator = document.getElementById('provider-indicator');
+            
+            if (!providerSelect || !indicator) return;
+            
+            const provider = providerSelect.value || '';
+            
+            if (provider) {
+                const providerInfo = getProviderDisplayInfo(provider);
+                indicator.innerHTML = `Selected: <span style="color: ${providerInfo.color}; font-weight: 500;">${providerInfo.icon} ${providerInfo.name}</span>`;
+            } else {
+                indicator.innerHTML = 'Auto-select will choose the best provider for your request';
             }
         }
 
@@ -1781,6 +2633,79 @@ Ready to execute your commands safely! 🚀`, false, 'system');
                 });
             }
             
+            // Voice Settings Button
+            if (voiceSettingsBtn) {
+                voiceSettingsBtn.addEventListener('click', async () => {
+                    const panel = document.getElementById('voiceSettingsPanel');
+                    if (panel) {
+                        panel.style.display = 'block';
+                        // Load available voices from backend
+                        await loadVoiceSettings();
+                    }
+                });
+            }
+            
+            // Voice Stop Button
+            const voiceStopBtn = document.getElementById('voiceStopBtn');
+            if (voiceStopBtn) {
+                voiceStopBtn.addEventListener('click', async () => {
+                    console.log('🛑 STOP button clicked - Exiting voice chat');
+                    if (conversationalVoice) {
+                        await conversationalVoice.stopVoiceMode();
+                        // Hide visualizer
+                        const visualizerContainer = document.getElementById('voiceVisualizerContainer');
+                        if (visualizerContainer) {
+                            visualizerContainer.style.display = 'none';
+                        }
+                        // Hide stop button
+                        voiceStopBtn.style.display = 'none';
+                        // Return to regular chat
+                        addMessage('✅ Voice chat stopped. You\'re back in regular chat mode.', false, 'system');
+                    }
+                });
+            }
+            
+            // Close Voice Settings
+            const closeVoiceSettings = document.getElementById('closeVoiceSettings');
+            if (closeVoiceSettings) {
+                closeVoiceSettings.addEventListener('click', () => {
+                    const panel = document.getElementById('voiceSettingsPanel');
+                    if (panel) {
+                        panel.style.display = 'none';
+                    }
+                });
+            }
+            
+            // Apply Voice Settings
+            const applyVoiceSettings = document.getElementById('applyVoiceSettings');
+            if (applyVoiceSettings) {
+                applyVoiceSettings.addEventListener('click', () => {
+                    applySettings();
+                    const panel = document.getElementById('voiceSettingsPanel');
+                    if (panel) {
+                        panel.style.display = 'none';
+                    }
+                    addMessage('✅ Voice settings applied successfully!', false, 'system');
+                });
+            }
+            
+            // Preset Buttons
+            const presetButtons = document.querySelectorAll('.preset-btn');
+            presetButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const preset = btn.dataset.preset;
+                    applyPreset(preset);
+                });
+            });
+            
+            // TTS Engine Change
+            const ttsEngineSelect = document.getElementById('ttsEngineSelect');
+            if (ttsEngineSelect) {
+                ttsEngineSelect.addEventListener('change', () => {
+                    updateVoiceOptions(ttsEngineSelect.value);
+                });
+            }
+            
             // Terminal input event listener
             if (terminalInput) {
                 terminalInput.addEventListener('keypress', async (e) => {
@@ -1853,6 +2778,9 @@ Ready to execute your commands safely! 🚀`, false, 'system');
                     }
                 });
             }
+            
+            // Initialize provider selection indicator
+            updateProviderSelection();
         }
 
         // Auto-resize textarea
@@ -2345,6 +3273,10 @@ Ready to execute your commands safely! 🚀`, false, 'system');
             currentController = new AbortController();
 
             try {
+                // Get selected provider
+                const providerSelect = document.getElementById('provider');
+                const selectedProvider = providerSelect ? providerSelect.value : '';
+                
                 // Use streaming endpoint for real-time responses
                 const response = await fetch('/chat/stream', {
                     method: 'POST',
@@ -2354,7 +3286,9 @@ Ready to execute your commands safely! 🚀`, false, 'system');
                     body: JSON.stringify({
                         message: message,
                         user_id: 'user_' + Date.now(),
-                        conversation_id: 'modern_chat_' + Date.now()
+                        conversation_id: 'modern_chat_' + Date.now(),
+                        provider: selectedProvider || undefined,
+                        agent_type: 'reasoning'
                     }),
                     signal: currentController.signal
                 });
@@ -2438,7 +3372,7 @@ Ready to execute your commands safely! 🚀`, false, 'system');
                                                     try {
                                                         bubble.innerHTML = marked.parse(assistantMessage);
                                                     } catch (e) {
-                                                        bubble.textContent = assistantMessage;
+                                                bubble.textContent = assistantMessage;
                                                     }
                                                 } else {
                                                     bubble.textContent = assistantMessage;
@@ -2505,7 +3439,7 @@ Ready to execute your commands safely! 🚀`, false, 'system');
                     try {
                         bubble.innerHTML = marked.parse(assistantMessage);
                     } catch (e) {
-                        bubble.textContent = assistantMessage;
+                bubble.textContent = assistantMessage;
                     }
                 } else {
                     bubble.textContent = assistantMessage;
@@ -2529,17 +3463,20 @@ Ready to execute your commands safely! 🚀`, false, 'system');
             }
         }
 
+        // Setup additional event listeners after DOM is ready
+        function setupAdditionalEventListeners() {
         // Mouse tracking for focus glow
         let mouseX = 0, mouseY = 0;
         document.addEventListener('mousemove', (e) => {
             mouseX = e.clientX;
             mouseY = e.clientY;
-            if (document.activeElement === chatInput) {
+                if (chatInput && focusGlow && document.activeElement === chatInput) {
                 focusGlow.style.transform = `translate(${mouseX - 400}px, ${mouseY - 400}px)`;
             }
         });
 
-        // Event listeners
+            // Additional input event listeners for command palette
+            if (chatInput) {
         chatInput.addEventListener('input', (e) => {
             adjustTextareaHeight();
             updateSendButton();
@@ -2563,6 +3500,35 @@ Ready to execute your commands safely! 🚀`, false, 'system');
                 hideCommandPalette();
             }
         });
+            }
+            
+            // Command palette click handlers
+            if (commandPalette) {
+                commandPalette.addEventListener('click', (e) => {
+                    const item = e.target.closest('.command-item');
+                    if (item) {
+                        applyCommand(item.getAttribute('data-prefix'));
+                    }
+                });
+            }
+
+            // Suggestion button handlers
+            document.querySelectorAll('.suggestion-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const command = btn.getAttribute('data-command');
+                    applyCommand(command);
+                });
+            });
+
+            // Click outside to hide command palette
+            if (commandPalette && commandBtn) {
+                document.addEventListener('click', (e) => {
+                    if (!commandPalette.contains(e.target) && !commandBtn.contains(e.target)) {
+                        hideCommandPalette();
+                    }
+                });
+            }
+        }
 
         
         // Modern AI Voice Input Component with Real Audio
@@ -2667,13 +3633,17 @@ Ready to execute your commands safely! 🚀`, false, 'system');
             }
 
             async toggleVoiceMode() {
-                this.voiceEnabled = !this.voiceEnabled;
-                this.conversationMode = this.voiceEnabled;
-                
-                if (this.voiceEnabled) {
+                // ✅ SIMPLIFIED: Toggle recording on/off with clicks
+                if (!this.voiceEnabled) {
+                    // First click: Start voice mode and recording
+                    this.voiceEnabled = true;
                     await this.startVoiceMode();
+                } else if (!this.isRecording) {
+                    // Already in voice mode but not recording: Start recording
+                    await this.startRecording();
                 } else {
-                    await this.stopVoiceMode();
+                    // Currently recording: Stop recording and send
+                    this.stopRecording();
                 }
                 
                 this.updateVoiceButton();
@@ -2682,8 +3652,29 @@ Ready to execute your commands safely! 🚀`, false, 'system');
             async startVoiceMode() {
                 try {
                     console.log('🎙️ Starting conversational voice mode...');
+                    console.log('🔍 DEBUG: Initial state check');
+                    console.log('  - voiceEnabled:', this.voiceEnabled);
+                    console.log('  - isRecording:', this.isRecording);
+                    console.log('  - WebSocket state:', this.socket ? this.socket.readyState : 'no socket');
+                    
+                    // ✅ CRITICAL: Wait for WebSocket to be fully connected
+                    if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
+                        console.log('⏳ Waiting for WebSocket connection...');
+                        await new Promise((resolve, reject) => {
+                            const timeout = setTimeout(() => reject(new Error('WebSocket connection timeout')), 5000);
+                            const checkConnection = setInterval(() => {
+                                if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+                                    clearInterval(checkConnection);
+                                    clearTimeout(timeout);
+                                    console.log('✅ WebSocket ready');
+                                    resolve();
+                                }
+                            }, 100);
+                        });
+                    }
                     
                     // Request microphone permissions
+                    console.log('🔍 Requesting microphone access...');
                     this.audioStream = await navigator.mediaDevices.getUserMedia({ 
                         audio: {
                             echoCancellation: true,
@@ -2692,6 +3683,14 @@ Ready to execute your commands safely! 🚀`, false, 'system');
                             sampleRate: 44100
                         } 
                     });
+                    
+                    console.log('🎤 Microphone access granted');
+                    console.log('🔍 DEBUG: Audio stream tracks:', this.audioStream.getTracks().map(t => ({ 
+                        kind: t.kind, 
+                        enabled: t.enabled, 
+                        muted: t.muted,
+                        readyState: t.readyState
+                    })));
                     
                     // Setup audio context and analyzer
                     this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -2703,14 +3702,43 @@ Ready to execute your commands safely! 🚀`, false, 'system');
                     
                     this.dataArray = new Uint8Array(this.analyser.frequencyBinCount);
                     
-                    // Show helpful message
-                    this.updateStatus('👂 Listening... Just start speaking!', 'success');
-                    addMessage('🎙️ Voice chat activated! I\'m listening - just start talking and I\'ll respond automatically.', false, 'system');
+                    console.log('🎛️ Audio context initialized');
+                    console.log('🔍 DEBUG: AudioContext state:', this.audioContext.state);
                     
-                    this.startListening();
+                    // 🎨 Show visualizer and stop button
+                    const visualizerContainer = document.getElementById('voiceVisualizerContainer');
+                    if (visualizerContainer) {
+                        visualizerContainer.style.display = 'flex';
+                        console.log('✅ Visualizer container shown');
+                    }
+                    
+                    const voiceStopBtn = document.getElementById('voiceStopBtn');
+                    if (voiceStopBtn) {
+                        voiceStopBtn.style.display = 'inline-block';
+                        console.log('✅ Stop button shown');
+                    }
+                    
+                    // 🎨 Initialize AMAZING visualizer
+                    if (window.voiceVisualizer) {
+                        window.voiceVisualizer.start(this.analyser);
+                        console.log('✨ Visualizer started');
+                    }
+                    
+                    // Show helpful message - SIMPLIFIED MODE
+                    this.updateStatus('Ready to record', 'success');
+                    addMessage('🎙️ Voice chat ready! Click the microphone button to start recording, click again to stop and send. Click 🛑 to exit voice mode.', false, 'system');
+                    
+                    // ✅ SIMPLIFIED: Auto-start first recording
+                    console.log('🔍 Auto-starting first recording...');
+                    await this.startRecording();
                     
                 } catch (error) {
-                    console.error('Failed to start voice mode:', error);
+                    console.error('❌ Failed to start voice mode:', error);
+                    console.error('🔍 DEBUG: Error details:', {
+                        name: error.name,
+                        message: error.message,
+                        stack: error.stack
+                    });
                     this.updateStatus('Microphone access denied', 'error');
                     addMessage('❌ Microphone access denied. Please allow microphone permissions and try again.', false, 'system');
                     this.voiceEnabled = false;
@@ -2719,24 +3747,57 @@ Ready to execute your commands safely! 🚀`, false, 'system');
             }
 
             async stopVoiceMode() {
-                console.log('🛑 Stopping conversational voice mode...');
+                console.log('🛑 Stopping voice mode...');
+                console.log('🔍 DEBUG: Stopping voice mode - current state:', {
+                    voiceEnabled: this.voiceEnabled,
+                    isRecording: this.isRecording,
+                    conversationMode: this.conversationMode,
+                    hasAudioStream: !!this.audioStream,
+                    hasAudioContext: !!this.audioContext
+                });
                 
+                this.voiceEnabled = false;
                 this.conversationMode = false;
                 this.stopRecording();
-                this.stopListening();
                 
+                // 🎨 Stop and hide visualizer
+                if (window.voiceVisualizer) {
+                    window.voiceVisualizer.stop();
+                    console.log('✅ Visualizer stopped');
+                }
+                
+                const visualizerContainer = document.getElementById('voiceVisualizerContainer');
+                if (visualizerContainer) {
+                    visualizerContainer.style.display = 'none';
+                    console.log('✅ Visualizer container hidden');
+                }
+                
+                // 🎨 Hide stop button
+                const voiceStopBtn = document.getElementById('voiceStopBtn');
+                if (voiceStopBtn) {
+                    voiceStopBtn.style.display = 'none';
+                    console.log('✅ Stop button hidden');
+                }
+                
+                // Stop audio stream
                 if (this.audioStream) {
-                    this.audioStream.getTracks().forEach(track => track.stop());
+                    this.audioStream.getTracks().forEach(track => {
+                        track.stop();
+                        console.log('✅ Audio track stopped:', track.kind);
+                    });
                     this.audioStream = null;
                 }
                 
-                if (this.audioContext) {
+                // Close audio context
+                if (this.audioContext && this.audioContext.state !== 'closed') {
                     await this.audioContext.close();
+                    console.log('✅ AudioContext closed');
                     this.audioContext = null;
                 }
                 
                 this.updateStatus('Voice mode disabled', 'info');
-                addMessage('🔇 Voice chat deactivated. Click the microphone to start again.', false, 'system');
+                addMessage('🔇 Voice chat deactivated. You\'re back in regular chat mode. Click the microphone to start again.', false, 'system');
+                console.log('✅ Voice mode fully stopped');
             }
 
             startListening() {
@@ -2767,11 +3828,16 @@ Ready to execute your commands safely! 🚀`, false, 'system');
                 }
                 const average = sum / this.dataArray.length;
                 
-                // Voice activity threshold
-                const threshold = 30;
+                // ✅ FIXED: Lower threshold for better sensitivity (was 30, now 15)
+                const threshold = 15;
+                
+                // Debug: Log audio level periodically
+                if (Math.random() < 0.01) { // Log 1% of the time
+                    console.log(`🎚️ Audio level: ${average.toFixed(1)} (threshold: ${threshold})`);
+                }
                 
                 if (average > threshold && !this.isRecording && !this.isProcessing) {
-                    console.log('🎤 Voice activity detected, starting recording...');
+                    console.log(`🎤 Voice activity detected! Level: ${average.toFixed(1)} > ${threshold}`);
                     this.startRecording();
                 } else if (average <= threshold && this.isRecording) {
                     // Use a delay to avoid cutting off speech
@@ -2813,15 +3879,26 @@ Ready to execute your commands safely! 🚀`, false, 'system');
                     this.mediaRecorder.ondataavailable = (event) => {
                         if (event.data.size > 0) {
                             this.audioChunks.push(event.data);
+                            console.log(`📦 Audio chunk collected: ${event.data.size} bytes`);
                         }
                     };
                     
                     this.mediaRecorder.onstop = async () => {
+                        console.log(`📥 Recording stopped, total chunks: ${this.audioChunks.length}`);
                         await this.processRecording();
                     };
                     
-                    this.mediaRecorder.start();
+                    this.mediaRecorder.onerror = (error) => {
+                        console.error('❌ MediaRecorder error:', error);
+                        this.updateStatus('Recording error', 'error');
+                        this.isRecording = false;
+                    };
+                    
+                    // ✅ CRITICAL FIX: Add timeslice (100ms) so ondataavailable fires during recording
+                    this.mediaRecorder.start(100);
                     this.startTimer();
+                    
+                    console.log('✅ MediaRecorder started successfully');
                     
                 } catch (error) {
                     console.error('Failed to start recording:', error);
@@ -2844,7 +3921,7 @@ Ready to execute your commands safely! 🚀`, false, 'system');
 
             async processRecording() {
                 if (this.audioChunks.length === 0) {
-                    console.log('No audio data to process');
+                    console.warn('⚠️ No audio data to process');
                     return;
                 }
                 
@@ -2853,50 +3930,68 @@ Ready to execute your commands safely! 🚀`, false, 'system');
                 
                 try {
                     const audioBlob = new Blob(this.audioChunks, { type: 'audio/webm' });
-                    console.log(`📤 Sending ${audioBlob.size} bytes of audio data`);
+                    console.log(`📤 Processing ${this.audioChunks.length} chunks, total size: ${audioBlob.size} bytes`);
+                    
+                    // ✅ CRITICAL: Check WebSocket state before sending
+                    if (!this.socket) {
+                        throw new Error('WebSocket not initialized');
+                    }
+                    
+                    if (this.socket.readyState !== WebSocket.OPEN) {
+                        throw new Error(`WebSocket not open (state: ${this.socket.readyState})`);
+                    }
                     
                     // Send audio to backend via WebSocket with new protocol
-                    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
                         const reader = new FileReader();
+                    
+                    reader.onerror = (error) => {
+                        console.error('❌ FileReader error:', error);
+                        this.updateStatus('Failed to read audio', 'error');
+                        this.isProcessing = false;
+                    };
+                    
                         reader.onload = () => {
+                        try {
                             // Convert to base64
                             const base64Audio = btoa(
                                 new Uint8Array(reader.result)
                                     .reduce((data, byte) => data + String.fromCharCode(byte), '')
                             );
                             
+                            console.log(`📦 Audio encoded to base64: ${base64Audio.length} characters`);
+                            
                             // Send JSON message with audio_input type
-                            this.socket.send(JSON.stringify({
+                            const message = {
                                 type: 'audio_input',
                                 audio_data: base64Audio
-                            }));
-                            console.log('✅ Audio sent to backend');
-                        };
-                        reader.readAsArrayBuffer(audioBlob);
-                    } else {
-                        console.error('WebSocket not connected');
-                        this.updateStatus('Connection lost', 'error');
-                    }
+                            };
+                            
+                            this.socket.send(JSON.stringify(message));
+                            console.log('✅ Audio sent to backend successfully');
+                            this.updateStatus('Sent to backend', 'processing');
+                            
+                        } catch (error) {
+                            console.error('❌ Failed to encode/send audio:', error);
+                            this.updateStatus('Send failed', 'error');
+                            this.isProcessing = false;
+                        }
+                    };
+                    
+                    reader.readAsArrayBuffer(audioBlob);
                     
                 } catch (error) {
-                    console.error('Failed to process recording:', error);
-                    this.updateStatus('Processing failed', 'error');
-                } finally {
+                    console.error('❌ Failed to process recording:', error);
+                    this.updateStatus(`Processing failed: ${error.message}`, 'error');
                     this.isProcessing = false;
+                } finally {
+                    // Clean up audio chunks
                     this.audioChunks = [];
-                    
-                    // Resume listening if in conversation mode
-                    if (this.conversationMode) {
-                        setTimeout(() => {
-                            this.updateStatus('Listening...', 'listening');
-                        }, 500);
-                    }
                 }
             }
 
             async handleVoiceResponse(event) {
                 try {
-                    const response = JSON.parse(event.data);
+                        const response = JSON.parse(event.data);
                     console.log('📥 Received:', response.type, response);
                     
                     switch(response.type) {
@@ -2923,6 +4018,9 @@ Ready to execute your commands safely! 🚀`, false, 'system');
                             const latency = response.latency;
                             console.log(`⏱️ Total: ${latency.total_ms}ms (STT: ${latency.stt_ms}ms, LLM: ${latency.llm_ms}ms, TTS: ${latency.tts_ms}ms)`);
                             
+                            // ✅ Reset processing flag now that we received response
+                            this.isProcessing = false;
+                            
                             // Decode and play audio
                             const audioData = atob(response.audio_data);
                             const audioArray = new Uint8Array(audioData.length);
@@ -2930,6 +4028,9 @@ Ready to execute your commands safely! 🚀`, false, 'system');
                                 audioArray[i] = audioData.charCodeAt(i);
                             }
                             await this.playAudioFromBytes(audioArray.buffer);
+                            
+                            // ✅ SIMPLIFIED: Ready for next recording
+                            this.updateStatus('Ready - Click to record', 'success');
                             break;
                             
                         case 'status':
@@ -2964,12 +4065,9 @@ Ready to execute your commands safely! 🚀`, false, 'system');
                     audio.onended = () => {
                         console.log('✅ Audio playback completed');
                         URL.revokeObjectURL(audioUrl);
-                        this.updateStatus('Listening...', 'listening');
                         
-                        // Resume listening if in conversation mode
-                        if (this.conversationMode) {
-                            setTimeout(() => this.startListening(), 500);
-                        }
+                        // ✅ SIMPLIFIED: Ready for next manual recording
+                        this.updateStatus('Ready - Click to record again', 'success');
                     };
                     
                     audio.onerror = (error) => {
@@ -3315,8 +4413,8 @@ Ready to execute your commands safely! 🚀`, false, 'system');
             }
         }
         
-        // Initialize the modern voice input
-        const conversationalVoice = new ConversationalVoiceChat();
+        // Initialize the modern voice input (will be created after DOM loads)
+        let conversationalVoice = null;
         let voiceEnabled = false;
         
         // Voice synthesis function with real audio playback
@@ -3524,30 +4622,7 @@ Ready to execute your commands safely! 🚀`, false, 'system');
         }
 
 
-        // Command palette click handlers
-        if (commandPalette) {
-            commandPalette.addEventListener('click', (e) => {
-                const item = e.target.closest('.command-item');
-                if (item) {
-                    applyCommand(item.getAttribute('data-prefix'));
-                }
-            });
-        }
-
-        // Suggestion button handlers
-        document.querySelectorAll('.suggestion-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const command = btn.getAttribute('data-command');
-                applyCommand(command);
-            });
-        });
-
-        // Click outside to hide command palette
-        document.addEventListener('click', (e) => {
-            if (!commandPalette.contains(e.target) && !commandBtn.contains(e.target)) {
-                hideCommandPalette();
-            }
-        });
+        // These event listeners are set up in setupAdditionalEventListeners() after DOM is ready
 
         // LangChain Agent UI Helper Functions
         function handleBasicStream(response) {
@@ -3589,7 +4664,7 @@ Ready to execute your commands safely! 🚀`, false, 'system');
                                     try {
                                         bubble.innerHTML = marked.parse(assistantMessage);
                                     } catch (e) {
-                                        bubble.textContent = assistantMessage;
+                                bubble.textContent = assistantMessage;
                                     }
                                 } else {
                                     bubble.textContent = assistantMessage;
@@ -3948,13 +5023,276 @@ Ready to execute your commands safely! 🚀`, false, 'system');
             }
         }
         
+        // 🎨 AMAZING VOICE VISUALIZER - GPT + GROK + APPLE HYBRID
+        class VoiceVisualizer {
+            constructor() {
+                this.container = document.getElementById('voiceVisualizerContainer');
+                this.canvas = document.getElementById('voiceVisualizerCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                
+                this.analyser = null;
+                this.dataArray = null;
+                this.bufferLength = 0;
+                
+                this.isActive = false;
+                this.animationFrame = null;
+                
+                // Particle system for organic movement
+                this.particles = [];
+                this.particleCount = 60;
+                
+                // Color palette (blue, purple, pink, orange)
+                this.colors = [
+                    { r: 59, g: 130, b: 246, name: 'blue' },      // Blue
+                    { r: 147, g: 51, b: 234, name: 'purple' },    // Purple
+                    { r: 236, g: 72, b: 153, name: 'pink' },      // Pink
+                    { r: 251, g: 146, b: 60, name: 'orange' }     // Orange
+                ];
+                
+                // Animation state
+                this.time = 0;
+                this.baseAmplitude = 0;
+                this.targetAmplitude = 0;
+                
+                this.initParticles();
+            }
+            
+            initParticles() {
+                this.particles = [];
+                const centerX = this.canvas.width / 2;
+                const centerY = this.canvas.height / 2;
+                
+                for (let i = 0; i < this.particleCount; i++) {
+                    const angle = (i / this.particleCount) * Math.PI * 2;
+                    const radius = 100 + Math.random() * 50;
+                    
+                    this.particles.push({
+                        angle: angle,
+                        radius: radius,
+                        baseRadius: radius,
+                        speed: 0.001 + Math.random() * 0.002,
+                        size: 2 + Math.random() * 3,
+                        colorIndex: Math.floor(Math.random() * this.colors.length),
+                        offset: Math.random() * Math.PI * 2
+                    });
+                }
+            }
+            
+            start(analyser) {
+                console.log('🎨 Starting AMAZING visualizer...');
+                this.analyser = analyser;
+                this.bufferLength = analyser.frequencyBinCount;
+                this.dataArray = new Uint8Array(this.bufferLength);
+                
+                this.isActive = true;
+                this.container.classList.add('active');
+                
+                this.animate();
+            }
+            
+            stop() {
+                console.log('🎨 Stopping visualizer...');
+                this.isActive = false;
+                this.container.classList.remove('active');
+                
+                if (this.animationFrame) {
+                    cancelAnimationFrame(this.animationFrame);
+                    this.animationFrame = null;
+                }
+                
+                // Clear canvas
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            }
+            
+            getAudioLevel() {
+                if (!this.analyser || !this.dataArray) return 0;
+                
+                this.analyser.getByteFrequencyData(this.dataArray);
+                
+                // Calculate average amplitude
+                let sum = 0;
+                for (let i = 0; i < this.bufferLength; i++) {
+                    sum += this.dataArray[i];
+                }
+                return sum / this.bufferLength / 255; // Normalize to 0-1
+            }
+            
+            animate() {
+                if (!this.isActive) return;
+                
+                this.animationFrame = requestAnimationFrame(() => this.animate());
+                
+                const centerX = this.canvas.width / 2;
+                const centerY = this.canvas.height / 2;
+                
+                // Get audio level
+                const audioLevel = this.getAudioLevel();
+                this.targetAmplitude = audioLevel;
+                
+                // Smooth transition
+                this.baseAmplitude += (this.targetAmplitude - this.baseAmplitude) * 0.1;
+                
+                // Clear with fade effect
+                this.ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                this.time += 0.01;
+                
+                // ===== LAYER 1: GPT-style ORB (center glow) =====
+                const orbRadius = 80 + this.baseAmplitude * 120;
+                const orbGradient = this.ctx.createRadialGradient(
+                    centerX, centerY, 0,
+                    centerX, centerY, orbRadius
+                );
+                
+                // Dynamic color based on audio
+                const colorIndex = Math.floor(this.time * 2) % this.colors.length;
+                const color1 = this.colors[colorIndex];
+                const color2 = this.colors[(colorIndex + 1) % this.colors.length];
+                
+                orbGradient.addColorStop(0, `rgba(${color1.r}, ${color1.g}, ${color1.b}, ${0.8 * (1 + this.baseAmplitude)})`);
+                orbGradient.addColorStop(0.5, `rgba(${color2.r}, ${color2.g}, ${color2.b}, ${0.4 * (1 + this.baseAmplitude)})`);
+                orbGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                
+                this.ctx.fillStyle = orbGradient;
+                this.ctx.beginPath();
+                this.ctx.arc(centerX, centerY, orbRadius, 0, Math.PI * 2);
+                this.ctx.fill();
+                
+                // ===== LAYER 2: GROK-style WAVEFORMS (circular bars) =====
+                const barCount = 64;
+                const barRadius = 120;
+                const barMaxHeight = 60 + this.baseAmplitude * 40;
+                
+                for (let i = 0; i < barCount; i++) {
+                    const angle = (i / barCount) * Math.PI * 2 - Math.PI / 2;
+                    
+                    // Get frequency data for this bar
+                    const dataIndex = Math.floor((i / barCount) * this.bufferLength);
+                    const barHeight = this.dataArray ? (this.dataArray[dataIndex] / 255) * barMaxHeight : barMaxHeight * 0.3;
+                    
+                    const x1 = centerX + Math.cos(angle) * barRadius;
+                    const y1 = centerY + Math.sin(angle) * barRadius;
+                    const x2 = centerX + Math.cos(angle) * (barRadius + barHeight);
+                    const y2 = centerY + Math.sin(angle) * (barRadius + barHeight);
+                    
+                    // Color based on position (gradient around circle)
+                    const colorProgress = i / barCount;
+                    const barColorIndex = Math.floor(colorProgress * this.colors.length);
+                    const barColor = this.colors[barColorIndex];
+                    
+                    this.ctx.strokeStyle = `rgba(${barColor.r}, ${barColor.g}, ${barColor.b}, ${0.6 + barHeight / barMaxHeight * 0.4})`;
+                    this.ctx.lineWidth = 3;
+                    this.ctx.lineCap = 'round';
+                    
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(x1, y1);
+                    this.ctx.lineTo(x2, y2);
+                    this.ctx.stroke();
+                }
+                
+                // ===== LAYER 3: APPLE-style PARTICLES (organic glow) =====
+                this.particles.forEach((particle, index) => {
+                    // Animate particle
+                    particle.angle += particle.speed;
+                    
+                    // Audio-reactive radius
+                    const audioBoost = this.baseAmplitude * 30 * Math.sin(this.time * 2 + particle.offset);
+                    particle.radius = particle.baseRadius + audioBoost;
+                    
+                    const x = centerX + Math.cos(particle.angle) * particle.radius;
+                    const y = centerY + Math.sin(particle.angle) * particle.radius;
+                    
+                    // Dynamic color
+                    const color = this.colors[particle.colorIndex];
+                    const alpha = 0.3 + this.baseAmplitude * 0.5;
+                    
+                    // Glow effect
+                    const gradient = this.ctx.createRadialGradient(x, y, 0, x, y, particle.size * 3);
+                    gradient.addColorStop(0, `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha})`);
+                    gradient.addColorStop(0.5, `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha * 0.5})`);
+                    gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                    
+                    this.ctx.fillStyle = gradient;
+                    this.ctx.beginPath();
+                    this.ctx.arc(x, y, particle.size * 3, 0, Math.PI * 2);
+                    this.ctx.fill();
+                });
+                
+                // ===== LAYER 4: EDGE LIGHTING (rotating gradient ring) =====
+                const ringRadius = 180;
+                const ringWidth = 3;
+                const segments = 120;
+                
+                for (let i = 0; i < segments; i++) {
+                    const angle = (i / segments) * Math.PI * 2 + this.time;
+                    const nextAngle = ((i + 1) / segments) * Math.PI * 2 + this.time;
+                    
+                    // Color cycling
+                    const colorProgress = (i / segments + this.time * 0.1) % 1;
+                    const colorIndex = Math.floor(colorProgress * this.colors.length);
+                    const nextColorIndex = (colorIndex + 1) % this.colors.length;
+                    const colorMix = (colorProgress * this.colors.length) % 1;
+                    
+                    const color1 = this.colors[colorIndex];
+                    const color2 = this.colors[nextColorIndex];
+                    
+                    const r = color1.r + (color2.r - color1.r) * colorMix;
+                    const g = color1.g + (color2.g - color1.g) * colorMix;
+                    const b = color1.b + (color2.b - color1.b) * colorMix;
+                    
+                    const alpha = 0.4 + this.baseAmplitude * 0.6;
+                    
+                    this.ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+                    this.ctx.lineWidth = ringWidth + this.baseAmplitude * 2;
+                    this.ctx.lineCap = 'round';
+                    
+                    const x1 = centerX + Math.cos(angle) * ringRadius;
+                    const y1 = centerY + Math.sin(angle) * ringRadius;
+                    const x2 = centerX + Math.cos(nextAngle) * ringRadius;
+                    const y2 = centerY + Math.sin(nextAngle) * ringRadius;
+                    
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(x1, y1);
+                    this.ctx.lineTo(x2, y2);
+                    this.ctx.stroke();
+                }
+                
+                // ===== LAYER 5: CENTER HIGHLIGHT (breathing core) =====
+                const coreSize = 20 + this.baseAmplitude * 30;
+                const coreGradient = this.ctx.createRadialGradient(
+                    centerX, centerY, 0,
+                    centerX, centerY, coreSize
+                );
+                
+                coreGradient.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
+                coreGradient.addColorStop(0.3, `rgba(${color1.r}, ${color1.g}, ${color1.b}, 0.8)`);
+                coreGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                
+                this.ctx.fillStyle = coreGradient;
+                this.ctx.beginPath();
+                this.ctx.arc(centerX, centerY, coreSize, 0, Math.PI * 2);
+                this.ctx.fill();
+            }
+        }
+        
+        // Initialize visualizer globally
+        window.voiceVisualizer = new VoiceVisualizer();
+        
         // Initialize Modern Chat Component
         document.addEventListener('DOMContentLoaded', () => {
             // Initialize DOM elements first
             initializeDOMElements();
+            
+            // Setup additional event listeners
+            setupAdditionalEventListeners();
 
             window.modernChatComponent = new ModernChatComponent();
             console.log('🚀 Modern Chat Component initialized with real-time state management');
+            
+            // Initialize conversational voice chat AFTER DOM is ready
+            conversationalVoice = new ConversationalVoiceChat();
+            console.log('🎙️ Conversational voice chat initialized');
             
             // Initialize development tools
             initializeDevTools();
@@ -4912,6 +6250,184 @@ Ready to execute your commands safely! 🚀`, false, 'system');
 
         // Initialize voice settings manager
         const voiceSettings = new VoiceSettingsManager();
+
+        // ===== 🔥 QUICK ACTION FUNCTIONS (Global) =====
+        
+        window.clearChat = function() {
+            const chatMessages = document.getElementById('chatMessages');
+            if (chatMessages && confirm('Are you sure you want to clear the chat?')) {
+                chatMessages.innerHTML = '';
+                addMessage('🗑️ Chat cleared!', false, 'system');
+                console.log('✅ Chat cleared');
+            }
+        };
+
+        window.exportChat = function() {
+            const chatMessages = document.getElementById('chatMessages');
+            if (!chatMessages) return;
+            
+            const messages = Array.from(chatMessages.querySelectorAll('.message')).map(msg => {
+                const role = msg.classList.contains('user-message') ? 'User' : 
+                           msg.classList.contains('assistant-message') ? 'Assistant' : 'System';
+                const content = msg.textContent || msg.innerText;
+                return `[${role}] ${content}`;
+            }).join('\n\n');
+            
+            const blob = new Blob([messages], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `nis-modern-chat-${new Date().toISOString().slice(0,10)}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            addMessage('💾 Chat exported successfully!', false, 'system');
+            console.log('✅ Chat exported');
+        };
+
+        window.runCodeDemo = async function() {
+            addMessage('💻 Running code execution demo...', false, 'system');
+            
+            const demoCode = `# Calculate Fibonacci numbers
+def fibonacci(n):
+    if n <= 1:
+        return n
+    return fibonacci(n-1) + fibonacci(n-2)
+
+# Calculate first 10 fibonacci numbers
+result = [fibonacci(i) for i in range(10)]
+print("First 10 Fibonacci numbers:", result)
+print("Sum:", sum(result))`;
+            
+            try {
+                const response = await fetch('/execute/code', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        code: demoCode,
+                        language: 'python'
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    addMessage(`✅ **Code Execution Result:**\n\n\`\`\`\n${result.stdout}\n\`\`\`\n\n⏱️ Execution time: ${result.execution_time || 0}ms`, false);
+                } else {
+                    addMessage(`❌ **Execution Error:**\n\n\`\`\`\n${result.stderr || result.error}\n\`\`\``, false);
+                }
+            } catch (error) {
+                addMessage(`❌ Code execution failed: ${error.message}`, false, 'system');
+            }
+        };
+
+        window.runPhysicsDemo = async function() {
+            addMessage('🔬 Running TRUE PINN physics validation demo...', false, 'system');
+            
+            try {
+                const response = await fetch('/physics/validate/true-pinn', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        scenario: 'bouncing_ball',
+                        mode: 'true_pinn',
+                        domain: 'classical_mechanics',
+                        parameters: {
+                            initial_height: 10.0,
+                            gravity: 9.81,
+                            elasticity: 0.8
+                        }
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.valid !== undefined) {
+                    let message = `## 🔬 Physics Validation Complete\n\n`;
+                    message += `**Status:** ${result.valid ? '✅ Valid' : '❌ Invalid'}\n`;
+                    message += `**Physics Compliance:** ${(result.confidence * 100).toFixed(1)}%\n`;
+                    message += `**Mode:** ${result.mode || 'TRUE_PINN'}\n`;
+                    message += `**Execution Time:** ${result.execution_time?.toFixed(3)}s\n\n`;
+                    
+                    if (result.validation_details) {
+                        message += `### Validation Details\n`;
+                        message += `\`\`\`json\n${JSON.stringify(result.validation_details, null, 2)}\n\`\`\``;
+                    }
+                    
+                    addMessage(message, false);
+                } else {
+                    addMessage(`🔬 Physics validation response:\n\n\`\`\`json\n${JSON.stringify(result, null, 2)}\n\`\`\``, false);
+                }
+            } catch (error) {
+                addMessage(`❌ Physics demo failed: ${error.message}`, false, 'system');
+            }
+        };
+
+        window.runDeepResearch = async function() {
+            const query = prompt('🔬 Enter your research query:');
+            if (!query) return;
+            
+            addMessage(`🔬 Deep Research: ${query}`, true);
+            addMessage('🔍 Conducting comprehensive research...', false, 'system');
+            
+            try {
+                const response = await fetch('/research/deep', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        query: query,
+                        research_depth: 'comprehensive',
+                        include_sources: true
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.research_result) {
+                    let message = `## 📚 Deep Research Results\n\n`;
+                    message += result.research_result;
+                    
+                    if (result.sources && result.sources.length > 0) {
+                        message += `\n\n### 📖 Sources\n`;
+                        result.sources.forEach((source, i) => {
+                            message += `${i + 1}. ${source.title || source.url || source}\n`;
+                        });
+                    }
+                    
+                    addMessage(message, false);
+                } else {
+                    addMessage(`📚 Research response:\n\n${JSON.stringify(result, null, 2)}`, false);
+                }
+            } catch (error) {
+                addMessage(`❌ Research failed: ${error.message}`, false, 'system');
+            }
+        };
+
+        window.showKeyboardShortcuts = function() {
+            const shortcuts = `## ⌨️ Keyboard Shortcuts
+
+**Chat Controls:**
+- \`Ctrl+Enter\` - Send message
+- \`Escape\` - Clear input
+- \`Ctrl+L\` - Clear chat
+
+**Voice Controls:**
+- \`Ctrl+M\` - Toggle voice mode
+- \`Space\` - Start/stop recording (when in voice mode)
+
+**Quick Actions:**
+- \`Ctrl+E\` - Export chat
+- \`Ctrl+K\` - Show this help
+
+**Tips:**
+- Use Smart Consensus for best responses
+- Try VibeVoice for AI agent personalities
+- Export important chats regularly`;
+            
+            addMessage(shortcuts, false, 'system');
+        };
+
+        console.log('✅ Quick action functions initialized');
     </script>
 
     <!-- Voice Settings Modal -->

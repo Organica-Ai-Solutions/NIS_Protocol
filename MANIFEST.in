@@ -1,0 +1,39 @@
+# Include documentation
+include README.md
+include LICENSE
+include requirements.txt
+include .env.example
+
+# Include configuration files
+recursive-include configs *.yaml *.yml *.json *.env.example
+
+# Include system documentation
+recursive-include system/docs *.md *.txt
+include system/docs/VERSION
+
+# Include static files for web UI
+recursive-include static *.html *.css *.js *.png *.jpg *.svg *.ico
+
+# Include essential scripts
+include start.sh stop.sh reset.sh
+recursive-include scripts/installation *.sh *.py
+recursive-include scripts/utilities *.py
+
+# Exclude unnecessary files
+global-exclude __pycache__
+global-exclude *.py[co]
+global-exclude .DS_Store
+global-exclude *.so
+global-exclude *.dylib
+global-exclude *.pyd
+recursive-exclude * .git*
+recursive-exclude * .dockerignore
+recursive-exclude * Dockerfile*
+recursive-exclude * docker-compose*
+recursive-exclude logs *
+recursive-exclude cache *
+recursive-exclude data *
+recursive-exclude models *
+prune dev
+prune tests
+
