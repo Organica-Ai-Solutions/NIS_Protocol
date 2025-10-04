@@ -1,12 +1,20 @@
-# Security constraints for NIS Protocol v3.2 - Security Updates
-# Exclude vulnerable packages and fix dependency conflicts
+# Security Constraints for NIS Protocol
+# 
+# This file prevents installation of packages with known vulnerabilities
+# Install with: pip install -r requirements.txt -c constraints.txt
 
-# EXCLUDE: keras due to CVE-2024-55459 (file download vulnerability)
-# Use tf-keras instead for Keras functionality
-keras<0.0.0
+# Block vulnerable keras versions (CVE-2024-55459)
+# keras 2.15.0 has 2 high-severity vulnerabilities:
+# - GHSA-cjgq-5qmw-rcj6
+# - GHSA-36fq-jgmw-rcj6
+# Solution: Use tf-keras instead (included in tensorflow 2.15.1)
+keras>=3.11.0
 
-# Fix dependency version conflicts
-packaging>=23.2,<26.0  # Fix langchain-core conflict
-email-validator>=2.0,<3.0  # Fix fastapi-mail conflict
-websockets>=10.2,<16.0  # Fix alpaca-py conflict
-google-ai-generativelanguage>=0.6.16,<0.7.0  # Fix langchain-google-genai conflict
+# Ensure minimum secure versions
+cryptography>=45.0.0
+urllib3>=2.5.2
+pillow>=11.0.0
+transformers>=4.53.0
+starlette>=0.47.2
+requests>=2.32.0
+aiohttp>=3.11.14
