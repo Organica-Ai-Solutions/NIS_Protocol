@@ -516,10 +516,30 @@ class EnhancedPINNPhysicsAgent(UnifiedPhysicsAgent):
         )
 
 # ✅ FACTORY FUNCTIONS FOR REAL PHYSICS AGENTS
-def create_unified_physics_agent(config: Optional[Dict[str, Any]] = None) -> UnifiedPhysicsAgent:
+def create_unified_physics_agent(
+    agent_id: str = "unified_physics",
+    config: Optional[Dict[str, Any]] = None
+) -> UnifiedPhysicsAgent:
     """Create real unified physics agent - no mocks"""
-    return UnifiedPhysicsAgent(config)
 
-def create_enhanced_pinn_physics_agent(config: Optional[Dict[str, Any]] = None) -> EnhancedPINNPhysicsAgent:
+    agent = UnifiedPhysicsAgent(agent_id=agent_id)
+
+    if config:
+        logger = logging.getLogger(__name__)
+        logger.debug("UnifiedPhysicsAgent received configuration: %s", config)
+
+    return agent
+
+def create_enhanced_pinn_physics_agent(
+    agent_id: str = "enhanced_pinn_physics",
+    config: Optional[Dict[str, Any]] = None
+) -> EnhancedPINNPhysicsAgent:
     """Create real enhanced PINN physics agent - no mocks"""
-    return EnhancedPINNPhysicsAgent(config)
+
+    agent = EnhancedPINNPhysicsAgent(agent_id=agent_id)
+
+    if config:
+        logger = logging.getLogger(__name__)
+        logger.debug("EnhancedPINNPhysicsAgent received configuration: %s", config)
+
+    return agent

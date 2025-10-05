@@ -1496,7 +1496,14 @@ class EnhancedLaplaceTransformer(UnifiedSignalAgent):
         """
         ✅ COMPATIBILITY: Transform signal data
         """
-        return {"transformed": True, "data": data, "agent_id": self.agent_id}
+        result = super().transform_signal(data)
+
+        # Ensure legacy consumers still receive expected metadata
+        if isinstance(result, dict):
+            result.setdefault("agent_id", self.agent_id)
+            result.setdefault("transformed", True)
+
+        return result
 
     def process_laplace_input(self, laplace_data: Dict[str, Any]) -> Dict[str, Any]:
         """
