@@ -6,13 +6,15 @@
 # Block vulnerable keras versions (CVE-2024-55459)
 # keras 2.15.0 has 2 high-severity vulnerabilities:
 # - GHSA-cjgq-5qmw-rcj6
-# - GHSA-36fq-jgmw-rcj6
+# - GHSA-36fq-jgmw-4r9c (fixed in 3.11.0)
 # Solution: Use tf-keras instead (included in tensorflow 2.15.1)
+# Block all keras versions below 3.11.0 to prevent installation
 keras>=3.11.0
+keras!=2.15.0
 
 # Ensure minimum secure versions
 cryptography>=45.0.0
-urllib3>=2.5.2
+urllib3>=2.5.0
 pillow>=11.0.0
 transformers>=4.53.0
 starlette>=0.47.2
