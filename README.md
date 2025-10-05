@@ -1,4 +1,4 @@
-# NIS Protocol v3.2.1 - Enterprise AI Operating System
+# NIS Protocol v3.2.2 - Enterprise AI Operating System
 
 **🚀 COMPLETE AI OPERATING SYSTEM - The only production-ready platform combining scientific reasoning, multi-agent coordination, voice processing, and enterprise-grade deployment for autonomous systems**
 
@@ -593,64 +593,197 @@ cp .env.example .env
 
 Before starting the system, configure your environment variables:
 
-1) Create your `.env` from the template
+#### Quick Setup
 
 ```bash
-cp .env.example .env
-# then open .env and fill in your keys and settings
+# Copy the complete environment template
+cp configs/complete.env.example .env
+# Edit .env with your actual API keys
 ```
 
-2) Required provider keys (at least one major LLM provider is needed)
+#### Complete Environment Configuration
 
-- OPENAI_API_KEY: required for OpenAI features
-- ANTHROPIC_API_KEY: required for Anthropic features
-- DEEPSEEK_API_KEY: optional
-- GOOGLE_API_KEY: optional (text via Gemini)
+```bash
+# ============================================================================
+# NIS PROTOCOL v3.2.2 - COMPLETE ENVIRONMENT CONFIGURATION
+# ============================================================================
 
-3) Google Imagen (image generation) optional setup
+# ----------------------------------------------------------------------------
+# 🤖 LLM PROVIDER API KEYS (REQUIRED for AI functionality)
+# ----------------------------------------------------------------------------
+# Get your API keys from:
+# • OpenAI: https://platform.openai.com/api-keys
+# • Anthropic: https://console.anthropic.com/
+# • DeepSeek: https://platform.deepseek.com/
+# • Google: https://makersuite.google.com/app/apikey
 
-- GCP_PROJECT_ID: your GCP project ID
-- GCP_LOCATION: region for Vertex AI, e.g. `us-central1` (default)
-- Service account JSON: copy `configs/google-service-account.json.example` to `configs/google-service-account.json` and place your real credentials there
+OPENAI_API_KEY=your-openai-key-here
+ANTHROPIC_API_KEY=your-anthropic-key-here
+GOOGLE_API_KEY=your-google-key-here
+DEEPSEEK_API_KEY=your-deepseek-key-here
+KIMI_K2_API_KEY=your-kimi-key-here
 
-Notes for credentials inside containers:
-- By default, the stack uses `configs/google-service-account.json` mounted into the backend container.
-- Application Default Credentials (ADC) via host path are disabled in the current compose for macOS compatibility. If you prefer ADC:
-  - macOS/Linux: configure Docker Desktop file sharing for your gcloud directory, then mount it and set `GOOGLE_APPLICATION_CREDENTIALS` to the in-container path.
-  - Windows: ensure `APPDATA` is set and points to your `%APPDATA%\gcloud\application_default_credentials.json`, then mount accordingly.
+# ----------------------------------------------------------------------------
+# 🌐 THIRD-PARTY PROTOCOL INTEGRATION (v3.2)
+# ----------------------------------------------------------------------------
+# MCP (Model Context Protocol) - Anthropic
+MCP_SERVER_URL=http://localhost:3000
+MCP_TIMEOUT=30
 
-4) Other common settings (already have sensible defaults)
+# A2A (Agent2Agent Protocol) - Google
+A2A_BASE_URL=https://api.google.com/a2a/v1
+A2A_API_KEY=your-google-a2a-key-here
+A2A_TIMEOUT=30
 
-- KAFKA_BOOTSTRAP_SERVERS, REDIS_HOST/PORT
-- API_HOST, API_PORT
-- BITNET_MODEL_PATH (offline fallback models)
+# ACP (Agent Communication Protocol) - IBM
+ACP_BASE_URL=http://localhost:8080
+ACP_API_KEY=your-ibm-acp-key-here
+ACP_TIMEOUT=30
 
-Security: Do not commit `.env`. Keep secrets out of version control. Only share `.env.example` with placeholders.
+# ----------------------------------------------------------------------------
+# 🗄️ VECTOR DATABASE CONFIGURATION
+# ----------------------------------------------------------------------------
+# Auto-selects best available: pinecone > weaviate > hnsw > simple
+VECTOR_STORE_BACKEND=auto
+
+# Pinecone (Recommended for Production)
+PINECONE_API_KEY=your-pinecone-key-here
+PINECONE_ENVIRONMENT=us-west1-gcp
+PINECONE_INDEX_NAME=nis-protocol-memory
+
+# Weaviate (Alternative Production Option)
+WEAVIATE_URL=http://localhost:8080
+WEAVIATE_API_KEY=your-weaviate-key-here
+
+# ----------------------------------------------------------------------------
+# 🗃️ INFRASTRUCTURE (Docker Services)
+# ----------------------------------------------------------------------------
+COMPOSE_PROJECT_NAME=nis-protocol-v3
+
+# PostgreSQL
+DATABASE_URL=postgresql://nis_user:nis_password_2025@postgres:5432/nis_protocol_v3
+
+# Kafka
+KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+
+# Redis
+REDIS_HOST=redis
+REDIS_PORT=6379
+REDIS_DB=0
+
+# ----------------------------------------------------------------------------
+# 🎙️ VOICE & AUDIO PROCESSING
+# ----------------------------------------------------------------------------
+# ElevenLabs TTS (Optional - for high-quality voice)
+ELEVENLABS_API_KEY=your-elevenlabs-key-here
+
+# Whisper STT Configuration
+WHISPER_MODEL=base
+
+# Bark TTS (Local - no key needed)
+BARK_VOICE=v2/en_speaker_6
+
+# ----------------------------------------------------------------------------
+# 🎯 APPLICATION CONFIGURATION
+# ----------------------------------------------------------------------------
+NIS_ENV=production
+LOG_LEVEL=INFO
+API_HOST=0.0.0.0
+API_PORT=8000
+DASHBOARD_PORT=5000
+
+# Application Behavior
+ENABLE_VOICE=true
+ENABLE_ANALYTICS=true
+ENABLE_CACHING=true
+
+# ----------------------------------------------------------------------------
+# 📊 MONITORING & OBSERVABILITY
+# ----------------------------------------------------------------------------
+GRAFANA_ADMIN_PASSWORD=nis_admin_2025
+PROMETHEUS_PORT=9090
+
+# ----------------------------------------------------------------------------
+# 🌍 SPECIALIZED API INTEGRATIONS
+# ----------------------------------------------------------------------------
+# Copernicus Climate Data Store (for weather/climate data)
+CDS_API_URL=https://cds.climate.copernicus.eu/api
+CDS_API_KEY=your-cds-user-id:your-cds-api-key
+
+# NVIDIA NIM (for NVIDIA models)
+NVIDIA_API_KEY=your-nvidia-key-here
+
+# ----------------------------------------------------------------------------
+# 🔬 AGENT CONFIGURATION
+# ----------------------------------------------------------------------------
+# Agent Orchestrator Settings
+AGENT_MAX_CONCURRENT=10
+AGENT_TIMEOUT=120
+
+# Physics Validation
+ENABLE_PHYSICS_VALIDATION=true
+PHYSICS_AUTO_CORRECTION=true
+
+# Research Agent
+ENABLE_WEB_SEARCH=true
+MAX_SEARCH_RESULTS=10
+
+# ----------------------------------------------------------------------------
+# 💾 MEMORY & CACHING
+# ----------------------------------------------------------------------------
+# Memory Configuration
+MEMORY_MAX_CONTEXT_LENGTH=4096
+MEMORY_EMBEDDING_DIM=768
+ENABLE_CONVERSATION_MEMORY=true
+
+# Cache Configuration
+CACHE_TTL=3600
+CACHE_MAX_SIZE=1000
+
+# ----------------------------------------------------------------------------
+# 🔐 SECURITY
+# ----------------------------------------------------------------------------
+# JWT Configuration (Optional)
+JWT_SECRET_KEY=your-secret-key-here
+JWT_ALGORITHM=HS256
+JWT_EXPIRATION=86400
+
+# CORS Settings
+CORS_ORIGINS=*
+CORS_ALLOW_CREDENTIALS=true
+
+# ----------------------------------------------------------------------------
+# 🚀 PERFORMANCE TUNING
+# ----------------------------------------------------------------------------
+# Worker Configuration
+WORKERS=4
+MAX_REQUESTS=1000
+MAX_REQUESTS_JITTER=50
+
+# Request Limits
+MAX_REQUEST_SIZE=10485760
+REQUEST_TIMEOUT=300
+```
+
+#### Configuration Checklist
+
+✅ **LLM API keys** (OpenAI, Anthropic, Google) - REQUIRED  
+⚙️ **Protocol keys** (MCP, A2A, ACP) - Optional but recommended  
+🗄️ **Vector DB** (Pinecone or Weaviate) - Optional but recommended for production  
+🎙️ **Voice keys** (ElevenLabs) - Optional  
+🌍 **Specialized APIs** (CDS, NVIDIA) - Optional
+
+#### Security Best Practices
+
+- Do not commit `.env` to version control
+- Keep secrets out of Git history
+- Only share `.env.example` with placeholders
+- Do not wrap values in quotes
+- Avoid leading/trailing spaces
 
 🛡️ **BILLING PROTECTION**: The system defaults to mock responses to prevent unexpected API charges. Use `./start_safe.sh` for safe development.
 
-#### Essential Configuration
-
-```bash
-# LLM Provider API Keys (at least one required)
-OPENAI_API_KEY=your_openai_api_key
-ANTHROPIC_API_KEY=your_anthropic_api_key
-DEEPSEEK_API_KEY=your_deepseek_api_key
-
-# Billing Protection (safe mode)
-FORCE_MOCK_MODE=true  # Set to false for production
-
-# Infrastructure (Docker defaults)
-DATABASE_URL=postgresql://nis_user:nis_password_2025@postgres:5432/nis_protocol_v3
-KAFKA_BOOTSTRAP_SERVERS=kafka:9092
-REDIS_HOST=redis
-```
-
-See `.env.example` for complete configuration options.
-
-Tips:
-- Do not wrap values in quotes and avoid leading/trailing spaces.
-- Keep `.env` out of version control; only commit `.env.example` with placeholders.
+For complete configuration details, see: `configs/complete.env.example`
 
 #### **Installation Options**
 
