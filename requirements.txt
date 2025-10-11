@@ -23,6 +23,7 @@ pydantic>=2.9.0,<3.0.0
 python-dotenv>=1.0.0
 requests>=2.32.0,<3.0.0
 aiohttp>=3.11.14,<4.0.0
+httpx>=0.28.0,<0.29.0
 aiofiles>=23.0.0
 click>=8.0.0
 python-dateutil>=2.8.0
@@ -122,6 +123,7 @@ pydub>=0.25.0,<1.0.0
 msgpack>=1.0.0,<2.0.0
 orjson>=3.8.0,<4.0.0
 structlog>=23.0.0,<24.0.0
+websockets>=15.0.0,<16.0.0
 
 # ===== PRODUCTION ENHANCEMENTS =====
 # Real mathematical implementations for production NIS Pipeline

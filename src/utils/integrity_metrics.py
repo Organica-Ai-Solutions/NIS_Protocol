@@ -8,6 +8,8 @@ import logging
 from typing import Dict, Any, List, Optional, Tuple, Union
 from dataclasses import dataclass
 from datetime import datetime
+from .confidence_calculator import calculate_confidence as _calculate_dynamic_confidence
+
 
 logger = logging.getLogger(__name__)
 
@@ -55,14 +57,11 @@ def calculate_physics_compliance(validation_result: ValidationResult) -> float:
     
     return float(compliance)
 
-def calculate_confidence(factors: Optional[Union[ConfidenceFactors, List[float]]] = None) -> float:
-    """
-    Calculates a confidence score.
-    NOTE: This is a mock implementation.
-    """
-    if isinstance(factors, list):
-        return np.mean(factors) if factors else 0.0
-    return 0.85 # Mock value
+def calculate_confidence(factors: Optional[Union[ConfidenceFactors, List[float]]] = None) -> Optional[float]:
+    """Wrapper that delegates to the dynamic confidence calculator."""
+    if isinstance(factors, ConfidenceFactors):
+        factors = list(factors.factors)
+    return _calculate_dynamic_confidence(factors)
 
 def calculate_accuracy(predictions: List[Any], ground_truth: List[Any], 
                       tolerance: float = 0.01) -> float:

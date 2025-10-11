@@ -245,10 +245,10 @@ Cost:          $0 per inference (after initial setup)
 
 | Metric | BitNet 1.3B | Traditional 1.3B | Advantage |
 |--------|-------------|------------------|-----------|
-| **Memory** | 81 MB | 1.3 GB | 16x smaller |
-| **Speed** | <100ms | 200-500ms | 2-5x faster |
-| **Energy** | 0.1W | 1.0W | 10x efficient |
-| **Cost** | $0/query | $0.001/query | ∞x cheaper |
+| **Memory** | 81 MB | 1.3 GB | ~16x smaller |
+| **Speed** | <100ms | 200-500ms | 2-5x improvement |
+| **Energy** | 0.1W | 1.0W | ~10x more efficient |
+| **Cost** | $0/query | $0.001/query | Free vs. paid |
 | **Privacy** | 100% local | Cloud dependent | Full privacy |
 
 ---

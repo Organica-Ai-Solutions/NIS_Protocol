@@ -1,0 +1,136 @@
+{
+  "mcpServers": {
+    "nis_protocol": {
+      "command": "python",
+      "args": ["-m", "src.mcp.standalone_server"],
+      "env": {
+        "PYTHONPATH": ".",
+        "NIS_MCP_MODE": "standalone",
+        "NIS_PROVIDER_REGISTRY": "configs/provider_registry.yaml",
+        "NIS_PROTOCOL_ROUTING": "configs/protocol_routing.json"
+      },
+      "working_directory": "/Users/diegofuego/Desktop/NIS_Protocol"
+    }
+  },
+  "tools": [
+    {
+      "name": "nis.run_pipeline",
+      "description": "Execute NIS Protocol pipeline (Laplace → KAN → PINN → LLM)",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "pipeline_type": {
+            "type": "string",
+            "enum": ["scientific", "robotics", "research"],
+            "description": "Type of pipeline to execute"
+          },
+          "parameters": {
+            "type": "object",
+            "description": "Pipeline-specific parameters"
+          },
+          "budget_usd": {
+            "type": "number",
+            "default": 10,
+            "description": "Maximum cost for this job in USD"
+          },
+          "session_id": {
+            "type": "string",
+            "description": "Optional session identifier"
+          }
+        },
+        "required": ["pipeline_type", "parameters"]
+      }
+    },
+    {
+      "name": "nis.robotics_control",
+      "description": "Control drones/manipulators (Forward/Inverse Kinematics, Trajectory Planning)",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "control_type": {
+            "type": "string",
+            "enum": ["forward_kinematics", "inverse_kinematics", "plan_trajectory"],
+            "description": "Type of control operation"
+          },
+          "robot_id": {
+            "type": "string",
+            "description": "Unique robot identifier"
+          },
+          "robot_type": {
+            "type": "string",
+            "enum": ["drone", "manipulator", "humanoid", "ground_vehicle"],
+            "description": "Type of robot"
+          },
+          "parameters": {
+            "type": "object",
+            "description": "Control-specific parameters (joint_angles, target_position, waypoints)"
+          }
+        },
+        "required": ["control_type", "robot_id", "robot_type", "parameters"]
+      }
+    },
+    {
+      "name": "nis.job_status",
+      "description": "Get status and metrics for a running NIS job",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "job_id": {
+            "type": "string",
+            "description": "Job identifier returned by nis.run_pipeline"
+          }
+        },
+        "required": ["job_id"]
+      }
+    },
+    {
+      "name": "nis.get_artifact",
+      "description": "Fetch outputs (trajectories, physics validation, research reports)",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "job_id": {
+            "type": "string",
+            "description": "Job identifier"
+          },
+          "artifact_name": {
+            "type": "string",
+            "description": "Name of artifact to retrieve"
+          }
+        },
+        "required": ["job_id", "artifact_name"]
+      }
+    },
+    {
+      "name": "nis.cost_report",
+      "description": "Track GPU usage and costs for NIS operations",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "window": {
+            "type": "string",
+            "default": "24h",
+            "description": "Time window (e.g., '1h', '24h', '7d')"
+          }
+        }
+      }
+    },
+    {
+      "name": "nis.list_capabilities",
+      "description": "List all available NIS Protocol agents, pipelines, and providers",
+      "input_schema": {
+        "type": "object",
+        "properties": {}
+      }
+    }
+  ],
+  "guardrails": {
+    "max_budget_per_job_usd": 100,
+    "max_job_duration_seconds": 3600
+  },
+  "rate_limits": {
+    "requests_per_minute": 60,
+    "concurrent_jobs": 5
+  }
+}
+

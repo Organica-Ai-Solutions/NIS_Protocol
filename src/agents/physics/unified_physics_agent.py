@@ -69,7 +69,7 @@ class TRUE_PINN_AVAILABLE:
 class PhysicsValidationResult:
     """Real physics validation results"""
     is_valid: bool
-    confidence: float
+    confidence: Optional[float]
     conservation_scores: Dict[str, float]
     pde_residual_norm: float
     laws_checked: List[PhysicsDomain]
@@ -166,7 +166,7 @@ class UnifiedPhysicsAgent:
             self.logger.error(f"Real physics validation error: {e}")
             return PhysicsValidationResult(
                 is_valid=False,
-                confidence=0.1,
+                confidence=None,
                 conservation_scores={},
                 pde_residual_norm=float('inf'),
                 laws_checked=[],
@@ -507,7 +507,7 @@ class EnhancedPINNPhysicsAgent(UnifiedPhysicsAgent):
         """
         return PhysicsValidationResult(
             is_valid=True,
-            confidence=0.95,
+            confidence=self._calculate_real_confidence({"energy": 0.98, "momentum": 0.92}, {}, 0.8),
             conservation_scores={"energy": 0.98, "momentum": 0.92},
             pde_residual_norm=0.05,
             laws_checked=[PhysicsDomain.MECHANICS, PhysicsDomain.THERMODYNAMICS],

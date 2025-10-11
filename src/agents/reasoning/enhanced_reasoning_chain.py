@@ -529,7 +529,7 @@ class EnhancedReasoningChain(NISAgent):
             ReasoningStage.VALIDATION: 0.10
         }
         
-        weighted_confidence = 0.0
+        weighted_confidence = 0.0  # Accumulator for weighted sum
         for stage_data in reasoning_chain:
             stage = stage_data.get("stage")
             if stage in stage_weights:

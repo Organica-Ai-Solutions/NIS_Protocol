@@ -6,7 +6,7 @@
 
 **For Development/Testing (ZERO billing risk):**
 ```bash
-git clone https://github.com/pentius00/NIS_Protocol.git
+git clone https://github.com/Organica-Ai-Solutions/NIS_Protocol.git
 cd NIS_Protocol
 ./start_safe.sh  # 🛡️ Mock responses only - NO API CHARGES
 ```

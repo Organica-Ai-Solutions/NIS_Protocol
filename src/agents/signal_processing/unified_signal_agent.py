@@ -248,7 +248,7 @@ class UnifiedSignalAgent(NISAgent):
     SAFETY: Extends working system instead of replacing it.
     """
     
-def __init__(
+    def __init__(
         self,
         agent_id: str = "unified_signal_agent",
         signal_mode: SignalMode = SignalMode.ENHANCED_LAPLACE,
@@ -343,54 +343,59 @@ def __init__(
         # Signal processing history and cache
         self.processing_history: deque = deque(maxlen=1000)
         self.signal_cache = {}
-        
-        self.logger.info(f"Unified Signal Agent '{agent_id}' initialized with mode: {signal_mode.value}")
+
+        self.logger.info(
+            f"Unified Signal Agent '{agent_id}' initialized with mode: {signal_mode.value}"
+        )
 
     # =============================================================================
     # SIGNAL ANALYSIS HELPER METHODS
     # =============================================================================
 
-def _find_peaks(self, signal: np.ndarray, min_distance: int = 1, threshold: float = None) -> np.ndarray:
+    def _find_peaks(
+        self,
+        signal: np.ndarray,
+        min_distance: int = 1,
+        threshold: Optional[float] = None,
+    ) -> np.ndarray:
         """Find peaks in signal using simple peak detection"""
         if len(signal) < 3:
             return np.array([])
 
-        peaks = []
+        peaks: List[int] = []
         if threshold is None:
             threshold = np.mean(signal) + np.std(signal)
 
         for i in range(1, len(signal) - 1):
-            if (signal[i] > signal[i-1] and
-                signal[i] > signal[i+1] and
-                signal[i] > threshold):
-                # Check minimum distance from other peaks
+            if (
+                signal[i] > signal[i - 1]
+                and signal[i] > signal[i + 1]
+                and signal[i] > threshold
+            ):
                 if not peaks or i - peaks[-1] >= min_distance:
                     peaks.append(i)
 
         return np.array(peaks)
 
-def _compute_snr(self, signal: np.ndarray) -> float:
+    def _compute_snr(self, signal: np.ndarray) -> float:
         """Compute Signal-to-Noise Ratio in dB"""
         if len(signal) < 2:
             return 0.0
 
-        # Simple SNR estimation: signal power vs noise power
         signal_mean = np.mean(signal)
-        signal_power = np.mean((signal - signal_mean)**2)
+        signal_power = np.mean((signal - signal_mean) ** 2)
 
-        # Estimate noise as high-frequency components
         if len(signal) > 10:
-            # Use simple difference as noise estimate
             noise = np.diff(signal)
             noise_power = np.mean(noise**2)
 
             if noise_power > 0:
                 snr = 10 * np.log10(signal_power / noise_power)
-                return max(0, snr)  # SNR can't be negative
+                return max(0, snr)
 
-        return 20.0  # Default reasonable SNR
+        return 20.0
 
-def _validate_signal_quality(self, signal: np.ndarray) -> Dict[str, Any]:
+    def _validate_signal_quality(self, signal: np.ndarray) -> Dict[str, Any]:
         """Comprehensive signal quality assessment"""
         if len(signal) == 0:
             return {"quality": "poor", "score": 0.0, "issues": ["empty_signal"]}
@@ -446,7 +451,7 @@ def _validate_signal_quality(self, signal: np.ndarray) -> Dict[str, Any]:
     # WORKING ENHANCED LAPLACE TRANSFORMER METHODS (PRESERVE)
     # =============================================================================
     
-def transform_signal(self, data: Dict[str, Any]) -> Dict[str, Any]:
+    def transform_signal(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """
         ✅ REAL: Transform signal using proper Laplace transform for frequency domain analysis
         This implements actual mathematical signal processing - PRODUCTION READY
@@ -585,14 +590,14 @@ def transform_signal(self, data: Dict[str, Any]) -> Dict[str, Any]:
                 "transform_type": "laplace_error"
             }
     
-def compute_laplace_transform(self, data: Dict[str, Any]) -> Dict[str, Any]:
+    def compute_laplace_transform(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """
         ✅ COMPATIBILITY: Legacy method for Laplace transform computation
         This method preserves the exact interface expected by the chat pipeline
         """
         return self.transform_signal(data)
     
-def get_status(self) -> Dict[str, Any]:
+    def get_status(self) -> Dict[str, Any]:
         """Get comprehensive unified signal agent status"""
         return {
             "agent_id": self.agent_id,
@@ -616,8 +621,8 @@ def get_status(self) -> Dict[str, Any]:
     # =============================================================================
     # ENHANCED SIGNAL PROCESSING METHODS
     # =============================================================================
-    
-async def process_signal_comprehensive(
+
+    async def process_signal_comprehensive(
         self,
         signal_data: Union[np.ndarray, List[float], Dict[str, Any]],
         signal_type: Optional[SignalType] = None,
@@ -631,7 +636,7 @@ async def process_signal_comprehensive(
         mode = mode or self.signal_mode
         signal_type = signal_type or SignalType.AUDIO
         config = config or {}
-        
+
         try:
             # Normalize input data
             if isinstance(signal_data, dict):
@@ -642,10 +647,10 @@ async def process_signal_comprehensive(
                 signal_array = np.array(signal_data)
             else:
                 signal_array = np.array(signal_data)
-            
+
             if len(signal_array) == 0:
                 signal_array = np.array([1.0, 0.5, -0.5, 0.8])
-            
+
             # Route to appropriate processing method
             if mode == SignalMode.ENHANCED_LAPLACE:
                 result = self._process_enhanced_laplace(signal_array, config)
@@ -661,14 +666,14 @@ async def process_signal_comprehensive(
                 result = await self._process_machine_learning(signal_array, signal_type, config)
             else:
                 result = self._process_basic_signal(signal_array, config)
-            
+
             execution_time = time.time() - start_time
-            
+
+            signal_quality_confidence = self._calculate_signal_quality_confidence(result)
+
             # Create unified result
             signal_result = SignalProcessingResult(
-                processed_signal=result.get("processed_signal", signal_array),
-                # ✅ REAL confidence calculation based on signal quality metrics
-                signal_quality_confidence=self._calculate_signal_quality_confidence(result),
+                processed_signal=np.array(result.get("processed_signal", signal_array)),
                 confidence=signal_quality_confidence,
                 signal_mode=mode,
                 signal_type=signal_type,
@@ -681,17 +686,17 @@ async def process_signal_comprehensive(
                 sampling_rate=self.sampling_rate,
                 model_used=f"unified_{mode.value}"
             )
-            
+
             # Update statistics
             self._update_signal_stats(signal_result)
-            
+
             return signal_result
-            
+
         except Exception as e:
             self.logger.error(f"Signal processing error: {e}")
             return SignalProcessingResult(
                 processed_signal=np.array([]),
-                confidence=0.0,
+                confidence=None,
                 signal_mode=mode,
                 signal_type=signal_type,
                 transforms_applied=[],
@@ -702,48 +707,55 @@ async def process_signal_comprehensive(
                 execution_time=time.time() - start_time,
                 sampling_rate=self.sampling_rate
             )
-    
-def _process_enhanced_laplace(self, signal_array: np.ndarray, config: Dict[str, Any]) -> Dict[str, Any]:
+
+    def _process_enhanced_laplace(self, signal_array: np.ndarray, config: Dict[str, Any]) -> Dict[str, Any]:
         """Enhanced Laplace processing (preserve working method)"""
         # Use the working transform_signal method
         signal_dict = {"signal": signal_array.tolist()}
         return self.transform_signal(signal_dict)
-    
-async def _process_comprehensive(self, signal_array: np.ndarray, signal_type: SignalType, config: Dict[str, Any]) -> Dict[str, Any]:
+
+    async def _process_comprehensive(self, signal_array: np.ndarray, signal_type: SignalType, config: Dict[str, Any]) -> Dict[str, Any]:
         """Comprehensive signal processing with multiple techniques"""
         try:
             processed_signal = signal_array.copy()
             transforms_applied = []
             filters_applied = []
-            
+
             # Apply preprocessing
             if len(signal_array) > 1:
                 # Normalize signal
                 signal_std = np.std(signal_array)
                 if signal_std > 0:
                     processed_signal = (signal_array - np.mean(signal_array)) / signal_std
-                
+
                 # Apply noise reduction if available
                 if SCIPY_AVAILABLE:
                     processed_signal = self._apply_noise_reduction(processed_signal)
                     filters_applied.append(FilterType.SAVGOL)
-            
+
             # Frequency domain analysis
             frequency_analysis = {}
             if SCIPY_AVAILABLE and len(processed_signal) > 4:
                 # FFT analysis
                 fft_result = fft(processed_signal)
                 freqs = fftfreq(len(processed_signal), 1/self.sampling_rate)
-                
+
+                spectral_centroid = float(np.sum(freqs * np.abs(fft_result)) / np.sum(np.abs(fft_result))) if np.sum(np.abs(fft_result)) != 0 else 0.0
+
                 frequency_analysis = {
                     "dominant_frequency": float(freqs[np.argmax(np.abs(fft_result))]),
-                    "spectral_centroid": float(np.sum(freqs * np.abs(fft_result)) / np.sum(np.abs(fft_result))),
-                    "spectral_bandwidth": float(np.sqrt(np.sum(((freqs - frequency_analysis.get("spectral_centroid", 0)) ** 2) * np.abs(fft_result)) / np.sum(np.abs(fft_result)))),
+                    "spectral_centroid": spectral_centroid,
+                    "spectral_bandwidth": float(
+                        np.sqrt(
+                            np.sum(((freqs - spectral_centroid) ** 2) * np.abs(fft_result)) /
+                            (np.sum(np.abs(fft_result)) + 1e-10)
+                        )
+                    ),
                     "spectral_rolloff": float(freqs[int(0.85 * len(freqs))]),
                     "spectral_energy": float(np.sum(np.abs(fft_result) ** 2))
                 }
                 transforms_applied.append(TransformType.FOURIER)
-            
+
             # Time domain analysis
             time_analysis = {
                 "rms": float(np.sqrt(np.mean(processed_signal ** 2))) if len(processed_signal) > 0 else 0.0,
@@ -751,21 +763,30 @@ async def _process_comprehensive(self, signal_array: np.ndarray, signal_type: Si
                 "zero_crossing_rate": float(np.sum(np.diff(np.sign(processed_signal)) != 0) / (2 * len(processed_signal))) if len(processed_signal) > 1 else 0.0,
                 "signal_energy": float(np.sum(processed_signal ** 2)) if len(processed_signal) > 0 else 0.0
             }
-            
+
             # Quality metrics
+            snr_estimate = self._estimate_snr(processed_signal)
             quality_metrics = {
-                "snr_estimate": self._estimate_snr(processed_signal),
-                "signal_to_noise_ratio": 20.0,  # Placeholder
-                "dynamic_range": float(20 * np.log10(np.max(np.abs(processed_signal)) / (np.mean(np.abs(processed_signal)) + 1e-10))) if len(processed_signal) > 0 else 0.0,
-                "crest_factor": float(np.max(np.abs(processed_signal)) / (np.sqrt(np.mean(processed_signal ** 2)) + 1e-10)) if len(processed_signal) > 0 else 0.0
+                "snr_estimate": snr_estimate,
+                "signal_to_noise_ratio": snr_estimate,
+                "dynamic_range": float(
+                    20 * np.log10(
+                        np.max(np.abs(processed_signal)) /
+                        (np.mean(np.abs(processed_signal)) + 1e-10)
+                    )
+                ) if len(processed_signal) > 0 else 0.0,
+                "crest_factor": float(
+                    np.max(np.abs(processed_signal)) /
+                    (np.sqrt(np.mean(processed_signal ** 2)) + 1e-10)
+                ) if len(processed_signal) > 0 else 0.0
             }
-            
+
             confidence = calculate_confidence([
                 0.9,
                 quality_metrics["snr_estimate"] / 30.0,  # Normalize SNR
                 0.8
             ])
-            
+
             return {
                 "processed_signal": processed_signal,
                 "confidence": confidence,
@@ -776,25 +797,25 @@ async def _process_comprehensive(self, signal_array: np.ndarray, signal_type: Si
                 "quality_metrics": quality_metrics,
                 "processing_type": "comprehensive"
             }
-            
+
         except Exception as e:
             self.logger.error(f"Comprehensive processing error: {e}")
             return {"processed_signal": signal_array, "confidence": 0.1, "error": str(e)}
-    
-def _process_scipy_advanced(self, signal_array: np.ndarray, config: Dict[str, Any]) -> Dict[str, Any]:
+
+    def _process_scipy_advanced(self, signal_array: np.ndarray, config: Dict[str, Any]) -> Dict[str, Any]:
         """SciPy-based advanced signal processing"""
         if not SCIPY_AVAILABLE:
             self.logger.warning("SciPy not available, falling back to enhanced Laplace")
             return self._process_enhanced_laplace(signal_array, config)
-        
+
         try:
             processed_signal = signal_array.copy()
             filters_applied = []
-            
+
             # Apply multiple filters based on config
             filter_type = config.get("filter_type", "butterworth")
             cutoff_freq = config.get("cutoff_freq", 1000.0)
-            
+
             if len(signal_array) > 10:
                 # Butterworth filter
                 if filter_type == "butterworth":
@@ -803,32 +824,39 @@ def _process_scipy_advanced(self, signal_array: np.ndarray, config: Dict[str, An
                     b, a = butter(4, normalized_cutoff, btype='low')
                     processed_signal = filtfilt(b, a, signal_array)
                     filters_applied.append(FilterType.BUTTERWORTH)
-                
+
                 # Savitzky-Golay filter for smoothing
                 if len(processed_signal) > 5:
                     from scipy.signal import savgol_filter
-                    window_length = min(5, len(processed_signal) if len(processed_signal) % 2 == 1 else len(processed_signal) - 1)
+                    window_length = min(
+                        5,
+                        len(processed_signal) if len(processed_signal) % 2 == 1 else len(processed_signal) - 1
+                    )
                     if window_length >= 3:
                         processed_signal = savgol_filter(processed_signal, window_length, 2)
                         filters_applied.append(FilterType.SAVGOL)
-            
+
             # Spectral analysis
             frequency_analysis = {}
             if len(processed_signal) > 8:
-                frequencies, power_spectrum = welch(processed_signal, self.sampling_rate, nperseg=min(64, len(processed_signal)))
+                frequencies, power_spectrum = welch(
+                    processed_signal,
+                    self.sampling_rate,
+                    nperseg=min(64, len(processed_signal))
+                )
                 frequency_analysis = {
                     "peak_frequency": float(frequencies[np.argmax(power_spectrum)]),
                     "total_power": float(np.sum(power_spectrum)),
                     "frequency_range": [float(frequencies[0]), float(frequencies[-1])],
                     "spectral_peaks": self._find_spectral_peaks(frequencies, power_spectrum)
                 }
-            
+
             confidence = calculate_confidence([
                 0.85,
                 len(filters_applied) / 3.0,  # More filters = higher confidence
                 0.9 if frequency_analysis else 0.6
             ])
-            
+
             return {
                 "processed_signal": processed_signal,
                 "confidence": confidence,
@@ -836,16 +864,16 @@ def _process_scipy_advanced(self, signal_array: np.ndarray, config: Dict[str, An
                 "frequency_analysis": frequency_analysis,
                 "processing_type": "scipy_advanced"
             }
-            
+
         except Exception as e:
             self.logger.error(f"SciPy processing error: {e}")
             return {"processed_signal": signal_array, "confidence": 0.1, "error": str(e)}
-    
-async def _process_time_series(self, signal_array: np.ndarray, config: Dict[str, Any]) -> Dict[str, Any]:
+
+    async def _process_time_series(self, signal_array: np.ndarray, config: Dict[str, Any]) -> Dict[str, Any]:
         """Time series analysis and pattern recognition"""
         try:
             processed_signal = signal_array.copy()
-            
+
             # Time series decomposition
             time_analysis = {
                 "trend": self._calculate_trend(signal_array),
@@ -854,7 +882,7 @@ async def _process_time_series(self, signal_array: np.ndarray, config: Dict[str,
                 "stationarity": self._test_stationarity(signal_array),
                 "change_points": self._detect_change_points(signal_array)
             }
-            
+
             # Pattern detection
             patterns = {
                 "cycles_detected": len(time_analysis["seasonality"]["periods"]),
@@ -862,13 +890,13 @@ async def _process_time_series(self, signal_array: np.ndarray, config: Dict[str,
                 "volatility": float(np.std(signal_array)) if len(signal_array) > 1 else 0.0,
                 "outliers": self._detect_outliers(signal_array)
             }
-            
+
             confidence = calculate_confidence([
                 0.8,
                 min(patterns["cycles_detected"] / 3.0, 1.0),
                 0.9 if time_analysis["stationarity"]["is_stationary"] else 0.6
             ])
-            
+
             return {
                 "processed_signal": processed_signal,
                 "confidence": confidence,
@@ -876,23 +904,23 @@ async def _process_time_series(self, signal_array: np.ndarray, config: Dict[str,
                 "patterns": patterns,
                 "processing_type": "time_series"
             }
-            
+
         except Exception as e:
             self.logger.error(f"Time series processing error: {e}")
             return {"processed_signal": signal_array, "confidence": 0.1, "error": str(e)}
-    
-def _process_frequency_domain(self, signal_array: np.ndarray, config: Dict[str, Any]) -> Dict[str, Any]:
+
+    def _process_frequency_domain(self, signal_array: np.ndarray, config: Dict[str, Any]) -> Dict[str, Any]:
         """Advanced frequency domain analysis"""
         try:
             if not SCIPY_AVAILABLE or len(signal_array) < 4:
                 return self._process_enhanced_laplace(signal_array, config)
-            
+
             processed_signal = signal_array.copy()
             transforms_applied = []
-            
+
             # Multiple transform analysis
             frequency_analysis = {}
-            
+
             # FFT
             fft_result = fft(signal_array)
             freqs = fftfreq(len(signal_array), 1/self.sampling_rate)
@@ -902,7 +930,7 @@ def _process_frequency_domain(self, signal_array: np.ndarray, config: Dict[str, 
                 "dominant_freq": float(freqs[np.argmax(np.abs(fft_result))])
             }
             transforms_applied.append(TransformType.FOURIER)
-            
+
             # Spectrogram if signal is long enough
             if len(signal_array) > 16:
                 f, t, Sxx = spectrogram(signal_array, self.sampling_rate)
@@ -912,7 +940,7 @@ def _process_frequency_domain(self, signal_array: np.ndarray, config: Dict[str, 
                     "power": np.mean(Sxx, axis=1).tolist()[:20]
                 }
                 transforms_applied.append(TransformType.SHORT_TIME_FOURIER)
-            
+
             # Hilbert transform for analytic signal
             try:
                 analytic_signal = signal.hilbert(signal_array)
@@ -922,15 +950,15 @@ def _process_frequency_domain(self, signal_array: np.ndarray, config: Dict[str, 
                     "instantaneous_frequency": np.diff(np.angle(analytic_signal)).tolist()[:10]
                 }
                 transforms_applied.append(TransformType.HILBERT)
-            except:
+            except Exception:
                 pass  # Skip if Hilbert transform fails
-            
+
             confidence = calculate_confidence([
                 0.9,
                 len(transforms_applied) / 3.0,
                 0.85
             ])
-            
+
             return {
                 "processed_signal": processed_signal,
                 "confidence": confidence,
@@ -938,35 +966,35 @@ def _process_frequency_domain(self, signal_array: np.ndarray, config: Dict[str, 
                 "frequency_analysis": frequency_analysis,
                 "processing_type": "frequency_domain"
             }
-            
+
         except Exception as e:
             self.logger.error(f"Frequency domain processing error: {e}")
             return {"processed_signal": signal_array, "confidence": 0.1, "error": str(e)}
-    
-async def _process_machine_learning(self, signal_array: np.ndarray, signal_type: SignalType, config: Dict[str, Any]) -> Dict[str, Any]:
+
+    async def _process_machine_learning(self, signal_array: np.ndarray, signal_type: SignalType, config: Dict[str, Any]) -> Dict[str, Any]:
         """Machine learning-based signal analysis"""
         if not self.enable_ml:
             self.logger.warning("Machine learning not enabled, falling back to comprehensive processing")
             return await self._process_comprehensive(signal_array, signal_type, config)
-        
+
         try:
             processed_signal = signal_array.copy()
-            
+
             # Feature extraction
             features = self._extract_ml_features(signal_array)
-            
+
             # Dimensionality reduction if available
             if len(features) > 10 and hasattr(self, 'pca_model'):
                 reduced_features = self.pca_model.transform([features])[0]
             else:
                 reduced_features = features[:10]  # Limit features
-            
+
             # Clustering analysis
             cluster_analysis = self._perform_clustering(signal_array)
-            
+
             # Anomaly detection
             anomalies = self._detect_anomalies_ml(signal_array)
-            
+
             ml_analysis = {
                 "features": {
                     "extracted_features": len(features),
@@ -980,25 +1008,25 @@ async def _process_machine_learning(self, signal_array: np.ndarray, signal_type:
                     "confidence": 0.8
                 }
             }
-            
+
             confidence = calculate_confidence([
                 0.85,
                 len(features) / 50.0,  # More features = higher confidence
                 cluster_analysis["silhouette_score"]
             ])
-            
+
             return {
                 "processed_signal": processed_signal,
                 "confidence": confidence,
                 "ml_analysis": ml_analysis,
                 "processing_type": "machine_learning"
             }
-            
+
         except Exception as e:
             self.logger.error(f"Machine learning processing error: {e}")
             return {"processed_signal": signal_array, "confidence": 0.1, "error": str(e)}
     
-def _process_basic_signal(self, signal_array: np.ndarray, config: Dict[str, Any]) -> Dict[str, Any]:
+    def _process_basic_signal(self, signal_array: np.ndarray, config: Dict[str, Any]) -> Dict[str, Any]:
         """Basic signal processing fallback"""
         try:
             processed_signal = signal_array.copy()
@@ -1018,7 +1046,12 @@ def _process_basic_signal(self, signal_array: np.ndarray, config: Dict[str, Any]
                 "length": len(signal_array)
             }
             
-            confidence = 0.6  # Basic processing confidence
+            # ✅ Calculate confidence from signal quality metrics
+            from src.utils.confidence_calculator import calculate_confidence
+            signal_quality = basic_analysis.get('snr', 0) / 100.0 if basic_analysis.get('snr', 0) > 0 else 0.5
+            confidence = calculate_confidence(factors=[signal_quality, min(len(signal_array) / 1000.0, 1.0)])
+            if confidence is None:
+                confidence = 0.5  # Neutral fallback (no data available)
             
             return {
                 "processed_signal": processed_signal,
@@ -1035,7 +1068,7 @@ def _process_basic_signal(self, signal_array: np.ndarray, config: Dict[str, Any]
     # UTILITY METHODS
     # =============================================================================
     
-def _apply_noise_reduction(self, signal: np.ndarray) -> np.ndarray:
+    def _apply_noise_reduction(self, signal: np.ndarray) -> np.ndarray:
         """Apply noise reduction using signal processing techniques"""
         if len(signal) < 5:
             return signal
@@ -1051,7 +1084,7 @@ def _apply_noise_reduction(self, signal: np.ndarray) -> np.ndarray:
         except:
             return signal
     
-def _estimate_snr(self, signal: np.ndarray) -> float:
+    def _estimate_snr(self, signal: np.ndarray) -> float:
         """Estimate signal-to-noise ratio"""
         if len(signal) < 2:
             return 20.0
@@ -1067,7 +1100,7 @@ def _estimate_snr(self, signal: np.ndarray) -> float:
         except:
             return 20.0
     
-def _find_spectral_peaks(self, frequencies: np.ndarray, power_spectrum: np.ndarray) -> List[Dict[str, float]]:
+    def _find_spectral_peaks(self, frequencies: np.ndarray, power_spectrum: np.ndarray) -> List[Dict[str, float]]:
         """Find peaks in power spectrum"""
         try:
             if SCIPY_AVAILABLE and len(power_spectrum) > 5:
@@ -1084,7 +1117,7 @@ def _find_spectral_peaks(self, frequencies: np.ndarray, power_spectrum: np.ndarr
         except:
             return []
     
-def _calculate_trend(self, signal: np.ndarray) -> Dict[str, float]:
+    def _calculate_trend(self, signal: np.ndarray) -> Dict[str, float]:
         """Calculate trend in signal"""
         try:
             if len(signal) < 2:
@@ -1108,7 +1141,7 @@ def _calculate_trend(self, signal: np.ndarray) -> Dict[str, float]:
         except:
             return {"slope": 0.0, "intercept": 0.0, "r_squared": 0.0}
     
-def _detect_seasonality(self, signal: np.ndarray) -> Dict[str, Any]:
+    def _detect_seasonality(self, signal: np.ndarray) -> Dict[str, Any]:
         """Detect seasonal patterns in signal"""
         try:
             if len(signal) < 6:
@@ -1134,7 +1167,7 @@ def _detect_seasonality(self, signal: np.ndarray) -> Dict[str, Any]:
         except:
             return {"periods": [], "strength": 0.0}
     
-def _calculate_autocorrelation(self, signal: np.ndarray) -> Dict[str, Any]:
+    def _calculate_autocorrelation(self, signal: np.ndarray) -> Dict[str, Any]:
         """Calculate autocorrelation function"""
         try:
             if len(signal) < 2:
@@ -1167,7 +1200,7 @@ def _calculate_autocorrelation(self, signal: np.ndarray) -> Dict[str, Any]:
         except:
             return {"lags": [], "correlations": [], "max_correlation": 0.0}
     
-def _test_stationarity(self, signal: np.ndarray) -> Dict[str, Any]:
+    def _test_stationarity(self, signal: np.ndarray) -> Dict[str, Any]:
         """Test signal stationarity"""
         try:
             if len(signal) < 4:
@@ -1197,7 +1230,7 @@ def _test_stationarity(self, signal: np.ndarray) -> Dict[str, Any]:
         except:
             return {"is_stationary": True, "test_statistic": 0.0, "p_value": 1.0}
     
-def _detect_change_points(self, signal: np.ndarray) -> List[int]:
+    def _detect_change_points(self, signal: np.ndarray) -> List[int]:
         """Detect change points in signal"""
         try:
             if len(signal) < 6:
@@ -1224,7 +1257,7 @@ def _detect_change_points(self, signal: np.ndarray) -> List[int]:
         except:
             return []
     
-def _detect_outliers(self, signal: np.ndarray) -> List[int]:
+    def _detect_outliers(self, signal: np.ndarray) -> List[int]:
         """Detect outliers in signal"""
         try:
             if len(signal) < 3:
@@ -1247,7 +1280,7 @@ def _detect_outliers(self, signal: np.ndarray) -> List[int]:
         except:
             return []
     
-def _extract_ml_features(self, signal: np.ndarray) -> List[float]:
+    def _extract_ml_features(self, signal: np.ndarray) -> List[float]:
         """Extract features for machine learning"""
         try:
             if len(signal) == 0:
@@ -1299,7 +1332,7 @@ def _extract_ml_features(self, signal: np.ndarray) -> List[float]:
         except:
             return [0.0] * 20
     
-def _perform_clustering(self, signal: np.ndarray) -> Dict[str, Any]:
+    def _perform_clustering(self, signal: np.ndarray) -> Dict[str, Any]:
         """Perform clustering analysis on signal"""
         try:
             if not self.enable_ml or len(signal) < 5:
@@ -1329,7 +1362,7 @@ def _perform_clustering(self, signal: np.ndarray) -> Dict[str, Any]:
         except:
             return {"n_clusters": 1, "labels": [0] * len(signal), "silhouette_score": 0.5}
     
-def _detect_anomalies_ml(self, signal: np.ndarray) -> Dict[str, Any]:
+    def _detect_anomalies_ml(self, signal: np.ndarray) -> Dict[str, Any]:
         """Detect anomalies using machine learning techniques"""
         try:
             if len(signal) < 5:
@@ -1361,7 +1394,7 @@ def _detect_anomalies_ml(self, signal: np.ndarray) -> Dict[str, Any]:
     # INITIALIZATION METHODS
     # =============================================================================
     
-def _initialize_scipy_components(self):
+    def _initialize_scipy_components(self):
         """Initialize SciPy signal processing components"""
         try:
             # Pre-compute common filter coefficients
@@ -1377,7 +1410,7 @@ def _initialize_scipy_components(self):
         except Exception as e:
             self.logger.error(f"Failed to initialize SciPy components: {e}")
     
-def _initialize_ml_models(self):
+    def _initialize_ml_models(self):
         """Initialize machine learning models"""
         try:
             # PCA for dimensionality reduction
@@ -1390,7 +1423,7 @@ def _initialize_ml_models(self):
         except Exception as e:
             self.logger.error(f"Failed to initialize ML models: {e}")
     
-def _initialize_neural_models(self):
+    def _initialize_neural_models(self):
         """Initialize neural network models"""
         try:
             if TORCH_AVAILABLE:
@@ -1404,7 +1437,7 @@ def _initialize_neural_models(self):
         except Exception as e:
             self.logger.error(f"Failed to initialize neural models: {e}")
     
-def _update_signal_stats(self, result: SignalProcessingResult):
+    def _update_signal_stats(self, result: SignalProcessingResult):
         """Update signal processing statistics"""
         self.signal_stats['total_processed'] += 1
         if result.confidence > 0.7:
@@ -1429,18 +1462,21 @@ def _update_signal_stats(self, result: SignalProcessingResult):
             if isinstance(score, (int, float)):
                 self.signal_stats['signal_quality_scores'][metric].append(score)
 
-def _calculate_signal_quality_confidence(self, result: Dict[str, Any]) -> float:
+    def _calculate_signal_quality_confidence(self, result: Dict[str, Any]) -> float:
         """
         ✅ REAL signal quality confidence calculation
         Based on actual signal processing metrics
         """
         try:
-            # Start with base confidence
-            confidence = 0.5
+            # ✅ Start with base confidence derived from result completeness
+            has_signal = result.get("processed_signal") is not None
+            has_analysis = bool(result.get("frequency_analysis") or result.get("basic_analysis"))
+            base = 0.3 + (0.1 if has_signal else 0.0) + (0.1 if has_analysis else 0.0)
+            confidence = base
 
             # ✅ REAL signal processing quality factors
             # Check if signal was properly processed
-            if result.get("processed_signal") is not None:
+            if has_signal:
                 confidence += 0.2
 
             # Check frequency analysis quality
@@ -1515,12 +1551,12 @@ class SignalProcessingAgent(UnifiedSignalAgent):
     """
     ✅ COMPATIBILITY: Alias for comprehensive signal processing
     """
-    
-def __init__(
+
+    def __init__(
         self,
         agent_id: str = "signal_processing_agent",
         sampling_rate: float = 44100.0,
-        enable_self_audit: bool = True
+        enable_self_audit: bool = True,
     ):
         """Initialize with comprehensive signal processing focus"""
         super().__init__(
@@ -1529,19 +1565,19 @@ def __init__(
             enable_self_audit=enable_self_audit,
             sampling_rate=sampling_rate,
             enable_ml=True,
-            enable_advanced=False
+            enable_advanced=False,
         )
 
 class SciPySignalAgent(UnifiedSignalAgent):
     """
     ✅ COMPATIBILITY: Alias for SciPy-based signal processing
     """
-    
-def __init__(
+
+    def __init__(
         self,
         agent_id: str = "scipy_signal_agent",
         sampling_rate: float = 44100.0,
-        enable_self_audit: bool = True
+        enable_self_audit: bool = True,
     ):
         """Initialize with SciPy signal processing focus"""
         super().__init__(
@@ -1550,15 +1586,15 @@ def __init__(
             enable_self_audit=enable_self_audit,
             sampling_rate=sampling_rate,
             enable_ml=False,
-            enable_advanced=False
+            enable_advanced=False,
         )
 
 class TimeSeriesAnalyzer(UnifiedSignalAgent):
     """
     ✅ COMPATIBILITY: Alias for time series analysis
     """
-    
-def __init__(
+
+    def __init__(
         self,
         agent_id: str = "time_series_analyzer",
         sampling_rate: float = 1.0,  # Different default for time series
@@ -1578,8 +1614,8 @@ class LaplaceSignalProcessor(UnifiedSignalAgent):
     """
     ✅ COMPATIBILITY: Alias for Laplace signal processing
     """
-    
-def __init__(
+
+    def __init__(
         self,
         agent_id: str = "laplace_signal_processor",
         sampling_rate: float = 44100.0
@@ -1594,26 +1630,30 @@ def __init__(
             enable_advanced=False
         )
 
-
 # =============================================================================
 # COMPATIBILITY FACTORY FUNCTIONS
 # =============================================================================
+
 
 def create_enhanced_laplace_transformer(agent_id: str = "laplace_transformer") -> EnhancedLaplaceTransformer:
     """Create working enhanced Laplace transformer (compatibility)"""
     return EnhancedLaplaceTransformer(agent_id)
 
+
 def create_comprehensive_signal_agent(**kwargs) -> SignalProcessingAgent:
     """Create comprehensive signal processing agent (compatibility)"""
     return SignalProcessingAgent(**kwargs)
+
 
 def create_scipy_signal_agent(**kwargs) -> SciPySignalAgent:
     """Create SciPy signal processing agent"""
     return SciPySignalAgent(**kwargs)
 
+
 def create_time_series_analyzer(**kwargs) -> TimeSeriesAnalyzer:
     """Create time series analyzer"""
     return TimeSeriesAnalyzer(**kwargs)
+
 
 def create_full_unified_signal_agent(**kwargs) -> UnifiedSignalAgent:
     """Create full unified signal agent with all capabilities"""

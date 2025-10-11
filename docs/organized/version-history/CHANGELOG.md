@@ -148,15 +148,15 @@
 - **Mobile Interface**: Native mobile applications
 - **Enterprise Features**: SSO, audit logging, compliance
 - **Advanced Analytics**: Usage metrics and insights
-- **Performance Optimization**: Sub-second response targets
+- **Performance Optimization**: Latency targets configurable per deployment
 
 ---
 
 ## 📞 Support & Community
 
 - **Documentation**: [Complete API docs and guides](./docs/)
-- **Issues**: [GitHub Issues](https://github.com/pentius00/NIS_Protocol/issues)
-- **Discussions**: [Community Forum](https://github.com/pentius00/NIS_Protocol/discussions)
+- **Issues**: [GitHub Issues](https://github.com/Organica-Ai-Solutions/NIS_Protocol/issues)
+- **Discussions**: [Community Forum](https://github.com/Organica-Ai-Solutions/NIS_Protocol/discussions)
 - **License**: [MIT License](./LICENSE)
 
 ---

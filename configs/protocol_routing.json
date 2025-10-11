@@ -1,7 +1,10 @@
 {
   "mcp": {
-    "base_url": "https://test-mcp-server.example.com",
-    "api_key": "test_mcp_key_123",
+    "base_url": "http://localhost:3333",
+    "api_key": "",
+    "provider_registry_path": "configs/provider_registry.yaml",
+    "orchestration_manifest_path": "configs/orchestration_manifest.yaml",
+    "protocol_routing_path": "configs/protocol_routing.json",
     "tool_mappings": {
       "file_editor_tool": {
         "nis_agent": "action_agent",

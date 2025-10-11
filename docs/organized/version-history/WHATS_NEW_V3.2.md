@@ -167,13 +167,13 @@ POST /visualization/create
 - **Image Generation**: 85% faster response times
 - **Console Loading**: 60% faster initial load
 - **Response Formatting**: 70% faster content transformation
-- **Error Recovery**: 90% faster fallback responses
+- **Error Recovery**: Robust fallback responses with reduced latency
 
 ### Quality Improvements
-- **Content Classification**: 95% accuracy in creative vs technical detection
-- **User Satisfaction**: 40% improvement in user experience ratings
-- **Error Rates**: 99% reduction in critical errors
-- **API Reliability**: 98% uptime with graceful degradation
+- **Content Classification**: Automatic creative vs technical detection (accuracy measured in test suite)
+- **User Satisfaction**: Improved user experience based on internal testing feedback
+- **Error Rates**: Significant reduction in critical errors
+- **API Reliability**: High uptime with graceful degradation
 
 ---
 
@@ -231,7 +231,7 @@ POST /visualization/create
 - **Consciousness Scaling**: Enhanced self-awareness capabilities
 - **Physics Validation**: More sophisticated physics checking
 - **Multimodal Fusion**: Better integration of text, image, and audio
-- **Performance Optimization**: Sub-second response targets
+- **Performance Optimization**: Latency targets configurable per deployment
 
 ---
 
@@ -253,4 +253,4 @@ Special thanks to the community for feedback and testing that made v3.2 possible
 
 ---
 
-*For technical support or questions about v3.2, please visit our [GitHub Issues](https://github.com/pentius00/NIS_Protocol/issues) page.*
+*For technical support or questions about v3.2, please visit our [GitHub Issues](https://github.com/Organica-Ai-Solutions/NIS_Protocol/issues) page.*

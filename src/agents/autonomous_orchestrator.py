@@ -164,7 +164,7 @@ class AutonomousOrchestrator:
             primary_tool = self.tool_mappings[intent]
             tools_needed.append(ToolSelection(
                 tool=primary_tool,
-                confidence=0.9,
+                confidence=None,
                 parameters=self._extract_parameters(user_message, intent),
                 reasoning=f"Primary tool for {intent.value}"
             ))
@@ -172,7 +172,7 @@ class AutonomousOrchestrator:
         # Add LLM provider for response generation
         tools_needed.append(ToolSelection(
             tool=ToolCapability.LLM_PROVIDER,
-            confidence=1.0,
+            confidence=None,
             parameters={"provider": "smart"},
             reasoning="Generate final response"
         ))

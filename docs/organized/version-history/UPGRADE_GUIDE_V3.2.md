@@ -44,7 +44,7 @@ git fetch origin
 git checkout v3.2.0
 
 # Or download release
-wget https://github.com/pentius00/NIS_Protocol/archive/v3.2.0.tar.gz
+wget https://github.com/Organica-Ai-Solutions/NIS_Protocol/archive/v3.2.0.tar.gz
 tar -xzf v3.2.0.tar.gz
 ```
 
@@ -354,8 +354,8 @@ echo "PERFORMANCE_MONITORING=true" >> .env
 
 ### If You Need Help
 1. **Documentation**: Check [complete docs](./README.md)
-2. **Issues**: [GitHub Issues](https://github.com/pentius00/NIS_Protocol/issues)
-3. **Community**: [Discussions](https://github.com/pentius00/NIS_Protocol/discussions)
+2. **Issues**: [GitHub Issues](https://github.com/Organica-Ai-Solutions/NIS_Protocol/issues)
+3. **Community**: [Discussions](https://github.com/Organica-Ai-Solutions/NIS_Protocol/discussions)
 4. **Changelog**: [Version History](../CHANGELOG.md)
 
 ### Common Questions

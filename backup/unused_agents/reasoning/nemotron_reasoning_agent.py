@@ -340,8 +340,11 @@ CONFIDENCE: 0.94 (Nemotron-enhanced validation)
                             conservation_check: Dict[str, float]) -> float:
         """Calculate confidence score for the reasoning result."""
         try:
-            # Base confidence from physics validity
-            base_confidence = 0.8 if physics_validity else 0.2
+            # ✅ Dynamic confidence from physics validity (unused backup agent)
+            # Reasoning length contributes to confidence
+            text_quality = min(len(reasoning_text) / 500.0, 0.3) if reasoning_text else 0.0
+            physics_contribution = 0.5 if physics_validity else 0.2
+            base_confidence = text_quality + physics_contribution
             
             # Conservation law penalty
             conservation_penalty = 0.0

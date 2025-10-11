@@ -96,7 +96,7 @@ Generate speech audio for any text with agent-specific voices.
 **Request:**
 ```json
 {
-  "text": "The physics validation is complete with 99.7% accuracy",
+  "text": "The physics validation is complete and passed all constraint checks",
   "speaker": "physics",
   "emotion": "explanatory"
 }

@@ -181,7 +181,7 @@ class StreamingSTTService:
             
             # Combine segments
             text_parts = []
-            total_confidence = 0.0
+            total_confidence = 0.0  # Accumulator for averaging
             segment_count = 0
             
             for segment in segments:
@@ -191,9 +191,9 @@ class StreamingSTTService:
             
             final_text = " ".join(text_parts).strip()
             avg_confidence = total_confidence / max(segment_count, 1)
-            
-            # Convert log probability to confidence score (0-1)
-            confidence = min(1.0, max(0.0, (avg_confidence + 5) / 5))
+
+            # Convert log probability to probability score (0-1)
+            confidence = float(np.clip(np.exp(avg_confidence), 0.0, 1.0))
             
             return {
                 "text": final_text,
@@ -204,7 +204,7 @@ class StreamingSTTService:
             
         except Exception as e:
             logger.error(f"Whisper transcription error: {e}")
-            return {"text": "", "confidence": 0.0, "error": str(e)}
+            return {"text": "", "confidence": None, "error": str(e)}
     
     def set_partial_callback(self, callback: Callable):
         """Set callback for partial transcription results"""

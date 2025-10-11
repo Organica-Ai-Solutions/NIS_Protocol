@@ -28,14 +28,20 @@ NIS Protocol is a **complete AI Operating System** featuring the industry's most
 **🧠 CORE AI CAPABILITIES:**
 - **✅ Multi-Agent Orchestration** - Consciousness-driven agent coordination with protocol bridge
 - **✅ Scientific Reasoning** - Real Laplace transforms, KAN networks, and PINN physics validation
-- **✅ Intelligent Query Router** - 83% faster responses with adaptive path selection (NEW!)
-- **✅ Real LLM Integration** - OpenAI, Anthropic, Google with smart consensus
+- **✅ Intelligent Query Router** - Adaptive path selection tuned via internal benchmarking (NEW!)
+- **✅ Real LLM Integration** - OpenAI (GPT-4o, GPT-5 ready), Anthropic (Claude), Google with smart consensus
 - **✅ Voice & Audio Processing** - Multi-speaker synthesis with real-time streaming + amazing visualizer (NEW!)
 - **✅ Enhanced Memory System** - Persistent conversation intelligence with context awareness
 - **✅ Third-Party Protocols** - MCP, A2A, ACP integration for ecosystem connectivity
+- **✅ ChatGPT & Claude Integration** - Expose NIS tools to ChatGPT and Claude via MCP (NEW!)
+- **✅ Robotics Control** - Universal robot control with physics validation (NEW!)
+  - Forward/Inverse Kinematics (Denavit-Hartenberg transforms)
+  - Trajectory planning (minimum jerk polynomials)
+  - Multi-platform translation (MAVLink, ROS, custom protocols)
+  - Real-time physics validation via PINN
 
 **🚀 ENTERPRISE FEATURES:**
-- **✅ Production-Ready Deployment** - Docker containerization with enterprise reliability
+- **✅ Production-Ready Deployment** - Docker + AWS-ready with portable paths (no hardcoded configs!)
 - **✅ NVIDIA NeMo Integration** - Enterprise AI acceleration and GPU optimization
 - **✅ Multiple Chat Interfaces** - Professional UIs for different use cases
 - **✅ Real-Time State Management** - WebSocket-driven frontend synchronization
@@ -89,27 +95,20 @@ curl -X POST http://localhost/chat \
 - **🧠 Multi-Agent System** - Consciousness service + protocol bridge
 - **🎙️ Voice Processing** - Real-time streaming with stunning multicolor visualizer
 - **💾 Enhanced Memory** - Persistent conversation intelligence
-- **🔌 MCP Integration** - Industry-standard connectivity
+- **🔌 MCP Integration** - Industry-standard connectivity + ChatGPT/Claude direct access
 - **🐳 Docker Deployment** - Production-ready containerization
 
-### **🚀 NEW in v3.2: Intelligent Query Router & Performance Revolution**
+### **🚀 NEW in v3.2: Intelligent Query Router & Performance Enhancements**
 
-**83% Faster Responses** with smart query routing - breakthrough performance optimization:
+The intelligent query router introduces an adaptive multi-path pipeline so deployments can tune latency versus analytical depth:
 
-**🎯 Intelligent Query Router** (inspired by MoE pattern):
-- **⚡ FAST Path (2-3s)** - Simple queries skip heavy processing (83% faster!)
-- **⚙️ STANDARD Path (5-10s)** - Balanced processing for normal queries
-- **🔬 FULL Path (10-15s)** - Complete pipeline for complex analysis
-- **🧠 Smart Classification** - Auto-detects query type and complexity using pattern matching
-- **📊 Real-Time Routing** - Adaptive path selection based on query characteristics
+- **⚡ FAST Path** – skips heavyweight analysis for simple prompts and keeps latency low.
+- **⚙️ STANDARD Path** – balances retrieval, reasoning, and cost for everyday queries.
+- **🔬 FULL Path** – executes the complete scientific stack (Laplace → KAN → PINN) when full rigor is required.
+- **🧠 Smart Classification** – lightweight semantic checks propose a path; operators can override or plug in their own heuristics.
+- **📊 Runtime Observability** – streaming metrics (via `/router/metrics`) expose actual timings so teams can document performance on their own hardware.
 
-**Performance Results:**
-```
-Simple Chat:  17.8s → 2.97s  (83% faster ⚡)
-Technical:    15.5s → 10.24s (34% faster)
-Physics:      16.9s → 13.21s (22% faster)
-Average:      16.7s → 8.8s   (47% overall improvement)
-```
+Administrators should benchmark the router on target infrastructure and record their own latency/cost profiles before promoting to production.
 
 **🌐 Third-Party Protocol Integration:**
 - **MCP (Model Context Protocol)** - Anthropic's standard for context exchange
@@ -125,7 +124,7 @@ Average:      16.7s → 8.8s   (47% overall improvement)
 
 **🔧 Advanced Tool Optimization:**
 - **Clear Namespacing** - (`nis_`, `physics_`, `kan_`, `laplace_`) reducing agent confusion
-- **Token Efficiency** - 67% reduction in response tokens
+- **⚡ Token Handling** - Optimized prompts and tool outputs to limit token usage during multi-step reasoning
 - **Consolidated Operations** - Multi-step workflows combined
 - **Performance Analytics** - Real-time optimization metrics
 
@@ -157,7 +156,7 @@ Average:      16.7s → 8.8s   (47% overall improvement)
 **Multi-speaker voice synthesis** with real-time streaming capabilities:
 
 - **🎭 4 Distinct Speakers** - Consciousness, Physics, Research, Coordination agents
-- **⚡ Real-time Streaming** - <50ms latency with WebSocket support
+- **⚡ Real-time Streaming** - WebSocket support with live audio chunks
 - **🔄 Dynamic Switching** - Agent voice changes in conversations
 - **⏱️ Long-form Generation** - Up to 90-minute content support
 
@@ -183,7 +182,12 @@ curl -X POST http://localhost:8000/communication/synthesize \
 ├── Specialized Agents (Context-Activated)
 │   ├── Multimodal Analysis (Vision + documents)
 │   ├── Research Engine (Web search + analysis)
-│   └── NVIDIA Simulation
+│   ├── NVIDIA Simulation
+│   └── Robotics Agent (NEW)
+│       ├── Forward Kinematics (DH transforms)
+│       ├── Inverse Kinematics (scipy optimization)
+│       ├── Trajectory Planning (physics-validated)
+│       └── Platform Translation (drone ↔ droid)
 └── Protocol Integration
     ├── MCP (Model Context Protocol)
     └── WebSocket State Management
@@ -832,7 +836,11 @@ curl -X POST http://localhost/chat \
 # 🔒 NEW: Test Secure Code Execution
 curl -X POST http://localhost:8001/execute \
   -H "Content-Type: application/json" \
-  -d '{"code": "print(\"Hello from secure sandbox!\")", "language": "python", "timeout": 10}'
+  -d '{
+    "code": "print(\"Hello from secure sandbox!\")",
+    "language": "python",
+    "timeout": 10
+  }'
 
 # 🚀 NEW: Test NVIDIA NeMo Integration
 curl -X GET http://localhost/nvidia/nemo/status
@@ -845,6 +853,9 @@ curl -X GET http://localhost/agents/status
 
 # 🔍 NEW: Test Research Capabilities
 curl -X GET http://localhost/research/capabilities
+
+# 🤖 NEW: Test Robotics Control
+curl -X GET http://localhost/robotics/capabilities
 ```
 
 ---
@@ -899,6 +910,83 @@ curl -X POST http://localhost/agents/planning/create \
     "constraints": ["budget_limit", "time_constraint"]
   }'
 ```
+
+### **🤖 Robotics Control Examples**
+```bash
+# Get robotics capabilities (real stats, no hardcoded values)
+curl -X GET http://localhost/robotics/capabilities
+
+# Forward Kinematics - Drone motor control
+curl -X POST http://localhost/robotics/forward_kinematics \
+  -H "Content-Type: application/json" \
+  -d '{
+    "robot_id": "drone_001",
+    "robot_type": "drone",
+    "joint_angles": [5000, 5000, 5000, 5000]
+  }'
+
+# Forward Kinematics - Robotic arm
+curl -X POST http://localhost/robotics/forward_kinematics \
+  -H "Content-Type: application/json" \
+  -d '{
+    "robot_id": "arm_001",
+    "robot_type": "manipulator",
+    "joint_angles": [0, 0.785, -0.785, 0, 1.57, 0]
+  }'
+
+# Inverse Kinematics - Solve for joint angles
+curl -X POST http://localhost/robotics/inverse_kinematics \
+  -H "Content-Type: application/json" \
+  -d '{
+    "robot_id": "arm_001",
+    "robot_type": "manipulator",
+    "target_pose": {
+      "position": [0.5, 0.3, 0.8]
+    }
+  }'
+
+# Trajectory Planning - Physics-validated path
+curl -X POST http://localhost/robotics/plan_trajectory \
+  -H "Content-Type: application/json" \
+  -d '{
+    "robot_id": "drone_001",
+    "robot_type": "drone",
+    "waypoints": [[0, 0, 0], [1, 1, 0.5], [2, 0, 1]],
+    "duration": 5.0,
+    "num_points": 50
+  }'
+```
+
+### **🔥 Robotics Streaming (Hybrid Architecture)**
+```bash
+# WebSocket - Real-time bidirectional control (50-1000Hz)
+# Test with: python3 dev/testing/test_robotics_streaming.py --mode websocket
+# JavaScript example in endpoint docstring
+
+# Server-Sent Events - Real-time telemetry monitoring (up to 1000Hz)
+curl -N http://localhost/robotics/telemetry/drone_001?update_rate=50
+
+# HTTP Chunked - Streaming trajectory execution with progress
+curl -X POST http://localhost/robotics/execute_trajectory_stream \
+  -H "Content-Type: application/json" \
+  -d '{
+    "robot_id": "drone_001",
+    "robot_type": "drone",
+    "waypoints": [[0,0,0], [5,5,10], [10,0,15]],
+    "duration": 5.0,
+    "num_points": 100,
+    "execution_rate": 50
+  }'
+
+# Full test suite for all streaming modes
+python3 dev/testing/test_robotics_streaming.py --mode all
+```
+
+**🎯 When to Use Each Mode:**
+- **REST APIs** → Planning, one-shot queries, offline computation
+- **WebSocket** → Real-time control loops, bidirectional data, low latency
+- **SSE** → Monitoring dashboards, telemetry streams, one-way updates
+- **HTTP Chunked** → Long operations, progress tracking, file-like streaming
 
 ### **🚀 NVIDIA NeMo Enterprise Integration Examples**
     ```bash
@@ -1008,6 +1096,45 @@ Import the complete API collections for interactive testing:
 - **Tests**: 32 verified working endpoints with 100% success rate
 - **Categories**: System, Physics, NVIDIA NeMo, Research, Agents, MCP, Chat
 - **NEW in v3.2**: All endpoints organized and tested with realistic data examples
+
+---
+
+## 🔌 **MCP Integration: Connect to ChatGPT & Claude**
+
+### **Make NIS Tools Available to ChatGPT and Claude**
+
+The NIS Protocol exposes all capabilities via **Model Context Protocol (MCP)** so ChatGPT, Claude, and other AI assistants can directly use your tools.
+
+**What You Can Do:**
+- Ask ChatGPT to run NIS pipelines
+- Have Claude control your robots via FK/IK/Trajectory commands
+- Track compute costs across all AI assistants
+- Get physics validation for any query
+
+**Quick Setup:**
+
+```bash
+# Start the standalone MCP server
+python -m src.mcp.standalone_server
+
+# Configure ChatGPT or Claude with the provided config
+# See docs/MCP_CHATGPT_CLAUDE_SETUP.md for details
+```
+
+**Available Tools:**
+- `nis.run_pipeline` - Execute Laplace→KAN→PINN→LLM pipelines
+- `nis.robotics_control` - Control drones/manipulators
+- `nis.job_status` - Get status and metrics
+- `nis.get_artifact` - Fetch outputs
+- `nis.cost_report` - Track GPU usage and costs
+- `nis.list_capabilities` - List all agents and providers
+
+**Full Documentation:** [`docs/MCP_CHATGPT_CLAUDE_SETUP.md`](docs/MCP_CHATGPT_CLAUDE_SETUP.md)
+
+**Supported AI Assistants:**
+- ✅ ChatGPT (OpenAI Developer Mode)
+- ✅ Claude Desktop (Anthropic)
+- ✅ Cursor IDE (already configured in `.cursor/mcp.json`)
 
 ---
 

@@ -266,13 +266,19 @@ class MCPServer:
         
     def _setup_skills(self):
         """Initialize and register Deep Agent skills."""
-        skills = [
-            ("dataset", DatasetSkill(self.agent, self.memory)),
+        skills = []
+
+        if DatasetSkill is not None:
+            skills.append(("dataset", DatasetSkill(self.agent, self.memory)))
+        else:
+            logging.warning("DatasetSkill unavailable - skipping dataset capability")
+
+        skills.extend([
             ("pipeline", PipelineSkill(self.agent, self.memory)),
             ("research", ResearchSkill(self.agent, self.memory)),
             ("audit", AuditSkill(self.agent, self.memory)),
             ("code", CodeSkill(self.agent, self.memory))
-        ]
+        ])
         
         for name, skill in skills:
             self.planner.register_skill(name, skill)

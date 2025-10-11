@@ -260,7 +260,7 @@ class ChatResponse(BaseModel):
     user_id: str
     conversation_id: str
     timestamp: float
-    confidence: float
+    confidence: Optional[float]
     provider: str
     real_ai: bool
     model: str
@@ -343,6 +343,36 @@ async def add_message_to_conversation(
             )
         except Exception as e:
             logger.warning(f"Failed to add message to enhanced memory: {e}")
+
+async def get_enhanced_conversation_context(
+    conversation_id: str,
+    current_message: Optional[str] = None,
+    max_messages: int = 50
+) -> List[Dict[str, Any]]:
+    """Get conversation context using enhanced memory system."""
+    
+    if enhanced_chat_memory:
+        try:
+            return await enhanced_chat_memory.get_conversation_context(
+                conversation_id=conversation_id,
+                max_messages=max_messages,
+                include_semantic_context=True,
+                current_message=current_message
+            )
+        except Exception as e:
+            logger.error(f"Failed to get enhanced context: {e}")
+    
+    # Fallback to legacy system
+    context_messages = conversation_memory.get(conversation_id, [])[-max_messages:]
+    return [
+        {
+            "role": msg["role"],
+            "content": msg["content"],
+            "timestamp": datetime.fromtimestamp(msg["timestamp"]).isoformat(),
+            "source": "legacy_memory"
+        }
+        for msg in context_messages
+    ]
 
 # NVIDIA Inception Integration (Enterprise Access)
 nvidia_inception = None  # NVIDIA Inception program integration
@@ -616,8 +646,11 @@ async def initialize_system():
     
     # Initialize Brain-like Agent Orchestrator
     try:
-        await nis_agent_orchestrator.start_orchestrator()
-        logger.info("Brain-like Agent Orchestrator initialized with 14 intelligent agents")
+        if nis_agent_orchestrator is not None:
+            await nis_agent_orchestrator.start_orchestrator()
+            logger.info("Brain-like Agent Orchestrator initialized with 14 intelligent agents")
+        else:
+            logger.warning("❌ Agent Orchestrator is None - skipping initialization")
     except Exception as e:
         logger.error(f"❌ Failed to initialize Agent Orchestrator: {e}")
     
@@ -673,16 +706,21 @@ async def initialize_system():
                 memory_agent = None
 
             # Create chat memory configuration
-            memory_config = ChatMemoryConfig(
-                storage_path="data/chat_memory/",
-                max_recent_messages=20,
-                max_context_messages=50,
-                semantic_search_threshold=0.7,
-                enable_cross_conversation_linking=True
-            )
+            try:
+                memory_config = ChatMemoryConfig(
+                    storage_path="data/chat_memory/",
+                    max_recent_messages=20,
+                    max_context_messages=50,
+                    semantic_search_threshold=0.7,
+                    enable_cross_conversation_linking=True
+                )
+            except TypeError:
+                # Fallback ChatMemoryConfig doesn't accept parameters
+                logger.warning("ChatMemoryConfig fallback used - no parameters supported")
+                memory_config = None
 
             # Initialize enhanced chat memory only if both components are available
-            if memory_agent is not None:
+            if memory_agent is not None and memory_config is not None:
                 enhanced_chat_memory = EnhancedChatMemory(
                     config=memory_config,
                     memory_agent=memory_agent,
@@ -690,7 +728,7 @@ async def initialize_system():
                 )
                 logger.info(" Enhanced Chat Memory System initialized successfully")
             else:
-                logger.warning("Memory agent not available - using fallback memory system")
+                logger.warning("Memory agent or config not available - using fallback memory system")
                 enhanced_chat_memory = None
     except Exception as e:
         logger.error(f"Failed to initialize Enhanced Chat Memory: {e}")
@@ -786,7 +824,6 @@ async def initialize_system():
     logger.info(f"📄 Document Agent initialized: {document_agent.agent_id}")
     # logger.info(f"🚀 Anthropic-Style Executor initialized: {anthropic_executor.agent_id}")  # Temporarily disabled
     # logger.info(f"🎯 BitNet Online Trainer initialized: {bitnet_trainer.agent_id}")  # Temporarily disabled
-
 @app.on_event("startup")  # RE-ENABLED: Initialize all components for chat functionality
 async def startup_event():
     """Application startup event - RE-ENABLED FOR FULL FUNCTIONALITY."""
@@ -877,6 +914,14 @@ class TrainingStatusResponse(BaseModel):
     offline_readiness_score: float = Field(..., description="Score indicating readiness for offline use (0.0-1.0)")
     metrics: Dict[str, Any] = Field(..., description="Detailed training metrics")
     config: Dict[str, Any] = Field(..., description="Training configuration")
+    supports_offline: bool = Field(default=False, description="Whether a local BitNet package is available for offline inference")
+    download_url: Optional[str] = Field(default=None, description="Download URL for mobile BitNet package (if available)")
+    download_checksum: Optional[str] = Field(default=None, description="Checksum (SHA-256) for verifying downloaded BitNet package")
+    download_size_mb: Optional[float] = Field(default=None, description="Approximate size in MB for the mobile BitNet package")
+    version: Optional[str] = Field(default=None, description="BitNet model version prepared for edge devices")
+    model_variant: Optional[str] = Field(default=None, description="Variant of the BitNet model (e.g., 2B4T, 3B)")
+    lora_available: bool = Field(default=False, description="Whether LoRA adapters are available for lightweight personalization")
+    last_updated: Optional[str] = Field(default=None, description="Timestamp of the last BitNet training or packaging event")
 
 class ForceTrainingRequest(BaseModel):
     reason: str = Field(default="Manual trigger", description="Reason for forcing training session")
@@ -1567,7 +1612,6 @@ async def vocalize_consciousness():
             "error_message": str(e),
             "timestamp": time.time()
         }
-
 @app.get("/communication/status", tags=["Communication"])
 async def communication_status():
     """
@@ -2340,8 +2384,6 @@ async def test_speaker_voice(speaker: str, text: str = "Hello! This is a test of
     except Exception as e:
         logger.error(f"Speaker test error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
-
-
 @app.post("/communication/synthesize/json", tags=["Communication"])
 async def synthesize_speech_json(request: Dict[str, Any]):
     """
@@ -2460,92 +2502,93 @@ async def get_research_capabilities():
             "capabilities": {}
         }, status_code=500)
 
-@app.post("/research/deep", tags=["Research"])
-async def deep_research(request: dict):
-    """
-    🔍 REAL Deep Research using GPT-4
-    
-    Performs comprehensive research analysis using our powerful LLM backend.
-    No external APIs needed - uses the AI you already have!
-    """
-    try:
-        query = request.get("query", "")
-        depth = request.get("research_depth", "standard")
-        max_length = request.get("max_length", 2000)
-        include_citations = request.get("include_citations", True)
-        
-        if not query:
-            return JSONResponse(content={
-                "success": False,
-                "error": "Query is required"
-            }, status_code=400)
-        
-        # Build comprehensive research prompt
-        research_prompt = f"""You are an expert research analyst. Conduct comprehensive research on the following topic:
-
-RESEARCH QUERY: {query}
-
-INSTRUCTIONS:
-1. Provide a thorough, well-researched analysis
-2. Include specific facts, statistics, and technical details
-3. Structure your response with clear sections
-4. {'Include citations in [Source] format where applicable' if include_citations else 'Focus on factual content'}
-5. Be analytical and avoid generalities
-6. Provide multiple perspectives when relevant
-7. Include recent developments and historical context
-
-DEPTH LEVEL: {depth}
-{'- Provide extensive detail and comprehensive coverage' if depth == 'comprehensive' else '- Provide balanced detail with key insights'}
-
-Format your response as a well-structured research report."""
-
-        # Use our powerful LLM backend for REAL research
-        if llm_provider is None:
-            raise HTTPException(status_code=500, detail="LLM Provider not initialized")
-        
-        messages = [
-            {"role": "system", "content": "You are an expert research analyst providing comprehensive, factual research reports."},
-            {"role": "user", "content": research_prompt}
-        ]
-        
-        # Generate REAL research using GPT-4
-        result = await llm_provider.generate_response(
-            messages=messages,
-            temperature=0.7,
-            requested_provider="openai"  # Use GPT-4 for best research quality
-        )
-        
-        # Structure the research result
-        research_result = {
-            "success": True,
-            "query": query,
-            "research_depth": depth,
-            "analysis": result.get("content", ""),
-            "metadata": {
-                "model": result.get("model", "gpt-4"),
-                "provider": result.get("provider", "openai"),
-                "tokens_used": result.get("tokens_used", 0),
-                "real_ai": result.get("real_ai", True)
-            },
-            "research_quality": {
-                "comprehensive": len(result.get("content", "")) > 1000,
-                "confidence_score": result.get("confidence", 0.9),
-                "factual_basis": "LLM knowledge base"
-            },
-            "timestamp": time.time()
-        }
-        
-        logger.info(f"✅ Deep research completed: {len(result.get('content', ''))} chars, {result.get('tokens_used', 0)} tokens")
-        
-        return research_result
-        
-    except Exception as e:
-        logger.error(f"Deep research error: {e}")
-        return JSONResponse(content={
-            "success": False,
-            "error": str(e)
-        }, status_code=500)
-
+# DUPLICATE ENDPOINT - Using research agent version instead (see line ~5982)
+# @app.post("/research/deep", tags=["Research"])
+# async def deep_research_OLD_DISABLED(request: dict):
+#     """
+#     🔍 REAL Deep Research using GPT-4
+#     
+#     Performs comprehensive research analysis using our powerful LLM backend.
+#     No external APIs needed - uses the AI you already have!
+#     """
+#     try:
+#         query = request.get("query", "")
+#         depth = request.get("research_depth", "standard")
+#         max_length = request.get("max_length", 2000)
+#         include_citations = request.get("include_citations", True)
+#         
+#         if not query:
+#             return JSONResponse(content={
+#                 "success": False,
+#                 "error": "Query is required"
+#             }, status_code=400)
+#         
+#         # Build comprehensive research prompt
+#         research_prompt = f"""You are an expert research analyst. Conduct comprehensive research on the following topic:
+# 
+# RESEARCH QUERY: {query}
+# 
+# INSTRUCTIONS:
+# 1. Provide a thorough, well-researched analysis
+# 2. Include specific facts, statistics, and technical details
+# 3. Structure your response with clear sections
+# 4. {'Include citations in [Source] format where applicable' if include_citations else 'Focus on factual content'}
+# 5. Be analytical and avoid generalities
+# 6. Provide multiple perspectives when relevant
+# 7. Include recent developments and historical context
+# 
+# DEPTH LEVEL: {depth}
+# {'- Provide extensive detail and comprehensive coverage' if depth == 'comprehensive' else '- Provide balanced detail with key insights'}
+# 
+# Format your response as a well-structured research report."""
+# 
+#         # Use our powerful LLM backend for REAL research
+#         if llm_provider is None:
+#             raise HTTPException(status_code=500, detail="LLM Provider not initialized")
+#         
+#         messages = [
+#             {"role": "system", "content": "You are an expert research analyst providing comprehensive, factual research reports."},
+#             {"role": "user", "content": research_prompt}
+#         ]
+#         
+#         # Generate REAL research using GPT-4
+#         result = await llm_provider.generate_response(
+#             messages=messages,
+#             temperature=0.7,
+#             requested_provider="openai"  # Use GPT-4 for best research quality
+#         )
+#         
+#         # Structure the research result
+#         research_result = {
+#             "success": True,
+#             "query": query,
+#             "research_depth": depth,
+#             "analysis": result.get("content", ""),
+#             "metadata": {
+#                 "model": result.get("model", "gpt-4"),
+#                 "provider": result.get("provider", "openai"),
+#                 "tokens_used": result.get("tokens_used", 0),
+#                 "real_ai": result.get("real_ai", True)
+#             },
+#             "research_quality": {
+#                 "comprehensive": len(result.get("content", "")) > 1000,
+#                 "confidence_score": result.get("confidence", 0.9),
+#                 "factual_basis": "LLM knowledge base"
+#             },
+#             "timestamp": time.time()
+#         }
+#         
+#         logger.info(f"✅ Deep research completed: {len(result.get('content', ''))} chars, {result.get('tokens_used', 0)} tokens")
+#         
+#         return research_result
+#         
+#     except Exception as e:
+#         logger.error(f"Deep research error: {e}")
+#         return JSONResponse(content={
+#             "success": False,
+#             "error": str(e)
+#         }, status_code=500)
+# 
 @app.get("/llm/optimization/stats", tags=["LLM Optimization"])
 async def get_optimization_stats():
     """
@@ -3078,27 +3121,50 @@ async def unified_analytics_endpoint(
             })
             
         elif view == "costs":
-            total_cost = usage_data.get("totals", {}).get("cost", 0)
-            cache_hits = usage_data.get("totals", {}).get("cache_hits", 0)
-            estimated_savings = cache_hits * 0.01
+            usage_data = analytics.get_usage_analytics(hours_back=hours_back)
+            provider_data = analytics.get_provider_analytics()
             
-            response_data.update({
-                "costs": {
-                    "financial_summary": {
-                        "current_cost": total_cost,
-                        "projected_monthly": total_cost * (30 * 24 / hours_back),
-                        "cache_savings": estimated_savings,
-                        "savings_percentage": (estimated_savings / max(total_cost + estimated_savings, 0.01)) * 100
-                    },
-                    "provider_costs": {k: {"cost": v.get("cost", 0), "cost_per_token": v.get("cost_per_token", 0)} 
-                                   for k, v in provider_data.items()},
-                    "cost_trends": usage_data.get("hourly_breakdown", []),
-                    "budget_analysis": {
-                        "daily_average": total_cost / max(hours_back / 24, 1),
-                        "cost_per_request": total_cost / max(usage_data.get("totals", {}).get("requests", 1), 1),
-                        "most_expensive_provider": max(provider_data.items(), key=lambda x: x[1].get("cost", 0)) if provider_data else None
-                    }
-                }
+            if not usage_data:
+                usage_data = {"totals": {"cost": 0, "requests": 0, "cache_hits": 0}}
+            totals = usage_data.get("totals", {}) or {}
+            total_cost = totals.get("cost", 0.0)
+            total_requests = max(totals.get("requests", 0), 1)
+            cache_hits = totals.get("cache_hits", 0)
+            
+            provider_costs = provider_data or {}
+            
+            estimated_savings = cache_hits * 0.01  # Rough estimate
+            cost_without_optimization = total_cost + estimated_savings
+            cost_without_optimization = max(cost_without_optimization, 1e-6)
+            
+            cost_insights = {
+                "current_cost": total_cost,
+                "estimated_cost_without_optimization": cost_without_optimization,
+                "total_savings": estimated_savings,
+                "savings_percentage": (estimated_savings / cost_without_optimization) * 100 if cost_without_optimization else 0,
+                "cost_per_request": total_cost / max(total_requests, 1),
+                "projected_monthly_cost": total_cost * (30 * 24 / max(hours_back, 1)),
+                "most_expensive_provider": None,
+                "most_cost_effective": None
+            }
+            
+            if provider_costs:
+                most_expensive = max(provider_costs.items(), key=lambda x: x[1].get("cost", 0))
+                cost_insights["most_expensive_provider"] = {"provider": most_expensive[0], **most_expensive[1]}
+                most_effective = min(provider_costs.items(), key=lambda x: x[1].get("cost_per_token", 1))
+                cost_insights["most_cost_effective"] = {"provider": most_effective[0], **most_effective[1]}
+
+            return JSONResponse(content={
+                "status": "success",
+                "period_hours": hours_back,
+                "cost_analysis": cost_insights,
+                "provider_costs": provider_costs,
+                "hourly_breakdown": usage_data.get("hourly_breakdown", []),
+                "recommendations": [
+                    "Enable caching for better savings",
+                    "Use Google/DeepSeek for cost-effective requests",
+                    "Reserve premium providers for complex tasks"
+                ]
             })
             
         elif view == "performance":
@@ -3576,8 +3642,8 @@ async def run_simulation(request: SimulationRequest):
         }
 
 # --- BitNet Online Training Endpoints ---
-@app.get("/training/bitnet/status", response_model=TrainingStatusResponse, tags=["BitNet Training"])
-async def get_bitnet_training_status():
+@app.get("/models/bitnet/status", response_model=TrainingStatusResponse, tags=["BitNet"])
+async def get_bitnet_model_status():
     """
     🎯 Get BitNet Online Training Status
     
@@ -3610,12 +3676,27 @@ async def get_bitnet_training_status():
                 "min_examples_before_training": 5,
                 "quality_threshold": 0.6,
                 "status": "disabled"
-            }
+            },
+            supports_offline=os.path.exists(os.path.join("models", "bitnet", "models", "bitnet")),
+            download_url=None,
+            download_checksum=None,
+            download_size_mb=None,
+            version="mock_v1.0",
+            model_variant="b1.58-2B",
+            lora_available=False,
+            last_updated=None
         )
     
     try:
         status = await bitnet_trainer.get_training_status()
-        
+
+        mobile_bundle_config = status.get("mobile_bundle", {})
+        bitnet_dir = status["config"].get("model_path", "models/bitnet/models/bitnet")
+        bundle_path = mobile_bundle_config.get("path")
+        bundle_size = None
+        if bundle_path and os.path.exists(bundle_path):
+            bundle_size = round(os.path.getsize(bundle_path) / (1024 * 1024), 2)
+
         return TrainingStatusResponse(
             is_training=status["is_training"],
             training_available=status["training_available"],
@@ -3623,7 +3704,15 @@ async def get_bitnet_training_status():
             unused_examples=status["unused_examples"],
             offline_readiness_score=status["metrics"].get("offline_readiness_score", 0.0),
             metrics=status["metrics"],
-            config=status["config"]
+            config=status["config"],
+            supports_offline=os.path.exists(bitnet_dir),
+            download_url=mobile_bundle_config.get("download_url"),
+            download_checksum=mobile_bundle_config.get("checksum"),
+            download_size_mb=mobile_bundle_config.get("size_mb", bundle_size),
+            version=mobile_bundle_config.get("version"),
+            model_variant=mobile_bundle_config.get("variant"),
+            lora_available=mobile_bundle_config.get("lora_available", False),
+            last_updated=status.get("metrics", {}).get("last_training_time")
         )
         
     except Exception as e:
@@ -3666,7 +3755,6 @@ async def force_bitnet_training(request: ForceTrainingRequest):
     except Exception as e:
         logger.error(f"Error forcing training session: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to force training: {str(e)}")
-
 @app.get("/training/bitnet/metrics", tags=["BitNet Training"])
 async def get_detailed_training_metrics():
     """
@@ -4416,14 +4504,15 @@ async def update_system_state_endpoint(request: dict):
 async def get_enhanced_tools():
     """
     🔧 Get Enhanced Tool Definitions
-    
-    Returns optimized tool definitions with:
-    - Clear namespacing (nis_, physics_, kan_, laplace_)
-    - Consolidated workflow operations
-    - Multiple response format support
-    - Token efficiency features
     """
     try:
+        if enhanced_schemas is None:
+            return {
+                "success": False,
+                "message": "Enhanced tool schemas are disabled in this build",
+                "tools": [],
+                "total_tools": 0
+            }
         tools = enhanced_schemas.get_mcp_tool_definitions()
         
         return {
@@ -4445,10 +4534,14 @@ async def get_enhanced_tools():
 async def get_tool_optimization_metrics():
     """
     📊 Tool Optimization Performance Metrics
-    
-    Returns token efficiency metrics and optimization statistics.
     """
     try:
+        if token_manager is None:
+            return {
+                "success": False,
+                "message": "Token efficiency manager is disabled in this build",
+                "metrics": {}
+            }
         token_metrics = token_manager.get_performance_metrics()
         
         return {
@@ -4460,9 +4553,6 @@ async def get_tool_optimization_metrics():
     except Exception as e:
         logger.error(f"Error getting optimization metrics: {e}")
         raise HTTPException(status_code=500, detail=str(e))
-
-# ====== EDGE AI OPERATING SYSTEM ENDPOINTS ======
-
 @app.get("/api/edge/capabilities", tags=["Edge AI"])
 async def get_edge_ai_capabilities():
     """
@@ -4744,6 +4834,130 @@ async def process_request_through_brain(request: dict):
 
 # /enhanced endpoint - REMOVED for simplification
 
+
+def _convert_numpy(obj: Any) -> Any:
+    """Utility to convert numpy data structures to native Python types."""
+    try:
+        import numpy as np  # Local import to avoid mandatory dependency
+    except ImportError:
+        np = None
+
+    if np is not None:
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        if isinstance(obj, np.generic):
+            return obj.item()
+
+    if isinstance(obj, dict):
+        return {key: _convert_numpy(value) for key, value in obj.items()}
+    if isinstance(obj, list):
+        return [_convert_numpy(item) for item in obj]
+    if isinstance(obj, tuple):
+        return tuple(_convert_numpy(item) for item in obj)
+
+    return obj
+
+
+async def process_nis_pipeline(user_input: str, conversation_id: Optional[str] = None) -> Dict[str, Any]:
+    """Unified pipeline that aggregates diagnostics and orchestrator output."""
+    start_time = time.time()
+    stages: List[Dict[str, Any]] = []
+
+    try:
+        result: Dict[str, Any] = {
+            "input": user_input,
+            "conversation_id": conversation_id,
+            "timestamp": time.time(),
+            "stages": stages,
+            "execution_time": 0.0,
+            "summary": ""
+        }
+
+        if nis_agent_orchestrator:
+            try:
+                orchestrator_output = await nis_agent_orchestrator.process_request({
+                    "text": user_input,
+                    "context": conversation_id,
+                    "processing_type": "optimized_pipeline"
+                })
+                stages.append({
+                    "stage": "agent_orchestrator",
+                    "success": True,
+                    "data": _convert_numpy(orchestrator_output)
+                })
+            except Exception as orchestrator_error:
+                stages.append({
+                    "stage": "agent_orchestrator",
+                    "success": False,
+                    "error": str(orchestrator_error)
+                })
+
+        if llm_provider:
+            try:
+                diagnostic_messages = [
+                    {
+                        "role": "system",
+                        "content": "You are a diagnostic agent that extracts goals, constraints, and tasks from user input."
+                    },
+                    {"role": "user", "content": user_input}
+                ]
+                diagnostic_response = await llm_provider.generate_response(
+                    diagnostic_messages,
+                    temperature=0.2,
+                    agent_type="diagnostic"
+                )
+                stages.append({
+                    "stage": "diagnostic_analysis",
+                    "success": True,
+                    "data": _convert_numpy(diagnostic_response)
+                })
+            except Exception as diagnostic_error:
+                stages.append({
+                    "stage": "diagnostic_analysis",
+                    "success": False,
+                    "error": str(diagnostic_error)
+                })
+
+        physics_note = None
+        if "physics" in user_input.lower():
+            physics_note = {
+                "status": "pending",
+                "detail": "Physics validation requires enhanced PINN agent which is disabled in current build"
+            }
+            stages.append({
+                "stage": "physics_validation",
+                "success": True,
+                "data": physics_note
+            })
+
+        summaries: List[str] = []
+        for stage in stages:
+            if stage.get("success") and stage.get("data"):
+                data = stage["data"]
+                if isinstance(data, dict) and "content" in data:
+                    summaries.append(f"{stage['stage']}: {data['content'][:160]}")
+                else:
+                    summaries.append(f"{stage['stage']}: completed")
+            elif stage.get("error"):
+                summaries.append(f"{stage['stage']}: error - {stage['error']}")
+
+        result["summary"] = " | ".join(summaries) if summaries else "Pipeline executed"
+        result["execution_time"] = time.time() - start_time
+
+        return _convert_numpy(result)
+
+    except Exception as pipeline_error:
+        logger.error(f"process_nis_pipeline failure: {pipeline_error}")
+        return {
+            "input": user_input,
+            "conversation_id": conversation_id,
+            "timestamp": time.time(),
+            "stages": stages,
+            "execution_time": time.time() - start_time,
+            "summary": f"Pipeline failed: {pipeline_error}"
+        }
+
+
 @app.post("/chat/formatted", response_class=HTMLResponse, tags=["Chat"])
 async def chat_formatted(request: ChatRequest):
     """
@@ -4789,7 +5003,7 @@ Use this rich context to provide deeper, more connected responses that build on 
 
         # Process NIS pipeline
         pipeline_result = await process_nis_pipeline(request.message)
-        safe_pipeline_result = convert_numpy_to_serializable(pipeline_result)
+        safe_pipeline_result = _convert_numpy(pipeline_result)
         messages.append({"role": "system", "content": f"Pipeline result: {json.dumps(safe_pipeline_result)}"})
         
         # Generate REAL LLM response using archaeological patterns
@@ -4901,7 +5115,7 @@ async def chat_optimized(request: ChatRequest):
         pipeline_result["optimization_applied"] = optimization_mode
         
         # Generate LLM response
-        safe_pipeline_result = convert_numpy_to_serializable(pipeline_result)
+        safe_pipeline_result = _convert_numpy(pipeline_result)
         messages = [
             {"role": "system", "content": f"You are an optimized AI assistant for NIS Protocol. Response mode: {optimization_mode}"},
             {"role": "system", "content": f"Pipeline result: {json.dumps(safe_pipeline_result)}"},
@@ -4950,7 +5164,7 @@ async def chat_optimized(request: ChatRequest):
             user_id=request.user_id,
             conversation_id=conversation_id,
             timestamp=time.time(),
-            confidence=0.1,
+            confidence=None,
             provider="error",
             real_ai=False,
             model="error-handler",
@@ -4996,12 +5210,10 @@ async def chat(request: ChatRequest):
         
         # Build message array for LLM with enhanced system prompt
         system_content = """You are an expert AI assistant specializing in the NIS Protocol v3. Provide detailed, accurate, and technically grounded responses about the system's architecture, capabilities, and usage. Focus on multi-agent coordination, signal processing pipeline, and LLM integration. Avoid references to specific projects or themes.
-
 You have access to enhanced conversation memory that includes:
 - Current conversation history
 - Relevant context from previous conversations
 - Semantic connections between related topics
-
 Use this rich context to provide more insightful responses that build on previous discussions and maintain topic continuity."""
         
         messages = [{"role": "system", "content": system_content}]
@@ -5019,7 +5231,7 @@ Use this rich context to provide more insightful responses that build on previou
         if not routing['config']['skip_pipeline']:
             # Run pipeline (light or full mode)
             pipeline_result = await process_nis_pipeline(request.message)
-            safe_pipeline_result = convert_numpy_to_serializable(pipeline_result)
+            safe_pipeline_result = _convert_numpy(pipeline_result)
             
             # For light mode, only include summary
             if routing['config'].get('pipeline_mode') == 'light':
@@ -5776,7 +5988,6 @@ async def analyze_image(request: ImageAnalysisRequest):
     except Exception as e:
         logger.error(f"Vision analysis failed: {e}")
         raise HTTPException(status_code=500, detail=f"Vision analysis failed: {str(e)}")
-
 @app.post("/research/deep", tags=["Research"])
 async def conduct_deep_research(request: ResearchRequest):
     """
@@ -6567,7 +6778,6 @@ async def get_pipeline_visualization(chart_type: str):
         except Exception as fallback_error:
             logger.error(f"Fallback visualization also failed: {fallback_error}")
             raise HTTPException(status_code=500, detail=f"Pipeline visualization failed: {str(e)}")
-
 @app.post("/pipeline/stop-monitoring", tags=["Real-Time Pipeline"])
 async def stop_pipeline_monitoring():
     """
@@ -7340,7 +7550,6 @@ async def install_nemo_toolkit():
             "error": str(e),
             "timestamp": time.time()
         }
-
 @app.get("/nvidia/nemo/toolkit/status", tags=["NVIDIA NeMo"])
 async def get_nemo_toolkit_status():
     """
@@ -7368,7 +7577,6 @@ async def get_nemo_toolkit_status():
             "error": str(e),
             "timestamp": time.time()
         }
-
 @app.get("/nvidia/nemo/enterprise/showcase", tags=["NVIDIA NeMo"])
 async def nemo_enterprise_showcase():
     """
@@ -7478,3 +7686,736 @@ async def test_audio():
         logger.error(f"❌ Test audio generation failed: {e}")
         raise HTTPException(status_code=500, detail=f"Test audio generation failed: {str(e)}")
 
+# ============================================================================
+# ROBOTICS CONTROL ENDPOINTS - Real Implementations Only
+# ============================================================================
+
+def _convert_numpy_to_json(obj):
+    """Recursively convert numpy arrays and objects to JSON-serializable types"""
+    import numpy as np
+    
+    if isinstance(obj, np.ndarray):
+        return obj.tolist()
+    elif isinstance(obj, (np.integer, np.floating)):
+        return obj.item()
+    elif isinstance(obj, np.generic):
+        return obj.item()
+    elif isinstance(obj, dict):
+        return {key: _convert_numpy_to_json(value) for key, value in obj.items()}
+    elif isinstance(obj, (list, tuple)):
+        return [_convert_numpy_to_json(item) for item in obj]
+    elif isinstance(obj, (np.bool_)):
+        return bool(obj)
+    else:
+        return obj
+
+
+@app.post("/robotics/forward_kinematics", tags=["Robotics"])
+async def robotics_forward_kinematics(request: dict):
+    """
+    🤖 Compute Forward Kinematics (Real Denavit-Hartenberg Transforms)
+    
+    Calculates end-effector pose from joint angles using actual DH transformations.
+    NO MOCKS - Real 4x4 homogeneous matrix computations.
+    
+    Args:
+        robot_id: Unique identifier for the robot
+        robot_type: "drone", "manipulator", "humanoid", or "ground_vehicle"
+        joint_angles: Array of joint angles (or motor speeds for drones)
+        
+    Returns:
+        Real computed end-effector pose with measured computation time
+    """
+    try:
+        from src.agents.robotics import UnifiedRoboticsAgent, RobotType
+        import numpy as np
+        
+        # Extract request parameters
+        robot_id = request.get("robot_id", "robot_001")
+        robot_type_str = request.get("robot_type", "manipulator")
+        joint_angles = np.array(request.get("joint_angles", []))
+        
+        if len(joint_angles) == 0:
+            raise HTTPException(status_code=400, detail="joint_angles required")
+        
+        # Map string to enum
+        robot_type_map = {
+            "drone": RobotType.DRONE,
+            "manipulator": RobotType.MANIPULATOR,
+            "humanoid": RobotType.HUMANOID,
+            "ground_vehicle": RobotType.GROUND_VEHICLE
+        }
+        
+        robot_type = robot_type_map.get(robot_type_str.lower())
+        if not robot_type:
+            raise HTTPException(status_code=400, detail=f"Invalid robot_type: {robot_type_str}")
+        
+        # Create agent and compute (REAL implementation)
+        agent = UnifiedRoboticsAgent(agent_id="api_robotics_agent")
+        result = agent.compute_forward_kinematics(robot_id, joint_angles, robot_type)
+        
+        # Convert all numpy arrays recursively
+        result = _convert_numpy_to_json(result)
+        
+        logger.info(f"✅ FK computed: {robot_id} ({robot_type_str}) in {result.get('computation_time', 0)*1000:.2f}ms")
+        
+        response_data = {
+            "status": "success",
+            "result": result,
+            "timestamp": time.time()
+        }
+        
+        # Use json.dumps to ensure everything is serialized before returning
+        import json
+        json_str = json.dumps(response_data)
+        return Response(content=json_str, media_type="application/json")
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"❌ Forward kinematics error: {e}")
+        raise HTTPException(status_code=500, detail=f"Forward kinematics failed: {str(e)}")
+
+
+@app.post("/robotics/inverse_kinematics", tags=["Robotics"])
+async def robotics_inverse_kinematics(request: dict):
+    """
+    🤖 Compute Inverse Kinematics (Real Scipy Numerical Optimization)
+    
+    Solves for joint angles to reach target pose using actual scipy.optimize.
+    NO MOCKS - Real numerical solver with convergence tracking.
+    
+    Args:
+        robot_id: Unique identifier for the robot
+        robot_type: "manipulator", "humanoid", or "ground_vehicle"
+        target_pose: Dictionary with 'position' [x, y, z] and optional 'orientation'
+        initial_guess: Optional initial joint angles for optimization
+        
+    Returns:
+        Real optimized joint angles with actual iteration count and error
+    """
+    try:
+        from src.agents.robotics import UnifiedRoboticsAgent, RobotType
+        import numpy as np
+        
+        # Extract request parameters
+        robot_id = request.get("robot_id", "robot_001")
+        robot_type_str = request.get("robot_type", "manipulator")
+        target_pose = request.get("target_pose", {})
+        initial_guess = request.get("initial_guess")
+        
+        if "position" not in target_pose:
+            raise HTTPException(status_code=400, detail="target_pose.position required")
+        
+        # Convert to numpy
+        target_pose["position"] = np.array(target_pose["position"])
+        if "orientation" in target_pose:
+            target_pose["orientation"] = np.array(target_pose["orientation"])
+        
+        if initial_guess is not None:
+            initial_guess = np.array(initial_guess)
+        
+        # Map string to enum
+        robot_type_map = {
+            "manipulator": RobotType.MANIPULATOR,
+            "humanoid": RobotType.HUMANOID,
+            "ground_vehicle": RobotType.GROUND_VEHICLE
+        }
+        
+        robot_type = robot_type_map.get(robot_type_str.lower())
+        if not robot_type:
+            raise HTTPException(status_code=400, detail=f"Invalid robot_type for IK: {robot_type_str}")
+        
+        # Create agent and compute (REAL scipy optimization)
+        agent = UnifiedRoboticsAgent(agent_id="api_robotics_agent")
+        result = agent.compute_inverse_kinematics(robot_id, target_pose, robot_type, initial_guess)
+        
+        # Convert all numpy arrays recursively
+        result = _convert_numpy_to_json(result)
+        
+        logger.info(f"✅ IK computed: {robot_id} converged in {result.get('iterations', 0)} iterations")
+        
+        response_data = {
+            "status": "success",
+            "result": result,
+            "timestamp": time.time()
+        }
+        
+        import json
+        json_str = json.dumps(response_data)
+        return Response(content=json_str, media_type="application/json")
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"❌ Inverse kinematics error: {e}")
+        raise HTTPException(status_code=500, detail=f"Inverse kinematics failed: {str(e)}")
+
+
+@app.post("/robotics/plan_trajectory", tags=["Robotics"])
+async def robotics_plan_trajectory(request: dict):
+    """
+    🤖 Plan Physics-Validated Trajectory (Real Minimum Jerk Polynomial)
+    
+    Generates smooth trajectory with real physics validation.
+    NO MOCKS - Real 5th-order polynomial with actual constraint checking.
+    
+    Args:
+        robot_id: Unique identifier for the robot
+        robot_type: "drone", "manipulator", "humanoid", or "ground_vehicle"
+        waypoints: List of 3D positions [[x1,y1,z1], [x2,y2,z2], ...]
+        duration: Total trajectory duration in seconds
+        num_points: Number of trajectory points to generate (default: 50)
+        
+    Returns:
+        Real trajectory with measured velocities/accelerations and physics validation
+    """
+    try:
+        from src.agents.robotics import UnifiedRoboticsAgent, RobotType
+        import numpy as np
+        
+        # Extract request parameters
+        robot_id = request.get("robot_id", "robot_001")
+        robot_type_str = request.get("robot_type", "drone")
+        waypoints_list = request.get("waypoints", [])
+        duration = request.get("duration", 5.0)
+        num_points = request.get("num_points", 50)
+        
+        if len(waypoints_list) < 2:
+            raise HTTPException(status_code=400, detail="At least 2 waypoints required")
+        
+        # Convert to numpy arrays
+        waypoints = [np.array(wp) for wp in waypoints_list]
+        
+        # Map string to enum
+        robot_type_map = {
+            "drone": RobotType.DRONE,
+            "manipulator": RobotType.MANIPULATOR,
+            "humanoid": RobotType.HUMANOID,
+            "ground_vehicle": RobotType.GROUND_VEHICLE
+        }
+        
+        robot_type = robot_type_map.get(robot_type_str.lower())
+        if not robot_type:
+            raise HTTPException(status_code=400, detail=f"Invalid robot_type: {robot_type_str}")
+        
+        # Create agent and compute (REAL trajectory planning)
+        agent = UnifiedRoboticsAgent(agent_id="api_robotics_agent", enable_physics_validation=True)
+        result = agent.plan_trajectory(robot_id, waypoints, robot_type, duration, num_points)
+        
+        # Convert trajectory points to serializable format
+        if result.get("success") and "trajectory" in result:
+            trajectory_list = []
+            for point in result["trajectory"]:
+                traj_point = {
+                    "time": point.time if hasattr(point, 'time') else 0.0,
+                    "position": point.position.tolist() if hasattr(point.position, 'tolist') else list(point.position),
+                    "velocity": point.velocity.tolist() if hasattr(point.velocity, 'tolist') else list(point.velocity),
+                    "acceleration": point.acceleration.tolist() if hasattr(point.acceleration, 'tolist') else list(point.acceleration)
+                }
+                if hasattr(point, 'orientation') and point.orientation is not None:
+                    traj_point["orientation"] = point.orientation.tolist()
+                if hasattr(point, 'angular_velocity') and point.angular_velocity is not None:
+                    traj_point["angular_velocity"] = point.angular_velocity.tolist()
+                trajectory_list.append(traj_point)
+            result["trajectory"] = trajectory_list
+        
+        # Convert remaining numpy arrays
+        result = _convert_numpy_to_json(result)
+        
+        logger.info(f"✅ Trajectory planned: {robot_id} ({num_points} points, physics_valid={result.get('physics_valid')})")
+        
+        response_data = {
+            "status": "success",
+            "result": result,
+            "timestamp": time.time()
+        }
+        
+        import json
+        json_str = json.dumps(response_data)
+        return Response(content=json_str, media_type="application/json")
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"❌ Trajectory planning error: {e}")
+        raise HTTPException(status_code=500, detail=f"Trajectory planning failed: {str(e)}")
+
+
+@app.get("/robotics/capabilities", tags=["Robotics"])
+async def robotics_capabilities():
+    """
+    🤖 Get Robotics Agent Capabilities (Real Stats Only)
+    
+    Returns actual agent capabilities and measured performance statistics.
+    NO HARDCODED VALUES - All metrics computed from real agent state.
+    
+    Returns:
+        Real-time agent statistics, supported platforms, and capabilities
+    """
+    try:
+        from src.agents.robotics import UnifiedRoboticsAgent, RobotType
+        
+        # Create agent to get real stats
+        agent = UnifiedRoboticsAgent(agent_id="api_robotics_agent")
+        stats = agent.get_stats()
+        
+        capabilities = {
+            "agent_info": {
+                "agent_id": agent.agent_id,
+                "description": agent.description,
+                "layer": agent.layer.value,
+                "physics_validation_enabled": agent.enable_physics_validation
+            },
+            "supported_robot_types": [
+                {
+                    "type": "drone",
+                    "description": "Quadcopter/multirotor UAVs",
+                    "capabilities": ["forward_kinematics", "trajectory_planning"],
+                    "platforms": ["MAVLink", "DJI SDK", "PX4"]
+                },
+                {
+                    "type": "manipulator",
+                    "description": "Robotic arms/manipulators",
+                    "capabilities": ["forward_kinematics", "inverse_kinematics", "trajectory_planning"],
+                    "platforms": ["ROS", "Universal Robots", "Custom"]
+                },
+                {
+                    "type": "humanoid",
+                    "description": "Humanoid robots/androids",
+                    "capabilities": ["forward_kinematics", "inverse_kinematics", "trajectory_planning"],
+                    "platforms": ["ROS", "Custom frameworks"]
+                },
+                {
+                    "type": "ground_vehicle",
+                    "description": "Ground-based mobile robots",
+                    "capabilities": ["trajectory_planning"],
+                    "platforms": ["ROS Navigation", "Custom"]
+                }
+            ],
+            "mathematical_methods": {
+                "forward_kinematics": "Denavit-Hartenberg 4x4 transforms",
+                "inverse_kinematics": "scipy.optimize numerical solver",
+                "trajectory_planning": "Minimum jerk (5th-order polynomial)",
+                "physics_validation": "PINN-based constraint checking"
+            },
+            "real_time_stats": stats,  # REAL measured statistics
+            "api_endpoints": [
+                "POST /robotics/forward_kinematics",
+                "POST /robotics/inverse_kinematics",
+                "POST /robotics/plan_trajectory",
+                "GET /robotics/capabilities"
+            ]
+        }
+        
+        logger.info(f"✅ Robotics capabilities retrieved: {stats['total_commands']} commands processed")
+        
+        return {
+            "status": "success",
+            "capabilities": capabilities,
+            "timestamp": time.time()
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Capabilities retrieval error: {e}")
+        raise HTTPException(status_code=500, detail=f"Capabilities retrieval failed: {str(e)}")
+
+
+# ========================================================================
+# ROBOTICS STREAMING ENDPOINTS (HYBRID ARCHITECTURE)
+# ========================================================================
+
+@app.websocket("/ws/robotics/control/{robot_id}")
+async def robotics_control_stream(websocket: WebSocket, robot_id: str):
+    """
+    🔥 Real-time Robotics Control Stream (WebSocket)
+    
+    Bidirectional streaming for real-time robot control:
+    - Client → Server: Control commands (FK/IK/trajectory)
+    - Server → Client: State updates, telemetry, validation
+    
+    Ideal for: Drones (50-400Hz), Manipulators (100-1000Hz), Real-time feedback
+    
+    Example Client (JavaScript):
+    ```javascript
+    const ws = new WebSocket('ws://localhost/ws/robotics/control/drone_001');
+    
+    ws.onopen = () => {
+        ws.send(JSON.stringify({
+            type: 'forward_kinematics',
+            robot_type: 'drone',
+            joint_angles: [5000, 5000, 5000, 5000]
+        }));
+    };
+    
+    ws.onmessage = (event) => {
+        const state = JSON.parse(event.data);
+        console.log('Robot state:', state);
+    };
+    ```
+    
+    Example Client (Python):
+    ```python
+    import asyncio
+    import websockets
+    import json
+    
+    async def control_robot():
+        uri = "ws://localhost/ws/robotics/control/drone_001"
+        async with websockets.connect(uri) as websocket:
+            # Send command
+            await websocket.send(json.dumps({
+                'type': 'forward_kinematics',
+                'robot_type': 'drone',
+                'joint_angles': [5000, 5000, 5000, 5000]
+            }))
+            
+            # Receive state
+            response = await websocket.recv()
+            print(json.loads(response))
+    
+    asyncio.run(control_robot())
+    ```
+    """
+    await websocket.accept()
+    logger.info(f"🔌 WebSocket connected: robot={robot_id}")
+    
+    try:
+        # Create dedicated agent for this session
+        from src.agents.robotics.unified_robotics_agent import UnifiedRoboticsAgent, RobotType
+        session_agent = UnifiedRoboticsAgent(agent_id=f"ws_{robot_id}")
+        
+        message_count = 0
+        
+        while True:
+            # Receive command from client
+            data = await websocket.receive_json()
+            message_count += 1
+            
+            command_type = data.get('type', 'unknown')
+            logger.info(f"📥 WS Command #{message_count}: {command_type} for {robot_id}")
+            
+            try:
+                # Route command to appropriate method
+                if command_type == 'forward_kinematics':
+                    result = await asyncio.to_thread(
+                        session_agent.compute_forward_kinematics,
+                        robot_id,
+                        data['joint_angles'],
+                        RobotType[data['robot_type'].upper()]
+                    )
+                    
+                elif command_type == 'inverse_kinematics':
+                    import numpy as np
+                    target_pose = {
+                        'position': np.array(data['target_pose']['position'])
+                    }
+                    if 'orientation' in data['target_pose']:
+                        target_pose['orientation'] = np.array(data['target_pose']['orientation'])
+                    
+                    initial_guess = np.array(data.get('initial_guess')) if 'initial_guess' in data else None
+                    
+                    result = await asyncio.to_thread(
+                        session_agent.compute_inverse_kinematics,
+                        robot_id,
+                        target_pose,
+                        RobotType[data['robot_type'].upper()],
+                        initial_guess
+                    )
+                    
+                elif command_type == 'plan_trajectory':
+                    import numpy as np
+                    waypoints = [np.array(w) for w in data['waypoints']]
+                    
+                    result = await asyncio.to_thread(
+                        session_agent.plan_trajectory,
+                        robot_id,
+                        waypoints,
+                        RobotType[data['robot_type'].upper()],
+                        data.get('duration', 5.0),
+                        data.get('num_points', 100)
+                    )
+                    
+                elif command_type == 'get_stats':
+                    result = session_agent.get_stats()
+                    
+                else:
+                    result = {
+                        'success': False,
+                        'error': f'Unknown command type: {command_type}'
+                    }
+                
+                # Convert numpy arrays
+                result = _convert_numpy_to_json(result)
+                
+                # Send response back to client
+                response = {
+                    'type': f'{command_type}_response',
+                    'robot_id': robot_id,
+                    'message_id': message_count,
+                    'timestamp': time.time(),
+                    'result': result
+                }
+                
+                await websocket.send_json(response)
+                logger.info(f"📤 WS Response #{message_count}: {command_type} completed in {result.get('computation_time', 0)*1000:.2f}ms")
+                
+            except Exception as e:
+                logger.error(f"❌ WS Command error: {e}")
+                await websocket.send_json({
+                    'type': 'error',
+                    'robot_id': robot_id,
+                    'message_id': message_count,
+                    'timestamp': time.time(),
+                    'error': str(e)
+                })
+    
+    except WebSocketDisconnect:
+        logger.info(f"🔌 WebSocket disconnected: robot={robot_id}, messages={message_count}")
+    except Exception as e:
+        logger.error(f"❌ WebSocket error for {robot_id}: {e}")
+
+
+@app.get("/robotics/telemetry/{robot_id}", tags=["Robotics"])
+async def robotics_telemetry_stream(robot_id: str, update_rate: int = 50):
+    """
+    📊 Real-time Telemetry Monitoring (Server-Sent Events)
+    
+    One-way streaming from server to client for monitoring robot state.
+    - Server → Client: Continuous state updates
+    - No client→server data (use WebSocket for bidirectional)
+    
+    Args:
+        robot_id: Robot identifier to monitor
+        update_rate: Updates per second (default: 50Hz, max: 1000Hz)
+    
+    Example Client (JavaScript):
+    ```javascript
+    const eventSource = new EventSource('/robotics/telemetry/drone_001?update_rate=50');
+    
+    eventSource.onmessage = (event) => {
+        const telemetry = JSON.parse(event.data);
+        console.log('Telemetry:', telemetry);
+    };
+    ```
+    
+    Example Client (Python):
+    ```python
+    import requests
+    
+    url = 'http://localhost/robotics/telemetry/drone_001?update_rate=50'
+    with requests.get(url, stream=True) as r:
+        for line in r.iter_lines():
+            if line:
+                print(line.decode())
+    ```
+    """
+    # Limit update rate to prevent system overload
+    update_rate = min(update_rate, 1000)  # Max 1000Hz
+    sleep_time = 1.0 / update_rate
+    
+    logger.info(f"📊 Starting telemetry stream: robot={robot_id}, rate={update_rate}Hz")
+    
+    from src.agents.robotics.unified_robotics_agent import UnifiedRoboticsAgent
+    telemetry_agent = UnifiedRoboticsAgent(agent_id=f"telemetry_{robot_id}")
+    
+    async def telemetry_generator():
+        """Generate telemetry events"""
+        frame_count = 0
+        
+        try:
+            while True:
+                frame_count += 1
+                
+                # Get current stats (in production, this would query actual robot state)
+                stats = telemetry_agent.get_stats()
+                
+                # Create telemetry packet
+                telemetry = {
+                    'robot_id': robot_id,
+                    'frame': frame_count,
+                    'timestamp': time.time(),
+                    'stats': stats,
+                    'update_rate': update_rate,
+                    'status': 'active'
+                }
+                
+                # Convert to SSE format
+                yield f"data: {json.dumps(telemetry)}\n\n"
+                
+                await asyncio.sleep(sleep_time)
+                
+        except asyncio.CancelledError:
+            logger.info(f"📊 Telemetry stream cancelled: robot={robot_id}, frames={frame_count}")
+            yield f"data: {json.dumps({'status': 'disconnected', 'frame': frame_count})}\n\n"
+    
+    return StreamingResponse(
+        telemetry_generator(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no"  # Disable nginx buffering
+        }
+    )
+
+
+@app.post("/robotics/execute_trajectory_stream", tags=["Robotics"])
+async def execute_trajectory_stream(request: dict):
+    """
+    🎬 Streaming Trajectory Execution (Chunked HTTP)
+    
+    Execute pre-planned trajectory with real-time progress updates.
+    - Server → Client: Continuous execution updates
+    - Ideal for: Long trajectories, progress monitoring, debugging
+    
+    Request Body:
+    ```json
+    {
+        "robot_id": "drone_001",
+        "robot_type": "drone",
+        "waypoints": [[0,0,0], [5,5,10], [10,0,15]],
+        "duration": 5.0,
+        "num_points": 100,
+        "execution_rate": 50
+    }
+    ```
+    
+    Response (NDJSON stream):
+    ```json
+    {"status": "planning", "timestamp": 1234567890.123}
+    {"status": "executing", "point": 0, "total": 100, "position": [0,0,0]}
+    {"status": "executing", "point": 1, "total": 100, "position": [0.003,0.003,0.007]}
+    ...
+    {"status": "complete", "point": 100, "total": 100}
+    ```
+    
+    Example Client (Python):
+    ```python
+    import requests
+    import json
+    
+    url = 'http://localhost/robotics/execute_trajectory_stream'
+    data = {
+        'robot_id': 'drone_001',
+        'robot_type': 'drone',
+        'waypoints': [[0,0,0], [5,5,10], [10,0,15]],
+        'duration': 5.0
+    }
+    
+    with requests.post(url, json=data, stream=True) as r:
+        for line in r.iter_lines():
+            if line:
+                update = json.loads(line)
+                print(f"Progress: {update['point']}/{update['total']}")
+    ```
+    """
+    robot_id = request.get('robot_id', 'unknown')
+    robot_type = request.get('robot_type', 'drone')
+    execution_rate = request.get('execution_rate', 50)  # Hz
+    
+    logger.info(f"🎬 Starting trajectory execution stream: robot={robot_id}")
+    
+    try:
+        from src.agents.robotics.unified_robotics_agent import UnifiedRoboticsAgent, RobotType
+        import numpy as np
+        
+        exec_agent = UnifiedRoboticsAgent(agent_id=f"exec_{robot_id}")
+        
+        async def trajectory_executor():
+            """Execute trajectory and stream progress"""
+            
+            try:
+                # Phase 1: Planning
+                yield json.dumps({
+                    'status': 'planning',
+                    'robot_id': robot_id,
+                    'timestamp': time.time()
+                }) + '\n'
+                
+                # Plan trajectory
+                waypoints = [np.array(w) for w in request['waypoints']]
+                duration = request.get('duration', 5.0)
+                num_points = request.get('num_points', 100)
+                
+                result = await asyncio.to_thread(
+                    exec_agent.plan_trajectory,
+                    robot_id,
+                    waypoints,
+                    RobotType[robot_type.upper()],
+                    duration,
+                    num_points
+                )
+                
+                if not result.get('success'):
+                    yield json.dumps({
+                        'status': 'error',
+                        'error': result.get('error', 'Planning failed'),
+                        'timestamp': time.time()
+                    }) + '\n'
+                    return
+                
+                trajectory = result['trajectory']
+                
+                yield json.dumps({
+                    'status': 'planned',
+                    'total_points': len(trajectory),
+                    'duration': duration,
+                    'timestamp': time.time()
+                }) + '\n'
+                
+                # Phase 2: Execution
+                sleep_time = 1.0 / execution_rate
+                
+                for i, point in enumerate(trajectory):
+                    # Convert trajectory point to dict
+                    point_data = {
+                        'time': float(point.time),
+                        'position': point.position.tolist() if hasattr(point.position, 'tolist') else point.position,
+                        'velocity': point.velocity.tolist() if hasattr(point.velocity, 'tolist') else point.velocity,
+                        'acceleration': point.acceleration.tolist() if hasattr(point.acceleration, 'tolist') else point.acceleration
+                    }
+                    
+                    yield json.dumps({
+                        'status': 'executing',
+                        'robot_id': robot_id,
+                        'point': i,
+                        'total': len(trajectory),
+                        'progress': (i / len(trajectory)) * 100,
+                        'trajectory_point': point_data,
+                        'timestamp': time.time()
+                    }) + '\n'
+                    
+                    await asyncio.sleep(sleep_time)
+                
+                # Phase 3: Complete
+                yield json.dumps({
+                    'status': 'complete',
+                    'robot_id': robot_id,
+                    'total_points': len(trajectory),
+                    'execution_time': len(trajectory) * sleep_time,
+                    'timestamp': time.time()
+                }) + '\n'
+                
+                logger.info(f"✅ Trajectory execution complete: robot={robot_id}, points={len(trajectory)}")
+                
+            except Exception as e:
+                logger.error(f"❌ Trajectory execution error: {e}")
+                yield json.dumps({
+                    'status': 'error',
+                    'error': str(e),
+                    'timestamp': time.time()
+                }) + '\n'
+        
+        return StreamingResponse(
+            trajectory_executor(),
+            media_type="application/x-ndjson",
+            headers={
+                "Cache-Control": "no-cache",
+                "X-Accel-Buffering": "no"
+            }
+        )
+        
+    except Exception as e:
+        logger.error(f"❌ Trajectory stream setup error: {e}")
+        raise HTTPException(status_code=500, detail=f"Trajectory execution failed: {str(e)}")

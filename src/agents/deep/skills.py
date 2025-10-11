@@ -26,6 +26,14 @@ class BaseSkill:
             "parameters": parameters
         }
 
+    def get_available_actions(self) -> Dict[str, Any]:
+        """Return metadata about supported actions for compatibility with MCP integrations."""
+        return {
+            "skill": self.skill_name,
+            "actions": ["execute"],
+            "description": f"Generic handler for {self.skill_name} operations"
+        }
+
 
 class DatasetSkill(BaseSkill):
     """Dataset management and analysis skill"""
@@ -34,6 +42,16 @@ class DatasetSkill(BaseSkill):
         super().__init__("dataset")
         self.agent = agent
         self.memory = memory
+        
+    def get_available_actions(self):
+        return {
+            "skill": self.skill_name,
+            "actions": [
+                "analyze_dataset",
+                "summarize_columns",
+                "compute_statistics"
+            ]
+        }
 
 
 class PipelineSkill(BaseSkill):
@@ -43,6 +61,16 @@ class PipelineSkill(BaseSkill):
         super().__init__("pipeline")
         self.agent = agent
         self.memory = memory
+        
+    def get_available_actions(self):
+        return {
+            "skill": self.skill_name,
+            "actions": [
+                "run_pipeline",
+                "validate_pipeline",
+                "optimize_pipeline"
+            ]
+        }
 
 
 class ResearchSkill(BaseSkill):
@@ -52,6 +80,16 @@ class ResearchSkill(BaseSkill):
         super().__init__("research")
         self.agent = agent
         self.memory = memory
+        
+    def get_available_actions(self):
+        return {
+            "skill": self.skill_name,
+            "actions": [
+                "run_research",
+                "validate_claim",
+                "summarize_sources"
+            ]
+        }
 
 
 class AuditSkill(BaseSkill):
@@ -61,6 +99,16 @@ class AuditSkill(BaseSkill):
         super().__init__("audit")
         self.agent = agent
         self.memory = memory
+        
+    def get_available_actions(self):
+        return {
+            "skill": self.skill_name,
+            "actions": [
+                "run_audit",
+                "check_integrity",
+                "evaluate_compliance"
+            ]
+        }
 
 
 class CodeSkill(BaseSkill):
@@ -70,3 +118,13 @@ class CodeSkill(BaseSkill):
         super().__init__("code")
         self.agent = agent
         self.memory = memory
+        
+    def get_available_actions(self):
+        return {
+            "skill": self.skill_name,
+            "actions": [
+                "analyze_code",
+                "generate_code",
+                "review_code"
+            ]
+        }

@@ -258,21 +258,9 @@ class NISResponseFormatter:
 
 ---
 
-## 📊 Performance Metrics
+## 📊 Observability Guidance
 
-### Speed Improvements
-| Metric | v3.1 | v3.2 | Improvement |
-|--------|------|------|-------------|
-| Image Generation | 25+ seconds | 4.2 seconds | 83% faster |
-| Console Loading | 1.2 seconds | 0.6 seconds | 50% faster |
-| Error Recovery | 3.2 seconds | 0.8 seconds | 75% faster |
-| Response Formatting | N/A | 1.1 seconds | New feature |
-
-### Quality Metrics
-- **Content Classification**: 95% accuracy in creative vs technical detection
-- **User Satisfaction**: 40% improvement in experience ratings
-- **Error Rates**: 99% reduction in critical errors
-- **API Reliability**: 98% uptime with graceful degradation
+Latency and quality depend on hardware, network, and provider quotas. We recommend operators run the included benchmarking scripts (see `system/benchmarks/`) and record results before relying on the router in production.
 
 ---
 
@@ -424,10 +412,10 @@ Special thanks to all community members who provided feedback, bug reports, and 
 ### GitHub Release
 ```bash
 # Clone latest release
-git clone -b v3.2.0 https://github.com/pentius00/NIS_Protocol.git
+git clone -b v3.2.0 https://github.com/Organica-Ai-Solutions/NIS_Protocol.git
 
 # Or download archive
-wget https://github.com/pentius00/NIS_Protocol/archive/v3.2.0.tar.gz
+wget https://github.com/Organica-Ai-Solutions/NIS_Protocol/archive/v3.2.0.tar.gz
 ```
 
 ### Docker Hub
@@ -453,8 +441,8 @@ docker pull nis-protocol:3.2.0
 - **[User Guide](./USER_GUIDE.md)**: Usage instructions and examples
 
 ### Community
-- **[GitHub Issues](https://github.com/pentius00/NIS_Protocol/issues)**: Bug reports and feature requests
-- **[Discussions](https://github.com/pentius00/NIS_Protocol/discussions)**: Community forum
+- **[GitHub Issues](https://github.com/Organica-Ai-Solutions/NIS_Protocol/issues)**: Bug reports and feature requests
+- **[Discussions](https://github.com/Organica-Ai-Solutions/NIS_Protocol/discussions)**: Community forum
 - **[Discord](https://discord.gg/nis-protocol)**: Real-time chat and support
 
 ---

@@ -182,26 +182,34 @@ class WakeWordDetector:
     
     def _calculate_confidence(self, match, original_text: str) -> float:
         """Calculate confidence score for wake word detection"""
-        base_confidence = 0.8
-        
-        # Boost confidence for exact matches
-        if match.group() in self.config.wake_phrases:
-            base_confidence += 0.2
-        
-        # Consider position in text (beginning is better)
-        text_length = len(original_text)
-        position_factor = 1.0 - (match.start() / max(text_length, 1)) * 0.2
-        
-        return min(1.0, base_confidence * position_factor)
+        # Base score from match quality: longer matches yield higher scores
+        matched_text = match.group()
+        phrase_length = max(len(matched_text), 1)
+        base_score = min(1.0, phrase_length / max(len(original_text), 1))
+
+        # Confidence boost for exact matches vs fuzzy matches
+        is_exact_match = any(matched_text == phrase for phrase in self.config.wake_phrases)
+        exact_match_bonus = 0.2 if is_exact_match else 0.1
+
+        # Consider position: earlier occurrences increase confidence
+        text_length = max(len(original_text), 1)
+        start_position = match.start()
+        position_score = max(0.0, 1.0 - (start_position / text_length))
+
+        # Combine scores with weights
+        confidence = (0.6 * base_score) + (0.2 * position_score) + exact_match_bonus
+
+        return min(1.0, max(0.0, confidence))
     
     def _calculate_text_confidence(self, pattern: str, text: str) -> float:
         """Calculate confidence for text-based command detection"""
-        if pattern == text.strip():
-            return 1.0
-        elif pattern in text:
-            return 0.8
-        else:
-            return 0.6
+        normalized_text = text.strip()
+        if pattern == normalized_text:
+            return 0.95
+        if pattern in text:
+            coverage = len(pattern) / max(len(normalized_text), 1)
+            return min(0.9, max(0.4, coverage))
+        return 0.0
     
     def set_detection_callback(self, callback: Callable):
         """Set callback function for wake word detection"""

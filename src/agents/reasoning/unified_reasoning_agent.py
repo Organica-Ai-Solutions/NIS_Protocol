@@ -1134,7 +1134,7 @@ async def reason(
             self.logger.error(f"Reasoning error: {e}")
             return ReasoningResult(
                 result={"error": str(e)},
-                confidence=0.0,
+                confidence=None,
                 reasoning_mode=mode,
                 strategy=strategy,
                 execution_time=time.time() - start_time

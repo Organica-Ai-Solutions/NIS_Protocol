@@ -190,8 +190,8 @@ cache = init_smart_cache(
 - **Redis**: Instant metrics, live dashboards
 
 ### **2. Performance** 
-- **SQLite**: Disk-bound, slow queries
-- **Redis**: Memory-fast, millisecond response
+- **SQLite**: Disk-bound, slower queries
+- **Redis**: Memory-fast, sub-millisecond typical response
 
 ### **3. Scalability**
 - **SQLite**: Single file bottleneck  

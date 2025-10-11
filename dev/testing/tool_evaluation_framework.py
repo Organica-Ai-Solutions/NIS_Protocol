@@ -503,8 +503,8 @@ class NISToolEvaluator:
                 execution_time=task.timeout_seconds,
                 tool_calls_made=[],
                 tokens_consumed=0,
-                tool_accuracy=0.0,
-                outcome_accuracy=0.0,
+                tool_accuracy=None,  # Cannot measure on timeout
+                outcome_accuracy=None,  # Cannot measure on timeout
                 efficiency_score=0.0,
                 reasoning_trace=[],
                 errors=["Task timeout"],
@@ -519,8 +519,8 @@ class NISToolEvaluator:
                 execution_time=time.time() - start_time,
                 tool_calls_made=[],
                 tokens_consumed=0,
-                tool_accuracy=0.0,
-                outcome_accuracy=0.0,
+                tool_accuracy=None,  # Cannot measure on error
+                outcome_accuracy=None,  # Cannot measure on error
                 efficiency_score=0.0,
                 reasoning_trace=[],
                 errors=[str(e)],

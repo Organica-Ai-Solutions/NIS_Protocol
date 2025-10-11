@@ -19,8 +19,10 @@ import logging
 import time
 import os
 import threading
+import hashlib
+import shutil
 from datetime import datetime, timedelta
-from typing import Dict, Any, List, Optional, Tuple, Deque
+from typing import Dict, Any, List, Optional, Tuple, Deque, Union
 from dataclasses import dataclass, field
 from collections import deque
 from pathlib import Path
@@ -68,6 +70,10 @@ class OnlineTrainingConfig:
     # Model settings
     model_path: str = "models/bitnet/models/bitnet"
     checkpoint_dir: str = "models/bitnet/checkpoints"
+    mobile_bundle_dir: str = "models/bitnet/mobile"
+    mobile_variant: str = "bitnet-b1.58-2b4t-mobile"
+    mobile_version: str = "v1"
+    create_mobile_bundle: bool = True
     
     # Training hyperparameters
     learning_rate: float = 1e-5  # Lower for online learning
@@ -175,6 +181,17 @@ class BitNetOnlineTrainer(NISAgent):
             'next_training_time': None,
             'offline_readiness_score': 0.0
         }
+
+        # Mobile bundle metadata
+        self.mobile_bundle_metadata: Dict[str, Any] = {
+            "path": None,
+            "checksum": None,
+            "size_mb": None,
+            "version": self.config.mobile_version,
+            "variant": self.config.mobile_variant,
+            "lora_available": False,
+            "download_url": None,
+        }
         
         # Background training thread
         self.training_thread = None
@@ -186,6 +203,9 @@ class BitNetOnlineTrainer(NISAgent):
         else:
             self.logger.warning("🔄 Training simulation mode - libraries not available")
         
+        # Ensure mobile bundle directory exists
+        Path(self.config.mobile_bundle_dir).mkdir(parents=True, exist_ok=True)
+
         self.logger.info(f"🚀 BitNet Online Trainer initialized: {agent_id}")
     
     def _initialize_training_system(self):
@@ -464,12 +484,20 @@ class BitNetOnlineTrainer(NISAgent):
             self.training_metrics['total_training_sessions'] += 1
             improvement_score = max(0, 1.0 - avg_loss)  # Simple improvement metric
             self.training_metrics['model_improvement_score'] = improvement_score
+            self.training_metrics['average_quality_score'] = np.mean(
+                [ex.quality_score for ex in self.training_examples]
+            ) if self.training_examples else 0.0
+            self.training_metrics['last_training_time'] = datetime.now().isoformat()
             
             # Update offline readiness score
             self._update_offline_readiness_score()
             
             self.logger.info(f"✅ Training session completed: loss={avg_loss:.4f}, time={training_time:.2f}s")
             self.logger.info(f"📊 Offline readiness: {self.training_metrics['offline_readiness_score']:.2f}")
+            
+            # Prepare mobile bundle if enabled
+            if self.config.create_mobile_bundle:
+                self._prepare_mobile_bundle(checkpoint_hint="training")
             
             return True
             
@@ -541,6 +569,10 @@ class BitNetOnlineTrainer(NISAgent):
             # Clean up old checkpoints
             self._cleanup_old_checkpoints()
             
+            # Prepare mobile bundle if enabled
+            if self.config.create_mobile_bundle:
+                self._prepare_mobile_bundle(checkpoint_hint=checkpoint_path)
+            
         except Exception as e:
             self.logger.error(f"❌ Failed to save checkpoint: {e}")
     
@@ -563,6 +595,86 @@ class BitNetOnlineTrainer(NISAgent):
         except Exception as e:
             self.logger.error(f"❌ Failed to cleanup old checkpoints: {e}")
     
+    def _prepare_mobile_bundle(self, checkpoint_hint: Optional[Union[Path, str]] = None) -> None:
+        """Prepare mobile-friendly BitNet bundle for edge devices."""
+        try:
+            if not self.model or not self.tokenizer:
+                self.logger.warning("⚠️ Cannot prepare mobile bundle - model not loaded")
+                return
+
+            bundle_dir = Path(self.config.mobile_bundle_dir)
+            bundle_dir.mkdir(parents=True, exist_ok=True)
+
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            bundle_name = f"{self.config.mobile_variant}_{timestamp}"
+            bundle_temp_dir = bundle_dir / bundle_name
+            bundle_temp_dir.mkdir(parents=True, exist_ok=True)
+
+            checkpoint_path: Optional[Path] = None
+            if checkpoint_hint is not None:
+                checkpoint_path = Path(str(checkpoint_hint))
+                if not checkpoint_path.exists():
+                    checkpoint_path = None
+
+            self.logger.info("📦 Preparing mobile BitNet bundle for edge deployment")
+            if checkpoint_path is not None and checkpoint_path.is_dir():
+                shutil.copytree(checkpoint_path, bundle_temp_dir, dirs_exist_ok=True)
+            else:
+                self.model.save_pretrained(bundle_temp_dir, safe_serialization=True)
+                self.tokenizer.save_pretrained(bundle_temp_dir)
+
+            manifest = {
+                "variant": self.config.mobile_variant,
+                "version": self.config.mobile_version,
+                "created_at": timestamp,
+                "offline_readiness_score": self.training_metrics['offline_readiness_score'],
+                "total_training_sessions": self.training_metrics['total_training_sessions'],
+                "source_checkpoint": str(checkpoint_path) if checkpoint_path else None,
+            }
+
+            manifest_path = bundle_temp_dir / "manifest.json"
+            with open(manifest_path, 'w') as f:
+                json.dump(manifest, f, indent=2)
+
+            archive_basename = bundle_dir / bundle_name
+            shutil.make_archive(str(archive_basename), 'zip', root_dir=bundle_temp_dir)
+            archive_path = archive_basename.with_suffix('.zip')
+
+            checksum = self._calculate_checksum(archive_path)
+            size_mb = round(archive_path.stat().st_size / (1024 * 1024), 2)
+
+            shutil.rmtree(bundle_temp_dir, ignore_errors=True)
+
+            self.mobile_bundle_metadata.update({
+                "path": str(archive_path),
+                "checksum": checksum,
+                "size_mb": size_mb,
+                "version": self.config.mobile_version,
+                "variant": self.config.mobile_variant,
+                "lora_available": self.config.use_lora,
+                "download_url": None,
+            })
+
+            self.logger.info(
+                "✅ Mobile BitNet bundle ready | "
+                f"size={size_mb}MB | checksum={checksum[:8]}..."
+            )
+
+        except Exception as e:
+            self.logger.error(f"❌ Failed to prepare mobile BitNet bundle: {e}")
+
+    @staticmethod
+    def _calculate_checksum(path: Path, chunk_size: int = 8192) -> str:
+        """Calculate SHA-256 checksum for a file."""
+        sha256 = hashlib.sha256()
+        with open(path, 'rb') as file:
+            while True:
+                chunk = file.read(chunk_size)
+                if not chunk:
+                    break
+                sha256.update(chunk)
+        return sha256.hexdigest()
+    
     async def get_training_status(self) -> Dict[str, Any]:
         """Get current training status and metrics"""
         return {
@@ -575,8 +687,10 @@ class BitNetOnlineTrainer(NISAgent):
                 "learning_rate": self.config.learning_rate,
                 "batch_size": self.config.batch_size,
                 "training_interval_seconds": self.config.training_interval_seconds,
-                "quality_threshold": self.config.quality_threshold
-            }
+                "quality_threshold": self.config.quality_threshold,
+                "model_path": self.config.model_path
+            },
+            "mobile_bundle": self.mobile_bundle_metadata.copy()
         }
     
     async def force_training_session(self) -> Dict[str, Any]:

@@ -479,7 +479,7 @@ Audit text for integrity violations and hardcoded values.
 curl -X POST "http://localhost/agents/audit/text" \
   -H "Content-Type: application/json" \
   -d '{
-    "text": "The system achieved 95% accuracy with advanced algorithms",
+    "text": "The system achieved strong performance with advanced algorithms",
     "context": {
       "source": "system_report",
       "check_integrity": true

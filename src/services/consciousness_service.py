@@ -57,7 +57,7 @@ class EthicalFramework(Enum):
 class ConsciousnessMetrics:
     """Consciousness evaluation metrics"""
     level: ConsciousnessLevel
-    confidence: float = 0.0
+    confidence: Optional[float] = None
     self_awareness_score: float = 0.0
     introspection_depth: float = 0.0
     meta_cognition_level: float = 0.0
@@ -205,14 +205,14 @@ class ConsciousnessService(NISAgent):
             # Return minimal consciousness metrics on error
             return ConsciousnessMetrics(
                 level=ConsciousnessLevel.REACTIVE,
-                confidence=0.1,
-                self_awareness_score=0.1,
-                introspection_depth=0.1,
-                meta_cognition_level=0.1,
-                social_awareness=0.1,
-                temporal_awareness=0.1,
-                ethical_reasoning_capability=0.1,
-                bias_resistance=0.1
+                confidence=None,
+                self_awareness_score=0.0,
+                introspection_depth=0.0,
+                meta_cognition_level=0.0,
+                social_awareness=0.0,
+                temporal_awareness=0.0,
+                ethical_reasoning_capability=0.0,
+                bias_resistance=0.0
             )
     
     async def detect_bias(self, data: Dict[str, Any]) -> BiasDetectionResult:

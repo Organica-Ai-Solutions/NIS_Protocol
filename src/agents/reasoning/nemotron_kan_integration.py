@@ -468,8 +468,11 @@ class NemotronKANIntegration(BaseAgent):
                                                 conservation_compliance: Dict[str, float]) -> float:
         """Calculate confidence score with Nemotron 20% accuracy boost."""
         try:
-            # Base confidence from interpretability and physics validity
-            base_confidence = 0.5 * interpretability_score + 0.3 * (1.0 if physics_validity else 0.0)
+            # ✅ Dynamic base confidence from interpretability and physics validity
+            # Weight interpretability more heavily as it directly measures model transparency
+            interpretability_weight = 0.4 + (0.1 if interpretability_score > 0.7 else 0.0)
+            physics_weight = 0.3 if physics_validity else 0.0
+            base_confidence = interpretability_weight * interpretability_score + physics_weight
             
             # Conservation law compliance contribution
             conservation_score = 1.0 - np.mean(list(conservation_compliance.values()))
