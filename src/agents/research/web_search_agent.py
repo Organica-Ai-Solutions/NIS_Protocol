@@ -337,7 +337,7 @@ class WebSearchAgent:
                 url="https://example.com/research",
                 snippet=f"Research findings on {query}...",
                 source="mock",
-                relevance_score=calculate_score(metrics),
+                relevance_score=0.85,  # Fixed score for mock search
                 domain="example.com",
                 timestamp=time.time(),
                 metadata={"mock": True}

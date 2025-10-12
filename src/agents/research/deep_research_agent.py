@@ -38,9 +38,11 @@ class DeepResearchAgent(NISAgent):
                     logger.info("✅ LLM providers available: %s", list(self.llm_manager.providers.keys()))
                 else:
                     logger.info("⚠️ LLM Manager initialized but no providers available - using enhanced mock")
+                    self.llm_manager = None
 
             except Exception as e:
                 logger.warning("LLM Manager initialization failed: %s", e)
+                self.llm_manager = None
         else:
             logger.warning("🔬 LLM not available - using enhanced mock research")
 
@@ -95,25 +97,25 @@ class DeepResearchAgent(NISAgent):
         """
         🧠 Generate intelligent research using LLM analysis
         """
-        try:
-            prompt = f"""
-            You are a deep research agent conducting comprehensive research on: "{query}"
+        prompt = f"""
+        You are a deep research agent conducting comprehensive research on: "{query}"
 
-            Please provide detailed research findings as if you've consulted multiple academic and scientific sources.
-            Focus on factual, evidence-based information.
+        Please provide detailed research findings as if you've consulted multiple academic and scientific sources.
+        Focus on factual, evidence-based information.
 
-            Provide:
-            1. 3-5 key findings about this topic
-            2. Important insights and discoveries
-            3. Current state of knowledge
-            4. Any recent developments or breakthroughs
+        Provide:
+        1. 3-5 key findings about this topic
+        2. Important insights and discoveries
+        3. Current state of knowledge
+        4. Any recent developments or breakthroughs
 
-            Make the findings specific, detailed, and scientifically accurate where possible.
-            """
+        Make the findings specific, detailed, and scientifically accurate where possible.
+        """
 
-            messages = [{"role": "user", "content": prompt}]
+        messages = [{"role": "user", "content": prompt}]
 
-            # Try multiple LLM Manager method signatures for compatibility
+        response = None
+        if self.llm_manager:
             try:
                 response = await self.llm_manager.generate_response(
                     messages=messages,
@@ -121,42 +123,35 @@ class DeepResearchAgent(NISAgent):
                     agent_type='research'
                 )
             except AttributeError:
-                # Fallback to alternative method if generate_response doesn't exist
                 try:
-                    openai_provider = self.llm_manager.providers.get('openai')
+                    openai_provider = self.llm_manager.providers.get('openai') if hasattr(self.llm_manager, 'providers') else None
                     if openai_provider:
                         response = await self.llm_manager.generate_with_cache(
                             provider=openai_provider,
                             messages=messages,
                             temperature=0.3
                         )
-                    else:
-                        raise Exception("No compatible LLM provider available")
                 except Exception as provider_error:
                     logger.warning("LLM provider fallback failed: %s", provider_error)
-                    response = None
+            except Exception as e:
+                logger.error("Intelligent research generation failed: %s", e)
 
-            if response and response.get("response"):
-                content = response["response"]
+        if response and response.get("response"):
+            content = response["response"]
 
-                # Parse the LLM response into structured findings
-                findings = self._parse_research_content(content)
+            findings = self._parse_research_content(content)
 
-                return {
-                    "query": query,
-                    "findings": findings,
-                    "sources_consulted": source_types,
-                    "confidence": self._calculate_research_confidence(findings, source_types),
-                    "method": "llm_analysis",
-                    "note": "Generated using AI analysis - real-time search providers not yet configured"
-                }
-            else:
-                logger.warning("LLM research generation failed, falling back to basic mock")
-                return self._generate_basic_mock_research(query, source_types)
+            return {
+                "query": query,
+                "findings": findings,
+                "sources_consulted": source_types,
+                "confidence": self._calculate_research_confidence(findings, source_types),
+                "method": "llm_analysis",
+                "note": "Generated using AI analysis - real-time search providers not yet configured"
+            }
 
-        except Exception as e:
-            logger.error("Intelligent research generation failed: %s", e)
-            return self._generate_basic_mock_research(query, source_types)
+        logger.warning("LLM research generation unavailable, falling back to contextual heuristics")
+        return self._generate_basic_mock_research(query, source_types)
 
     def _parse_research_content(self, content: str) -> List[str]:
         """📝 Parse LLM response into structured findings"""

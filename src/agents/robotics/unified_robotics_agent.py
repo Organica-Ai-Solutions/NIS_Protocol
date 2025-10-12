@@ -471,16 +471,24 @@ class UnifiedRoboticsAgent(NISAgent):
         # Verify solution
         fk_check = self._fk_manipulator(robot_id, result.x)
         final_pos = fk_check['end_effector_pose']['position']
-        position_error = np.linalg.norm(final_pos - target_pos)
-        
-        return {
-            'success': result.success and position_error < 0.01,  # 1cm tolerance
+        position_error = float(np.linalg.norm(final_pos - target_pos))
+
+        converged = bool(result.success and position_error < 0.01)  # 1cm tolerance
+
+        response: Dict[str, Any] = {
+            'success': converged,
             'joint_angles': result.x,
             'position_error': position_error,
-            'iterations': result.nit,
+            'iterations': int(result.nit),
             'final_pose': fk_check['end_effector_pose'],
             'robot_type': RobotType.MANIPULATOR.value
         }
+
+        if not converged:
+            message = getattr(result, 'message', 'IK solver did not converge within tolerance')
+            response['error'] = message
+
+        return response
     
     def _ik_humanoid(
         self,
@@ -616,15 +624,18 @@ class UnifiedRoboticsAgent(NISAgent):
                 valid = True
                 warnings = []
             
+            metrics = self._compute_trajectory_metrics(trajectory)
+
             result = {
-                'success': True,
+                'success': bool(valid),
                 'trajectory': trajectory,
                 'num_points': len(trajectory),
                 'duration': duration,
-                'physics_valid': valid,
+                'physics_valid': bool(valid),
                 'physics_warnings': warnings,
                 'computation_time': time.time() - start_time,
-                'robot_type': robot_type.value
+                'robot_type': robot_type.value,
+                **metrics
             }
             
             # Update stats
@@ -638,6 +649,14 @@ class UnifiedRoboticsAgent(NISAgent):
             self.logger.error(f"Trajectory planning failed: {e}")
             return {
                 'success': False,
+                'trajectory': [],
+                'num_points': 0,
+                'duration': duration,
+                'physics_valid': False,
+                'physics_warnings': [],
+                'total_distance': 0.0,
+                'average_speed': 0.0,
+                'average_acceleration': 0.0,
                 'error': str(e),
                 'computation_time': time.time() - start_time
             }
@@ -736,6 +755,37 @@ class UnifiedRoboticsAgent(NISAgent):
             'warnings': warnings,
             'total_violations': violations,
             'violation_rate': violations / len(trajectory) if trajectory else 0
+        }
+
+    def _compute_trajectory_metrics(self, trajectory: List[TrajectoryPoint]) -> Dict[str, Any]:
+        """Compute aggregate metrics for a planned trajectory"""
+
+        if not trajectory:
+            return {
+                'total_distance': 0.0,
+                'average_speed': 0.0,
+                'average_acceleration': 0.0
+            }
+
+        distances: List[float] = []
+        speeds: List[float] = []
+        accelerations: List[float] = []
+
+        for idx in range(1, len(trajectory)):
+            prev_point = trajectory[idx - 1]
+            curr_point = trajectory[idx]
+            distances.append(float(np.linalg.norm(curr_point.position - prev_point.position)))
+            speeds.append(float(np.linalg.norm(curr_point.velocity)))
+            accelerations.append(float(np.linalg.norm(curr_point.acceleration)))
+
+        total_distance = float(np.sum(distances)) if distances else 0.0
+        average_speed = float(np.mean(speeds)) if speeds else 0.0
+        average_acceleration = float(np.mean(accelerations)) if accelerations else 0.0
+
+        return {
+            'total_distance': total_distance,
+            'average_speed': average_speed,
+            'average_acceleration': average_acceleration
         }
     
     def _validate_pose(

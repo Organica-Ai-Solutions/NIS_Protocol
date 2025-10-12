@@ -59,6 +59,7 @@ class AgentMetrics:
     error_count: int = 0
     last_active: Optional[float] = None
     resource_usage: Dict[str, float] = None
+    health_check_count: int = 0  # Track number of health checks performed
     
     def __post_init__(self):
         if self.resource_usage is None:

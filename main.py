@@ -30,16 +30,18 @@ import time
 import uuid
 from typing import Dict, Any, List, Optional
 from datetime import datetime
+from enum import Enum
 # import numpy as np  # Moved to local imports to prevent FastAPI serialization issues
 import soundfile as sf
 from pydub import AudioSegment
+import requests
 
 # Set up logging early to avoid NameError
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("nis_general_pattern")
 
 # FastAPI and web framework imports
-from fastapi import FastAPI, HTTPException, BackgroundTasks, WebSocket, WebSocketDisconnect, Response
+from fastapi import FastAPI, HTTPException, BackgroundTasks, WebSocket, WebSocketDisconnect, Response, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, StreamingResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -98,9 +100,7 @@ from src.services.consciousness_service import create_consciousness_service
 from src.services.protocol_bridge_service import create_protocol_bridge_service
 from src.agents.research.web_search_agent import WebSearchAgent
 from src.llm.llm_manager import GeneralLLMProvider
-# Temporarily disabled due to missing dependencies
-# from src.agents.learning.learning_agent import LearningAgent
-LearningAgent = None
+from src.agents.learning.learning_agent import LearningAgent
 from src.agents.consciousness.conscious_agent import ConsciousAgent
 # Temporarily disabled to debug numpy serialization
 # from src.agents.signal_processing.unified_signal_agent import create_enhanced_laplace_transformer
@@ -155,7 +155,11 @@ except ImportError:
             raise NotImplementedError("Chat memory config must be properly implemented - mocks prohibited by engineering integrity rules")
 # Temporarily disabled due to missing dependencies
 # from src.agents.memory.enhanced_memory_agent import EnhancedMemoryAgent
-EnhancedMemoryAgent = None
+try:
+    from src.agents.memory.enhanced_memory_agent import EnhancedMemoryAgent
+except ImportError as e:
+    logger.warning(f"EnhancedMemoryAgent import failed: {e}. Memory system will run in basic mode.")
+
 # from src.agents.autonomous_execution.anthropic_style_executor import create_anthropic_style_executor, ExecutionStrategy, ExecutionMode  # Temporarily disabled
 # from src.agents.training.bitnet_online_trainer import create_bitnet_online_trainer, OnlineTrainingConfig  # Temporarily disabled
 
@@ -294,6 +298,12 @@ conversation_memory: Dict[str, List[Dict[str, Any]]] = {}  # Legacy - kept for c
 enhanced_chat_memory = None  # Enhanced chat memory system with persistence
 agent_registry: Dict[str, Dict[str, Any]] = {}
 tool_registry: Dict[str, Dict[str, Any]] = {}
+# Enhanced Multimodal Agents - v3.2
+vision_agent = None  # Multimodal vision analysis agent
+research_agent = None  # Deep research agent
+reasoning_chain = None  # Enhanced reasoning chain agent
+document_agent = None  # Document analysis agent
+pipeline_agent = None  # Real-time data pipeline agent
 
 # ✅ Conversation Management Helper Functions
 def get_or_create_conversation(conversation_id: Optional[str], user_id: Optional[str] = None) -> str:
@@ -500,6 +510,16 @@ initialize_protocol_adapters()
 # ====== MCP + DEEP AGENTS + MCP-UI INTEGRATION ======
 # Initialize MCP integration globally
 mcp_integration = None
+mcp_demo_catalog = None
+
+try:
+    project_root = os.getenv("NIS_PROJECT_ROOT", os.getcwd())
+    demo_catalog_path = os.path.join(project_root, "mcp_chatgpt_config.json")
+    if os.path.exists(demo_catalog_path):
+        with open(demo_catalog_path, "r", encoding="utf-8") as demo_file:
+            mcp_demo_catalog = json.load(demo_file)
+except Exception:
+    mcp_demo_catalog = None
 
 # @app.on_event("startup")  # Commented out to avoid duplicate startup events
 async def setup_mcp_integration_disabled():
@@ -619,15 +639,7 @@ async def formatted_chat():
 
 async def initialize_system():
     """Initialize the NIS Protocol system - can be called manually for testing."""
-    global llm_provider, web_search_agent, simulation_coordinator, learning_agent, conscious_agent, planning_system, curiosity_engine, ethical_reasoner, scenario_simulator, anthropic_executor, bitnet_trainer, laplace, kan, pinn, coordinator, consciousness_service, protocol_bridge, vision_agent, research_agent, reasoning_chain, document_agent, enhanced_chat_memory
-
-    logger.info("Initializing NIS Protocol v3...")
-    
-    # Initialize app start time for metrics
-    app.start_time = datetime.now()
-    
-    # Initialize LLM provider with error handling
-    global llm_provider, web_search_agent, simulation_coordinator, learning_agent, planning_system, curiosity_engine
+    global llm_provider, web_search_agent, simulation_coordinator, learning_agent, planning_system, curiosity_engine, fallback_learning_agent
     try:
         llm_provider = GeneralLLMProvider()
         logger.info(" LLM Provider initialized successfully")
@@ -657,15 +669,19 @@ async def initialize_system():
     # Initialize Web Search Agent
     web_search_agent = WebSearchAgent()
     
+    # Initialize Unified Scientific Coordinator (contains laplace, kan, pinn)
+    coordinator = create_scientific_coordinator()
+
     # Initialize Simulation Coordinator (now unified)
     simulation_coordinator = coordinator  # Use unified coordinator's simulation capabilities
 
-    # Initialize Learning Agent (if available)
-    learning_agent = None
-    if LearningAgent is not None:
+    # Initialize Learning Agent (full implementation - no fallbacks)
+    try:
         learning_agent = LearningAgent(agent_id="core_learning_agent_01")
-    else:
-        logger.warning("LearningAgent not available - using fallback mode")
+        logger.info("✅ LearningAgent initialized successfully")
+    except Exception as e:
+        logger.error(f"❌ LearningAgent initialization failed: {e}")
+        raise  # Fail fast - no fallbacks per integrity rules
 
     # Initialize Planning System
     planning_system = AutonomousPlanningSystem()
@@ -676,8 +692,14 @@ async def initialize_system():
     # Initialize Ethical Reasoner
     ethical_reasoner = EthicalReasoner()
 
-    # Initialize Scenario Simulator
-    scenario_simulator = EnhancedScenarioSimulator()
+    global scenario_simulator
+    # Initialize Scenario Simulator (full implementation - no fallbacks)
+    try:
+        scenario_simulator = EnhancedScenarioSimulator()
+        logger.info("✅ EnhancedScenarioSimulator initialized successfully")
+    except Exception as e:
+        logger.error(f"❌ EnhancedScenarioSimulator initialization failed: {e}")
+        raise  # Fail fast - no fallbacks per integrity rules
 
     # Initialize Response Formatter
     response_formatter = NISResponseFormatter()
@@ -733,9 +755,6 @@ async def initialize_system():
     except Exception as e:
         logger.error(f"Failed to initialize Enhanced Chat Memory: {e}")
         enhanced_chat_memory = None
-
-    # Initialize Unified Scientific Coordinator (contains laplace, kan, pinn)
-    coordinator = create_scientific_coordinator()
 
     # Temporarily disable agents that contain numpy arrays to fix chat serialization
     # Use coordinator's pipeline agents (avoid duplication)
@@ -798,6 +817,7 @@ async def initialize_system():
         logger.warning(f"BitNet Online Trainer initialization skipped: {e}")
 
     # Initialize Enhanced Multimodal Agents - v3.2
+    global vision_agent, research_agent, reasoning_chain, document_agent
     vision_agent = MultimodalVisionAgent(agent_id="multimodal_vision_agent")
     research_agent = DeepResearchAgent(agent_id="deep_research_agent")
     reasoning_chain = EnhancedReasoningChain(agent_id="enhanced_reasoning_chain")
@@ -867,14 +887,20 @@ async def initialize_mcp_integration():
         
         from src.mcp.integration import MCPIntegration
         
-        # Create MCP integration instance
-        mcp_integration = MCPIntegration()
+        # Create MCP integration instance with port 8020 to avoid conflict with FastAPI on 8000
+        mcp_config = {
+            "mcp": {
+                "host": "localhost",
+                "port": 8020  # Changed from 8000 to avoid FastAPI conflict
+            }
+        }
+        mcp_integration = MCPIntegration(nis_config=mcp_config)
         await mcp_integration.initialize()
         
         # Store in app state for endpoint access
         app.state.mcp_integration = mcp_integration
         
-        logger.info("✅ MCP integration ready")
+        logger.info("✅ MCP integration ready on port 8020")
         
     except Exception as e:
         logger.error(f"❌ MCP integration failed: {e}")
@@ -964,6 +990,18 @@ async def run_generative_simulation(request: SimulationConcept):
 # TRUE PHYSICS VALIDATION API ENDPOINTS
 # =============================================================================
 
+try:
+    from src.agents.physics.unified_physics_agent import UnifiedPhysicsAgent, PhysicsMode, PhysicsDomain
+except ImportError as e:
+    logger.error(f"UnifiedPhysicsAgent import failed: {e}")
+    UnifiedPhysicsAgent = None
+    class PhysicsMode(Enum):
+        TRUE_PINN = "true_pinn"
+        HYBRID = "hybrid"
+    class PhysicsDomain(Enum):
+        MECHANICS = "mechanics"
+        THERMODYNAMICS = "thermodynamics"
+
 class PhysicsValidationRequest(BaseModel):
     physics_data: Dict[str, Any] = Field(..., description="Physics data to validate")
     mode: Optional[str] = Field(default="true_pinn", description="Physics validation mode")
@@ -984,6 +1022,20 @@ class WaveEquationRequest(BaseModel):
     final_time: float = Field(default=0.5, description="Final simulation time")
     initial_displacement: Optional[str] = Field(default="gaussian", description="Initial wave shape")
 
+physics_validation_agent = None  # Will be UnifiedPhysicsAgent instance if available
+
+def ensure_physics_agent_available():
+    if UnifiedPhysicsAgent is None:
+        raise HTTPException(status_code=500, detail="UnifiedPhysicsAgent not available. Install physics component dependencies.")
+
+
+async def get_physics_agent(agent_id: str = "unified_physics"):
+    ensure_physics_agent_available()
+    global physics_validation_agent
+    if physics_validation_agent is None:
+        physics_validation_agent = UnifiedPhysicsAgent(agent_id=agent_id)
+    return physics_validation_agent
+
 @app.post("/physics/validate/true-pinn", tags=["Physics Validation"])
 async def validate_physics_true_pinn(request: PhysicsValidationRequest):
     """
@@ -1001,34 +1053,10 @@ async def validate_physics_true_pinn(request: PhysicsValidationRequest):
     This is NOT mock validation - it actually solves differential equations!
     """
     try:
-        # Initialize unified physics agent with TRUE_PINN mode
-        from src.agents.physics.unified_physics_agent import UnifiedPhysicsAgent, PhysicsMode, PhysicsDomain
-        
-        # Map string parameters to enums
-        mode_map = {
-            "true_pinn": PhysicsMode.TRUE_PINN,
-            "enhanced_pinn": PhysicsMode.ENHANCED_PINN,
-            "advanced_pinn": PhysicsMode.ADVANCED_PINN,
-            "basic": PhysicsMode.BASIC
-        }
-        
-        domain_map = {
-            "classical_mechanics": PhysicsDomain.CLASSICAL_MECHANICS,
-            "thermodynamics": PhysicsDomain.THERMODYNAMICS,
-            "electromagnetism": PhysicsDomain.ELECTROMAGNETISM,
-            "fluid_dynamics": PhysicsDomain.FLUID_DYNAMICS,
-            "quantum_mechanics": PhysicsDomain.QUANTUM_MECHANICS
-        }
-        
-        physics_mode = mode_map.get(request.mode, PhysicsMode.TRUE_PINN)
-        physics_domain = domain_map.get(request.domain, PhysicsDomain.CLASSICAL_MECHANICS)
-        
-        # Create physics agent
-        physics_agent = UnifiedPhysicsAgent(
-            agent_id="true_pinn_validator",
-            physics_mode=physics_mode,
-            enable_self_audit=True
-        )
+        physics_mode = PhysicsMode.__members__.get(request.mode.upper(), PhysicsMode.TRUE_PINN) if request.mode else PhysicsMode.TRUE_PINN
+        physics_domain = PhysicsDomain.__members__.get(request.domain.upper(), PhysicsDomain.MECHANICS) if request.domain else PhysicsDomain.MECHANICS
+
+        physics_agent = await get_physics_agent("true_pinn_validator")
         
         # Prepare validation data
         validation_data = {
@@ -1045,7 +1073,7 @@ async def validate_physics_true_pinn(request: PhysicsValidationRequest):
         logger.info(f"Running TRUE PINN validation in {physics_mode.value} mode for {physics_domain.value} domain")
         
         # Perform comprehensive physics validation
-        validation_result = await physics_agent.validate_physics_comprehensive(
+        validation_result = await physics_agent.validate_physics(
             validation_data, physics_mode, physics_domain
         )
         
@@ -1107,30 +1135,35 @@ async def solve_heat_equation(request: HeatEquationRequest):
     - Heat transfer verification
     """
     try:
-        from src.agents.physics.true_pinn_agent import create_true_pinn_physics_agent
-        
-        # Create TRUE PINN agent
-        pinn_agent = create_true_pinn_physics_agent()
-        
+        physics_agent = await get_physics_agent("heat_equation_solver")
+
         logger.info(f"Solving heat equation with α={request.thermal_diffusivity}, L={request.domain_length}, t={request.final_time}")
-        
-        # Solve heat equation
-        result = pinn_agent.solve_heat_equation(
-            initial_temp=None,  # Will use default sine wave
-            thermal_diffusivity=request.thermal_diffusivity,
-            domain_length=request.domain_length,
-            final_time=request.final_time
-        )
-        
-        # Add meta-agent consciousness supervision
-        consciousness_metadata = {
-            "meta_agent_supervision": "Heat equation solution supervised by consciousness meta-agent",
-            "physics_reasoning_level": "partial_differential_equations",
-            "solution_quality_assessment": result.get('physics_compliance', 0.0),
-            "agent_coordination": "unified_physics_meta_coordination",
-            "bitnet_offline_capability": "available_for_edge_deployment"
+
+        wave_scenario = {
+            'x_range': [0.0, request.domain_length],
+            't_range': [0.0, request.final_time],
+            'domain_points': 1000,
+            'boundary_points': 100,
+            'thermal_diffusivity': request.thermal_diffusivity,
+            'initial_conditions': request.initial_conditions,
+            'boundary_conditions': request.boundary_conditions
         }
-        
+
+        validation_result = await physics_agent.validate_physics(
+            {
+                "physics_data": {
+                    "thermal_diffusivity": request.thermal_diffusivity,
+                    "initial_conditions": request.initial_conditions,
+                    "boundary_conditions": request.boundary_conditions
+                },
+                "physics_scenario": wave_scenario,
+                "pde_type": "heat"
+            },
+            PhysicsMode.TRUE_PINN
+        )
+
+        validation = validation_result.validation_details
+
         enhanced_result = {
             "status": "success",
             "equation_type": "heat_equation_1d",
@@ -1142,15 +1175,19 @@ async def solve_heat_equation(request: HeatEquationRequest):
                 "initial_conditions": request.initial_conditions,
                 "boundary_conditions": request.boundary_conditions
             },
-            "solution": result,
-            "consciousness_meta_agent": consciousness_metadata,
+            "validation": {
+                "is_valid": validation_result.is_valid,
+                "confidence": validation_result.confidence,
+                "conservation_scores": validation_result.conservation_scores,
+                "pde_residual_norm": validation_result.pde_residual_norm,
+                "laws_checked": [law.value for law in validation_result.laws_checked],
+                "details": validation,
+                "execution_time": validation_result.execution_time
+            },
             "timestamp": time.time()
         }
-        
-        logger.info(f"✅ Heat equation solved successfully: compliance={result.get('physics_compliance', 0):.3f}")
-        
+
         return JSONResponse(content=enhanced_result, status_code=200)
-        
     except Exception as e:
         logger.error(f"Heat equation solving error: {e}")
         return JSONResponse(content={
@@ -1178,14 +1215,7 @@ async def solve_wave_equation(request: WaveEquationRequest):
     - Structural dynamics validation
     """
     try:
-        from src.agents.physics.unified_physics_agent import UnifiedPhysicsAgent, PhysicsMode, PhysicsDomain
-        
-        # Create physics agent for wave equation
-        physics_agent = UnifiedPhysicsAgent(
-            agent_id="wave_equation_solver",
-            physics_mode=PhysicsMode.TRUE_PINN,
-            enable_self_audit=True
-        )
+        physics_agent = await get_physics_agent("wave_equation_solver")
         
         # Prepare wave equation scenario
         wave_scenario = {
@@ -1206,7 +1236,7 @@ async def solve_wave_equation(request: WaveEquationRequest):
         logger.info(f"Solving wave equation with c={request.wave_speed}, L={request.domain_length}, t={request.final_time}")
         
         # Solve using TRUE PINN
-        validation_result = await physics_agent.validate_physics_comprehensive(
+        validation_result = await physics_agent.validate_physics(
             validation_data, PhysicsMode.TRUE_PINN, PhysicsDomain.CLASSICAL_MECHANICS
         )
         
@@ -1221,12 +1251,13 @@ async def solve_wave_equation(request: WaveEquationRequest):
                 "final_time": request.final_time,
                 "initial_displacement": request.initial_displacement
             },
-            "solution": {
-                "physics_compliance": validation_result.conservation_scores.get("physics_compliance", 0.0),
-                "pde_residual_norm": validation_result.conservation_scores.get("pde_residual_norm", float('inf')),
-                "convergence_achieved": validation_result.conservation_scores.get("convergence", 0.0) > 0.5,
-                "energy_conservation": validation_result.conservation_scores.get("energy", 0.95),
-                "momentum_conservation": validation_result.conservation_scores.get("momentum", 0.95),
+            "validation": {
+                "is_valid": validation_result.is_valid,
+                "confidence": validation_result.confidence,
+                "conservation_scores": validation_result.conservation_scores,
+                "pde_residual_norm": validation_result.pde_residual_norm,
+                "laws_checked": [law.value for law in validation_result.laws_checked],
+                "details": validation_result.validation_details,
                 "execution_time": validation_result.execution_time
             },
             "consciousness_meta_agent": {
@@ -1377,7 +1408,6 @@ async def get_physics_constants():
             "message": f"Failed to retrieve physics constants: {str(e)}",
             "constants": {}
         }, status_code=500)
-
 @app.post("/physics/validate", tags=["Physics Validation"])
 async def validate_physics(request: Dict[str, Any]):
     """
@@ -2121,7 +2151,6 @@ async def websocket_realtime_streaming(websocket: WebSocket):
         # Clean up session
         if session_id in streaming_agent.active_sessions:
             del streaming_agent.active_sessions[session_id]
-
 @app.get("/voice/settings", tags=["Voice Settings"])
 async def get_voice_settings():
     """
@@ -2588,7 +2617,112 @@ async def get_research_capabilities():
 #             "success": False,
 #             "error": str(e)
 #         }, status_code=500)
-# 
+
+@app.post("/research/deep", tags=["Research"])
+async def deep_research(request: dict):
+    """
+    🔍 Deep Research using WebSearchAgent + LLM Analysis
+    
+    Performs comprehensive research by:
+    1. Using WebSearchAgent to gather real-time information
+    2. Analyzing results with our LLM backend
+    3. Generating comprehensive research reports
+    
+    NO MOCKS - Real web search + AI analysis.
+    """
+    try:
+        query = request.get("query", "")
+        research_depth = request.get("research_depth", "standard")
+        max_results = request.get("max_results", 10)
+        include_citations = request.get("include_citations", True)
+        
+        if not query:
+            raise HTTPException(status_code=400, detail="Query is required")
+        
+        if web_search_agent is None:
+            raise HTTPException(status_code=500, detail="WebSearchAgent not initialized")
+        
+        if llm_provider is None:
+            raise HTTPException(status_code=500, detail="LLM Provider not initialized")
+        
+        # Step 1: Gather information using WebSearchAgent
+        logger.info(f"🔍 Starting deep research for query: {query}")
+        from src.agents.research.web_search_agent import ResearchQuery, ResearchDomain
+        research_query = ResearchQuery(
+            query=query,
+            domain=ResearchDomain.GENERAL,
+            context={"research_depth": research_depth},
+            max_results=max_results,
+            cultural_sensitivity=True
+        )
+        search_results = await web_search_agent.research(research_query)
+        
+        # Step 2: Analyze and synthesize with LLM
+        research_context = f"Search Results for '{query}':\n\n"
+        search_result_list = search_results.get('results', [])
+        if isinstance(search_result_list, list) and len(search_result_list) > 0:
+            for idx, result in enumerate(search_result_list, 1):
+                # Handle both dict and SearchResult objects
+                title = result.get('title') if isinstance(result, dict) else getattr(result, 'title', '')
+                snippet = result.get('snippet') if isinstance(result, dict) else getattr(result, 'snippet', '')
+                url = result.get('url') if isinstance(result, dict) else getattr(result, 'url', '')
+                
+                research_context += f"{idx}. {title}\n"
+                research_context += f"   {snippet}\n"
+                if include_citations:
+                    research_context += f"   Source: {url}\n"
+                research_context += "\n"
+        else:
+            research_context += "No search results available.\n"
+        
+        analysis_prompt = f"""You are an expert research analyst. Based on the search results provided, create a comprehensive research report on: {query}
+
+SEARCH RESULTS:
+{research_context}
+
+INSTRUCTIONS:
+1. Synthesize the information from all sources
+2. Provide a well-structured analysis with clear sections
+3. Include specific facts, statistics, and technical details
+4. {'Cite sources using [Source N] format' if include_citations else 'Focus on factual synthesis'}
+5. Provide multiple perspectives when relevant
+6. Be analytical and evidence-based
+7. Depth level: {research_depth}
+
+Format your response as a comprehensive research report."""
+
+        messages = [
+            {"role": "system", "content": "You are an expert research analyst providing comprehensive, factual research reports based on verified sources."},
+            {"role": "user", "content": analysis_prompt}
+        ]
+        
+        # Generate analysis
+        analysis_result = await llm_provider.generate_response(
+            messages=messages,
+            max_tokens=2000,
+            temperature=0.3  # Lower temperature for factual analysis
+        )
+        
+        research_report = {
+            "success": True,
+            "query": query,
+            "research_depth": research_depth,
+            "report": analysis_result.get("content", ""),
+            "sources_count": len(search_results.get('results', [])),
+            "sources": search_results.get('results', []) if include_citations else None,
+            "model_used": analysis_result.get("model", ""),
+            "tokens_used": analysis_result.get("tokens_used", 0),
+            "timestamp": time.time()
+        }
+        
+        logger.info(f"✅ Deep research completed: {len(research_report['report'])} chars")
+        
+        return JSONResponse(content=research_report)
+        
+    except Exception as e:
+        logger.error(f"❌ Deep research error: {e}")
+        raise HTTPException(status_code=500, detail=f"Deep research failed: {str(e)}")
+
 @app.get("/llm/optimization/stats", tags=["LLM Optimization"])
 async def get_optimization_stats():
     """
@@ -2699,6 +2833,14 @@ async def clear_llm_cache(provider: Optional[str] = None):
     try:
         if llm_provider is None:
             raise HTTPException(status_code=500, detail="LLM Provider not initialized")
+        
+        # Check if smart_cache attribute exists
+        if not hasattr(llm_provider, 'smart_cache'):
+            return JSONResponse(content={
+                "status": "success",
+                "message": "Cache clearing not available - smart_cache not enabled",
+                "timestamp": time.time()
+            })
         
         if provider:
             llm_provider.smart_cache.clear_provider_cache(provider)
@@ -2833,8 +2975,9 @@ async def cost_analytics(hours_back: int = 24):
         
         # Calculate cost insights
         total_cost = usage_data.get("totals", {}).get("cost", 0)
-        total_requests = usage_data.get("totals", {}).get("requests", 1)
+        total_requests = max(usage_data.get("totals", {}).get("requests", 1), 1)  # Ensure never 0
         cache_hits = usage_data.get("totals", {}).get("cache_hits", 0)
+        hours_back = max(hours_back, 1)  # Ensure never 0
         
         # Estimate savings
         estimated_savings = cache_hits * 0.01  # Rough estimate
@@ -2868,6 +3011,66 @@ async def cost_analytics(hours_back: int = 24):
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Cost analytics failed: {str(e)}")
+
+def _handle_analytics_redirect(e: Exception) -> Optional[JSONResponse]:
+    try:
+        import requests
+        if isinstance(e, requests.exceptions.HTTPError) and getattr(e.response, "status_code", None) == 301:
+            return JSONResponse(content={
+                "status": "error",
+                "message": "Analytics service returned redirect. Ensure backend URL is configured correctly.",
+                "suggestion": "Access analytics via http://localhost/analytics/ (trailing slash) or configure nginx to avoid redirects."
+            }, status_code=503)
+    except Exception:
+        pass
+    return None
+
+@app.get("/analytics", tags=["Analytics"])
+async def unified_analytics_endpoint(
+    view: str = "summary",
+    hours_back: int = 24,
+    provider: Optional[str] = None,
+    include_charts: bool = True
+):
+    """
+    📊 **Unified Analytics Endpoint** - AWS CloudWatch Style
+    """
+    try:
+        from src.analytics.llm_analytics import get_llm_analytics
+        analytics = get_llm_analytics()
+        
+        # Get analytics data based on view
+        if view == "summary":
+            data = analytics.get_summary_analytics(hours_back=hours_back)
+        elif view == "usage":
+            data = analytics.get_usage_analytics(hours_back=hours_back)
+        elif view == "providers":
+            data = analytics.get_provider_analytics(provider=provider)
+        elif view == "tokens":
+            data = analytics.get_token_breakdown(hours_back=hours_back)
+        elif view == "costs":
+            data = analytics.get_cost_analytics(hours_back=hours_back)
+        elif view == "users":
+            data = analytics.get_user_analytics(limit=10)
+        else:
+            raise HTTPException(status_code=400, detail="Invalid view")
+        
+        # Include charts if requested
+        if include_charts:
+            data["charts"] = analytics.get_charts(view, hours_back=hours_back, provider=provider)
+        
+        return JSONResponse(content={
+            "status": "success",
+            "view": view,
+            "data": data,
+            "timestamp": time.time()
+        })
+        
+    except Exception as e:
+        redirect_response = _handle_analytics_redirect(e)
+        if redirect_response:
+            return redirect_response
+        raise HTTPException(status_code=500, detail=f"Analytics endpoint failed: {str(e)}")
 
 @app.get("/analytics/performance", tags=["Analytics"])
 async def performance_analytics():
@@ -2997,278 +3200,6 @@ async def cleanup_analytics(days_to_keep: int = 30):
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Analytics cleanup failed: {str(e)}")
-
-@app.get("/analytics", tags=["Analytics"])
-async def unified_analytics_endpoint(
-    view: str = "summary",
-    hours_back: int = 24,
-    provider: Optional[str] = None,
-    include_charts: bool = True
-):
-    """
-    📊 **Unified Analytics Endpoint** - AWS CloudWatch Style
-    
-    **Single endpoint for all analytics data with flexible views:**
-    
-    **Views Available:**
-    - `summary` - High-level overview (default)
-    - `detailed` - Comprehensive metrics
-    - `tokens` - Token usage analysis
-    - `costs` - Financial breakdown
-    - `performance` - Speed & efficiency
-    - `realtime` - Live monitoring
-    - `providers` - Provider comparison
-    - `trends` - Historical patterns
-    
-    **Parameters:**
-    - `view`: Analytics view type
-    - `hours_back`: Time period (1-168 hours)
-    - `provider`: Filter by specific provider
-    - `include_charts`: Include chart data for visualization
-    
-    **Example Usage:**
-    ```
-    GET /analytics?view=summary&hours_back=24
-    GET /analytics?view=costs&provider=openai
-    GET /analytics?view=realtime&include_charts=true
-    ```
-    """
-    try:
-        from src.analytics.llm_analytics import get_llm_analytics
-        analytics = get_llm_analytics()
-        
-        # Validate parameters
-        if hours_back < 1 or hours_back > 168:  # Max 1 week
-            hours_back = 24
-            
-        valid_views = ["summary", "detailed", "tokens", "costs", "performance", "realtime", "providers", "trends"]
-        if view not in valid_views:
-            view = "summary"
-        
-        # Get base analytics data
-        usage_data = analytics.get_usage_analytics(hours_back=hours_back)
-        provider_data = analytics.get_provider_analytics()
-        recent_requests = analytics.get_recent_requests(limit=50)
-        
-        # Build response based on view
-        response_data = {
-            "endpoint": "unified_analytics",
-            "view": view,
-            "timestamp": time.time(),
-            "period": {
-                "hours_back": hours_back,
-                "start_time": time.time() - (hours_back * 3600),
-                "end_time": time.time()
-            },
-            "status": "success"
-        }
-        
-        if view == "summary":
-            response_data.update({
-                "summary": {
-                    "overview": {
-                        "total_requests": usage_data.get("totals", {}).get("requests", 0),
-                        "total_tokens": usage_data.get("totals", {}).get("tokens", 0),
-                        "total_cost": usage_data.get("totals", {}).get("cost", 0),
-                        "cache_hit_rate": usage_data.get("averages", {}).get("cache_hit_rate", 0),
-                        "avg_latency": usage_data.get("averages", {}).get("latency_ms", 0),
-                        "error_rate": usage_data.get("averages", {}).get("error_rate", 0)
-                    },
-                    "top_provider": max(provider_data.items(), key=lambda x: x[1].get("requests", 0)) if provider_data else None,
-                    "most_efficient": min(provider_data.items(), key=lambda x: x[1].get("cost_per_token", 1)) if provider_data else None,
-                    "alerts": [
-                        {"type": "info", "message": f"Cache hit rate: {usage_data.get('averages', {}).get('cache_hit_rate', 0)*100:.1f}%"},
-                        {"type": "success" if usage_data.get("averages", {}).get("error_rate", 0) < 0.05 else "warning", 
-                         "message": f"Error rate: {usage_data.get('averages', {}).get('error_rate', 0)*100:.2f}%"}
-                    ]
-                }
-            })
-            
-        elif view == "detailed":
-            token_data = analytics.get_token_breakdown(hours_back=hours_back)
-            user_data = analytics.get_user_analytics(limit=10)
-            
-            response_data.update({
-                "detailed": {
-                    "usage_metrics": usage_data,
-                    "provider_breakdown": provider_data,
-                    "token_analysis": token_data,
-                    "user_analytics": user_data,
-                    "recent_activity": recent_requests[:10],
-                    "system_health": {
-                        "cache_efficiency": usage_data.get("averages", {}).get("cache_hit_rate", 0),
-                        "performance_score": 1.0 - usage_data.get("averages", {}).get("error_rate", 0),
-                        "cost_efficiency": sum(p.get("cost_per_token", 0) for p in provider_data.values()) / max(len(provider_data), 1)
-                    }
-                }
-            })
-            
-        elif view == "tokens":
-            token_data = analytics.get_token_breakdown(hours_back=hours_back)
-            response_data.update({
-                "tokens": {
-                    "analysis": token_data,
-                    "insights": {
-                        "efficiency_rating": "high" if token_data.get("summary", {}).get("input_output_ratio", 0) < 2 else "medium",
-                        "optimization_potential": max(0, 2 - token_data.get("summary", {}).get("input_output_ratio", 0)) * 50,
-                        "recommendations": [
-                            "Cache repeated patterns to reduce input tokens",
-                            "Use more efficient providers for simple tasks",
-                            "Monitor token consumption trends"
-                        ]
-                    }
-                }
-            })
-            
-        elif view == "costs":
-            usage_data = analytics.get_usage_analytics(hours_back=hours_back)
-            provider_data = analytics.get_provider_analytics()
-            
-            if not usage_data:
-                usage_data = {"totals": {"cost": 0, "requests": 0, "cache_hits": 0}}
-            totals = usage_data.get("totals", {}) or {}
-            total_cost = totals.get("cost", 0.0)
-            total_requests = max(totals.get("requests", 0), 1)
-            cache_hits = totals.get("cache_hits", 0)
-            
-            provider_costs = provider_data or {}
-            
-            estimated_savings = cache_hits * 0.01  # Rough estimate
-            cost_without_optimization = total_cost + estimated_savings
-            cost_without_optimization = max(cost_without_optimization, 1e-6)
-            
-            cost_insights = {
-                "current_cost": total_cost,
-                "estimated_cost_without_optimization": cost_without_optimization,
-                "total_savings": estimated_savings,
-                "savings_percentage": (estimated_savings / cost_without_optimization) * 100 if cost_without_optimization else 0,
-                "cost_per_request": total_cost / max(total_requests, 1),
-                "projected_monthly_cost": total_cost * (30 * 24 / max(hours_back, 1)),
-                "most_expensive_provider": None,
-                "most_cost_effective": None
-            }
-            
-            if provider_costs:
-                most_expensive = max(provider_costs.items(), key=lambda x: x[1].get("cost", 0))
-                cost_insights["most_expensive_provider"] = {"provider": most_expensive[0], **most_expensive[1]}
-                most_effective = min(provider_costs.items(), key=lambda x: x[1].get("cost_per_token", 1))
-                cost_insights["most_cost_effective"] = {"provider": most_effective[0], **most_effective[1]}
-
-            return JSONResponse(content={
-                "status": "success",
-                "period_hours": hours_back,
-                "cost_analysis": cost_insights,
-                "provider_costs": provider_costs,
-                "hourly_breakdown": usage_data.get("hourly_breakdown", []),
-                "recommendations": [
-                    "Enable caching for better savings",
-                    "Use Google/DeepSeek for cost-effective requests",
-                    "Reserve premium providers for complex tasks"
-                ]
-            })
-            
-        elif view == "performance":
-            response_data.update({
-                "performance": {
-                    "metrics": {
-                        "overall_latency": usage_data.get("averages", {}).get("latency_ms", 0),
-                        "cache_hit_rate": usage_data.get("averages", {}).get("cache_hit_rate", 0),
-                        "throughput": usage_data.get("totals", {}).get("requests", 0) / max(hours_back, 1),
-                        "error_rate": usage_data.get("averages", {}).get("error_rate", 0)
-                    },
-                    "provider_performance": {
-                        k: {
-                            "avg_latency": v.get("avg_latency", 0),
-                            "requests_per_hour": v.get("requests", 0) / max(hours_back, 1),
-                            "reliability": 1.0 - (0.01 if v.get("requests", 0) > 0 else 0)  # Simplified
-                        }
-                        for k, v in provider_data.items()
-                    },
-                    "performance_grade": "A" if usage_data.get("averages", {}).get("latency_ms", 0) < 2000 else "B"
-                }
-            })
-            
-        elif view == "realtime":
-            current_hour = analytics.get_usage_analytics(hours_back=1)
-            response_data.update({
-                "realtime": {
-                    "live_metrics": {
-                        "current_hour_requests": current_hour.get("totals", {}).get("requests", 0),
-                        "current_hour_cost": current_hour.get("totals", {}).get("cost", 0),
-                        "live_cache_rate": current_hour.get("averages", {}).get("cache_hit_rate", 0),
-                        "active_providers": len([p for p in provider_data.keys() if provider_data[p].get("requests", 0) > 0])
-                    },
-                    "recent_requests": recent_requests[:5],
-                    "system_status": {
-                        "redis_connected": True,  # Would check actual Redis connection
-                        "analytics_active": True,
-                        "cache_operational": True,
-                        "rate_limiter_active": True
-                    },
-                    "alerts": []
-                }
-            })
-            
-        elif view == "providers":
-            response_data.update({
-                "providers": {
-                    "comparison": provider_data,
-                    "rankings": {
-                        "by_speed": sorted(provider_data.items(), key=lambda x: x[1].get("avg_latency", 1000)),
-                        "by_cost": sorted(provider_data.items(), key=lambda x: x[1].get("cost_per_token", 1)),
-                        "by_usage": sorted(provider_data.items(), key=lambda x: x[1].get("requests", 0), reverse=True)
-                    },
-                    "recommendations": {
-                        "speed_focused": "google",
-                        "cost_focused": "deepseek", 
-                        "quality_focused": "anthropic",
-                        "balanced": "openai"
-                    }
-                }
-            })
-            
-        elif view == "trends":
-            hourly_data = usage_data.get("hourly_breakdown", [])
-            response_data.update({
-                "trends": {
-                    "hourly_patterns": hourly_data,
-                    "trend_analysis": {
-                        "request_trend": "increasing" if len(hourly_data) > 1 and hourly_data[-1].get("requests", 0) > hourly_data[0].get("requests", 0) else "stable",
-                        "cost_trend": "increasing" if len(hourly_data) > 1 and hourly_data[-1].get("cost", 0) > hourly_data[0].get("cost", 0) else "stable",
-                        "peak_hour": max(hourly_data, key=lambda x: x.get("requests", 0)) if hourly_data else None
-                    },
-                    "forecasting": {
-                        "next_hour_requests": hourly_data[-1].get("requests", 0) if hourly_data else 0,
-                        "projected_daily_cost": sum(h.get("cost", 0) for h in hourly_data[-24:]) if len(hourly_data) >= 24 else 0
-                    }
-                }
-            })
-        
-        # Add chart data if requested
-        if include_charts and view in ["summary", "detailed", "costs", "performance", "trends"]:
-            response_data["charts"] = {
-                "hourly_requests": [{"hour": h.get("hour", ""), "requests": h.get("requests", 0)} for h in usage_data.get("hourly_breakdown", [])],
-                "hourly_costs": [{"hour": h.get("hour", ""), "cost": h.get("cost", 0)} for h in usage_data.get("hourly_breakdown", [])],
-                "provider_distribution": [{"provider": k, "requests": v.get("requests", 0)} for k, v in provider_data.items()],
-                "latency_trends": [{"hour": h.get("hour", ""), "latency": h.get("avg_latency", 0)} for h in usage_data.get("hourly_breakdown", [])]
-            }
-        
-        # Filter by provider if specified
-        if provider and provider in provider_data:
-            response_data["filtered_provider"] = {
-                "provider": provider,
-                "stats": provider_data[provider],
-                "filtered_requests": [r for r in recent_requests if r.get("provider") == provider][:10]
-            }
-        
-        return JSONResponse(content=response_data)
-        
-    except Exception as e:
-        return JSONResponse(content={
-            "error": f"Analytics endpoint failed: {str(e)}",
-            "view": view,
-            "suggestion": "Check Redis connection and analytics system status"
-        }, status_code=500)
 
 @app.post("/nvidia/process", tags=["NVIDIA Models"])
 async def process_nvidia_model(request: NVIDIAModelRequest):
@@ -3452,6 +3383,7 @@ async def process_learning_request(request: LearningRequest):
     """
     Process a learning-related request.
     """
+    global learning_agent
     if not learning_agent:
         raise HTTPException(status_code=500, detail="Learning Agent not initialized.")
 
@@ -3604,7 +3536,6 @@ async def run_simulation(request: SimulationRequest):
         
         # Import locally if needed
         if not scenario_simulator:
-            from src.agents.simulation.enhanced_scenario_simulator import EnhancedScenarioSimulator
             scenario_simulator = EnhancedScenarioSimulator()
             logger.info("🔧 Scenario simulator initialized on-demand")
 
@@ -3640,7 +3571,6 @@ async def run_simulation(request: SimulationRequest):
             "scenario_id": getattr(request, 'scenario_id', 'unknown'),
             "traceback": traceback.format_exc()
         }
-
 # --- BitNet Online Training Endpoints ---
 @app.get("/models/bitnet/status", response_model=TrainingStatusResponse, tags=["BitNet"])
 async def get_bitnet_model_status():
@@ -3878,6 +3808,35 @@ class ProtocolExecuteRequest(BaseModel):
 class ProtocolMessageRequest(BaseModel):
     message: Dict[str, Any]
     target_protocol: str  # "mcp", "a2a", or "acp"
+@app.get("/protocol/mcp/tools", tags=["Third-Party Protocols"])
+async def mcp_discover_tools():
+    """Discover available MCP tools"""
+    adapter = protocol_adapters.get("mcp")
+    if not adapter:
+        if mcp_demo_catalog:
+            return {
+                "status": "demo",
+                "protocol": "mcp",
+                "tools": mcp_demo_catalog.get("tools", [])
+            }
+        raise HTTPException(status_code=503, detail="MCP adapter not initialized")
+
+    try:
+        await adapter.discover_tools()
+        return {
+            "status": "success",
+            "protocol": "mcp",
+            "tools": list(adapter.tools_registry.values())
+        }
+    except Exception as e:
+        logger.warning(f"MCP tool discovery failed: {e}")
+        if mcp_demo_catalog:
+            return {
+                "status": "demo",
+                "protocol": "mcp",
+                "tools": mcp_demo_catalog.get("tools", [])
+            }
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/protocol/mcp/initialize", tags=["Third-Party Protocols"])
 async def mcp_initialize(demo_mode: bool = False):
@@ -3956,46 +3915,6 @@ async def mcp_initialize(demo_mode: bool = False):
                 "setup_guide": "To connect a real MCP server, set MCP_SERVER_URL environment variable."
             }
         )
-    except ProtocolTimeoutError as e:
-        raise HTTPException(status_code=504, detail=f"Timeout: {e}")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-@app.get("/protocol/mcp/tools", tags=["Third-Party Protocols"])
-async def mcp_discover_tools():
-    """Discover available MCP tools"""
-    if not protocol_adapters["mcp"]:
-        raise HTTPException(status_code=503, detail="MCP adapter not initialized")
-    
-    try:
-        await protocol_adapters["mcp"].discover_tools()
-        return {
-            "status": "success",
-            "protocol": "mcp",
-            "tools": list(protocol_adapters["mcp"].tools_registry.values())
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-@app.post("/protocol/mcp/call-tool", tags=["Third-Party Protocols"])
-async def mcp_call_tool(request: ProtocolToolRequest):
-    """Execute an MCP tool"""
-    if not protocol_adapters["mcp"]:
-        raise HTTPException(status_code=503, detail="MCP adapter not initialized")
-    
-    try:
-        result = await protocol_adapters["mcp"].call_tool(
-            request.tool_name,
-            request.arguments
-        )
-        return {
-            "status": "success",
-            "protocol": "mcp",
-            "tool": request.tool_name,
-            "result": result
-        }
-    except CircuitBreakerOpenError as e:
-        raise HTTPException(status_code=503, detail="Circuit breaker open - service unavailable")
     except ProtocolTimeoutError as e:
         raise HTTPException(status_code=504, detail=f"Timeout: {e}")
     except Exception as e:
@@ -4429,8 +4348,6 @@ async def websocket_state_endpoint(
         # Cleanup connection
         if 'connection_id' in locals():
             await nis_websocket_manager.disconnect(connection_id)
-
-@app.get("/api/state/current", tags=["State Management"])
 async def get_current_system_state():
     """
     📊 Get Current System State
@@ -4663,9 +4580,7 @@ async def deploy_edge_ai_system(
     except Exception as e:
         logger.error(f"Error deploying edge AI system: {e}")
         raise HTTPException(status_code=500, detail=str(e))
-
 # ====== BRAIN ORCHESTRATION ENDPOINTS ======
-
 @app.get("/api/agents/status", tags=["Brain Orchestration"])
 async def get_agents_status():
     """
@@ -4681,7 +4596,10 @@ async def get_agents_status():
     try:
         # Initialize orchestrator if needed
         if nis_agent_orchestrator is None:
-            initialize_agent_orchestrator()
+            try:
+                initialize_agent_orchestrator()
+            except Exception as init_error:
+                logger.error(f"Orchestrator initialization failed: {init_error}")
 
         # Get agent status from orchestrator
         status = nis_agent_orchestrator.get_agent_status() if nis_agent_orchestrator else {}
@@ -4712,7 +4630,6 @@ async def get_agents_status():
             "active_agents": 0,
             "timestamp": time.time()
         }
-
 @app.get("/api/agents/{agent_id}/status", tags=["Brain Orchestration"])
 async def get_agent_status(agent_id: str):
     """
@@ -5415,7 +5332,10 @@ async def agents_status():
     try:
         # Initialize orchestrator if needed
         if nis_agent_orchestrator is None:
-            initialize_agent_orchestrator()
+            try:
+                initialize_agent_orchestrator()
+            except Exception as init_error:
+                logger.error(f"Orchestrator initialization failed: {init_error}")
 
         # Get agent status from orchestrator
         status = nis_agent_orchestrator.get_agent_status() if nis_agent_orchestrator else {}
@@ -5445,11 +5365,9 @@ async def agents_status():
             "agents": [],
             "timestamp": time.time()
         }
-
-@app.post("/agent/behavior/{agent_id}")
 async def set_agent_behavior(agent_id: str, request: SetBehaviorRequest):
     try:
-        global agent_registry, coordinator
+        global agent_registry, coordinator, fallback_learning_agent
         
         # Initialize if not already done
         if not agent_registry:
@@ -5511,7 +5429,6 @@ async def get_memory_stats():
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to get memory stats: {str(e)}")
-
 @app.get("/memory/conversations", tags=["Memory"])
 async def search_conversations(
     query: Optional[str] = None,
@@ -5707,8 +5624,40 @@ class SimpleChatRequest(BaseModel):
 
 @app.post("/chat/simple")
 async def chat_simple(request: SimpleChatRequest):
-    """SIMPLE WORKING CHAT ENDPOINT"""
-    return {"response": f"Hello! You said: {request.message}", "status": "success", "user_id": request.user_id}
+    """SIMPLE CHAT ENDPOINT - REAL LLM"""
+    try:
+        messages = [
+            {"role": "system", "content": "You are a helpful AI assistant. Provide clear, accurate responses."},
+            {"role": "user", "content": request.message}
+        ]
+        
+        # Use real LLM provider
+        if llm_provider:
+            result = await llm_provider.generate_response(
+                messages=messages,
+                temperature=0.7,
+                requested_provider=None  # Auto-select best provider
+            )
+            
+            response_text = result.get("content", "No response generated")
+            
+            return {
+                "response": response_text,
+                "response_text": response_text,  # Add this for compatibility
+                "status": "success",
+                "user_id": request.user_id,
+                "provider": result.get("provider", "unknown"),
+                "model": result.get("model", "unknown"),
+                "tokens_used": result.get("tokens_used", 0),
+                "real_ai": result.get("real_ai", False)
+            }
+        else:
+            logger.error("LLM provider not initialized")
+            raise HTTPException(status_code=500, detail="LLM provider not available")
+            
+    except Exception as e:
+        logger.error(f"Chat simple error: {e}")
+        raise HTTPException(status_code=500, detail=f"Chat error: {str(e)}")
 
 @app.post("/chat/simple/stream")
 async def chat_simple_stream(request: SimpleChatRequest):
@@ -5988,7 +5937,6 @@ async def analyze_image(request: ImageAnalysisRequest):
     except Exception as e:
         logger.error(f"Vision analysis failed: {e}")
         raise HTTPException(status_code=500, detail=f"Vision analysis failed: {str(e)}")
-@app.post("/research/deep", tags=["Research"])
 async def conduct_deep_research(request: ResearchRequest):
     """
     🔬 Conduct comprehensive research with multi-source validation
@@ -6199,7 +6147,6 @@ async def generate_image(request: ImageGenerationRequest):
     except Exception as e:
         logger.error(f"Image generation failed: {e}")
         raise HTTPException(status_code=500, detail=f"Image generation failed: {str(e)}")
-
 async def create_enhanced_visual_placeholder(prompt: str, style: str, size: str) -> Dict[str, Any]:
     """Create an enhanced visual placeholder when AI generation fails"""
     try:
@@ -6989,8 +6936,6 @@ async def debate_reasoning(request: DebateRequest):
     except Exception as e:
         logger.error(f"Debate reasoning failed: {e}")
         raise HTTPException(status_code=500, detail=f"Debate reasoning failed: {str(e)}")
-
-@app.get("/agents/multimodal/status", tags=["System"])
 async def get_multimodal_status():
     """
     📋 Get status of all multimodal agents
@@ -7428,13 +7373,10 @@ async def nemo_physics_simulation(request: dict):
                 "error": "NeMo Integration Manager not available"
             }
         
-        # Get fallback physics agent
-        fallback_agent = agents.get('physics') if 'agents' in globals() else None
-        
         # Run enhanced physics simulation
         result = await nemo_manager.enhanced_physics_simulation(
             scenario_description=scenario_description,
-            fallback_agent=fallback_agent,
+            fallback_agent=None,
             simulation_type=request.get("simulation_type", "classical_mechanics"),
             precision=request.get("precision", "high")
         )
@@ -7773,9 +7715,8 @@ async def robotics_forward_kinematics(request: dict):
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"❌ Forward kinematics error: {e}")
+        logger.error(f"Robotics FK error: {e}")
         raise HTTPException(status_code=500, detail=f"Forward kinematics failed: {str(e)}")
-
 
 @app.post("/robotics/inverse_kinematics", tags=["Robotics"])
 async def robotics_inverse_kinematics(request: dict):
@@ -7829,17 +7770,23 @@ async def robotics_inverse_kinematics(request: dict):
         # Create agent and compute (REAL scipy optimization)
         agent = UnifiedRoboticsAgent(agent_id="api_robotics_agent")
         result = agent.compute_inverse_kinematics(robot_id, target_pose, robot_type, initial_guess)
-        
+
+        status = "success" if result.get("success", False) else "error"
+        message = result.get("error") if status == "error" else None
+
         # Convert all numpy arrays recursively
         result = _convert_numpy_to_json(result)
-        
-        logger.info(f"✅ IK computed: {robot_id} converged in {result.get('iterations', 0)} iterations")
-        
+
+        logger.info(f"✅ IK computed: {robot_id} converged in {result.get('iterations', 0)} iterations" if status == "success" else f"⚠️ IK failed for {robot_id}: {message}")
+
         response_data = {
-            "status": "success",
+            "status": status,
             "result": result,
             "timestamp": time.time()
         }
+
+        if message:
+            response_data["message"] = message
         
         import json
         json_str = json.dumps(response_data)
@@ -7848,7 +7795,7 @@ async def robotics_inverse_kinematics(request: dict):
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"❌ Inverse kinematics error: {e}")
+        logger.error(f"Robotics IK error: {e}")
         raise HTTPException(status_code=500, detail=f"Inverse kinematics failed: {str(e)}")
 
 
@@ -7902,13 +7849,16 @@ async def robotics_plan_trajectory(request: dict):
         # Create agent and compute (REAL trajectory planning)
         agent = UnifiedRoboticsAgent(agent_id="api_robotics_agent", enable_physics_validation=True)
         result = agent.plan_trajectory(robot_id, waypoints, robot_type, duration, num_points)
-        
+
+        status = "success" if result.get("success", False) else "error"
+        message = result.get("error") if status == "error" else None
+
         # Convert trajectory points to serializable format
-        if result.get("success") and "trajectory" in result:
+        if result.get("trajectory"):
             trajectory_list = []
             for point in result["trajectory"]:
                 traj_point = {
-                    "time": point.time if hasattr(point, 'time') else 0.0,
+                    "time": float(getattr(point, 'time', 0.0)),
                     "position": point.position.tolist() if hasattr(point.position, 'tolist') else list(point.position),
                     "velocity": point.velocity.tolist() if hasattr(point.velocity, 'tolist') else list(point.velocity),
                     "acceleration": point.acceleration.tolist() if hasattr(point.acceleration, 'tolist') else list(point.acceleration)
@@ -7919,17 +7869,24 @@ async def robotics_plan_trajectory(request: dict):
                     traj_point["angular_velocity"] = point.angular_velocity.tolist()
                 trajectory_list.append(traj_point)
             result["trajectory"] = trajectory_list
-        
+
         # Convert remaining numpy arrays
         result = _convert_numpy_to_json(result)
-        
-        logger.info(f"✅ Trajectory planned: {robot_id} ({num_points} points, physics_valid={result.get('physics_valid')})")
-        
+
+        logger.info(
+            f"✅ Trajectory planned: {robot_id} ({result.get('num_points', 0)} points, physics_valid={result.get('physics_valid')})"
+            if status == "success"
+            else f"⚠️ Trajectory planning failed for {robot_id}: {message}"
+        )
+
         response_data = {
-            "status": "success",
+            "status": status,
             "result": result,
             "timestamp": time.time()
         }
+
+        if message:
+            response_data["message"] = message
         
         import json
         json_str = json.dumps(response_data)
@@ -7938,7 +7895,7 @@ async def robotics_plan_trajectory(request: dict):
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"❌ Trajectory planning error: {e}")
+        logger.error(f"Robotics trajectory planning error: {e}")
         raise HTTPException(status_code=500, detail=f"Trajectory planning failed: {str(e)}")
 
 
@@ -8017,8 +7974,10 @@ async def robotics_capabilities():
         }
         
     except Exception as e:
-        logger.error(f"❌ Capabilities retrieval error: {e}")
-        raise HTTPException(status_code=500, detail=f"Capabilities retrieval failed: {str(e)}")
+        redirect_response = _handle_analytics_redirect(e)
+        if redirect_response:
+            return redirect_response
+        raise HTTPException(status_code=500, detail=f"Analytics endpoint failed: {str(e)}")
 
 
 # ========================================================================
@@ -8173,7 +8132,10 @@ async def robotics_control_stream(websocket: WebSocket, robot_id: str):
     except WebSocketDisconnect:
         logger.info(f"🔌 WebSocket disconnected: robot={robot_id}, messages={message_count}")
     except Exception as e:
-        logger.error(f"❌ WebSocket error for {robot_id}: {e}")
+        redirect_response = _handle_analytics_redirect(e)
+        if redirect_response:
+            return redirect_response
+        raise HTTPException(status_code=500, detail=f"Analytics endpoint failed: {str(e)}")
 
 
 @app.get("/robotics/telemetry/{robot_id}", tags=["Robotics"])
@@ -8258,164 +8220,3 @@ async def robotics_telemetry_stream(robot_id: str, update_rate: int = 50):
             "X-Accel-Buffering": "no"  # Disable nginx buffering
         }
     )
-
-
-@app.post("/robotics/execute_trajectory_stream", tags=["Robotics"])
-async def execute_trajectory_stream(request: dict):
-    """
-    🎬 Streaming Trajectory Execution (Chunked HTTP)
-    
-    Execute pre-planned trajectory with real-time progress updates.
-    - Server → Client: Continuous execution updates
-    - Ideal for: Long trajectories, progress monitoring, debugging
-    
-    Request Body:
-    ```json
-    {
-        "robot_id": "drone_001",
-        "robot_type": "drone",
-        "waypoints": [[0,0,0], [5,5,10], [10,0,15]],
-        "duration": 5.0,
-        "num_points": 100,
-        "execution_rate": 50
-    }
-    ```
-    
-    Response (NDJSON stream):
-    ```json
-    {"status": "planning", "timestamp": 1234567890.123}
-    {"status": "executing", "point": 0, "total": 100, "position": [0,0,0]}
-    {"status": "executing", "point": 1, "total": 100, "position": [0.003,0.003,0.007]}
-    ...
-    {"status": "complete", "point": 100, "total": 100}
-    ```
-    
-    Example Client (Python):
-    ```python
-    import requests
-    import json
-    
-    url = 'http://localhost/robotics/execute_trajectory_stream'
-    data = {
-        'robot_id': 'drone_001',
-        'robot_type': 'drone',
-        'waypoints': [[0,0,0], [5,5,10], [10,0,15]],
-        'duration': 5.0
-    }
-    
-    with requests.post(url, json=data, stream=True) as r:
-        for line in r.iter_lines():
-            if line:
-                update = json.loads(line)
-                print(f"Progress: {update['point']}/{update['total']}")
-    ```
-    """
-    robot_id = request.get('robot_id', 'unknown')
-    robot_type = request.get('robot_type', 'drone')
-    execution_rate = request.get('execution_rate', 50)  # Hz
-    
-    logger.info(f"🎬 Starting trajectory execution stream: robot={robot_id}")
-    
-    try:
-        from src.agents.robotics.unified_robotics_agent import UnifiedRoboticsAgent, RobotType
-        import numpy as np
-        
-        exec_agent = UnifiedRoboticsAgent(agent_id=f"exec_{robot_id}")
-        
-        async def trajectory_executor():
-            """Execute trajectory and stream progress"""
-            
-            try:
-                # Phase 1: Planning
-                yield json.dumps({
-                    'status': 'planning',
-                    'robot_id': robot_id,
-                    'timestamp': time.time()
-                }) + '\n'
-                
-                # Plan trajectory
-                waypoints = [np.array(w) for w in request['waypoints']]
-                duration = request.get('duration', 5.0)
-                num_points = request.get('num_points', 100)
-                
-                result = await asyncio.to_thread(
-                    exec_agent.plan_trajectory,
-                    robot_id,
-                    waypoints,
-                    RobotType[robot_type.upper()],
-                    duration,
-                    num_points
-                )
-                
-                if not result.get('success'):
-                    yield json.dumps({
-                        'status': 'error',
-                        'error': result.get('error', 'Planning failed'),
-                        'timestamp': time.time()
-                    }) + '\n'
-                    return
-                
-                trajectory = result['trajectory']
-                
-                yield json.dumps({
-                    'status': 'planned',
-                    'total_points': len(trajectory),
-                    'duration': duration,
-                    'timestamp': time.time()
-                }) + '\n'
-                
-                # Phase 2: Execution
-                sleep_time = 1.0 / execution_rate
-                
-                for i, point in enumerate(trajectory):
-                    # Convert trajectory point to dict
-                    point_data = {
-                        'time': float(point.time),
-                        'position': point.position.tolist() if hasattr(point.position, 'tolist') else point.position,
-                        'velocity': point.velocity.tolist() if hasattr(point.velocity, 'tolist') else point.velocity,
-                        'acceleration': point.acceleration.tolist() if hasattr(point.acceleration, 'tolist') else point.acceleration
-                    }
-                    
-                    yield json.dumps({
-                        'status': 'executing',
-                        'robot_id': robot_id,
-                        'point': i,
-                        'total': len(trajectory),
-                        'progress': (i / len(trajectory)) * 100,
-                        'trajectory_point': point_data,
-                        'timestamp': time.time()
-                    }) + '\n'
-                    
-                    await asyncio.sleep(sleep_time)
-                
-                # Phase 3: Complete
-                yield json.dumps({
-                    'status': 'complete',
-                    'robot_id': robot_id,
-                    'total_points': len(trajectory),
-                    'execution_time': len(trajectory) * sleep_time,
-                    'timestamp': time.time()
-                }) + '\n'
-                
-                logger.info(f"✅ Trajectory execution complete: robot={robot_id}, points={len(trajectory)}")
-                
-            except Exception as e:
-                logger.error(f"❌ Trajectory execution error: {e}")
-                yield json.dumps({
-                    'status': 'error',
-                    'error': str(e),
-                    'timestamp': time.time()
-                }) + '\n'
-        
-        return StreamingResponse(
-            trajectory_executor(),
-            media_type="application/x-ndjson",
-            headers={
-                "Cache-Control": "no-cache",
-                "X-Accel-Buffering": "no"
-            }
-        )
-        
-    except Exception as e:
-        logger.error(f"❌ Trajectory stream setup error: {e}")
-        raise HTTPException(status_code=500, detail=f"Trajectory execution failed: {str(e)}")

@@ -6,7 +6,7 @@ Replaces hardcoded performance values with evidence-based calculations
 import numpy as np
 import logging
 from typing import Dict, Any, List, Optional, Tuple, Union
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 from datetime import datetime
 from .confidence_calculator import calculate_confidence as _calculate_dynamic_confidence
 
@@ -60,7 +60,8 @@ def calculate_physics_compliance(validation_result: ValidationResult) -> float:
 def calculate_confidence(factors: Optional[Union[ConfidenceFactors, List[float]]] = None) -> Optional[float]:
     """Wrapper that delegates to the dynamic confidence calculator."""
     if isinstance(factors, ConfidenceFactors):
-        factors = list(factors.factors)
+        factor_values = [value for value in asdict(factors).values() if value is not None]
+        factors = factor_values if factor_values else None
     return _calculate_dynamic_confidence(factors)
 
 def calculate_accuracy(predictions: List[Any], ground_truth: List[Any], 
