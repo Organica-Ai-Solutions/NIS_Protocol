@@ -1,0 +1,130 @@
+{
+  "created": "2025-10-10T00:07:43.297452",
+  "nis_protocol_version": "3.2.3",
+  "purpose": "Robotics agent training data collection",
+  "datasets": {
+    "droid": {
+      "name": "DROID: Distributed Robot Interaction Dataset",
+      "url": "https://droid-dataset.github.io/",
+      "paper": "https://arxiv.org/abs/2403.12945",
+      "size": "76,000 trajectories",
+      "robot_types": [
+        "manipulator"
+      ],
+      "tasks": 84,
+      "institutions": 13
+    },
+    "ros_datasets": {
+      "name": "ROS Datasets Collection",
+      "url": "http://www.rosbag.org/datasets",
+      "types": [
+        "mobile_robots",
+        "drones",
+        "manipulators"
+      ]
+    },
+    "openrobotics": {
+      "name": "Open Robotics Datasets",
+      "url": "https://github.com/openrobotics",
+      "includes": [
+        "navigation",
+        "manipulation",
+        "perception"
+      ]
+    },
+    "px4_logs": {
+      "name": "PX4 Flight Review Logs",
+      "url": "https://logs.px4.io/",
+      "robot_type": "drone",
+      "format": "ULog"
+    },
+    "berkeley_autolab": {
+      "name": "Berkeley AutoLab Datasets",
+      "url": "https://berkeleyautomation.github.io/gqcnn/",
+      "focus": "grasping and manipulation"
+    }
+  },
+  "download_instructions": {
+    "droid": {
+      "method": "Python API",
+      "code": "\n# Install DROID dataset\npip install droid-dataset\n\n# Download data\nfrom droid import DROIDDataset\ndataset = DROIDDataset(download=True, data_dir='./data/droid')\n                ",
+      "size": "~500GB (full dataset)",
+      "recommended_subset": "10% sample for initial training"
+    },
+    "px4_logs": {
+      "method": "Manual download or API",
+      "url": "https://logs.px4.io/",
+      "format": "ULog files",
+      "tools": "pyulog for parsing"
+    },
+    "ros_bags": {
+      "method": "ROS tools",
+      "code": "\n# Install ROS bagfile tools\npip install rosbag rospkg\n\n# Read bagfile\nimport rosbag\nbag = rosbag.Bag('robot_data.bag')\nfor topic, msg, t in bag.read_messages():\n    # Process messages\n    pass\n                "
+    }
+  },
+  "preprocessing_pipeline": [
+    {
+      "step": 1,
+      "name": "Data Loading",
+      "description": "Load raw robot data from various formats",
+      "outputs": "trajectories, states, actions"
+    },
+    {
+      "step": 2,
+      "name": "Physics Validation",
+      "description": "Validate all trajectories against physics constraints using PINN",
+      "outputs": "validated_trajectories, violation_report"
+    },
+    {
+      "step": 3,
+      "name": "Normalization",
+      "description": "Normalize states and actions to [-1, 1] range",
+      "outputs": "normalized_data, normalization_params"
+    },
+    {
+      "step": 4,
+      "name": "Augmentation",
+      "description": "Add noise, rotate, scale for robustness",
+      "outputs": "augmented_trajectories"
+    },
+    {
+      "step": 5,
+      "name": "Train/Val/Test Split",
+      "description": "Split data 80/10/10",
+      "outputs": "train_data, val_data, test_data"
+    },
+    {
+      "step": 6,
+      "name": "Feature Engineering",
+      "description": "Compute velocities, accelerations, forces",
+      "outputs": "engineered_features"
+    }
+  ],
+  "physics_validation_requirements": {
+    "kinematic_constraints": {
+      "max_velocity": "Robot-specific",
+      "max_acceleration": "Robot-specific",
+      "joint_limits": "From URDF/config",
+      "workspace_bounds": "Defined per robot"
+    },
+    "dynamic_constraints": {
+      "mass": "Required",
+      "inertia_tensor": "Required for rotation",
+      "friction_coefficients": "Optional",
+      "damping": "Optional"
+    },
+    "safety_constraints": {
+      "collision_avoidance": "Required",
+      "singularity_avoidance": "Required for manipulators",
+      "stability_margins": "Required for mobile robots",
+      "force_limits": "Required for contact tasks"
+    },
+    "validation_method": "PINN (Physics-Informed Neural Networks)",
+    "rejection_criteria": {
+      "physics_violation": "Discard trajectory",
+      "sensor_noise_excessive": "Filter or discard",
+      "incomplete_trajectory": "Discard",
+      "unrealistic_dynamics": "Flag for review"
+    }
+  }
+}

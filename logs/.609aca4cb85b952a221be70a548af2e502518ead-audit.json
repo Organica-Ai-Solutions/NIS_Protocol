@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "/Users/diegofuego/Desktop/NIS_Protocol/logs/.609aca4cb85b952a221be70a548af2e502518ead-audit.json",
+    "files": [
+        {
+            "date": 1760066045121,
+            "name": "/Users/diegofuego/Desktop/NIS_Protocol/logs/mcp-puppeteer-2025-10-09.log",
+            "hash": "ea8e3479da35a27399589e2038a8a22fa6e216c1a287de28f6e2062de9588de6"
+        }
+    ],
+    "hashType": "sha256"
+}

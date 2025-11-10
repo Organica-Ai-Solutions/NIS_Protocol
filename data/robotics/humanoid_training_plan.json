@@ -1,0 +1,54 @@
+{
+  "robot_type": "humanoid",
+  "recommended_datasets": [
+    "CMU Motion Capture Database",
+    "AMASS: Archive of Motion Capture as Surface Shapes",
+    "H36M: Human3.6M dataset",
+    "Custom: Humanoid walking patterns"
+  ],
+  "training_phases": [
+    {
+      "phase": 1,
+      "name": "Supervised Learning from Demonstrations",
+      "data": "Expert trajectories from datasets",
+      "objective": "Learn basic behaviors",
+      "duration": "1-2 weeks",
+      "success_metric": "Trajectory following accuracy > 90%"
+    },
+    {
+      "phase": 2,
+      "name": "Physics-Informed Refinement",
+      "data": "Validated trajectories + physics constraints",
+      "objective": "Ensure physical plausibility",
+      "duration": "1 week",
+      "success_metric": "Physics violation rate < 1%"
+    },
+    {
+      "phase": 3,
+      "name": "Simulation Fine-Tuning",
+      "data": "Simulated environments (Gazebo/Isaac)",
+      "objective": "Generalization and robustness",
+      "duration": "2-3 weeks",
+      "success_metric": "Success rate > 85% in simulation"
+    },
+    {
+      "phase": 4,
+      "name": "Real-World Adaptation (Optional)",
+      "data": "Real robot telemetry",
+      "objective": "Sim-to-real transfer",
+      "duration": "Ongoing",
+      "success_metric": "Deployment-ready performance"
+    }
+  ],
+  "estimated_data_requirements": {
+    "trajectories": "10K - 100K",
+    "timesteps": "1M - 10M",
+    "storage": "100GB - 1TB",
+    "preprocessing_time": "1-3 days"
+  },
+  "compute_requirements": {
+    "training": "GPU recommended (V100/A100)",
+    "inference": "CPU acceptable for real-time",
+    "cloud_credits_estimate": "$500 - $2000"
+  }
+}

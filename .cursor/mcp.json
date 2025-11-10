@@ -1,0 +1,48 @@
+{
+  "mcpServers": {
+    "nis_protocol": {
+      "command": "python",
+      "args": ["scripts/utilities/orchestrator_status.py"],
+      "env": {
+        "NIS_PROVIDER_REGISTRY": "configs/provider_registry.yaml",
+        "NIS_PROTOCOL_ROUTING": "configs/protocol_routing.json"
+      }
+    },
+    "puppeteer": {
+      "command": "npx",
+      "args": ["-y", "@hisma/server-puppeteer"],
+      "env": {
+        "PUPPETEER_HEADLESS": "true"
+      }
+    }
+  },
+  "resources": [ 
+    {
+      "uri": "file:///${NIS_PROJECT_ROOT:-/opt/nis-protocol}/configs/provider_registry.yaml",
+      "name": "NIS Provider Registry",
+      "description": "NIS Protocol multiprovider configuration (OpenAI, Anthropic, Gemini, etc.)"
+    },
+    {
+      "uri": "file:///${NIS_PROJECT_ROOT:-/opt/nis-protocol}/configs/protocol_routing.json",
+      "name": "NIS Protocol Routing",
+      "description": "Third-party protocol routing and MCP adapter configuration"
+    },
+    {
+      "uri": "file:///${NIS_PROJECT_ROOT:-/opt/nis-protocol}/src/utils/env_config.py",
+      "name": "NIS Environment Config",
+      "description": "Environment configuration and LLM settings"
+    }
+  ],
+  "prompts": [
+    {
+      "name": "nis_agent_status",
+      "description": "Show current NIS Protocol agent orchestration status",
+      "arguments": []
+    },
+    {
+      "name": "nis_provider_info",
+      "description": "Display configured LLM providers and their capabilities",
+      "arguments": []
+    }
+  ]
+}

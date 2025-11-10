@@ -1,77 +1,84 @@
-# Production Multi-stage Dockerfile for NIS Protocol v3.2.1
-# Enhanced for NVIDIA NIM integration and real mathematical implementations
-# Supports both CPU and GPU deployment modes
+# ========================================================================
+# Production Multi-stage Dockerfile for NIS Protocol v3.2.1 (GPU Edition)
+# Enhanced for NVIDIA NIM, KAN/PINN workloads, and physics-informed AI
+# CUDA 12.1.1 — Optimized for AWS g4dn.xlarge (NVIDIA T4)
+# ========================================================================
 
-# Stage 1: Build stage (for compiling dependencies)
-FROM python:3.11-slim as builder
+# ---------- Stage 1: Builder -------------------------------------------------
+FROM nvidia/cuda:12.1.1-devel-ubuntu22.04 AS builder
 
-# Install only essential build tools
+# Prevent interactive installs
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install build tools and Python
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    gcc \
+    python3.11 python3.11-venv python3-pip build-essential git gcc g++ curl wget \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-# Copy requirements first for better layer caching
+# Copy requirements first for caching
 COPY requirements.txt .
 
-# Upgrade pip and install dependencies
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir --user -r requirements.txt
+# Install dependencies inside builder
+RUN python3.11 -m pip install --no-cache-dir --upgrade pip && \
+    python3.11 -m pip install --no-cache-dir --user -r requirements.txt
 
-# Install Whisper STT for GPT-like voice chat
-RUN pip install --no-cache-dir --user openai-whisper soundfile librosa ffmpeg-python
+# Optional: Add core voice & TTS/STT modules
+RUN python3.11 -m pip install --no-cache-dir --user \
+    openai-whisper soundfile librosa ffmpeg-python \
+    gtts suno-bark transformers scipy encodec nltk einops boto3
 
-# Install gTTS for simple, reliable voice output
-RUN pip install --no-cache-dir --user gtts
+# ---------- Stage 2: Runtime -------------------------------------------------
+FROM nvidia/cuda:12.1.1-runtime-ubuntu22.04
 
-# Install Bark TTS for natural, conversational voice (ChatGPT/Grok-like)
-RUN pip install --no-cache-dir --user suno-bark transformers scipy encodec nltk einops boto3
+# Prevent interactive installs
+ENV DEBIAN_FRONTEND=noninteractive
 
-
-# Stage 2: Runtime stage (lightweight)
-FROM python:3.11-slim
-
-# Install runtime dependencies including audio processing and NVIDIA tools
+# Install runtime dependencies (audio + system libs)
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl \
-    wget \
-    ffmpeg \
-    libsndfile1 \
-    libsndfile1-dev \
-    libasound2-dev \
-    portaudio19-dev \
-    libgomp1 \
-    libblas3 \
-    liblapack3 \
+    python3.11 python3-pip ffmpeg libsndfile1 libasound2-dev portaudio19-dev \
+    libgomp1 libblas3 liblapack3 curl wget git \
     && rm -rf /var/lib/apt/lists/*
 
-# Create non-root user
+# Create a non-root user for security
 RUN useradd -m -u 1000 nisuser
 
-# Copy Python packages from builder
+# Copy Python user site-packages from builder
 COPY --from=builder /root/.local /home/nisuser/.local
 
-# Set up environment
+# Set environment paths
 USER nisuser
 ENV PATH="/home/nisuser/.local/bin:${PATH}"
 ENV PYTHONPATH="/home/nisuser/app:${PYTHONPATH}"
 WORKDIR /home/nisuser/app
 
-# Copy only essential application files (thanks to optimized .dockerignore)
+# Copy project source
 COPY --chown=nisuser:nisuser . .
 
-# Create directories and set permissions
+# Prepare directories
 RUN mkdir -p logs static cache models data/chat_memory && \
     chmod +x *.sh 2>/dev/null || true
 
-# Health check
+# ---------------- Environment Variables ----------------
+# (Used by ECS and Docker Compose)
+ENV CUDA_HOME=/usr/local/cuda
+ENV NVIDIA_VISIBLE_DEVICES=all
+ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility
+ENV PYTHONUNBUFFERED=1
+
+# ---------------- Healthcheck ----------------
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD curl -f http://localhost:8000/health || exit 1
 
-# Expose port
+# ---------------- Port Exposure ----------------
 EXPOSE 8000
 
-# Use uvicorn for production
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1"] 
+# ---------------- Entrypoint ----------------
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1"]
+
+# ---------------- GPU Validation ----------------
+# Test locally before ECS:
+# docker build -t nis-protocol:gpu .
+# docker run --rm --gpus all nis-protocol:gpu python3 -c "import torch; print(torch.cuda.is_available(), torch.version.cuda)"
+# Expected: True 12.1 

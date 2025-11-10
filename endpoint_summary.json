@@ -1,0 +1,56 @@
+{
+  "get": {
+    "total": 53,
+    "success_200": 41,
+    "errors": [
+      {
+        "method": "GET",
+        "path": "/analytics/costs",
+        "status": "500",
+        "body_preview": "{\"detail\":\"Cost analytics failed: division by zero\"}"
+      },
+      {
+        "method": "GET",
+        "path": "/api/tools/enhanced",
+        "status": "500",
+        "body_preview": "{\"detail\":\"'NoneType' object has no attribute 'get_mcp_tool_definitions'\"}"
+      },
+      {
+        "method": "GET",
+        "path": "/api/tools/optimization/metrics",
+        "status": "500",
+        "body_preview": "{\"detail\":\"'NoneType' object has no attribute 'get_performance_metrics'\"}"
+      },
+      {
+        "method": "GET",
+        "path": "/protocol/mcp/tools",
+        "status": "500",
+        "body_preview": "{\"detail\":\"HTTPConnectionPool(host='localhost', port=3000): Max retries exceeded with url: / (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0xfffeea731c50>: Failed to establish a new connection: [Errno 111] Connection refused'))\"}"
+      }
+    ]
+  },
+  "post_no_body": {
+    "total": 68,
+    "executed_no_body": 10,
+    "errors": [
+      {
+        "method": "POST",
+        "path": "/api/edge/deploy",
+        "status": "422",
+        "body_preview": "{\"detail\":[{\"type\":\"missing\",\"loc\":[\"query\",\"device_type\"],\"msg\":\"Field required\",\"input\":null}]}"
+      },
+      {
+        "method": "POST",
+        "path": "/llm/cache/clear",
+        "status": "500",
+        "body_preview": "{\"detail\":\"Failed to clear cache: 'GeneralLLMProvider' object has no attribute 'smart_cache'\"}"
+      },
+      {
+        "method": "POST",
+        "path": "/protocol/mcp/initialize",
+        "status": "503",
+        "body_preview": "{\"detail\":{\"error\":\"Connection failed: Failed to connect to MCP server: HTTPConnectionPool(host='localhost', port=3000): Max retries exceeded with url: / (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0xfffeea767350>: Failed to establish a new connection: [Errno 111] Connection refused'))\",\"suggestion\":\"No MCP server found. Try adding '?demo_mode=true' to test the inte"
+      }
+    ]
+  }
+}
