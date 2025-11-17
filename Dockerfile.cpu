@@ -1,0 +1,87 @@
+# ========================================================================
+# CPU-Only Dockerfile for NIS Protocol v3.2.1 (Local Testing)
+# Optimized for Mac/Linux development without GPU requirements
+# Faster build times, smaller image size, local development friendly
+# ========================================================================
+
+# ---------- Single Stage: CPU Runtime ----------------------------------------
+FROM python:3.11-slim-bullseye
+
+# Prevent interactive installs
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install runtime dependencies (no CUDA, lighter weight)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl wget git \
+    ffmpeg libsndfile1 libasound2-dev portaudio19-dev \
+    libgomp1 libblas3 liblapack3 \
+    build-essential gcc g++ \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create a non-root user for security
+RUN useradd -m -u 1000 nisuser
+
+# Set working directory
+WORKDIR /home/nisuser/app
+
+# Copy requirements first for caching
+COPY requirements.txt constraints.txt ./
+
+# Install Python dependencies
+# Note: PyTorch CPU version is much smaller than GPU version
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt -c constraints.txt
+
+# Optional: Install CPU-optimized PyTorch (smaller, faster for Mac)
+# Uncomment if you want to replace GPU PyTorch with CPU version
+# RUN pip uninstall -y torch torchvision torchaudio && \
+#     pip install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+
+# Optional: Add core voice & TTS/STT modules (if needed)
+RUN pip install --no-cache-dir \
+    openai-whisper soundfile librosa ffmpeg-python \
+    gtts transformers scipy encodec nltk einops boto3
+
+# Copy project source
+COPY --chown=nisuser:nisuser . .
+
+# Switch to non-root user
+USER nisuser
+
+# Set environment paths
+ENV PATH="/home/nisuser/.local/bin:${PATH}"
+ENV PYTHONPATH="/home/nisuser/app:${PYTHONPATH}"
+ENV PYTHONUNBUFFERED=1
+
+# Prepare directories
+RUN mkdir -p logs static cache models data/chat_memory && \
+    chmod +x *.sh 2>/dev/null || true
+
+# ---------------- CPU-Specific Environment ----------------
+# Disable GPU features
+ENV CUDA_VISIBLE_DEVICES=""
+ENV NVIDIA_NIM_ENABLED=false
+ENV BITNET_TRAINING_ENABLED=false
+
+# CPU optimization flags
+ENV OMP_NUM_THREADS=4
+ENV MKL_NUM_THREADS=4
+
+# ---------------- Healthcheck ----------------
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:8000/health || exit 1
+
+# ---------------- Port Exposure ----------------
+EXPOSE 8000
+
+# ---------------- Entrypoint ----------------
+# Note: Using 1 worker for simpler debugging on Mac
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1", "--reload"]
+
+# ---------------- Local Testing ----------------
+# Build and run locally:
+# docker build -f Dockerfile.cpu -t nis-protocol:cpu .
+# docker run --rm -p 8000:8000 --env-file .env nis-protocol:cpu
+#
+# Or use docker-compose:
+# docker-compose -f docker-compose.cpu.yml up

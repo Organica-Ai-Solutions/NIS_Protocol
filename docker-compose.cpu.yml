@@ -1,0 +1,128 @@
+# CPU-Only Docker Compose for Local Mac Testing
+# Fast startup, no GPU requirements, development-friendly
+# Usage: docker-compose -f docker-compose.cpu.yml up
+
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.0
+    container_name: nis-zookeeper-cpu
+    networks:
+      - nis-network-cpu
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  kafka:
+    image: confluentinc/cp-kafka:7.4.0
+    container_name: nis-kafka-cpu
+    networks:
+      - nis-network-cpu
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    depends_on:
+      - zookeeper
+
+  redis:
+    image: redis:7-alpine
+    container_name: nis-redis-cpu
+    networks:
+      - nis-network-cpu
+    ports:
+      - "6379:6379"
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.cpu
+    container_name: nis-backend-cpu
+    networks:
+      - nis-network-cpu
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      # LLM API Keys (REQUIRED)
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-your_openai_api_key_here}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-your_anthropic_api_key_here}
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY:-your_deepseek_api_key_here}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY:-your_google_api_key_here}
+      
+      # Google Cloud (if using Vertex AI)
+      - GCP_PROJECT_ID=${GCP_PROJECT_ID:-organicaaisolutions}
+      - GOOGLE_SERVICE_ACCOUNT_KEY=/app/service-account-key.json
+      
+      # CPU-Specific Settings
+      - CUDA_VISIBLE_DEVICES=
+      - NVIDIA_NIM_ENABLED=false
+      - BITNET_TRAINING_ENABLED=false
+      
+      # CPU Optimization
+      - OMP_NUM_THREADS=4
+      - MKL_NUM_THREADS=4
+      
+      # Development Mode
+      - PYTHONUNBUFFERED=1
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    
+    volumes:
+      # Mount code for hot-reload during development
+      - ./:/home/nisuser/app
+      # Google credentials (optional)
+      - ./configs/google-service-account.json:/app/service-account-key.json:ro
+    
+    depends_on:
+      - redis
+      - kafka
+    
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+  nginx:
+    build:
+      context: .
+      dockerfile: system/config/Dockerfile.nginx
+    container_name: nis-nginx-cpu
+    networks:
+      - nis-network-cpu
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  runner:
+    build: ./runner
+    container_name: nis-runner-cpu
+    networks:
+      - nis-network-cpu
+    volumes:
+      - ./runner/workspace:/app/workspace
+    environment:
+      - PYTHONUNBUFFERED=1
+    ports:
+      - "8001:8001"
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
+
+networks:
+  nis-network-cpu:
+    driver: bridge
+
+# Volumes for persistent data (optional)
+volumes:
+  redis_data_cpu:
+  kafka_data_cpu:
