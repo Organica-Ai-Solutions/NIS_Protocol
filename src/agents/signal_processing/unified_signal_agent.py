@@ -146,6 +146,26 @@ class SignalProcessingResult:
     timestamp: float = field(default_factory=time.time)
     signal_metadata: Dict[str, Any] = field(default_factory=dict)
     feature_extraction: Dict[str, Any] = field(default_factory=dict)
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to JSON-serializable dictionary"""
+        return {
+            "processed_signal": self.processed_signal.tolist() if isinstance(self.processed_signal, np.ndarray) else self.processed_signal,
+            "confidence": float(self.confidence) if self.confidence is not None else None,
+            "signal_mode": self.signal_mode.value if hasattr(self.signal_mode, 'value') else str(self.signal_mode),
+            "signal_type": self.signal_type.value if hasattr(self.signal_type, 'value') else str(self.signal_type),
+            "transforms_applied": [t.value if hasattr(t, 'value') else str(t) for t in self.transforms_applied],
+            "filters_applied": [f.value if hasattr(f, 'value') else str(f) for f in self.filters_applied],
+            "frequency_analysis": self.frequency_analysis,
+            "time_analysis": self.time_analysis,
+            "quality_metrics": self.quality_metrics,
+            "execution_time": float(self.execution_time),
+            "sampling_rate": float(self.sampling_rate),
+            "model_used": str(self.model_used),
+            "timestamp": float(self.timestamp),
+            "signal_metadata": self.signal_metadata,
+            "feature_extraction": self.feature_extraction
+        }
 
 @dataclass
 class LaplaceTransformConfig:

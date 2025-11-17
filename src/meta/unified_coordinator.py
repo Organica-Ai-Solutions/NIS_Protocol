@@ -78,6 +78,7 @@ class UnifiedCoordinator:
     def process_data_pipeline(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Process data through the NIS pipeline: Laplace → KAN → PINN
+        Returns JSON-serializable results
         """
         try:
             result = {
@@ -89,14 +90,23 @@ class UnifiedCoordinator:
             
             if self.laplace:
                 laplace_result = self.laplace.process(data)
+                # Convert to dict if it's a dataclass with to_dict method
+                if hasattr(laplace_result, 'to_dict'):
+                    laplace_result = laplace_result.to_dict()
                 result["laplace"] = laplace_result
             
             if self.kan:
                 kan_result = self.kan.process(data)
+                # Convert to dict if it's a dataclass with to_dict method
+                if hasattr(kan_result, 'to_dict'):
+                    kan_result = kan_result.to_dict()
                 result["kan"] = kan_result
                 
             if self.pinn:
                 pinn_result = self.pinn.validate_physics(data)
+                # Convert to dict if it's a dataclass with to_dict method
+                if hasattr(pinn_result, 'to_dict'):
+                    pinn_result = pinn_result.to_dict()
                 result["pinn"] = pinn_result
             
             return result

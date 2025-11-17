@@ -756,15 +756,15 @@ async def initialize_system():
         logger.error(f"Failed to initialize Enhanced Chat Memory: {e}")
         enhanced_chat_memory = None
 
-    # Temporarily disable agents that contain numpy arrays to fix chat serialization
+    # ✅ FIXED: Re-enable scientific pipeline agents (numpy serialization fixed)
     # Use coordinator's pipeline agents (avoid duplication)
     # Access the agents from the coordinator after proper initialization
-    laplace = None  # Temporarily disabled - coordinator.laplace if hasattr(coordinator, 'laplace') else None
-    kan = None  # Temporarily disabled - coordinator.kan if hasattr(coordinator, 'kan') else None
-    pinn = None  # Temporarily disabled - coordinator.pinn if hasattr(coordinator, 'pinn') else None
+    laplace = coordinator.laplace if hasattr(coordinator, 'laplace') else None
+    kan = coordinator.kan if hasattr(coordinator, 'kan') else None
+    pinn = coordinator.pinn if hasattr(coordinator, 'pinn') else None
 
     # Log initialization status
-    logger.info(f"ScientificCoordinator initialized: laplace={laplace is not None}, kan={kan is not None}, pinn={pinn is not None} (agents temporarily disabled for chat fix)")
+    logger.info(f"✅ ScientificCoordinator initialized: laplace={laplace is not None}, kan={kan is not None}, pinn={pinn is not None}")
 
     # Start agent orchestrator background tasks if it exists
     if nis_agent_orchestrator is not None:

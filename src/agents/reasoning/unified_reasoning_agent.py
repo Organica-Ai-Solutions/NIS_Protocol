@@ -132,6 +132,35 @@ class ReasoningResult:
     interpretability_data: Dict[str, Any] = field(default_factory=dict)
     symbolic_functions: List[str] = field(default_factory=list)
     reasoning_trace: List[str] = field(default_factory=list)
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to JSON-serializable dictionary"""
+        # Helper function to convert numpy arrays recursively
+        def convert_value(val):
+            if isinstance(val, np.ndarray):
+                return val.tolist()
+            elif isinstance(val, (np.integer, np.floating)):
+                return val.item()
+            elif isinstance(val, dict):
+                return {k: convert_value(v) for k, v in val.items()}
+            elif isinstance(val, (list, tuple)):
+                return [convert_value(item) for item in val]
+            return val
+        
+        return {
+            "result": convert_value(self.result),
+            "confidence": float(self.confidence) if self.confidence is not None else None,
+            "reasoning_mode": self.reasoning_mode.value if hasattr(self.reasoning_mode, 'value') else str(self.reasoning_mode),
+            "strategy": self.strategy.value if hasattr(self.strategy, 'value') else str(self.strategy),
+            "execution_time": float(self.execution_time),
+            "physics_validity": bool(self.physics_validity),
+            "conservation_check": convert_value(self.conservation_check),
+            "model_used": str(self.model_used),
+            "timestamp": float(self.timestamp),
+            "interpretability_data": convert_value(self.interpretability_data),
+            "symbolic_functions": self.symbolic_functions,
+            "reasoning_trace": self.reasoning_trace
+        }
 
 @dataclass
 class NemotronConfig:
