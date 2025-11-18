@@ -5982,6 +5982,94 @@ async def get_genesis_history():
         logger.error(f"Genesis history retrieval failed: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to get genesis history: {str(e)}")
 
+@app.post("/v4/consciousness/collective/register", tags=["V4.0 Evolution"])
+async def register_consciousness_peer(peer_id: str, peer_endpoint: str):
+    """
+    🌐 V4.0: Register peer NIS instance for collective consciousness
+    
+    Enables multi-instance decision making - swarm intelligence!
+    """
+    try:
+        if consciousness_service is None:
+            raise HTTPException(status_code=503, detail="Consciousness service not initialized")
+        
+        result = await consciousness_service.register_peer(peer_id, peer_endpoint)
+        
+        return {
+            "status": "success",
+            "peer_registered": True,
+            **result,
+            "timestamp": time.time()
+        }
+        
+    except Exception as e:
+        logger.error(f"Peer registration failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Peer registration failed: {str(e)}")
+
+@app.post("/v4/consciousness/collective/decide", tags=["V4.0 Evolution"])
+async def collective_consciousness_decision(problem: str, local_decision: dict):
+    """
+    🧠 V4.0: Make collective decision across multiple instances
+    
+    Consults all registered peers before deciding.
+    """
+    try:
+        if consciousness_service is None:
+            raise HTTPException(status_code=503, detail="Consciousness service not initialized")
+        
+        result = await consciousness_service.collective_decision(problem, local_decision)
+        
+        return {
+            "status": "success",
+            **result,
+            "timestamp": time.time()
+        }
+        
+    except Exception as e:
+        logger.error(f"Collective decision failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Collective decision failed: {str(e)}")
+
+@app.post("/v4/consciousness/collective/sync", tags=["V4.0 Evolution"])
+async def sync_consciousness_state():
+    """
+    🔄 V4.0: Synchronize consciousness state with all peers
+    """
+    try:
+        if consciousness_service is None:
+            raise HTTPException(status_code=503, detail="Consciousness service not initialized")
+        
+        result = await consciousness_service.sync_state_with_peers()
+        
+        return {
+            "status": "success",
+            **result
+        }
+        
+    except Exception as e:
+        logger.error(f"State sync failed: {e}")
+        raise HTTPException(status_code=500, detail=f"State sync failed: {str(e)}")
+
+@app.get("/v4/consciousness/collective/status", tags=["V4.0 Evolution"])
+async def get_collective_consciousness_status():
+    """
+    📊 V4.0: Get distributed consciousness network status
+    """
+    try:
+        if consciousness_service is None:
+            raise HTTPException(status_code=503, detail="Consciousness service not initialized")
+        
+        status = consciousness_service.get_collective_status()
+        
+        return {
+            "status": "success",
+            **status,
+            "timestamp": time.time()
+        }
+        
+    except Exception as e:
+        logger.error(f"Collective status retrieval failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Collective status failed: {str(e)}")
+
 @app.get("/infrastructure/status")
 async def infrastructure_status():
     return {

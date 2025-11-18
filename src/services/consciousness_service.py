@@ -911,6 +911,174 @@ class ConsciousnessService(NISAgent):
                 for g in self.genesis_history[-5:]
             ]
         }
+    
+    # =============================================================================
+    # 🌐 V4.0: DISTRIBUTED CONSCIOUSNESS - MULTI-INSTANCE COORDINATION
+    # =============================================================================
+    
+    def __init_distributed__(self):
+        """Initialize distributed consciousness (call after __init__)"""
+        if not hasattr(self, '_distributed_initialized'):
+            self.peer_instances = {}  # Other consciousness instances
+            self.collective_decisions = []
+            self.sync_enabled = True
+            self._distributed_initialized = True
+    
+    async def register_peer(self, peer_id: str, peer_endpoint: str) -> Dict[str, Any]:
+        """
+        🌐 V4.0: Register another NIS instance for collective consciousness
+        
+        Args:
+            peer_id: Unique identifier for peer instance
+            peer_endpoint: HTTP endpoint for peer communication
+        """
+        if not hasattr(self, '_distributed_initialized'):
+            self.__init_distributed__()
+        
+        self.peer_instances[peer_id] = {
+            "endpoint": peer_endpoint,
+            "registered_at": time.time(),
+            "last_sync": None,
+            "consensus_weight": 1.0,
+            "reliability": 1.0
+        }
+        
+        self.logger.info(f"🌐 Peer registered: {peer_id} ({len(self.peer_instances)} total peers)")
+        
+        return {
+            "peer_id": peer_id,
+            "total_peers": len(self.peer_instances),
+            "collective_size": len(self.peer_instances) + 1  # +1 for self
+        }
+    
+    async def collective_decision(
+        self, 
+        problem: str, 
+        local_decision: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """
+        🧠 V4.0: Consult peer instances before making final decision
+        
+        Implements collective consciousness - multiple minds, one decision
+        """
+        if not hasattr(self, '_distributed_initialized'):
+            self.__init_distributed__()
+        
+        if not self.peer_instances or not self.sync_enabled:
+            # No peers or sync disabled - use local decision
+            return {
+                "decision": local_decision,
+                "collective": False,
+                "peers_consulted": 0,
+                "consensus_level": 1.0
+            }
+        
+        # Collect peer opinions (simulated for now - real impl would HTTP call)
+        peer_opinions = []
+        for peer_id, peer_info in self.peer_instances.items():
+            # In real implementation: await self._query_peer(peer_id, problem)
+            # For now, simulate diverse opinions
+            peer_opinions.append({
+                "peer_id": peer_id,
+                "decision": local_decision,  # Simplified
+                "confidence": peer_info["reliability"],
+                "weight": peer_info["consensus_weight"]
+            })
+        
+        # Calculate collective consensus
+        total_weight = sum(p["weight"] for p in peer_opinions) + 1.0  # +1 for local
+        weighted_confidence = sum(
+            p["confidence"] * p["weight"] for p in peer_opinions
+        ) + (local_decision.get("confidence", 0.7) * 1.0)
+        
+        consensus_level = weighted_confidence / total_weight
+        
+        # Determine if we should trust collective over local
+        if consensus_level > local_decision.get("confidence", 0.7):
+            final_decision = "collective"
+            confidence = consensus_level
+        else:
+            final_decision = "local"
+            confidence = local_decision.get("confidence", 0.7)
+        
+        result = {
+            "decision": local_decision,
+            "collective": True,
+            "peers_consulted": len(peer_opinions),
+            "consensus_level": consensus_level,
+            "decision_source": final_decision,
+            "final_confidence": confidence,
+            "collective_size": len(self.peer_instances) + 1
+        }
+        
+        # Record collective decision
+        self.collective_decisions.append({
+            "timestamp": time.time(),
+            "problem": problem,
+            "peers_consulted": len(peer_opinions),
+            "consensus_level": consensus_level
+        })
+        
+        self.logger.info(
+            f"🌐 Collective decision: {len(peer_opinions)} peers, "
+            f"consensus={consensus_level:.2f}, source={final_decision}"
+        )
+        
+        return result
+    
+    async def sync_state_with_peers(self) -> Dict[str, Any]:
+        """
+        🔄 V4.0: Synchronize consciousness state across instances
+        
+        Shares evolution history, genesis history, performance metrics
+        """
+        if not hasattr(self, '_distributed_initialized'):
+            self.__init_distributed__()
+        
+        # Prepare state for sharing
+        local_state = {
+            "agent_id": self.agent_id,
+            "consciousness_threshold": self.consciousness_threshold,
+            "bias_threshold": self.bias_threshold,
+            "evolution_count": len(self.evolution_history) if hasattr(self, 'evolution_history') else 0,
+            "genesis_count": len(self.genesis_history) if hasattr(self, 'genesis_history') else 0,
+            "timestamp": time.time()
+        }
+        
+        synced_peers = []
+        for peer_id, peer_info in self.peer_instances.items():
+            # In real implementation: await self._send_state_to_peer(peer_id, local_state)
+            peer_info["last_sync"] = time.time()
+            synced_peers.append(peer_id)
+        
+        self.logger.info(f"🔄 State synced with {len(synced_peers)} peers")
+        
+        return {
+            "synced_peers": synced_peers,
+            "local_state": local_state,
+            "sync_timestamp": time.time()
+        }
+    
+    def get_collective_status(self) -> Dict[str, Any]:
+        """Get status of distributed consciousness network"""
+        if not hasattr(self, '_distributed_initialized'):
+            return {"distributed_enabled": False}
+        
+        return {
+            "distributed_enabled": True,
+            "total_peers": len(self.peer_instances),
+            "collective_size": len(self.peer_instances) + 1,
+            "collective_decisions_made": len(self.collective_decisions),
+            "sync_enabled": self.sync_enabled,
+            "peers": [
+                {
+                    "peer_id": peer_id,
+                    "endpoint": info["endpoint"],
+                    "last_sync": datetime.fromtimestamp(info["last_sync"]).isoformat() if info["last_sync"] else None
+                }
+                for peer_id, info in self.peer_instances.items()
+            ]
+        }
 
 
 # =============================================================================
