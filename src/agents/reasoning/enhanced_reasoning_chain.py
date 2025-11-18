@@ -636,20 +636,15 @@ class EnhancedReasoningChain(NISAgent):
                 if debate_history:
                     context = f"\nPrevious debate rounds:\n{json.dumps(debate_history, indent=2)}"
                 
-                debate_prompt = f"""
-                You are participating in a structured debate about: {problem}
-                
-                Your position: {position}
-                Round: {round_num + 1}
-                {context}
-                
-                Provide your strongest argument for this position. Address counter-arguments from previous rounds if applicable.
-                Be logical, evidence-based, and persuasive. Keep your response focused and under 300 words.
-                """
+                # Create a direct debate prompt that forces immediate argument
+                if round_num == 0:
+                    debate_prompt = f"{position}\n\nProvide 3 strongest evidence-based arguments for this position in 200 words:"
+                else:
+                    debate_prompt = f"{position}\n\nCounter the opposing arguments:\n{context}\n\nProvide your rebuttal in 200 words:"
                 
                 try:
                     response = await self.llm_provider.generate_response([
-                        {"role": "system", "content": "You are an expert debater skilled in logical argumentation."},
+                        {"role": "system", "content": "You are debating. Present arguments directly without preamble or meta-commentary."},
                         {"role": "user", "content": debate_prompt}
                     ], agent_type="reasoning", requested_provider=model_name)
                     

@@ -109,6 +109,21 @@ class GeneralLLMProvider:
         """Generate a response using real API or mock fallback"""
         provider = requested_provider or self.default_provider
         
+        # Map model names to provider names
+        provider_mapping = {
+            "gpt-4": "openai",
+            "gpt-4-turbo": "openai",
+            "gpt-4-turbo-preview": "openai",
+            "claude-3-opus": "anthropic",
+            "claude-3-sonnet": "anthropic",
+            "claude-3-haiku": "anthropic",
+            "gemini-pro": "google"
+        }
+        
+        # Use mapping if provider is a model name
+        if provider in provider_mapping:
+            provider = provider_mapping[provider]
+        
         # Try real API if available
         if self.real_providers.get(provider, False):
             try:
