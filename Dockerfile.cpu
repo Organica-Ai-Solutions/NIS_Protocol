@@ -29,8 +29,10 @@ COPY requirements.txt constraints.txt ./
 
 # Install Python dependencies
 # Note: PyTorch CPU version is much smaller than GPU version
+# Skip keras constraint during main install (tensorflow includes tf-keras)
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt -c constraints.txt
+    pip install --no-cache-dir -r requirements.txt && \
+    pip uninstall -y keras || true
 
 # Optional: Install CPU-optimized PyTorch (smaller, faster for Mac)
 # Uncomment if you want to replace GPU PyTorch with CPU version

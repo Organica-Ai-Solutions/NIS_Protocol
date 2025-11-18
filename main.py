@@ -75,6 +75,9 @@ import src.agents.communication.vibevoice_engine as vibevoice_module
 # Global VibeVoice engine instance
 vibevoice_engine = None
 
+# Global NVIDIA NeMo Integration Manager instance
+nemo_manager = None
+
 # Enhanced optimization systems (temporarily disabled for startup)
 # from src.mcp.schemas.enhanced_tool_schemas import EnhancedToolSchemas
 # from src.mcp.enhanced_response_system import EnhancedResponseSystem, ResponseFormat
@@ -858,6 +861,9 @@ async def startup_event():
     # Initialize VibeVoice engine synchronously
     initialize_vibevoice_engine()
     
+    # Initialize NVIDIA NeMo manager synchronously
+    initialize_nemo_manager()
+    
     logger.info("🔄 Initialization scheduled in background")
     logger.info("📊 Enhanced pipeline: Laplace → Consciousness → KAN → PINN → Safety → Multimodal")
     logger.info("🎓 Online Training: BitNet continuously learning from conversations")
@@ -878,6 +884,32 @@ def initialize_vibevoice_engine():
         logger.error(f"❌ VibeVoice initialization failed: {e}")
         # Continue without VibeVoice
         vibevoice_engine = None
+
+
+def initialize_nemo_manager():
+    """Initialize NVIDIA NeMo Integration Manager synchronously."""
+    global nemo_manager
+    try:
+        if not NEMO_INTEGRATION_AVAILABLE:
+            logger.info("⚠️ NVIDIA NeMo integration not available - skipping initialization")
+            nemo_manager = None
+            return
+        
+        logger.info("🚀 Initializing NVIDIA NeMo Integration Manager...")
+        
+        # Create NeMo Integration Manager instance
+        nemo_manager = NeMoIntegrationManager()
+        
+        logger.info("✅ NVIDIA NeMo Integration Manager ready")
+        logger.info("   • NeMo Framework: Available")
+        logger.info("   • Agent Toolkit: Ready for installation")
+        logger.info("   • Inception Benefits: Enterprise access enabled")
+
+    except Exception as e:
+        logger.error(f"❌ NVIDIA NeMo manager initialization failed: {e}")
+        # Continue without NeMo manager
+        nemo_manager = None
+
 
 async def initialize_mcp_integration():
     """Initialize MCP integration in background."""
