@@ -791,6 +791,126 @@ class ConsciousnessService(NISAgent):
                 for e in self.evolution_history[-5:]
             ]
         }
+    
+    # =============================================================================
+    # 🔬 V4.0: AGENT GENESIS - DYNAMIC AGENT CREATION
+    # =============================================================================
+    
+    async def detect_capability_gap(self, recent_failures: List[Dict[str, Any]]) -> Optional[str]:
+        """
+        🔬 V4.0: Detect missing capabilities from failure patterns
+        
+        Meta-cognitive analysis: What can't we do well?
+        """
+        if len(recent_failures) < 3:
+            return None
+        
+        # Analyze failure patterns
+        failure_types = {}
+        for failure in recent_failures:
+            failure_type = failure.get("type", "unknown")
+            failure_types[failure_type] = failure_types.get(failure_type, 0) + 1
+        
+        # Find most common failure
+        if not failure_types:
+            return None
+        
+        most_common = max(failure_types, key=failure_types.get)
+        
+        # Map failures to capability gaps
+        capability_map = {
+            "ocr_handwriting": "handwriting_recognition",
+            "complex_math": "advanced_mathematics",
+            "code_generation": "code_synthesis",
+            "translation_rare_language": "rare_language_translation",
+            "audio_analysis": "audio_processing",
+            "video_understanding": "video_analysis"
+        }
+        
+        return capability_map.get(most_common)
+    
+    async def synthesize_agent(self, capability: str) -> Dict[str, Any]:
+        """
+        🎯 V4.0: Create new agent specification for missing capability
+        
+        Consciousness decides what agent to create!
+        """
+        agent_templates = {
+            "handwriting_recognition": {
+                "agent_id": f"handwriting_ocr_{int(time.time())}",
+                "name": "Handwriting Recognition Agent",
+                "type": "specialized",
+                "capabilities": ["ocr", "handwriting", "document_analysis"],
+                "model_recommendation": "vision_transformer",
+                "context_keywords": ["handwriting", "handwritten", "cursive", "manuscript"]
+            },
+            "advanced_mathematics": {
+                "agent_id": f"advanced_math_{int(time.time())}",
+                "name": "Advanced Mathematics Agent",
+                "type": "specialized",
+                "capabilities": ["calculus", "linear_algebra", "differential_equations"],
+                "model_recommendation": "symbolic_solver",
+                "context_keywords": ["derivative", "integral", "matrix", "equation"]
+            },
+            "code_synthesis": {
+                "agent_id": f"code_gen_{int(time.time())}",
+                "name": "Code Generation Agent",
+                "type": "specialized",
+                "capabilities": ["code_generation", "debugging", "refactoring"],
+                "model_recommendation": "codegen_model",
+                "context_keywords": ["code", "function", "class", "bug", "refactor"]
+            }
+        }
+        
+        template = agent_templates.get(capability, {
+            "agent_id": f"dynamic_{capability}_{int(time.time())}",
+            "name": f"Dynamic {capability.replace('_', ' ').title()} Agent",
+            "type": "specialized",
+            "capabilities": [capability],
+            "model_recommendation": "general_purpose",
+            "context_keywords": [capability]
+        })
+        
+        self.logger.info(f"🎯 Agent Genesis: Synthesized {template['name']}")
+        
+        return {
+            "agent_spec": template,
+            "synthesized_at": time.time(),
+            "reason": f"Detected capability gap: {capability}",
+            "ready_for_registration": True
+        }
+    
+    def record_agent_genesis(self, agent_spec: Dict[str, Any]):
+        """Track dynamically created agents"""
+        if not hasattr(self, 'genesis_history'):
+            self.genesis_history = []
+        
+        self.genesis_history.append({
+            "timestamp": time.time(),
+            "agent_id": agent_spec.get("agent_id"),
+            "capability": agent_spec.get("capabilities", []),
+            "reason": agent_spec.get("reason", "unknown")
+        })
+        
+        self.logger.info(f"🔬 Genesis recorded: {len(self.genesis_history)} agents created")
+    
+    def get_genesis_report(self) -> Dict[str, Any]:
+        """Get report on dynamically created agents"""
+        if not hasattr(self, 'genesis_history'):
+            return {"genesis_enabled": False, "total_agents_created": 0}
+        
+        return {
+            "genesis_enabled": True,
+            "total_agents_created": len(self.genesis_history),
+            "recent_agents": [
+                {
+                    "timestamp": datetime.fromtimestamp(g["timestamp"]).isoformat(),
+                    "agent_id": g["agent_id"],
+                    "capabilities": g["capability"]
+                }
+                for g in self.genesis_history[-5:]
+            ]
+        }
 
 
 # =============================================================================

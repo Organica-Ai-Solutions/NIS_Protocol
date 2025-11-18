@@ -5931,6 +5931,57 @@ async def get_performance_trend():
         logger.error(f"Performance analysis failed: {e}")
         raise HTTPException(status_code=500, detail=f"Performance analysis failed: {str(e)}")
 
+@app.post("/v4/consciousness/genesis", tags=["V4.0 Evolution"])
+async def create_dynamic_agent(capability: str):
+    """
+    🔬 V4.0: Agent Genesis - Create new agent for capability gap
+    
+    Consciousness synthesizes a new agent when it detects missing capabilities.
+    """
+    try:
+        if consciousness_service is None:
+            raise HTTPException(status_code=503, detail="Consciousness service not initialized")
+        
+        # Synthesize agent specification
+        agent_spec = await consciousness_service.synthesize_agent(capability)
+        
+        # Record genesis
+        consciousness_service.record_agent_genesis(agent_spec["agent_spec"])
+        
+        return {
+            "status": "success",
+            "agent_created": True,
+            "agent_spec": agent_spec["agent_spec"],
+            "reason": agent_spec["reason"],
+            "ready_for_registration": agent_spec["ready_for_registration"],
+            "timestamp": agent_spec["synthesized_at"]
+        }
+        
+    except Exception as e:
+        logger.error(f"Agent genesis failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Agent genesis failed: {str(e)}")
+
+@app.get("/v4/consciousness/genesis/history", tags=["V4.0 Evolution"])
+async def get_genesis_history():
+    """
+    📊 V4.0: Get history of dynamically created agents
+    """
+    try:
+        if consciousness_service is None:
+            raise HTTPException(status_code=503, detail="Consciousness service not initialized")
+        
+        report = consciousness_service.get_genesis_report()
+        
+        return {
+            "status": "success",
+            **report,
+            "timestamp": time.time()
+        }
+        
+    except Exception as e:
+        logger.error(f"Genesis history retrieval failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to get genesis history: {str(e)}")
+
 @app.get("/infrastructure/status")
 async def infrastructure_status():
     return {
