@@ -633,6 +633,164 @@ class ConsciousnessService(NISAgent):
             "average_ethical_score": sum(e.overall_ethical_score for e in self.ethical_analysis_history) / len(self.ethical_analysis_history) if self.ethical_analysis_history else 0.0,
             "service_id": self.agent_id
         }
+    
+    # =============================================================================
+    # 🧬 V4.0: EVOLUTIONARY CONSCIOUSNESS - SELF-IMPROVEMENT CAPABILITIES
+    # =============================================================================
+    
+    def __init_evolution__(self):
+        """Initialize evolutionary consciousness tracking (call after __init__)"""
+        if not hasattr(self, '_evolution_initialized'):
+            self.evolution_enabled = True
+            self.evolution_history = []
+            self.performance_window = []  # Last N decisions for trend analysis
+            self.last_evolution_time = None
+            self._evolution_initialized = True
+    
+    async def analyze_performance_trend(self) -> Dict[str, Any]:
+        """
+        🧠 V4.0: Meta-cognitive performance analysis
+        
+        Analyzes recent consciousness performance to detect trends.
+        This enables self-awareness of performance degradation.
+        """
+        if not hasattr(self, 'performance_window') or len(self.performance_window) < 10:
+            return {
+                "sufficient_data": False,
+                "samples": len(self.performance_window) if hasattr(self, 'performance_window') else 0
+            }
+        
+        import numpy as np
+        
+        # Analyze consciousness history trends
+        recent_metrics = self.consciousness_history[-100:] if len(self.consciousness_history) > 100 else self.consciousness_history
+        
+        if not recent_metrics:
+            return {"sufficient_data": False}
+        
+        # Calculate averages
+        avg_self_awareness = np.mean([m.self_awareness_score for m in recent_metrics])
+        avg_introspection = np.mean([m.introspection_depth for m in recent_metrics])
+        avg_meta_cognition = np.mean([m.meta_cognition_level for m in recent_metrics])
+        avg_bias_resistance = np.mean([m.bias_resistance for m in recent_metrics])
+        
+        # Calculate trends (simple linear fit)
+        scores = [m.meta_cognition_level for m in recent_metrics]
+        trend = np.polyfit(range(len(scores)), scores, 1)[0] if len(scores) > 1 else 0.0
+        
+        return {
+            "sufficient_data": True,
+            "avg_self_awareness": float(avg_self_awareness),
+            "avg_introspection": float(avg_introspection),
+            "avg_meta_cognition": float(avg_meta_cognition),
+            "avg_bias_resistance": float(avg_bias_resistance),
+            "meta_cognition_trend": float(trend),
+            "declining": trend < -0.01,  # Negative trend
+            "samples_analyzed": len(recent_metrics)
+        }
+    
+    async def evolve_consciousness(self, reason: str = "manual_trigger") -> Dict[str, Any]:
+        """
+        ✨ V4.0: SELF-EVOLUTION - Consciousness modifies its own parameters
+        
+        This is the revolutionary self-improvement capability.
+        The system analyzes its performance and adjusts its own thresholds.
+        
+        Args:
+            reason: Why evolution was triggered
+            
+        Returns:
+            Evolution event details
+        """
+        if not hasattr(self, '_evolution_initialized'):
+            self.__init_evolution__()
+        
+        # Snapshot current state
+        before_state = {
+            "consciousness_threshold": self.consciousness_threshold,
+            "bias_threshold": self.bias_threshold,
+            "ethics_threshold": self.ethics_threshold
+        }
+        
+        # Analyze performance
+        trend = await self.analyze_performance_trend()
+        
+        # Determine what to evolve
+        changes_made = {}
+        
+        if trend.get("declining"):
+            # Performance is declining - raise standards
+            old_threshold = self.consciousness_threshold
+            self.consciousness_threshold = min(self.consciousness_threshold * 1.1, 0.95)
+            changes_made["consciousness_threshold"] = {
+                "old": old_threshold,
+                "new": self.consciousness_threshold,
+                "reason": "Performance declining - raising threshold"
+            }
+            self.logger.info(f"🧬 Evolution: Consciousness threshold {old_threshold:.3f} → {self.consciousness_threshold:.3f}")
+        
+        elif trend.get("avg_bias_resistance", 0) < 0.7:
+            # Bias detection needs improvement
+            old_threshold = self.bias_threshold
+            self.bias_threshold = max(self.bias_threshold * 0.9, 0.1)
+            changes_made["bias_threshold"] = {
+                "old": old_threshold,
+                "new": self.bias_threshold,
+                "reason": "Low bias resistance - lowering detection threshold"
+            }
+            self.logger.info(f"🧬 Evolution: Bias threshold {old_threshold:.3f} → {self.bias_threshold:.3f}")
+        
+        # Record evolution event
+        evolution_event = {
+            "timestamp": time.time(),
+            "reason": reason,
+            "before_state": before_state,
+            "after_state": {
+                "consciousness_threshold": self.consciousness_threshold,
+                "bias_threshold": self.bias_threshold,
+                "ethics_threshold": self.ethics_threshold
+            },
+            "changes_made": changes_made,
+            "trend_analysis": trend
+        }
+        
+        self.evolution_history.append(evolution_event)
+        self.last_evolution_time = time.time()
+        
+        self.logger.info(f"✨ Consciousness evolved: {len(changes_made)} parameters modified")
+        
+        return evolution_event
+    
+    def get_evolution_report(self) -> Dict[str, Any]:
+        """Get report on consciousness evolution history"""
+        if not hasattr(self, 'evolution_history'):
+            return {"evolution_enabled": False, "message": "Evolution not initialized"}
+        
+        if not self.evolution_history:
+            return {
+                "evolution_enabled": True,
+                "total_evolutions": 0,
+                "message": "No evolutions performed yet"
+            }
+        
+        return {
+            "evolution_enabled": True,
+            "total_evolutions": len(self.evolution_history),
+            "last_evolution": datetime.fromtimestamp(self.evolution_history[-1]["timestamp"]).isoformat(),
+            "current_state": {
+                "consciousness_threshold": self.consciousness_threshold,
+                "bias_threshold": self.bias_threshold,
+                "ethics_threshold": self.ethics_threshold
+            },
+            "recent_evolutions": [
+                {
+                    "timestamp": datetime.fromtimestamp(e["timestamp"]).isoformat(),
+                    "reason": e["reason"],
+                    "changes": len(e["changes_made"])
+                }
+                for e in self.evolution_history[-5:]
+            ]
+        }
 
 
 # =============================================================================
