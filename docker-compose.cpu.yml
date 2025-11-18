@@ -75,7 +75,8 @@ services:
     
     volumes:
       # Mount code for hot-reload during development
-      - ./:/home/nisuser/app
+      # DISABLED: Causes import deadlock on Mac - code is copied during build instead
+      # - ./:/home/nisuser/app
       # Google credentials (optional)
       - ./configs/google-service-account.json:/app/service-account-key.json:ro
     
