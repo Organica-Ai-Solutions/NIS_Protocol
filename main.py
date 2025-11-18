@@ -5839,6 +5839,93 @@ async def consciousness_status():
             "timestamp": time.time()
         }
 
+# =============================================================================
+# 🧬 V4.0: EVOLUTIONARY CONSCIOUSNESS ENDPOINTS
+# =============================================================================
+
+@app.post("/v4/consciousness/evolve", tags=["V4.0 Evolution"])
+async def trigger_consciousness_evolution(reason: str = "manual_trigger"):
+    """
+    ✨ V4.0: Trigger consciousness self-evolution
+    
+    The system analyzes its performance and modifies its own parameters.
+    This is the self-improvement capability.
+    """
+    try:
+        if consciousness_service is None:
+            raise HTTPException(status_code=503, detail="Consciousness service not initialized")
+        
+        # Initialize evolution if needed
+        if not hasattr(consciousness_service, '_evolution_initialized'):
+            consciousness_service._ConsciousnessService__init_evolution__()
+        
+        # Trigger evolution
+        evolution_event = await consciousness_service.evolve_consciousness(reason=reason)
+        
+        return {
+            "status": "success",
+            "evolution_performed": True,
+            "reason": reason,
+            "changes_made": evolution_event["changes_made"],
+            "before_state": evolution_event["before_state"],
+            "after_state": evolution_event["after_state"],
+            "timestamp": evolution_event["timestamp"]
+        }
+        
+    except Exception as e:
+        logger.error(f"Evolution trigger failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Evolution failed: {str(e)}")
+
+@app.get("/v4/consciousness/evolution/history", tags=["V4.0 Evolution"])
+async def get_evolution_history():
+    """
+    📊 V4.0: Get consciousness evolution history
+    
+    Returns all self-modifications the system has performed.
+    """
+    try:
+        if consciousness_service is None:
+            raise HTTPException(status_code=503, detail="Consciousness service not initialized")
+        
+        report = consciousness_service.get_evolution_report()
+        
+        return {
+            "status": "success",
+            **report,
+            "timestamp": time.time()
+        }
+        
+    except Exception as e:
+        logger.error(f"Evolution history retrieval failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to get evolution history: {str(e)}")
+
+@app.get("/v4/consciousness/performance", tags=["V4.0 Evolution"])
+async def get_performance_trend():
+    """
+    📈 V4.0: Analyze consciousness performance trends
+    
+    Returns meta-cognitive analysis of recent performance.
+    """
+    try:
+        if consciousness_service is None:
+            raise HTTPException(status_code=503, detail="Consciousness service not initialized")
+        
+        # Initialize evolution if needed
+        if not hasattr(consciousness_service, '_evolution_initialized'):
+            consciousness_service._ConsciousnessService__init_evolution__()
+        
+        trend = await consciousness_service.analyze_performance_trend()
+        
+        return {
+            "status": "success",
+            "performance_trend": trend,
+            "timestamp": time.time()
+        }
+        
+    except Exception as e:
+        logger.error(f"Performance analysis failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Performance analysis failed: {str(e)}")
+
 @app.get("/infrastructure/status")
 async def infrastructure_status():
     return {
