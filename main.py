@@ -779,6 +779,11 @@ async def initialize_system():
 
     # 🧠 Initialize NIS HUB Enhanced Services
     consciousness_service = create_consciousness_service()
+    
+    # 🧬 V4.0: Initialize evolutionary consciousness
+    consciousness_service._ConsciousnessService__init_evolution__()
+    logger.info("🧬 Evolutionary consciousness initialized - system can now self-improve")
+    
     protocol_bridge = create_protocol_bridge_service(
         consciousness_service=consciousness_service,
         unified_coordinator=coordinator
