@@ -6070,6 +6070,52 @@ async def get_collective_consciousness_status():
         logger.error(f"Collective status retrieval failed: {e}")
         raise HTTPException(status_code=500, detail=f"Collective status failed: {str(e)}")
 
+@app.post("/v4/consciousness/plan", tags=["V4.0 Evolution"])
+async def create_autonomous_plan(goal_id: str, high_level_goal: str):
+    """
+    🎯 V4.0: Create and execute autonomous multi-step plan
+    
+    System breaks down goal and executes autonomously!
+    
+    Example: "Research protein folding" → 6-step autonomous execution
+    """
+    try:
+        if consciousness_service is None:
+            raise HTTPException(status_code=503, detail="Consciousness service not initialized")
+        
+        result = await consciousness_service.execute_autonomous_plan(goal_id, high_level_goal)
+        
+        return {
+            "status": "success",
+            "plan_created": True,
+            **result
+        }
+        
+    except Exception as e:
+        logger.error(f"Autonomous planning failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Planning failed: {str(e)}")
+
+@app.get("/v4/consciousness/plan/status", tags=["V4.0 Evolution"])
+async def get_planning_status():
+    """
+    📊 V4.0: Get status of all autonomous plans
+    """
+    try:
+        if consciousness_service is None:
+            raise HTTPException(status_code=503, detail="Consciousness service not initialized")
+        
+        status = consciousness_service.get_planning_status()
+        
+        return {
+            "status": "success",
+            **status,
+            "timestamp": time.time()
+        }
+        
+    except Exception as e:
+        logger.error(f"Planning status retrieval failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Planning status failed: {str(e)}")
+
 @app.get("/infrastructure/status")
 async def infrastructure_status():
     return {

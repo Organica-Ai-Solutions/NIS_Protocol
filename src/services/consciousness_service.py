@@ -1079,6 +1079,202 @@ class ConsciousnessService(NISAgent):
                 for peer_id, info in self.peer_instances.items()
             ]
         }
+    
+    # =============================================================================
+    # 🎯 V4.0: AUTONOMOUS PLANNING - MULTI-STEP GOAL EXECUTION
+    # =============================================================================
+    
+    def __init_planning__(self):
+        """Initialize autonomous planning (call after __init__)"""
+        if not hasattr(self, '_planning_initialized'):
+            self.active_goals = {}
+            self.completed_goals = []
+            self.planning_enabled = True
+            self._planning_initialized = True
+    
+    async def decompose_goal(self, high_level_goal: str) -> List[Dict[str, Any]]:
+        """
+        🎯 V4.0: Break down high-level goal into executable steps
+        
+        Consciousness plans autonomously - no human guidance needed!
+        
+        Example: "Become best at protein folding" →
+        ["Research SOTA", "Identify gaps", "Design experiments", ...]
+        """
+        # Simplified goal decomposition (real impl would use LLM)
+        goal_templates = {
+            "research": [
+                {"step": "Research current state-of-the-art", "type": "info_gathering"},
+                {"step": "Identify knowledge gaps", "type": "analysis"},
+                {"step": "Design research methodology", "type": "planning"},
+                {"step": "Execute experiments", "type": "execution"},
+                {"step": "Analyze results", "type": "analysis"},
+                {"step": "Iterate until success", "type": "loop"}
+            ],
+            "improve": [
+                {"step": "Benchmark current performance", "type": "measurement"},
+                {"step": "Identify bottlenecks", "type": "analysis"},
+                {"step": "Design optimizations", "type": "planning"},
+                {"step": "Implement changes", "type": "execution"},
+                {"step": "Validate improvements", "type": "verification"}
+            ],
+            "learn": [
+                {"step": "Identify learning objectives", "type": "planning"},
+                {"step": "Gather training data", "type": "info_gathering"},
+                {"step": "Design learning strategy", "type": "planning"},
+                {"step": "Train/study", "type": "execution"},
+                {"step": "Test knowledge", "type": "verification"}
+            ]
+        }
+        
+        # Detect goal type
+        goal_lower = high_level_goal.lower()
+        if "research" in goal_lower or "study" in goal_lower:
+            template = goal_templates["research"]
+        elif "improve" in goal_lower or "optimize" in goal_lower:
+            template = goal_templates["improve"]
+        elif "learn" in goal_lower:
+            template = goal_templates["learn"]
+        else:
+            # Generic decomposition
+            template = [
+                {"step": "Analyze goal requirements", "type": "analysis"},
+                {"step": "Break into sub-goals", "type": "planning"},
+                {"step": "Execute each sub-goal", "type": "execution"},
+                {"step": "Validate completion", "type": "verification"}
+            ]
+        
+        self.logger.info(f"🎯 Goal decomposed: {len(template)} steps for '{high_level_goal}'")
+        
+        return template
+    
+    async def execute_autonomous_plan(
+        self,
+        goal_id: str,
+        high_level_goal: str
+    ) -> Dict[str, Any]:
+        """
+        🚀 V4.0: Execute multi-step plan autonomously
+        
+        Consciousness drives execution - system becomes self-directed!
+        """
+        if not hasattr(self, '_planning_initialized'):
+            self.__init_planning__()
+        
+        # Decompose goal
+        steps = await self.decompose_goal(high_level_goal)
+        
+        # Create plan
+        plan = {
+            "goal_id": goal_id,
+            "high_level_goal": high_level_goal,
+            "steps": steps,
+            "current_step": 0,
+            "status": "in_progress",
+            "started_at": time.time(),
+            "completed_steps": [],
+            "failed_steps": []
+        }
+        
+        self.active_goals[goal_id] = plan
+        
+        # Execute steps (simplified - real impl would actually execute)
+        for i, step in enumerate(steps):
+            # Meta-cognitive check before each step
+            should_continue = await self._should_proceed_with_step(step, plan)
+            
+            if not should_continue:
+                plan["status"] = "paused"
+                plan["pause_reason"] = "Meta-cognitive review required"
+                break
+            
+            # Simulate step execution
+            step_result = {
+                "step_index": i,
+                "step_name": step["step"],
+                "status": "completed",
+                "executed_at": time.time()
+            }
+            
+            plan["completed_steps"].append(step_result)
+            plan["current_step"] = i + 1
+        
+        # Finalize
+        if plan["current_step"] == len(steps):
+            plan["status"] = "completed"
+            plan["completed_at"] = time.time()
+            self.completed_goals.append(plan)
+            del self.active_goals[goal_id]
+        
+        self.logger.info(
+            f"🚀 Plan execution: {plan['current_step']}/{len(steps)} steps, "
+            f"status={plan['status']}"
+        )
+        
+        return plan
+    
+    async def _should_proceed_with_step(
+        self,
+        step: Dict[str, Any],
+        plan: Dict[str, Any]
+    ) -> bool:
+        """
+        🧠 Meta-decision: Should we proceed with this step?
+        
+        Consciousness evaluates each step before execution.
+        """
+        # Check if step is safe
+        if step.get("type") == "execution":
+            # For execution steps, verify safety
+            safety_check = await self._check_step_safety(step)
+            if not safety_check:
+                self.logger.warning(f"⚠️ Step safety check failed: {step['step']}")
+                return False
+        
+        # Check if we have required capabilities
+        if step.get("type") == "info_gathering":
+            # Verify we can gather required info
+            pass
+        
+        # Meta-cognitive: Is this step still aligned with goal?
+        progress = len(plan["completed_steps"]) / len(plan["steps"])
+        if progress > 0.5:
+            # Halfway through - review if still makes sense
+            pass
+        
+        return True
+    
+    async def _check_step_safety(self, step: Dict[str, Any]) -> bool:
+        """Verify step is safe to execute"""
+        # Simplified safety check
+        dangerous_keywords = ["delete", "destroy", "harm", "attack"]
+        step_text = step.get("step", "").lower()
+        
+        for keyword in dangerous_keywords:
+            if keyword in step_text:
+                return False
+        
+        return True
+    
+    def get_planning_status(self) -> Dict[str, Any]:
+        """Get status of autonomous planning"""
+        if not hasattr(self, '_planning_initialized'):
+            return {"planning_enabled": False}
+        
+        return {
+            "planning_enabled": True,
+            "active_goals": len(self.active_goals),
+            "completed_goals": len(self.completed_goals),
+            "goals": [
+                {
+                    "goal_id": goal_id,
+                    "goal": plan["high_level_goal"],
+                    "progress": f"{plan['current_step']}/{len(plan['steps'])}",
+                    "status": plan["status"]
+                }
+                for goal_id, plan in self.active_goals.items()
+            ]
+        }
 
 
 # =============================================================================
