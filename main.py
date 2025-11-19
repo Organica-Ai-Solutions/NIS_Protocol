@@ -643,6 +643,7 @@ async def formatted_chat():
 async def initialize_system():
     """Initialize the NIS Protocol system - can be called manually for testing."""
     global llm_provider, web_search_agent, simulation_coordinator, learning_agent, planning_system, curiosity_engine, fallback_learning_agent
+    global consciousness_service, protocol_bridge
     try:
         llm_provider = GeneralLLMProvider()
         logger.info(" LLM Provider initialized successfully")
@@ -780,9 +781,20 @@ async def initialize_system():
     # 🧠 Initialize NIS HUB Enhanced Services
     consciousness_service = create_consciousness_service()
     
-    # 🧬 V4.0: Initialize evolutionary consciousness
-    consciousness_service._ConsciousnessService__init_evolution__()
-    logger.info("🧬 Evolutionary consciousness initialized - system can now self-improve")
+    # 🧬 V4.0: Initialize all consciousness phases
+    consciousness_service.__init_evolution__()
+    logger.info("🧬 Phase 1: Evolutionary consciousness initialized")
+    
+    consciousness_service.__init_embodiment__()
+    logger.info("🤖 Phase 8: Physical embodiment initialized")
+    
+    consciousness_service.__init_debugger__()
+    logger.info("🔍 Phase 9: Consciousness debugger initialized")
+    
+    consciousness_service.__init_meta_evolution__()
+    logger.info("🔬 Phase 10: Meta-evolution initialized")
+    
+    logger.info("✅ All v4.0 consciousness phases initialized - system ready for AGI-level operation")
     
     protocol_bridge = create_protocol_bridge_service(
         consciousness_service=consciousness_service,
@@ -6115,6 +6127,293 @@ async def get_planning_status():
     except Exception as e:
         logger.error(f"Planning status retrieval failed: {e}")
         raise HTTPException(status_code=500, detail=f"Planning status failed: {str(e)}")
+
+@app.post("/v4/consciousness/marketplace/publish", tags=["V4.0 Evolution"])
+async def publish_consciousness_insight(
+    insight_type: str,
+    content: Dict[str, Any],
+    metadata: Optional[Dict[str, Any]] = None
+):
+    """💼 V4.0: Publish a consciousness insight to local marketplace"""
+    try:
+        if consciousness_service is None:
+            raise HTTPException(status_code=503, detail="Consciousness service not initialized")
+        
+        record = consciousness_service.publish_insight(
+            insight_type=insight_type,
+            content=content,
+            metadata=metadata or {}
+        )
+        
+        return {
+            "status": "success",
+            "insight": record
+        }
+    
+    except Exception as e:
+        logger.error(f"Insight publish failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Insight publish failed: {str(e)}")
+
+
+@app.get("/v4/consciousness/marketplace/list", tags=["V4.0 Evolution"])
+async def list_consciousness_insights(insight_type: Optional[str] = None):
+    """List insights available in the local consciousness marketplace"""
+    try:
+        if consciousness_service is None:
+            raise HTTPException(status_code=503, detail="Consciousness service not initialized")
+        
+        insights = consciousness_service.list_insights(insight_type=insight_type)
+        
+        return {
+            "status": "success",
+            "count": len(insights),
+            "insights": insights
+        }
+    except Exception as e:
+        logger.error(f"Insight list failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Insight list failed: {str(e)}")
+
+
+@app.get("/v4/consciousness/marketplace/insight/{insight_id}", tags=["V4.0 Evolution"])
+async def get_consciousness_insight(insight_id: str):
+    """Retrieve a single insight by ID"""
+    try:
+        if consciousness_service is None:
+            raise HTTPException(status_code=503, detail="Consciousness service not initialized")
+        
+        insight = consciousness_service.get_insight(insight_id)
+        if insight is None:
+            raise HTTPException(status_code=404, detail="Insight not found")
+        
+        return {
+            "status": "success",
+            "insight": insight
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Insight retrieval failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Insight retrieval failed: {str(e)}")
+
+
+@app.post("/v4/consciousness/ethics/evaluate", tags=["V4.0 Evolution"])
+async def evaluate_ethical_decision(decision_context: Dict[str, Any]):
+    """Run full ethical + bias evaluation on a decision context.
+
+    Returns approval flag, ethical score, and whether human review is required.
+    """
+    try:
+        if consciousness_service is None:
+            raise HTTPException(status_code=503, detail="Consciousness service not initialized")
+
+        result = await consciousness_service.evaluate_ethical_decision(decision_context)
+
+        return {
+            "status": "success",
+            **result
+        }
+    except Exception as e:
+        logger.error(f"Ethical evaluation failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Ethical evaluation failed: {str(e)}")
+
+
+# =============================================================================
+# PHASE 8: PHYSICAL EMBODIMENT ENDPOINTS
+# =============================================================================
+
+@app.post("/v4/consciousness/embodiment/state/update", tags=["V4.0 Evolution"])
+async def update_body_state(
+    position: Optional[Dict[str, float]] = None,
+    orientation: Optional[Dict[str, float]] = None,
+    battery: Optional[float] = None,
+    temperature: Optional[float] = None,
+    sensor_data: Optional[Dict[str, Any]] = None
+):
+    """Update the physical body state from sensors"""
+    try:
+        if consciousness_service is None:
+            raise HTTPException(status_code=503, detail="Consciousness service not initialized")
+        
+        result = consciousness_service.update_body_state(
+            position=position,
+            orientation=orientation,
+            battery=battery,
+            temperature=temperature,
+            sensor_data=sensor_data
+        )
+        
+        return {
+            "status": "success",
+            **result
+        }
+    except Exception as e:
+        logger.error(f"Body state update failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Body state update failed: {str(e)}")
+
+
+@app.post("/v4/consciousness/embodiment/motion/check", tags=["V4.0 Evolution"])
+async def check_motion_safety(
+    target_position: Dict[str, float],
+    target_orientation: Optional[Dict[str, float]] = None,
+    speed: float = 0.5
+):
+    """Check if a planned motion is safe before execution"""
+    try:
+        if consciousness_service is None:
+            raise HTTPException(status_code=503, detail="Consciousness service not initialized")
+        
+        result = consciousness_service.check_motion_safety(
+            target_position=target_position,
+            target_orientation=target_orientation,
+            speed=speed
+        )
+        
+        return {
+            "status": "success",
+            **result
+        }
+    except Exception as e:
+        logger.error(f"Motion safety check failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Motion safety check failed: {str(e)}")
+
+
+@app.post("/v4/consciousness/embodiment/action/execute", tags=["V4.0 Evolution"])
+async def execute_embodied_action(
+    action_type: str,
+    parameters: Dict[str, Any]
+):
+    """Execute a physical action with embodied consciousness"""
+    try:
+        if consciousness_service is None:
+            raise HTTPException(status_code=503, detail="Consciousness service not initialized")
+        
+        result = consciousness_service.execute_embodied_action(
+            action_type=action_type,
+            parameters=parameters
+        )
+        
+        return {
+            "status": "success",
+            **result
+        }
+    except Exception as e:
+        logger.error(f"Embodied action execution failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Embodied action execution failed: {str(e)}")
+
+
+@app.get("/v4/consciousness/embodiment/status", tags=["V4.0 Evolution"])
+async def get_embodiment_status():
+    """Get current embodiment status"""
+    try:
+        if consciousness_service is None:
+            raise HTTPException(status_code=503, detail="Consciousness service not initialized")
+        
+        result = consciousness_service.get_embodiment_status()
+        
+        return {
+            "status": "success",
+            **result
+        }
+    except Exception as e:
+        logger.error(f"Embodiment status retrieval failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Embodiment status retrieval failed: {str(e)}")
+
+
+# =============================================================================
+# PHASE 9: CONSCIOUSNESS DEBUGGER ENDPOINTS
+# =============================================================================
+
+@app.get("/v4/consciousness/debug/explain", tags=["V4.0 Evolution"])
+async def explain_decision(decision_id: Optional[str] = None):
+    """Explain a consciousness decision with full trace.
+    
+    If no decision_id provided, explains current state.
+    """
+    try:
+        if consciousness_service is None:
+            raise HTTPException(status_code=503, detail="Consciousness service not initialized")
+        
+        result = consciousness_service.explain_decision(decision_id=decision_id)
+        
+        return {
+            "status": "success",
+            **result
+        }
+    except Exception as e:
+        logger.error(f"Decision explanation failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Decision explanation failed: {str(e)}")
+
+
+@app.post("/v4/consciousness/debug/record", tags=["V4.0 Evolution"])
+async def record_decision(
+    decision_type: str,
+    inputs: Dict[str, Any],
+    output: Any,
+    reasoning: List[str],
+    confidence: float
+):
+    """Record a decision for later debugging"""
+    try:
+        if consciousness_service is None:
+            raise HTTPException(status_code=503, detail="Consciousness service not initialized")
+        
+        decision_id = consciousness_service.record_decision(
+            decision_type=decision_type,
+            inputs=inputs,
+            output=output,
+            reasoning=reasoning,
+            confidence=confidence
+        )
+        
+        return {
+            "status": "success",
+            "decision_id": decision_id,
+            "message": "Decision recorded for debugging"
+        }
+    except Exception as e:
+        logger.error(f"Decision recording failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Decision recording failed: {str(e)}")
+
+
+# =============================================================================
+# PHASE 10: META-EVOLUTION ENDPOINTS
+# =============================================================================
+
+@app.post("/v4/consciousness/meta-evolve", tags=["V4.0 Evolution"])
+async def meta_evolve(reason: str = "periodic_meta_evolution"):
+    """Trigger meta-evolution: evolve the evolution strategy itself"""
+    try:
+        if consciousness_service is None:
+            raise HTTPException(status_code=503, detail="Consciousness service not initialized")
+        
+        result = consciousness_service.meta_evolve(reason=reason)
+        
+        return {
+            "status": "success",
+            **result
+        }
+    except Exception as e:
+        logger.error(f"Meta-evolution failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Meta-evolution failed: {str(e)}")
+
+
+@app.get("/v4/consciousness/meta-evolution/status", tags=["V4.0 Evolution"])
+async def get_meta_evolution_status():
+    """Get current meta-evolution strategy and history"""
+    try:
+        if consciousness_service is None:
+            raise HTTPException(status_code=503, detail="Consciousness service not initialized")
+        
+        result = consciousness_service.get_meta_evolution_status()
+        
+        return {
+            "status": "success",
+            **result
+        }
+    except Exception as e:
+        logger.error(f"Meta-evolution status retrieval failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Meta-evolution status retrieval failed: {str(e)}")
+
 
 @app.get("/infrastructure/status")
 async def infrastructure_status():

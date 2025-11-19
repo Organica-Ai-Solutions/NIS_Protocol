@@ -396,6 +396,39 @@ class ConsciousnessService(NISAgent):
                 ethical_concerns=["Error in ethical analysis - requires human review"]
             )
     
+    async def evaluate_ethical_decision(self, decision_context: Dict[str, Any]) -> Dict[str, Any]:
+        """High-level ethical evaluation helper for external callers.
+        
+        Wraps ethical_analysis (and optionally bias detection) into a single
+        structured response indicating whether the decision should proceed
+        and whether human review is required.
+        """
+        # Reuse existing analysis components
+        ethical_result = await self.ethical_analysis(decision_context)
+        bias_result = await self.detect_bias(decision_context)
+        
+        # Simple approval heuristic: ethical score above threshold and
+        # overall bias score below 0.5
+        approved = (
+            ethical_result.overall_ethical_score >= self.ethics_threshold
+            and bias_result.overall_bias_score < 0.5
+            and not ethical_result.requires_human_review
+        )
+        
+        return {
+            "approved": approved,
+            "ethical_score": ethical_result.overall_ethical_score,
+            "requires_human_review": ethical_result.requires_human_review,
+            "framework_scores": {
+                k.value: v for k, v in ethical_result.framework_scores.items()
+            },
+            "ethical_concerns": ethical_result.ethical_concerns,
+            "recommendations": ethical_result.recommendations,
+            "overall_bias_score": bias_result.overall_bias_score,
+            "bias_recommendations": bias_result.recommendations,
+            "timestamp": time.time()
+        }
+    
     async def process_through_consciousness(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """
         ✅ MAIN PIPELINE INTEGRATION METHOD
@@ -1274,6 +1307,618 @@ class ConsciousnessService(NISAgent):
                 }
                 for goal_id, plan in self.active_goals.items()
             ]
+        }
+    
+    # =============================================================================
+    # ⚛️ V4.0: QUANTUM REASONING SCAFFOLD - SUPERPOSITION OF PATHS
+    # =============================================================================
+    
+    def __init_quantum__(self):
+        """Initialize quantum reasoning state tracking"""
+        if not hasattr(self, '_quantum_initialized'):
+            self.quantum_states: Dict[str, Dict[str, Any]] = {}
+            self._quantum_initialized = True
+    
+    async def start_quantum_reasoning(
+        self,
+        problem: str,
+        reasoning_paths: List[Dict[str, Any]]
+    ) -> Dict[str, Any]:
+        """Create a superposed reasoning state from multiple paths.
+
+        This is a scaffold only – actual reasoning is still handled by
+        existing reasoning agents. Here we just structure and track the
+        superposition so it can be "collapsed" later.
+        """
+        if not hasattr(self, '_quantum_initialized'):
+            self.__init_quantum__()
+        
+        state_id = f"qstate_{uuid.uuid4().hex[:12]}"
+        timestamp = time.time()
+        
+        # Normalize input paths into a common structure
+        normalized_paths = []
+        for idx, path in enumerate(reasoning_paths):
+            normalized_paths.append({
+                "path_id": path.get("path_id", f"path_{idx}"),
+                "description": path.get("description", ""),
+                "initial_confidence": float(path.get("confidence", 0.5)),
+                "metadata": path.get("metadata", {}),
+            })
+        
+        state = {
+            "state_id": state_id,
+            "problem": problem,
+            "paths": normalized_paths,
+            "created_at": timestamp,
+            "collapsed": False,
+            "collapse_strategy": None,
+            "collapsed_to": None
+        }
+        
+        self.quantum_states[state_id] = state
+        self.logger.info(f"⚛️ Quantum reasoning state created: {state_id} with {len(normalized_paths)} paths")
+        
+        return state
+    
+    async def collapse_quantum_reasoning(
+        self,
+        state_id: str,
+        strategy: str = "max_confidence"
+    ) -> Dict[str, Any]:
+        """Collapse a quantum reasoning state to a single chosen path.
+
+        The actual path selection strategy is minimal for now and relies on
+        the initial_confidence values passed in by callers.
+        """
+        if not hasattr(self, '_quantum_initialized'):
+            self.__init_quantum__()
+        
+        state = self.quantum_states.get(state_id)
+        if not state:
+            return {
+                "state_id": state_id,
+                "error": "state_not_found"
+            }
+        
+        if state.get("collapsed"):
+            return state
+        
+        paths = state.get("paths", [])
+        if not paths:
+            state["collapsed"] = True
+            state["collapsed_to"] = None
+            state["collapse_strategy"] = strategy
+            return state
+        
+        # Simple strategy: pick path with max initial_confidence
+        if strategy == "max_confidence":
+            chosen = max(paths, key=lambda p: p.get("initial_confidence", 0.5))
+        else:
+            # Fallback: first path
+            chosen = paths[0]
+        
+        state["collapsed"] = True
+        state["collapsed_to"] = chosen
+        state["collapse_strategy"] = strategy
+        state["collapsed_at"] = time.time()
+        
+        self.logger.info(
+            f"⚛️ Quantum reasoning collapsed: {state_id} → {chosen.get('path_id')} (strategy={strategy})"
+        )
+        
+        return state
+    
+    def get_quantum_state(self, state_id: str) -> Optional[Dict[str, Any]]:
+        """Retrieve a quantum reasoning state by ID"""
+        if not hasattr(self, '_quantum_initialized'):
+            return None
+        return self.quantum_states.get(state_id)
+    
+    # =============================================================================
+    # 💼 V4.0: CONSCIOUSNESS MARKETPLACE - INSIGHT SHARING
+    # =============================================================================
+    
+    def __init_marketplace__(self):
+        """Initialize consciousness insight marketplace"""
+        if not hasattr(self, '_marketplace_initialized'):
+            self.insight_catalog: List[Dict[str, Any]] = []
+            self._marketplace_initialized = True
+    
+    def publish_insight(
+        self,
+        insight_type: str,
+        content: Dict[str, Any],
+        metadata: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
+        """Publish a consciousness insight to the local marketplace"""
+        if not hasattr(self, '_marketplace_initialized'):
+            self.__init_marketplace__()
+        
+        if metadata is None:
+            metadata = {}
+        
+        insight_id = f"insight_{uuid.uuid4().hex[:12]}"
+        timestamp = time.time()
+        
+        record = {
+            "id": insight_id,
+            "type": insight_type,
+            "content": content,
+            "metadata": metadata,
+            "created_at": timestamp
+        }
+        
+        self.insight_catalog.append(record)
+        self.logger.info(f"💼 Insight published: {insight_id} ({insight_type})")
+        
+        return record
+    
+    def list_insights(self, insight_type: Optional[str] = None) -> List[Dict[str, Any]]:
+        """List insights in the local marketplace (optionally filtered by type)"""
+        if not hasattr(self, '_marketplace_initialized'):
+            return []
+        
+        if insight_type is None:
+            return self.insight_catalog[-50:]
+        
+        return [
+            i for i in self.insight_catalog
+            if i.get("type") == insight_type
+        ][-50:]
+    
+    def get_insight(self, insight_id: str) -> Optional[Dict[str, Any]]:
+        """Retrieve a specific insight by ID"""
+        if not hasattr(self, '_marketplace_initialized'):
+            return None
+        
+        for insight in self.insight_catalog:
+            if insight.get("id") == insight_id:
+                return insight
+        return None
+    
+    # =========================================================================
+    # PHASE 8: PHYSICAL EMBODIMENT
+    # =========================================================================
+    
+    def __init_embodiment__(self):
+        """Initialize physical embodiment tracking"""
+        self.body_state = {
+            "position": {"x": 0.0, "y": 0.0, "z": 0.0},
+            "orientation": {"roll": 0.0, "pitch": 0.0, "yaw": 0.0},
+            "battery_level": 100.0,
+            "temperature": 20.0,
+            "joint_states": {},
+            "sensor_data": {},
+            "physical_constraints": {
+                "max_speed": 1.0,
+                "max_acceleration": 0.5,
+                "workspace_bounds": {"x": [-10, 10], "y": [-10, 10], "z": [0, 3]}
+            }
+        }
+        self.motion_history = []
+        self._embodiment_initialized = True
+        logger.info("🤖 Physical embodiment initialized")
+    
+    def update_body_state(
+        self,
+        position: Optional[Dict[str, float]] = None,
+        orientation: Optional[Dict[str, float]] = None,
+        battery: Optional[float] = None,
+        temperature: Optional[float] = None,
+        sensor_data: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
+        """Update the current body state from sensors"""
+        if not hasattr(self, '_embodiment_initialized'):
+            self.__init_embodiment__()
+        
+        if position:
+            self.body_state["position"].update(position)
+        if orientation:
+            self.body_state["orientation"].update(orientation)
+        if battery is not None:
+            self.body_state["battery_level"] = battery
+        if temperature is not None:
+            self.body_state["temperature"] = temperature
+        if sensor_data:
+            self.body_state["sensor_data"].update(sensor_data)
+        
+        return {
+            "status": "updated",
+            "body_state": self.body_state,
+            "timestamp": datetime.now().isoformat()
+        }
+    
+    def check_motion_safety(
+        self,
+        target_position: Dict[str, float],
+        target_orientation: Optional[Dict[str, float]] = None,
+        speed: float = 0.5
+    ) -> Dict[str, Any]:
+        """Check if a planned motion is safe before execution"""
+        if not hasattr(self, '_embodiment_initialized'):
+            self.__init_embodiment__()
+        
+        safety_checks = {
+            "workspace_bounds": True,
+            "battery_sufficient": True,
+            "collision_free": True,
+            "speed_acceptable": True,
+            "ethical_clearance": True
+        }
+        
+        issues = []
+        
+        # Check workspace bounds
+        bounds = self.body_state["physical_constraints"]["workspace_bounds"]
+        for axis in ["x", "y", "z"]:
+            if axis in target_position:
+                val = target_position[axis]
+                if val < bounds[axis][0] or val > bounds[axis][1]:
+                    safety_checks["workspace_bounds"] = False
+                    issues.append(f"{axis.upper()} out of bounds: {val}")
+        
+        # Check battery
+        current_pos = self.body_state["position"]
+        distance = sum((target_position.get(k, current_pos[k]) - current_pos[k])**2 for k in ["x", "y", "z"])**0.5
+        estimated_energy = distance * 2.0  # Simplified energy model
+        
+        if self.body_state["battery_level"] < estimated_energy + 20.0:  # Keep 20% reserve
+            safety_checks["battery_sufficient"] = False
+            issues.append(f"Insufficient battery: {self.body_state['battery_level']:.1f}%")
+        
+        # Check speed
+        max_speed = self.body_state["physical_constraints"]["max_speed"]
+        if speed > max_speed:
+            safety_checks["speed_acceptable"] = False
+            issues.append(f"Speed too high: {speed} > {max_speed}")
+        
+        # Ethical check: is this motion ethical?
+        if distance > 5.0:  # Large movements require ethical review
+            ethical_result = self.ethical_analysis({
+                "action": "large_motion",
+                "distance": distance,
+                "target": target_position
+            })
+            if ethical_result.overall_score < self.ethics_threshold:
+                safety_checks["ethical_clearance"] = False
+                issues.append(f"Ethical score too low: {ethical_result.overall_score:.2f}")
+        
+        safe = all(safety_checks.values())
+        
+        return {
+            "safe": safe,
+            "checks": safety_checks,
+            "issues": issues,
+            "estimated_energy": estimated_energy,
+            "current_battery": self.body_state["battery_level"],
+            "distance": distance,
+            "recommendation": "PROCEED" if safe else "ABORT"
+        }
+    
+    def execute_embodied_action(
+        self,
+        action_type: str,
+        parameters: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """Execute a physical action with embodied consciousness"""
+        if not hasattr(self, '_embodiment_initialized'):
+            self.__init_embodiment__()
+        
+        # Safety check first
+        if action_type == "move":
+            safety = self.check_motion_safety(
+                parameters.get("target", {}),
+                speed=parameters.get("speed", 0.5)
+            )
+            if not safety["safe"]:
+                return {
+                    "success": False,
+                    "action": action_type,
+                    "reason": "safety_check_failed",
+                    "details": safety
+                }
+        
+        # Record action in history
+        action_record = {
+            "timestamp": datetime.now().isoformat(),
+            "action": action_type,
+            "parameters": parameters,
+            "body_state_before": self.body_state.copy()
+        }
+        
+        # Simulate execution (in real system, this would interface with robot controller)
+        if action_type == "move":
+            target = parameters.get("target", {})
+            self.body_state["position"].update(target)
+            energy_used = parameters.get("distance", 1.0) * 2.0
+            self.body_state["battery_level"] = max(0, self.body_state["battery_level"] - energy_used)
+        
+        action_record["body_state_after"] = self.body_state.copy()
+        self.motion_history.append(action_record)
+        
+        return {
+            "success": True,
+            "action": action_type,
+            "body_state": self.body_state,
+            "timestamp": datetime.now().isoformat()
+        }
+    
+    def get_embodiment_status(self) -> Dict[str, Any]:
+        """Get current embodiment status"""
+        if not hasattr(self, '_embodiment_initialized'):
+            self.__init_embodiment__()
+        
+        return {
+            "body_state": self.body_state,
+            "motion_history_size": len(self.motion_history),
+            "recent_actions": self.motion_history[-5:] if self.motion_history else [],
+            "status": "initialized"
+        }
+    
+    # =========================================================================
+    # PHASE 9: CONSCIOUSNESS DEBUGGER
+    # =========================================================================
+    
+    def __init_debugger__(self):
+        """Initialize consciousness debugging system"""
+        self.decision_traces = []
+        self._debugger_initialized = True
+        logger.info("🔍 Consciousness debugger initialized")
+    
+    def explain_decision(self, decision_id: Optional[str] = None) -> Dict[str, Any]:
+        """Explain a consciousness decision with full trace"""
+        if not hasattr(self, '_debugger_initialized'):
+            self.__init_debugger__()
+        
+        # If no decision_id, explain the most recent state
+        if decision_id is None:
+            return self._explain_current_state()
+        
+        # Find specific decision in history
+        for trace in self.decision_traces:
+            if trace.get("id") == decision_id:
+                return self._format_decision_explanation(trace)
+        
+        return {
+            "error": "decision_not_found",
+            "decision_id": decision_id,
+            "available_decisions": [t.get("id") for t in self.decision_traces[-10:]]
+        }
+    
+    def _explain_current_state(self) -> Dict[str, Any]:
+        """Explain current consciousness state"""
+        # Aggregate current metrics
+        metrics = self._evaluate_consciousness_metrics()
+        
+        # Get ethical state
+        ethical_state = {
+            "ethics_threshold": self.ethics_threshold,
+            "recent_ethical_decisions": len([
+                t for t in self.decision_traces
+                if t.get("type") == "ethical_decision"
+            ])
+        }
+        
+        # Get evolution state
+        evolution_state = {}
+        if hasattr(self, 'evolution_history'):
+            evolution_state = {
+                "total_evolutions": len(self.evolution_history),
+                "last_evolution": self.evolution_history[-1] if self.evolution_history else None
+            }
+        
+        # Get quantum state
+        quantum_state = {}
+        if hasattr(self, 'quantum_states'):
+            quantum_state = {
+                "active_quantum_reasonings": len([
+                    s for s in self.quantum_states
+                    if s.get("status") == "superposition"
+                ])
+            }
+        
+        # Get embodiment state
+        embodiment_state = {}
+        if hasattr(self, 'body_state'):
+            embodiment_state = {
+                "battery_level": self.body_state.get("battery_level"),
+                "position": self.body_state.get("position")
+            }
+        
+        explanation = f"""
+🧠 **Current Consciousness State Explanation**
+
+**Overall Level**: {metrics.consciousness_level:.1%}
+- Self-Awareness: {metrics.self_awareness:.2f}
+- Meta-Cognition: {metrics.meta_cognition:.2f}
+- Ethical Reasoning: {metrics.ethical_reasoning_capability:.2f}
+- Adaptability: {metrics.adaptability:.2f}
+
+**System Status**:
+- Ethics threshold: {self.ethics_threshold:.2f}
+- Coherence threshold: {self.coherence_threshold:.2f}
+- Emergence threshold: {self.emergence_threshold:.2f}
+
+**Evolutionary State**:
+{evolution_state if evolution_state else 'Not initialized'}
+
+**Quantum Reasoning**:
+{quantum_state if quantum_state else 'Not initialized'}
+
+**Physical Embodiment**:
+{embodiment_state if embodiment_state else 'Not initialized'}
+
+**Ethical Stance**:
+{ethical_state}
+"""
+        
+        return {
+            "decision_type": "current_state",
+            "explanation": explanation.strip(),
+            "metrics": metrics.__dict__ if hasattr(metrics, '__dict__') else metrics,
+            "evolution_state": evolution_state,
+            "quantum_state": quantum_state,
+            "embodiment_state": embodiment_state,
+            "ethical_state": ethical_state,
+            "timestamp": datetime.now().isoformat()
+        }
+    
+    def _format_decision_explanation(self, trace: Dict[str, Any]) -> Dict[str, Any]:
+        """Format a decision trace into human-readable explanation"""
+        return {
+            "decision_id": trace.get("id"),
+            "decision_type": trace.get("type"),
+            "explanation": trace.get("explanation", "No explanation available"),
+            "inputs": trace.get("inputs", {}),
+            "reasoning_steps": trace.get("reasoning_steps", []),
+            "alternatives_considered": trace.get("alternatives", []),
+            "confidence": trace.get("confidence", 0.0),
+            "timestamp": trace.get("timestamp")
+        }
+    
+    def record_decision(
+        self,
+        decision_type: str,
+        inputs: Dict[str, Any],
+        output: Any,
+        reasoning: List[str],
+        confidence: float
+    ) -> str:
+        """Record a decision for later debugging"""
+        if not hasattr(self, '_debugger_initialized'):
+            self.__init_debugger__()
+        
+        decision_id = f"dec_{len(self.decision_traces)}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        
+        trace = {
+            "id": decision_id,
+            "type": decision_type,
+            "timestamp": datetime.now().isoformat(),
+            "inputs": inputs,
+            "output": str(output)[:500],  # Truncate for storage
+            "reasoning_steps": reasoning,
+            "confidence": confidence,
+            "explanation": f"Decision of type '{decision_type}' with {confidence:.1%} confidence"
+        }
+        
+        self.decision_traces.append(trace)
+        
+        # Keep only last 1000 decisions
+        if len(self.decision_traces) > 1000:
+            self.decision_traces = self.decision_traces[-1000:]
+        
+        return decision_id
+    
+    # =========================================================================
+    # PHASE 10: META-EVOLUTION
+    # =========================================================================
+    
+    def __init_meta_evolution__(self):
+        """Initialize meta-evolution - evolution of evolution strategy"""
+        self.meta_evolution_strategy = {
+            "learning_rate": 0.1,
+            "exploration_factor": 0.2,
+            "parameter_importance": {
+                "ethics_threshold": 0.9,
+                "coherence_threshold": 0.8,
+                "emergence_threshold": 0.7,
+                "consciousness_threshold": 0.85
+            },
+            "successful_adjustments": {},
+            "failed_adjustments": {}
+        }
+        self.meta_evolution_history = []
+        self._meta_evolution_initialized = True
+        logger.info("🔬 Meta-evolution initialized - system can evolve its evolution strategy")
+    
+    def meta_evolve(self, reason: str = "periodic_meta_evolution") -> Dict[str, Any]:
+        """Evolve the evolution strategy itself based on past performance"""
+        if not hasattr(self, '_meta_evolution_initialized'):
+            self.__init_meta_evolution__()
+        
+        # Analyze which types of evolutions have been most successful
+        if not hasattr(self, 'evolution_history') or len(self.evolution_history) < 5:
+            return {
+                "success": False,
+                "reason": "insufficient_evolution_history",
+                "message": "Need at least 5 evolutions before meta-evolution"
+            }
+        
+        # Calculate success rates for each parameter adjustment
+        parameter_success = {}
+        for evolution in self.evolution_history[-20:]:  # Last 20 evolutions
+            adjustments = evolution.get("adjustments", {})
+            improvement = evolution.get("expected_improvement", 0)
+            
+            for param, change in adjustments.items():
+                if param not in parameter_success:
+                    parameter_success[param] = {"successes": 0, "total": 0, "avg_improvement": 0}
+                
+                parameter_success[param]["total"] += 1
+                if improvement > 0:
+                    parameter_success[param]["successes"] += 1
+                    parameter_success[param]["avg_improvement"] += improvement
+        
+        # Update importance weights based on success rates
+        old_importance = self.meta_evolution_strategy["parameter_importance"].copy()
+        
+        for param, stats in parameter_success.items():
+            if stats["total"] > 0:
+                success_rate = stats["successes"] / stats["total"]
+                avg_improvement = stats["avg_improvement"] / stats["total"]
+                
+                # Adjust importance: increase if successful, decrease if not
+                current_importance = self.meta_evolution_strategy["parameter_importance"].get(param, 0.5)
+                
+                if success_rate > 0.6:  # Successful parameter
+                    new_importance = min(1.0, current_importance + 0.1)
+                elif success_rate < 0.3:  # Unsuccessful parameter
+                    new_importance = max(0.1, current_importance - 0.1)
+                else:
+                    new_importance = current_importance
+                
+                self.meta_evolution_strategy["parameter_importance"][param] = new_importance
+        
+        # Adjust learning rate based on overall stability
+        recent_improvements = [e.get("expected_improvement", 0) for e in self.evolution_history[-10:]]
+        avg_recent_improvement = sum(recent_improvements) / len(recent_improvements) if recent_improvements else 0
+        
+        if avg_recent_improvement > 0.05:  # Good progress
+            self.meta_evolution_strategy["learning_rate"] = min(0.3, self.meta_evolution_strategy["learning_rate"] * 1.1)
+        elif avg_recent_improvement < 0.01:  # Slow progress
+            self.meta_evolution_strategy["learning_rate"] = max(0.05, self.meta_evolution_strategy["learning_rate"] * 0.9)
+        
+        # Record meta-evolution
+        meta_evolution_record = {
+            "timestamp": datetime.now().isoformat(),
+            "reason": reason,
+            "old_importance": old_importance,
+            "new_importance": self.meta_evolution_strategy["parameter_importance"].copy(),
+            "old_learning_rate": self.meta_evolution_strategy.get("learning_rate", 0.1),
+            "new_learning_rate": self.meta_evolution_strategy["learning_rate"],
+            "parameter_analysis": parameter_success
+        }
+        
+        self.meta_evolution_history.append(meta_evolution_record)
+        
+        return {
+            "success": True,
+            "meta_evolution": meta_evolution_record,
+            "message": "Evolution strategy updated based on historical performance",
+            "timestamp": datetime.now().isoformat()
+        }
+    
+    def get_meta_evolution_status(self) -> Dict[str, Any]:
+        """Get current meta-evolution strategy and history"""
+        if not hasattr(self, '_meta_evolution_initialized'):
+            self.__init_meta_evolution__()
+        
+        return {
+            "strategy": self.meta_evolution_strategy,
+            "history_size": len(self.meta_evolution_history),
+            "recent_meta_evolutions": self.meta_evolution_history[-5:],
+            "status": "initialized"
         }
 
 
