@@ -6211,6 +6211,86 @@ async def get_consciousness_insight(insight_id: str):
         raise HTTPException(status_code=500, detail=f"Insight retrieval failed: {str(e)}")
 
 
+# =============================================================================
+# PHASE 6: QUANTUM REASONING ENDPOINTS
+# =============================================================================
+
+@app.post("/v4/consciousness/quantum/start", tags=["V4.0 Evolution"])
+async def start_quantum_reasoning(
+    problem: str,
+    num_paths: int = 3
+):
+    """⚛️ V4.0: Start quantum reasoning with multiple superposed paths"""
+    try:
+        if consciousness_service is None:
+            raise HTTPException(status_code=503, detail="Consciousness service not initialized")
+        
+        # Generate reasoning paths
+        paths = [
+            {"path_id": f"path_{i}", "hypothesis": f"Approach {i+1} for {problem}", "confidence": 0.5 + (i * 0.1)}
+            for i in range(num_paths)
+        ]
+        
+        state = await consciousness_service.start_quantum_reasoning(
+            problem=problem,
+            reasoning_paths=paths
+        )
+        
+        return {
+            "status": "success",
+            "quantum_state": state
+        }
+    except Exception as e:
+        logger.error(f"Quantum reasoning start failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Quantum reasoning failed: {str(e)}")
+
+
+@app.post("/v4/consciousness/quantum/collapse", tags=["V4.0 Evolution"])
+async def collapse_quantum_reasoning(
+    state_id: str,
+    strategy: str = "best"
+):
+    """⚛️ V4.0: Collapse quantum state to single reasoning path"""
+    try:
+        if consciousness_service is None:
+            raise HTTPException(status_code=503, detail="Consciousness service not initialized")
+        
+        result = consciousness_service.collapse_quantum_reasoning(
+            state_id=state_id,
+            strategy=strategy
+        )
+        
+        return {
+            "status": "success",
+            "collapsed_result": result
+        }
+    except Exception as e:
+        logger.error(f"Quantum collapse failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Quantum collapse failed: {str(e)}")
+
+
+@app.get("/v4/consciousness/quantum/state", tags=["V4.0 Evolution"])
+async def get_quantum_state(state_id: Optional[str] = None):
+    """⚛️ V4.0: Get current quantum reasoning state(s)"""
+    try:
+        if consciousness_service is None:
+            raise HTTPException(status_code=503, detail="Consciousness service not initialized")
+        
+        state = consciousness_service.get_quantum_state(state_id)
+        
+        return {
+            "status": "success",
+            "quantum_state": state
+        }
+    except Exception as e:
+        logger.error(f"Quantum state retrieval failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Quantum state retrieval failed: {str(e)}")
+
+
+# =============================================================================
+# PHASE 7: ETHICAL AUTONOMY ENDPOINTS
+# =============================================================================
+
 @app.post("/v4/consciousness/ethics/evaluate", tags=["V4.0 Evolution"])
 async def evaluate_ethical_decision(decision_context: Dict[str, Any]):
     """Run full ethical + bias evaluation on a decision context.

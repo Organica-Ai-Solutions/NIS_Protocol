@@ -834,7 +834,7 @@ class ConsciousnessService(NISAgent):
         if not hasattr(self, '_genesis_initialized'):
             self.genesis_history: List[Dict[str, Any]] = []
             self._genesis_initialized = True
-            logger.info("🔬 Agent Genesis initialized - system can create specialized agents on-demand")
+            self.logger.info("🔬 Agent Genesis initialized - system can create specialized agents on-demand")
     
     async def detect_capability_gap(self, recent_failures: List[Dict[str, Any]]) -> Optional[str]:
         """
@@ -1505,7 +1505,7 @@ class ConsciousnessService(NISAgent):
         }
         self.motion_history = []
         self._embodiment_initialized = True
-        logger.info("🤖 Physical embodiment initialized")
+        self.logger.info("🤖 Physical embodiment initialized")
     
     def update_body_state(
         self,
@@ -1671,7 +1671,7 @@ class ConsciousnessService(NISAgent):
         """Initialize consciousness debugging system"""
         self.decision_traces = []
         self._debugger_initialized = True
-        logger.info("🔍 Consciousness debugger initialized")
+        self.logger.info("🔍 Consciousness debugger initialized")
     
     def explain_decision(self, decision_id: Optional[str] = None) -> Dict[str, Any]:
         """Explain a consciousness decision with full trace"""
@@ -1837,7 +1837,7 @@ class ConsciousnessService(NISAgent):
         }
         self.meta_evolution_history = []
         self._meta_evolution_initialized = True
-        logger.info("🔬 Meta-evolution initialized - system can evolve its evolution strategy")
+        self.logger.info("🔬 Meta-evolution initialized - system can evolve its evolution strategy")
     
     def meta_evolve(self, reason: str = "periodic_meta_evolution") -> Dict[str, Any]:
         """Evolve the evolution strategy itself based on past performance"""
