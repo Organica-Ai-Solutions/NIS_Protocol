@@ -785,6 +785,21 @@ async def initialize_system():
     consciousness_service.__init_evolution__()
     logger.info("🧬 Phase 1: Evolutionary consciousness initialized")
     
+    consciousness_service.__init_genesis__()
+    logger.info("🔬 Phase 2: Agent Genesis initialized")
+    
+    consciousness_service.__init_distributed__()
+    logger.info("🌐 Phase 3: Distributed consciousness initialized")
+    
+    consciousness_service.__init_planning__()
+    logger.info("🎯 Phase 4: Autonomous planning initialized")
+    
+    consciousness_service.__init_marketplace__()
+    logger.info("💼 Phase 5: Consciousness marketplace initialized")
+    
+    consciousness_service.__init_quantum__()
+    logger.info("⚛️ Phase 6: Quantum reasoning initialized")
+    
     consciousness_service.__init_embodiment__()
     logger.info("🤖 Phase 8: Physical embodiment initialized")
     
@@ -794,7 +809,7 @@ async def initialize_system():
     consciousness_service.__init_meta_evolution__()
     logger.info("🔬 Phase 10: Meta-evolution initialized")
     
-    logger.info("✅ All v4.0 consciousness phases initialized - system ready for AGI-level operation")
+    logger.info("✅ All 10 v4.0 consciousness phases initialized - system ready for AGI-level operation")
     
     protocol_bridge = create_protocol_bridge_service(
         consciousness_service=consciousness_service,

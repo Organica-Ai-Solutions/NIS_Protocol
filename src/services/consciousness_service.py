@@ -829,6 +829,13 @@ class ConsciousnessService(NISAgent):
     # 🔬 V4.0: AGENT GENESIS - DYNAMIC AGENT CREATION
     # =============================================================================
     
+    def __init_genesis__(self):
+        """Initialize agent genesis system (call after __init__)"""
+        if not hasattr(self, '_genesis_initialized'):
+            self.genesis_history: List[Dict[str, Any]] = []
+            self._genesis_initialized = True
+            logger.info("🔬 Agent Genesis initialized - system can create specialized agents on-demand")
+    
     async def detect_capability_gap(self, recent_failures: List[Dict[str, Any]]) -> Optional[str]:
         """
         🔬 V4.0: Detect missing capabilities from failure patterns
@@ -915,8 +922,8 @@ class ConsciousnessService(NISAgent):
     
     def record_agent_genesis(self, agent_spec: Dict[str, Any]):
         """Track dynamically created agents"""
-        if not hasattr(self, 'genesis_history'):
-            self.genesis_history = []
+        if not hasattr(self, '_genesis_initialized'):
+            self.__init_genesis__()
         
         self.genesis_history.append({
             "timestamp": time.time(),
@@ -929,8 +936,8 @@ class ConsciousnessService(NISAgent):
     
     def get_genesis_report(self) -> Dict[str, Any]:
         """Get report on dynamically created agents"""
-        if not hasattr(self, 'genesis_history'):
-            return {"genesis_enabled": False, "total_agents_created": 0}
+        if not hasattr(self, '_genesis_initialized'):
+            self.__init_genesis__()
         
         return {
             "genesis_enabled": True,
