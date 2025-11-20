@@ -300,6 +300,11 @@ class VisionAgent(NISAgent):
         """
         super().__init__(agent_id, description, emotional_state)
         
+        # Set up enhanced logging FIRST (before using logger)
+        if not hasattr(self, 'logger'):
+            self.logger = logging.getLogger(f"nis_vision_agent_{agent_id}")
+            self.logger.setLevel(logging.INFO)
+        
         # Store WALDO preference
         self.use_waldo = use_waldo
         
@@ -336,11 +341,6 @@ class VisionAgent(NISAgent):
         
         # Initialize confidence factors for mathematical validation
         self.confidence_factors = create_default_confidence_factors()
-        
-        # Set up enhanced logging
-        if not hasattr(self, 'logger'):
-            self.logger = logging.getLogger(f"nis_vision_agent_{agent_id}")
-            self.logger.setLevel(logging.INFO)
         
         # Register with NIS system
         NISRegistry().register(self)
