@@ -355,14 +355,19 @@ class VisionAgent(NISAgent):
         """End processing timer and return duration"""
         return time.time() - start_time
     
-    def _create_response(self, status: str, data: Dict[str, Any]) -> Dict[str, Any]:
+    def _create_response(self, status: str, data: Dict[str, Any], metadata: Optional[Dict[str, Any]] = None, emotional_state: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """Create standardized response"""
-        return {
+        response = {
             "status": status,
             "agent_id": self.agent_id,
             "timestamp": time.time(),
             **data
         }
+        if metadata:
+            response["metadata"] = metadata
+        if emotional_state:
+            response["emotional_state"] = emotional_state
+        return response
     
     def process(self, message: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -454,7 +459,7 @@ class VisionAgent(NISAgent):
             metadata={
                 "is_streaming": self.is_streaming
             },
-            emotional_state=self.emotional_state.get_state()
+            emotional_state=self.emotional_state.get_state() if self.emotional_state else None
         )
     
     def _validate_message(self, message: Dict[str, Any]) -> bool:
