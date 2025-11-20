@@ -305,6 +305,10 @@ class VisionAgent(NISAgent):
             self.logger = logging.getLogger(f"nis_vision_agent_{agent_id}")
             self.logger.setLevel(logging.INFO)
         
+        # Initialize emotional state (set to None if not provided)
+        if not hasattr(self, 'emotional_state'):
+            self.emotional_state = emotional_state
+        
         # Store WALDO preference
         self.use_waldo = use_waldo
         
