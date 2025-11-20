@@ -10,9 +10,9 @@ FROM nvidia/cuda:12.1.1-devel-ubuntu22.04 AS builder
 # Prevent interactive installs
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install build tools and Python
+# Install build tools and Python (with dev headers for C extensions)
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    python3.11 python3.11-venv python3-pip build-essential git gcc g++ curl wget \
+    python3.11 python3.11-dev python3.11-venv python3-pip build-essential git gcc g++ curl wget \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
