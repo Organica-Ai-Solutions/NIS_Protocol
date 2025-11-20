@@ -1514,11 +1514,12 @@ class ConsciousnessService(NISAgent):
             from src.agents.perception.vision_agent import VisionAgent
             self.vision_agent = VisionAgent(
                 agent_id="embodiment_vision",
-                enable_yolo=True,  # Object detection
+                description="Computer vision for embodiment perception",
+                yolo_model_path=None,  # Use default YOLO model
                 confidence_threshold=0.5
             )
             self.logger.info("👁️ VisionAgent initialized (YOLO detection, OpenCV)")
-        except ImportError as e:
+        except Exception as e:
             self.logger.warning(f"⚠️ VisionAgent not available: {e}")
             self.vision_agent = None
         
