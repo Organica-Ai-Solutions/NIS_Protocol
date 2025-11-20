@@ -347,6 +347,23 @@ class VisionAgent(NISAgent):
         
         self.logger.info(f"Vision Agent '{agent_id}' initialized with OpenCV available: {CV2_AVAILABLE}, self-audit: {enable_self_audit}")
     
+    def _start_processing_timer(self) -> float:
+        """Start processing timer"""
+        return time.time()
+    
+    def _end_processing_timer(self, start_time: float) -> float:
+        """End processing timer and return duration"""
+        return time.time() - start_time
+    
+    def _create_response(self, status: str, data: Dict[str, Any]) -> Dict[str, Any]:
+        """Create standardized response"""
+        return {
+            "status": status,
+            "agent_id": self.agent_id,
+            "timestamp": time.time(),
+            **data
+        }
+    
     def process(self, message: Dict[str, Any]) -> Dict[str, Any]:
         """
         Process a visual input and extract features.
