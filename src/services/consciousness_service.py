@@ -1489,7 +1489,9 @@ class ConsciousnessService(NISAgent):
     # =========================================================================
     
     def __init_embodiment__(self):
-        """Initialize physical embodiment tracking"""
+        """Initialize physical embodiment tracking with NASA-grade redundancy"""
+        from src.services.redundancy_manager import RedundancyManager
+        
         self.body_state = {
             "position": {"x": 0.0, "y": 0.0, "z": 0.0},
             "orientation": {"roll": 0.0, "pitch": 0.0, "yaw": 0.0},
@@ -1505,6 +1507,11 @@ class ConsciousnessService(NISAgent):
         }
         self.motion_history = []
         self._embodiment_lock = asyncio.Lock()  # FIX: Add lock to prevent race condition
+        
+        # NASA-GRADE REDUNDANCY SYSTEM
+        self.redundancy_manager = RedundancyManager()
+        self.logger.info("🛰️ Redundancy system initialized (NASA-grade)")
+        
         self._embodiment_initialized = True
         self.logger.info("🤖 Physical embodiment initialized")
     
@@ -1543,19 +1550,48 @@ class ConsciousnessService(NISAgent):
         target_orientation: Optional[Dict[str, float]] = None,
         speed: float = 0.5
     ) -> Dict[str, Any]:
-        """Check if a planned motion is safe before execution"""
+        """Check if a planned motion is safe before execution (with NASA-grade redundancy)"""
         if not hasattr(self, '_embodiment_initialized'):
             self.__init_embodiment__()
+        
+        # RESET WATCHDOG TIMER
+        self.redundancy_manager.watchdogs["safety_check"].reset()
+        
+        # CHECK ALL REDUNDANT SENSORS
+        sensor_data = await self.redundancy_manager.check_all_sensors(self.body_state)
         
         safety_checks = {
             "workspace_bounds": True,
             "battery_sufficient": True,
             "collision_free": True,
             "speed_acceptable": True,
-            "ethical_clearance": True
+            "ethical_clearance": True,
+            "redundancy_health": sensor_data["system_health"] == "nominal"
         }
         
         issues = []
+        
+        # CHECK SYSTEM HEALTH (NASA-grade graceful degradation)
+        if sensor_data["system_health"] != "nominal":
+            degradation = self.redundancy_manager.graceful_degradation()
+            
+            if "full_motion" not in degradation["allowed_operations"]:
+                safety_checks["redundancy_health"] = False
+                issues.append(f"System degraded: {sensor_data['system_health']}")
+                issues.extend(degradation["restrictions"])
+                
+                # Adjust speed limit for degraded mode
+                if degradation["mode"] == "degraded":
+                    speed = min(speed, 0.5)  # Limit to 50% in degraded mode
+                    self.logger.warning(f"⚠️ Operating in degraded mode, speed limited to 50%")
+                elif degradation["mode"] == "failsafe":
+                    return {
+                        "safe": False,
+                        "checks": safety_checks,
+                        "issues": ["FAILSAFE ACTIVE: All motion prohibited"],
+                        "recommendation": "ABORT",
+                        "redundancy_status": sensor_data
+                    }
         
         # Check workspace bounds
         bounds = self.body_state["physical_constraints"]["workspace_bounds"]
@@ -1601,7 +1637,12 @@ class ConsciousnessService(NISAgent):
             "estimated_energy": estimated_energy,
             "current_battery": self.body_state["battery_level"],
             "distance": distance,
-            "recommendation": "PROCEED" if safe else "ABORT"
+            "recommendation": "PROCEED" if safe else "ABORT",
+            "redundancy_status": {
+                "system_health": sensor_data["system_health"],
+                "degraded_components": sensor_data["degraded_components"],
+                "statistics": sensor_data["statistics"]
+            }
         }
     
     async def execute_embodied_action(
@@ -1609,19 +1650,25 @@ class ConsciousnessService(NISAgent):
         action_type: str,
         parameters: Dict[str, Any]
     ) -> Dict[str, Any]:
-        """Execute a physical action with embodied consciousness"""
+        """Execute a physical action with embodied consciousness (NASA-grade safety)"""
         if not hasattr(self, '_embodiment_initialized'):
             self.__init_embodiment__()
+        
+        # START MOTION WATCHDOG TIMER
+        watchdog = self.redundancy_manager.watchdogs["motion_execution"]
+        watchdog.reset()
         
         # FIX: Acquire lock to prevent race condition
         async with self._embodiment_lock:
             try:
-                # Safety check first
+                # Safety check first (includes redundancy checks)
                 if action_type == "move":
                     safety = await self.check_motion_safety(
                         parameters.get("target", {}),
                         speed=parameters.get("speed", 0.5)
                     )
+                    watchdog.reset()  # Still alive after safety check
+                    
                     if not safety["safe"]:
                         return {
                             "success": False,
@@ -1644,6 +1691,20 @@ class ConsciousnessService(NISAgent):
                     self.body_state["position"].update(target)
                     energy_used = parameters.get("distance", 1.0) * 2.0
                     self.body_state["battery_level"] = max(0, self.body_state["battery_level"] - energy_used)
+                    
+                    watchdog.reset()  # Still alive after motion execution
+                
+                # CHECK FOR WATCHDOG TIMEOUTS
+                timeouts = await self.redundancy_manager.check_watchdogs()
+                if timeouts:
+                    self.logger.critical(f"🚨 WATCHDOG TIMEOUT DETECTED: {timeouts}")
+                    return {
+                        "success": False,
+                        "action": action_type,
+                        "reason": "watchdog_timeout",
+                        "timeouts": timeouts,
+                        "timestamp": datetime.now().isoformat()
+                    }
                 
                 action_record["body_state_after"] = self.body_state.copy()
                 self.motion_history.append(action_record)
@@ -1655,12 +1716,14 @@ class ConsciousnessService(NISAgent):
                     "timestamp": datetime.now().isoformat()
                 }
             except Exception as e:
-                # FIX: Proper error handling instead of returning null
+                # TRIGGER FAILSAFE
+                await self.redundancy_manager.trigger_failsafe(f"Exception during {action_type}: {e}")
                 self.logger.error(f"Embodiment action failed: {e}")
                 return {
                     "success": False,
                     "action": action_type,
                     "error": str(e),
+                    "failsafe_triggered": True,
                     "body_state": self.body_state,
                     "timestamp": datetime.now().isoformat()
                 }

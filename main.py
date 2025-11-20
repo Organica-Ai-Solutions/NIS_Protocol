@@ -6414,6 +6414,69 @@ async def get_embodiment_status():
         raise HTTPException(status_code=500, detail=f"Embodiment status retrieval failed: {str(e)}")
 
 
+@app.get("/v4/consciousness/embodiment/redundancy/status", tags=["V4.0 Evolution"])
+async def get_redundancy_status():
+    """Get NASA-grade redundancy system status (TMR, watchdogs, health)"""
+    try:
+        if consciousness_service is None:
+            raise HTTPException(status_code=503, detail="Consciousness service not initialized")
+        
+        if not hasattr(consciousness_service, 'redundancy_manager'):
+            raise HTTPException(status_code=503, detail="Redundancy system not initialized")
+        
+        status = consciousness_service.redundancy_manager.get_status()
+        
+        return {
+            "status": "success",
+            "redundancy_system": status
+        }
+    except Exception as e:
+        logger.error(f"Redundancy status retrieval failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Redundancy status retrieval failed: {str(e)}")
+
+
+@app.post("/v4/consciousness/embodiment/diagnostics", tags=["V4.0 Evolution"])
+async def run_self_diagnostics():
+    """Run comprehensive self-diagnostics (Built-In Test - BIT)"""
+    try:
+        if consciousness_service is None:
+            raise HTTPException(status_code=503, detail="Consciousness service not initialized")
+        
+        if not hasattr(consciousness_service, 'redundancy_manager'):
+            raise HTTPException(status_code=503, detail="Redundancy system not initialized")
+        
+        diagnostics = await consciousness_service.redundancy_manager.self_diagnostics()
+        
+        return {
+            "status": "success",
+            "diagnostics": diagnostics
+        }
+    except Exception as e:
+        logger.error(f"Self-diagnostics failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Self-diagnostics failed: {str(e)}")
+
+
+@app.get("/v4/consciousness/embodiment/redundancy/degradation", tags=["V4.0 Evolution"])
+async def get_degradation_mode():
+    """Get current graceful degradation mode and restrictions"""
+    try:
+        if consciousness_service is None:
+            raise HTTPException(status_code=503, detail="Consciousness service not initialized")
+        
+        if not hasattr(consciousness_service, 'redundancy_manager'):
+            raise HTTPException(status_code=503, detail="Redundancy system not initialized")
+        
+        degradation = consciousness_service.redundancy_manager.graceful_degradation()
+        
+        return {
+            "status": "success",
+            "degradation_mode": degradation
+        }
+    except Exception as e:
+        logger.error(f"Degradation mode retrieval failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Degradation mode retrieval failed: {str(e)}")
+
+
 # =============================================================================
 # PHASE 9: CONSCIOUSNESS DEBUGGER ENDPOINTS
 # =============================================================================
