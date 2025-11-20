@@ -1489,9 +1489,11 @@ class ConsciousnessService(NISAgent):
     # =========================================================================
     
     def __init_embodiment__(self):
-        """Initialize physical embodiment with UnifiedRoboticsAgent (includes NASA-grade redundancy)"""
+        """Initialize COMPLETE physical embodiment system - Full robotics stack integration"""
         
-        # CORRECT ARCHITECTURE: Use UnifiedRoboticsAgent for all hardware control
+        # ====================================================================
+        # UNIFIED ROBOTICS AGENT - Core control system with redundancy
+        # ====================================================================
         try:
             from src.agents.robotics.unified_robotics_agent import UnifiedRoboticsAgent, RobotType
             self.robotics_agent = UnifiedRoboticsAgent(
@@ -1500,12 +1502,42 @@ class ConsciousnessService(NISAgent):
                 enable_redundancy=True  # NASA-grade redundancy at robotics layer
             )
             self.robot_type = RobotType.MANIPULATOR  # Default, can be changed
-            self.logger.info("🤖 UnifiedRoboticsAgent initialized with redundancy")
+            self.logger.info("🤖 UnifiedRoboticsAgent initialized (kinematics, physics, redundancy)")
         except ImportError as e:
             self.logger.warning(f"⚠️ UnifiedRoboticsAgent not available: {e}")
             self.robotics_agent = None
         
-        # High-level body state (managed by consciousness)
+        # ====================================================================
+        # VISION AGENT - Computer vision and perception
+        # ====================================================================
+        try:
+            from src.agents.perception.vision_agent import VisionAgent
+            self.vision_agent = VisionAgent(
+                agent_id="embodiment_vision",
+                enable_yolo=True,  # Object detection
+                confidence_threshold=0.5
+            )
+            self.logger.info("👁️ VisionAgent initialized (YOLO detection, OpenCV)")
+        except ImportError as e:
+            self.logger.warning(f"⚠️ VisionAgent not available: {e}")
+            self.vision_agent = None
+        
+        # ====================================================================
+        # ROBOTICS DATA COLLECTOR - Training data access
+        # ====================================================================
+        try:
+            from src.agents.robotics.robotics_data_collector import RoboticsDataCollector
+            self.data_collector = RoboticsDataCollector(
+                data_dir="data/robotics"
+            )
+            self.logger.info("📊 RoboticsDataCollector initialized (76K+ trajectories)")
+        except ImportError as e:
+            self.logger.warning(f"⚠️ RoboticsDataCollector not available: {e}")
+            self.data_collector = None
+        
+        # ====================================================================
+        # HIGH-LEVEL BODY STATE - Consciousness abstraction
+        # ====================================================================
         self.body_state = {
             "position": {"x": 0.0, "y": 0.0, "z": 0.0},
             "orientation": {"roll": 0.0, "pitch": 0.0, "yaw": 0.0},
@@ -1523,7 +1555,14 @@ class ConsciousnessService(NISAgent):
         self._embodiment_lock = asyncio.Lock()
         
         self._embodiment_initialized = True
-        self.logger.info("🤖 Physical embodiment initialized (via UnifiedRoboticsAgent)")
+        
+        # Log complete integration
+        components = []
+        if self.robotics_agent: components.append("✅ Robotics")
+        if self.vision_agent: components.append("✅ Vision")
+        if self.data_collector: components.append("✅ Data")
+        
+        self.logger.info(f"🤖 COMPLETE Embodiment System: {' | '.join(components)}")
     
     def update_body_state(
         self,

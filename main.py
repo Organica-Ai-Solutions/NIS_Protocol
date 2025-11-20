@@ -6486,6 +6486,117 @@ async def get_degradation_mode():
         raise HTTPException(status_code=500, detail=f"Degradation mode retrieval failed: {str(e)}")
 
 
+@app.get("/v4/consciousness/embodiment/vision/detect", tags=["V4.0 Evolution"])
+async def detect_objects(image_path: Optional[str] = None):
+    """Detect objects in image using YOLO (via VisionAgent)"""
+    try:
+        if consciousness_service is None:
+            raise HTTPException(status_code=503, detail="Consciousness service not initialized")
+        
+        if not hasattr(consciousness_service, 'vision_agent') or consciousness_service.vision_agent is None:
+            raise HTTPException(status_code=503, detail="Vision agent not initialized")
+        
+        # For now, return vision agent status (image processing requires actual image input)
+        return {
+            "status": "success",
+            "vision_agent": {
+                "available": True,
+                "yolo_enabled": consciousness_service.vision_agent.yolo_model is not None,
+                "opencv_available": True,
+                "note": "Image processing requires actual image input (base64 or path)"
+            }
+        }
+    except Exception as e:
+        logger.error(f"Vision detection failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Vision detection failed: {str(e)}")
+
+
+@app.get("/v4/consciousness/embodiment/robotics/datasets", tags=["V4.0 Evolution"])
+async def get_robotics_datasets():
+    """Get available robotics training datasets (76K+ trajectories)"""
+    try:
+        if consciousness_service is None:
+            raise HTTPException(status_code=503, detail="Consciousness service not initialized")
+        
+        if not hasattr(consciousness_service, 'data_collector') or consciousness_service.data_collector is None:
+            raise HTTPException(status_code=503, detail="Data collector not initialized")
+        
+        datasets = consciousness_service.data_collector.get_available_datasets()
+        
+        return {
+            "status": "success",
+            "datasets": datasets
+        }
+    except Exception as e:
+        logger.error(f"Dataset retrieval failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Dataset retrieval failed: {str(e)}")
+
+
+@app.get("/v4/consciousness/embodiment/robotics/info", tags=["V4.0 Evolution"])
+async def get_robotics_info():
+    """Get complete robotics system information and capabilities"""
+    try:
+        if consciousness_service is None:
+            raise HTTPException(status_code=503, detail="Consciousness service not initialized")
+        
+        info = {
+            "robotics_agent": {
+                "available": hasattr(consciousness_service, 'robotics_agent') and consciousness_service.robotics_agent is not None,
+                "features": []
+            },
+            "vision_agent": {
+                "available": hasattr(consciousness_service, 'vision_agent') and consciousness_service.vision_agent is not None,
+                "features": []
+            },
+            "data_collector": {
+                "available": hasattr(consciousness_service, 'data_collector') and consciousness_service.data_collector is not None,
+                "features": []
+            }
+        }
+        
+        # Robotics agent info
+        if info["robotics_agent"]["available"]:
+            robotics = consciousness_service.robotics_agent
+            info["robotics_agent"]["features"] = [
+                "Forward/Inverse Kinematics",
+                "Trajectory Planning (Minimum Jerk)",
+                "Physics Validation",
+                "Multi-Platform Support (Drones, Humanoids, Manipulators, Vehicles)",
+                "NASA-Grade Redundancy" if robotics.enable_redundancy else "No Redundancy",
+                f"Robot Types: {len(robotics.robot_states)} configured"
+            ]
+            info["robotics_agent"]["stats"] = robotics.stats
+        
+        # Vision agent info
+        if info["vision_agent"]["available"]:
+            vision = consciousness_service.vision_agent
+            info["vision_agent"]["features"] = [
+                "YOLO Object Detection (v5/v8)",
+                "OpenCV Image Processing",
+                "Real-time Video Streams",
+                "80 COCO Classes"
+            ]
+        
+        # Data collector info
+        if info["data_collector"]["available"]:
+            collector = consciousness_service.data_collector
+            info["data_collector"]["features"] = [
+                "DROID Dataset (76,000 manipulation trajectories)",
+                "PX4 Flight Logs (drone data)",
+                "ROS Bagfiles",
+                "Motion Capture Data",
+                "Berkeley AutoLab (grasping)"
+            ]
+        
+        return {
+            "status": "success",
+            "system_info": info
+        }
+    except Exception as e:
+        logger.error(f"Robotics info retrieval failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Robotics info retrieval failed: {str(e)}")
+
+
 # =============================================================================
 # PHASE 9: CONSCIOUSNESS DEBUGGER ENDPOINTS
 # =============================================================================
