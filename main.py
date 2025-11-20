@@ -6357,7 +6357,7 @@ async def check_motion_safety(
         if consciousness_service is None:
             raise HTTPException(status_code=503, detail="Consciousness service not initialized")
         
-        result = consciousness_service.check_motion_safety(
+        result = await consciousness_service.check_motion_safety(
             target_position=target_position,
             target_orientation=target_orientation,
             speed=speed
@@ -6382,7 +6382,7 @@ async def execute_embodied_action(
         if consciousness_service is None:
             raise HTTPException(status_code=503, detail="Consciousness service not initialized")
         
-        result = consciousness_service.execute_embodied_action(
+        result = await consciousness_service.execute_embodied_action(
             action_type=action_type,
             parameters=parameters
         )

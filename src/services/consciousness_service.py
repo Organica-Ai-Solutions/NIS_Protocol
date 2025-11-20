@@ -1536,7 +1536,7 @@ class ConsciousnessService(NISAgent):
             "timestamp": datetime.now().isoformat()
         }
     
-    def check_motion_safety(
+    async def check_motion_safety(
         self,
         target_position: Dict[str, float],
         target_orientation: Optional[Dict[str, float]] = None,
@@ -1582,7 +1582,7 @@ class ConsciousnessService(NISAgent):
         
         # Ethical check: is this motion ethical?
         if distance > 5.0:  # Large movements require ethical review
-            ethical_result = self.ethical_analysis({
+            ethical_result = await self.ethical_analysis({
                 "action": "large_motion",
                 "distance": distance,
                 "target": target_position
@@ -1603,7 +1603,7 @@ class ConsciousnessService(NISAgent):
             "recommendation": "PROCEED" if safe else "ABORT"
         }
     
-    def execute_embodied_action(
+    async def execute_embodied_action(
         self,
         action_type: str,
         parameters: Dict[str, Any]
@@ -1614,7 +1614,7 @@ class ConsciousnessService(NISAgent):
         
         # Safety check first
         if action_type == "move":
-            safety = self.check_motion_safety(
+            safety = await self.check_motion_safety(
                 parameters.get("target", {}),
                 speed=parameters.get("speed", 0.5)
             )
