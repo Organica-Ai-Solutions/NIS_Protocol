@@ -1,0 +1,588 @@
+{
+  "project_name": "NIS Protocol v4.0 Demo",
+  "project_description": "Interactive Flutter demo showcasing AGI-level consciousness system with 10 intelligence phases",
+  "api_base_url": "http://localhost:8000",
+  "theme": {
+    "primary_color": "#6366F1",
+    "secondary_color": "#8B5CF6",
+    "accent_color": "#EC4899",
+    "background_dark": "#0F172A",
+    "card_background": "#1E293B",
+    "success_color": "#10B981",
+    "warning_color": "#F59E0B",
+    "error_color": "#EF4444",
+    "text_primary": "#F1F5F9",
+    "text_secondary": "#94A3B8"
+  },
+  "app_structure": {
+    "main_screen": {
+      "type": "dashboard",
+      "title": "NIS Protocol v4.0 - AGI Consciousness System",
+      "subtitle": "10 Phases of Autonomous Intelligence",
+      "components": [
+        "system_status_card",
+        "phase_selector_grid",
+        "real_time_metrics_panel",
+        "live_data_visualization"
+      ]
+    },
+    "navigation": {
+      "type": "bottom_navigation",
+      "items": [
+        {"label": "Dashboard", "icon": "dashboard", "route": "/"},
+        {"label": "Phases", "icon": "psychology", "route": "/phases"},
+        {"label": "Live Test", "icon": "play_arrow", "route": "/test"},
+        {"label": "Analytics", "icon": "analytics", "route": "/analytics"}
+      ]
+    }
+  },
+  "phases": [
+    {
+      "id": 1,
+      "name": "Self-Improvement",
+      "icon": "🧬",
+      "color": "#10B981",
+      "description": "System modifies its own parameters autonomously",
+      "api_endpoint": "/v4/consciousness/evolve",
+      "method": "POST",
+      "demo_action": {
+        "button_text": "Trigger Evolution",
+        "params": {"reason": "flutter_demo_test"},
+        "expected_response": {
+          "evolution_performed": "boolean",
+          "before_state": "object",
+          "after_state": "object",
+          "changes_made": "object"
+        },
+        "visualization": {
+          "type": "before_after_comparison",
+          "show_delta": true,
+          "animate": true
+        }
+      },
+      "real_time_metrics": [
+        {"label": "Bias Threshold", "key": "bias_threshold", "format": "0.00"},
+        {"label": "Ethics Threshold", "key": "ethics_threshold", "format": "0.00"},
+        {"label": "Total Evolutions", "key": "evolution_count", "format": "integer"}
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Agent Genesis",
+      "icon": "🔬",
+      "color": "#8B5CF6",
+      "description": "Creates specialized AI agents on-demand",
+      "api_endpoint": "/v4/consciousness/genesis",
+      "method": "POST",
+      "demo_action": {
+        "button_text": "Create AI Agent",
+        "input_field": {
+          "label": "Capability Required",
+          "placeholder": "e.g., image_recognition, nlp_analysis",
+          "param_name": "capability"
+        },
+        "expected_response": {
+          "agent_created": "boolean",
+          "agent_spec": "object"
+        },
+        "visualization": {
+          "type": "agent_card_animation",
+          "show_capabilities": true,
+          "confetti_on_create": true
+        }
+      },
+      "history_endpoint": "/v4/consciousness/genesis/history",
+      "display_list": {
+        "title": "Created Agents",
+        "show_capabilities": true,
+        "show_timestamps": true
+      }
+    },
+    {
+      "id": 3,
+      "name": "Distributed Intelligence",
+      "icon": "🌐",
+      "color": "#3B82F6",
+      "description": "Multi-node swarm consciousness",
+      "api_endpoint": "/v4/consciousness/collective/decide",
+      "method": "POST",
+      "demo_action": {
+        "button_text": "Make Collective Decision",
+        "params": {
+          "problem": "system_upgrade_decision",
+          "choice": "approve",
+          "confidence": 0.85
+        },
+        "expected_response": {
+          "collective": "boolean",
+          "final_confidence": "float",
+          "consensus_level": "float"
+        },
+        "visualization": {
+          "type": "network_graph",
+          "show_nodes": true,
+          "show_confidence_boost": true,
+          "animate_consensus": true
+        }
+      },
+      "status_endpoint": "/v4/consciousness/collective/status",
+      "real_time_metrics": [
+        {"label": "Network Size", "key": "collective_size", "format": "integer"},
+        {"label": "Consensus Level", "key": "consensus_level", "format": "0.000"},
+        {"label": "Decisions Made", "key": "collective_decisions_made", "format": "integer"}
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Autonomous Planning",
+      "icon": "🎯",
+      "color": "#F59E0B",
+      "description": "Multi-step goal execution without humans",
+      "api_endpoint": "/v4/consciousness/plan",
+      "method": "POST",
+      "demo_action": {
+        "button_text": "Execute Autonomous Plan",
+        "params": {
+          "goal_id": "demo_deployment",
+          "high_level_goal": "deploy_feature_to_production"
+        },
+        "expected_response": {
+          "status": "string",
+          "steps": "array",
+          "completed_steps": "array"
+        },
+        "visualization": {
+          "type": "stepper_with_progress",
+          "show_timing": true,
+          "animate_execution": true
+        }
+      },
+      "real_time_metrics": [
+        {"label": "Active Goals", "key": "active_goals", "format": "integer"},
+        {"label": "Execution Time", "key": "execution_time_ms", "format": "0.00", "suffix": "ms"}
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Knowledge Marketplace",
+      "icon": "💼",
+      "color": "#EC4899",
+      "description": "Insight sharing between system instances",
+      "note": "Knowledge and insight sharing between instances",
+      "api_endpoint": "/v4/consciousness/marketplace/publish",
+      "method": "POST",
+      "demo_action": {
+        "button_text": "Publish Insight",
+        "input_fields": [
+          {
+            "label": "Insight Type",
+            "param_name": "insight_type",
+            "type": "dropdown",
+            "options": ["performance_breakthrough", "architecture_pattern", "security_discovery"]
+          },
+          {
+            "label": "Content (JSON)",
+            "param_name": "content",
+            "type": "json_editor"
+          }
+        ],
+        "visualization": {
+          "type": "marketplace_grid",
+          "show_categories": true,
+          "animate_publish": true
+        }
+      },
+      "list_endpoint": "/v4/consciousness/marketplace/list",
+      "display_grid": {
+        "title": "Available Insights",
+        "show_type": true,
+        "show_timestamp": true
+      }
+    },
+    {
+      "id": 6,
+      "name": "Multi-Path Reasoning",
+      "icon": "🌳",
+      "color": "#14B8A6",
+      "description": "Parallel hypothesis exploration (NOT quantum computing)",
+      "note": "Software design pattern inspired by quantum concepts. No quantum hardware required.",
+      "api_endpoint": "/v4/consciousness/multipath/start",
+      "method": "POST",
+      "demo_action": {
+        "button_text": "Explore Parallel Paths",
+        "params": {
+          "problem": "architecture_optimization",
+          "num_paths": 6
+        },
+        "expected_response": {
+          "multipath_state": {
+            "state_id": "string",
+            "paths": "array"
+          }
+        },
+        "visualization": {
+          "type": "parallel_paths_tree",
+          "show_confidence_levels": true,
+          "animate_exploration": true
+        }
+      },
+      "collapse_action": {
+        "button_text": "Collapse to Best Path",
+        "endpoint": "/v4/consciousness/multipath/collapse",
+        "visualization": {
+          "type": "path_collapse_animation",
+          "highlight_winner": true
+        }
+      }
+    },
+    {
+      "id": 7,
+      "name": "Ethical Evaluation",
+      "icon": "⚖️",
+      "color": "#A78BFA",
+      "description": "Multi-framework moral analysis",
+      "api_endpoint": "/v4/consciousness/ethics/evaluate",
+      "method": "POST",
+      "demo_action": {
+        "button_text": "Evaluate Ethics",
+        "params": {
+          "decision_context": {
+            "action": "deploy_ai_system",
+            "impact": "high",
+            "stakeholders": ["users", "developers", "society"]
+          }
+        },
+        "expected_response": {
+          "approved": "boolean",
+          "framework_scores": "object",
+          "overall_bias_score": "float"
+        },
+        "visualization": {
+          "type": "radar_chart",
+          "frameworks": ["utilitarian", "deontological", "virtue_ethics", "care_ethics", "justice"],
+          "show_bias": true
+        }
+      },
+      "real_time_metrics": [
+        {"label": "Decisions Approved", "key": "approved_count", "format": "integer"},
+        {"label": "Avg Ethical Score", "key": "avg_score", "format": "0.00"}
+      ]
+    },
+    {
+      "id": 8,
+      "name": "Physical Embodiment",
+      "icon": "🤖",
+      "color": "#F97316",
+      "description": "Simulated robot state for physical systems integration",
+      "note": "Simulation layer for robot integration. Does not require actual physical hardware.",
+      "api_endpoint": "/v4/consciousness/embodiment/action/execute",
+      "method": "POST",
+      "demo_action": {
+        "button_text": "Execute Motion",
+        "params": {
+          "action_type": "move",
+          "target": {"x": 5.0, "y": 4.0, "z": 1.5}
+        },
+        "expected_response": {
+          "success": "boolean",
+          "body_state": {
+            "position": "object",
+            "battery_level": "float"
+          }
+        },
+        "visualization": {
+          "type": "3d_robot_visualization",
+          "show_position": true,
+          "show_battery": true,
+          "animate_movement": true
+        }
+      },
+      "status_endpoint": "/v4/consciousness/embodiment/status",
+      "real_time_metrics": [
+        {"label": "Battery Level", "key": "battery_level", "format": "0.0", "suffix": "%"},
+        {"label": "Position X", "key": "position.x", "format": "0.0"},
+        {"label": "Total Actions", "key": "motion_history_size", "format": "integer"}
+      ]
+    },
+    {
+      "id": 9,
+      "name": "Decision Debugging",
+      "icon": "🔍",
+      "color": "#06B6D4",
+      "description": "Complete decision traceability",
+      "api_endpoint": "/v4/consciousness/debug/record",
+      "method": "POST",
+      "demo_action": {
+        "button_text": "Trace Decision",
+        "params": {
+          "decision_type": "system_choice",
+          "output": "selected_option_a",
+          "confidence": 0.92
+        },
+        "expected_response": {
+          "decision_id": "string",
+          "traceable": "boolean"
+        },
+        "visualization": {
+          "type": "decision_tree_trace",
+          "show_reasoning_steps": true,
+          "show_inputs": true
+        }
+      },
+      "list_endpoint": "/v4/consciousness/debug/list",
+      "display_list": {
+        "title": "Recent Decisions",
+        "show_confidence": true,
+        "show_timestamp": true
+      }
+    },
+    {
+      "id": 10,
+      "name": "Meta-Evolution",
+      "icon": "🔬",
+      "color": "#84CC16",
+      "description": "System learns how to improve itself",
+      "api_endpoint": "/v4/consciousness/meta-evolution/status",
+      "method": "GET",
+      "demo_action": {
+        "button_text": "View Meta-Strategy",
+        "expected_response": {
+          "strategy": {
+            "learning_rate": "float",
+            "parameter_importance": "object"
+          }
+        },
+        "visualization": {
+          "type": "priority_heatmap",
+          "show_learning_rate": true,
+          "show_exploration": true
+        }
+      },
+      "real_time_metrics": [
+        {"label": "Learning Rate", "key": "learning_rate", "format": "0.00"},
+        {"label": "Exploration Factor", "key": "exploration_factor", "format": "0.00"},
+        {"label": "Top Priority", "key": "top_priority", "format": "string"}
+      ]
+    }
+  ],
+  "dashboard_widgets": [
+    {
+      "type": "system_health",
+      "title": "System Status",
+      "endpoint": "/infrastructure/status",
+      "refresh_interval_ms": 5000,
+      "display": {
+        "status_indicator": true,
+        "cpu_gauge": true,
+        "memory_gauge": true,
+        "active_services_list": true
+      }
+    },
+    {
+      "type": "intelligence_metrics",
+      "title": "AGI Capabilities",
+      "metrics": [
+        {"icon": "🧬", "label": "Self-Modification", "value": "ACTIVE", "color": "success"},
+        {"icon": "🔬", "label": "Agent Genesis", "value": "ENABLED", "color": "success"},
+        {"icon": "🌐", "label": "Swarm Intelligence", "value": "6 NODES", "color": "info"},
+        {"icon": "🎯", "label": "Autonomous", "value": "0 HUMANS", "color": "success"},
+        {"icon": "🌳", "label": "Multi-Path", "value": "8 PATHS", "color": "info"},
+        {"icon": "⚖️", "label": "Ethics", "value": "5 FRAMEWORKS", "color": "success"},
+        {"icon": "🤖", "label": "Embodiment", "value": "SIMULATED", "color": "warning"},
+        {"icon": "🔍", "label": "Traceable", "value": "FULL AUDIT", "color": "success"},
+        {"icon": "🔬", "label": "Meta-Learning", "value": "ACTIVE", "color": "success"}
+      ]
+    },
+    {
+      "type": "live_data_chart",
+      "title": "Real-Time Transformations",
+      "chart_type": "line",
+      "data_points": [
+        {"label": "Bias Threshold", "color": "#10B981"},
+        {"label": "Confidence", "color": "#3B82F6"},
+        {"label": "Battery", "color": "#F59E0B"}
+      ],
+      "update_interval_ms": 2000
+    }
+  ],
+  "live_test_screen": {
+    "title": "Run Complete System Test",
+    "description": "Execute all 10 phases sequentially and see real-time results",
+    "test_sequence": [
+      {
+        "phase": 1,
+        "action": "evolve",
+        "display": "Triggering self-improvement...",
+        "success_message": "✅ System evolved: bias reduced"
+      },
+      {
+        "phase": 2,
+        "action": "create_agent",
+        "display": "Creating specialized AI agent...",
+        "success_message": "✅ Agent created on-demand"
+      },
+      {
+        "phase": 3,
+        "action": "collective_decision",
+        "display": "Consulting distributed swarm...",
+        "success_message": "✅ Swarm consensus achieved"
+      },
+      {
+        "phase": 4,
+        "action": "autonomous_plan",
+        "display": "Executing autonomous plan...",
+        "success_message": "✅ Multi-step plan completed"
+      },
+      {
+        "phase": 5,
+        "action": "publish_insight",
+        "display": "Publishing knowledge...",
+        "success_message": "✅ Insight shared to marketplace"
+      },
+      {
+        "phase": 6,
+        "action": "multipath_reasoning",
+        "display": "Exploring parallel paths...",
+        "success_message": "✅ 6 hypotheses explored"
+      },
+      {
+        "phase": 7,
+        "action": "ethical_eval",
+        "display": "Evaluating ethics across 5 frameworks...",
+        "success_message": "✅ Ethical approval granted"
+      },
+      {
+        "phase": 8,
+        "action": "execute_motion",
+        "display": "Simulating robot motion...",
+        "success_message": "✅ Motion executed, energy tracked"
+      },
+      {
+        "phase": 9,
+        "action": "trace_decision",
+        "display": "Recording decision trace...",
+        "success_message": "✅ Full audit trail captured"
+      },
+      {
+        "phase": 10,
+        "action": "view_meta_strategy",
+        "display": "Checking meta-evolution...",
+        "success_message": "✅ Meta-learning active"
+      }
+    ],
+    "final_report": {
+      "show_summary": true,
+      "show_metrics": true,
+      "show_grade": true,
+      "confetti_on_complete": true
+    }
+  },
+  "analytics_screen": {
+    "title": "System Analytics",
+    "charts": [
+      {
+        "type": "pie",
+        "title": "Phase Activity Distribution",
+        "data_source": "phase_usage_stats"
+      },
+      {
+        "type": "bar",
+        "title": "Decision Confidence Over Time",
+        "data_source": "confidence_history"
+      },
+      {
+        "type": "gauge",
+        "title": "System Intelligence Score",
+        "value": 95,
+        "max": 100,
+        "color": "success"
+      }
+    ]
+  },
+  "ui_components": {
+    "phase_card": {
+      "elevation": 4,
+      "border_radius": 16,
+      "padding": 16,
+      "show_icon": true,
+      "show_description": true,
+      "show_action_button": true,
+      "hover_effect": true,
+      "animation": "fade_in"
+    },
+    "metric_card": {
+      "elevation": 2,
+      "border_radius": 12,
+      "padding": 12,
+      "show_trend_indicator": true,
+      "animation": "scale"
+    },
+    "action_button": {
+      "elevation": 2,
+      "border_radius": 8,
+      "padding": "12 24",
+      "animation": "ripple",
+      "loading_indicator": true
+    }
+  },
+  "animations": {
+    "phase_transition": "slide_fade",
+    "data_update": "pulse",
+    "success_action": "scale_bounce",
+    "error_action": "shake"
+  },
+  "notifications": {
+    "show_toasts": true,
+    "show_badges": true,
+    "sound_effects": false,
+    "duration_ms": 3000
+  },
+  "responsive": {
+    "mobile": {
+      "grid_columns": 1,
+      "font_scale": 0.9
+    },
+    "tablet": {
+      "grid_columns": 2,
+      "font_scale": 1.0
+    },
+    "desktop": {
+      "grid_columns": 3,
+      "font_scale": 1.1
+    }
+  },
+  "dependencies": {
+    "required": [
+      "flutter_bloc",
+      "http",
+      "provider",
+      "fl_chart",
+      "animations",
+      "google_fonts",
+      "lottie",
+      "confetti"
+    ]
+  },
+  "build_instructions": {
+    "step_1": "Create Flutter project with material design",
+    "step_2": "Implement API service class for all endpoints",
+    "step_3": "Create models for all phase responses",
+    "step_4": "Build reusable phase card widget",
+    "step_5": "Implement dashboard with real-time updates",
+    "step_6": "Add navigation and routing",
+    "step_7": "Implement live test sequence",
+    "step_8": "Add analytics with charts",
+    "step_9": "Polish animations and transitions",
+    "step_10": "Test all API integrations"
+  },
+  "demo_highlights": [
+    "Real-time data from actual NIS Protocol v4.0 API",
+    "All 10 consciousness phases interactive",
+    "Live metrics updating every 2-5 seconds",
+    "Beautiful material design with dark theme",
+    "Smooth animations and transitions",
+    "Complete system test in one click",
+    "AGI-level capabilities clearly demonstrated",
+    "Production-ready code architecture"
+  ]
+}
