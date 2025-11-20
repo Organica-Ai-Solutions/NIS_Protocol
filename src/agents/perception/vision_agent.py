@@ -343,7 +343,7 @@ class VisionAgent(NISAgent):
             self.logger.setLevel(logging.INFO)
         
         # Register with NIS system
-        NISRegistry.register_agent(self)
+        NISRegistry().register(self)
         
         self.logger.info(f"Vision Agent '{agent_id}' initialized with OpenCV available: {CV2_AVAILABLE}, self-audit: {enable_self_audit}")
     
