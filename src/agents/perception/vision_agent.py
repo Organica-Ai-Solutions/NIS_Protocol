@@ -41,10 +41,13 @@ from src.utils.self_audit import self_audit_engine, ViolationType, IntegrityViol
 class YOLOModel:
     """
     Wrapper class for YOLO object detection model.
-    Supports both YOLOv5/YOLOv8 via ultralytics and OpenCV's DNN module for older YOLO models.
+    Supports:
+    - YOLOv5/YOLOv8 via ultralytics
+    - WALDO (drone-specific detection)
+    - OpenCV's DNN module for older YOLO models
     """
     
-    def __init__(self, model_path: str = None, confidence_threshold: float = 0.5):
+    def __init__(self, model_path: str = None, confidence_threshold: float = 0.5, use_waldo: bool = False):
         """
         Initialize the YOLO model.
         
@@ -57,6 +60,23 @@ class YOLOModel:
         self.model = None
         self.class_names = []
         self.use_ultralytics = False
+        self.use_waldo = use_waldo
+        
+        # WALDO class names (drone-specific detection)
+        self.waldo_classes = {
+            0: 'LightVehicle',
+            1: 'Person',
+            2: 'Building',
+            3: 'UPole',
+            4: 'Boat',
+            5: 'Bike',
+            6: 'Container',
+            7: 'Truck',
+            8: 'Gastank',
+            10: 'Digger',
+            11: 'Solarpanels',
+            12: 'Bus'
+        }
         
         # Try to load the model
         self._load_model()
@@ -66,10 +86,26 @@ class YOLOModel:
         if not CV2_AVAILABLE:
             print("OpenCV not available. Vision detection disabled.")
             return
+        
+        # Load WALDO for drone detection if requested
+        if self.use_waldo:
+            try:
+                from ultralytics import YOLO
+                print("Loading WALDO model for drone object detection...")
+                # WALDO v3.0 from HuggingFace: StephanST/WALDO30
+                self.model = YOLO('StephanST/WALDO30')
+                self.use_ultralytics = True
+                self.class_names = self.waldo_classes
+                print("✅ WALDO model loaded successfully!")
+                print(f"   Detectable classes: {list(self.waldo_classes.values())}")
+                return
+            except Exception as e:
+                print(f"⚠️ Failed to load WALDO: {e}")
+                print("   Falling back to standard YOLO...")
+                self.use_waldo = False
             
         try:
-            # First try to load using ultralytics (YOLOv5/v8)
-#             import torch
+            # Standard YOLO loading (YOLOv5/v8)
             from ultralytics import YOLO
             
             # Use default YOLOv8n if no model specified
@@ -247,7 +283,8 @@ class VisionAgent(NISAgent):
         emotional_state: Optional[EmotionalState] = None,
         yolo_model_path: Optional[str] = None,
         confidence_threshold: float = 0.5,
-        enable_self_audit: bool = True
+        enable_self_audit: bool = True,
+        use_waldo: bool = False
     ):
         """
         Initialize the Vision Agent.
@@ -259,12 +296,18 @@ class VisionAgent(NISAgent):
             yolo_model_path: Path to YOLO model weights
             confidence_threshold: Minimum confidence for object detection
             enable_self_audit: Whether to enable real-time integrity monitoring
+            use_waldo: Use WALDO model for drone/overhead imagery detection
         """
         super().__init__(agent_id, description, emotional_state)
         
-        # Initialize YOLO model
+        # Store WALDO preference
+        self.use_waldo = use_waldo
+        
+        # Initialize YOLO model (with optional WALDO)
         if CV2_AVAILABLE:
-            self.yolo_model = YOLOModel(yolo_model_path, confidence_threshold)
+            self.yolo_model = YOLOModel(yolo_model_path, confidence_threshold, use_waldo=use_waldo)
+            if use_waldo:
+                self.logger.info("🚁 WALDO drone detection model enabled")
         else:
             self.yolo_model = None
             self.logger.warning("OpenCV (cv2) not available. Vision functionality will be limited.")

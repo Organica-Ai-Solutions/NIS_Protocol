@@ -1509,16 +1509,27 @@ class ConsciousnessService(NISAgent):
         
         # ====================================================================
         # VISION AGENT - Computer vision and perception
+        # Supports: Standard YOLO + WALDO (drone-specific detection)
         # ====================================================================
         try:
             from src.agents.perception.vision_agent import VisionAgent
+            import os
+            
+            # Check if WALDO should be enabled for drone detection
+            use_waldo = os.getenv('ENABLE_WALDO_DRONE_DETECTION', 'false').lower() == 'true'
+            
             self.vision_agent = VisionAgent(
                 agent_id="embodiment_vision",
                 description="Computer vision for embodiment perception",
                 yolo_model_path=None,  # Use default YOLO model
-                confidence_threshold=0.5
+                confidence_threshold=0.5,
+                use_waldo=use_waldo  # Enable WALDO for drone object detection
             )
-            self.logger.info("👁️ VisionAgent initialized (YOLO detection, OpenCV)")
+            
+            if use_waldo:
+                self.logger.info("🚁 VisionAgent initialized with WALDO (drone detection)")
+            else:
+                self.logger.info("👁️ VisionAgent initialized (standard YOLO detection)")
         except Exception as e:
             self.logger.warning(f"⚠️ VisionAgent not available: {e}")
             self.vision_agent = None
