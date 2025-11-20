@@ -104,7 +104,9 @@ Multi-step goal achievement without human guidance - self-directed AI!
 
 **Status**: ✅ Production Ready
 
-Trade consciousness insights between systems.
+**What it is**: Knowledge and insight sharing between NIS instances.
+
+*Note: "Consciousness Marketplace" refers to trading insights and learned patterns between system instances, not literal consciousness trading.*
 
 #### Completed:
 - ✅ Insight packaging and cataloging
@@ -121,11 +123,13 @@ Trade consciousness insights between systems.
 
 ---
 
-### ⚛️ Phase 6: Quantum Reasoning Scaffold (COMPLETE)
+### 🌳 Phase 6: Multi-Path Reasoning Engine (COMPLETE)
 
 **Status**: ✅ Production Ready
 
-Superposition of multiple reasoning paths.
+**What it is**: Parallel hypothesis exploration inspired by quantum concepts.
+
+*Note: This is NOT actual quantum computing. It's a software design pattern that maintains multiple reasoning paths simultaneously (like quantum superposition) for exploring different solution approaches. No quantum hardware required.*
 
 #### Completed:
 - ✅ Quantum state representation
@@ -169,7 +173,9 @@ System makes ethical decisions independently.
 
 **Status**: ✅ Production Ready
 
-True robotics consciousness integration.
+**What it is**: Simulated robot state for integration with physical systems.
+
+*Note: "Physical Embodiment" is a simulation layer that tracks robot body state (position, battery, sensors) and provides motion safety checks. It prepares the consciousness system for real robotics integration but does not require actual physical hardware to function.*
 
 #### Completed:
 - ✅ Proprioception simulation

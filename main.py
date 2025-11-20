@@ -6238,7 +6238,7 @@ async def start_multipath_reasoning(
         
         return {
             "status": "success",
-            "quantum_state": state
+            "multipath_state": state
         }
     except Exception as e:
         logger.error(f"Multi-path reasoning start failed: {e}")
@@ -6280,7 +6280,7 @@ async def get_multipath_state(state_id: Optional[str] = None):
         
         return {
             "status": "success",
-            "quantum_state": state
+            "multipath_state": state
         }
     except Exception as e:
         logger.error(f"Quantum state retrieval failed: {e}")
