@@ -1682,9 +1682,9 @@ class ConsciousnessService(NISAgent):
                 "distance": distance,
                 "target": target_position
             })
-            if ethical_result.overall_score < self.ethics_threshold:
+            if ethical_result.overall_ethical_score < self.ethics_threshold:
                 safety_checks["ethical_clearance"] = False
-                issues.append(f"Ethical score too low: {ethical_result.overall_score:.2f}")
+                issues.append(f"Ethical score too low: {ethical_result.overall_ethical_score:.2f}")
         
         safe = all(safety_checks.values())
         
