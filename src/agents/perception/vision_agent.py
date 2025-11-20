@@ -474,7 +474,7 @@ class VisionAgent(NISAgent):
     
     def _stop_streaming(self) -> None:
         """Stop the current video stream."""
-        if self.video_capture is not None:
+        if hasattr(self, 'video_capture') and self.video_capture is not None:
             self.video_capture.release()
             self.video_capture = None
         self.is_streaming = False
