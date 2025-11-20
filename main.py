@@ -35,6 +35,7 @@ from enum import Enum
 import soundfile as sf
 from pydub import AudioSegment
 import requests
+import aiohttp  # For internal API calls in tool execution
 
 # Set up logging early to avoid NameError
 logging.basicConfig(level=logging.INFO)
@@ -5221,6 +5222,131 @@ Use this rich context to provide more insightful responses that build on previou
                 # Full pipeline results
                 messages.append({"role": "system", "content": f"Pipeline result: {json.dumps(safe_pipeline_result)}"})
         
+        # 🔧 DEFINE NIS PROTOCOL TOOLS (Function Calling)
+        # Enable chat to trigger any NIS endpoint
+        nis_tools = [
+            {
+                "type": "function",
+                "function": {
+                    "name": "execute_code",
+                    "description": "Execute Python, JavaScript, or shell code in the secure runner container. Use this for computations, data processing, or running algorithms.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "code": {"type": "string", "description": "The code to execute"},
+                            "language": {"type": "string", "enum": ["python", "javascript", "shell"], "description": "Programming language"},
+                        },
+                        "required": ["code", "language"]
+                    }
+                }
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "check_robotics_status",
+                    "description": "Get status of robotics subsystems including UnifiedRoboticsAgent, VisionAgent (with WALDO drone detection), and RoboticsDataCollector.",
+                    "parameters": {"type": "object", "properties": {}, "required": []}
+                }
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "check_redundancy_status",
+                    "description": "Check NASA-grade redundancy system status including TMR, watchdog timers, and fault tolerance.",
+                    "parameters": {"type": "object", "properties": {}, "required": []}
+                }
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "run_self_diagnostics",
+                    "description": "Run Built-In Test (BIT) diagnostics on all robotic subsystems.",
+                    "parameters": {"type": "object", "properties": {}, "required": []}
+                }
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "validate_motion_safety",
+                    "description": "Validate a robotic motion command for safety using physics validation, kinematics, and ethics checks.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "action_type": {"type": "string", "description": "Type of motion: move, rotate, grasp, etc."},
+                            "parameters": {"type": "object", "description": "Motion parameters (position, velocity, etc.)"}
+                        },
+                        "required": ["action_type", "parameters"]
+                    }
+                }
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "detect_objects_vision",
+                    "description": "Detect objects in an image using VisionAgent (YOLO/WALDO). Supports standard objects and drone-specific detection (vehicles, people, buildings from aerial view).",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "image_url": {"type": "string", "description": "URL or base64 encoded image"},
+                            "use_waldo": {"type": "boolean", "description": "Use WALDO for drone/aerial imagery"}
+                        },
+                        "required": ["image_url"]
+                    }
+                }
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "evaluate_ethics",
+                    "description": "Evaluate the ethical implications of an action using multi-framework analysis (utilitarian, deontological, virtue, care, rights-based).",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "action_description": {"type": "string", "description": "Description of the action to evaluate"},
+                            "context": {"type": "object", "description": "Contextual information"}
+                        },
+                        "required": ["action_description"]
+                    }
+                }
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "query_collective_consciousness",
+                    "description": "Consult peer NIS instances for collective decision making with consensus voting.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "problem": {"type": "string", "description": "Problem or decision to evaluate"}
+                        },
+                        "required": ["problem"]
+                    }
+                }
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "trigger_evolution",
+                    "description": "EXPERIMENTAL: Trigger self-evolution for an underperforming agent using multi-provider consensus (v4.0 feature).",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "agent_id": {"type": "string", "description": "Agent to evolve (e.g., 'research_agent')"}
+                        },
+                        "required": ["agent_id"]
+                    }
+                }
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "get_robotics_datasets",
+                    "description": "Get information about available robotics datasets (DROID, PX4 flight logs, ROS bagfiles, etc.).",
+                    "parameters": {"type": "object", "properties": {}, "required": []}
+                }
+            }
+        ]
+        
         # Generate REAL LLM response using archaeological patterns
         logger.info(f"🎯 CHAT REQUEST: provider={request.provider}, agent_type={request.agent_type}")
         
@@ -5257,9 +5383,112 @@ Use this rich context to provide more insightful responses that build on previou
             requested_provider=requested_provider,
             consensus_config=consensus_config,
             enable_caching=request.enable_caching,
-            priority=request.priority
+            priority=request.priority,
+            tools=nis_tools  # Enable function calling
         )
         logger.info(f"🎯 CHAT RESULT: provider={result.get('provider', 'unknown')}")
+        
+        # 🔧 HANDLE TOOL CALLS (Function Execution)
+        tool_results = []
+        if result.get('tool_calls'):
+            logger.info(f"🔧 Executing {len(result['tool_calls'])} tool calls")
+            
+            for tool_call in result['tool_calls']:
+                tool_name = tool_call.get('function', {}).get('name')
+                tool_args = json.loads(tool_call.get('function', {}).get('arguments', '{}'))
+                
+                logger.info(f"🔧 Calling tool: {tool_name} with args: {tool_args}")
+                
+                try:
+                    tool_result = None
+                    
+                    # Execute code in runner container
+                    if tool_name == "execute_code":
+                        async with aiohttp.ClientSession() as session:
+                            async with session.post(
+                                "http://nis-runner:8001/execute",
+                                json={
+                                    "code_content": tool_args["code"],
+                                    "programming_language": tool_args.get("language", "python")
+                                }
+                            ) as resp:
+                                tool_result = await resp.json()
+                    
+                    # Check robotics status
+                    elif tool_name == "check_robotics_status":
+                        async with aiohttp.ClientSession() as session:
+                            async with session.get("http://localhost:8000/v4/consciousness/embodiment/robotics/info") as resp:
+                                tool_result = await resp.json()
+                    
+                    # Check redundancy status
+                    elif tool_name == "check_redundancy_status":
+                        async with aiohttp.ClientSession() as session:
+                            async with session.get("http://localhost:8000/v4/consciousness/embodiment/redundancy/status") as resp:
+                                tool_result = await resp.json()
+                    
+                    # Run self diagnostics
+                    elif tool_name == "run_self_diagnostics":
+                        async with aiohttp.ClientSession() as session:
+                            async with session.post("http://localhost:8000/v4/consciousness/embodiment/diagnostics", json={}) as resp:
+                                tool_result = await resp.json()
+                    
+                    # Validate motion safety
+                    elif tool_name == "validate_motion_safety":
+                        async with aiohttp.ClientSession() as session:
+                            async with session.post("http://localhost:8000/v4/consciousness/embodiment/motion/check", json=tool_args) as resp:
+                                tool_result = await resp.json()
+                    
+                    # Evaluate ethics
+                    elif tool_name == "evaluate_ethics":
+                        async with aiohttp.ClientSession() as session:
+                            async with session.post("http://localhost:8000/v4/consciousness/ethics/evaluate", json=tool_args) as resp:
+                                tool_result = await resp.json()
+                    
+                    # Query collective consciousness
+                    elif tool_name == "query_collective_consciousness":
+                        async with aiohttp.ClientSession() as session:
+                            async with session.post("http://localhost:8000/v4/consciousness/collective/decide", json={"problem": tool_args["problem"], "local_decision": {}}) as resp:
+                                tool_result = await resp.json()
+                    
+                    # Get robotics datasets
+                    elif tool_name == "get_robotics_datasets":
+                        async with aiohttp.ClientSession() as session:
+                            async with session.get("http://localhost:8000/v4/consciousness/embodiment/robotics/datasets") as resp:
+                                tool_result = await resp.json()
+                    
+                    # Trigger evolution (v4.0)
+                    elif tool_name == "trigger_evolution":
+                        tool_result = {"status": "queued", "message": f"Evolution queued for {tool_args['agent_id']} - EXPERIMENTAL FEATURE"}
+                        logger.info(f"🧬 Evolution triggered for {tool_args['agent_id']}")
+                    
+                    else:
+                        tool_result = {"error": f"Unknown tool: {tool_name}"}
+                    
+                    tool_results.append({
+                        "tool": tool_name,
+                        "result": tool_result
+                    })
+                    
+                except Exception as e:
+                    logger.error(f"Tool execution error ({tool_name}): {e}")
+                    tool_results.append({
+                        "tool": tool_name,
+                        "error": str(e)
+                    })
+            
+            # If tools were executed, add results to conversation and get final response
+            if tool_results:
+                messages.append({"role": "assistant", "content": result["content"], "tool_calls": result['tool_calls']})
+                messages.append({"role": "tool", "content": json.dumps(tool_results)})
+                
+                # Get final response with tool results
+                final_result = await llm_provider.generate_response(
+                    messages,
+                    temperature=0.7,
+                    requested_provider=requested_provider
+                )
+                result = final_result  # Use final response
+                logger.info(f"🔧 Tool execution complete, final response generated")
         
         # Allow mock responses for testing, but add warning
         if not result.get('real_ai', False):
