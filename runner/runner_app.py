@@ -262,7 +262,7 @@ async def execute_python_code(
                 raise TimeoutError("Execution timeout")
             
             signal.signal(signal.SIGALRM, timeout_handler)
-            signal.alarm(timeout)
+            signal.alarm(timeout_seconds)
             
             # Track memory usage
             process = psutil.Process()
@@ -305,7 +305,7 @@ async def execute_python_code(
                 success=False,
                 output="",
                 error="Execution timeout",
-                execution_time_seconds=timeout,
+                execution_time_seconds=timeout_seconds,
                 memory_used_mb=0,
                 exit_code=-1,
                 security_violations=["Timeout"]

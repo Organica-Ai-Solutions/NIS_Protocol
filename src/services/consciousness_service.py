@@ -818,22 +818,45 @@ class ConsciousnessService(NISAgent):
                 "message": "No evolutions performed yet"
             }
         
+        # Calculate evolution statistics
+        total_changes = sum(len(e["changes_made"]) for e in self.evolution_history)
+        parameters_evolved = set()
+        for e in self.evolution_history:
+            parameters_evolved.update(e["changes_made"].keys())
+        
+        # Calculate average evolution interval
+        if len(self.evolution_history) > 1:
+            timestamps = [e["timestamp"] for e in self.evolution_history]
+            intervals = [timestamps[i+1] - timestamps[i] for i in range(len(timestamps)-1)]
+            avg_interval = sum(intervals) / len(intervals)
+        else:
+            avg_interval = 0
+        
         return {
             "evolution_enabled": True,
             "total_evolutions": len(self.evolution_history),
+            "total_parameters_changed": total_changes,
+            "unique_parameters_evolved": list(parameters_evolved),
+            "avg_evolution_interval_seconds": avg_interval,
             "last_evolution": datetime.fromtimestamp(self.evolution_history[-1]["timestamp"]).isoformat(),
             "current_state": {
                 "consciousness_threshold": self.consciousness_threshold,
                 "bias_threshold": self.bias_threshold,
                 "ethics_threshold": self.ethics_threshold
             },
+            "initial_state": {
+                "consciousness_threshold": 0.7,  # Default initial values
+                "bias_threshold": 0.3,
+                "ethics_threshold": 0.8
+            },
             "recent_evolutions": [
                 {
                     "timestamp": datetime.fromtimestamp(e["timestamp"]).isoformat(),
                     "reason": e["reason"],
-                    "changes": len(e["changes_made"])
+                    "changes": len(e["changes_made"]),
+                    "parameters": list(e["changes_made"].keys())
                 }
-                for e in self.evolution_history[-5:]
+                for e in self.evolution_history[-10:]
             ]
         }
     
