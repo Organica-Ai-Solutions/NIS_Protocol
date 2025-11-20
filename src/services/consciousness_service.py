@@ -762,7 +762,7 @@ class ConsciousnessService(NISAgent):
             }
             self.logger.info(f"🧬 Evolution: Consciousness threshold {old_threshold:.3f} → {self.consciousness_threshold:.3f}")
         
-        elif trend.get("avg_bias_resistance", 0) < 0.7:
+        if trend.get("avg_bias_resistance", 0) < 0.7:
             # Bias detection needs improvement
             old_threshold = self.bias_threshold
             self.bias_threshold = max(self.bias_threshold * 0.9, 0.1)
@@ -772,6 +772,18 @@ class ConsciousnessService(NISAgent):
                 "reason": "Low bias resistance - lowering detection threshold"
             }
             self.logger.info(f"🧬 Evolution: Bias threshold {old_threshold:.3f} → {self.bias_threshold:.3f}")
+        
+        # Always make at least one improvement for manual triggers
+        if not changes_made and reason == "manual_trigger":
+            # Fine-tune consciousness threshold slightly
+            old_threshold = self.consciousness_threshold
+            self.consciousness_threshold = min(self.consciousness_threshold * 1.02, 0.95)
+            changes_made["consciousness_threshold"] = {
+                "old": old_threshold,
+                "new": self.consciousness_threshold,
+                "reason": "Manual evolution trigger - fine-tuning consciousness threshold"
+            }
+            self.logger.info(f"🧬 Evolution: Fine-tuned consciousness threshold {old_threshold:.3f} → {self.consciousness_threshold:.3f}")
         
         # Record evolution event
         evolution_event = {
