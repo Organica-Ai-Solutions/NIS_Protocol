@@ -1317,16 +1317,16 @@ class ConsciousnessService(NISAgent):
         }
     
     # =============================================================================
-    # ⚛️ V4.0: QUANTUM REASONING SCAFFOLD - SUPERPOSITION OF PATHS
+    # 🌳 V4.0: MULTI-PATH REASONING ENGINE - PARALLEL HYPOTHESIS EXPLORATION
     # =============================================================================
     
-    def __init_quantum__(self):
+    def __init_multipath__(self):
         """Initialize quantum reasoning state tracking"""
-        if not hasattr(self, '_quantum_initialized'):
-            self.quantum_states: Dict[str, Dict[str, Any]] = {}
-            self._quantum_initialized = True
+        if not hasattr(self, '_multipath_initialized'):
+            self.multipath_states: Dict[str, Dict[str, Any]] = {}
+            self._multipath_initialized = True
     
-    async def start_quantum_reasoning(
+    async def start_multipath_reasoning(
         self,
         problem: str,
         reasoning_paths: List[Dict[str, Any]]
@@ -1337,10 +1337,10 @@ class ConsciousnessService(NISAgent):
         existing reasoning agents. Here we just structure and track the
         superposition so it can be "collapsed" later.
         """
-        if not hasattr(self, '_quantum_initialized'):
-            self.__init_quantum__()
+        if not hasattr(self, '_multipath_initialized'):
+            self.__init_multipath__()
         
-        state_id = f"qstate_{uuid.uuid4().hex[:12]}"
+        state_id = f"mpath_{uuid.uuid4().hex[:12]}"
         timestamp = time.time()
         
         # Normalize input paths into a common structure
@@ -1363,12 +1363,12 @@ class ConsciousnessService(NISAgent):
             "collapsed_to": None
         }
         
-        self.quantum_states[state_id] = state
-        self.logger.info(f"⚛️ Quantum reasoning state created: {state_id} with {len(normalized_paths)} paths")
+        self.multipath_states[state_id] = state
+        self.logger.info(f"🌳 Multi-path reasoning state created: {state_id} with {len(normalized_paths)} paths")
         
         return state
     
-    async def collapse_quantum_reasoning(
+    async def collapse_multipath_reasoning(
         self,
         state_id: str,
         strategy: str = "max_confidence"
@@ -1378,10 +1378,10 @@ class ConsciousnessService(NISAgent):
         The actual path selection strategy is minimal for now and relies on
         the initial_confidence values passed in by callers.
         """
-        if not hasattr(self, '_quantum_initialized'):
-            self.__init_quantum__()
+        if not hasattr(self, '_multipath_initialized'):
+            self.__init_multipath__()
         
-        state = self.quantum_states.get(state_id)
+        state = self.multipath_states.get(state_id)
         if not state:
             return {
                 "state_id": state_id,
@@ -1411,16 +1411,16 @@ class ConsciousnessService(NISAgent):
         state["collapsed_at"] = time.time()
         
         self.logger.info(
-            f"⚛️ Quantum reasoning collapsed: {state_id} → {chosen.get('path_id')} (strategy={strategy})"
+            f"🌳 Multi-path reasoning collapsed: {state_id} → {chosen.get('path_id')} (strategy={strategy})"
         )
         
         return state
     
-    def get_quantum_state(self, state_id: str) -> Optional[Dict[str, Any]]:
+    def get_multipath_state(self, state_id: str) -> Optional[Dict[str, Any]]:
         """Retrieve a quantum reasoning state by ID"""
-        if not hasattr(self, '_quantum_initialized'):
+        if not hasattr(self, '_multipath_initialized'):
             return None
-        return self.quantum_states.get(state_id)
+        return self.multipath_states.get(state_id)
     
     # =============================================================================
     # 💼 V4.0: CONSCIOUSNESS MARKETPLACE - INSIGHT SHARING
@@ -1720,7 +1720,7 @@ class ConsciousnessService(NISAgent):
         if hasattr(self, 'quantum_states'):
             quantum_state = {
                 "active_quantum_reasonings": len([
-                    s for s in self.quantum_states
+                    s for s in self.multipath_states
                     if s.get("status") == "superposition"
                 ])
             }

@@ -797,8 +797,8 @@ async def initialize_system():
     consciousness_service.__init_marketplace__()
     logger.info("💼 Phase 5: Consciousness marketplace initialized")
     
-    consciousness_service.__init_quantum__()
-    logger.info("⚛️ Phase 6: Quantum reasoning initialized")
+    consciousness_service.__init_multipath__()
+    logger.info("🌳 Phase 6: Multi-path reasoning initialized")
     
     consciousness_service.__init_embodiment__()
     logger.info("🤖 Phase 8: Physical embodiment initialized")
@@ -6212,15 +6212,15 @@ async def get_consciousness_insight(insight_id: str):
 
 
 # =============================================================================
-# PHASE 6: QUANTUM REASONING ENDPOINTS
+# PHASE 6: MULTI-PATH REASONING ENDPOINTS
 # =============================================================================
 
-@app.post("/v4/consciousness/quantum/start", tags=["V4.0 Evolution"])
-async def start_quantum_reasoning(
+@app.post("/v4/consciousness/multipath/start", tags=["V4.0 Evolution"])
+async def start_multipath_reasoning(
     problem: str,
     num_paths: int = 3
 ):
-    """⚛️ V4.0: Start quantum reasoning with multiple superposed paths"""
+    """🌳 V4.0: Start quantum reasoning with multiple superposed paths"""
     try:
         if consciousness_service is None:
             raise HTTPException(status_code=503, detail="Consciousness service not initialized")
@@ -6231,7 +6231,7 @@ async def start_quantum_reasoning(
             for i in range(num_paths)
         ]
         
-        state = await consciousness_service.start_quantum_reasoning(
+        state = await consciousness_service.start_multipath_reasoning(
             problem=problem,
             reasoning_paths=paths
         )
@@ -6241,21 +6241,21 @@ async def start_quantum_reasoning(
             "quantum_state": state
         }
     except Exception as e:
-        logger.error(f"Quantum reasoning start failed: {e}")
-        raise HTTPException(status_code=500, detail=f"Quantum reasoning failed: {str(e)}")
+        logger.error(f"Multi-path reasoning start failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Multi-path reasoning failed: {str(e)}")
 
 
-@app.post("/v4/consciousness/quantum/collapse", tags=["V4.0 Evolution"])
-async def collapse_quantum_reasoning(
+@app.post("/v4/consciousness/multipath/collapse", tags=["V4.0 Evolution"])
+async def collapse_multipath_reasoning(
     state_id: str,
     strategy: str = "best"
 ):
-    """⚛️ V4.0: Collapse quantum state to single reasoning path"""
+    """🌳 V4.0: Collapse multi-path state to single reasoning path"""
     try:
         if consciousness_service is None:
             raise HTTPException(status_code=503, detail="Consciousness service not initialized")
         
-        result = consciousness_service.collapse_quantum_reasoning(
+        result = await consciousness_service.collapse_multipath_reasoning(
             state_id=state_id,
             strategy=strategy
         )
@@ -6269,14 +6269,14 @@ async def collapse_quantum_reasoning(
         raise HTTPException(status_code=500, detail=f"Quantum collapse failed: {str(e)}")
 
 
-@app.get("/v4/consciousness/quantum/state", tags=["V4.0 Evolution"])
-async def get_quantum_state(state_id: Optional[str] = None):
-    """⚛️ V4.0: Get current quantum reasoning state(s)"""
+@app.get("/v4/consciousness/multipath/state", tags=["V4.0 Evolution"])
+async def get_multipath_state(state_id: Optional[str] = None):
+    """🌳 V4.0: Get current quantum reasoning state(s)"""
     try:
         if consciousness_service is None:
             raise HTTPException(status_code=503, detail="Consciousness service not initialized")
         
-        state = consciousness_service.get_quantum_state(state_id)
+        state = consciousness_service.get_multipath_state(state_id)
         
         return {
             "status": "success",
