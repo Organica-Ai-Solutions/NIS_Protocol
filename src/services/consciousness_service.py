@@ -939,16 +939,38 @@ class ConsciousnessService(NISAgent):
         if not hasattr(self, '_genesis_initialized'):
             self.__init_genesis__()
         
+        # Categorize agents by type
+        agents_by_category = {}
+        for g in self.genesis_history:
+            caps = g.get("capability", [])
+            if isinstance(caps, list) and caps:
+                category = caps[0]
+            elif isinstance(caps, str):
+                category = caps
+            else:
+                category = "general"
+            
+            agents_by_category[category] = agents_by_category.get(category, 0) + 1
+        
         return {
             "genesis_enabled": True,
             "total_agents_created": len(self.genesis_history),
+            "agents_by_category": agents_by_category,
+            "categories_available": len(agents_by_category),
             "recent_agents": [
                 {
                     "timestamp": datetime.fromtimestamp(g["timestamp"]).isoformat(),
                     "agent_id": g["agent_id"],
-                    "capabilities": g["capability"]
+                    "capabilities": g["capability"],
+                    "type": g.get("type", "specialized")
                 }
-                for g in self.genesis_history[-5:]
+                for g in self.genesis_history[-10:]
+            ],
+            "agent_templates_available": [
+                "handwriting_recognition",
+                "advanced_mathematics",
+                "code_synthesis",
+                "custom_dynamic"
             ]
         }
     
