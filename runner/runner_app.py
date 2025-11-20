@@ -293,8 +293,8 @@ async def execute_python_code(
                 success=True,
                 output=output,
                 error="",
-                execution_time=time.time() - start_time,
-                memory_used=memory_used,
+                execution_time_seconds=time.time() - start_time,
+                memory_used_mb=memory_used,
                 exit_code=0,
                 security_violations=[]
             )
@@ -305,8 +305,8 @@ async def execute_python_code(
                 success=False,
                 output="",
                 error="Execution timeout",
-                execution_time=timeout,
-                memory_used=0,
+                execution_time_seconds=timeout,
+                memory_used_mb=0,
                 exit_code=-1,
                 security_violations=["Timeout"]
             )
@@ -316,8 +316,8 @@ async def execute_python_code(
                 success=False,
                 output="",
                 error=str(e),
-                execution_time=time.time() - start_time,
-                memory_used=0,
+                execution_time_seconds=time.time() - start_time,
+                memory_used_mb=0,
                 exit_code=-1,
                 security_violations=[]
             )
@@ -330,8 +330,8 @@ async def execute_python_code(
             success=False,
             output="",
             error=f"Execution failed: {str(e)}",
-            execution_time=time.time() - start_time,
-            memory_used=0,
+            execution_time_seconds=time.time() - start_time,
+            memory_used_mb=0,
             exit_code=-1,
             security_violations=[]
         )
