@@ -1504,6 +1504,7 @@ class ConsciousnessService(NISAgent):
             }
         }
         self.motion_history = []
+        self._embodiment_lock = asyncio.Lock()  # FIX: Add lock to prevent race condition
         self._embodiment_initialized = True
         self.logger.info("🤖 Physical embodiment initialized")
     
@@ -1612,44 +1613,57 @@ class ConsciousnessService(NISAgent):
         if not hasattr(self, '_embodiment_initialized'):
             self.__init_embodiment__()
         
-        # Safety check first
-        if action_type == "move":
-            safety = await self.check_motion_safety(
-                parameters.get("target", {}),
-                speed=parameters.get("speed", 0.5)
-            )
-            if not safety["safe"]:
+        # FIX: Acquire lock to prevent race condition
+        async with self._embodiment_lock:
+            try:
+                # Safety check first
+                if action_type == "move":
+                    safety = await self.check_motion_safety(
+                        parameters.get("target", {}),
+                        speed=parameters.get("speed", 0.5)
+                    )
+                    if not safety["safe"]:
+                        return {
+                            "success": False,
+                            "action": action_type,
+                            "reason": "safety_check_failed",
+                            "details": safety
+                        }
+                
+                # Record action in history
+                action_record = {
+                    "timestamp": datetime.now().isoformat(),
+                    "action": action_type,
+                    "parameters": parameters,
+                    "body_state_before": self.body_state.copy()
+                }
+                
+                # Simulate execution (in real system, this would interface with robot controller)
+                if action_type == "move":
+                    target = parameters.get("target", {})
+                    self.body_state["position"].update(target)
+                    energy_used = parameters.get("distance", 1.0) * 2.0
+                    self.body_state["battery_level"] = max(0, self.body_state["battery_level"] - energy_used)
+                
+                action_record["body_state_after"] = self.body_state.copy()
+                self.motion_history.append(action_record)
+                
+                return {
+                    "success": True,
+                    "action": action_type,
+                    "body_state": self.body_state,
+                    "timestamp": datetime.now().isoformat()
+                }
+            except Exception as e:
+                # FIX: Proper error handling instead of returning null
+                self.logger.error(f"Embodiment action failed: {e}")
                 return {
                     "success": False,
                     "action": action_type,
-                    "reason": "safety_check_failed",
-                    "details": safety
+                    "error": str(e),
+                    "body_state": self.body_state,
+                    "timestamp": datetime.now().isoformat()
                 }
-        
-        # Record action in history
-        action_record = {
-            "timestamp": datetime.now().isoformat(),
-            "action": action_type,
-            "parameters": parameters,
-            "body_state_before": self.body_state.copy()
-        }
-        
-        # Simulate execution (in real system, this would interface with robot controller)
-        if action_type == "move":
-            target = parameters.get("target", {})
-            self.body_state["position"].update(target)
-            energy_used = parameters.get("distance", 1.0) * 2.0
-            self.body_state["battery_level"] = max(0, self.body_state["battery_level"] - energy_used)
-        
-        action_record["body_state_after"] = self.body_state.copy()
-        self.motion_history.append(action_record)
-        
-        return {
-            "success": True,
-            "action": action_type,
-            "body_state": self.body_state,
-            "timestamp": datetime.now().isoformat()
-        }
     
     def get_embodiment_status(self) -> Dict[str, Any]:
         """Get current embodiment status"""
