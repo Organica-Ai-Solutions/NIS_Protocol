@@ -6416,15 +6416,18 @@ async def get_embodiment_status():
 
 @app.get("/v4/consciousness/embodiment/redundancy/status", tags=["V4.0 Evolution"])
 async def get_redundancy_status():
-    """Get NASA-grade redundancy system status (TMR, watchdogs, health)"""
+    """Get NASA-grade redundancy system status (via UnifiedRoboticsAgent)"""
     try:
         if consciousness_service is None:
             raise HTTPException(status_code=503, detail="Consciousness service not initialized")
         
-        if not hasattr(consciousness_service, 'redundancy_manager'):
-            raise HTTPException(status_code=503, detail="Redundancy system not initialized")
+        if not hasattr(consciousness_service, 'robotics_agent') or consciousness_service.robotics_agent is None:
+            raise HTTPException(status_code=503, detail="Robotics agent not initialized")
         
-        status = consciousness_service.redundancy_manager.get_status()
+        if not consciousness_service.robotics_agent.enable_redundancy:
+            raise HTTPException(status_code=503, detail="Redundancy system not enabled")
+        
+        status = consciousness_service.robotics_agent.redundancy_manager.get_status()
         
         return {
             "status": "success",
@@ -6437,15 +6440,18 @@ async def get_redundancy_status():
 
 @app.post("/v4/consciousness/embodiment/diagnostics", tags=["V4.0 Evolution"])
 async def run_self_diagnostics():
-    """Run comprehensive self-diagnostics (Built-In Test - BIT)"""
+    """Run comprehensive self-diagnostics via UnifiedRoboticsAgent (Built-In Test - BIT)"""
     try:
         if consciousness_service is None:
             raise HTTPException(status_code=503, detail="Consciousness service not initialized")
         
-        if not hasattr(consciousness_service, 'redundancy_manager'):
-            raise HTTPException(status_code=503, detail="Redundancy system not initialized")
+        if not hasattr(consciousness_service, 'robotics_agent') or consciousness_service.robotics_agent is None:
+            raise HTTPException(status_code=503, detail="Robotics agent not initialized")
         
-        diagnostics = await consciousness_service.redundancy_manager.self_diagnostics()
+        if not consciousness_service.robotics_agent.enable_redundancy:
+            raise HTTPException(status_code=503, detail="Redundancy system not enabled")
+        
+        diagnostics = await consciousness_service.robotics_agent.redundancy_manager.self_diagnostics()
         
         return {
             "status": "success",
@@ -6458,15 +6464,18 @@ async def run_self_diagnostics():
 
 @app.get("/v4/consciousness/embodiment/redundancy/degradation", tags=["V4.0 Evolution"])
 async def get_degradation_mode():
-    """Get current graceful degradation mode and restrictions"""
+    """Get current graceful degradation mode via UnifiedRoboticsAgent"""
     try:
         if consciousness_service is None:
             raise HTTPException(status_code=503, detail="Consciousness service not initialized")
         
-        if not hasattr(consciousness_service, 'redundancy_manager'):
-            raise HTTPException(status_code=503, detail="Redundancy system not initialized")
+        if not hasattr(consciousness_service, 'robotics_agent') or consciousness_service.robotics_agent is None:
+            raise HTTPException(status_code=503, detail="Robotics agent not initialized")
         
-        degradation = consciousness_service.redundancy_manager.graceful_degradation()
+        if not consciousness_service.robotics_agent.enable_redundancy:
+            raise HTTPException(status_code=503, detail="Redundancy system not enabled")
+        
+        degradation = consciousness_service.robotics_agent.redundancy_manager.graceful_degradation()
         
         return {
             "status": "success",

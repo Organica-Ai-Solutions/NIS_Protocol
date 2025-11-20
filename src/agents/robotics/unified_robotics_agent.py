@@ -104,12 +104,25 @@ class UnifiedRoboticsAgent(NISAgent):
         self,
         agent_id: str = "unified_robotics",
         description: str = "Physics-validated robotics control agent",
-        enable_physics_validation: bool = True
+        enable_physics_validation: bool = True,
+        enable_redundancy: bool = True
     ):
         super().__init__(agent_id)
         self.description = description
         self.layer = NISLayer.REASONING
         self.logger = logging.getLogger(f"nis.{agent_id}")
+        
+        # NASA-GRADE REDUNDANCY SYSTEM (Integrated at robotics layer)
+        self.enable_redundancy = enable_redundancy
+        self.redundancy_manager = None
+        if enable_redundancy:
+            try:
+                from ...services.redundancy_manager import RedundancyManager
+                self.redundancy_manager = RedundancyManager()
+                self.logger.info("🛰️ NASA-grade redundancy enabled")
+            except ImportError:
+                self.logger.warning("⚠️ Redundancy manager not available")
+                self.enable_redundancy = False
         
         # Memory for robot states and trajectories (simplified)
         self.memory = {
@@ -166,7 +179,7 @@ class UnifiedRoboticsAgent(NISAgent):
             'physics_violations': 0
         }
         
-        self.logger.info(f"Initialized Unified Robotics Agent (Physics: {enable_physics_validation})")
+        self.logger.info(f"Initialized Unified Robotics Agent (Physics: {enable_physics_validation}, Redundancy: {enable_redundancy})")
     
     # ========================================================================
     # FORWARD KINEMATICS
