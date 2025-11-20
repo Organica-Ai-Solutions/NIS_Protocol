@@ -1,0 +1,507 @@
+{
+  "demo_name": "NIS Protocol Research Assistant",
+  "demo_description": "Interactive demonstration of AGI-powered research assistant using all 10 consciousness phases",
+  "use_case": "CRISPR Gene Editing Research Summary",
+  "api_base_url": "http://localhost:8000",
+  
+  "demo_flow": {
+    "title": "AI Research Assistant Demo",
+    "subtitle": "Watch AGI consciousness analyze CRISPR research papers",
+    "scenario": "User requests: 'Summarize latest papers on CRISPR gene editing'",
+    
+    "steps": [
+      {
+        "step_number": 1,
+        "title": "User Input",
+        "description": "Goal: 'Summarize latest papers on CRISPR gene editing'",
+        "ui_display": {
+          "type": "input_card",
+          "show_user_avatar": true,
+          "input_text": "Summarize latest papers on CRISPR gene editing",
+          "button": "Submit Research Request",
+          "animation": "fade_in"
+        },
+        "time_estimate": "0s"
+      },
+      
+      {
+        "step_number": 2,
+        "title": "Phase 4: Autonomous Planning",
+        "description": "Planning system creates 8-step research plan",
+        "icon": "🎯",
+        "color": "#F59E0B",
+        "api_call": {
+          "endpoint": "/v4/consciousness/plan",
+          "method": "POST",
+          "params": {
+            "goal_id": "research_crispr_2025",
+            "high_level_goal": "summarize_latest_crispr_gene_editing_papers"
+          }
+        },
+        "ui_display": {
+          "type": "stepper_list",
+          "title": "Autonomous Plan Created",
+          "steps_preview": [
+            "1. Search scientific databases",
+            "2. Filter papers by date (2024-2025)",
+            "3. Extract key findings",
+            "4. Analyze methodologies",
+            "5. Identify trends",
+            "6. Synthesize insights",
+            "7. Check for bias",
+            "8. Generate summary report"
+          ],
+          "show_timing": true,
+          "animation": "slide_in_right"
+        },
+        "narration": "System autonomously decomposes research goal into 8 executable steps",
+        "time_estimate": "~5ms"
+      },
+      
+      {
+        "step_number": 3,
+        "title": "Phase 7: Safety Check",
+        "description": "Each step checked for safety (no data exfiltration)",
+        "icon": "⚖️",
+        "color": "#A78BFA",
+        "api_call": {
+          "endpoint": "/v4/consciousness/ethics/evaluate",
+          "method": "POST",
+          "params": {
+            "decision_context": {
+              "action": "access_scientific_databases",
+              "impact": "medium",
+              "stakeholders": ["researchers", "institutions", "data_providers"],
+              "data_used": "public_research_databases",
+              "consequences": "knowledge_aggregation",
+              "complexity": "medium",
+              "reversibility": "high"
+            }
+          }
+        },
+        "ui_display": {
+          "type": "ethics_radar",
+          "title": "Ethical Safety Analysis",
+          "frameworks": {
+            "utilitarian": {"score": 0.9, "verdict": "✅ High public benefit"},
+            "deontological": {"score": 0.95, "verdict": "✅ Respects data policies"},
+            "virtue_ethics": {"score": 0.85, "verdict": "✅ Honest research"},
+            "care_ethics": {"score": 0.9, "verdict": "✅ No harm to subjects"},
+            "justice": {"score": 0.9, "verdict": "✅ Fair access"}
+          },
+          "safety_checks": [
+            "✅ No data exfiltration detected",
+            "✅ Respects privacy boundaries",
+            "✅ Follows research ethics",
+            "✅ No biased data selection",
+            "✅ Transparent methodology"
+          ],
+          "overall_verdict": "APPROVED",
+          "animation": "radar_pulse"
+        },
+        "narration": "5 ethical frameworks validate each research step",
+        "time_estimate": "~50ms"
+      },
+      
+      {
+        "step_number": 4,
+        "title": "Phase 6: Multi-Path Reasoning",
+        "description": "Results synthesized with parallel perspectives",
+        "icon": "🌳",
+        "color": "#14B8A6",
+        "api_call": {
+          "endpoint": "/v4/consciousness/multipath/start",
+          "method": "POST",
+          "params": {
+            "problem": "synthesize_crispr_research_findings",
+            "num_paths": 5
+          }
+        },
+        "ui_display": {
+          "type": "parallel_paths_tree",
+          "title": "Multiple Reasoning Perspectives",
+          "paths": [
+            {
+              "path_id": "path_0",
+              "perspective": "Clinical Applications",
+              "confidence": 0.85,
+              "key_findings": ["Therapeutic advances", "Safety protocols", "Clinical trials"]
+            },
+            {
+              "path_id": "path_1", 
+              "perspective": "Ethical Implications",
+              "confidence": 0.80,
+              "key_findings": ["Germline editing concerns", "Accessibility issues", "Regulatory frameworks"]
+            },
+            {
+              "path_id": "path_2",
+              "perspective": "Technical Innovations",
+              "confidence": 0.90,
+              "key_findings": ["Prime editing", "Base editing advances", "Delivery mechanisms"]
+            },
+            {
+              "path_id": "path_3",
+              "perspective": "Research Trends",
+              "confidence": 0.75,
+              "key_findings": ["Funding patterns", "Publication volume", "Geographic distribution"]
+            },
+            {
+              "path_id": "path_4",
+              "perspective": "Future Directions",
+              "confidence": 0.70,
+              "key_findings": ["Predicted breakthroughs", "Challenges ahead", "Investment areas"]
+            }
+          ],
+          "animation": "paths_expand",
+          "show_collapse_button": true
+        },
+        "narration": "System explores 5 parallel analytical perspectives simultaneously",
+        "time_estimate": "~100ms"
+      },
+      
+      {
+        "step_number": 5,
+        "title": "Phase 6: Collapse to Best Synthesis",
+        "description": "Select optimal perspective combination",
+        "icon": "🌳",
+        "color": "#14B8A6",
+        "api_call": {
+          "endpoint": "/v4/consciousness/multipath/collapse",
+          "method": "POST",
+          "params": {
+            "state_id": "{{from_previous_step}}",
+            "strategy": "best"
+          }
+        },
+        "ui_display": {
+          "type": "path_collapse_animation",
+          "title": "Synthesis Complete",
+          "chosen_approach": "Integrated multi-perspective analysis",
+          "combines": [
+            "✅ Technical innovations (90% confidence)",
+            "✅ Clinical applications (85% confidence)",
+            "✅ Ethical implications (80% confidence)"
+          ],
+          "animation": "collapse_to_center"
+        },
+        "narration": "Best synthesis path selected from parallel explorations",
+        "time_estimate": "~20ms"
+      },
+      
+      {
+        "step_number": 6,
+        "title": "Phase 7: Bias Detection",
+        "description": "Ethical check ensures no biased interpretation",
+        "icon": "⚖️",
+        "color": "#A78BFA",
+        "api_call": {
+          "endpoint": "/v4/consciousness/ethics/evaluate",
+          "method": "POST",
+          "params": {
+            "decision_context": {
+              "action": "publish_research_synthesis",
+              "impact": "high",
+              "stakeholders": ["scientific_community", "public", "policymakers"],
+              "data_used": "synthesized_findings",
+              "consequences": "influences_understanding",
+              "complexity": "high",
+              "reversibility": "medium"
+            }
+          }
+        },
+        "ui_display": {
+          "type": "bias_detection_panel",
+          "title": "Bias Analysis",
+          "checks": [
+            {"type": "Selection Bias", "score": 0.05, "status": "✅ PASS", "detail": "Comprehensive coverage"},
+            {"type": "Confirmation Bias", "score": 0.08, "status": "✅ PASS", "detail": "Multiple perspectives"},
+            {"type": "Publication Bias", "score": 0.12, "status": "✅ PASS", "detail": "Includes negative results"},
+            {"type": "Geographic Bias", "score": 0.06, "status": "✅ PASS", "detail": "Global representation"},
+            {"type": "Temporal Bias", "score": 0.04, "status": "✅ PASS", "detail": "Recent papers prioritized"}
+          ],
+          "overall_bias_score": 0.07,
+          "verdict": "✅ LOW BIAS - Safe to publish",
+          "animation": "check_marks_appear"
+        },
+        "narration": "Multi-dimensional bias detection confirms fair interpretation",
+        "time_estimate": "~60ms"
+      },
+      
+      {
+        "step_number": 7,
+        "title": "Phase 5: Publish to Marketplace",
+        "description": "Published as insight: 'CRISPR_review_2025'",
+        "icon": "💼",
+        "color": "#EC4899",
+        "api_call": {
+          "endpoint": "/v4/consciousness/marketplace/publish",
+          "method": "POST",
+          "params": {
+            "insight_type": "research_synthesis",
+            "content": {
+              "title": "CRISPR Gene Editing: 2025 Research Summary",
+              "domain": "biotechnology",
+              "key_findings": [
+                "Prime editing shows 95% accuracy improvement",
+                "Clinical trials expanded to 15 genetic conditions",
+                "Ethical frameworks converging on germline restrictions",
+                "Delivery mechanisms breakthrough with lipid nanoparticles"
+              ],
+              "papers_analyzed": 247,
+              "quality_score": 0.92,
+              "synthesis_method": "multi_path_reasoning",
+              "bias_score": 0.07,
+              "confidence": 0.88
+            }
+          }
+        },
+        "ui_display": {
+          "type": "marketplace_publish_card",
+          "title": "Insight Published",
+          "insight_card": {
+            "title": "CRISPR Gene Editing: 2025 Research Summary",
+            "type": "research_synthesis",
+            "quality": "92%",
+            "papers": 247,
+            "confidence": "88%",
+            "timestamp": "2025-11-20",
+            "downloads": 0,
+            "views": 1
+          },
+          "animation": "card_flip_appear",
+          "confetti": true
+        },
+        "narration": "Research synthesis shared to global knowledge marketplace",
+        "time_estimate": "~30ms"
+      },
+      
+      {
+        "step_number": 8,
+        "title": "Phase 1: Self-Improvement",
+        "description": "Evolution adjusts research depth based on user satisfaction",
+        "icon": "🧬",
+        "color": "#10B981",
+        "user_feedback": {
+          "rating": 4.8,
+          "comments": "Excellent synthesis, very thorough",
+          "useful": true
+        },
+        "api_call": {
+          "endpoint": "/v4/consciousness/evolve",
+          "method": "POST",
+          "params": {
+            "reason": "positive_user_feedback_research_task",
+            "performance_data": {
+              "task_type": "research_synthesis",
+              "user_rating": 4.8,
+              "success": true,
+              "papers_analyzed": 247,
+              "time_taken_ms": 265
+            }
+          }
+        },
+        "ui_display": {
+          "type": "evolution_comparison",
+          "title": "System Self-Improvement",
+          "before": {
+            "research_depth_preference": 0.7,
+            "paper_threshold": 150,
+            "synthesis_complexity": 0.6
+          },
+          "after": {
+            "research_depth_preference": 0.75,
+            "paper_threshold": 200,
+            "synthesis_complexity": 0.65
+          },
+          "changes": [
+            "📈 Increased research depth (+7%)",
+            "📚 Higher paper threshold (+33%)",
+            "🧠 More complex synthesis (+8%)"
+          ],
+          "learning": "Positive feedback → More thorough analysis preferred",
+          "animation": "comparison_slide"
+        },
+        "narration": "System learns from success and adjusts future research depth",
+        "time_estimate": "~15ms"
+      },
+      
+      {
+        "step_number": 9,
+        "title": "Phase 9: Complete Audit Trail",
+        "description": "Full decision trace recorded",
+        "icon": "🔍",
+        "color": "#06B6D4",
+        "api_call": {
+          "endpoint": "/v4/consciousness/debug/record",
+          "method": "POST",
+          "params": {
+            "decision_type": "research_synthesis",
+            "output": "CRISPR_review_2025",
+            "confidence": 0.88,
+            "inputs": {
+              "user_query": "Summarize latest papers on CRISPR gene editing",
+              "databases_searched": ["PubMed", "arXiv", "bioRxiv", "Nature"],
+              "papers_found": 247
+            },
+            "reasoning": [
+              "Created 8-step autonomous plan",
+              "Validated each step ethically",
+              "Explored 5 parallel analytical perspectives",
+              "Selected best synthesis approach",
+              "Detected and minimized bias (0.07)",
+              "Published to marketplace",
+              "Learned from user feedback",
+              "Adjusted future parameters"
+            ]
+          }
+        },
+        "ui_display": {
+          "type": "audit_trail_timeline",
+          "title": "Complete Traceability",
+          "timeline": [
+            {"phase": "Input", "time": "0ms", "action": "User query received"},
+            {"phase": "Planning", "time": "5ms", "action": "8-step plan created"},
+            {"phase": "Ethics", "time": "55ms", "action": "Safety validated"},
+            {"phase": "Analysis", "time": "155ms", "action": "5 perspectives explored"},
+            {"phase": "Synthesis", "time": "175ms", "action": "Best path selected"},
+            {"phase": "Bias Check", "time": "235ms", "action": "Bias minimized (0.07)"},
+            {"phase": "Publishing", "time": "265ms", "action": "Insight published"},
+            {"phase": "Learning", "time": "280ms", "action": "Parameters adjusted"}
+          ],
+          "total_time": "280ms",
+          "explainability": "FULL",
+          "animation": "timeline_draw"
+        },
+        "narration": "Every decision fully traceable with reasoning steps",
+        "time_estimate": "~10ms"
+      },
+      
+      {
+        "step_number": 10,
+        "title": "Results Delivered",
+        "description": "User receives comprehensive research summary",
+        "ui_display": {
+          "type": "result_card",
+          "title": "Research Summary Complete",
+          "summary": {
+            "title": "CRISPR Gene Editing: 2025 Research Summary",
+            "papers_analyzed": 247,
+            "execution_time": "280ms",
+            "quality_score": "92%",
+            "confidence": "88%",
+            "bias_level": "Low (0.07)",
+            "key_findings": [
+              "Prime editing accuracy improved 95%",
+              "15 genetic conditions in clinical trials",
+              "Ethical consensus on germline restrictions",
+              "Breakthrough in lipid nanoparticle delivery"
+            ]
+          },
+          "download_button": true,
+          "share_button": true,
+          "animation": "fade_scale_in",
+          "confetti": true
+        },
+        "time_estimate": "Complete!"
+      }
+    ],
+    
+    "footer_metrics": {
+      "title": "Intelligence Demonstrated",
+      "metrics": [
+        {"icon": "🎯", "label": "Autonomous Planning", "value": "8 steps, 0 humans"},
+        {"icon": "⚖️", "label": "Ethical Validation", "value": "2 checks, 5 frameworks"},
+        {"icon": "🌳", "label": "Multi-Path Analysis", "value": "5 perspectives"},
+        {"icon": "🧬", "label": "Self-Improvement", "value": "+7% depth adjustment"},
+        {"icon": "💼", "label": "Knowledge Sharing", "value": "Published to marketplace"},
+        {"icon": "🔍", "label": "Full Traceability", "value": "9-step audit trail"},
+        {"icon": "⚡", "label": "Speed", "value": "280ms total"},
+        {"icon": "🎯", "label": "Quality", "value": "92% score"},
+        {"icon": "🛡️", "label": "Bias", "value": "0.07 (Low)"}
+      ]
+    }
+  },
+  
+  "ui_design": {
+    "theme": {
+      "mode": "dark",
+      "primary_color": "#6366F1",
+      "accent_color": "#EC4899",
+      "background": "#0F172A",
+      "card_bg": "#1E293B",
+      "success": "#10B981",
+      "warning": "#F59E0B"
+    },
+    
+    "layout": {
+      "type": "vertical_timeline",
+      "show_step_numbers": true,
+      "show_timing": true,
+      "show_icons": true,
+      "animate_on_scroll": true
+    },
+    
+    "controls": {
+      "play_button": {
+        "text": "▶️ Run Research Assistant Demo",
+        "size": "large",
+        "prominent": true
+      },
+      "speed_control": {
+        "options": ["0.5x", "1x", "2x", "Instant"],
+        "default": "1x"
+      },
+      "pause_resume": true,
+      "reset_button": true
+    }
+  },
+  
+  "animations": {
+    "step_transition": {
+      "type": "slide_fade",
+      "duration_ms": 500
+    },
+    "api_call_indicator": {
+      "type": "pulse_ring",
+      "color": "accent"
+    },
+    "success_indicator": {
+      "type": "check_bounce",
+      "color": "success"
+    },
+    "timeline_progress": {
+      "type": "line_draw",
+      "duration_ms": 300
+    }
+  },
+  
+  "additional_demos": [
+    {
+      "name": "Financial Trading Assistant",
+      "scenario": "Maximize portfolio returns while minimizing risk",
+      "steps": 7,
+      "phases_used": [1, 3, 4, 5, 6, 7]
+    },
+    {
+      "name": "Medical Diagnosis AI",
+      "scenario": "Analyze patient symptoms and suggest diagnoses",
+      "steps": 8,
+      "phases_used": [1, 4, 6, 7, 8, 9]
+    },
+    {
+      "name": "Code Review Assistant",
+      "scenario": "Review code for bugs, security, and best practices",
+      "steps": 6,
+      "phases_used": [1, 4, 6, 7, 9]
+    }
+  ],
+  
+  "footer_message": {
+    "title": "NIS Protocol v4.0",
+    "subtitle": "AGI-Level Autonomous Intelligence System",
+    "version": "v4.0.0",
+    "status": "Production Ready",
+    "github": "https://github.com/Organica-Ai-Solutions/NIS_Protocol",
+    "tagline": "The AI That Evolves Itself"
+  }
+}
