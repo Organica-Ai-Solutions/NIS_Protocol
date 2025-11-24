@@ -66,7 +66,17 @@ show_warning() {
 stop_all_services() {
     print_status "Stopping all NIS Protocol v3 services gracefully..."
     
-    # Use the stop.sh script for a graceful shutdown
+    # Check if CPU stack is running
+    if docker ps | grep -q "nis-backend-cpu"; then
+        print_status "Detected CPU stack running. Using stop-cpu.sh..."
+        if [ -f "./stop-cpu.sh" ]; then
+            ./stop-cpu.sh --volumes
+        else
+            docker-compose -f docker-compose.cpu.yml -p "$PROJECT_NAME" down -v
+        fi
+    fi
+
+    # Use the stop.sh script for a graceful shutdown of main stack
     if [ -f "./stop.sh" ]; then
         ./stop.sh --remove-containers
     else
@@ -82,9 +92,12 @@ stop_all_services() {
 remove_all_data() {
     print_status "Removing all data volumes..."
     
-    # Remove all volumes
+    # Remove all volumes (Main Stack)
     docker-compose -p "$PROJECT_NAME" down -v --remove-orphans 2>/dev/null || true
     docker-compose -p "$PROJECT_NAME" --profile monitoring down -v --remove-orphans 2>/dev/null || true
+    
+    # Remove all volumes (CPU Stack)
+    docker-compose -f docker-compose.cpu.yml -p "$PROJECT_NAME" down -v --remove-orphans 2>/dev/null || true
     
     # Clean up local data directories
     print_status "Cleaning up local data directories..."
