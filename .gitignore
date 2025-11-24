@@ -183,3 +183,13 @@ venv/
 # Private directories
 private/
 .env.backup
+
+# Generated BitNet Artifacts
+models/bitnet/checkpoints/
+models/bitnet/mobile/
+models/bitnet/models/bitnet/chat_template.jinja
+
+# Temporary Test Files
+test_ddg.py
+backend_logs.txt
+FLUTTER_DEMO_INSTRUCTIONS 2.json
