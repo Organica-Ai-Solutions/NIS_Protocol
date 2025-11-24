@@ -24,6 +24,8 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    volumes:
+      - kafka_data:/var/lib/kafka/data
     depends_on:
       - zookeeper
 
@@ -34,6 +36,8 @@ services:
       - nis-network
     ports:
       - "6379:6379"
+    volumes:
+      - redis_data:/data
 
   backend:
     build: .
@@ -41,7 +45,7 @@ services:
     networks:
       - nis-network
     ports:
-      - "8000:8000"
+      - "8007:8000"
     restart: unless-stopped
     env_file:
       - .env
@@ -60,6 +64,8 @@ services:
       # Commenting out Google credentials mount that's causing issues
       # - ${APPDATA}/gcloud/application_default_credentials.json:/app/google-credentials.json:ro
       - ./configs/google-service-account.json:/app/service-account-key.json:ro
+      - ./models:/home/nisuser/app/models
+      - ./logs:/app/logs
     depends_on:
       - redis
       - kafka

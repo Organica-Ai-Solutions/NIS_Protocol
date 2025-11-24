@@ -430,30 +430,43 @@ print_success "All required directories are ready"
 # 3. Check for BitNet Model Files
 print_info "Checking for BitNet model files..."
 if [ ! -f "$BITNET_MODEL_MARKER" ]; then
-    print_warning "BitNet model files not found. Initiating download..."
-    
-    if command -v python &> /dev/null || command -v python3 &> /dev/null; then
-        PYTHON_CMD="python"
-        if ! command -v python &> /dev/null; then
-            PYTHON_CMD="python3"
-        fi
+    if [ "$SKIP_MODEL_DOWNLOAD" == "true" ]; then
+        print_warning "BitNet model missing but SKIP_MODEL_DOWNLOAD=true. Skipping."
+    else
+        print_warning "BitNet model files not found (Local Autonomy)."
         
-        if [ -f "scripts/download_bitnet_models.py" ]; then
-            print_info "Running BitNet model download script..."
-            $PYTHON_CMD scripts/download_bitnet_models.py
+        # Check for python
+        if command -v python &> /dev/null || command -v python3 &> /dev/null; then
+            PYTHON_CMD="python"
+            if ! command -v python &> /dev/null; then
+                PYTHON_CMD="python3"
+            fi
             
-            if [ $? -ne 0 ]; then
-                print_warning "BitNet model download failed. The system will use fallback mechanisms."
+            # Prompt user
+            echo -e "${YELLOW}Would you like to download the local model (~2.5GB) for offline autonomy?${NC}"
+            read -t 10 -p "Download now? [Y/n] (default: Y in 10s): " choice
+            choice=${choice:-Y}
+            
+            if [[ "$choice" =~ ^[Yy]$ ]]; then
+                if [ -f "scripts/setup_local_autonomy.py" ]; then
+                    print_info "Running Local Autonomy setup script..."
+                    $PYTHON_CMD scripts/setup_local_autonomy.py
+                    
+                    if [ $? -ne 0 ]; then
+                        print_warning "Model download failed. The system will use fallback mechanisms."
+                    else
+                        print_success "Local model files downloaded successfully!"
+                    fi
+                else
+                    print_warning "Setup script not found at scripts/setup_local_autonomy.py"
+                    print_warning "The system will use fallback mechanisms."
+                fi
             else
-                print_success "BitNet model files downloaded successfully!"
+                print_warning "Skipping download. System will run in simulation mode."
             fi
         else
-            print_warning "BitNet download script not found at scripts/download_bitnet_models.py"
-            print_warning "The system will use fallback mechanisms."
+            print_warning "Python not found. Cannot download models."
         fi
-    else
-        print_warning "Python not found. Cannot download BitNet models."
-        print_warning "The system will use fallback mechanisms."
     fi
 else
     print_success "BitNet model files found!"

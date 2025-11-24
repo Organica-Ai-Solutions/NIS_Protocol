@@ -41,6 +41,9 @@ import aiohttp  # For internal API calls in tool execution
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("nis_general_pattern")
 
+# Import State Manager for Real-Time Visibility
+from src.core.state_manager import nis_state_manager, StateEventType
+
 # FastAPI and web framework imports
 from fastapi import FastAPI, HTTPException, BackgroundTasks, WebSocket, WebSocketDisconnect, Response, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
@@ -57,16 +60,16 @@ from src.utils.env_config import EnvironmentConfig
 
 # High-performance audio processing imports
 # Temporarily disabled to fix numpy serialization issue
-# from src.services.streaming_stt_service import StreamingSTTService, transcribe_audio_stream
-# from src.services.audio_buffer_service import get_audio_processor, HighPerformanceAudioBuffer
-# from src.services.wake_word_service import get_wake_word_detector, get_conversation_manager
+from src.services.streaming_stt_service import StreamingSTTService, transcribe_audio_stream
+from src.services.audio_buffer_service import get_audio_processor, HighPerformanceAudioBuffer
+from src.services.wake_word_service import get_wake_word_detector, get_conversation_manager
 
 # ✅ REAL NIS Protocol platform imports - No mocks allowed
 # Import real implementations from dedicated modules
 # Temporarily disabled to debug numpy serialization
-# from src.agents.signal_processing.unified_signal_agent import UnifiedSignalAgent
-# from src.agents.reasoning.unified_reasoning_agent import EnhancedKANReasoningAgent
-# from src.meta.unified_coordinator import EnhancedPINNPhysicsAgent
+from src.agents.signal_processing.unified_signal_agent import UnifiedSignalAgent
+from src.agents.reasoning.unified_reasoning_agent import EnhancedKANReasoningAgent
+from src.meta.unified_coordinator import EnhancedPINNPhysicsAgent
 from src.nis_protocol.core.platform import create_edge_platform
 
 # VibeVoice communication imports
@@ -80,24 +83,9 @@ vibevoice_engine = None
 nemo_manager = None
 
 # Enhanced optimization systems (temporarily disabled for startup)
-# from src.mcp.schemas.enhanced_tool_schemas import EnhancedToolSchemas
-# from src.mcp.enhanced_response_system import EnhancedResponseSystem, ResponseFormat
-# from src.mcp.token_efficiency_system import TokenEfficiencyManager
-
-# Temporary fallbacks
-class EnhancedToolSchemas:
-    def get_mcp_tool_definitions(self):
-        return []
-
-class EnhancedResponseSystem:
-    def create_response(self, **kwargs):
-        return kwargs.get('raw_data', {})
-
-class TokenEfficiencyManager:
-    def get_performance_metrics(self):
-        return {"requests_processed": 0, "tokens_saved": 0}
-    def create_efficient_response(self, **kwargs):
-        return kwargs.get('raw_data', [])
+from src.mcp.schemas.enhanced_tool_schemas import EnhancedToolSchemas
+from src.mcp.enhanced_response_system import EnhancedResponseSystem, ResponseFormat
+from src.mcp.token_efficiency_system import TokenEfficiencyManager
 
 # NIS HUB Integration - Enhanced Services
 from src.services.consciousness_service import create_consciousness_service
@@ -107,16 +95,10 @@ from src.llm.llm_manager import GeneralLLMProvider
 from src.agents.learning.learning_agent import LearningAgent
 from src.agents.consciousness.conscious_agent import ConsciousAgent
 # Temporarily disabled to debug numpy serialization
-# from src.agents.signal_processing.unified_signal_agent import create_enhanced_laplace_transformer
-# from src.agents.reasoning.unified_reasoning_agent import create_enhanced_kan_reasoning_agent
+from src.agents.signal_processing.unified_signal_agent import create_enhanced_laplace_transformer
+from src.agents.reasoning.unified_reasoning_agent import create_enhanced_kan_reasoning_agent
 # Real physics agent implementation required by integrity rules
-# Temporarily disabled to debug numpy serialization
-# try:
-#     from src.agents.physics.unified_physics_agent import create_enhanced_pinn_physics_agent
-# except ImportError:
-def create_enhanced_pinn_physics_agent():
-        """Physics agent implementation required - no mocks allowed per .cursorrules"""
-        raise NotImplementedError("Physics agent must be properly implemented - mocks prohibited by engineering integrity rules")
+from src.agents.physics.unified_physics_agent import create_enhanced_pinn_physics_agent
 from src.agents.planning.autonomous_planning_system import AutonomousPlanningSystem
 from src.agents.goals.curiosity_engine import CuriosityEngine
 from src.utils.self_audit import self_audit_engine
@@ -144,6 +126,11 @@ except ImportError as e:
     create_nemo_agent_orchestrator = None
     NeMoIntegrationManager = None
     NVIDIAInceptionIntegration = None
+
+# Import Autonomous Executor and Diagram Agent
+from src.agents.autonomous_execution.executor import create_anthropic_style_executor
+from src.agents.visualization.diagram_agent import DiagramAgent
+
 # Real chat memory implementation required by integrity rules
 try:
     from src.chat.enhanced_memory_chat import EnhancedChatMemory, ChatMemoryConfig
@@ -396,6 +383,10 @@ agents = {}  # Agent registry for NeMo integration
 # NIS HUB Enhanced Services
 consciousness_service = None
 protocol_bridge = None
+vision_agent = None
+research_agent = None
+reasoning_chain = None
+document_agent = None
 
 # coordinator = create_scientific_coordinator()  # Temporarily disabled to debug numpy serialization
 coordinator = None
@@ -412,10 +403,10 @@ enhanced_schemas = None
 response_system = None
 token_manager = None
 
-# Edge AI Operating System - temporarily disabled to debug numpy serialization
-# from src.core.edge_ai_operating_system import (
-#     EdgeAIOperatingSystem, create_drone_ai_os, create_robot_ai_os, create_vehicle_ai_os
-# )
+# Edge AI Operating System - enabled
+from src.core.edge_ai_operating_system import (
+    EdgeAIOperatingSystem, create_drone_ai_os, create_robot_ai_os, create_vehicle_ai_os
+)
 
 class NumpyEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -444,8 +435,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Mount static files
-app.mount("/static", StaticFiles(directory="static"), name="static")
+# Mount static files gracefully
+if os.path.exists("static"):
+    app.mount("/static", StaticFiles(directory="static"), name="static")
+else:
+    logger.warning("⚠️ Static directory not found - static files will not be served")
+
+# Mount BitNet Mobile Bundle downloads
+bitnet_mobile_dir = "models/bitnet/mobile"
+if not os.path.exists(bitnet_mobile_dir):
+    os.makedirs(bitnet_mobile_dir, exist_ok=True)
+app.mount("/downloads/bitnet", StaticFiles(directory=bitnet_mobile_dir), name="bitnet_downloads")
 
 # ====== THIRD-PARTY PROTOCOL INTEGRATION ======
 # Real production integration of MCP, A2A, and ACP protocols
@@ -644,7 +644,7 @@ async def formatted_chat():
 async def initialize_system():
     """Initialize the NIS Protocol system - can be called manually for testing."""
     global llm_provider, web_search_agent, simulation_coordinator, learning_agent, planning_system, curiosity_engine, fallback_learning_agent
-    global consciousness_service, protocol_bridge
+    global consciousness_service, protocol_bridge, bitnet_trainer
     try:
         llm_provider = GeneralLLMProvider()
         logger.info(" LLM Provider initialized successfully")
@@ -801,8 +801,13 @@ async def initialize_system():
     consciousness_service.__init_multipath__()
     logger.info("🌳 Phase 6: Multi-path reasoning initialized")
     
-    consciousness_service.__init_embodiment__()
-    logger.info("🤖 Phase 8: Physical embodiment initialized")
+    try:
+        consciousness_service.__init_embodiment__()
+        logger.info("🤖 Phase 8: Physical embodiment initialized")
+    except OSError as e:
+        logger.warning(f"⚠️ Phase 8 skipped due to file system error: {e}")
+    except Exception as e:
+        logger.error(f"❌ Phase 8 initialization failed: {e}")
     
     consciousness_service.__init_debugger__()
     logger.info("🔍 Phase 9: Consciousness debugger initialized")
@@ -817,38 +822,50 @@ async def initialize_system():
         unified_coordinator=coordinator
     )
     
-    # 🚀 Initialize Autonomous Executor (temporarily disabled)
-    #     executor = create_executor(
-    #     agent_id="anthropic_autonomous_executor",
-    #     enable_consciousness_validation=True,
-    #     enable_physics_validation=True,
-    #     human_oversight_level="adaptive"
-    # )
-    executor = None  # Temporarily disabled
+    # 🚀 Initialize Autonomous Executor
+    executor = create_anthropic_style_executor(
+        agent_id="anthropic_autonomous_executor",
+        enable_consciousness_validation=True,
+        enable_physics_validation=True,
+        human_oversight_level="adaptive"
+    )
     
     # 🎯 Initialize BitNet Online Training System (gated)
     bitnet_trainer = None
     try:
-        bitnet_enabled = os.getenv("BITNET_TRAINING_ENABLED", "false").lower() == "true"
+        # BitNet Initialization Logic (Enhanced with Auto-Detect)
         bitnet_dir = os.getenv("BITNET_MODEL_PATH", "models/bitnet/models/bitnet")
-        if bitnet_enabled and os.path.exists(os.path.join(bitnet_dir, "config.json")):
+        model_exists = os.path.exists(os.path.join(bitnet_dir, "config.json"))
+        
+        # Enable if explicitly set OR if model exists (Auto-Detect)
+        env_enabled = os.getenv("BITNET_TRAINING_ENABLED", "false").lower() == "true"
+        bitnet_enabled = env_enabled or model_exists
+
+        if bitnet_enabled and model_exists:
+            logger.info(f"🤖 Found BitNet model at {bitnet_dir}")
+            logger.info("🚀 Initializing BitNet Online Trainer...")
+            
             from src.agents.training.bitnet_online_trainer import OnlineTrainingConfig, create_bitnet_online_trainer
             training_config = OnlineTrainingConfig(
                 model_path=bitnet_dir,
                 learning_rate=1e-5,
-                training_interval_seconds=300.0,
-                min_examples_before_training=5,
                 quality_threshold=0.6,
                 checkpoint_interval_minutes=30
             )
-            bitnet_trainer = create_bitnet_online_trainer(
-                agent_id="bitnet_online_trainer",
-                config=training_config,
-                consciousness_service=consciousness_service
-            )
-            logger.info("🚀 BitNet Online Trainer enabled")
+            try:
+                bitnet_trainer = create_bitnet_online_trainer(
+                    agent_id="bitnet_online_trainer",
+                    config=training_config,
+                    consciousness_service=consciousness_service
+                )
+                logger.info("✅ BitNet Online Trainer ACTIVE and integrated with Consciousness Service")
+            except Exception as e:
+                logger.error(f"❌ Failed to initialize BitNet Trainer: {e}")
         else:
-            logger.info("BitNet Online Trainer disabled or model files missing")
+            if not model_exists:
+                logger.info(f"ℹ️ BitNet model not found at {bitnet_dir} - Training disabled")
+            else:
+                logger.info("ℹ️ BitNet Training disabled by configuration")
     except Exception as e:
         logger.warning(f"BitNet Online Trainer initialization skipped: {e}")
 
@@ -860,7 +877,7 @@ async def initialize_system():
     document_agent = DocumentAnalysisAgent(agent_id="document_analysis_agent")
     
     # Initialize Precision Visualization Agent (Code-based, NOT AI image gen)
-    # diagram_agent = DiagramAgent()  # Temporarily disabled
+    diagram_agent = DiagramAgent()
     
     # Initialize Real-Time Data Pipeline Agent (global scope)
     global pipeline_agent
@@ -884,11 +901,15 @@ async def initialize_system():
 async def startup_event():
     """Application startup event - RE-ENABLED FOR FULL FUNCTIONALITY."""
     logger.info("🚀 Starting NIS Protocol v3 initialization...")
-    # Schedule initialization in background to avoid blocking readiness
-    import asyncio as _asyncio
-    _asyncio.create_task(initialize_system())
+    
+    # Initialize Orchestrator explicitly
+    initialize_agent_orchestrator()
+    
+    # Await initialization to ensure v4 endpoints are ready (Consciousness Service required)
+    await initialize_system()
     
     # Initialize MCP integration in background (non-blocking)
+    import asyncio as _asyncio
     _asyncio.create_task(initialize_mcp_integration())
     
     # Initialize VibeVoice engine synchronously
@@ -930,8 +951,28 @@ def initialize_nemo_manager():
         
         logger.info("🚀 Initializing NVIDIA NeMo Integration Manager...")
         
+        # Create config with API key from environment
+        from src.agents.nvidia_nemo.nemo_integration_manager import NeMoIntegrationConfig
+        
+        nim_api_key = os.getenv("NVIDIA_API_KEY") or os.getenv("NVIDIA_NIM_API_KEY")
+        dgx_endpoint = os.getenv("DGX_CLOUD_ENDPOINT")
+        
+        config = NeMoIntegrationConfig(
+            nim_api_key=nim_api_key,
+            dgx_cloud_endpoint=dgx_endpoint,
+            enable_nim_inference=bool(nim_api_key),
+            enable_dgx_cloud=bool(dgx_endpoint)
+        )
+        
         # Create NeMo Integration Manager instance
-        nemo_manager = NeMoIntegrationManager()
+        nemo_manager = NeMoIntegrationManager(config=config)
+        
+        # Initialize integration resources if keys are present
+        if nim_api_key:
+            import asyncio
+            # We are in a sync function, but initialization requires async
+            # This will be handled by the background task or when first used
+            logger.info("✅ NVIDIA API Key found - NIM Inference enabled")
         
         logger.info("✅ NVIDIA NeMo Integration Manager ready")
         logger.info("   • NeMo Framework: Available")
@@ -1020,13 +1061,42 @@ class ForceTrainingRequest(BaseModel):
 @app.post("/simulation/run", tags=["Generative Simulation"])
 async def run_generative_simulation(request: SimulationConcept):
     """
-    Run a physics simulation for a given concept - DEMO READY endpoint.
+    Run a physics simulation for a given concept using the Unified Coordinator pipeline.
     """
     try:
-        # Create a physics-focused simulation using the concept
+        # Use simulation_coordinator which is properly initialized
+        active_coordinator = simulation_coordinator if simulation_coordinator else coordinator
+        
+        if active_coordinator:
+            # Use REAL pipeline
+            pipeline_data = {
+                "concept": request.concept,
+                "timestamp": time.time(),
+                "parameters": {"simulation_mode": "generative"}
+            }
+            
+            # Run the data through Laplace -> KAN -> PINN
+            pipeline_result = await active_coordinator.process_data_pipeline(pipeline_data)
+            
+            # Construct rich response with internal trace
+            result = {
+                "status": "success",
+                "message": f"Real simulation pipeline execution for: {request.concept}",
+                "concept": request.concept,
+                "pipeline_result": pipeline_result, # Expose the inner workings!
+                "trace": {
+                    "steps": ["laplace_transform", "kan_symbolic_reasoning", "pinn_validation"],
+                    "coordinator_id": active_coordinator.coordinator_id,
+                    "execution_time": time.time() - pipeline_data["timestamp"]
+                }
+            }
+            return JSONResponse(content=result, status_code=200)
+            
+        # Fallback if coordinator not initialized
+        logger.warning("Coordinator not available, using mock simulation")
         result = {
-            "status": "completed",
-            "message": f"Physics simulation completed for concept: '{request.concept}'",
+            "status": "completed_mock",
+            "message": f"Physics simulation (mock) completed for concept: '{request.concept}'",
             "concept": request.concept,
             "key_metrics": {
                 "physics_compliance": 0.94,
@@ -1098,7 +1168,9 @@ async def get_physics_agent(agent_id: str = "unified_physics"):
     ensure_physics_agent_available()
     global physics_validation_agent
     if physics_validation_agent is None:
-        physics_validation_agent = UnifiedPhysicsAgent(agent_id=agent_id)
+        # Use enhanced agent for true PINN capabilities
+        from src.agents.physics.unified_physics_agent import create_enhanced_pinn_physics_agent
+        physics_validation_agent = create_enhanced_pinn_physics_agent(agent_id=agent_id)
     return physics_validation_agent
 
 @app.post("/physics/validate/true-pinn", tags=["Physics Validation"])
@@ -1139,7 +1211,7 @@ async def validate_physics_true_pinn(request: PhysicsValidationRequest):
         
         # Perform comprehensive physics validation
         validation_result = await physics_agent.validate_physics(
-            validation_data, physics_mode, physics_domain
+            validation_data, physics_mode
         )
         
         # Extract detailed results
@@ -1151,11 +1223,11 @@ async def validate_physics_true_pinn(request: PhysicsValidationRequest):
             "is_valid": validation_result.is_valid,
             "confidence": validation_result.confidence,
             "physics_compliance": validation_result.conservation_scores.get("physics_compliance", 0.0),
-            "pde_residual_norm": validation_result.conservation_scores.get("pde_residual_norm", float('inf')),
+            "pde_residual_norm": validation_result.pde_residual_norm,
             "laws_validated": [law.value for law in validation_result.laws_checked],
-            "violations": validation_result.violations,
-            "corrections_applied": validation_result.corrections,
-            "pde_details": validation_result.physics_metadata.get("pde_details", {}),
+            "violations": validation_result.validation_details.get("violations", []),
+            "corrections_applied": validation_result.validation_details.get("corrections", []),
+            "pde_details": validation_result.validation_details.get("pde_details", {}),
             "execution_time": validation_result.execution_time,
             "timestamp": time.time(),
             "validation_id": f"pinn_{int(time.time())}"
@@ -1204,30 +1276,14 @@ async def solve_heat_equation(request: HeatEquationRequest):
 
         logger.info(f"Solving heat equation with α={request.thermal_diffusivity}, L={request.domain_length}, t={request.final_time}")
 
-        wave_scenario = {
-            'x_range': [0.0, request.domain_length],
-            't_range': [0.0, request.final_time],
-            'domain_points': 1000,
-            'boundary_points': 100,
-            'thermal_diffusivity': request.thermal_diffusivity,
-            'initial_conditions': request.initial_conditions,
-            'boundary_conditions': request.boundary_conditions
-        }
-
-        validation_result = await physics_agent.validate_physics(
-            {
-                "physics_data": {
-                    "thermal_diffusivity": request.thermal_diffusivity,
-                    "initial_conditions": request.initial_conditions,
-                    "boundary_conditions": request.boundary_conditions
-                },
-                "physics_scenario": wave_scenario,
-                "pde_type": "heat"
-            },
-            PhysicsMode.TRUE_PINN
-        )
-
-        validation = validation_result.validation_details
+        # Call REAL solver instead of just validator
+        solution = await physics_agent.solve_heat_equation({
+            "thermal_diffusivity": request.thermal_diffusivity,
+            "domain_length": request.domain_length,
+            "final_time": request.final_time,
+            "initial_conditions": request.initial_conditions,
+            "boundary_conditions": request.boundary_conditions
+        })
 
         enhanced_result = {
             "status": "success",
@@ -1240,14 +1296,13 @@ async def solve_heat_equation(request: HeatEquationRequest):
                 "initial_conditions": request.initial_conditions,
                 "boundary_conditions": request.boundary_conditions
             },
+            "solution": solution,
             "validation": {
-                "is_valid": validation_result.is_valid,
-                "confidence": validation_result.confidence,
-                "conservation_scores": validation_result.conservation_scores,
-                "pde_residual_norm": validation_result.pde_residual_norm,
-                "laws_checked": [law.value for law in validation_result.laws_checked],
-                "details": validation,
-                "execution_time": validation_result.execution_time
+                "is_valid": solution.get("convergence", False),
+                "confidence": 0.95 if solution.get("convergence") else 0.4,
+                "pde_residual_norm": solution.get("residual_norm", 0.0),
+                "method": solution.get("method", "unknown"),
+                "implementation": solution.get("implementation", "unknown")
             },
             "timestamp": time.time()
         }
@@ -1282,28 +1337,15 @@ async def solve_wave_equation(request: WaveEquationRequest):
     try:
         physics_agent = await get_physics_agent("wave_equation_solver")
         
-        # Prepare wave equation scenario
-        wave_scenario = {
-            'x_range': [0.0, request.domain_length],
-            't_range': [0.0, request.final_time],
-            'domain_points': 2000,
-            'boundary_points': 200,
-            'wave_speed': request.wave_speed,
-            'initial_displacement': request.initial_displacement
-        }
-        
-        validation_data = {
-            "physics_data": {"wave_speed": request.wave_speed},
-            "pde_type": "wave",
-            "physics_scenario": wave_scenario
-        }
-        
         logger.info(f"Solving wave equation with c={request.wave_speed}, L={request.domain_length}, t={request.final_time}")
         
-        # Solve using TRUE PINN
-        validation_result = await physics_agent.validate_physics(
-            validation_data, PhysicsMode.TRUE_PINN, PhysicsDomain.CLASSICAL_MECHANICS
-        )
+        # Call REAL solver
+        solution = await physics_agent.solve_wave_equation({
+            "wave_speed": request.wave_speed,
+            "domain_length": request.domain_length,
+            "final_time": request.final_time,
+            "initial_displacement": request.initial_displacement
+        })
         
         # Enhanced result with consciousness supervision
         result = {
@@ -1316,25 +1358,18 @@ async def solve_wave_equation(request: WaveEquationRequest):
                 "final_time": request.final_time,
                 "initial_displacement": request.initial_displacement
             },
+            "solution": solution,
             "validation": {
-                "is_valid": validation_result.is_valid,
-                "confidence": validation_result.confidence,
-                "conservation_scores": validation_result.conservation_scores,
-                "pde_residual_norm": validation_result.pde_residual_norm,
-                "laws_checked": [law.value for law in validation_result.laws_checked],
-                "details": validation_result.validation_details,
-                "execution_time": validation_result.execution_time
-            },
-            "consciousness_meta_agent": {
-                "wave_physics_supervision": "Wave equation solution monitored by meta-agent",
-                "mechanical_reasoning_depth": "second_order_pde_level",
-                "conservation_law_enforcement": "automated_via_pinn_loss",
-                "agent_coordination_status": "unified_physics_supervision"
+                "is_valid": solution.get("convergence", False),
+                "confidence": 0.95 if solution.get("convergence") else 0.4,
+                "pde_residual_norm": solution.get("residual_norm", 0.0),
+                "method": solution.get("method", "unknown"),
+                "implementation": solution.get("implementation", "unknown")
             },
             "timestamp": time.time()
         }
         
-        logger.info(f"✅ Wave equation solved: compliance={validation_result.conservation_scores.get('physics_compliance', 0):.3f}")
+        logger.info(f"✅ Wave equation solved: valid={solution.get('convergence', False)}")
         
         return JSONResponse(content=result, status_code=200)
         
@@ -2596,92 +2631,7 @@ async def get_research_capabilities():
             "capabilities": {}
         }, status_code=500)
 
-# DUPLICATE ENDPOINT - Using research agent version instead (see line ~5982)
-# @app.post("/research/deep", tags=["Research"])
-# async def deep_research_OLD_DISABLED(request: dict):
-#     """
-#     🔍 REAL Deep Research using GPT-4
-#     
-#     Performs comprehensive research analysis using our powerful LLM backend.
-#     No external APIs needed - uses the AI you already have!
-#     """
-#     try:
-#         query = request.get("query", "")
-#         depth = request.get("research_depth", "standard")
-#         max_length = request.get("max_length", 2000)
-#         include_citations = request.get("include_citations", True)
-#         
-#         if not query:
-#             return JSONResponse(content={
-#                 "success": False,
-#                 "error": "Query is required"
-#             }, status_code=400)
-#         
-#         # Build comprehensive research prompt
-#         research_prompt = f"""You are an expert research analyst. Conduct comprehensive research on the following topic:
-# 
-# RESEARCH QUERY: {query}
-# 
-# INSTRUCTIONS:
-# 1. Provide a thorough, well-researched analysis
-# 2. Include specific facts, statistics, and technical details
-# 3. Structure your response with clear sections
-# 4. {'Include citations in [Source] format where applicable' if include_citations else 'Focus on factual content'}
-# 5. Be analytical and avoid generalities
-# 6. Provide multiple perspectives when relevant
-# 7. Include recent developments and historical context
-# 
-# DEPTH LEVEL: {depth}
-# {'- Provide extensive detail and comprehensive coverage' if depth == 'comprehensive' else '- Provide balanced detail with key insights'}
-# 
-# Format your response as a well-structured research report."""
-# 
-#         # Use our powerful LLM backend for REAL research
-#         if llm_provider is None:
-#             raise HTTPException(status_code=500, detail="LLM Provider not initialized")
-#         
-#         messages = [
-#             {"role": "system", "content": "You are an expert research analyst providing comprehensive, factual research reports."},
-#             {"role": "user", "content": research_prompt}
-#         ]
-#         
-#         # Generate REAL research using GPT-4
-#         result = await llm_provider.generate_response(
-#             messages=messages,
-#             temperature=0.7,
-#             requested_provider="openai"  # Use GPT-4 for best research quality
-#         )
-#         
-#         # Structure the research result
-#         research_result = {
-#             "success": True,
-#             "query": query,
-#             "research_depth": depth,
-#             "analysis": result.get("content", ""),
-#             "metadata": {
-#                 "model": result.get("model", "gpt-4"),
-#                 "provider": result.get("provider", "openai"),
-#                 "tokens_used": result.get("tokens_used", 0),
-#                 "real_ai": result.get("real_ai", True)
-#             },
-#             "research_quality": {
-#                 "comprehensive": len(result.get("content", "")) > 1000,
-#                 "confidence_score": result.get("confidence", 0.9),
-#                 "factual_basis": "LLM knowledge base"
-#             },
-#             "timestamp": time.time()
-#         }
-#         
-#         logger.info(f"✅ Deep research completed: {len(result.get('content', ''))} chars, {result.get('tokens_used', 0)} tokens")
-#         
-#         return research_result
-#         
-#     except Exception as e:
-#         logger.error(f"Deep research error: {e}")
-#         return JSONResponse(content={
-#             "success": False,
-#             "error": str(e)
-#         }, status_code=500)
+
 
 @app.post("/research/deep", tags=["Research"])
 async def deep_research(request: dict):
@@ -2724,7 +2674,8 @@ async def deep_research(request: dict):
         
         # Step 2: Analyze and synthesize with LLM
         research_context = f"Search Results for '{query}':\n\n"
-        search_result_list = search_results.get('results', [])
+        # Fix: WebSearchAgent returns 'top_results', not 'results'
+        search_result_list = search_results.get('top_results', [])
         if isinstance(search_result_list, list) and len(search_result_list) > 0:
             for idx, result in enumerate(search_result_list, 1):
                 # Handle both dict and SearchResult objects
@@ -3638,7 +3589,7 @@ async def run_simulation(request: SimulationRequest):
         }
 # --- BitNet Online Training Endpoints ---
 @app.get("/models/bitnet/status", response_model=TrainingStatusResponse, tags=["BitNet"])
-async def get_bitnet_model_status():
+async def get_bitnet_model_status(request: Request):
     """
     🎯 Get BitNet Online Training Status
     
@@ -3692,6 +3643,13 @@ async def get_bitnet_model_status():
         if bundle_path and os.path.exists(bundle_path):
             bundle_size = round(os.path.getsize(bundle_path) / (1024 * 1024), 2)
 
+        # Inject Download URL
+        download_url = mobile_bundle_config.get("download_url")
+        if not download_url and bundle_path and os.path.exists(bundle_path):
+             bundle_filename = os.path.basename(bundle_path)
+             base_url = str(request.base_url).rstrip('/')
+             download_url = f"{base_url}/downloads/bitnet/{bundle_filename}"
+
         return TrainingStatusResponse(
             is_training=status["is_training"],
             training_available=status["training_available"],
@@ -3701,7 +3659,7 @@ async def get_bitnet_model_status():
             metrics=status["metrics"],
             config=status["config"],
             supports_offline=os.path.exists(bitnet_dir),
-            download_url=mobile_bundle_config.get("download_url"),
+            download_url=download_url,
             download_checksum=mobile_bundle_config.get("checksum"),
             download_size_mb=mobile_bundle_config.get("size_mb", bundle_size),
             version=mobile_bundle_config.get("version"),
@@ -6188,13 +6146,17 @@ async def get_performance_trend():
         raise HTTPException(status_code=500, detail=f"Performance analysis failed: {str(e)}")
 
 @app.post("/v4/consciousness/genesis", tags=["V4.0 Evolution"])
-async def create_dynamic_agent(capability: str):
+async def create_dynamic_agent(request: Dict[str, Any]):
     """
     🔬 V4.0: Agent Genesis - Create new agent for capability gap
     
     Consciousness synthesizes a new agent when it detects missing capabilities.
     """
     try:
+        capability = request.get("capability")
+        if not capability:
+            raise HTTPException(status_code=400, detail="capability is required")
+
         if consciousness_service is None:
             raise HTTPException(status_code=503, detail="Consciousness service not initialized")
         
@@ -6263,13 +6225,19 @@ async def register_consciousness_peer(peer_id: str, peer_endpoint: str):
         raise HTTPException(status_code=500, detail=f"Peer registration failed: {str(e)}")
 
 @app.post("/v4/consciousness/collective/decide", tags=["V4.0 Evolution"])
-async def collective_consciousness_decision(problem: str, local_decision: dict):
+async def collective_consciousness_decision(request: Dict[str, Any]):
     """
     🧠 V4.0: Make collective decision across multiple instances
     
     Consults all registered peers before deciding.
     """
     try:
+        problem = request.get("problem")
+        local_decision = request.get("local_decision")
+        
+        if not problem:
+            raise HTTPException(status_code=400, detail="problem is required")
+
         if consciousness_service is None:
             raise HTTPException(status_code=503, detail="Consciousness service not initialized")
         
@@ -6327,7 +6295,7 @@ async def get_collective_consciousness_status():
         raise HTTPException(status_code=500, detail=f"Collective status failed: {str(e)}")
 
 @app.post("/v4/consciousness/plan", tags=["V4.0 Evolution"])
-async def create_autonomous_plan(goal_id: str, high_level_goal: str):
+async def create_autonomous_plan(request: Dict[str, Any]):
     """
     🎯 V4.0: Create and execute autonomous multi-step plan
     
@@ -6336,6 +6304,12 @@ async def create_autonomous_plan(goal_id: str, high_level_goal: str):
     Example: "Research protein folding" → 6-step autonomous execution
     """
     try:
+        goal_id = request.get("goal_id")
+        high_level_goal = request.get("high_level_goal")
+        
+        if not goal_id or not high_level_goal:
+            raise HTTPException(status_code=400, detail="goal_id and high_level_goal are required")
+
         if consciousness_service is None:
             raise HTTPException(status_code=503, detail="Consciousness service not initialized")
         
@@ -6373,13 +6347,16 @@ async def get_planning_status():
         raise HTTPException(status_code=500, detail=f"Planning status failed: {str(e)}")
 
 @app.post("/v4/consciousness/marketplace/publish", tags=["V4.0 Evolution"])
-async def publish_consciousness_insight(
-    insight_type: str,
-    content: Dict[str, Any],
-    metadata: Optional[Dict[str, Any]] = None
-):
+async def publish_consciousness_insight(request: Dict[str, Any]):
     """💼 V4.0: Publish a consciousness insight to local marketplace"""
     try:
+        insight_type = request.get("insight_type")
+        content = request.get("content")
+        metadata = request.get("metadata", {})
+        
+        if not insight_type or not content:
+            raise HTTPException(status_code=400, detail="insight_type and content are required")
+
         if consciousness_service is None:
             raise HTTPException(status_code=503, detail="Consciousness service not initialized")
         
@@ -6592,12 +6569,15 @@ async def get_complete_system_dashboard():
 # =============================================================================
 
 @app.post("/v4/consciousness/multipath/start", tags=["V4.0 Evolution"])
-async def start_multipath_reasoning(
-    problem: str,
-    num_paths: int = 3
-):
+async def start_multipath_reasoning(request: Dict[str, Any]):
     """🌳 V4.0: Start quantum reasoning with multiple superposed paths"""
     try:
+        problem = request.get("problem")
+        num_paths = request.get("num_paths", 3)
+        
+        if not problem:
+            raise HTTPException(status_code=400, detail="problem is required")
+
         if consciousness_service is None:
             raise HTTPException(status_code=503, detail="Consciousness service not initialized")
         
@@ -6668,12 +6648,20 @@ async def get_multipath_state(state_id: Optional[str] = None):
 # =============================================================================
 
 @app.post("/v4/consciousness/ethics/evaluate", tags=["V4.0 Evolution"])
-async def evaluate_ethical_decision(decision_context: Dict[str, Any]):
+async def evaluate_ethical_decision(request: Dict[str, Any]):
     """Run full ethical + bias evaluation on a decision context.
 
     Returns approval flag, ethical score, and whether human review is required.
     """
     try:
+        decision_context = request.get("decision_context")
+        if not decision_context:
+            # Fallback: check if the request body IS the context (legacy support)
+            if "action" in request:
+                decision_context = request
+            else:
+                raise HTTPException(status_code=400, detail="decision_context is required")
+
         if consciousness_service is None:
             raise HTTPException(status_code=503, detail="Consciousness service not initialized")
 
@@ -6749,12 +6737,26 @@ async def check_motion_safety(
 
 
 @app.post("/v4/consciousness/embodiment/action/execute", tags=["V4.0 Evolution"])
-async def execute_embodied_action(
-    action_type: str,
-    parameters: Dict[str, Any]
-):
+async def execute_embodied_action(request: Dict[str, Any]):
     """Execute a physical action with embodied consciousness"""
     try:
+        action_type = request.get("action_type")
+        parameters = request.get("parameters", {})
+        
+        if not action_type:
+            # Try nested structure from demo spec
+            # "params": {"action_type": "move", "target": ...}
+            if "action_type" in request:
+                action_type = request["action_type"]
+                # Parameters are the rest or explicit? Demo spec sends flattened params?
+                # Demo spec: "params": {"action_type": "move", "target": {...}}
+                # Actually Flutter code sends body.
+                # If body is {"action_type": "move", "target": ...}
+                # Then parameters should be the rest.
+                parameters = {k: v for k, v in request.items() if k != "action_type"}
+            else:
+                raise HTTPException(status_code=400, detail="action_type is required")
+
         if consciousness_service is None:
             raise HTTPException(status_code=503, detail="Consciousness service not initialized")
         
@@ -6999,15 +7001,18 @@ async def explain_decision(decision_id: Optional[str] = None):
 
 
 @app.post("/v4/consciousness/debug/record", tags=["V4.0 Evolution"])
-async def record_decision(
-    decision_type: str,
-    inputs: Dict[str, Any],
-    output: Any,
-    reasoning: List[str],
-    confidence: float
-):
+async def record_decision(request: Dict[str, Any]):
     """Record a decision for later debugging"""
     try:
+        decision_type = request.get("decision_type")
+        inputs = request.get("inputs", {})
+        output = request.get("output")
+        reasoning = request.get("reasoning", [])
+        confidence = request.get("confidence", 0.0)
+        
+        if not decision_type:
+            raise HTTPException(status_code=400, detail="decision_type is required")
+
         if consciousness_service is None:
             raise HTTPException(status_code=503, detail="Consciousness service not initialized")
         
@@ -9482,3 +9487,174 @@ async def robotics_telemetry_stream(robot_id: str, update_rate: int = 50):
             "X-Accel-Buffering": "no"  # Disable nginx buffering
         }
     )
+# ===========================================================================================
+# 🔍 SYSTEM VISIBILITY & REAL-TIME MONITORING
+# ===========================================================================================
+
+@app.get("/system/status", tags=["System Visibility"])
+async def get_system_status():
+    """
+    🧠 Get Real-Time System Status & Agent States
+    
+    Returns the current state of the NIS Agent Orchestrator, including:
+    - Active agents
+    - Performance metrics
+    - Queue status
+    - Consciousness level
+    """
+    if nis_agent_orchestrator:
+        return nis_agent_orchestrator.get_agent_status()
+    return {"status": "orchestrator_not_initialized"}
+
+@app.websocket("/system/stream")
+async def websocket_system_stream(websocket: WebSocket):
+    """
+    📡 Real-Time System Event Stream
+    
+    WebSocket endpoint that streams:
+    - Agent activation/deactivation
+    - Thought processes
+    - State changes
+    - Performance metrics
+    """
+    await websocket.accept()
+    connection_id = f"sys_stream_{int(time.time())}_{id(websocket)}"
+    
+    try:
+        # Register with State Manager
+        nis_state_manager.add_websocket_connection(connection_id, websocket)
+        logger.info(f"📡 System stream connected: {connection_id}")
+        
+        # Send initial state
+        if nis_agent_orchestrator:
+            initial_status = nis_agent_orchestrator.get_agent_status()
+            await websocket.send_json({
+                "type": "initial_state",
+                "data": initial_status
+            })
+        
+        # Keep alive loop
+        while True:
+            # Wait for client message (ping/pong)
+            await websocket.receive_text()
+            
+    except WebSocketDisconnect:
+        logger.info(f"📡 System stream disconnected: {connection_id}")
+        nis_state_manager.remove_websocket_connection(connection_id)
+    except Exception as e:
+        logger.error(f"System stream error: {e}")
+        nis_state_manager.remove_websocket_connection(connection_id)
+
+# ===========================================================================================
+# 🎨 MULTIMODAL VISION ENDPOINTS
+# ===========================================================================================
+
+@app.post("/vision/analyze", tags=["Vision"])
+async def analyze_image(request: Dict[str, Any]):
+    """
+    🎨 Analyze Image using Multimodal Vision Agent
+    
+    Performs comprehensive analysis of images using LLM vision capabilities (GPT-4V, Claude 3, Gemini).
+    Features:
+    - Object detection
+    - Scene analysis
+    - Technical/Scientific/Physics-focused analysis
+    - Rich metadata extraction
+    """
+    try:
+        image_data = request.get("image_data")
+        if not image_data:
+            raise HTTPException(status_code=400, detail="Image data (base64) is required")
+            
+        analysis_type = request.get("analysis_type", "comprehensive")
+        context = request.get("context", "")
+        
+        if vision_agent:
+            result = await vision_agent.analyze_image(
+                image_data=image_data,
+                analysis_type=analysis_type,
+                context=context
+            )
+            return JSONResponse(content=result)
+        else:
+            raise HTTPException(status_code=503, detail="Vision Agent not initialized")
+        
+    except Exception as e:
+        logger.error(f"Vision analysis error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/vision/generate", tags=["Vision"])
+async def generate_image(request: Dict[str, Any]):
+    """
+    🎨 Generate Image using AI Providers
+    """
+    try:
+        prompt = request.get("prompt")
+        if not prompt:
+            raise HTTPException(status_code=400, detail="Prompt is required")
+            
+        style = request.get("style", "photorealistic")
+        
+        if vision_agent:
+            result = await vision_agent.generate_image(
+                prompt=prompt,
+                style=style,
+                size=request.get("size", "1024x1024"),
+                quality=request.get("quality", "standard")
+            )
+            return JSONResponse(content=result)
+        else:
+            raise HTTPException(status_code=503, detail="Vision Agent not initialized")
+        
+    except Exception as e:
+        logger.error(f"Image generation error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ===========================================================================================
+# 🛠️ MCP & TOOLS ENDPOINTS
+# ===========================================================================================
+
+@app.post("/mcp/chat", tags=["MCP"])
+async def mcp_chat(request: Dict[str, Any]):
+    """
+    💬 MCP Agent Chat Interface
+    
+    Direct interface to the Model Context Protocol agent system.
+    Supports tool execution, planning, and multi-agent coordination.
+    """
+    try:
+        if not hasattr(app.state, "mcp_integration") or not app.state.mcp_integration:
+             raise HTTPException(status_code=503, detail="MCP Integration not initialized")
+        
+        # If handle_mcp_request is not available, use a fallback
+        if hasattr(app.state.mcp_integration, "handle_mcp_request"):
+            return await app.state.mcp_integration.handle_mcp_request(request)
+        else:
+             raise HTTPException(status_code=500, detail="MCP Integration handler missing")
+             
+    except Exception as e:
+        logger.error(f"MCP chat error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/tools/list", tags=["MCP"])
+async def list_tools():
+    """
+    🛠️ List Available Tools
+    """
+    try:
+        if hasattr(app.state, "mcp_integration") and app.state.mcp_integration:
+            if hasattr(app.state.mcp_integration, "get_tool_registry"):
+                return app.state.mcp_integration.get_tool_registry()
+        
+        # Fallback: Return known agents as tools
+        return {
+            "tools": [
+                {"name": "web_search", "description": "Search the internet using DuckDuckGo"},
+                {"name": "vision_analysis", "description": "Analyze images"},
+                {"name": "physics_simulation", "description": "Run physics simulations"},
+                {"name": "code_execution", "description": "Execute python code (sandboxed)"}
+            ]
+        }
+    except Exception as e:
+        logger.error(f"Tool listing error: {e}")
+        return {"error": str(e)}
