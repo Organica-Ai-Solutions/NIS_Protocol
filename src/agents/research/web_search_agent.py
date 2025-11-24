@@ -17,6 +17,12 @@ import aiohttp
 
 # Try to import optional dependencies
 try:
+    from duckduckgo_search import DDGS
+    DDGS_AVAILABLE = True
+except ImportError:
+    DDGS_AVAILABLE = False
+
+try:
     import google.generativeai as check_genai_available
     GEMINI_AVAILABLE = True
 except ImportError:
@@ -29,6 +35,7 @@ class SearchProvider(Enum):
     SERPER = "serper"
     TAVILY = "tavily"
     BING = "bing"
+    DUCKDUCKGO = "duckduckgo"
 
 
 class ResearchDomain(Enum):
@@ -135,9 +142,19 @@ class WebSearchAgent:
             self.search_providers[SearchProvider.TAVILY] = self._search_tavily
             self.logger.info("Tavily search provider initialized")
         
+        # DuckDuckGo (No API key required)
+        if DDGS_AVAILABLE:
+            self.search_providers[SearchProvider.DUCKDUCKGO] = self._search_duckduckgo
+            self.logger.info("DuckDuckGo search provider initialized")
+        
         if not self.search_providers:
-            self.logger.info("No search providers configured - using enhanced mock search")
-            self.search_providers[SearchProvider.GOOGLE_CSE] = self._search_mock
+            if DDGS_AVAILABLE:
+                self.logger.info("No API keys configured - using DuckDuckGo as default provider")
+                # Map default provider slot to DuckDuckGo
+                self.search_providers[SearchProvider.GOOGLE_CSE] = self._search_duckduckgo
+            else:
+                self.logger.info("No search providers configured - using enhanced mock search")
+                self.search_providers[SearchProvider.GOOGLE_CSE] = self._search_mock
     
     def _initialize_llm_providers(self):
         """Initialize LLM providers for query generation and synthesis."""
@@ -329,6 +346,34 @@ class WebSearchAgent:
         
         return []
     
+    async def _search_duckduckgo(self, query: str, research_query: ResearchQuery) -> List[SearchResult]:
+        """Search using DuckDuckGo (No API key needed)."""
+        try:
+            results = []
+            # run_in_executor to avoid blocking event loop
+            loop = asyncio.get_event_loop()
+            
+            def run_ddg():
+                with DDGS() as ddgs:
+                    return list(ddgs.text(query, max_results=min(research_query.max_results, 10)))
+            
+            ddg_results = await loop.run_in_executor(None, run_ddg)
+            
+            for item in ddg_results:
+                results.append(SearchResult(
+                    title=item.get("title", ""),
+                    url=item.get("href", ""),
+                    snippet=item.get("body", ""),
+                    source="duckduckgo",
+                    relevance_score=1.0,
+                    domain=item.get("href", "").split('/')[2] if item.get("href") else "",
+                    timestamp=time.time()
+                ))
+            return results
+        except Exception as e:
+            self.logger.error(f"DuckDuckGo search failed: {e}")
+            return []
+
     async def _search_mock(self, query: str, research_query: ResearchQuery) -> List[SearchResult]:
         """Mock search for testing."""
         return [

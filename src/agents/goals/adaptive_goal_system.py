@@ -134,68 +134,68 @@ if TORCH_AVAILABLE:
     class GoalGenerationNetwork(nn.Module):
         """Neural network for autonomous goal generation"""
     
-    def __init__(self, state_dim: int = 100, goal_dim: int = 50, hidden_dims: List[int] = [256, 128, 64]):
-        super().__init__()
+        def __init__(self, state_dim: int = 100, goal_dim: int = 50, hidden_dims: List[int] = [256, 128, 64]):
+            super().__init__()
+            
+            self.state_dim = state_dim
+            self.goal_dim = goal_dim
+            
+            # Feature extraction layers
+            layers = []
+            prev_dim = state_dim
+            for hidden_dim in hidden_dims:
+                layers.extend([
+                    nn.Linear(prev_dim, hidden_dim),
+                    nn.ReLU(),
+                    nn.Dropout(0.1)
+                ])
+                prev_dim = hidden_dim
+            
+            self.feature_extractor = nn.Sequential(*layers)
+            
+            # Goal generation heads
+            self.goal_type_head = nn.Sequential(
+                nn.Linear(prev_dim, len(GoalType)),
+                nn.Softmax(dim=-1)
+            )
+            
+            self.priority_head = nn.Sequential(
+                nn.Linear(prev_dim, len(GoalPriority)),
+                nn.Softmax(dim=-1)
+            )
+            
+            self.effort_head = nn.Sequential(
+                nn.Linear(prev_dim, 1),
+                nn.Sigmoid()
+            )
+            
+            self.value_head = nn.Sequential(
+                nn.Linear(prev_dim, 1),
+                nn.Sigmoid()
+            )
+            
+            self.success_probability_head = nn.Sequential(
+                nn.Linear(prev_dim, 1),
+                nn.Sigmoid()
+            )
+            
+            self.goal_features_head = nn.Sequential(
+                nn.Linear(prev_dim, goal_dim),
+                nn.Tanh()
+            )
         
-        self.state_dim = state_dim
-        self.goal_dim = goal_dim
-        
-        # Feature extraction layers
-        layers = []
-        prev_dim = state_dim
-        for hidden_dim in hidden_dims:
-            layers.extend([
-                nn.Linear(prev_dim, hidden_dim),
-                nn.ReLU(),
-                nn.Dropout(0.1)
-            ])
-            prev_dim = hidden_dim
-        
-        self.feature_extractor = nn.Sequential(*layers)
-        
-        # Goal generation heads
-        self.goal_type_head = nn.Sequential(
-            nn.Linear(prev_dim, len(GoalType)),
-            nn.Softmax(dim=-1)
-        )
-        
-        self.priority_head = nn.Sequential(
-            nn.Linear(prev_dim, len(GoalPriority)),
-            nn.Softmax(dim=-1)
-        )
-        
-        self.effort_head = nn.Sequential(
-            nn.Linear(prev_dim, 1),
-            nn.Sigmoid()
-        )
-        
-        self.value_head = nn.Sequential(
-            nn.Linear(prev_dim, 1),
-            nn.Sigmoid()
-        )
-        
-        self.success_probability_head = nn.Sequential(
-            nn.Linear(prev_dim, 1),
-            nn.Sigmoid()
-        )
-        
-        self.goal_features_head = nn.Sequential(
-            nn.Linear(prev_dim, goal_dim),
-            nn.Tanh()
-        )
-    
-    def forward(self, state: torch.Tensor) -> Dict[str, torch.Tensor]:
-        """Generate goal properties from system state"""
-        features = self.feature_extractor(state)
-        
-        return {
-            'goal_type_probs': self.goal_type_head(features),
-            'priority_probs': self.priority_head(features),
-            'estimated_effort': self.effort_head(features),
-            'expected_value': self.value_head(features),
-            'success_probability': self.success_probability_head(features),
-            'goal_features': self.goal_features_head(features)
-        }
+        def forward(self, state: torch.Tensor) -> Dict[str, torch.Tensor]:
+            """Generate goal properties from system state"""
+            features = self.feature_extractor(state)
+            
+            return {
+                'goal_type_probs': self.goal_type_head(features),
+                'priority_probs': self.priority_head(features),
+                'estimated_effort': self.effort_head(features),
+                'expected_value': self.value_head(features),
+                'success_probability': self.success_probability_head(features),
+                'goal_features': self.goal_features_head(features)
+            }
 
 else:
     # Fallback when PyTorch is not available
@@ -294,7 +294,8 @@ class AdaptiveGoalSystem(NISAgent):
                  enable_self_audit: bool = True,
                  infrastructure_coordinator: Optional[InfrastructureCoordinator] = None):
         
-        super().__init__(agent_id, NISLayer.REASONING)
+        super().__init__(agent_id)
+        self.layer = NISLayer.REASONING
         
         self.max_active_goals = max_active_goals
         self.goal_generation_interval = goal_generation_interval

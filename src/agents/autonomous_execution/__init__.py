@@ -8,7 +8,7 @@ This module provides Anthropic-level autonomous execution capabilities:
 - Human-in-the-loop decision making
 """
 
-from .anthropic_style_executor import (
+from .executor import (
     AnthropicStyleExecutor,
     ExecutionStrategy,
     ExecutionMode,

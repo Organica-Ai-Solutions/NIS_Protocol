@@ -19,10 +19,11 @@ WORKDIR /app
 
 # Copy requirements first for caching
 COPY requirements.txt .
+COPY constraints.txt .
 
 # Install dependencies inside builder
 RUN python3.11 -m pip install --no-cache-dir --upgrade pip && \
-    python3.11 -m pip install --no-cache-dir --user -r requirements.txt
+    python3.11 -m pip install --no-cache-dir --user -r requirements.txt -c constraints.txt
 
 # Optional: Add core voice & TTS/STT modules
 RUN python3.11 -m pip install --no-cache-dir --user \

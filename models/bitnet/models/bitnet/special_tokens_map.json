@@ -1,7 +1,4 @@
 {
-  "additional_special_tokens": [
-    "</line>"
-  ],
   "bos_token": {
     "content": "<s>",
     "lstrip": false,
@@ -17,7 +14,7 @@
     "single_word": false
   },
   "pad_token": {
-    "content": "<pad>",
+    "content": "</s>",
     "lstrip": false,
     "normalized": false,
     "rstrip": false,

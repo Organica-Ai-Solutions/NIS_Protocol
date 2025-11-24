@@ -28,6 +28,9 @@ NIS Protocol is a **complete AI Operating System** featuring the industry's most
 **🧠 CORE AI CAPABILITIES:**
 - **✅ Multi-Agent Orchestration** - Consciousness-driven agent coordination with protocol bridge
 - **✅ Scientific Reasoning** - Real Laplace transforms, KAN networks, and PINN physics validation
+- **✅ Deep Web Research** - Autonomous internet research with DuckDuckGo fallback (Free & Key-less!) (NEW!)
+- **✅ Multimodal Vision** - Advanced image analysis and generation via Multimodal Vision Agent (NEW!)
+- **✅ System Observability** - Real-time visibility into agent thought processes and state (NEW!)
 - **✅ Intelligent Query Router** - Adaptive path selection tuned via internal benchmarking (NEW!)
 - **✅ Real LLM Integration** - OpenAI (GPT-4o, GPT-5 ready), Anthropic (Claude), Google with smart consensus
 - **✅ Voice & Audio Processing** - Multi-speaker synthesis with real-time streaming + amazing visualizer (NEW!)

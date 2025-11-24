@@ -127,11 +127,13 @@ class GeneralLLMProvider:
         # Try real API if available
         if self.real_providers.get(provider, False):
             try:
+                tools = additional_options.get("tools")
                 return await self._call_real_api(
                     provider,
                     messages,
                     temperature,
-                    token_limit
+                    token_limit,
+                    tools=tools
                 )
             except Exception as e:
                 logger.error(f"Real API call failed for {provider}: {e}, falling back to mock")
@@ -150,7 +152,8 @@ class GeneralLLMProvider:
         provider: str,
         messages: Union[str, List[Dict[str, str]]],
         temperature: float,
-        max_tokens: Optional[int]
+        max_tokens: Optional[int],
+        tools: Optional[List[Dict[str, Any]]] = None
     ) -> Dict[str, Any]:
         """Call real LLM API"""
         # Format messages
@@ -160,11 +163,11 @@ class GeneralLLMProvider:
             formatted_messages = messages
         
         if provider == "openai":
-            return await self._call_openai(formatted_messages, temperature, max_tokens)
+            return await self._call_openai(formatted_messages, temperature, max_tokens, tools)
         elif provider == "anthropic":
-            return await self._call_anthropic(formatted_messages, temperature, max_tokens)
+            return await self._call_anthropic(formatted_messages, temperature, max_tokens, tools)
         elif provider == "google":
-            return await self._call_google(formatted_messages, temperature, max_tokens)
+            return await self._call_google(formatted_messages, temperature, max_tokens, tools)
         else:
             raise ValueError(f"Unknown provider: {provider}")
     
@@ -172,7 +175,8 @@ class GeneralLLMProvider:
         self,
         messages: List[Dict[str, str]],
         temperature: float,
-        max_tokens: Optional[int]
+        max_tokens: Optional[int],
+        tools: Optional[List[Dict[str, Any]]] = None
     ) -> Dict[str, Any]:
         """Call OpenAI API"""
         async with aiohttp.ClientSession() as session:
@@ -189,6 +193,10 @@ class GeneralLLMProvider:
             if max_tokens:
                 payload["max_tokens"] = max_tokens
             
+            if tools:
+                payload["tools"] = tools
+                payload["tool_choice"] = "auto"
+            
             async with session.post(self.endpoints["openai"], headers=headers, json=payload) as resp:
                 if resp.status != 200:
                     error_text = await resp.text()
@@ -197,7 +205,7 @@ class GeneralLLMProvider:
                 data = await resp.json()
                 choice = data["choices"][0]
                 
-                return {
+                result = {
                     "content": choice["message"]["content"],
                     "provider": "openai",
                     "model": data["model"],
@@ -206,12 +214,18 @@ class GeneralLLMProvider:
                     "tokens_used": data["usage"]["total_tokens"],
                     "real_ai": True
                 }
+                
+                if choice["message"].get("tool_calls"):
+                    result["tool_calls"] = choice["message"]["tool_calls"]
+                
+                return result
     
     async def _call_anthropic(
         self,
         messages: List[Dict[str, str]],
         temperature: float,
-        max_tokens: Optional[int]
+        max_tokens: Optional[int],
+        tools: Optional[List[Dict[str, Any]]] = None
     ) -> Dict[str, Any]:
         """Call Anthropic Claude API"""
         async with aiohttp.ClientSession() as session:
@@ -239,6 +253,9 @@ class GeneralLLMProvider:
             if system_msg:
                 payload["system"] = system_msg
             
+            if tools:
+                logger.warning("Tool use not fully implemented for Anthropic in this version - ignoring tools")
+            
             async with session.post(self.endpoints["anthropic"], headers=headers, json=payload) as resp:
                 if resp.status != 200:
                     error_text = await resp.text()
@@ -260,7 +277,8 @@ class GeneralLLMProvider:
         self,
         messages: List[Dict[str, str]],
         temperature: float,
-        max_tokens: Optional[int]
+        max_tokens: Optional[int],
+        tools: Optional[List[Dict[str, Any]]] = None
     ) -> Dict[str, Any]:
         """Call Google Gemini API"""
         async with aiohttp.ClientSession() as session:
@@ -316,9 +334,9 @@ class GeneralLLMProvider:
                 user_message = messages
             elif isinstance(messages, list):
                 # Extract user message (last user role message)
-                user_messages = [msg.get("content", "") for msg in messages if msg.get("role") == "user"]
+                user_messages = [str(msg.get("content") or "") for msg in messages if msg.get("role") == "user"]
                 user_message = user_messages[-1] if user_messages else "Hello"
-                prompt = " ".join([msg.get("content", "") for msg in messages if msg.get("content")])
+                prompt = " ".join([str(msg.get("content") or "") for msg in messages])
             else:
                 prompt = str(messages)
                 user_message = str(messages)
@@ -339,21 +357,61 @@ class GeneralLLMProvider:
             
             # Generate a dynamic response based on user message
             response_content = ""
+            tool_calls = []
             
-            if "help" in user_message.lower() or "what can you do" in user_message.lower():
+            user_msg_lower = user_message.lower()
+            
+            # Mock Tool Calling Logic
+            if "bitnet" in user_msg_lower and ("status" in user_msg_lower or "check" in user_msg_lower):
+                tool_calls.append({
+                    "function": {
+                        "name": "check_bitnet_status",
+                        "arguments": "{}"
+                    }
+                })
+                response_content = "I'll check the current status of the BitNet training system for you."
+            
+            elif "train" in user_msg_lower and "bitnet" in user_msg_lower:
+                tool_calls.append({
+                    "function": {
+                        "name": "start_bitnet_training",
+                        "arguments": "{\"reason\": \"User requested training via chat\"}"
+                    }
+                })
+                response_content = "Initiating BitNet training session..."
+
+            elif ("robot" in user_msg_lower or "drone" in user_msg_lower) and ("status" in user_msg_lower or "check" in user_msg_lower):
+                tool_calls.append({
+                    "function": {
+                        "name": "check_robotics_status",
+                        "arguments": "{}"
+                    }
+                })
+                response_content = "Retrieving robotics subsystem status..."
+
+            elif ("move" in user_msg_lower or "rotate" in user_msg_lower) and ("robot" in user_msg_lower or "drone" in user_msg_lower):
+                tool_calls.append({
+                    "function": {
+                        "name": "validate_motion_safety",
+                        "arguments": "{\"action_type\": \"move\", \"parameters\": {\"target\": \"simulation\"}}"
+                    }
+                })
+                response_content = "Validating motion command safety protocols..."
+            
+            elif "help" in user_msg_lower or "what can you do" in user_msg_lower:
                 response_content = "I can help you with system monitoring, agent coordination, analysis tasks, and more. What specific information or assistance do you need today?"
-            elif "status" in user_message.lower() or "health" in user_message.lower():
+            elif "status" in user_msg_lower or "health" in user_msg_lower:
                 response_content = "The NIS Protocol system is currently operational with all core agents active. Would you like me to provide a detailed status report?"
-            elif "agent" in user_message.lower() or "brain" in user_message.lower():
+            elif "agent" in user_msg_lower or "brain" in user_msg_lower:
                 response_content = "The NIS Protocol brain orchestration system includes 14 specialized agents across core, specialized, protocol, and learning categories. Which specific agent would you like to know more about?"
-            elif "physics" in user_message.lower() or "validation" in user_message.lower():
+            elif "physics" in user_msg_lower or "validation" in user_msg_lower:
                 response_content = "The physics validation system is active with support for classical mechanics, thermodynamics, electromagnetism, and quantum mechanics domains. What specific physics validation would you like to perform?"
-            elif "research" in user_message.lower() or "search" in user_message.lower():
+            elif "research" in user_msg_lower or "search" in user_msg_lower:
                 response_content = "The research capabilities include academic paper analysis, web search, and multi-source synthesis. What topic would you like me to research?"
             else:
                 response_content = f"I've received your message about '{user_message}'. How can I assist you with the NIS Protocol system today?"
             
-            return {
+            result = {
                 "content": response_content,
                 "provider": provider or self.default_provider,
                 "success": True,
@@ -371,6 +429,11 @@ class GeneralLLMProvider:
                     }
                 }
             }
+            
+            if tool_calls:
+                result["tool_calls"] = tool_calls
+            
+            return result
         except Exception as e:
             logger.error(f"LLM generation failed: {e}")
             # Calculate confidence based on error type and severity

@@ -70,9 +70,12 @@ services:
       - MKL_NUM_THREADS=4
       
       # Development Mode
+      - NIM_BASE_URL=${NIM_BASE_URL:-https://api.nvcf.nvidia.com/v2/nvcf}
+      - NVIDIA_NIM_ENABLED=${NVIDIA_NIM_ENABLED:-false}
       - PYTHONUNBUFFERED=1
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
     
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --workers 1
     volumes:
       # Mount code for hot-reload during development
       # DISABLED: Causes import deadlock on Mac - code is copied during build instead

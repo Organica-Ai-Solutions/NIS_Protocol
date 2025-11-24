@@ -75,7 +75,7 @@ class UnifiedCoordinator:
             self.logger.error(f"❌ Failed to initialize PINN physics agent: {e}")
             self.pinn = None
 
-    def process_data_pipeline(self, data: Dict[str, Any]) -> Dict[str, Any]:
+    async def process_data_pipeline(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Process data through the NIS pipeline: Laplace → KAN → PINN
         Returns JSON-serializable results
@@ -89,27 +89,72 @@ class UnifiedCoordinator:
             }
             
             if self.laplace:
-                laplace_result = self.laplace.process(data)
-                # Convert to dict if it's a dataclass with to_dict method
-                if hasattr(laplace_result, 'to_dict'):
-                    laplace_result = laplace_result.to_dict()
-                result["laplace"] = laplace_result
+                try:
+                    if asyncio.iscoroutinefunction(self.laplace.process):
+                        laplace_result = await self.laplace.process(data)
+                    else:
+                        laplace_result = self.laplace.process(data)
+                        
+                    # Convert to dict if it's a dataclass with to_dict method or is a dataclass
+                    if hasattr(laplace_result, 'to_dict'):
+                        laplace_result = laplace_result.to_dict()
+                    elif hasattr(laplace_result, '__dataclass_fields__'):
+                        laplace_result = asdict(laplace_result)
+                    result["laplace"] = laplace_result
+                except Exception as e:
+                    self.logger.error(f"Laplace processing error: {e}")
+                    result["laplace"] = {"error": str(e)}
             
             if self.kan:
-                kan_result = self.kan.process(data)
-                # Convert to dict if it's a dataclass with to_dict method
-                if hasattr(kan_result, 'to_dict'):
-                    kan_result = kan_result.to_dict()
-                result["kan"] = kan_result
+                try:
+                    if asyncio.iscoroutinefunction(self.kan.process):
+                        kan_result = await self.kan.process(data)
+                    else:
+                        kan_result = self.kan.process(data)
+                        
+                    # Convert to dict
+                    if hasattr(kan_result, 'to_dict'):
+                        kan_result = kan_result.to_dict()
+                    elif hasattr(kan_result, '__dataclass_fields__'):
+                        kan_result = asdict(kan_result)
+                    result["kan"] = kan_result
+                except Exception as e:
+                    self.logger.error(f"KAN processing error: {e}")
+                    result["kan"] = {"error": str(e)}
                 
             if self.pinn:
-                pinn_result = self.pinn.validate_physics(data)
-                # Convert to dict if it's a dataclass with to_dict method
-                if hasattr(pinn_result, 'to_dict'):
-                    pinn_result = pinn_result.to_dict()
-                result["pinn"] = pinn_result
+                try:
+                    # We know validate_physics is likely async in the enhanced version
+                    if asyncio.iscoroutinefunction(self.pinn.validate_physics):
+                        pinn_result = await self.pinn.validate_physics(data)
+                    else:
+                        pinn_result = self.pinn.validate_physics(data)
+                        
+                    # Convert to dict
+                    if hasattr(pinn_result, 'to_dict'):
+                        pinn_result = pinn_result.to_dict()
+                    elif hasattr(pinn_result, '__dataclass_fields__'):
+                        pinn_result = asdict(pinn_result)
+                    result["pinn"] = pinn_result
+                except Exception as e:
+                    self.logger.error(f"PINN validation error: {e}")
+                    result["pinn"] = {"error": str(e)}
             
-            return result
+            # Sanitize result for JSON compliance (handle Infinity/NaN and Enums)
+            import math
+            from enum import Enum
+            def sanitize(o):
+                if isinstance(o, Enum):
+                    return o.value
+                if isinstance(o, float) and (math.isinf(o) or math.isnan(o)):
+                    return "Infinity" if math.isinf(o) else "NaN"
+                if isinstance(o, dict):
+                    return {k: sanitize(v) for k, v in o.items()}
+                if isinstance(o, list):
+                    return [sanitize(v) for v in o]
+                return o
+                
+            return sanitize(result)
             
         except Exception as e:
             self.logger.error(f"Pipeline error: {e}")

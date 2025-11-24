@@ -255,7 +255,10 @@ class BitNetOnlineTrainer(NISAgent):
             
         except Exception as e:
             self.logger.error(f"❌ Failed to initialize training system: {e}")
-            raise
+            self.logger.warning("⚠️ Falling back to training simulation mode (Logic Only)")
+            self.model = None
+            self.tokenizer = None
+            # Do NOT raise, allow agent to exist in mock mode
     
     async def add_training_example(
         self,
@@ -484,9 +487,9 @@ class BitNetOnlineTrainer(NISAgent):
             self.training_metrics['total_training_sessions'] += 1
             improvement_score = max(0, 1.0 - avg_loss)  # Simple improvement metric
             self.training_metrics['model_improvement_score'] = improvement_score
-            self.training_metrics['average_quality_score'] = np.mean(
+            self.training_metrics['average_quality_score'] = float(np.mean(
                 [ex.quality_score for ex in self.training_examples]
-            ) if self.training_examples else 0.0
+            )) if self.training_examples else 0.0
             self.training_metrics['last_training_time'] = datetime.now().isoformat()
             
             # Update offline readiness score
@@ -529,7 +532,7 @@ class BitNetOnlineTrainer(NISAgent):
         factors.append(sessions_score)
         
         # Calculate overall readiness
-        self.training_metrics['offline_readiness_score'] = np.mean(factors)
+        self.training_metrics['offline_readiness_score'] = float(np.mean(factors))
     
     def _save_checkpoint(self):
         """Save model checkpoint for offline use"""

@@ -232,7 +232,9 @@ class EnhancedMultiLLMAgent(NISAgent):
                  default_strategy: LLMOrchestrationStrategy = LLMOrchestrationStrategy.PHYSICS_INFORMED,
                  enable_self_audit: bool = True,
                  enable_langsmith: bool = True):
-        super().__init__(agent_id, NISLayer.REASONING, "Enhanced Multi-LLM orchestration agent")
+        super().__init__(agent_id)
+        self.layer = NISLayer.REASONING
+        self.description = "Enhanced Multi-LLM orchestration agent"
         
         # Core components
         self.provider_manager = LLMProviderManager()

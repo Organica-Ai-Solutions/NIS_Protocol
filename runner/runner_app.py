@@ -102,8 +102,17 @@ class SecurityConfig:
 
 def safe_import_function(name, globals=None, locals=None, fromlist=(), level=0):
     """Custom safe import function that only allows whitelisted modules"""
-    # Allow only modules that are in our allowed list
-    if name in ['math', 'random', 'datetime', 'json', 'requests']:
+    # Allow scientific stack + standard utils
+    allowed_modules = {
+        'math', 'random', 'datetime', 'json', 'time', 're',
+        'numpy', 'pandas', 'scipy', 'matplotlib', 'matplotlib.pyplot',
+        'seaborn', 'networkx', 'sympy'
+    }
+    
+    # Handle submodules (e.g. matplotlib.pyplot)
+    base_name = name.split('.')[0]
+    
+    if name in allowed_modules or base_name in allowed_modules:
         return __import__(name, globals, locals, fromlist, level)
     else:
         raise ImportError(f"Module '{name}' is not allowed")
@@ -156,7 +165,7 @@ def create_safe_globals():
     import random
     import datetime
     import json
-    import requests
+    # requests removed for security (SSRF prevention)
     from browser_security import get_secure_browser, SecureBrowser
     
     restricted_globals.update({
@@ -164,7 +173,6 @@ def create_safe_globals():
         'random': random,
         'datetime': datetime,
         'json': json,
-        'requests': requests,
         'get_secure_browser': get_secure_browser,
         'SecureBrowser': SecureBrowser,
     })

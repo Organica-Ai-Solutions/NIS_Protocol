@@ -28,7 +28,7 @@ import time
 from collections import defaultdict
 
 from .signal_processing.unified_signal_agent import LaplaceSignalProcessor, LaplaceTransform
-from .physics.unified_physics_agent import PINNPhysicsAgent, PhysicsValidationResult as PINNValidationResult
+from .physics.unified_physics_agent import EnhancedPINNPhysicsAgent as PINNPhysicsAgent, PhysicsValidationResult as PINNValidationResult
 from .reasoning.unified_reasoning_agent import KANReasoningAgent, ReasoningResult
 from ..core.agent import NISAgent, NISLayer
 from ..core.symbolic_bridge import SymbolicBridge, SymbolicExtractionResult

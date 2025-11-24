@@ -5302,6 +5302,28 @@ Use this rich context to provide more insightful responses that build on previou
                     "description": "Get information about available robotics datasets (DROID, PX4 flight logs, ROS bagfiles, etc.).",
                     "parameters": {"type": "object", "properties": {}, "required": []}
                 }
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "check_bitnet_status",
+                    "description": "Get the current status of the BitNet 1.58-bit quantized model training, including metrics, mobile bundle availability, and offline readiness.",
+                    "parameters": {"type": "object", "properties": {}, "required": []}
+                }
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "start_bitnet_training",
+                    "description": "Manually trigger a BitNet training session.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "reason": {"type": "string", "description": "Reason for triggering training"}
+                        },
+                        "required": ["reason"]
+                    }
+                }
             }
         ]
         
@@ -5350,6 +5372,7 @@ Use this rich context to provide more insightful responses that build on previou
         tool_results = []
         if result.get('tool_calls'):
             logger.info(f"🔧 Executing {len(result['tool_calls'])} tool calls")
+            logger.info(f"DEBUG: bitnet_trainer type: {type(bitnet_trainer)}")
             
             for tool_call in result['tool_calls']:
                 tool_name = tool_call.get('function', {}).get('name')
@@ -5418,6 +5441,20 @@ Use this rich context to provide more insightful responses that build on previou
                     elif tool_name == "trigger_evolution":
                         tool_result = {"status": "queued", "message": f"Evolution queued for {tool_args['agent_id']} - EXPERIMENTAL FEATURE"}
                         logger.info(f"🧬 Evolution triggered for {tool_args['agent_id']}")
+
+                    # Check BitNet Status
+                    elif tool_name == "check_bitnet_status":
+                        if bitnet_trainer:
+                            tool_result = await bitnet_trainer.get_training_status()
+                        else:
+                            tool_result = {"status": "disabled", "message": "BitNet trainer not initialized"}
+
+                    # Start BitNet Training
+                    elif tool_name == "start_bitnet_training":
+                        if bitnet_trainer:
+                            tool_result = await bitnet_trainer.force_training_session()
+                        else:
+                            tool_result = {"status": "failed", "message": "BitNet trainer not initialized"}
                     
                     else:
                         tool_result = {"error": f"Unknown tool: {tool_name}"}
