@@ -5155,6 +5155,130 @@ async def chat_optimized(request: ChatRequest):
             reasoning_trace=["error_handling"]
         )
 
+
+# === REFLECTIVE GENERATION - Self-Improving Inference (Nested Learning) ===
+reflective_generator = None  # Initialized in startup
+
+@app.post("/chat/reflective", tags=["Chat", "v4.0"])
+async def chat_reflective(request: ChatRequest):
+    """
+    🧠 Reflective Chat - Self-Improving Inference Loop
+    
+    Implements Google's "Nested Learning" paradigm:
+    - Treats inference as an optimization problem
+    - Uses ConsciousnessService as the "loss function"
+    - Iteratively refines responses until quality threshold is met
+    - Flags high-novelty interactions for BitNet training
+    
+    This is "System 2" thinking - the model optimizes its own reasoning.
+    """
+    global reflective_generator, llm_provider, consciousness_service, bitnet_trainer
+    
+    conversation_id = get_or_create_conversation(request.conversation_id, request.user_id)
+    await add_message_to_conversation(conversation_id, "user", request.message, {"context": request.context}, request.user_id)
+    
+    try:
+        # Initialize reflective generator if needed
+        if reflective_generator is None:
+            from src.llm.reflective_generator import ReflectiveGenerator
+            reflective_generator = ReflectiveGenerator(
+                llm_provider=llm_provider,
+                consciousness_service=consciousness_service,
+                max_iterations=3,
+                quality_threshold=0.75,
+                novelty_threshold=0.6
+            )
+        
+        # Get conversation history
+        history = conversation_memory.get(conversation_id, [])
+        
+        # Run reflective generation
+        result = await reflective_generator.generate(
+            prompt=request.message,
+            context=request.context,
+            user_id=request.user_id,
+            conversation_history=history,
+            force_reflection=getattr(request, 'force_reflection', False)
+        )
+        
+        # If high novelty, queue for BitNet training
+        if result.should_train and bitnet_trainer:
+            try:
+                await bitnet_trainer.add_training_example(
+                    prompt=request.message,
+                    response=result.final_response,
+                    user_feedback=None,
+                    quality_score=result.final_score,
+                    metadata={
+                        "novelty_score": result.novelty_score,
+                        "iterations": result.iterations,
+                        "improvement": result.improvement,
+                        "source": "reflective_generation"
+                    }
+                )
+                logger.info(f"📚 High-novelty response queued for BitNet training (novelty={result.novelty_score:.2f})")
+            except Exception as train_err:
+                logger.warning(f"Failed to queue training: {train_err}")
+        
+        # Store response
+        await add_message_to_conversation(
+            conversation_id, "assistant", result.final_response,
+            {"reflective": True, "iterations": result.iterations, "improvement": result.improvement},
+            request.user_id
+        )
+        
+        return {
+            "response": result.final_response,
+            "user_id": request.user_id,
+            "conversation_id": conversation_id,
+            "timestamp": time.time(),
+            "confidence": result.final_score,
+            "provider": "reflective",
+            "real_ai": True,
+            "model": "reflective-v4",
+            "tokens_used": len(result.final_response.split()),
+            "reasoning_trace": result.reasoning_trace,
+            "reflective_metadata": {
+                "iterations": result.iterations,
+                "initial_score": result.initial_score,
+                "final_score": result.final_score,
+                "improvement": result.improvement,
+                "novelty_score": result.novelty_score,
+                "should_train": result.should_train,
+                "total_time_ms": result.total_time_ms
+            }
+        }
+        
+    except Exception as e:
+        logger.error(f"Reflective generation error: {e}")
+        import traceback
+        traceback.print_exc()
+        return {
+            "response": f"Reflective generation encountered an error: {str(e)}",
+            "user_id": request.user_id,
+            "conversation_id": conversation_id,
+            "timestamp": time.time(),
+            "confidence": 0.0,
+            "provider": "error",
+            "real_ai": False,
+            "model": "error-handler",
+            "tokens_used": 0,
+            "reasoning_trace": ["reflective_error"]
+        }
+
+
+@app.get("/chat/reflective/metrics", tags=["Chat", "v4.0"])
+async def get_reflective_metrics():
+    """Get metrics from the reflective generator"""
+    global reflective_generator
+    if reflective_generator:
+        return {
+            "status": "active",
+            "metrics": reflective_generator.get_metrics()
+        }
+    return {"status": "not_initialized", "metrics": {}}
+
+
 @app.post("/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
     """Enhanced chat with REAL LLM - NIS Protocol v3.2 - INTELLIGENT QUERY ROUTING"""

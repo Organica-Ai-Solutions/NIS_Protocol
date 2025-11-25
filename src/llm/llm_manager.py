@@ -161,14 +161,40 @@ class GeneralLLMProvider:
             _os.environ["OMP_NUM_THREADS"] = "1"
             _os.environ["MKL_NUM_THREADS"] = "1"
             
-            logger.info(f"🔄 Loading BitNet model from {self.bitnet_model_path}...")
+            # STRATEGY: Copy to /tmp to avoid VirtioFS deadlock on macOS Docker
+            # Reading large files (safetensors) from mounted volumes often causes deadlock
+            import shutil
+            import tempfile
+            
+            load_path = self.bitnet_model_path
+            temp_dir = "/tmp/bitnet_model_cache"
+            
+            if Path("/.dockerenv").exists() or _os.path.exists(temp_dir):
+                logger.info(f"📦 Docker/Deadlock Protection: Copying model to {temp_dir}...")
+                try:
+                    if not _os.path.exists(temp_dir):
+                        _os.makedirs(temp_dir, exist_ok=True)
+                        # Copy critical files only
+                        for file_name in ["config.json", "tokenizer.json", "tokenizer_config.json", "model.safetensors", "generation_config.json", "special_tokens_map.json"]:
+                            src = Path(self.bitnet_model_path) / file_name
+                            dst = Path(temp_dir) / file_name
+                            if src.exists() and not dst.exists():
+                                logger.info(f"   Copying {file_name}...")
+                                shutil.copy2(src, dst)
+                    
+                    load_path = temp_dir
+                    logger.info(f"✅ Model files ready in {load_path}")
+                except Exception as copy_err:
+                    logger.warning(f"⚠️ Failed to copy model to temp: {copy_err}. Trying direct load...")
+            
+            logger.info(f"🔄 Loading BitNet model from {load_path}...")
             
             # First, verify files are readable using subprocess (avoids deadlock)
             verify_script = f'''
 import os
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 os.environ["OMP_NUM_THREADS"] = "1"
-path = "{self.bitnet_model_path}"
+path = "{load_path}"
 import json
 with open(f"{{path}}/config.json", "r") as f:
     config = json.load(f)
@@ -178,7 +204,7 @@ print("OK:" + str(config.get("model_type", "unknown")))
                 [sys.executable, "-c", verify_script],
                 capture_output=True,
                 text=True,
-                timeout=30
+                timeout=60
             )
             if result.returncode != 0 or not result.stdout.startswith("OK:"):
                 raise Exception(f"Model verification failed: {result.stderr}")
@@ -190,7 +216,7 @@ print("OK:" + str(config.get("model_type", "unknown")))
             
             from transformers import AutoTokenizer as AT
             self.bitnet_tokenizer = AT.from_pretrained(
-                self.bitnet_model_path,
+                load_path,
                 trust_remote_code=True,
                 local_files_only=True,
                 use_fast=True
@@ -202,7 +228,7 @@ print("OK:" + str(config.get("model_type", "unknown")))
             
             from transformers import AutoModelForCausalLM as AMLM
             self.bitnet_model = AMLM.from_pretrained(
-                self.bitnet_model_path,
+                load_path,
                 torch_dtype=torch.float32,
                 device_map=None,
                 trust_remote_code=True,
