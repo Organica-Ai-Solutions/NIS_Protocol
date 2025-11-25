@@ -52,10 +52,16 @@ RUN pip install --no-cache-dir \
     pillow opencv-python-headless ultralytics \
     hnswlib chromadb sentence-transformers \
     google-generativeai tiktoken tenacity peft \
-    pyaudio webrtcvad SpeechRecognition
+    pyaudio webrtcvad SpeechRecognition \
+    prometheus-client
 
 # Copy project source
 COPY --chown=nisuser:nisuser . .
+
+# Create directories as root (before switching user) and set ownership
+RUN mkdir -p logs static cache models data/chat_memory && \
+    chown -R nisuser:nisuser logs static cache models data && \
+    chmod +x *.sh 2>/dev/null || true
 
 # Switch to non-root user
 USER nisuser
@@ -64,10 +70,6 @@ USER nisuser
 ENV PATH="/home/nisuser/.local/bin:${PATH}"
 ENV PYTHONPATH="/home/nisuser/app:${PYTHONPATH}"
 ENV PYTHONUNBUFFERED=1
-
-# Prepare directories
-RUN mkdir -p logs static cache models data/chat_memory && \
-    chmod +x *.sh 2>/dev/null || true
 
 # ---------------- CPU-Specific Environment ----------------
 # Disable GPU features
