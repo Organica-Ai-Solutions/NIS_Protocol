@@ -5121,6 +5121,16 @@ async def chat_optimized(request: ChatRequest):
             reasoning_trace=["error_handling"]
         )
 
+@app.get("/chat", response_class=HTMLResponse, tags=["Chat"])
+async def chat_browser():
+    """
+    Browser access to chat - redirects to the chat console.
+    For API access, use POST /chat with JSON body.
+    """
+    from fastapi.responses import RedirectResponse
+    return RedirectResponse(url="/console", status_code=302)
+
+
 @app.post("/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
     """Enhanced chat with REAL LLM - NIS Protocol v3.2 - INTELLIGENT QUERY ROUTING"""
