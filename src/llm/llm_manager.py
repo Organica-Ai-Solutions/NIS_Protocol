@@ -23,8 +23,18 @@ import logging
 import os
 import json
 from typing import Dict, List, Optional, Any, Union
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
+
+# BitNet local model imports
+try:
+    import torch
+    from transformers import AutoTokenizer, AutoModelForCausalLM
+    TORCH_AVAILABLE = True
+except ImportError:
+    TORCH_AVAILABLE = False
+    logger.warning("torch/transformers not available - BitNet local inference disabled")
 
 # Try to import HTTP clients for real API calls
 try:
@@ -75,9 +85,21 @@ class GeneralLLMProvider:
             "deepseek": os.getenv("DEEPSEEK_API_KEY", ""),
             "kimi": os.getenv("MOONSHOT_API_KEY", ""),  # Kimi K2 from Moonshot
             "nvidia": os.getenv("NVIDIA_API_KEY", ""),  # NVIDIA NIM
+            "bitnet": "local",  # BitNet uses local model
         }
         
+        # BitNet local model path
+        self.bitnet_model_path = os.getenv("BITNET_MODEL_PATH", "models/bitnet/models/bitnet")
+        self.bitnet_model = None
+        self.bitnet_tokenizer = None
+        self._bitnet_loaded = False
+        
+        # Training data collector (for BitNet learning from LLMs)
+        self.training_collector = None
+        self.collect_training_data = os.getenv("BITNET_COLLECT_TRAINING", "true").lower() == "true"
+        
         # Check which providers are available
+        bitnet_available = self._check_bitnet_available()
         self.real_providers = {
             "openai": bool(self.api_keys["openai"]) and AIOHTTP_AVAILABLE,
             "anthropic": bool(self.api_keys["anthropic"]) and AIOHTTP_AVAILABLE,
@@ -85,7 +107,13 @@ class GeneralLLMProvider:
             "deepseek": bool(self.api_keys["deepseek"]) and AIOHTTP_AVAILABLE,
             "kimi": bool(self.api_keys["kimi"]) and AIOHTTP_AVAILABLE,
             "nvidia": bool(self.api_keys["nvidia"]) and AIOHTTP_AVAILABLE,
+            "bitnet": bitnet_available,
         }
+        
+        # Pre-load BitNet model at startup (avoids deadlock during async requests)
+        if bitnet_available and os.getenv("BITNET_PRELOAD", "false").lower() == "true":
+            logger.info("🔄 Pre-loading BitNet model at startup...")
+            self._load_bitnet_model()
         
         active_providers = [p for p, avail in self.real_providers.items() if avail]
         if active_providers:
@@ -101,7 +129,109 @@ class GeneralLLMProvider:
             "deepseek": "https://api.deepseek.com/chat/completions",
             "kimi": "https://api.moonshot.cn/v1/chat/completions",
             "nvidia": "https://integrate.api.nvidia.com/v1/chat/completions",
+            "bitnet": "local",  # BitNet runs locally
         }
+    
+    def _check_bitnet_available(self) -> bool:
+        """Check if BitNet local model is available"""
+        if not TORCH_AVAILABLE:
+            return False
+        model_path = Path(self.bitnet_model_path)
+        # Check for model files
+        has_model = (model_path / "config.json").exists() or \
+                    (model_path / "pytorch_model.bin").exists() or \
+                    (model_path / "model.safetensors").exists()
+        if has_model:
+            logger.info(f"🧠 BitNet local model found at {model_path}")
+        return has_model
+    
+    def _load_bitnet_model(self):
+        """Lazy load BitNet model using subprocess to avoid async deadlock"""
+        if self._bitnet_loaded or not TORCH_AVAILABLE:
+            return self._bitnet_loaded
+        
+        try:
+            import gc
+            import os as _os
+            import subprocess
+            import sys
+            
+            # Disable tokenizer parallelism to avoid deadlocks
+            _os.environ["TOKENIZERS_PARALLELISM"] = "false"
+            _os.environ["OMP_NUM_THREADS"] = "1"
+            _os.environ["MKL_NUM_THREADS"] = "1"
+            
+            logger.info(f"🔄 Loading BitNet model from {self.bitnet_model_path}...")
+            
+            # First, verify files are readable using subprocess (avoids deadlock)
+            verify_script = f'''
+import os
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+os.environ["OMP_NUM_THREADS"] = "1"
+path = "{self.bitnet_model_path}"
+import json
+with open(f"{{path}}/config.json", "r") as f:
+    config = json.load(f)
+print("OK:" + str(config.get("model_type", "unknown")))
+'''
+            result = subprocess.run(
+                [sys.executable, "-c", verify_script],
+                capture_output=True,
+                text=True,
+                timeout=30
+            )
+            if result.returncode != 0 or not result.stdout.startswith("OK:"):
+                raise Exception(f"Model verification failed: {result.stderr}")
+            
+            logger.info(f"✅ Model files verified: {result.stdout.strip()}")
+            
+            # Now load in main process with protections
+            torch.set_num_threads(1)
+            
+            from transformers import AutoTokenizer as AT
+            self.bitnet_tokenizer = AT.from_pretrained(
+                self.bitnet_model_path,
+                trust_remote_code=True,
+                local_files_only=True,
+                use_fast=True
+            )
+            if self.bitnet_tokenizer.pad_token is None:
+                self.bitnet_tokenizer.pad_token = self.bitnet_tokenizer.eos_token
+            
+            logger.info("✅ Tokenizer loaded, loading model weights...")
+            
+            from transformers import AutoModelForCausalLM as AMLM
+            self.bitnet_model = AMLM.from_pretrained(
+                self.bitnet_model_path,
+                torch_dtype=torch.float32,
+                device_map=None,
+                trust_remote_code=True,
+                low_cpu_mem_usage=True,
+                local_files_only=True
+            )
+            self.bitnet_model = self.bitnet_model.to("cpu")
+            self.bitnet_model.eval()
+            
+            gc.collect()
+            
+            self._bitnet_loaded = True
+            logger.info("✅ BitNet model loaded successfully")
+            return True
+        except subprocess.TimeoutExpired:
+            logger.error("❌ BitNet model verification timed out (Docker file system issue)")
+            self._bitnet_loaded = False
+            return False
+        except Exception as e:
+            logger.error(f"❌ Failed to load BitNet model: {e}")
+            import traceback
+            logger.error(f"Traceback: {traceback.format_exc()}")
+            self._bitnet_loaded = False
+            return False
+    
+    def set_training_collector(self, collector):
+        """Set the training collector for BitNet learning"""
+        self.training_collector = collector
+        logger.info("📚 BitNet training collector registered")
     
     async def generate_response(
         self, 
@@ -136,8 +266,8 @@ class GeneralLLMProvider:
         
         # Try real API with smart fallback
         providers_to_try = [provider]
-        # Add fallback providers (working providers first)
-        fallback_order = ["anthropic", "deepseek", "nvidia", "kimi", "google", "openai"]
+        # Add fallback providers (working providers first, BitNet last for offline)
+        fallback_order = ["anthropic", "deepseek", "nvidia", "kimi", "google", "openai", "bitnet"]
         for fb in fallback_order:
             if fb != provider and self.real_providers.get(fb, False):
                 providers_to_try.append(fb)
@@ -156,6 +286,10 @@ class GeneralLLMProvider:
                     )
                     if try_provider != provider:
                         logger.info(f"✅ Used fallback provider {try_provider} (primary {provider} failed)")
+                    
+                    # 📚 Capture training data for BitNet learning
+                    await self._capture_training_data(messages, result)
+                    
                     return result
                 except Exception as e:
                     last_error = e
@@ -209,6 +343,8 @@ class GeneralLLMProvider:
             return await self._call_kimi(formatted_messages, temperature, max_tokens, tools)
         elif provider == "nvidia":
             return await self._call_nvidia(formatted_messages, temperature, max_tokens, tools)
+        elif provider == "bitnet":
+            return await self._call_bitnet(formatted_messages, temperature, max_tokens)
         else:
             raise ValueError(f"Unknown provider: {provider}")
     
@@ -479,6 +615,134 @@ class GeneralLLMProvider:
                     "tokens_used": data.get("usage", {}).get("total_tokens", 0),
                     "real_ai": True
                 }
+    
+    async def _call_bitnet(
+        self,
+        messages: List[Dict[str, str]],
+        temperature: float,
+        max_tokens: Optional[int]
+    ) -> Dict[str, Any]:
+        """Call local BitNet model for offline inference"""
+        import time
+        start_time = time.time()
+        
+        # Lazy load model
+        if not self._load_bitnet_model():
+            raise Exception("BitNet model not available or failed to load")
+        
+        try:
+            # Format conversation for model
+            conversation = ""
+            for msg in messages:
+                role = msg.get("role", "user")
+                content = msg.get("content", "")
+                if role == "system":
+                    conversation += f"System: {content}\n\n"
+                elif role == "user":
+                    conversation += f"Human: {content}\n\n"
+                elif role == "assistant":
+                    conversation += f"Assistant: {content}\n\n"
+            
+            conversation += "Assistant:"
+            
+            # Tokenize
+            inputs = self.bitnet_tokenizer(
+                conversation,
+                return_tensors="pt",
+                truncation=True,
+                max_length=2048
+            )
+            
+            # Generate
+            with torch.no_grad():
+                outputs = self.bitnet_model.generate(
+                    inputs.input_ids,
+                    max_new_tokens=max_tokens or 512,
+                    temperature=max(0.1, temperature),  # Avoid temperature=0
+                    do_sample=temperature > 0,
+                    top_p=0.9,
+                    pad_token_id=self.bitnet_tokenizer.pad_token_id,
+                    eos_token_id=self.bitnet_tokenizer.eos_token_id
+                )
+            
+            # Decode response
+            response = self.bitnet_tokenizer.decode(
+                outputs[0][inputs.input_ids.shape[1]:],
+                skip_special_tokens=True
+            ).strip()
+            
+            # Clean up response
+            if "Human:" in response:
+                response = response.split("Human:")[0].strip()
+            
+            inference_time = time.time() - start_time
+            tokens_used = outputs.shape[1]
+            
+            logger.info(f"🧠 BitNet inference: {tokens_used} tokens in {inference_time:.2f}s")
+            
+            return {
+                "content": response,
+                "provider": "bitnet",
+                "model": "bitnet-local",
+                "success": True,
+                "confidence": 0.85,  # Local model confidence
+                "tokens_used": tokens_used,
+                "real_ai": True,
+                "local_inference": True,
+                "inference_time_ms": int(inference_time * 1000)
+            }
+            
+        except Exception as e:
+            logger.error(f"❌ BitNet inference error: {e}")
+            raise Exception(f"BitNet inference failed: {e}")
+    
+    async def _capture_training_data(
+        self,
+        messages: Union[str, List[Dict[str, str]]],
+        response: Dict[str, Any]
+    ):
+        """Capture successful LLM responses for BitNet training"""
+        if not self.collect_training_data or not self.training_collector:
+            return
+        
+        # Only capture real AI responses (not mock)
+        if not response.get("real_ai", False):
+            return
+        
+        # Don't train on BitNet's own responses
+        if response.get("provider") == "bitnet":
+            return
+        
+        try:
+            # Extract prompt
+            if isinstance(messages, str):
+                prompt = messages
+            elif isinstance(messages, list):
+                user_msgs = [m.get("content", "") for m in messages if m.get("role") == "user"]
+                prompt = user_msgs[-1] if user_msgs else ""
+            else:
+                return
+            
+            # Get response content
+            content = response.get("content", "")
+            if not content or not prompt:
+                return
+            
+            # Add to training collector
+            await self.training_collector.add_training_example(
+                prompt=prompt,
+                response=content,
+                user_feedback=None,  # Will be updated if user provides feedback
+                additional_context={
+                    "source_provider": response.get("provider"),
+                    "source_model": response.get("model"),
+                    "confidence": response.get("confidence", 0.9)
+                }
+            )
+            logger.debug(f"📚 Captured training data from {response.get('provider')}")
+            
+        except Exception as e:
+            logger.warning(f"⚠️ Failed to capture training data: {e}")
     
     async def _generate_mock_response(
         self,

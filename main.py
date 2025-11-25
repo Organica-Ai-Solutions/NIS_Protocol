@@ -897,6 +897,10 @@ async def initialize_system():
                     config=training_config,
                     consciousness_service=consciousness_service
                 )
+                # 🔗 Connect BitNet trainer to LLM provider for automatic training capture
+                if llm_provider:
+                    llm_provider.set_training_collector(bitnet_trainer)
+                    logger.info("🔗 BitNet Trainer connected to LLM Provider for automatic learning")
                 logger.info("✅ BitNet Online Trainer ACTIVE and integrated with Consciousness Service")
             except Exception as e:
                 logger.error(f"❌ Failed to initialize BitNet Trainer: {e}")

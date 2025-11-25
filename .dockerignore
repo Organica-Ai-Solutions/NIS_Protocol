@@ -39,9 +39,10 @@ endpoint_fixes_backup/
 nis-integrity-toolkit/
 logs/
 
-# Large assets and models not needed in the final image
+# Large assets
 assets/
-models/
+# BitNet model - include for local inference (4GB)
+# models/  # Commented out to allow BitNet model copy
 system/assets/
 system/utilities/reports/
 *.png

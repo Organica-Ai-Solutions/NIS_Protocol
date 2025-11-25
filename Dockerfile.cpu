@@ -77,9 +77,11 @@ ENV CUDA_VISIBLE_DEVICES=""
 ENV NVIDIA_NIM_ENABLED=false
 ENV BITNET_TRAINING_ENABLED=false
 
-# CPU optimization flags
-ENV OMP_NUM_THREADS=4
-ENV MKL_NUM_THREADS=4
+# CPU optimization flags (set to 1 to avoid deadlocks during model loading)
+ENV OMP_NUM_THREADS=1
+ENV MKL_NUM_THREADS=1
+ENV TOKENIZERS_PARALLELISM=false
+ENV SAFETENSORS_FAST_GPU=0
 
 # ---------------- Healthcheck ----------------
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \

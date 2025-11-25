@@ -87,7 +87,8 @@ services:
       # - ./:/home/nisuser/app
       # Google credentials (optional)
       - ./configs/google-service-account.json:/app/service-account-key.json:ro
-      - ./models:/home/nisuser/app/models
+      # BitNet model - mount read-only to avoid write locks
+      - ./models:/home/nisuser/app/models:ro
       - ./logs:/app/logs
     
     depends_on:
