@@ -5279,6 +5279,152 @@ async def get_reflective_metrics():
     return {"status": "not_initialized", "metrics": {}}
 
 
+# === V4.0 PERSISTENT MEMORY SYSTEM ===
+persistent_memory = None
+
+@app.post("/v4/memory/store", tags=["V4.0 Memory"])
+async def store_memory(request: Dict[str, Any]):
+    """Store a memory in the persistent memory system"""
+    global persistent_memory
+    if persistent_memory is None:
+        from src.memory.persistent_memory import get_memory_system
+        persistent_memory = get_memory_system()
+    
+    content = request.get("content", "")
+    memory_type = request.get("type", "semantic")
+    importance = request.get("importance", 0.5)
+    metadata = request.get("metadata", {})
+    
+    memory_id = await persistent_memory.store(
+        content=content,
+        memory_type=memory_type,
+        importance=importance,
+        metadata=metadata
+    )
+    
+    return {"status": "stored", "memory_id": memory_id, "type": memory_type}
+
+
+@app.post("/v4/memory/retrieve", tags=["V4.0 Memory"])
+async def retrieve_memories(request: Dict[str, Any]):
+    """Retrieve relevant memories"""
+    global persistent_memory
+    if persistent_memory is None:
+        from src.memory.persistent_memory import get_memory_system
+        persistent_memory = get_memory_system()
+    
+    query = request.get("query", "")
+    memory_type = request.get("type")
+    top_k = request.get("top_k", 5)
+    
+    results = await persistent_memory.retrieve(
+        query=query,
+        memory_type=memory_type,
+        top_k=top_k
+    )
+    
+    return {
+        "query": query,
+        "results": [
+            {
+                "content": r.entry.content,
+                "type": r.entry.memory_type,
+                "relevance": r.relevance_score,
+                "importance": r.importance_score,
+                "combined_score": r.combined_score
+            }
+            for r in results
+        ]
+    }
+
+
+@app.get("/v4/memory/stats", tags=["V4.0 Memory"])
+async def get_memory_stats():
+    """Get memory system statistics"""
+    global persistent_memory
+    if persistent_memory is None:
+        from src.memory.persistent_memory import get_memory_system
+        persistent_memory = get_memory_system()
+    
+    return persistent_memory.get_stats()
+
+
+# === V4.0 SELF-MODIFICATION SYSTEM ===
+self_modifier = None
+
+@app.get("/v4/self/status", tags=["V4.0 Self-Modification"])
+async def get_self_modifier_status():
+    """Get self-modifier status and current parameters"""
+    global self_modifier
+    if self_modifier is None:
+        from src.core.self_modifier import get_self_modifier
+        self_modifier = get_self_modifier()
+    
+    return self_modifier.get_status()
+
+
+@app.post("/v4/self/record-metric", tags=["V4.0 Self-Modification"])
+async def record_performance_metric(request: Dict[str, Any]):
+    """Record a performance metric for self-optimization"""
+    global self_modifier
+    if self_modifier is None:
+        from src.core.self_modifier import get_self_modifier
+        self_modifier = get_self_modifier()
+    
+    metric_name = request.get("metric", "response_quality")
+    value = request.get("value", 0.5)
+    
+    self_modifier.record_metric(metric_name, value)
+    return {"status": "recorded", "metric": metric_name, "value": value}
+
+
+@app.post("/v4/self/optimize", tags=["V4.0 Self-Modification"])
+async def trigger_auto_optimization():
+    """Trigger automatic self-optimization based on performance"""
+    global self_modifier
+    if self_modifier is None:
+        from src.core.self_modifier import get_self_modifier
+        self_modifier = get_self_modifier()
+    
+    modifications = await self_modifier.auto_optimize()
+    
+    return {
+        "status": "optimized",
+        "modifications_applied": len(modifications),
+        "details": [
+            {"target": m.target, "reason": m.reason}
+            for m in modifications
+        ]
+    }
+
+
+@app.get("/v4/self/history", tags=["V4.0 Self-Modification"])
+async def get_modification_history():
+    """Get history of self-modifications"""
+    global self_modifier
+    if self_modifier is None:
+        from src.core.self_modifier import get_self_modifier
+        self_modifier = get_self_modifier()
+    
+    return {
+        "history": self_modifier.get_modification_history(limit=20)
+    }
+
+
+@app.get("/v4/self/parameters", tags=["V4.0 Self-Modification"])
+async def get_current_parameters():
+    """Get current self-modified parameters"""
+    global self_modifier
+    if self_modifier is None:
+        from src.core.self_modifier import get_self_modifier
+        self_modifier = get_self_modifier()
+    
+    return {
+        "parameters": self_modifier.parameters,
+        "routing_rules": self_modifier.routing_rules
+    }
+
+
 @app.post("/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
     """Enhanced chat with REAL LLM - NIS Protocol v3.2 - INTELLIGENT QUERY ROUTING"""

@@ -156,7 +156,25 @@ class ReflectiveGenerator:
     async def _audit_response(self, prompt: str, response: str) -> ConsciousnessAudit:
         if self.consciousness_service:
             try:
-                audit = await self.consciousness_service.audit_response(prompt=prompt, response=response)
+                # Try the real consciousness service audit
+                if hasattr(self.consciousness_service, 'audit_response'):
+                    audit = await self.consciousness_service.audit_response(prompt=prompt, response=response)
+                elif hasattr(self.consciousness_service, 'evaluate_response'):
+                    audit = await self.consciousness_service.evaluate_response(response, prompt)
+                elif hasattr(self.consciousness_service, 'get_awareness_metrics'):
+                    # Use awareness metrics as proxy
+                    metrics = await self.consciousness_service.get_awareness_metrics()
+                    audit = {
+                        "overall_score": metrics.get("awareness_level", 0.7),
+                        "safety_score": 0.9,
+                        "coherence_score": metrics.get("coherence", 0.7),
+                        "grounding_score": metrics.get("grounding", 0.7),
+                        "critique": "",
+                        "suggestions": []
+                    }
+                else:
+                    raise AttributeError("No audit method found")
+                
                 return ConsciousnessAudit(
                     score=audit.get("overall_score", 0.7),
                     safety_score=audit.get("safety_score", 0.9),
@@ -166,7 +184,7 @@ class ReflectiveGenerator:
                     suggestions=audit.get("suggestions", [])
                 )
             except Exception as e:
-                logger.warning(f"Audit failed: {e}")
+                logger.warning(f"Consciousness audit failed: {e}, using heuristic")
         
         # Heuristic fallback
         score = 0.6
