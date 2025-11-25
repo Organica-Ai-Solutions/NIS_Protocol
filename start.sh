@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ==============================================================================
-# 🔒 NIS Protocol v3.2.5 - Complete AI Operating System
+# 🔒 NIS Protocol v3.2.6 - Complete AI Operating System
 # "Production-Ready with Robotics, MCP & AWS Cloud Deployment"
 # ==============================================================================
 
