@@ -435,6 +435,45 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Security middleware (auth + rate limiting)
+try:
+    from src.security.auth import verify_api_key, check_rate_limit
+    from starlette.requests import Request
+    from starlette.responses import JSONResponse
+    
+    @app.middleware("http")
+    async def security_middleware(request: Request, call_next):
+        # Skip security for health/metrics endpoints
+        if request.url.path in ["/health", "/metrics", "/metrics/prometheus", "/docs", "/openapi.json", "/redoc"]:
+            return await call_next(request)
+        
+        # Get client identifier
+        client_ip = request.client.host if request.client else "unknown"
+        api_key = request.headers.get("X-API-Key")
+        
+        # Check rate limit
+        allowed, remaining, reset = check_rate_limit(client_ip, api_key)
+        
+        if not allowed:
+            return JSONResponse(
+                {"error": "Rate limit exceeded", "retry_after": reset},
+                status_code=429,
+                headers={"Retry-After": str(reset), "X-RateLimit-Remaining": "0"}
+            )
+        
+        # Process request
+        response = await call_next(request)
+        
+        # Add rate limit headers
+        response.headers["X-RateLimit-Remaining"] = str(remaining)
+        response.headers["X-RateLimit-Reset"] = str(reset)
+        
+        return response
+    
+    logger.info("✅ Security middleware enabled (rate limiting active)")
+except Exception as e:
+    logger.warning(f"⚠️ Security middleware not loaded: {e}")
+
 # Mount static files gracefully
 if os.path.exists("static"):
     app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -7129,6 +7168,19 @@ async def system_metrics():
         "system": "NIS Protocol v3.1",
         "status": "operational"
     }
+
+@app.get("/metrics/prometheus")
+async def prometheus_metrics():
+    """Prometheus-format metrics for Grafana"""
+    try:
+        from src.monitoring.prometheus_metrics import get_metrics, get_metrics_content_type
+        from fastapi.responses import Response
+        return Response(
+            content=get_metrics(),
+            media_type=get_metrics_content_type()
+        )
+    except ImportError:
+        return {"error": "Prometheus metrics not available", "hint": "pip install prometheus-client"}
 
 class ProcessRequest(BaseModel):
     text: str

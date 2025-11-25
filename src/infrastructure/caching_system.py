@@ -138,17 +138,10 @@ class NISRedisManager:
     ):
         """Initialize the enhanced Redis manager"""
         
-        # Auto-detect Redis host
+        # Auto-detect Redis host from environment (set in docker-compose)
         if host is None:
             import os
-            # Try environment variable first
-            host = os.environ.get('REDIS_HOST')
-            if not host:
-                # Check if we're in a Docker environment
-                if os.path.exists('/.dockerenv'):
-                    host = "nis-redis"  # Docker container name
-                else:
-                    host = "localhost"  # Local development
+            host = os.environ.get('REDIS_HOST', 'localhost')
         
         self.host = host
         self.port = port

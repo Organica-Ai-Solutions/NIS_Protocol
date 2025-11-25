@@ -64,13 +64,17 @@ class GeneralLLMProvider:
     
     def __init__(self, providers: Optional[Dict[str, Any]] = None):
         self.providers = providers or {}
-        self.default_provider = "openai"
+        # Default provider - Anthropic with fresh key
+        self.default_provider = os.getenv("DEFAULT_LLM_PROVIDER", "anthropic")
         
         # Load API keys from environment
         self.api_keys = {
             "openai": os.getenv("OPENAI_API_KEY", ""),
             "anthropic": os.getenv("ANTHROPIC_API_KEY", ""),
             "google": os.getenv("GOOGLE_API_KEY", ""),
+            "deepseek": os.getenv("DEEPSEEK_API_KEY", ""),
+            "kimi": os.getenv("MOONSHOT_API_KEY", ""),  # Kimi K2 from Moonshot
+            "nvidia": os.getenv("NVIDIA_API_KEY", ""),  # NVIDIA NIM
         }
         
         # Check which providers are available
@@ -78,6 +82,9 @@ class GeneralLLMProvider:
             "openai": bool(self.api_keys["openai"]) and AIOHTTP_AVAILABLE,
             "anthropic": bool(self.api_keys["anthropic"]) and AIOHTTP_AVAILABLE,
             "google": bool(self.api_keys["google"]) and AIOHTTP_AVAILABLE,
+            "deepseek": bool(self.api_keys["deepseek"]) and AIOHTTP_AVAILABLE,
+            "kimi": bool(self.api_keys["kimi"]) and AIOHTTP_AVAILABLE,
+            "nvidia": bool(self.api_keys["nvidia"]) and AIOHTTP_AVAILABLE,
         }
         
         active_providers = [p for p, avail in self.real_providers.items() if avail]
@@ -90,7 +97,10 @@ class GeneralLLMProvider:
         self.endpoints = {
             "openai": "https://api.openai.com/v1/chat/completions",
             "anthropic": "https://api.anthropic.com/v1/messages",
-            "google": "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent"
+            "google": "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent",
+            "deepseek": "https://api.deepseek.com/chat/completions",
+            "kimi": "https://api.moonshot.cn/v1/chat/completions",
+            "nvidia": "https://integrate.api.nvidia.com/v1/chat/completions",
         }
     
     async def generate_response(
@@ -124,20 +134,45 @@ class GeneralLLMProvider:
         if provider in provider_mapping:
             provider = provider_mapping[provider]
         
-        # Try real API if available
-        if self.real_providers.get(provider, False):
-            try:
-                tools = additional_options.get("tools")
-                return await self._call_real_api(
-                    provider,
-                    messages,
-                    temperature,
-                    token_limit,
-                    tools=tools
-                )
-            except Exception as e:
-                logger.error(f"Real API call failed for {provider}: {e}, falling back to mock")
-                # Fall through to mock response
+        # Try real API with smart fallback
+        providers_to_try = [provider]
+        # Add fallback providers (working providers first)
+        fallback_order = ["anthropic", "deepseek", "nvidia", "kimi", "google", "openai"]
+        for fb in fallback_order:
+            if fb != provider and self.real_providers.get(fb, False):
+                providers_to_try.append(fb)
+        
+        last_error = None
+        for try_provider in providers_to_try:
+            if self.real_providers.get(try_provider, False):
+                try:
+                    tools = additional_options.get("tools")
+                    result = await self._call_real_api(
+                        try_provider,
+                        messages,
+                        temperature,
+                        token_limit,
+                        tools=tools
+                    )
+                    if try_provider != provider:
+                        logger.info(f"✅ Used fallback provider {try_provider} (primary {provider} failed)")
+                    return result
+                except Exception as e:
+                    last_error = e
+                    error_str = str(e)
+                    logger.error(f"❌ {try_provider} API error: {error_str[:500]}")  # Log full error
+                    # Try fallback for recoverable errors (quota, rate limit, model not found, auth)
+                    recoverable = any(x in error_str for x in ["429", "404", "401", "403"]) or \
+                                  any(x in error_str.lower() for x in ["quota", "rate", "not_found", "unauthorized", "invalid"])
+                    if recoverable:
+                        logger.warning(f"⚠️ {try_provider} error ({error_str[:100]}...), trying fallback...")
+                        continue
+                    else:
+                        logger.error(f"Real API call failed for {try_provider}: {e}")
+                        break
+        
+        if last_error:
+            logger.error(f"All providers failed. Last error: {last_error}, falling back to mock")
         
         # Mock response fallback
         return await self._generate_mock_response(
@@ -168,6 +203,12 @@ class GeneralLLMProvider:
             return await self._call_anthropic(formatted_messages, temperature, max_tokens, tools)
         elif provider == "google":
             return await self._call_google(formatted_messages, temperature, max_tokens, tools)
+        elif provider == "deepseek":
+            return await self._call_deepseek(formatted_messages, temperature, max_tokens, tools)
+        elif provider == "kimi":
+            return await self._call_kimi(formatted_messages, temperature, max_tokens, tools)
+        elif provider == "nvidia":
+            return await self._call_nvidia(formatted_messages, temperature, max_tokens, tools)
         else:
             raise ValueError(f"Unknown provider: {provider}")
     
@@ -186,7 +227,7 @@ class GeneralLLMProvider:
             }
             
             payload = {
-                "model": "gpt-4-turbo-preview",
+                "model": "gpt-4o",  # Use gpt-4o (available in tier 1)
                 "messages": messages,
                 "temperature": temperature
             }
@@ -245,7 +286,7 @@ class GeneralLLMProvider:
                     user_messages.append(msg)
             
             payload = {
-                "model": "claude-3-5-sonnet-20241022",
+                "model": "claude-sonnet-4-20250514",  # Latest Claude Sonnet 4
                 "messages": user_messages,
                 "temperature": temperature,
                 "max_tokens": max_tokens or 4096
@@ -316,6 +357,126 @@ class GeneralLLMProvider:
                     "success": True,
                     "confidence": 0.93,
                     "tokens_used": data.get("usageMetadata", {}).get("totalTokenCount", 0),
+                    "real_ai": True
+                }
+    
+    async def _call_deepseek(
+        self,
+        messages: List[Dict[str, str]],
+        temperature: float,
+        max_tokens: Optional[int],
+        tools: Optional[List[Dict[str, Any]]] = None
+    ) -> Dict[str, Any]:
+        """Call DeepSeek API (OpenAI-compatible)"""
+        async with aiohttp.ClientSession() as session:
+            headers = {
+                "Authorization": f"Bearer {self.api_keys['deepseek']}",
+                "Content-Type": "application/json"
+            }
+            
+            payload = {
+                "model": "deepseek-chat",  # DeepSeek V3
+                "messages": messages,
+                "temperature": temperature
+            }
+            if max_tokens:
+                payload["max_tokens"] = max_tokens
+            
+            async with session.post(self.endpoints["deepseek"], headers=headers, json=payload) as resp:
+                if resp.status != 200:
+                    error_text = await resp.text()
+                    raise Exception(f"DeepSeek API error {resp.status}: {error_text}")
+                
+                data = await resp.json()
+                choice = data["choices"][0]
+                
+                return {
+                    "content": choice["message"]["content"],
+                    "provider": "deepseek",
+                    "model": data.get("model", "deepseek-chat"),
+                    "success": True,
+                    "confidence": 0.92,
+                    "tokens_used": data.get("usage", {}).get("total_tokens", 0),
+                    "real_ai": True
+                }
+    
+    async def _call_kimi(
+        self,
+        messages: List[Dict[str, str]],
+        temperature: float,
+        max_tokens: Optional[int],
+        tools: Optional[List[Dict[str, Any]]] = None
+    ) -> Dict[str, Any]:
+        """Call Kimi K2 API (Moonshot - OpenAI-compatible)"""
+        async with aiohttp.ClientSession() as session:
+            headers = {
+                "Authorization": f"Bearer {self.api_keys['kimi']}",
+                "Content-Type": "application/json"
+            }
+            
+            payload = {
+                "model": "kimi-k2-0711-preview",  # Kimi K2 model
+                "messages": messages,
+                "temperature": temperature
+            }
+            if max_tokens:
+                payload["max_tokens"] = max_tokens
+            
+            async with session.post(self.endpoints["kimi"], headers=headers, json=payload) as resp:
+                if resp.status != 200:
+                    error_text = await resp.text()
+                    raise Exception(f"Kimi API error {resp.status}: {error_text}")
+                
+                data = await resp.json()
+                choice = data["choices"][0]
+                
+                return {
+                    "content": choice["message"]["content"],
+                    "provider": "kimi",
+                    "model": data.get("model", "kimi-k2"),
+                    "success": True,
+                    "confidence": 0.91,
+                    "tokens_used": data.get("usage", {}).get("total_tokens", 0),
+                    "real_ai": True
+                }
+    
+    async def _call_nvidia(
+        self,
+        messages: List[Dict[str, str]],
+        temperature: float,
+        max_tokens: Optional[int],
+        tools: Optional[List[Dict[str, Any]]] = None
+    ) -> Dict[str, Any]:
+        """Call NVIDIA NIM API (OpenAI-compatible)"""
+        async with aiohttp.ClientSession() as session:
+            headers = {
+                "Authorization": f"Bearer {self.api_keys['nvidia']}",
+                "Content-Type": "application/json"
+            }
+            
+            # NVIDIA NIM offers multiple models - using Llama 3.1 70B as default
+            payload = {
+                "model": "meta/llama-3.1-70b-instruct",  # NVIDIA hosted Llama 3.1
+                "messages": messages,
+                "temperature": temperature,
+                "max_tokens": max_tokens or 1024
+            }
+            
+            async with session.post(self.endpoints["nvidia"], headers=headers, json=payload) as resp:
+                if resp.status != 200:
+                    error_text = await resp.text()
+                    raise Exception(f"NVIDIA NIM API error {resp.status}: {error_text}")
+                
+                data = await resp.json()
+                choice = data["choices"][0]
+                
+                return {
+                    "content": choice["message"]["content"],
+                    "provider": "nvidia",
+                    "model": data.get("model", "llama-3.1-70b"),
+                    "success": True,
+                    "confidence": 0.94,  # High quality NVIDIA models
+                    "tokens_used": data.get("usage", {}).get("total_tokens", 0),
                     "real_ai": True
                 }
     

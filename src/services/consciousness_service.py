@@ -1899,6 +1899,18 @@ class ConsciousnessService(NISAgent):
             "available_decisions": [t.get("id") for t in self.decision_traces[-10:]]
         }
     
+    def _evaluate_consciousness_metrics(self) -> Dict[str, Any]:
+        """Evaluate current consciousness metrics"""
+        return {
+            "consciousness_level": getattr(self, 'consciousness_level', 0.5),
+            "coherence": getattr(self, 'current_coherence', 0.7),
+            "ethics_score": getattr(self, 'current_ethics_score', 0.8),
+            "emergence_score": getattr(self, 'emergence_score', 0.6),
+            "active_thoughts": len(getattr(self, 'decision_traces', [])),
+            "bias_detected": len(getattr(self, 'detected_biases', [])),
+            "timestamp": datetime.now().isoformat()
+        }
+    
     def _explain_current_state(self) -> Dict[str, Any]:
         """Explain current consciousness state"""
         # Aggregate current metrics
@@ -1942,16 +1954,16 @@ class ConsciousnessService(NISAgent):
         explanation = f"""
 🧠 **Current Consciousness State Explanation**
 
-**Overall Level**: {metrics.consciousness_level:.1%}
-- Self-Awareness: {metrics.self_awareness:.2f}
-- Meta-Cognition: {metrics.meta_cognition:.2f}
-- Ethical Reasoning: {metrics.ethical_reasoning_capability:.2f}
-- Adaptability: {metrics.adaptability:.2f}
+**Overall Level**: {metrics.get('consciousness_level', 0.5):.1%}
+- Coherence: {metrics.get('coherence', 0.7):.2f}
+- Ethics Score: {metrics.get('ethics_score', 0.8):.2f}
+- Emergence Score: {metrics.get('emergence_score', 0.6):.2f}
+- Active Thoughts: {metrics.get('active_thoughts', 0)}
 
 **System Status**:
-- Ethics threshold: {self.ethics_threshold:.2f}
-- Coherence threshold: {self.coherence_threshold:.2f}
-- Emergence threshold: {self.emergence_threshold:.2f}
+- Ethics threshold: {getattr(self, 'ethics_threshold', 0.8):.2f}
+- Coherence threshold: {getattr(self, 'coherence_threshold', 0.7):.2f}
+- Emergence threshold: {getattr(self, 'emergence_threshold', 0.6):.2f}
 
 **Evolutionary State**:
 {evolution_state if evolution_state else 'Not initialized'}

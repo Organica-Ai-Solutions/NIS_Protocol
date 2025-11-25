@@ -40,9 +40,19 @@ RUN pip install --no-cache-dir --upgrade pip && \
 #     pip install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
 
 # Optional: Add core voice & TTS/STT modules (if needed)
+# Core dependencies that must be installed even if requirements.txt has issues
 RUN pip install --no-cache-dir \
-    openai-whisper soundfile librosa ffmpeg-python \
-    gtts transformers scipy encodec nltk einops boto3
+    uvicorn[standard] fastapi pydub aiohttp \
+    openai anthropic redis kafka-python \
+    langchain langchain-core langgraph langsmith \
+    httpx pydantic python-multipart aiofiles \
+    openai-whisper faster-whisper ctranslate2 \
+    soundfile librosa ffmpeg-python \
+    gtts transformers scipy encodec nltk einops boto3 \
+    pillow opencv-python-headless ultralytics \
+    hnswlib chromadb sentence-transformers \
+    google-generativeai tiktoken tenacity peft \
+    pyaudio webrtcvad SpeechRecognition
 
 # Copy project source
 COPY --chown=nisuser:nisuser . .
@@ -78,7 +88,7 @@ EXPOSE 8000
 
 # ---------------- Entrypoint ----------------
 # Note: Using 1 worker for simpler debugging on Mac
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1", "--reload"]
+CMD ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1"]
 
 # ---------------- Local Testing ----------------
 # Build and run locally:

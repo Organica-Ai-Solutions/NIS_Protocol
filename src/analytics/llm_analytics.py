@@ -88,16 +88,9 @@ class LLMAnalytics:
     def __init__(self, redis_host: str = None, redis_port: int = 6379, redis_db: int = 1):
         """Initialize analytics with Redis backend"""
         
-        # Auto-detect Redis host
+        # Auto-detect Redis host from environment (set in docker-compose)
         if redis_host is None:
-            # Try environment variable first
-            redis_host = os.environ.get('REDIS_HOST')
-            if not redis_host:
-                # Check if we're in a Docker environment
-                if os.path.exists('/.dockerenv'):
-                    redis_host = "nis-redis"  # Docker container name
-                else:
-                    redis_host = "localhost"  # Local development
+            redis_host = os.environ.get('REDIS_HOST', 'localhost')
         
         try:
             self.redis_client = redis.Redis(
@@ -551,11 +544,8 @@ def get_llm_analytics() -> LLMAnalytics:
     """Get global LLM analytics instance"""
     global _global_analytics
     if _global_analytics is None:
-        # Auto-detect Redis host for Docker/local environments
-        redis_host = None
-        if os.path.exists('/.dockerenv'):
-            redis_host = "nis-redis"  # Docker container name
-        _global_analytics = LLMAnalytics(redis_host=redis_host)
+        # Redis host auto-detected from REDIS_HOST env var in LLMAnalytics.__init__
+        _global_analytics = LLMAnalytics()
     return _global_analytics
 
 def init_llm_analytics(redis_host: str = None, 

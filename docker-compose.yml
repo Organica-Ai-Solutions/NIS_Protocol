@@ -60,6 +60,9 @@ services:
       - NGC_API_KEY=${NGC_API_KEY:-your_ngc_api_key_here}
       - NIM_BASE_URL=${NIM_BASE_URL:-https://api.nvcf.nvidia.com/v2/nvcf}
       - NVIDIA_NIM_ENABLED=${NVIDIA_NIM_ENABLED:-false}
+      # Service Discovery
+      - REDIS_HOST=redis
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
     volumes:
       # Commenting out Google credentials mount that's causing issues
       # - ${APPDATA}/gcloud/application_default_credentials.json:/app/google-credentials.json:ro
