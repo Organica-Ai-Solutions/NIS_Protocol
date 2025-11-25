@@ -101,10 +101,14 @@ from src.agents.reasoning.unified_reasoning_agent import create_enhanced_kan_rea
 from src.agents.physics.unified_physics_agent import create_enhanced_pinn_physics_agent
 from src.agents.planning.autonomous_planning_system import AutonomousPlanningSystem
 from src.agents.goals.curiosity_engine import CuriosityEngine
+from src.agents.goals.adaptive_goal_system import AdaptiveGoalSystem  # V4.0
 from src.utils.self_audit import self_audit_engine
 from src.utils.response_formatter import NISResponseFormatter
 from src.agents.alignment.ethical_reasoner import EthicalReasoner, EthicalFramework
 from src.agents.simulation.enhanced_scenario_simulator import EnhancedScenarioSimulator, ScenarioType, SimulationParameters
+from src.llm.reflective_generator import ReflectiveGenerator  # V4.0
+from src.memory.persistent_memory import get_memory_system    # V4.0
+from src.core.self_modifier import get_self_modifier          # V4.0
 
 # NVIDIA NeMo Enterprise Integration with proper error handling
 try:
@@ -684,6 +688,7 @@ async def initialize_system():
     """Initialize the NIS Protocol system - can be called manually for testing."""
     global llm_provider, web_search_agent, simulation_coordinator, learning_agent, planning_system, curiosity_engine, fallback_learning_agent
     global consciousness_service, protocol_bridge, bitnet_trainer
+    global persistent_memory, reflective_generator, self_modifier, adaptive_goal_system  # V4.0 Globals
     try:
         llm_provider = GeneralLLMProvider()
         logger.info(" LLM Provider initialized successfully")
@@ -855,6 +860,27 @@ async def initialize_system():
     logger.info("🔬 Phase 10: Meta-evolution initialized")
     
     logger.info("✅ All 10 v4.0 consciousness phases initialized - system ready for AGI-level operation")
+    
+    # 🧠 V4.0: Initialize Self-Improving Components (Memory, Reflection, Goals)
+    try:
+        logger.info("🧠 Initializing V4.0 Self-Improving Components...")
+        persistent_memory = get_memory_system()
+        self_modifier = get_self_modifier()
+        
+        reflective_generator = ReflectiveGenerator(
+            llm_provider=llm_provider,
+            consciousness_service=consciousness_service,
+            quality_threshold=0.75
+        )
+        
+        adaptive_goal_system = AdaptiveGoalSystem(
+            agent_id="core_goal_system",
+            persistent_memory=persistent_memory,
+            reflective_generator=reflective_generator
+        )
+        logger.info("✅ V4.0 Self-Improving System initialized")
+    except Exception as e:
+        logger.error(f"❌ Failed to initialize V4.0 components: {e}")
     
     protocol_bridge = create_protocol_bridge_service(
         consciousness_service=consciousness_service,
@@ -5423,6 +5449,36 @@ async def get_current_parameters():
         "parameters": self_modifier.parameters,
         "routing_rules": self_modifier.routing_rules
     }
+
+
+# === V4.0 ADAPTIVE GOAL SYSTEM ===
+adaptive_goal_system = None
+
+@app.post("/v4/goals/generate", tags=["V4.0 Goals"])
+async def generate_goals():
+    """Trigger autonomous goal generation"""
+    global adaptive_goal_system
+    if adaptive_goal_system:
+        return await adaptive_goal_system.process({"operation": "generate_goals"})
+    return {"status": "error", "message": "Goal system not initialized"}
+
+
+@app.get("/v4/goals/list", tags=["V4.0 Goals"])
+async def list_goals():
+    """List active goals"""
+    global adaptive_goal_system
+    if adaptive_goal_system:
+        return await adaptive_goal_system.process({"operation": "get_active_goals"})
+    return {"status": "error", "message": "Goal system not initialized"}
+
+
+@app.get("/v4/goals/metrics", tags=["V4.0 Goals"])
+async def get_goal_metrics():
+    """Get goal system performance metrics"""
+    global adaptive_goal_system
+    if adaptive_goal_system:
+        return {"metrics": adaptive_goal_system.goal_metrics}
+    return {"status": "error", "message": "Goal system not initialized"}
 
 
 @app.post("/chat", response_model=ChatResponse)
