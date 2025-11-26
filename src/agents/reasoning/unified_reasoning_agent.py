@@ -737,13 +737,30 @@ def get_model_info(self) -> Dict[str, Any]:
 
 def get_component_analysis(self, input_idx: int, output_idx: int) -> Dict[str, Any]:
         """Analyze a specific input-output connection"""
-        # Simplified component analysis
+        # Calculate connection strength from model weights
+        strength = 0.5
+        complexity = 0.5
+        
+        if hasattr(self, 'model') and hasattr(self.model, 'weights'):
+            weights = self.model.weights
+            if len(weights) > 0:
+                # Connection strength = normalized weight magnitude
+                w = weights[0] if len(weights[0].shape) == 2 else weights[0].flatten()
+                if input_idx < w.shape[0] and output_idx < w.shape[-1]:
+                    weight_val = abs(w[input_idx, output_idx] if len(w.shape) > 1 else w[input_idx])
+                    max_weight = np.max(np.abs(w)) + 1e-10
+                    strength = float(weight_val / max_weight)
+                
+                # Complexity = number of active connections / total
+                active = np.sum(np.abs(w) > 0.01)
+                complexity = float(active / (w.size + 1e-10))
+        
         return {
-            'activation': 'spline',  # Most common in KAN
+            'activation': 'spline',
             'input_index': input_idx,
             'output_index': output_idx,
-            'strength': 0.8,  # Placeholder
-            'complexity': 0.5  # Placeholder
+            'strength': strength,
+            'complexity': min(1.0, complexity)
         }
 
 def _train_kan_function(self, input_data: np.ndarray, target_data: np.ndarray) -> 'KANModel':

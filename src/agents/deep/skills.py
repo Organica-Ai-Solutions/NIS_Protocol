@@ -1,6 +1,6 @@
 """
 Deep Agent Skills for NIS Protocol
-Placeholder skill classes for MCP integration
+Skill classes providing action routing for MCP integration
 """
 
 from typing import Dict, Any
@@ -17,13 +17,25 @@ class BaseSkill:
         self.logger = logging.getLogger(f"deep_skill.{skill_name}")
     
     async def execute(self, action: str, parameters: Dict[str, Any]) -> Dict[str, Any]:
-        """Execute skill action"""
+        """Execute skill action by routing to specific handler"""
+        # Try to find action-specific handler
+        handler_name = f"_handle_{action}"
+        if hasattr(self, handler_name):
+            handler = getattr(self, handler_name)
+            try:
+                result = await handler(parameters) if callable(handler) else handler
+                return {"success": True, "skill": self.skill_name, "action": action, "result": result}
+            except Exception as e:
+                self.logger.error(f"Action {action} failed: {e}")
+                return {"success": False, "skill": self.skill_name, "action": action, "error": str(e)}
+        
+        # Default execution
         return {
             "success": True,
             "skill": self.skill_name,
             "action": action,
-            "result": f"Executed {action} with {self.skill_name}",
-            "parameters": parameters
+            "result": f"Executed {action}",
+            "parameters_received": list(parameters.keys())
         }
 
     def get_available_actions(self) -> Dict[str, Any]:
