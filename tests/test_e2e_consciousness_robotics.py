@@ -4,6 +4,7 @@ import os
 import asyncio
 import logging
 import json
+import pytest
 
 # Add project root to path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -23,6 +24,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger("test_e2e")
 
+@pytest.mark.asyncio
 async def test_e2e():
     logger.info("🧠🤖 STARTING E2E CONSCIOUSNESS -> ROBOTICS TEST")
     
