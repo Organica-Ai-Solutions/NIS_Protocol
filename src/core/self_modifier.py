@@ -50,10 +50,26 @@ class PerformanceMetric:
     
     def get_trend(self, window: int = 50) -> float:
         """Get trend: positive = improving, negative = declining"""
-        if len(self.values) < window:
+        n = len(self.values)
+        if n < 2:
             return 0.0
+        
+        # For small samples, use linear regression slope
+        if n < window:
+            if n < 3:
+                return self.values[-1] - self.values[0]
+            # Simple linear regression
+            x_mean = (n - 1) / 2
+            y_mean = sum(self.values) / n
+            numerator = sum((i - x_mean) * (v - y_mean) for i, v in enumerate(self.values))
+            denominator = sum((i - x_mean) ** 2 for i in range(n))
+            if denominator == 0:
+                return 0.0
+            return numerator / denominator
+        
+        # For larger samples, compare recent vs older windows
         recent = self.values[-window:]
-        older = self.values[-window*2:-window] if len(self.values) >= window*2 else self.values[:window]
+        older = self.values[-window*2:-window] if n >= window*2 else self.values[:window]
         if not older:
             return 0.0
         return (sum(recent) / len(recent)) - (sum(older) / len(older))
