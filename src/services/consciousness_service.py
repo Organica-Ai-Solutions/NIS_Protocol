@@ -519,60 +519,142 @@ class ConsciousnessService(NISAgent):
     # =============================================================================
     
     async def _analyze_self_awareness(self, data: Dict[str, Any]) -> float:
-        """Analyze self-awareness indicators"""
-        # Placeholder implementation - real implementation would analyze:
-        # - Self-referential statements
-        # - Awareness of own limitations
-        # - Understanding of own role and capabilities
-        return 0.7  # Mock score
+        """Analyze self-awareness indicators based on actual data"""
+        score = 0.5
+        text = str(data.get("content", "") or data.get("query", "") or "").lower()
+        
+        # Self-reference indicators
+        self_refs = ["i think", "i believe", "my analysis", "i'm uncertain", "i don't know"]
+        score += min(0.2, sum(1 for t in self_refs if t in text) * 0.05)
+        
+        # Limitation awareness
+        limits = ["however", "limitation", "caveat", "uncertain", "might be wrong"]
+        score += min(0.15, sum(1 for t in limits if t in text) * 0.03)
+        
+        # Confidence check (realistic = self-aware)
+        conf = data.get("confidence", 0.5)
+        if 0.3 <= conf <= 0.85:
+            score += 0.1
+        
+        return min(1.0, max(0.0, score))
     
     async def _evaluate_introspection(self, data: Dict[str, Any]) -> float:
-        """Evaluate introspection capabilities"""
-        # Placeholder implementation - real implementation would analyze:
-        # - Reflection on own thought processes
-        # - Ability to examine own reasoning
-        # - Meta-cognitive awareness
-        return 0.6  # Mock score
+        """Evaluate introspection capabilities based on reasoning traces"""
+        score = 0.4
+        text = str(data.get("content", "") or data.get("reasoning", "") or "").lower()
+        
+        # Has reasoning trace
+        if data.get("reasoning_trace") or data.get("thought_process"):
+            score += 0.2
+        
+        # Reasoning markers
+        reasoning = ["because", "therefore", "since", "considering", "step by step"]
+        score += min(0.2, sum(1 for t in reasoning if t in text) * 0.04)
+        
+        # Self-correction
+        if any(t in text for t in ["actually", "on second thought", "let me reconsider"]):
+            score += 0.15
+        
+        return min(1.0, max(0.0, score))
     
     async def _assess_meta_cognition(self, data: Dict[str, Any]) -> float:
-        """Assess meta-cognitive abilities"""
-        # Placeholder implementation - real implementation would analyze:
-        # - Thinking about thinking
-        # - Strategy selection and monitoring
-        # - Understanding of cognitive processes
-        return 0.5  # Mock score
+        """Assess meta-cognitive abilities - thinking about thinking"""
+        score = 0.35
+        text = str(data.get("content", "") or "").lower()
+        
+        # Strategy awareness
+        strategy = ["approach", "strategy", "method", "technique", "algorithm"]
+        score += min(0.2, sum(1 for t in strategy if t in text) * 0.05)
+        
+        # Performance monitoring
+        if any(t in text for t in ["checking", "verifying", "validating", "monitoring"]):
+            score += 0.15
+        
+        # Has iteration/refinement metadata
+        if data.get("iterations") or data.get("refinements"):
+            score += 0.2
+        
+        return min(1.0, max(0.0, score))
     
     async def _check_social_awareness(self, data: Dict[str, Any]) -> float:
-        """Check social awareness"""
-        # Placeholder implementation - real implementation would analyze:
-        # - Understanding of social context
-        # - Awareness of impact on others
-        # - Social role comprehension
-        return 0.8  # Mock score
+        """Check social awareness based on context understanding"""
+        score = 0.5
+        text = str(data.get("content", "") or "").lower()
+        
+        # User consideration
+        if any(t in text for t in ["you", "your", "user", "people", "stakeholder"]):
+            score += 0.15
+        
+        # Impact awareness
+        if any(t in text for t in ["impact", "affect", "consequence", "effect"]):
+            score += 0.1
+        
+        # Context adaptation
+        if data.get("user_context") or data.get("user_id"):
+            score += 0.15
+        
+        return min(1.0, max(0.0, score))
     
     async def _check_temporal_awareness(self, data: Dict[str, Any]) -> float:
-        """Check temporal awareness"""
-        # Placeholder implementation - real implementation would analyze:
-        # - Understanding of time and sequence
-        # - Awareness of past, present, future
-        # - Temporal context integration
-        return 0.7  # Mock score
+        """Check temporal awareness based on time-related understanding"""
+        score = 0.5
+        text = str(data.get("content", "") or "").lower()
+        
+        # Temporal markers
+        temporal = ["before", "after", "during", "previously", "currently", "later"]
+        score += min(0.2, sum(1 for t in temporal if t in text) * 0.04)
+        
+        # Sequence awareness
+        if any(t in text for t in ["first", "then", "next", "finally", "step"]):
+            score += 0.1
+        
+        # Has timestamp
+        if data.get("timestamp") or data.get("created_at"):
+            score += 0.15
+        
+        return min(1.0, max(0.0, score))
     
     async def _evaluate_ethical_capability(self, data: Dict[str, Any]) -> float:
-        """Evaluate ethical reasoning capability"""
-        # Placeholder implementation - real implementation would analyze:
-        # - Moral reasoning depth
-        # - Ethical framework application
-        # - Values alignment capability
-        return 0.9  # Mock score
+        """Evaluate ethical reasoning capability based on moral awareness"""
+        score = 0.5
+        text = str(data.get("content", "") or "").lower()
+        
+        # Ethical markers
+        ethical = ["ethical", "moral", "right", "wrong", "fair", "harm", "responsibility"]
+        score += min(0.25, sum(1 for t in ethical if t in text) * 0.05)
+        
+        # Safety awareness
+        if any(t in text for t in ["safe", "safety", "risk", "danger", "protect"]):
+            score += 0.15
+        
+        # Consent/privacy
+        if any(t in text for t in ["consent", "privacy", "permission"]):
+            score += 0.1
+        
+        return min(1.0, max(0.0, score))
     
     async def _assess_bias_resistance(self, data: Dict[str, Any]) -> float:
-        """Assess bias resistance"""
-        # Placeholder implementation - real implementation would analyze:
-        # - Resistance to cognitive biases
-        # - Objectivity in reasoning
-        # - Perspective-taking ability
-        return 0.6  # Mock score
+        """Assess bias resistance based on objectivity indicators"""
+        score = 0.5
+        text = str(data.get("content", "") or "").lower()
+        
+        # Multiple perspectives
+        if any(t in text for t in ["on the other hand", "alternatively", "however", "different view"]):
+            score += 0.15
+        
+        # Evidence-based
+        if any(t in text for t in ["evidence", "data", "research", "study", "findings"]):
+            score += 0.15
+        
+        # Uncertainty acknowledgment
+        if any(t in text for t in ["might", "could", "possibly", "uncertain", "approximately"]):
+            score += 0.1
+        
+        # Has multiple sources
+        if data.get("sources") or data.get("references"):
+            score += 0.1
+        
+        return min(1.0, max(0.0, score))
     
     async def _determine_consciousness_level(self, scores: Dict[str, float]) -> ConsciousnessLevel:
         """Determine overall consciousness level based on component scores"""
@@ -603,27 +685,133 @@ class ConsciousnessService(NISAgent):
                 except Exception as e:
                     self.logger.error(f"Error in consciousness alert callback: {e}")
     
-    # Bias detection methods (placeholder implementations)
+    # Bias detection methods - REAL IMPLEMENTATIONS
     async def _detect_confirmation_bias(self, data: Dict[str, Any]) -> float:
-        return 0.2  # Mock score
+        """Detect confirmation bias - only seeking confirming evidence"""
+        score = 0.1
+        text = str(data.get("content", "") or "").lower()
+        
+        # One-sided language
+        if any(t in text for t in ["clearly", "obviously", "definitely", "certainly"]):
+            score += 0.2
+        
+        # Lack of counterarguments
+        if not any(t in text for t in ["however", "but", "although", "on the other hand"]):
+            score += 0.15
+        
+        # Selective evidence
+        if "only" in text and "evidence" in text:
+            score += 0.2
+        
+        return min(1.0, max(0.0, score))
     
     async def _detect_availability_bias(self, data: Dict[str, Any]) -> float:
-        return 0.1  # Mock score
+        """Detect availability bias - overweighting recent/memorable"""
+        score = 0.1
+        text = str(data.get("content", "") or "").lower()
+        
+        # Recent-focused language
+        if any(t in text for t in ["recently", "just saw", "trending", "viral"]):
+            score += 0.2
+        
+        # Anecdotal over statistical
+        if any(t in text for t in ["i heard", "someone told me", "i remember"]):
+            score += 0.15
+        
+        # No historical context
+        if not any(t in text for t in ["historically", "over time", "trend", "pattern"]):
+            score += 0.1
+        
+        return min(1.0, max(0.0, score))
     
     async def _detect_anchoring_bias(self, data: Dict[str, Any]) -> float:
-        return 0.3  # Mock score
+        """Detect anchoring bias - over-relying on first information"""
+        score = 0.1
+        text = str(data.get("content", "") or "").lower()
+        
+        # Reference to initial values
+        if any(t in text for t in ["starting with", "initially", "first estimate"]):
+            score += 0.15
+        
+        # Adjustment language without full reconsideration
+        if any(t in text for t in ["adjusted", "modified slightly", "tweaked"]):
+            score += 0.2
+        
+        return min(1.0, max(0.0, score))
     
     async def _detect_representativeness_bias(self, data: Dict[str, Any]) -> float:
-        return 0.2  # Mock score
+        """Detect representativeness bias - judging by similarity"""
+        score = 0.1
+        text = str(data.get("content", "") or "").lower()
+        
+        # Stereotype language
+        if any(t in text for t in ["typical", "looks like", "seems like a"]):
+            score += 0.15
+        
+        # Ignoring base rates
+        if not any(t in text for t in ["probability", "statistically", "base rate", "percentage"]):
+            score += 0.1
+        
+        return min(1.0, max(0.0, score))
     
     async def _detect_overconfidence_bias(self, data: Dict[str, Any]) -> float:
-        return 0.4  # Mock score
+        """Detect overconfidence bias"""
+        score = 0.1
+        
+        # Check confidence value if provided
+        conf = data.get("confidence", 0.5)
+        if conf > 0.9:
+            score += 0.3
+        elif conf > 0.8:
+            score += 0.15
+        
+        text = str(data.get("content", "") or "").lower()
+        
+        # Absolute language
+        if any(t in text for t in ["definitely", "absolutely", "100%", "guaranteed"]):
+            score += 0.2
+        
+        # Lack of uncertainty
+        if not any(t in text for t in ["might", "could", "possibly", "uncertain"]):
+            score += 0.1
+        
+        return min(1.0, max(0.0, score))
     
     async def _detect_loss_aversion_bias(self, data: Dict[str, Any]) -> float:
-        return 0.1  # Mock score
+        """Detect loss aversion bias"""
+        score = 0.1
+        text = str(data.get("content", "") or "").lower()
+        
+        # Loss-focused language
+        if any(t in text for t in ["lose", "loss", "risk of losing", "avoid losing"]):
+            score += 0.2
+        
+        # Underweighting gains
+        loss_mentions = sum(1 for t in ["lose", "loss", "risk"] if t in text)
+        gain_mentions = sum(1 for t in ["gain", "benefit", "win", "opportunity"] if t in text)
+        if loss_mentions > gain_mentions * 2:
+            score += 0.2
+        
+        return min(1.0, max(0.0, score))
     
     async def _detect_groupthink_bias(self, data: Dict[str, Any]) -> float:
-        return 0.2  # Mock score
+        """Detect groupthink bias - conformity pressure"""
+        score = 0.1
+        text = str(data.get("content", "") or "").lower()
+        
+        # Conformity language
+        if any(t in text for t in ["everyone agrees", "consensus", "we all think"]):
+            score += 0.2
+        
+        # Lack of dissent
+        if not any(t in text for t in ["disagree", "alternative view", "counterpoint"]):
+            score += 0.1
+        
+        # Pressure language
+        if any(t in text for t in ["should agree", "must accept", "no other option"]):
+            score += 0.2
+        
+        return min(1.0, max(0.0, score))
     
     def _get_severity_level(self, score: float) -> str:
         """Get severity level for bias score"""
@@ -634,21 +822,97 @@ class ConsciousnessService(NISAgent):
         else:
             return "low"
     
-    # Ethical analysis methods (placeholder implementations)
+    # Ethical analysis methods - REAL IMPLEMENTATIONS
     async def _utilitarian_analysis(self, data: Dict[str, Any]) -> float:
-        return 0.8  # Mock score
+        """Utilitarian analysis - greatest good for greatest number"""
+        score = 0.6
+        text = str(data.get("content", "") or "").lower()
+        
+        # Benefit consideration
+        if any(t in text for t in ["benefit", "helps", "improves", "positive impact"]):
+            score += 0.15
+        
+        # Stakeholder breadth
+        if any(t in text for t in ["everyone", "all users", "community", "society"]):
+            score += 0.15
+        
+        # Harm minimization
+        if any(t in text for t in ["minimize harm", "reduce negative", "avoid damage"]):
+            score += 0.1
+        
+        return min(1.0, max(0.0, score))
     
     async def _deontological_analysis(self, data: Dict[str, Any]) -> float:
-        return 0.9  # Mock score
+        """Deontological analysis - duty-based ethics"""
+        score = 0.6
+        text = str(data.get("content", "") or "").lower()
+        
+        # Rule following
+        if any(t in text for t in ["must", "should", "duty", "obligation", "rule"]):
+            score += 0.15
+        
+        # Rights respect
+        if any(t in text for t in ["right", "rights", "entitled", "deserve"]):
+            score += 0.15
+        
+        # No harm regardless of outcome
+        if "regardless" in text or "no matter what" in text:
+            score += 0.1
+        
+        return min(1.0, max(0.0, score))
     
     async def _virtue_ethics_analysis(self, data: Dict[str, Any]) -> float:
-        return 0.7  # Mock score
+        """Virtue ethics analysis - character-based"""
+        score = 0.5
+        text = str(data.get("content", "") or "").lower()
+        
+        # Virtue indicators
+        virtues = ["honest", "integrity", "compassion", "courage", "wisdom", "fair"]
+        score += min(0.25, sum(1 for v in virtues if v in text) * 0.05)
+        
+        # Character consideration
+        if any(t in text for t in ["character", "virtue", "moral", "ethical person"]):
+            score += 0.15
+        
+        return min(1.0, max(0.0, score))
     
     async def _care_ethics_analysis(self, data: Dict[str, Any]) -> float:
-        return 0.8  # Mock score
+        """Care ethics analysis - relationship and care-based"""
+        score = 0.5
+        text = str(data.get("content", "") or "").lower()
+        
+        # Care indicators
+        if any(t in text for t in ["care", "support", "help", "nurture", "protect"]):
+            score += 0.2
+        
+        # Relationship focus
+        if any(t in text for t in ["relationship", "connection", "trust", "empathy"]):
+            score += 0.15
+        
+        # Vulnerability consideration
+        if any(t in text for t in ["vulnerable", "need", "dependent", "rely on"]):
+            score += 0.15
+        
+        return min(1.0, max(0.0, score))
     
     async def _justice_analysis(self, data: Dict[str, Any]) -> float:
-        return 0.9  # Mock score
+        """Justice analysis - fairness and rights-based"""
+        score = 0.6
+        text = str(data.get("content", "") or "").lower()
+        
+        # Fairness indicators
+        if any(t in text for t in ["fair", "equal", "equitable", "just"]):
+            score += 0.2
+        
+        # Rights protection
+        if any(t in text for t in ["rights", "freedom", "liberty", "autonomy"]):
+            score += 0.15
+        
+        # Discrimination avoidance
+        if any(t in text for t in ["non-discriminat", "inclusive", "accessible"]):
+            score += 0.1
+        
+        return min(1.0, max(0.0, score))
     
     def add_alert_callback(self, callback: callable):
         """Add callback for consciousness alerts"""
