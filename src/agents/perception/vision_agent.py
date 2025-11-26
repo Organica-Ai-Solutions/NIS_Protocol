@@ -706,9 +706,39 @@ class VisionAgent(NISAgent):
         Returns:
             Language code (default: 'en')
         """
-        # In a real implementation, use a language detection library
-        # This is a simple placeholder
-        return "en"
+        if not text:
+            return "en"
+        
+        # Simple language detection using character patterns
+        text_lower = text.lower()
+        
+        # Check for non-ASCII characters common in specific languages
+        if any('\u4e00' <= c <= '\u9fff' for c in text):
+            return "zh"  # Chinese
+        if any('\u3040' <= c <= '\u309f' or '\u30a0' <= c <= '\u30ff' for c in text):
+            return "ja"  # Japanese
+        if any('\uac00' <= c <= '\ud7af' for c in text):
+            return "ko"  # Korean
+        if any('\u0600' <= c <= '\u06ff' for c in text):
+            return "ar"  # Arabic
+        if any('\u0400' <= c <= '\u04ff' for c in text):
+            return "ru"  # Russian
+        
+        # Check for common words in European languages
+        spanish_words = ["el", "la", "de", "que", "es", "en", "los", "del"]
+        french_words = ["le", "la", "de", "et", "est", "les", "des", "que"]
+        german_words = ["der", "die", "und", "ist", "das", "nicht", "ich"]
+        
+        words = text_lower.split()
+        if len(words) >= 3:
+            if sum(1 for w in words if w in spanish_words) >= 2:
+                return "es"
+            if sum(1 for w in words if w in french_words) >= 2:
+                return "fr"
+            if sum(1 for w in words if w in german_words) >= 2:
+                return "de"
+        
+        return "en"  # Default to English
     
     def _detect_unusual_patterns(self, detections: List[Dict[str, Any]]) -> bool:
         """
