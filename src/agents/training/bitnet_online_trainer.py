@@ -330,14 +330,36 @@ class BitNetOnlineTrainer(NISAgent):
             return False
     
     def _assess_physics_compliance(self, response: str, context: Optional[Dict[str, Any]]) -> float:
-        """Assess physics compliance of response"""
-        # Simple physics compliance assessment
-        # In real implementation, this would use the PINN physics validation
-        physics_keywords = ["energy", "conservation", "momentum", "force", "physics", "law", "equation"]
+        """Assess physics compliance of response using heuristic analysis"""
+        response_lower = response.lower()
+        score = 0.7  # Base score
         
-        if any(keyword in response.lower() for keyword in physics_keywords):
-            return 0.8  # Higher compliance for physics-related content
-        return 0.6  # Default compliance
+        # Physics-aware content indicators (+)
+        physics_terms = ["energy", "conservation", "momentum", "force", "mass", "velocity",
+                        "acceleration", "newton", "thermodynamic", "entropy", "equation"]
+        term_count = sum(1 for term in physics_terms if term in response_lower)
+        score += min(0.15, term_count * 0.03)
+        
+        # Scientific rigor indicators (+)
+        rigor_terms = ["approximately", "measured", "calculated", "empirical", "theory", "model"]
+        if any(term in response_lower for term in rigor_terms):
+            score += 0.05
+        
+        # Physics violation indicators (-)
+        violation_terms = [
+            "perpetual motion", "free energy", "faster than light", 
+            "infinite energy", "100% efficient", "violates conservation"
+        ]
+        if any(term in response_lower for term in violation_terms):
+            score -= 0.3
+        
+        # Mathematical consistency check
+        if context and context.get("contains_equations"):
+            # Check for unit consistency (simplified)
+            if any(unit in response_lower for unit in ["joules", "newtons", "meters", "kg"]):
+                score += 0.05
+        
+        return max(0.0, min(1.0, score))
     
     def _calculate_quality_score(
         self, 

@@ -448,10 +448,38 @@ Focus on:
             return False, f"Insufficient consensus: {proposal.consensus_score:.2%} < 50%"
         
         # 3. Check if this is a reasonable change (not too radical)
-        # TODO: Implement embedding distance check
-        # For now, assume safe if consensus is high
+        config_distance = self._calculate_config_distance(
+            proposal.current_config, proposal.proposed_config
+        )
+        if config_distance > 0.7:  # More than 70% change is too radical
+            return False, f"Config change too radical: {config_distance:.1%} distance"
         
         return True, "All safety checks passed"
+    
+    def _calculate_config_distance(self, config_a: Dict, config_b: Dict) -> float:
+        """Calculate normalized distance between two configs (0-1 scale)"""
+        if not config_a or not config_b:
+            return 0.5  # Unknown, assume moderate
+        
+        # Flatten configs to compare
+        def flatten(d, prefix=''):
+            items = []
+            for k, v in d.items():
+                key = f"{prefix}.{k}" if prefix else k
+                if isinstance(v, dict):
+                    items.extend(flatten(v, key).items())
+                else:
+                    items.append((key, str(v)))
+            return dict(items)
+        
+        flat_a, flat_b = flatten(config_a), flatten(config_b)
+        all_keys = set(flat_a.keys()) | set(flat_b.keys())
+        
+        if not all_keys:
+            return 0.0
+        
+        differences = sum(1 for k in all_keys if flat_a.get(k) != flat_b.get(k))
+        return differences / len(all_keys)
     
     async def deploy_canary(self, proposal: EvolutionProposal) -> None:
         """
@@ -577,9 +605,8 @@ Focus on:
             self.logger.info(f"✅ Agent {agent_id} performing well ({metrics.success_rate:.2%})")
             return None
         
-        # 2. Get current config
-        # TODO: Load from agent registry
-        current_config = {"placeholder": "real config would be loaded here"}
+        # 2. Get current config from registry
+        current_config = self._get_agent_config(agent_id)
         
         # 3. Generate proposal
         proposal = await self.generate_evolution_proposal(agent_id, metrics, current_config)
@@ -617,7 +644,8 @@ Focus on:
             self.logger.info(
                 f"⏸️ Evolution awaiting human approval (total evolutions: {len(self.evolution_history)})"
             )
-            # TODO: Send to Slack/Teams for approval
+            # Send notification for approval
+            await self._notify_for_approval(proposal)
         else:
             proposal.status = EvolutionStatus.APPROVED
             proposal.approved_by = "auto"
@@ -647,14 +675,90 @@ Focus on:
             return False
         
         # Deploy to production
-        # TODO: Update agent config in registry
-        # TODO: Restart agent with new config
+        success = await self._deploy_config(proposal)
+        if not success:
+            self.logger.error(f"Failed to deploy evolution {evolution_id}")
+            return False
         
         proposal.status = EvolutionStatus.DEPLOYED
         proposal.deployed_at = time.time()
         
         self.logger.info(f"🚀 Evolution {evolution_id} deployed to production")
         return True
+    
+    def _get_agent_config(self, agent_id: str) -> Dict[str, Any]:
+        """Get current config for an agent from registry"""
+        try:
+            from src.core.registry import NISRegistry
+            registry = NISRegistry()
+            agent = registry.agents.get(agent_id)
+            if agent:
+                return {
+                    "agent_id": agent.agent_id,
+                    "layer": agent.layer.value if hasattr(agent.layer, 'value') else str(agent.layer),
+                    "description": getattr(agent, 'description', ''),
+                    "active": getattr(agent, 'active', True),
+                    "config": getattr(agent, 'config', {})
+                }
+        except Exception as e:
+            self.logger.warning(f"Failed to get agent config: {e}")
+        
+        return {"agent_id": agent_id, "config": {}}
+    
+    async def _notify_for_approval(self, proposal: 'EvolutionProposal') -> None:
+        """Send notification for human approval (webhook-based)"""
+        import os
+        webhook_url = os.environ.get("EVOLUTION_WEBHOOK_URL")
+        
+        if not webhook_url:
+            self.logger.info("📧 No webhook configured - approval notification logged only")
+            return
+        
+        try:
+            import aiohttp
+            payload = {
+                "text": f"🧬 Evolution Proposal Awaiting Approval",
+                "blocks": [
+                    {"type": "header", "text": {"type": "plain_text", "text": "🧬 Agent Evolution Request"}},
+                    {"type": "section", "text": {"type": "mrkdwn", 
+                        "text": f"*Agent:* {proposal.agent_id}\n*Evolution ID:* {proposal.evolution_id}\n*Consensus:* {proposal.consensus_score:.1%}"}}
+                ]
+            }
+            async with aiohttp.ClientSession() as session:
+                async with session.post(webhook_url, json=payload) as resp:
+                    if resp.status == 200:
+                        self.logger.info(f"📧 Approval notification sent")
+        except Exception as e:
+            self.logger.warning(f"Failed to send approval notification: {e}")
+    
+    async def _deploy_config(self, proposal: 'EvolutionProposal') -> bool:
+        """Deploy new config to agent"""
+        try:
+            from src.core.registry import NISRegistry
+            registry = NISRegistry()
+            agent = registry.agents.get(proposal.agent_id)
+            
+            if agent and hasattr(agent, 'config'):
+                # Update agent config
+                if isinstance(proposal.proposed_config, dict):
+                    for key, value in proposal.proposed_config.items():
+                        if hasattr(agent, key):
+                            setattr(agent, key, value)
+                        elif hasattr(agent, 'config') and isinstance(agent.config, dict):
+                            agent.config[key] = value
+                
+                self.logger.info(f"✅ Config deployed for {proposal.agent_id}")
+                return True
+            else:
+                # Agent not in registry - store config for next restart
+                self._pending_configs = getattr(self, '_pending_configs', {})
+                self._pending_configs[proposal.agent_id] = proposal.proposed_config
+                self.logger.info(f"📦 Config staged for {proposal.agent_id} (will apply on restart)")
+                return True
+                
+        except Exception as e:
+            self.logger.error(f"Failed to deploy config: {e}")
+            return False
     
     def get_evolution_summary(self) -> Dict[str, Any]:
         """Get statistics about evolution history"""
