@@ -6,7 +6,7 @@ import sys
 
 BASE_URL = "http://localhost:8007"
 
-def test_endpoint(method, path, data=None, expected_status=200, description=""):
+def check_endpoint(method, path, data=None, expected_status=200, description=""):
     print(f"\n🧪 Testing {description} ({path})...")
     url = f"{BASE_URL}{path}"
     try:
@@ -111,7 +111,7 @@ def run_tests():
 
     failures = 0
     for t in tests:
-        if not test_endpoint(t["method"], t["path"], t.get("data"), description=t["desc"]):
+        if not check_endpoint(t["method"], t["path"], t.get("data"), description=t["desc"]):
             failures += 1
 
     print(f"\n🏁 Tests Completed. Failures: {failures}")

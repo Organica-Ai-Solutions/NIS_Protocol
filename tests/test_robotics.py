@@ -4,6 +4,7 @@ import os
 import numpy as np
 import asyncio
 import logging
+import pytest
 
 # Add project root to path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -23,6 +24,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger("test_robotics")
 
+@pytest.mark.asyncio
 async def test_robotics():
     logger.info("🤖 STARTING ROBOTICS TESTS")
     
