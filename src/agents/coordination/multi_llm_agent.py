@@ -51,6 +51,11 @@ try:
     LANGSMITH_AVAILABLE = True
 except ImportError:
     LANGSMITH_AVAILABLE = False
+    # Fallback decorator that does nothing
+    def traceable(func=None, **kwargs):
+        if func is None:
+            return lambda f: f
+        return func
 
 from ...core.agent import NISAgent, NISLayer
 from ..hybrid_agent_core import CompleteScientificProcessingResult, CompleteHybridAgent
