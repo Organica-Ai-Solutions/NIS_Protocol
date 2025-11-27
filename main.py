@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-NIS Protocol v3.2.1 
-Real LLM Integration without Infrastructure Dependencies
-Using improved LLM integration pattern
+NIS Protocol v4.0
+Enterprise AI Operating System with 10-Phase Consciousness Pipeline
+Full Robotics Integration, Authentication, and Flutter Frontend Support
 
 Copyright 2025 Organica AI Solutions
 
@@ -5752,17 +5752,26 @@ Use this rich context to provide more insightful responses that build on previou
                 try:
                     tool_result = None
                     
-                    # Execute code in runner container
+                    # Execute code - try Docker runner first, fallback to local
                     if tool_name == "execute_code":
-                        async with aiohttp.ClientSession() as session:
-                            async with session.post(
-                                "http://nis-runner:8001/execute",
-                                json={
-                                    "code_content": tool_args["code"],
-                                    "programming_language": tool_args.get("language", "python")
-                                }
-                            ) as resp:
-                                tool_result = await resp.json()
+                        try:
+                            # Try Docker runner first
+                            async with aiohttp.ClientSession() as session:
+                                async with session.post(
+                                    "http://nis-runner:8001/execute",
+                                    json={
+                                        "code_content": tool_args["code"],
+                                        "programming_language": tool_args.get("language", "python")
+                                    },
+                                    timeout=aiohttp.ClientTimeout(total=5)
+                                ) as resp:
+                                    tool_result = await resp.json()
+                        except Exception as docker_err:
+                            # Fallback to local executor
+                            logger.info(f"Docker runner unavailable, using local executor: {docker_err}")
+                            from src.execution.code_executor import execute_code as local_exec
+                            exec_result = await local_exec(tool_args["code"])
+                            tool_result = exec_result.to_dict()
                     
                     # Check robotics status
                     elif tool_name == "check_robotics_status":
@@ -9968,10 +9977,10 @@ async def websocket_system_stream(websocket: WebSocket):
 # 🎨 MULTIMODAL VISION ENDPOINTS
 # ===========================================================================================
 
-@app.post("/vision/analyze", tags=["Vision"])
-async def analyze_image(request: Dict[str, Any]):
+@app.post("/vision/analyze/simple", tags=["Vision"])
+async def analyze_image_simple(request: Dict[str, Any]):
     """
-    🎨 Analyze Image using Multimodal Vision Agent
+    🎨 Analyze Image (Simple API) using Multimodal Vision Agent
     
     Performs comprehensive analysis of images using LLM vision capabilities (GPT-4V, Claude 3, Gemini).
     Features:
@@ -10077,3 +10086,984 @@ async def list_tools():
     except Exception as e:
         logger.error(f"Tool listing error: {e}")
         return {"error": str(e)}
+
+
+# ============================================================
+# 🔐 AUTHENTICATION & USER MANAGEMENT (V4.0)
+# ============================================================
+
+from src.security.user_management import user_manager
+
+@app.post("/auth/signup", tags=["Authentication"])
+async def auth_signup(request: Dict[str, Any]):
+    """
+    📝 Create new user account
+    """
+    email = request.get("email", "")
+    password = request.get("password", "")
+    name = request.get("name", "")
+    
+    if not email or not password or not name:
+        raise HTTPException(status_code=400, detail="Email, password, and name required")
+    
+    result = user_manager.signup(email, password, name)
+    if not result["success"]:
+        raise HTTPException(status_code=400, detail=result.get("error", "Signup failed"))
+    
+    return result
+
+@app.post("/auth/login", tags=["Authentication"])
+async def auth_login(request: Dict[str, Any]):
+    """
+    🔑 Authenticate user
+    """
+    email = request.get("email", "")
+    password = request.get("password", "")
+    
+    if not email or not password:
+        raise HTTPException(status_code=400, detail="Email and password required")
+    
+    result = user_manager.login(email, password)
+    if not result["success"]:
+        raise HTTPException(status_code=401, detail=result.get("error", "Login failed"))
+    
+    return result
+
+@app.post("/auth/logout", tags=["Authentication"])
+async def auth_logout(request: Dict[str, Any]):
+    """
+    🚪 Logout and invalidate token
+    """
+    token = request.get("token", "")
+    return user_manager.logout(token)
+
+@app.post("/auth/recover", tags=["Authentication"])
+async def auth_recover(request: Dict[str, Any]):
+    """
+    🔄 Initiate password recovery
+    """
+    email = request.get("email", "")
+    if not email:
+        raise HTTPException(status_code=400, detail="Email required")
+    
+    result = user_manager.recover_password(email)
+    return result
+
+@app.post("/auth/refresh", tags=["Authentication"])
+async def auth_refresh(request: Dict[str, Any]):
+    """
+    🔄 Refresh authentication token
+    """
+    token = request.get("token", "")
+    if not token:
+        raise HTTPException(status_code=400, detail="Token required")
+    
+    result = user_manager.refresh_token(token)
+    if not result["success"]:
+        raise HTTPException(status_code=401, detail=result.get("error", "Refresh failed"))
+    
+    return result
+
+@app.get("/auth/verify", tags=["Authentication"])
+async def auth_verify(token: str):
+    """
+    ✅ Verify token validity
+    """
+    user = user_manager.verify_token(token)
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+    return {"valid": True, "user": user}
+
+
+# ============================================================
+# 👤 USER MANAGEMENT (V4.0)
+# ============================================================
+
+@app.get("/users/profile", tags=["User Management"])
+async def get_user_profile(token: str):
+    """
+    👤 Get current user profile
+    """
+    user = user_manager.verify_token(token)
+    if not user:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    return user
+
+@app.put("/users/profile", tags=["User Management"])
+async def update_user_profile(request: Dict[str, Any]):
+    """
+    ✏️ Update user profile
+    """
+    token = request.get("token", "")
+    user = user_manager.verify_token(token)
+    if not user:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    
+    updates = {k: v for k, v in request.items() if k in ["name", "settings", "password"]}
+    result = user_manager.update_user(user["id"], updates)
+    return result
+
+@app.post("/users/api-keys", tags=["User Management"])
+async def create_api_key(request: Dict[str, Any]):
+    """
+    🔑 Create new API key
+    """
+    token = request.get("token", "")
+    name = request.get("name", "Unnamed Key")
+    
+    user = user_manager.verify_token(token)
+    if not user:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    
+    result = user_manager.create_api_key(user["id"], name)
+    return result
+
+@app.delete("/users/api-keys/{key_id}", tags=["User Management"])
+async def delete_api_key(key_id: str, token: str):
+    """
+    🗑️ Delete API key
+    """
+    user = user_manager.verify_token(token)
+    if not user:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    
+    result = user_manager.delete_api_key(user["id"], key_id)
+    return result
+
+@app.get("/users/usage", tags=["User Management"])
+async def get_user_usage(token: str):
+    """
+    📊 Get user usage statistics
+    """
+    user = user_manager.verify_token(token)
+    if not user:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    
+    return user_manager.get_usage(user["id"])
+
+
+# =============================================================================
+# COST TRACKING ENDPOINTS
+# =============================================================================
+
+from src.utils.cost_tracker import get_cost_tracker
+
+@app.get("/costs/session", tags=["Cost Tracking"])
+async def get_session_costs():
+    """
+    💰 Get current session cost summary
+    
+    Returns:
+        - Total requests and tokens
+        - Cost breakdown by provider
+        - Average latency
+    """
+    tracker = get_cost_tracker()
+    return {
+        "success": True,
+        "data": tracker.get_session_summary()
+    }
+
+
+@app.get("/costs/daily", tags=["Cost Tracking"])
+async def get_daily_costs(date: Optional[str] = None):
+    """
+    📅 Get daily cost summary
+    
+    Args:
+        date: Optional date in YYYY-MM-DD format (defaults to today)
+    """
+    from datetime import datetime
+    tracker = get_cost_tracker()
+    
+    if date:
+        try:
+            dt = datetime.strptime(date, "%Y-%m-%d")
+        except ValueError:
+            raise HTTPException(status_code=400, detail="Invalid date format. Use YYYY-MM-DD")
+    else:
+        dt = datetime.now()
+    
+    return {
+        "success": True,
+        "data": tracker.get_daily_summary(dt)
+    }
+
+
+@app.get("/costs/monthly", tags=["Cost Tracking"])
+async def get_monthly_costs(year: Optional[int] = None, month: Optional[int] = None):
+    """
+    📊 Get monthly cost summary
+    """
+    tracker = get_cost_tracker()
+    return {
+        "success": True,
+        "data": tracker.get_monthly_summary(year, month)
+    }
+
+
+@app.get("/costs/estimate", tags=["Cost Tracking"])
+async def estimate_monthly_costs():
+    """
+    🔮 Estimate monthly costs based on current usage
+    """
+    tracker = get_cost_tracker()
+    return {
+        "success": True,
+        "data": tracker.estimate_monthly_cost()
+    }
+
+
+# =============================================================================
+# MEMORY ENDPOINTS
+# =============================================================================
+
+from src.memory.persistent_memory import get_memory_system
+
+@app.post("/memory/store", tags=["Memory"])
+async def store_memory(request: Dict[str, Any]):
+    """
+    💾 Store a memory
+    
+    Args:
+        content: The content to remember
+        memory_type: "episodic", "semantic", or "procedural"
+        importance: 0-1 importance score
+    """
+    memory = get_memory_system()
+    
+    content = request.get("content")
+    if not content:
+        raise HTTPException(status_code=400, detail="Content required")
+    
+    memory_id = await memory.store(
+        content=content,
+        memory_type=request.get("memory_type", "episodic"),
+        importance=request.get("importance", 0.5),
+        metadata=request.get("metadata")
+    )
+    
+    return {
+        "success": True,
+        "memory_id": memory_id
+    }
+
+
+@app.post("/memory/retrieve", tags=["Memory"])
+async def retrieve_memories(request: Dict[str, Any]):
+    """
+    🔍 Retrieve relevant memories
+    
+    Args:
+        query: Search query
+        memory_type: Optional filter by type
+        top_k: Number of results (default 5)
+    """
+    memory = get_memory_system()
+    
+    query = request.get("query")
+    if not query:
+        raise HTTPException(status_code=400, detail="Query required")
+    
+    results = await memory.retrieve(
+        query=query,
+        memory_type=request.get("memory_type"),
+        top_k=request.get("top_k", 5)
+    )
+    
+    return {
+        "success": True,
+        "results": [
+            {
+                "content": r.entry.content,
+                "type": r.entry.memory_type,
+                "relevance": round(r.relevance_score, 3),
+                "importance": round(r.importance_score, 3),
+                "combined_score": round(r.combined_score, 3)
+            }
+            for r in results
+        ]
+    }
+
+
+@app.get("/memory/persistent/stats", tags=["Memory"])
+async def get_persistent_memory_stats():
+    """
+    📊 Get persistent memory system statistics
+    """
+    memory = get_memory_system()
+    return {
+        "success": True,
+        "data": memory.get_stats()
+    }
+
+
+@app.post("/memory/context", tags=["Memory"])
+async def get_memory_context(request: Dict[str, Any]):
+    """
+    🧠 Get relevant context for a query (for LLM augmentation)
+    """
+    memory = get_memory_system()
+    
+    query = request.get("query")
+    if not query:
+        raise HTTPException(status_code=400, detail="Query required")
+    
+    context = await memory.get_context_for_query(
+        query=query,
+        max_tokens=request.get("max_tokens", 1000)
+    )
+    
+    return {
+        "success": True,
+        "context": context,
+        "has_context": bool(context)
+    }
+
+
+# =============================================================================
+# RESPONSE CACHE ENDPOINTS
+# =============================================================================
+
+from src.utils.response_cache import get_response_cache
+
+@app.get("/cache/stats", tags=["Cache"])
+async def get_cache_stats():
+    """
+    📊 Get cache statistics
+    
+    Returns hit rate, tokens saved, cost saved
+    """
+    cache = get_response_cache()
+    return {
+        "success": True,
+        "data": cache.get_stats()
+    }
+
+
+@app.post("/cache/clear", tags=["Cache"])
+async def clear_cache():
+    """
+    🗑️ Clear all cached responses
+    """
+    cache = get_response_cache()
+    cache.clear()
+    return {
+        "success": True,
+        "message": "Cache cleared"
+    }
+
+
+# =============================================================================
+# PROMPT TEMPLATE ENDPOINTS
+# =============================================================================
+
+from src.utils.prompt_templates import get_template_manager, TemplateCategory
+
+@app.get("/templates", tags=["Templates"])
+async def list_templates(category: Optional[str] = None):
+    """
+    📋 List available prompt templates
+    
+    Args:
+        category: Optional filter by category (analysis, coding, writing, etc.)
+    """
+    manager = get_template_manager()
+    
+    if category:
+        try:
+            cat = TemplateCategory(category)
+            templates = [
+                {
+                    "id": t.id,
+                    "name": t.name,
+                    "description": t.description,
+                    "variables": t.variables
+                }
+                for t in manager.list_by_category(cat)
+            ]
+        except ValueError:
+            raise HTTPException(status_code=400, detail=f"Invalid category: {category}")
+    else:
+        templates = manager.list_all()
+    
+    return {
+        "success": True,
+        "templates": templates,
+        "categories": [c.value for c in TemplateCategory]
+    }
+
+
+@app.get("/templates/{template_id}", tags=["Templates"])
+async def get_template(template_id: str):
+    """
+    📄 Get a specific template with details
+    """
+    manager = get_template_manager()
+    template = manager.get(template_id)
+    
+    if not template:
+        raise HTTPException(status_code=404, detail=f"Template not found: {template_id}")
+    
+    return {
+        "success": True,
+        "template": {
+            "id": template.id,
+            "name": template.name,
+            "description": template.description,
+            "category": template.category.value,
+            "template": template.template,
+            "variables": template.variables,
+            "examples": template.examples,
+            "estimated_tokens": template.estimated_tokens
+        }
+    }
+
+
+@app.post("/templates/{template_id}/render", tags=["Templates"])
+async def render_template(template_id: str, request: Dict[str, Any]):
+    """
+    ✨ Render a template with variables
+    
+    Args:
+        template_id: The template to use
+        request body: Variable values (e.g., {"language": "python", "code": "..."})
+    """
+    manager = get_template_manager()
+    
+    try:
+        rendered = manager.render(template_id, **request)
+        return {
+            "success": True,
+            "prompt": rendered
+        }
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.post("/templates/search", tags=["Templates"])
+async def search_templates(request: Dict[str, Any]):
+    """
+    🔍 Search templates by keyword
+    """
+    query = request.get("query", "")
+    if not query:
+        raise HTTPException(status_code=400, detail="Query required")
+    
+    manager = get_template_manager()
+    results = manager.search(query)
+    
+    return {
+        "success": True,
+        "results": [
+            {
+                "id": t.id,
+                "name": t.name,
+                "description": t.description,
+                "category": t.category.value
+            }
+            for t in results
+        ]
+    }
+
+
+# ===========================================================================================
+# 🖥️ CODE EXECUTION ENDPOINTS - The Missing Piece for Autonomous Operation
+# ===========================================================================================
+
+from src.execution.code_executor import get_code_executor, execute_code as exec_code
+
+
+@app.post("/execute", tags=["Code Execution"])
+async def execute_code_endpoint(request: Dict[str, Any]):
+    """
+    🖥️ Execute Python code safely and return results
+    
+    This is the critical piece that enables:
+    - LLM generates code → Execute → See results → Iterate
+    - Generate plots with matplotlib
+    - Process data with pandas
+    - Create visualizations
+    - Autonomous task completion
+    
+    Returns stdout, plots (base64), dataframes, and any errors.
+    """
+    code = request.get("code") or request.get("code_content")
+    if not code:
+        raise HTTPException(status_code=400, detail="Code is required")
+    
+    timeout = request.get("timeout", 30)
+    
+    try:
+        result = await exec_code(code, timeout_seconds=timeout)
+        return {
+            "success": result.success,
+            "execution_id": result.execution_id,
+            "stdout": result.stdout,
+            "stderr": result.stderr,
+            "result": str(result.result) if result.result else None,
+            "plots": result.plots,  # List of {name, base64, type}
+            "dataframes": result.dataframes,  # List of {name, shape, preview}
+            "execution_time_ms": result.execution_time_ms,
+            "error": result.error
+        }
+    except Exception as e:
+        logger.error(f"Code execution error: {e}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+@app.post("/execute/plot", tags=["Code Execution"])
+async def execute_and_plot(request: Dict[str, Any]):
+    """
+    📊 Execute code that generates a matplotlib plot
+    
+    Convenience endpoint that wraps code in plot setup.
+    Just provide the plotting code, we handle plt.figure() and capture.
+    """
+    code = request.get("code", "")
+    title = request.get("title", "Generated Plot")
+    
+    # Wrap code with plot setup
+    wrapped_code = f'''
+import matplotlib.pyplot as plt
+import numpy as np
+
+plt.figure(figsize=(10, 6))
+{code}
+plt.title("{title}")
+plt.tight_layout()
+'''
+    
+    result = await exec_code(wrapped_code)
+    
+    if result.plots:
+        return {
+            "success": True,
+            "plot": result.plots[0],  # Return first plot
+            "execution_time_ms": result.execution_time_ms
+        }
+    else:
+        return {
+            "success": False,
+            "error": result.error or "No plot generated",
+            "stdout": result.stdout
+        }
+
+
+@app.post("/execute/analyze", tags=["Code Execution"])
+async def execute_data_analysis(request: Dict[str, Any]):
+    """
+    📈 Execute data analysis code with pandas
+    
+    Provide data and analysis code, get back results and visualizations.
+    """
+    data = request.get("data", {})
+    code = request.get("code", "")
+    
+    # Create DataFrame from data
+    setup_code = f'''
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Load provided data
+data = {json.dumps(data)}
+df = pd.DataFrame(data)
+
+# User analysis code
+{code}
+'''
+    
+    result = await exec_code(setup_code)
+    
+    return {
+        "success": result.success,
+        "stdout": result.stdout,
+        "plots": result.plots,
+        "dataframes": result.dataframes,
+        "error": result.error,
+        "execution_time_ms": result.execution_time_ms
+    }
+
+
+@app.get("/execute/{execution_id}", tags=["Code Execution"])
+async def get_execution_result(execution_id: str):
+    """
+    📋 Get results from a previous code execution
+    """
+    executor = get_code_executor()
+    result = executor.get_execution(execution_id)
+    
+    if not result:
+        raise HTTPException(status_code=404, detail="Execution not found")
+    
+    return result.to_dict()
+
+
+# ===========================================================================================
+# 🤖 AUTONOMOUS EXECUTION - The Complete Loop (LLM → Code → Execute → Iterate)
+# ===========================================================================================
+
+from src.execution.autonomous_loop import get_autonomous_executor, run_autonomous_task
+
+
+@app.post("/autonomous/run", tags=["Autonomous Execution"])
+async def run_autonomous_endpoint(request: Dict[str, Any]):
+    """
+    🤖 Run an autonomous task - the system will iterate until complete
+    
+    This is the GPT Code Interpreter / Claude Artifacts equivalent.
+    The LLM will:
+    1. Analyze the task
+    2. Generate code if needed
+    3. Execute the code
+    4. See the results (stdout, plots, errors)
+    5. Iterate until done or fix errors
+    
+    Returns task ID for tracking, or waits for completion if wait=true.
+    """
+    task_request = request.get("request") or request.get("task")
+    if not task_request:
+        raise HTTPException(status_code=400, detail="Request/task is required")
+    
+    wait_for_completion = request.get("wait", True)
+    max_iterations = request.get("max_iterations", 10)
+    
+    # Create LLM callback using our chat system
+    async def llm_callback(prompt: str) -> str:
+        try:
+            # Use the existing chat infrastructure
+            result = await llm_provider.chat(
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.7
+            )
+            return result.get("response", result.get("content", ""))
+        except Exception as e:
+            logger.error(f"LLM callback error: {e}")
+            return f"Error calling LLM: {e}"
+    
+    executor = get_autonomous_executor()
+    executor.max_iterations = max_iterations
+    
+    if wait_for_completion:
+        # Run and wait
+        task = await executor.execute_task(task_request, llm_callback)
+        return {
+            "success": task.status.value in ["completed", "max_iterations"],
+            "task": task.to_dict()
+        }
+    else:
+        # Start in background and return task ID
+        task_id = str(uuid.uuid4())[:8]
+        asyncio.create_task(executor.execute_task(task_request, llm_callback))
+        return {
+            "success": True,
+            "task_id": task_id,
+            "message": "Task started in background"
+        }
+
+
+@app.get("/autonomous/task/{task_id}", tags=["Autonomous Execution"])
+async def get_autonomous_task(task_id: str):
+    """
+    📋 Get status and results of an autonomous task
+    """
+    executor = get_autonomous_executor()
+    task = executor.get_task(task_id)
+    
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+    
+    return task.to_dict()
+
+
+@app.get("/autonomous/tasks", tags=["Autonomous Execution"])
+async def list_autonomous_tasks():
+    """
+    📋 List all autonomous tasks
+    """
+    executor = get_autonomous_executor()
+    return {
+        "tasks": executor.list_tasks()
+    }
+
+
+@app.post("/autonomous/quick", tags=["Autonomous Execution"])
+async def quick_autonomous_task(request: Dict[str, Any]):
+    """
+    ⚡ Quick autonomous task - single iteration for simple requests
+    
+    For simple tasks that just need one code execution.
+    Faster than full autonomous loop.
+    """
+    task_request = request.get("request") or request.get("task")
+    if not task_request:
+        raise HTTPException(status_code=400, detail="Request/task is required")
+    
+    # Generate code prompt
+    code_prompt = f"""Generate Python code to accomplish this task:
+{task_request}
+
+Return ONLY the Python code, no explanations. The code should:
+- Use numpy, pandas, matplotlib as needed
+- Print results to stdout
+- Create plots if visualization is needed
+- Be complete and runnable
+
+```python
+"""
+    
+    try:
+        # Get code from LLM
+        result = await llm_provider.chat(
+            messages=[{"role": "user", "content": code_prompt}],
+            temperature=0.3
+        )
+        
+        response = result.get("response", result.get("content", ""))
+        
+        # Extract code
+        if "```python" in response:
+            start = response.find("```python") + 9
+            end = response.find("```", start)
+            code = response[start:end].strip() if end > start else response
+        elif "```" in response:
+            start = response.find("```") + 3
+            end = response.find("```", start)
+            code = response[start:end].strip() if end > start else response
+        else:
+            code = response.strip()
+        
+        # Execute
+        exec_result = await exec_code(code)
+        
+        return {
+            "success": exec_result.success,
+            "code": code,
+            "stdout": exec_result.stdout,
+            "plots": exec_result.plots,
+            "dataframes": exec_result.dataframes,
+            "error": exec_result.error,
+            "execution_time_ms": exec_result.execution_time_ms
+        }
+        
+    except Exception as e:
+        logger.error(f"Quick autonomous task error: {e}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+# ===========================================================================================
+# 🔗 UNIFIED PIPELINE - The Integration Layer That Connects Everything
+# ===========================================================================================
+
+from src.core.unified_pipeline import get_unified_pipeline, PipelineMode
+
+
+@app.post("/unified/chat", tags=["Unified Pipeline"])
+async def unified_chat_endpoint(request: Dict[str, Any]):
+    """
+    🔗 Unified Chat - The fully integrated pipeline
+    
+    This endpoint connects ALL NIS Protocol components:
+    - Memory (retrieves relevant context)
+    - Cache (avoids redundant calls)
+    - LLM (generates response)
+    - Code Execution (runs code if needed)
+    - Cost Tracking (records usage)
+    - Vision (multi-modal image analysis)
+    - Proactive Suggestions
+    
+    Modes:
+    - fast: Skip memory/consciousness, use cache
+    - standard: Full pipeline with all checks
+    - autonomous: Enable code execution
+    - research: Deep research mode
+    
+    Multi-Modal:
+    - image_base64: Base64 encoded image for vision analysis
+    - file_path: Path to file for processing
+    
+    Options:
+    - generate_suggestions: true/false (default: true)
+    """
+    message = request.get("message")
+    if not message:
+        raise HTTPException(status_code=400, detail="Message is required")
+    
+    user_id = request.get("user_id", "default")
+    conversation_id = request.get("conversation_id")
+    mode_str = request.get("mode", "standard")
+    provider = request.get("provider", "anthropic")
+    
+    # Multi-modal inputs
+    image_base64 = request.get("image_base64")
+    file_path = request.get("file_path")
+    generate_suggestions = request.get("generate_suggestions", True)
+    
+    # Parse mode
+    mode_map = {
+        "fast": PipelineMode.FAST,
+        "standard": PipelineMode.STANDARD,
+        "autonomous": PipelineMode.AUTONOMOUS,
+        "research": PipelineMode.RESEARCH
+    }
+    mode = mode_map.get(mode_str, PipelineMode.STANDARD)
+    
+    # Create LLM callback
+    async def llm_callback(prompt: str) -> str:
+        try:
+            result = await llm_provider.chat(
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.7
+            )
+            return result.get("response", result.get("content", ""))
+        except Exception as e:
+            logger.error(f"LLM error: {e}")
+            return f"Error: {e}"
+    
+    pipeline = get_unified_pipeline()
+    result = await pipeline.process(
+        message=message,
+        user_id=user_id,
+        conversation_id=conversation_id,
+        mode=mode,
+        llm_callback=llm_callback,
+        provider=provider,
+        image_base64=image_base64,
+        file_path=file_path,
+        generate_suggestions=generate_suggestions
+    )
+    
+    return result.to_dict()
+
+
+@app.get("/unified/status", tags=["Unified Pipeline"])
+async def unified_status():
+    """
+    📊 Get unified pipeline status - shows all connected components
+    """
+    pipeline = get_unified_pipeline()
+    await pipeline.initialize()
+    return {
+        "status": "operational",
+        "pipeline": pipeline.get_status()
+    }
+
+
+@app.post("/unified/autonomous", tags=["Unified Pipeline"])
+async def unified_autonomous_endpoint(request: Dict[str, Any]):
+    """
+    🤖 Unified Autonomous Mode - Full power
+    
+    Combines:
+    - Memory context
+    - LLM reasoning
+    - Code execution
+    - Iterative refinement
+    - Cost tracking
+    """
+    message = request.get("message") or request.get("task")
+    if not message:
+        raise HTTPException(status_code=400, detail="Message/task is required")
+    
+    max_iterations = request.get("max_iterations", 5)
+    
+    async def llm_callback(prompt: str) -> str:
+        try:
+            result = await llm_provider.chat(
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.7
+            )
+            return result.get("response", result.get("content", ""))
+        except Exception as e:
+            return f"Error: {e}"
+    
+    from src.execution.autonomous_loop import get_autonomous_executor
+    
+    executor = get_autonomous_executor()
+    executor.max_iterations = max_iterations
+    
+    pipeline = get_unified_pipeline()
+    await pipeline.initialize()
+    
+    async def enhanced_callback(prompt: str) -> str:
+        memory_context = ""
+        if pipeline._memory:
+            try:
+                memory_context = await pipeline._memory.get_context_for_query(message, max_tokens=300)
+            except:
+                pass
+        
+        if memory_context:
+            enhanced_prompt = f"**Relevant Memory:**\n{memory_context}\n\n{prompt}"
+        else:
+            enhanced_prompt = prompt
+        
+        return await llm_callback(enhanced_prompt)
+    
+    task = await executor.execute_task(message, enhanced_callback)
+    
+    return {
+        "success": task.status.value in ["completed", "max_iterations"],
+        "task": task.to_dict(),
+        "artifacts": task.artifacts
+    }
+
+
+@app.get("/system/integration", tags=["System"])
+async def system_integration_status():
+    """
+    📊 Complete system integration status - shows all connected components
+    """
+    pipeline = get_unified_pipeline()
+    await pipeline.initialize()
+    
+    components = {}
+    
+    if pipeline._memory:
+        components["memory"] = {"status": "connected", "stats": pipeline._memory.get_stats()}
+    else:
+        components["memory"] = {"status": "disconnected"}
+    
+    if pipeline._cache:
+        components["cache"] = {"status": "connected", "stats": pipeline._cache.get_stats()}
+    else:
+        components["cache"] = {"status": "disconnected"}
+    
+    if pipeline._cost_tracker:
+        components["cost_tracker"] = {"status": "connected"}
+    else:
+        components["cost_tracker"] = {"status": "disconnected"}
+    
+    if pipeline._code_executor:
+        components["code_executor"] = {"status": "connected", "executions": len(pipeline._code_executor.executions)}
+    else:
+        components["code_executor"] = {"status": "disconnected"}
+    
+    if pipeline._template_manager:
+        components["templates"] = {"status": "connected", "count": len(pipeline._template_manager.list_all())}
+    else:
+        components["templates"] = {"status": "disconnected"}
+    
+    connected = sum(1 for c in components.values() if c.get("status") == "connected")
+    
+    return {
+        "status": "integrated",
+        "connected_components": f"{connected}/{len(components)}",
+        "components": components,
+        "data_flow": [
+            "1. User Message → Memory Context",
+            "2. Cache Check",
+            "3. LLM Processing",
+            "4. Code Execution (autonomous)",
+            "5. Cost Tracking",
+            "6. Memory Storage",
+            "7. Response + Artifacts"
+        ]
+    }
