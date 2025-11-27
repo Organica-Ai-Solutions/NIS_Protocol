@@ -10736,8 +10736,9 @@ async def run_autonomous_endpoint(request: Dict[str, Any]):
     async def llm_callback(prompt: str) -> str:
         try:
             # Use the existing chat infrastructure
-            result = await llm_provider.chat(
-                messages=[{"role": "user", "content": prompt}],
+            result = await llm_provider.generate_response(
+                messages=prompt,
+                requested_provider="anthropic",
                 temperature=0.7
             )
             return result.get("response", result.get("content", ""))
@@ -10818,8 +10819,9 @@ Return ONLY the Python code, no explanations. The code should:
     
     try:
         # Get code from LLM
-        result = await llm_provider.chat(
-            messages=[{"role": "user", "content": code_prompt}],
+        result = await llm_provider.generate_response(
+            messages=code_prompt,
+            requested_provider="anthropic",
             temperature=0.3
         )
         
@@ -10918,8 +10920,9 @@ async def unified_chat_endpoint(request: Dict[str, Any]):
     # Create LLM callback
     async def llm_callback(prompt: str) -> str:
         try:
-            result = await llm_provider.chat(
-                messages=[{"role": "user", "content": prompt}],
+            result = await llm_provider.generate_response(
+                messages=prompt,
+                requested_provider=provider,
                 temperature=0.7
             )
             return result.get("response", result.get("content", ""))
@@ -10976,8 +10979,9 @@ async def unified_autonomous_endpoint(request: Dict[str, Any]):
     
     async def llm_callback(prompt: str) -> str:
         try:
-            result = await llm_provider.chat(
-                messages=[{"role": "user", "content": prompt}],
+            result = await llm_provider.generate_response(
+                messages=prompt,
+                requested_provider="anthropic",
                 temperature=0.7
             )
             return result.get("response", result.get("content", ""))
