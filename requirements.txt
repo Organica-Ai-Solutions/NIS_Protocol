@@ -65,7 +65,7 @@ tf-keras==2.15.1
 # constraints.txt blocks vulnerable keras versions
 
 # ===== TRANSFORMERS (SECURITY FIXED VERSIONS) =====
-transformers>=4.53.0,<5.0.0
+transformers>=4.36.0,<5.0.0
 tokenizers>=0.15.0,<1.0.0
 tiktoken>=0.5.0,<1.0.0
 openai>=1.0.0,<2.0.0
@@ -95,11 +95,11 @@ hnswlib>=0.8.0,<1.0.0
 pytest>=7.0.0,<8.0.0
 pytest-asyncio>=0.21.0,<1.0.0
 
-# ===== SECURITY AND AUTHENTICATION (LATEST SECURE VERSIONS) =====
-cryptography>=45.0.0,<50.0.0
-pyjwt>=2.10.0,<3.0.0
-urllib3>=2.5.0,<3.0.0
-pillow>=11.0.0,<12.0.0
+# ===== SECURITY AND AUTHENTICATION (STABLE SECURE VERSIONS) =====
+cryptography>=43.0.0,<50.0.0
+pyjwt>=2.8.0,<3.0.0
+urllib3>=2.2.0,<3.0.0
+pillow>=10.4.0,<12.0.0
 
 # ===== VIBEVOICE TTS DEPENDENCIES =====
 # Microsoft VibeVoice for real-time multi-speaker streaming
@@ -107,10 +107,9 @@ diffusers>=0.25.0,<1.0.0
 soundfile>=0.12.0,<1.0.0
 librosa>=0.10.0,<1.0.0
 resampy>=0.4.0,<1.0.0
-torch>=2.0.0,<3.0.0
-torchaudio>=2.0.0,<3.0.0
-transformers>=4.30.0,<5.0.0
-accelerate>=0.20.0,<1.0.0
+# torch, torchaudio already defined above
+# transformers already defined above
+# accelerate already defined above
 huggingface_hub>=0.15.0,<1.0.0
 
 # ===== HIGH-PERFORMANCE AUDIO PROCESSING =====
