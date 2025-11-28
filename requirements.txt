@@ -14,16 +14,16 @@
 # INSTALL COMMAND: pip install -r requirements.txt -c constraints.txt
 
 # ===== CORE WEB FRAMEWORK (LATEST SECURE VERSIONS) =====
-fastapi>=0.116.0,<0.120.0
-uvicorn[standard]>=0.29.0,<0.35.0
-starlette>=0.47.2,<1.0.0
-pydantic>=2.9.0,<3.0.0
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+starlette>=0.36.0
+pydantic>=2.5.0,<3.0.0
 
 # ===== BASIC UTILITIES =====
 python-dotenv>=1.0.0
-requests>=2.32.0,<3.0.0
-aiohttp>=3.11.14,<4.0.0
-httpx>=0.28.0,<0.29.0
+requests>=2.31.0,<3.0.0
+aiohttp>=3.9.0,<4.0.0
+httpx>=0.26.0
 aiofiles>=23.0.0
 click>=8.0.0
 python-dateutil>=2.8.0
@@ -70,11 +70,11 @@ tokenizers>=0.15.0,<1.0.0
 tiktoken>=0.5.0,<1.0.0
 openai>=1.0.0,<2.0.0
 
-# ===== LANGCHAIN ECOSYSTEM (SECURITY UPDATED) =====
-langchain>=0.3.0,<1.0.0
-langchain-core>=0.3.0,<1.0.0
-langgraph>=0.6.0,<1.0.0
-langsmith>=0.4.0,<1.0.0
+# ===== LANGCHAIN ECOSYSTEM =====
+langchain>=0.2.0
+langchain-core>=0.2.0
+langgraph>=0.2.0
+langsmith>=0.1.0
 
 # ===== NVIDIA PACKAGES =====
 nvidia-ml-py3>=7.352.0,<8.0.0
@@ -114,15 +114,15 @@ huggingface_hub>=0.15.0,<1.0.0
 
 # ===== HIGH-PERFORMANCE AUDIO PROCESSING =====
 # Faster-whisper for optimized STT with <500ms latency
-faster-whisper>=1.2.0,<2.0.0
-ctranslate2>=4.6.0,<5.0.0
+faster-whisper>=1.0.0,<2.0.0
+ctranslate2>=4.0.0,<5.0.0
 pydub>=0.25.0,<1.0.0
 
 # ===== ADDITIONAL UTILITIES =====
 msgpack>=1.0.0,<2.0.0
 orjson>=3.8.0,<4.0.0
 structlog>=23.0.0,<24.0.0
-websockets>=15.0.0,<16.0.0
+websockets>=12.0,<16.0.0
 
 # ===== PRODUCTION ENHANCEMENTS =====
 # Real mathematical implementations for production NIS Pipeline
