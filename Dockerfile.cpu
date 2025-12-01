@@ -40,12 +40,28 @@ RUN pip install --no-cache-dir --upgrade pip && \
 #     pip install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
 
 # Optional: Add core voice & TTS/STT modules (if needed)
+# Core dependencies that must be installed even if requirements.txt has issues
 RUN pip install --no-cache-dir \
-    openai-whisper soundfile librosa ffmpeg-python \
-    gtts transformers scipy encodec nltk einops boto3
+    uvicorn[standard] fastapi pydub aiohttp \
+    openai anthropic redis kafka-python \
+    langchain langchain-core langgraph langsmith \
+    httpx pydantic python-multipart aiofiles \
+    openai-whisper faster-whisper ctranslate2 \
+    soundfile librosa ffmpeg-python \
+    gtts transformers scipy encodec nltk einops boto3 \
+    pillow opencv-python-headless ultralytics \
+    hnswlib chromadb sentence-transformers \
+    google-generativeai tiktoken tenacity peft \
+    pyaudio webrtcvad SpeechRecognition \
+    prometheus-client
 
 # Copy project source
 COPY --chown=nisuser:nisuser . .
+
+# Create directories as root (before switching user) and set ownership
+RUN mkdir -p logs static cache models data/chat_memory && \
+    chown -R nisuser:nisuser logs static cache models data && \
+    chmod +x *.sh 2>/dev/null || true
 
 # Switch to non-root user
 USER nisuser
@@ -55,19 +71,17 @@ ENV PATH="/home/nisuser/.local/bin:${PATH}"
 ENV PYTHONPATH="/home/nisuser/app:${PYTHONPATH}"
 ENV PYTHONUNBUFFERED=1
 
-# Prepare directories
-RUN mkdir -p logs static cache models data/chat_memory && \
-    chmod +x *.sh 2>/dev/null || true
-
 # ---------------- CPU-Specific Environment ----------------
 # Disable GPU features
 ENV CUDA_VISIBLE_DEVICES=""
 ENV NVIDIA_NIM_ENABLED=false
 ENV BITNET_TRAINING_ENABLED=false
 
-# CPU optimization flags
-ENV OMP_NUM_THREADS=4
-ENV MKL_NUM_THREADS=4
+# CPU optimization flags (set to 1 to avoid deadlocks during model loading)
+ENV OMP_NUM_THREADS=1
+ENV MKL_NUM_THREADS=1
+ENV TOKENIZERS_PARALLELISM=false
+ENV SAFETENSORS_FAST_GPU=0
 
 # ---------------- Healthcheck ----------------
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
@@ -78,7 +92,7 @@ EXPOSE 8000
 
 # ---------------- Entrypoint ----------------
 # Note: Using 1 worker for simpler debugging on Mac
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1", "--reload"]
+CMD ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1"]
 
 # ---------------- Local Testing ----------------
 # Build and run locally:

@@ -19,6 +19,7 @@ class NISLayer(Enum):
     ACTION = "action"
     LEARNING = "learning"
     COORDINATION = "coordination"
+    CONSCIOUSNESS = "consciousness"
 
 
 class NISAgent:

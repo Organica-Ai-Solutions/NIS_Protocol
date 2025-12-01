@@ -104,12 +104,25 @@ class UnifiedRoboticsAgent(NISAgent):
         self,
         agent_id: str = "unified_robotics",
         description: str = "Physics-validated robotics control agent",
-        enable_physics_validation: bool = True
+        enable_physics_validation: bool = True,
+        enable_redundancy: bool = True
     ):
         super().__init__(agent_id)
         self.description = description
         self.layer = NISLayer.REASONING
         self.logger = logging.getLogger(f"nis.{agent_id}")
+        
+        # NASA-GRADE REDUNDANCY SYSTEM (Integrated at robotics layer)
+        self.enable_redundancy = enable_redundancy
+        self.redundancy_manager = None
+        if enable_redundancy:
+            try:
+                from ...services.redundancy_manager import RedundancyManager
+                self.redundancy_manager = RedundancyManager()
+                self.logger.info("🛰️ NASA-grade redundancy enabled")
+            except ImportError:
+                self.logger.warning("⚠️ Redundancy manager not available")
+                self.enable_redundancy = False
         
         # Memory for robot states and trajectories (simplified)
         self.memory = {
@@ -166,7 +179,7 @@ class UnifiedRoboticsAgent(NISAgent):
             'physics_violations': 0
         }
         
-        self.logger.info(f"Initialized Unified Robotics Agent (Physics: {enable_physics_validation})")
+        self.logger.info(f"Initialized Unified Robotics Agent (Physics: {enable_physics_validation}, Redundancy: {enable_redundancy})")
     
     # ========================================================================
     # FORWARD KINEMATICS
@@ -617,7 +630,7 @@ class UnifiedRoboticsAgent(NISAgent):
             
             # Physics validation
             if self.enable_physics_validation:
-                validation = self._validate_trajectory(trajectory, constraints)
+                validation = self._validate_trajectory(trajectory, constraints, robot_type)
                 valid = validation['valid']
                 warnings = validation.get('warnings', [])
             else:
@@ -721,7 +734,8 @@ class UnifiedRoboticsAgent(NISAgent):
     def _validate_trajectory(
         self,
         trajectory: List[TrajectoryPoint],
-        constraints: PhysicsConstraints
+        constraints: PhysicsConstraints,
+        robot_type: RobotType = RobotType.MANIPULATOR
     ) -> Dict[str, Any]:
         """Validate entire trajectory against physics constraints"""
         
@@ -744,7 +758,24 @@ class UnifiedRoboticsAgent(NISAgent):
                 if violations <= 3:  # Log first few
                     warnings.append(f"Acceleration limit exceeded at t={point.time:.2f}s: "
                                   f"{acc_mag:.2f} > {constraints.max_acceleration} m/s²")
-        
+            
+            # Dynamics Check (Force/Torque)
+            if robot_type == RobotType.DRONE:
+                # Calculate required thrust: F = m(a + g)
+                # Assuming Z-up, gravity is [0, 0, 9.81]
+                gravity_vec = np.array([0, 0, constraints.gravity])
+                required_force = constraints.mass * (point.acceleration + gravity_vec)
+                thrust_mag = np.linalg.norm(required_force)
+                
+                # 20% margin for control authority
+                max_allowed_thrust = constraints.max_force * 0.8
+                
+                if thrust_mag > max_allowed_thrust:
+                    violations += 1
+                    if violations <= 3:
+                        warnings.append(f"Thrust limit exceeded at t={point.time:.2f}s: "
+                                      f"{thrust_mag:.2f} > {max_allowed_thrust:.2f} N (Max: {constraints.max_force} N)")
+
         valid = violations == 0
         
         if not valid:

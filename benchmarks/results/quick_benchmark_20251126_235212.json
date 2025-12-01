@@ -1,0 +1,87 @@
+{
+  "timestamp": "2025-11-26 23:52:12",
+  "results": [
+    {
+      "id": "CODE_1",
+      "category": "code",
+      "passed": true,
+      "latency_ms": 6163.861036300659,
+      "details": "OK"
+    },
+    {
+      "id": "CODE_2",
+      "category": "code",
+      "passed": true,
+      "latency_ms": 6649.502992630005,
+      "details": "OK"
+    },
+    {
+      "id": "CODE_3",
+      "category": "code",
+      "passed": true,
+      "latency_ms": 6140.653133392334,
+      "details": "OK"
+    },
+    {
+      "id": "MATH_1",
+      "category": "math",
+      "passed": true,
+      "latency_ms": 4517.3492431640625,
+      "details": "expected=120, got=120.0"
+    },
+    {
+      "id": "MATH_2",
+      "category": "math",
+      "passed": true,
+      "latency_ms": 4293.11990737915,
+      "details": "expected=150, got=150.0"
+    },
+    {
+      "id": "MATH_3",
+      "category": "math",
+      "passed": true,
+      "latency_ms": 4277.535200119019,
+      "details": "expected=20, got=20.0"
+    },
+    {
+      "id": "PHYS_1",
+      "category": "physics",
+      "passed": true,
+      "latency_ms": 5848.007917404175,
+      "details": "expected=15\u00b11, got=15.0"
+    },
+    {
+      "id": "PHYS_2",
+      "category": "physics",
+      "passed": true,
+      "latency_ms": 5751.429080963135,
+      "details": "expected=16\u00b11, got=16.0"
+    },
+    {
+      "id": "LAT_1",
+      "category": "latency",
+      "passed": true,
+      "latency_ms": 4104.286193847656,
+      "details": "4104ms"
+    },
+    {
+      "id": "LAT_2",
+      "category": "latency",
+      "passed": true,
+      "latency_ms": 4349.207878112793,
+      "details": "4349ms"
+    },
+    {
+      "id": "LAT_3",
+      "category": "latency",
+      "passed": true,
+      "latency_ms": 4010.309934616089,
+      "details": "4010ms"
+    }
+  ],
+  "summary": {
+    "total": 11,
+    "passed": 11,
+    "avg_latency_ms": 5100.478410720825
+  }
+}

@@ -55,6 +55,15 @@ class QueryRouter:
     def __init__(self):
         self.logger = logger
         
+        # Stats tracking
+        self._stats = {
+            "total_queries": 0,
+            "fast_path_usage": 0,
+            "standard_path_usage": 0,
+            "full_path_usage": 0,
+            "by_type": {t.value: 0 for t in QueryType}
+        }
+        
         # Pattern recognition for query types
         self.patterns = {
             QueryType.SIMPLE_CHAT: [
@@ -140,6 +149,16 @@ class QueryRouter:
             f"🎯 Query Router: type={query_type.value}, "
             f"complexity={complexity}, path={path.value}"
         )
+        
+        # Track stats
+        self._stats["total_queries"] += 1
+        self._stats["by_type"][query_type.value] += 1
+        if path == ProcessingPath.FAST:
+            self._stats["fast_path_usage"] += 1
+        elif path == ProcessingPath.STANDARD:
+            self._stats["standard_path_usage"] += 1
+        else:
+            self._stats["full_path_usage"] += 1
         
         return {
             "query_type": query_type.value,
@@ -299,12 +318,16 @@ class QueryRouter:
     
     def get_performance_stats(self) -> Dict[str, Any]:
         """Get routing performance statistics"""
-        # TODO: Implement stats tracking
+        total = self._stats["total_queries"] or 1  # Avoid division by zero
         return {
-            "total_queries": 0,
-            "fast_path_usage": 0,
-            "standard_path_usage": 0,
-            "full_path_usage": 0
+            "total_queries": self._stats["total_queries"],
+            "fast_path_usage": self._stats["fast_path_usage"],
+            "fast_path_pct": round(self._stats["fast_path_usage"] / total * 100, 1),
+            "standard_path_usage": self._stats["standard_path_usage"],
+            "standard_path_pct": round(self._stats["standard_path_usage"] / total * 100, 1),
+            "full_path_usage": self._stats["full_path_usage"],
+            "full_path_pct": round(self._stats["full_path_usage"] / total * 100, 1),
+            "by_query_type": self._stats["by_type"]
         }
 
 

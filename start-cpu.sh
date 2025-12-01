@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ==============================================================================
-# NIS Protocol v3.2.6 - CPU-Only Quick Start Script (Mac/Linux)
+# NIS Protocol v3.2.5 - CPU-Only Quick Start Script (Mac/Linux)
 # Fast startup without GPU requirements
 # ==============================================================================
 
@@ -37,7 +37,7 @@ print_error() {
 
 clear
 echo -e "${BLUE}╔══════════════════════════════════════════════════════════╗${NC}"
-echo -e "${BLUE}║  NIS Protocol v3.2.6 - CPU Mode (Mac/Linux Testing)     ║${NC}"
+echo -e "${BLUE}║  NIS Protocol v3.2.5 - CPU Mode (Mac/Linux Testing)     ║${NC}"
 echo -e "${BLUE}╚══════════════════════════════════════════════════════════╝${NC}"
 echo ""
 

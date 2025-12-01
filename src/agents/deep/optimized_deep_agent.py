@@ -663,10 +663,30 @@ class OptimizedDeepAgent:
     
     def _pattern_matches_context(self, pattern: Dict[str, Any], context: Dict[str, Any]) -> bool:
         """Check if a learned pattern matches the current context"""
+        if not pattern or not context:
+            return False
         
-        # Simple matching based on skill types and context similarity
-        # In production, this would be more sophisticated
-        return True  # Placeholder
+        # Check skill type match
+        pattern_skills = set(pattern.get("skill_types", []))
+        context_skills = set(context.get("required_skills", []))
+        if pattern_skills and context_skills and not pattern_skills.intersection(context_skills):
+            return False
+        
+        # Check context similarity via key overlap
+        pattern_keys = set(pattern.get("context_keys", []))
+        context_keys = set(context.keys())
+        if pattern_keys:
+            overlap = len(pattern_keys.intersection(context_keys)) / len(pattern_keys)
+            if overlap < 0.5:
+                return False
+        
+        # Check complexity range
+        pattern_complexity = pattern.get("complexity_range", (0, 1))
+        context_complexity = context.get("complexity", 0.5)
+        if not (pattern_complexity[0] <= context_complexity <= pattern_complexity[1]):
+            return False
+        
+        return True
     
     def _apply_pattern_optimization(self, plan: ExecutionPlan, pattern: Dict[str, Any]) -> ExecutionPlan:
         """Apply learned optimization pattern to plan"""

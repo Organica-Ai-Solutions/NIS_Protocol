@@ -31,39 +31,10 @@ import json
 import asyncio
 
 # Import DRL foundation
-# from src.agents/learning.drl_foundation import (
-#     DRLPolicyNetwork, DRLEnvironment, DRLAgent, RewardSignal,
-#     DRLMetrics, TrainingConfig, ExperienceBuffer
-# )
-
-# Temporary placeholder classes for DRL functionality
-class DRLPolicyNetwork:
-    def __init__(self):
-        pass
-
-class DRLEnvironment:
-    def __init__(self):
-        pass
-
-class DRLAgent:
-    def __init__(self):
-        pass
-
-class RewardSignal:
-    def __init__(self):
-        pass
-
-class DRLMetrics:
-    def __init__(self):
-        pass
-
-class TrainingConfig:
-    def __init__(self):
-        pass
-
-class ExperienceBuffer:
-    def __init__(self):
-        pass
+from src.agents.learning.drl_foundation import (
+    DRLPolicyNetwork, DRLEnvironment, DRLAgent, RewardSignal,
+    DRLMetrics, TrainingConfig, ExperienceBuffer
+)
 
 # Import existing router infrastructure
 from src.agents.agent_router import (

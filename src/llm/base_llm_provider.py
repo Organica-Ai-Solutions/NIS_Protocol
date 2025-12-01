@@ -58,6 +58,15 @@ class LLMMessage:
         )
 
 
+@dataclass
+class LLMResponse:
+    """Standardized LLM response"""
+    content: str
+    model: str
+    provider: str
+    usage: Optional[Dict[str, int]] = None
+    metadata: Optional[Dict[str, Any]] = None
+
 class BaseLLMProvider:
     """
     Base class for LLM providers in NIS Protocol

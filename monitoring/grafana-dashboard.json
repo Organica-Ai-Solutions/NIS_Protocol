@@ -1,0 +1,164 @@
+{
+  "dashboard": {
+    "title": "NIS Protocol Dashboard",
+    "uid": "nis-protocol",
+    "tags": ["nis", "ai", "llm"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "title": "Request Rate",
+        "type": "stat",
+        "gridPos": {"x": 0, "y": 0, "w": 6, "h": 4},
+        "targets": [
+          {
+            "expr": "sum(rate(nis_requests_total[5m]))",
+            "legendFormat": "Requests/sec"
+          }
+        ]
+      },
+      {
+        "title": "LLM Requests by Provider",
+        "type": "piechart",
+        "gridPos": {"x": 6, "y": 0, "w": 6, "h": 4},
+        "targets": [
+          {
+            "expr": "sum by (provider) (nis_llm_requests_total)",
+            "legendFormat": "{{provider}}"
+          }
+        ]
+      },
+      {
+        "title": "Response Latency (p95)",
+        "type": "gauge",
+        "gridPos": {"x": 12, "y": 0, "w": 6, "h": 4},
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(nis_request_latency_seconds_bucket[5m]))",
+            "legendFormat": "p95 Latency"
+          }
+        ]
+      },
+      {
+        "title": "Error Rate",
+        "type": "stat",
+        "gridPos": {"x": 18, "y": 0, "w": 6, "h": 4},
+        "targets": [
+          {
+            "expr": "sum(rate(nis_errors_total[5m]))",
+            "legendFormat": "Errors/sec"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {"mode": "thresholds"},
+            "thresholds": {
+              "steps": [
+                {"color": "green", "value": 0},
+                {"color": "yellow", "value": 0.1},
+                {"color": "red", "value": 1}
+              ]
+            }
+          }
+        }
+      },
+      {
+        "title": "Request Latency Over Time",
+        "type": "timeseries",
+        "gridPos": {"x": 0, "y": 4, "w": 12, "h": 6},
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.50, rate(nis_request_latency_seconds_bucket[5m]))",
+            "legendFormat": "p50"
+          },
+          {
+            "expr": "histogram_quantile(0.95, rate(nis_request_latency_seconds_bucket[5m]))",
+            "legendFormat": "p95"
+          },
+          {
+            "expr": "histogram_quantile(0.99, rate(nis_request_latency_seconds_bucket[5m]))",
+            "legendFormat": "p99"
+          }
+        ]
+      },
+      {
+        "title": "LLM Provider Success Rate",
+        "type": "timeseries",
+        "gridPos": {"x": 12, "y": 4, "w": 12, "h": 6},
+        "targets": [
+          {
+            "expr": "sum by (provider) (rate(nis_llm_requests_total{success='True'}[5m])) / sum by (provider) (rate(nis_llm_requests_total[5m])) * 100",
+            "legendFormat": "{{provider}}"
+          }
+        ]
+      },
+      {
+        "title": "Consciousness Level",
+        "type": "gauge",
+        "gridPos": {"x": 0, "y": 10, "w": 6, "h": 4},
+        "targets": [
+          {
+            "expr": "nis_consciousness_level",
+            "legendFormat": "Level"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "min": 0,
+            "max": 1,
+            "thresholds": {
+              "steps": [
+                {"color": "red", "value": 0},
+                {"color": "yellow", "value": 0.5},
+                {"color": "green", "value": 0.8}
+              ]
+            }
+          }
+        }
+      },
+      {
+        "title": "Ethics Score",
+        "type": "gauge",
+        "gridPos": {"x": 6, "y": 10, "w": 6, "h": 4},
+        "targets": [
+          {
+            "expr": "nis_ethics_score",
+            "legendFormat": "Score"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "min": 0,
+            "max": 1
+          }
+        }
+      },
+      {
+        "title": "Active Conversations",
+        "type": "stat",
+        "gridPos": {"x": 12, "y": 10, "w": 6, "h": 4},
+        "targets": [
+          {
+            "expr": "nis_active_conversations",
+            "legendFormat": "Active"
+          }
+        ]
+      },
+      {
+        "title": "Cache Hit Rate",
+        "type": "stat",
+        "gridPos": {"x": 18, "y": 10, "w": 6, "h": 4},
+        "targets": [
+          {
+            "expr": "sum(rate(nis_cache_hits_total[5m])) / (sum(rate(nis_cache_hits_total[5m])) + sum(rate(nis_cache_misses_total[5m]))) * 100",
+            "legendFormat": "Hit Rate %"
+          }
+        ]
+      }
+    ],
+    "refresh": "10s",
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    }
+  }
+}

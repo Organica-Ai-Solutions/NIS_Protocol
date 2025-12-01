@@ -155,18 +155,8 @@ class MetaCognitiveProcessor:
         try:
             redis_config = self.config.get("infrastructure", {}).get("memory_cache", {})
             
-            # Auto-detect Redis host
-            redis_host = redis_config.get("host")
-            if not redis_host:
-                import os
-                # Try environment variable first
-                redis_host = os.environ.get('REDIS_HOST')
-                if not redis_host:
-                    # Check if we're in a Docker environment
-                    if os.path.exists('/.dockerenv'):
-                        redis_host = "nis-redis"  # Docker container name
-                    else:
-                        redis_host = "localhost"  # Local development
+            # Auto-detect Redis host from config or environment
+            redis_host = redis_config.get("host") or os.environ.get('REDIS_HOST', 'localhost')
             
             self.redis_client = redis.Redis(
                 host=redis_host,

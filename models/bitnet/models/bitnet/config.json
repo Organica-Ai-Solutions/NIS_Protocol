@@ -1,71 +1,29 @@
 {
-  "_name_or_path": "nis-protocol-bitnet-seed",
   "architectures": [
-    "BitNetForCausalLM"
+    "LlamaForCausalLM"
   ],
-  "auto_map": {
-    "AutoConfig": "configuration_bitnet.BitNetConfig",
-    "AutoModelForCausalLM": "modeling_bitnet.BitNetForCausalLM"
-  },
+  "attention_bias": false,
+  "attention_dropout": 0.0,
   "bos_token_id": 1,
   "eos_token_id": 2,
+  "head_dim": 64,
   "hidden_act": "silu",
   "hidden_size": 2048,
   "initializer_range": 0.02,
-  "intermediate_size": 8192,
-  "max_position_embeddings": 4096,
-  "model_type": "bitnet",
+  "intermediate_size": 5632,
+  "max_position_embeddings": 2048,
+  "mlp_bias": false,
+  "model_type": "llama",
   "num_attention_heads": 32,
-  "num_hidden_layers": 24,
-  "num_key_value_heads": 32,
+  "num_hidden_layers": 22,
+  "num_key_value_heads": 4,
   "pretraining_tp": 1,
-  "rms_norm_eps": 1e-06,
+  "rms_norm_eps": 1e-05,
   "rope_scaling": null,
   "rope_theta": 10000.0,
   "tie_word_embeddings": false,
-  "torch_dtype": "float16",
-  "transformers_version": "4.36.0",
+  "torch_dtype": "float32",
+  "transformers_version": "4.55.2",
   "use_cache": true,
-  "vocab_size": 32000,
-  "pad_token_id": 0,
-  "bitnet_version": "v2-hadamard-4bit",
-  "quantization_config": {
-    "weight_bits": 1.58,
-    "activation_bits": 4,
-    "hadamard_transform": true,
-    "h_bitlinear_enabled": true,
-    "online_hadamard": true,
-    "outlier_mitigation": true,
-    "gaussian_activation_distribution": true,
-    "optimized_runtime": "bitnet_cpp"
-  },
-  "runtime_config": {
-    "target_memory_mb": 1024,
-    "inference_engine": "bitnet_cpp",
-    "edge_deployment_ready": true,
-    "local_first": true
-  },
-  "nis_learning_config": {
-    "learning_mode": "online_fine_tuning",
-    "learns_from_llms": true,
-    "learns_from_nis_responses": true,
-    "offline_capable": true,
-    "continuous_learning": true,
-    "seed_model": true,
-    "production_ready": true,
-    "edge_optimized": true,
-    "target_domains": [
-      "physics",
-      "consciousness",
-      "reasoning",
-      "multimodal",
-      "edge_inference"
-    ]
-  },
-  "benchmark_targets": {
-    "memory_footprint": "<1GB",
-    "inference_speed": "sub_second",
-    "accuracy_retention": ">90%",
-    "edge_compatibility": true
-  }
+  "vocab_size": 32000
 }

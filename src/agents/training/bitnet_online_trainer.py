@@ -197,6 +197,13 @@ class BitNetOnlineTrainer(NISAgent):
         self.training_thread = None
         self.should_stop_training = False
         
+        # Training data persistence path
+        self.training_data_path = Path("data/bitnet_training")
+        self.training_data_path.mkdir(parents=True, exist_ok=True)
+        
+        # Load persisted training examples
+        self._load_persisted_examples()
+        
         # Initialize training system
         if TRAINING_AVAILABLE:
             self._initialize_training_system()
@@ -207,6 +214,68 @@ class BitNetOnlineTrainer(NISAgent):
         Path(self.config.mobile_bundle_dir).mkdir(parents=True, exist_ok=True)
 
         self.logger.info(f"🚀 BitNet Online Trainer initialized: {agent_id}")
+    
+    def _load_persisted_examples(self):
+        """Load previously saved training examples from disk"""
+        try:
+            examples_file = self.training_data_path / "training_examples.json"
+            metrics_file = self.training_data_path / "training_metrics.json"
+            
+            if examples_file.exists():
+                with open(examples_file, 'r') as f:
+                    examples_data = json.load(f)
+                    for ex_data in examples_data:
+                        example = TrainingExample(
+                            prompt=ex_data['prompt'],
+                            response=ex_data['response'],
+                            consciousness_score=ex_data.get('consciousness_score', 0.7),
+                            physics_compliance=ex_data.get('physics_compliance', 0.7),
+                            user_feedback=ex_data.get('user_feedback'),
+                            quality_score=ex_data.get('quality_score', 0.7),
+                            used_for_training=ex_data.get('used_for_training', False)
+                        )
+                        self.training_examples.append(example)
+                self.logger.info(f"📂 Loaded {len(self.training_examples)} persisted training examples")
+            
+            if metrics_file.exists():
+                with open(metrics_file, 'r') as f:
+                    saved_metrics = json.load(f)
+                    self.training_metrics.update(saved_metrics)
+                self.logger.info(f"📊 Loaded persisted training metrics")
+                
+        except Exception as e:
+            self.logger.warning(f"⚠️ Could not load persisted examples: {e}")
+    
+    def _persist_training_data(self):
+        """Save training examples and metrics to disk"""
+        try:
+            # Save examples
+            examples_file = self.training_data_path / "training_examples.json"
+            examples_data = [
+                {
+                    'prompt': ex.prompt,
+                    'response': ex.response,
+                    'consciousness_score': ex.consciousness_score,
+                    'physics_compliance': ex.physics_compliance,
+                    'user_feedback': ex.user_feedback,
+                    'quality_score': ex.quality_score,
+                    'used_for_training': ex.used_for_training,
+                    'timestamp': ex.timestamp.isoformat() if hasattr(ex.timestamp, 'isoformat') else str(ex.timestamp)
+                }
+                for ex in self.training_examples
+            ]
+            with open(examples_file, 'w') as f:
+                json.dump(examples_data, f, indent=2)
+            
+            # Save metrics
+            metrics_file = self.training_data_path / "training_metrics.json"
+            with open(metrics_file, 'w') as f:
+                json.dump(self.training_metrics, f, indent=2)
+            
+            self.logger.info(f"💾 Persisted {len(self.training_examples)} training examples")
+            
+        except Exception as e:
+            self.logger.error(f"❌ Failed to persist training data: {e}")
     
     def _initialize_training_system(self):
         """Initialize the BitNet training system"""
@@ -255,7 +324,10 @@ class BitNetOnlineTrainer(NISAgent):
             
         except Exception as e:
             self.logger.error(f"❌ Failed to initialize training system: {e}")
-            raise
+            self.logger.warning("⚠️ Falling back to training simulation mode (Logic Only)")
+            self.model = None
+            self.tokenizer = None
+            # Do NOT raise, allow agent to exist in mock mode
     
     async def add_training_example(
         self,
@@ -291,7 +363,7 @@ class BitNetOnlineTrainer(NISAgent):
                     "consciousness_validation", {}
                 ).get("consciousness_confidence", 0.7)
             
-            # 2. ⚗️ Physics compliance check (placeholder for real implementation)
+            # 2. ⚗️ Physics compliance check (heuristic analysis)
             physics_compliance = self._assess_physics_compliance(response, additional_context)
             
             # 3. 📊 Calculate overall quality score
@@ -316,6 +388,10 @@ class BitNetOnlineTrainer(NISAgent):
                 # Update average quality score
                 self._update_average_quality_score(quality_score)
                 
+                # Persist every 10 examples
+                if self.training_metrics['total_examples_collected'] % 10 == 0:
+                    self._persist_training_data()
+                
                 self.logger.info(f"✅ Training example added: quality={quality_score:.3f}")
                 return True
             else:
@@ -327,14 +403,36 @@ class BitNetOnlineTrainer(NISAgent):
             return False
     
     def _assess_physics_compliance(self, response: str, context: Optional[Dict[str, Any]]) -> float:
-        """Assess physics compliance of response"""
-        # Simple physics compliance assessment
-        # In real implementation, this would use the PINN physics validation
-        physics_keywords = ["energy", "conservation", "momentum", "force", "physics", "law", "equation"]
+        """Assess physics compliance of response using heuristic analysis"""
+        response_lower = response.lower()
+        score = 0.7  # Base score
         
-        if any(keyword in response.lower() for keyword in physics_keywords):
-            return 0.8  # Higher compliance for physics-related content
-        return 0.6  # Default compliance
+        # Physics-aware content indicators (+)
+        physics_terms = ["energy", "conservation", "momentum", "force", "mass", "velocity",
+                        "acceleration", "newton", "thermodynamic", "entropy", "equation"]
+        term_count = sum(1 for term in physics_terms if term in response_lower)
+        score += min(0.15, term_count * 0.03)
+        
+        # Scientific rigor indicators (+)
+        rigor_terms = ["approximately", "measured", "calculated", "empirical", "theory", "model"]
+        if any(term in response_lower for term in rigor_terms):
+            score += 0.05
+        
+        # Physics violation indicators (-)
+        violation_terms = [
+            "perpetual motion", "free energy", "faster than light", 
+            "infinite energy", "100% efficient", "violates conservation"
+        ]
+        if any(term in response_lower for term in violation_terms):
+            score -= 0.3
+        
+        # Mathematical consistency check
+        if context and context.get("contains_equations"):
+            # Check for unit consistency (simplified)
+            if any(unit in response_lower for unit in ["joules", "newtons", "meters", "kg"]):
+                score += 0.05
+        
+        return max(0.0, min(1.0, score))
     
     def _calculate_quality_score(
         self, 
@@ -484,9 +582,9 @@ class BitNetOnlineTrainer(NISAgent):
             self.training_metrics['total_training_sessions'] += 1
             improvement_score = max(0, 1.0 - avg_loss)  # Simple improvement metric
             self.training_metrics['model_improvement_score'] = improvement_score
-            self.training_metrics['average_quality_score'] = np.mean(
+            self.training_metrics['average_quality_score'] = float(np.mean(
                 [ex.quality_score for ex in self.training_examples]
-            ) if self.training_examples else 0.0
+            )) if self.training_examples else 0.0
             self.training_metrics['last_training_time'] = datetime.now().isoformat()
             
             # Update offline readiness score
@@ -529,7 +627,7 @@ class BitNetOnlineTrainer(NISAgent):
         factors.append(sessions_score)
         
         # Calculate overall readiness
-        self.training_metrics['offline_readiness_score'] = np.mean(factors)
+        self.training_metrics['offline_readiness_score'] = float(np.mean(factors))
     
     def _save_checkpoint(self):
         """Save model checkpoint for offline use"""

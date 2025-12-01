@@ -4,6 +4,9 @@ include LICENSE
 include requirements.txt
 include .env.example
 
+# Include route modules
+recursive-include routes *.py
+
 # Include configuration files
 recursive-include configs *.yaml *.yml *.json *.env.example
 

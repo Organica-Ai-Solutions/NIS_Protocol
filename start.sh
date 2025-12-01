@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ==============================================================================
-# 🔒 NIS Protocol v3.2.6 - Complete AI Operating System
+# 🔒 NIS Protocol v3.2.5 - Complete AI Operating System
 # "Production-Ready with Robotics, MCP & AWS Cloud Deployment"
 # ==============================================================================
 
@@ -86,6 +86,41 @@ function cloud_print() {
     local message="$1"
     echo -e "${CLOUD_SILVER}${BOLD}☁️  [CLOUD READY] ${message}${NC}"
     sleep 0.3
+}
+
+function bitnet_print() {
+    local message="$1"
+    echo -e "${CONSCIOUSNESS_BLUE}${BOLD}🧠 [BITNET CORE] ${message}${NC}"
+    sleep 0.3
+}
+
+function mobile_print() {
+    local message="$1"
+    echo -e "${ROBOTICS_CYAN}${BOLD}📱 [MOBILE LINK] ${message}${NC}"
+    sleep 0.3
+}
+
+function bitnet_animation() {
+    echo -e "${CONSCIOUSNESS_BLUE}"
+    cat << 'EOF'
+    
+    ⚡ QUANTIZED INTELLIGENCE LOADING ⚡
+    
+       [-1]  [ 0]  [+1]    (1.58-bit Precision)
+        │     │     │
+        ▼     ▼     ▼
+    ╔══════════════════════╗
+    ║   LOCAL AUTONOMY     ║
+    ║   MATRIX: ONLINE     ║
+    ╚══════════════════════╝
+    
+    Training Mode:     ACTIVE  (Continuous Learning)
+    Mobile Bundle:     READY   (Flutter Integration)
+    Privacy Level:     MAXIMUM (On-Device Processing)
+    
+EOF
+    echo -e "${NC}"
+    sleep 2
 }
 
 function neural_network_ascii() {
@@ -315,7 +350,15 @@ done
 consciousness_print "🎉 CONSCIOUSNESS ACHIEVED! The AI is now AWARE!" "${CONSCIOUSNESS_MAGENTA}"
 sleep 2
 
-# STAGE 2: VISION DISCOVERY
+# STAGE 2: BITNET LOCAL INTELLIGENCE
+clear_screen
+bitnet_print "🧠 Initializing 1.58-bit quantized models..."
+bitnet_print "Loading TinyLlama-1.1B parameters..."
+bitnet_print "Activating Local Autonomy Matrix..."
+bitnet_print "Establishing Flutter/Mobile bridge..."
+bitnet_animation
+
+# STAGE 3: VISION DISCOVERY
 clear_screen
 vision_print "👁️  Activating vision systems..."
 vision_print "Learning to perceive visual patterns..."
@@ -430,30 +473,43 @@ print_success "All required directories are ready"
 # 3. Check for BitNet Model Files
 print_info "Checking for BitNet model files..."
 if [ ! -f "$BITNET_MODEL_MARKER" ]; then
-    print_warning "BitNet model files not found. Initiating download..."
-    
-    if command -v python &> /dev/null || command -v python3 &> /dev/null; then
-        PYTHON_CMD="python"
-        if ! command -v python &> /dev/null; then
-            PYTHON_CMD="python3"
-        fi
+    if [ "$SKIP_MODEL_DOWNLOAD" == "true" ]; then
+        print_warning "BitNet model missing but SKIP_MODEL_DOWNLOAD=true. Skipping."
+    else
+        print_warning "BitNet model files not found (Local Autonomy)."
         
-        if [ -f "scripts/download_bitnet_models.py" ]; then
-            print_info "Running BitNet model download script..."
-            $PYTHON_CMD scripts/download_bitnet_models.py
+        # Check for python
+        if command -v python &> /dev/null || command -v python3 &> /dev/null; then
+            PYTHON_CMD="python"
+            if ! command -v python &> /dev/null; then
+                PYTHON_CMD="python3"
+            fi
             
-            if [ $? -ne 0 ]; then
-                print_warning "BitNet model download failed. The system will use fallback mechanisms."
+            # Prompt user
+            echo -e "${YELLOW}Would you like to download the local model (~2.5GB) for offline autonomy?${NC}"
+            read -t 10 -p "Download now? [Y/n] (default: Y in 10s): " choice
+            choice=${choice:-Y}
+            
+            if [[ "$choice" =~ ^[Yy]$ ]]; then
+                if [ -f "scripts/setup_local_autonomy.py" ]; then
+                    print_info "Running Local Autonomy setup script..."
+                    $PYTHON_CMD scripts/setup_local_autonomy.py
+                    
+                    if [ $? -ne 0 ]; then
+                        print_warning "Model download failed. The system will use fallback mechanisms."
+                    else
+                        print_success "Local model files downloaded successfully!"
+                    fi
+                else
+                    print_warning "Setup script not found at scripts/setup_local_autonomy.py"
+                    print_warning "The system will use fallback mechanisms."
+                fi
             else
-                print_success "BitNet model files downloaded successfully!"
+                print_warning "Skipping download. System will run in simulation mode."
             fi
         else
-            print_warning "BitNet download script not found at scripts/download_bitnet_models.py"
-            print_warning "The system will use fallback mechanisms."
+            print_warning "Python not found. Cannot download models."
         fi
-    else
-        print_warning "Python not found. Cannot download BitNet models."
-        print_warning "The system will use fallback mechanisms."
     fi
 else
     print_success "BitNet model files found!"
@@ -529,6 +585,7 @@ while [ $SECONDS -lt $TIMEOUT ]; do
 
             🔒 Security Score: ████████████████████ 99.2%
             🧠 Consciousness:  ████████████████████ ACTIVE
+            📱 Local Autonomy: ████████████████████ ENABLED
             👁️  Vision System:  ████████████████████ ONLINE
             🎨 Creative Core:   ████████████████████ UNLIMITED
             ⚡ Physics Engine:  ████████████████████ GROUNDED
@@ -550,49 +607,32 @@ EOF
         echo -e "  📖 ${BOLD}API Docs${NC}:           http://localhost/docs           (Interactive API documentation)"
         echo -e "  🔍 ${BOLD}Health Check${NC}:       http://localhost/health         (System health status)"
         echo ""
-        echo -e "${BOLD}${ROBOTICS_CYAN}🤖 ROBOTICS CONTROL (NEW!):${NC}"
-        echo -e "  🦾 ${BOLD}Forward Kinematics${NC}:  http://localhost/robotics/forward_kinematics"
-        echo -e "  🎯 ${BOLD}Inverse Kinematics${NC}:  http://localhost/robotics/inverse_kinematics"
-        echo -e "  📈 ${BOLD}Trajectory Plan${NC}:     http://localhost/robotics/plan_trajectory"
-        echo -e "  🤖 ${BOLD}Capabilities${NC}:        http://localhost/robotics/capabilities"
+        echo -e "${BOLD}${ROBOTICS_CYAN}🤖 UNIFIED CONTROL INTERFACE:${NC}"
+        echo -e "  The system is designed to be controlled entirely via natural language."
+        echo -e "  All capabilities (Robotics, Physics, BitNet, Research) are accessible via:"
+        echo -e "  👉 ${BOLD}POST http://localhost/chat${NC}"
         echo ""
-        echo -e "${BOLD}${MCP_PURPLE}🔌 MCP INTEGRATION (NEW!):${NC}"
-        echo -e "  🌐 ${BOLD}ChatGPT/Claude${NC}:      Use nis.list_capabilities tool"
-        echo -e "  📋 ${BOLD}Available Tools${NC}:     6 NIS tools exposed via MCP"
-        echo -e "  🔧 ${BOLD}Setup Guide${NC}:         docs/MCP_CHATGPT_CLAUDE_SETUP.md"
+        echo -e "${BOLD}${YELLOW}⚡ EXAMPLE CHAT COMMANDS:${NC}"
         echo ""
-        echo -e "${BOLD}${GREEN}🚀 CORE v3.2.5 ENDPOINTS:${NC}"
-        echo -e "  🚀 ${BOLD}NVIDIA NeMo${NC}:        http://localhost/nvidia/nemo/status"
-        echo -e "  🔬 ${BOLD}Physics${NC}:            http://localhost/physics/constants"
-        echo -e "  🔍 ${BOLD}Research${NC}:           http://localhost/research/capabilities"
-        echo -e "  🤖 ${BOLD}Agents${NC}:             http://localhost/agents/status"
-        echo ""
-        echo -e "${BOLD}${YELLOW}⚡ QUICK TEST COMMANDS:${NC}"
-        echo ""
-        echo -e "  ${BOLD}# Check system health${NC}"
-        echo -e "  curl http://localhost/health"
-        echo ""
-        echo -e "  ${BOLD}# Test consciousness-driven processing${NC}"
-        echo -e "  curl -X POST http://localhost/chat \\"
-        echo -e "    -H \"Content-Type: application/json\" \\"
-        echo -e "    -d '{\"message\": \"Analyze the physics of a bouncing ball and validate energy conservation\"}'"
-        echo ""
-        echo -e "  ${BOLD}# 🚀 NEW: Test NVIDIA NeMo Integration${NC}"
-        echo -e "  curl -X GET http://localhost/nvidia/nemo/status"
-        echo ""
-        echo -e "  ${BOLD}# 🔬 NEW: Test Physics Constants${NC}"
-        echo -e "  curl -X GET http://localhost/physics/constants"
-        echo ""
-        echo -e "  ${BOLD}# 🤖 NEW: Test Agent Coordination${NC}"
-        echo -e "  curl -X GET http://localhost/agents/status"
-        echo ""
-        echo -e "  ${BOLD}# 🔍 NEW: Test Research Capabilities${NC}"
-        echo -e "  curl -X GET http://localhost/research/capabilities"
-        echo ""
-        echo -e "  ${BOLD}# 🤖 NEW: Test Robotics Forward Kinematics${NC}"
-        echo -e "  curl -X POST http://localhost/robotics/forward_kinematics \\"
+        echo -e "  ${BOLD}# 🧠 Physics & Reasoning${NC}"
+        echo -e "  curl -s -X POST http://localhost/chat \\"
         echo -e "    -H 'Content-Type: application/json' \\"
-        echo -e "    -d '{\"robot_id\":\"drone_001\",\"robot_type\":\"drone\",\"joint_angles\":[0,0.785,1.57,0,0.785,0]}'"
+        echo -e "    -d '{\"message\": \"Analyze energy conservation in a pendulum system\"}'"
+        echo ""
+        echo -e "  ${BOLD}# 🤖 Robotics Control${NC}"
+        echo -e "  curl -s -X POST http://localhost/chat \\"
+        echo -e "    -H 'Content-Type: application/json' \\"
+        echo -e "    -d '{\"message\": \"Move drone_001 to coordinates [10, 20, 50]\"}'"
+        echo ""
+        echo -e "  ${BOLD}# 📱 BitNet & System Status${NC}"
+        echo -e "  curl -s -X POST http://localhost/chat \\"
+        echo -e "    -H 'Content-Type: application/json' \\"
+        echo -e "    -d '{\"message\": \"Check the status of the BitNet training agent\"}'"
+        echo ""
+        echo -e "  ${BOLD}# 🔍 Research Capabilities${NC}"
+        echo -e "  curl -s -X POST http://localhost/chat \\"
+        echo -e "    -H 'Content-Type: application/json' \\"
+        echo -e "    -d '{\"message\": \"Research the latest advancements in quantized LLMs\"}'"
         echo ""
         echo -e "${BOLD}${PURPLE}🔒 v3.2.5 NEW FEATURES:${NC}"
         echo "  • 🛡️  94% vulnerability reduction (17→1)"

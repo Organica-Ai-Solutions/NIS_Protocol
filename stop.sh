@@ -46,21 +46,12 @@ check_containers() {
 stop_services() {
     print_status "Stopping NIS Protocol v3 services..."
     
-    # Check for CPU stack
-    if docker ps | grep -q "nis-backend-cpu"; then
-        print_status "Detected CPU stack running. Stopping CPU services..."
-        docker-compose -f docker-compose.cpu.yml -p "$PROJECT_NAME" stop 2>/dev/null || true
-    fi
-
     if ! check_containers; then
-        # Only warn if neither stack is found
-        if ! docker ps | grep -q "nis-backend-cpu"; then
-            print_warning "No running containers found for project: $PROJECT_NAME"
-            return 0
-        fi
+        print_warning "No running containers found for project: $PROJECT_NAME"
+        return 0
     fi
     
-    # Stop services in reverse order of dependency (Main Stack)
+    # Stop services in reverse order of dependency
     print_status "Stopping reverse proxy..."
     docker-compose -p "$PROJECT_NAME" stop nginx 2>/dev/null || true
     
@@ -80,14 +71,8 @@ stop_services() {
 remove_containers() {
     if [ "$1" = "--remove-containers" ]; then
         print_status "Removing containers..."
-        
-        # Remove CPU stack containers if present
-        docker-compose -f docker-compose.cpu.yml -p "$PROJECT_NAME" down --remove-orphans 2>/dev/null || true
-        
-        # Remove Main stack containers
         docker-compose -p "$PROJECT_NAME" down --remove-orphans 2>/dev/null || true
         docker-compose -p "$PROJECT_NAME" --profile monitoring down --remove-orphans 2>/dev/null || true
-        
         print_success "Containers removed"
     fi
 }
@@ -99,10 +84,6 @@ remove_volumes() {
         read -p "This will delete all data. Are you sure? (y/N): " -n 1 -r
         echo
         if [[ $REPLY =~ ^[Yy]$ ]]; then
-            # Remove CPU stack volumes
-            docker-compose -f docker-compose.cpu.yml -p "$PROJECT_NAME" down -v --remove-orphans 2>/dev/null || true
-            
-            # Remove Main stack volumes
             docker-compose -p "$PROJECT_NAME" down -v --remove-orphans 2>/dev/null || true
             docker-compose -p "$PROJECT_NAME" --profile monitoring down -v --remove-orphans 2>/dev/null || true
             print_success "Volumes removed"
@@ -146,11 +127,7 @@ force_stop() {
     if [ "$1" = "--force" ]; then
         print_warning "Force stopping all NIS Protocol v3 containers..."
         
-        # Kill all CPU containers
-        docker-compose -f docker-compose.cpu.yml -p "$PROJECT_NAME" kill 2>/dev/null || true
-        docker-compose -f docker-compose.cpu.yml -p "$PROJECT_NAME" rm -f 2>/dev/null || true
-
-        # Kill all Main containers
+        # Kill all containers
         docker-compose -p "$PROJECT_NAME" kill 2>/dev/null || true
         docker-compose -p "$PROJECT_NAME" --profile monitoring kill 2>/dev/null || true
         

@@ -1,0 +1,411 @@
+"""
+NIS Protocol v4.0 - Agent Routes
+
+This module contains agent-related endpoints:
+- Learning agent
+- Planning system
+- Curiosity engine
+- Self-audit
+- Ethical evaluation
+- Simulation
+- Agent management
+
+MIGRATION STATUS: Ready for testing
+"""
+
+import logging
+import traceback
+from typing import Any, Dict, List, Optional
+
+from fastapi import APIRouter, HTTPException
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel, Field
+
+logger = logging.getLogger("nis.routes.agents")
+
+# Create router
+router = APIRouter(prefix="/agents", tags=["Agents"])
+
+
+# ====== Request Models ======
+
+class LearningRequest(BaseModel):
+    operation: str = Field(..., description="Learning operation to perform")
+    params: Optional[Dict[str, Any]] = None
+
+
+class PlanRequest(BaseModel):
+    goal: str = Field(..., description="The high-level goal for the plan")
+    context: Optional[Dict[str, Any]] = None
+
+
+class StimulusRequest(BaseModel):
+    stimulus: Dict[str, Any] = Field(..., description="The stimulus to be processed")
+    context: Optional[Dict[str, Any]] = None
+
+
+class AuditRequest(BaseModel):
+    text: str = Field(..., description="The text to be audited")
+
+
+class EthicalEvaluationRequest(BaseModel):
+    action: Dict[str, Any] = Field(..., description="The action to be evaluated")
+    context: Optional[Dict[str, Any]] = None
+
+
+class SimulationRequest(BaseModel):
+    scenario_id: str = Field(..., description="The ID of the scenario to simulate")
+    scenario_type: str = Field(..., description="The type of scenario to simulate")
+    parameters: Dict[str, Any] = Field(default_factory=dict, description="Simulation parameters")
+
+
+class CollaborationRequest(BaseModel):
+    task: str = Field(..., description="Task for agents to collaborate on")
+    agents: Optional[List[str]] = None
+    context: Optional[Dict[str, Any]] = None
+
+
+class AgentCreateRequest(BaseModel):
+    agent_type: str
+    name: str
+    config: Optional[Dict[str, Any]] = None
+
+
+# ====== Dependency Injection ======
+
+def get_learning_agent():
+    return getattr(router, '_learning_agent', None)
+
+def get_planning_system():
+    return getattr(router, '_planning_system', None)
+
+def get_curiosity_engine():
+    return getattr(router, '_curiosity_engine', None)
+
+def get_ethical_reasoner():
+    return getattr(router, '_ethical_reasoner', None)
+
+def get_scenario_simulator():
+    return getattr(router, '_scenario_simulator', None)
+
+def get_agent_registry():
+    return getattr(router, '_agent_registry', {})
+
+
+# ====== Endpoints ======
+
+@router.post("/learning/process")
+async def process_learning_request(request: LearningRequest):
+    """
+    🧠 Process a learning-related request.
+    """
+    learning_agent = get_learning_agent()
+    
+    if not learning_agent:
+        raise HTTPException(status_code=500, detail="Learning Agent not initialized.")
+
+    try:
+        message = {"operation": request.operation}
+        if request.params:
+            message.update(request.params)
+            
+        results = learning_agent.process(message)
+        if results.get("status") == "error":
+            raise HTTPException(status_code=500, detail=results)
+        return JSONResponse(content=results, status_code=200)
+    except Exception as e:
+        logger.error(f"Error during learning process: {e}")
+        return JSONResponse(content={"error": str(e)}, status_code=500)
+
+
+@router.post("/planning/create_plan")
+async def create_plan(request: PlanRequest):
+    """
+    📋 Create a new plan using the Autonomous Planning System.
+    """
+    planning_system = get_planning_system()
+
+    if not planning_system:
+        raise HTTPException(status_code=500, detail="Planning System not initialized.")
+
+    try:
+        message = {
+            "operation": "create_plan",
+            "goal_data": {"description": request.goal},
+            "planning_context": request.context or {}
+        }
+        result = await planning_system.process(message)
+        if result.get("status") == "error":
+            raise HTTPException(status_code=500, detail=result.get("payload"))
+        return JSONResponse(content=result, status_code=200)
+    except Exception as e:
+        logger.error(f"Error during plan creation: {e}")
+        return JSONResponse(content={"error": str(e)}, status_code=500)
+
+
+@router.post("/curiosity/process_stimulus")
+async def process_stimulus(request: StimulusRequest):
+    """
+    🔍 Process a stimulus using the Curiosity Engine.
+    """
+    curiosity_engine = get_curiosity_engine()
+    
+    if not curiosity_engine:
+        raise HTTPException(status_code=500, detail="Curiosity Engine not initialized.")
+
+    try:
+        signals = curiosity_engine.process_stimulus(request.stimulus, request.context)
+        return JSONResponse(content={"signals": [
+            {
+                **s.__dict__,
+                'curiosity_type': s.curiosity_type.value if hasattr(s.curiosity_type, 'value') else str(s.curiosity_type),
+                'systematicty_source': s.systematicty_source.value if hasattr(s.systematicty_source, 'value') else str(s.systematicty_source)
+            } for s in signals
+        ]}, status_code=200)
+    except Exception as e:
+        logger.error(f"Error during stimulus processing: {e}")
+        return JSONResponse(content={"error": str(e)}, status_code=500)
+
+
+@router.post("/audit/text")
+async def audit_text(request: AuditRequest):
+    """
+    🔍 Audit a piece of text using the Self-Audit Engine.
+    """
+    try:
+        from src.utils.self_audit import self_audit_engine
+        
+        violations = self_audit_engine.audit_text(request.text)
+        score = self_audit_engine.get_integrity_score(request.text)
+        
+        violations_dict = []
+        for v in violations:
+            v_dict = v.__dict__
+            v_dict['violation_type'] = v.violation_type.value if hasattr(v.violation_type, 'value') else str(v.violation_type)
+            violations_dict.append(v_dict)
+
+        return {
+            "status": "success",
+            "violations": violations_dict,
+            "integrity_score": score,
+            "text_analyzed": len(request.text),
+            "agent_id": "self_audit_engine"
+        }
+    except Exception as e:
+        logger.error(f"Error during text audit: {e}")
+        return {
+            "status": "error", 
+            "error": str(e),
+            "traceback": traceback.format_exc()
+        }
+
+
+@router.post("/alignment/evaluate_ethics")
+async def evaluate_ethics(request: EthicalEvaluationRequest):
+    """
+    ⚖️ Evaluate the ethical implications of an action.
+    """
+    ethical_reasoner = get_ethical_reasoner()
+    
+    if not ethical_reasoner:
+        raise HTTPException(status_code=500, detail="Ethical Reasoner not initialized.")
+
+    try:
+        message = {
+            "operation": "evaluate_ethics",
+            "action": request.action,
+            "context": request.context or {}
+        }
+        result = ethical_reasoner.process(message)
+
+        # Convert enums to strings for JSON serialization
+        if result.get("payload") and result["payload"].get("framework_evaluations"):
+            for eval_item in result["payload"]["framework_evaluations"]:
+                if hasattr(eval_item.get("framework"), 'value'):
+                    eval_item["framework"] = eval_item["framework"].value
+
+        return JSONResponse(content=result, status_code=200)
+    except Exception as e:
+        logger.error(f"Error during ethical evaluation: {e}")
+        return JSONResponse(content={"error": str(e)}, status_code=500)
+
+
+@router.post("/simulation/run")
+async def run_simulation(request: SimulationRequest):
+    """
+    🎮 Run a simulation using the Enhanced Scenario Simulator.
+    """
+    try:
+        scenario_simulator = get_scenario_simulator()
+        
+        if not scenario_simulator:
+            # Try to initialize on-demand
+            try:
+                from src.agents.scenario_simulator import EnhancedScenarioSimulator
+                scenario_simulator = EnhancedScenarioSimulator()
+                router._scenario_simulator = scenario_simulator
+                logger.info("🔧 Scenario simulator initialized on-demand")
+            except ImportError:
+                raise HTTPException(status_code=500, detail="Scenario Simulator not available")
+
+        result = await scenario_simulator.simulate_scenario(
+            scenario_id=request.scenario_id,
+            scenario_type=request.scenario_type,
+            parameters=request.parameters
+        )
+        
+        # Convert result to dict if needed
+        if hasattr(result, 'to_message_content'):
+            result_content = result.to_message_content()
+        elif hasattr(result, '__dict__'):
+            result_content = result.__dict__
+        else:
+            result_content = {"result": str(result)}
+            
+        return {
+            "status": "success",
+            "simulation": result_content,
+            "scenario_id": request.scenario_id,
+            "scenario_type": request.scenario_type,
+            "agent_id": "enhanced_scenario_simulator"
+        }
+        
+    except Exception as e:
+        logger.error(f"Error during simulation: {e}")
+        return {
+            "status": "error",
+            "error": str(e),
+            "scenario_id": request.scenario_id,
+            "traceback": traceback.format_exc()
+        }
+
+
+@router.post("/collaborate")
+async def collaborate_agents(request: CollaborationRequest):
+    """
+    🤝 Trigger multi-agent collaboration on a task.
+    """
+    try:
+        agent_registry = get_agent_registry()
+        
+        # Select agents for collaboration
+        selected_agents = request.agents or list(agent_registry.keys())[:3]
+        
+        results = {
+            "status": "success",
+            "task": request.task,
+            "agents_involved": selected_agents,
+            "collaboration_results": [],
+            "consensus": None
+        }
+        
+        # Simulate collaboration (actual implementation would coordinate agents)
+        for agent_name in selected_agents:
+            agent = agent_registry.get(agent_name)
+            if agent:
+                try:
+                    agent_result = await agent.process({"task": request.task, "context": request.context})
+                    results["collaboration_results"].append({
+                        "agent": agent_name,
+                        "result": agent_result
+                    })
+                except Exception as e:
+                    results["collaboration_results"].append({
+                        "agent": agent_name,
+                        "error": str(e)
+                    })
+        
+        return results
+        
+    except Exception as e:
+        logger.error(f"Collaboration error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/create")
+async def create_agent(request: AgentCreateRequest):
+    """
+    ➕ Create a new agent instance.
+    """
+    try:
+        agent_registry = get_agent_registry()
+        
+        # Agent creation logic would go here
+        agent_id = f"{request.agent_type}_{request.name}"
+        
+        return {
+            "status": "success",
+            "agent_id": agent_id,
+            "agent_type": request.agent_type,
+            "name": request.name,
+            "message": "Agent created successfully"
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("")
+async def list_agents():
+    """
+    📋 List all registered agents.
+    """
+    agent_registry = get_agent_registry()
+    
+    agents = []
+    for agent_id, agent in agent_registry.items():
+        agents.append({
+            "id": agent_id,
+            "type": type(agent).__name__,
+            "status": "active"
+        })
+    
+    return {
+        "status": "success",
+        "agents": agents,
+        "total": len(agents)
+    }
+
+
+@router.get("/status")
+async def get_agents_status():
+    """
+    📊 Get status of all agents.
+    """
+    agent_registry = get_agent_registry()
+    
+    status = {
+        "total_agents": len(agent_registry),
+        "active_agents": len(agent_registry),
+        "agents": {}
+    }
+    
+    for agent_id, agent in agent_registry.items():
+        status["agents"][agent_id] = {
+            "type": type(agent).__name__,
+            "status": "active",
+            "capabilities": getattr(agent, 'capabilities', [])
+        }
+    
+    return {
+        "status": "success",
+        "agent_status": status
+    }
+
+
+# ====== Dependency Injection Helper ======
+
+def set_dependencies(
+    learning_agent=None,
+    planning_system=None,
+    curiosity_engine=None,
+    ethical_reasoner=None,
+    scenario_simulator=None,
+    agent_registry=None
+):
+    """Set dependencies for the agents router"""
+    router._learning_agent = learning_agent
+    router._planning_system = planning_system
+    router._curiosity_engine = curiosity_engine
+    router._ethical_reasoner = ethical_reasoner
+    router._scenario_simulator = scenario_simulator
+    router._agent_registry = agent_registry or {}

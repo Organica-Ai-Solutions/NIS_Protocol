@@ -6250,16 +6250,19 @@ Examples:
             async handleVoiceResponse(data) {
                 try {
                     const message = JSON.parse(data);
-                    console.log('📨 Voice message:', message.type);
+                    console.log('📨 Voice message:', message.type, message);
                     
                     switch (message.type) {
                         case 'connected':
                             console.log('✅ Voice chat ready');
+                            const ttsInfo = message.capabilities?.openai_tts ? 'OpenAI TTS (fast)' : 'gTTS';
+                            addMessage('system', `🎙️ Voice connected! Using ${ttsInfo}. Voices: ${message.capabilities?.voices?.join(', ') || 'default'}`);
                             break;
                         
                         case 'transcription':
                             const transcription = message.text || '';
                             addMessage('user', transcription);
+                            addMessage('system', `⏱️ STT: ${message.latency_ms || 0}ms`);
                             break;
                         
                         case 'text_response':
@@ -6270,14 +6273,30 @@ Examples:
                         case 'audio_response':
                             this.isProcessing = false;
                             const audioData = message.audio_data;
+                            const latency = message.latency || {};
+                            const ttsEngine = message.tts_engine || 'unknown';
                             if (audioData) {
                                 await this.playAudioFromBytes(audioData);
                             }
-                            addMessage('system', `⏱️ Response: ${message.latency?.total_ms || 0}ms`);
+                            addMessage('system', `⏱️ Total: ${latency.total_ms || 0}ms (STT: ${latency.stt_ms || 0}ms, LLM: ${latency.llm_ms || 0}ms, TTS: ${latency.tts_ms || 0}ms) - ${ttsEngine}`);
                             break;
                         
                         case 'status':
-                            console.log(`📊 Status: ${message.stage}`);
+                            const stageEmoji = { 'transcribing': '🎤', 'thinking': '🧠', 'synthesizing': '🔊' };
+                            console.log(`${stageEmoji[message.stage] || '⏳'} ${message.stage}...`);
+                            break;
+                        
+                        case 'voice_changed':
+                            addMessage('system', `🎤 Voice changed to: ${message.voice}`);
+                            break;
+                        
+                        case 'interrupted':
+                            addMessage('system', '🛑 Interrupted');
+                            this.isProcessing = false;
+                            break;
+                        
+                        case 'status_response':
+                            addMessage('system', `📊 Voice: ${message.current_voice}, TTS: ${message.tts_engine}, OpenAI: ${message.openai_tts}`);
                             break;
                         
                         case 'error':
@@ -6285,6 +6304,9 @@ Examples:
                             addMessage('system', `❌ ${message.message}`);
                             this.isProcessing = false;
                             break;
+                            
+                        default:
+                            console.log('Unknown message type:', message.type);
                     }
                 } catch (error) {
                     console.error('❌ Failed to parse voice message:', error);

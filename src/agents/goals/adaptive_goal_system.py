@@ -134,68 +134,68 @@ if TORCH_AVAILABLE:
     class GoalGenerationNetwork(nn.Module):
         """Neural network for autonomous goal generation"""
     
-    def __init__(self, state_dim: int = 100, goal_dim: int = 50, hidden_dims: List[int] = [256, 128, 64]):
-        super().__init__()
+        def __init__(self, state_dim: int = 100, goal_dim: int = 50, hidden_dims: List[int] = [256, 128, 64]):
+            super().__init__()
+            
+            self.state_dim = state_dim
+            self.goal_dim = goal_dim
+            
+            # Feature extraction layers
+            layers = []
+            prev_dim = state_dim
+            for hidden_dim in hidden_dims:
+                layers.extend([
+                    nn.Linear(prev_dim, hidden_dim),
+                    nn.ReLU(),
+                    nn.Dropout(0.1)
+                ])
+                prev_dim = hidden_dim
+            
+            self.feature_extractor = nn.Sequential(*layers)
+            
+            # Goal generation heads
+            self.goal_type_head = nn.Sequential(
+                nn.Linear(prev_dim, len(GoalType)),
+                nn.Softmax(dim=-1)
+            )
+            
+            self.priority_head = nn.Sequential(
+                nn.Linear(prev_dim, len(GoalPriority)),
+                nn.Softmax(dim=-1)
+            )
+            
+            self.effort_head = nn.Sequential(
+                nn.Linear(prev_dim, 1),
+                nn.Sigmoid()
+            )
+            
+            self.value_head = nn.Sequential(
+                nn.Linear(prev_dim, 1),
+                nn.Sigmoid()
+            )
+            
+            self.success_probability_head = nn.Sequential(
+                nn.Linear(prev_dim, 1),
+                nn.Sigmoid()
+            )
+            
+            self.goal_features_head = nn.Sequential(
+                nn.Linear(prev_dim, goal_dim),
+                nn.Tanh()
+            )
         
-        self.state_dim = state_dim
-        self.goal_dim = goal_dim
-        
-        # Feature extraction layers
-        layers = []
-        prev_dim = state_dim
-        for hidden_dim in hidden_dims:
-            layers.extend([
-                nn.Linear(prev_dim, hidden_dim),
-                nn.ReLU(),
-                nn.Dropout(0.1)
-            ])
-            prev_dim = hidden_dim
-        
-        self.feature_extractor = nn.Sequential(*layers)
-        
-        # Goal generation heads
-        self.goal_type_head = nn.Sequential(
-            nn.Linear(prev_dim, len(GoalType)),
-            nn.Softmax(dim=-1)
-        )
-        
-        self.priority_head = nn.Sequential(
-            nn.Linear(prev_dim, len(GoalPriority)),
-            nn.Softmax(dim=-1)
-        )
-        
-        self.effort_head = nn.Sequential(
-            nn.Linear(prev_dim, 1),
-            nn.Sigmoid()
-        )
-        
-        self.value_head = nn.Sequential(
-            nn.Linear(prev_dim, 1),
-            nn.Sigmoid()
-        )
-        
-        self.success_probability_head = nn.Sequential(
-            nn.Linear(prev_dim, 1),
-            nn.Sigmoid()
-        )
-        
-        self.goal_features_head = nn.Sequential(
-            nn.Linear(prev_dim, goal_dim),
-            nn.Tanh()
-        )
-    
-    def forward(self, state: torch.Tensor) -> Dict[str, torch.Tensor]:
-        """Generate goal properties from system state"""
-        features = self.feature_extractor(state)
-        
-        return {
-            'goal_type_probs': self.goal_type_head(features),
-            'priority_probs': self.priority_head(features),
-            'estimated_effort': self.effort_head(features),
-            'expected_value': self.value_head(features),
-            'success_probability': self.success_probability_head(features),
-            'goal_features': self.goal_features_head(features)
-        }
+        def forward(self, state: torch.Tensor) -> Dict[str, torch.Tensor]:
+            """Generate goal properties from system state"""
+            features = self.feature_extractor(state)
+            
+            return {
+                'goal_type_probs': self.goal_type_head(features),
+                'priority_probs': self.priority_head(features),
+                'estimated_effort': self.effort_head(features),
+                'expected_value': self.value_head(features),
+                'success_probability': self.success_probability_head(features),
+                'goal_features': self.goal_features_head(features)
+            }
 
 else:
     # Fallback when PyTorch is not available
@@ -292,14 +292,19 @@ class AdaptiveGoalSystem(NISAgent):
                  max_active_goals: int = 20,
                  goal_generation_interval: float = 300.0,  # 5 minutes
                  enable_self_audit: bool = True,
-                 infrastructure_coordinator: Optional[InfrastructureCoordinator] = None):
+                 infrastructure_coordinator: Optional[InfrastructureCoordinator] = None,
+                 persistent_memory: Optional[Any] = None,
+                 reflective_generator: Optional[Any] = None):
         
-        super().__init__(agent_id, NISLayer.REASONING)
+        super().__init__(agent_id)
+        self.layer = NISLayer.REASONING
         
         self.max_active_goals = max_active_goals
         self.goal_generation_interval = goal_generation_interval
         self.enable_self_audit = enable_self_audit
         self.infrastructure = infrastructure_coordinator
+        self.persistent_memory = persistent_memory
+        self.reflective_generator = reflective_generator
         
         # Goal storage and management
         self.goals: Dict[str, Goal] = {}
@@ -374,15 +379,28 @@ class AdaptiveGoalSystem(NISAgent):
         # Gather generation context
         context = await self._gather_goal_generation_context()
         
-        # Generate state vector for neural network
-        state_vector = self._context_to_state_vector(context)
+        new_goals = []
         
-        # Generate goals using neural network
-        with torch.no_grad():
-            goal_predictions = self.goal_generator(state_vector)
+        # V4.0: Use Reflective Generator if available (System 2 Thinking)
+        if self.reflective_generator:
+            try:
+                new_goals = await self._generate_goals_with_reflection(context)
+                if new_goals:
+                    self.logger.info(f"✨ Generated {len(new_goals)} goals via Reflective Intelligence")
+            except Exception as e:
+                self.logger.warning(f"Reflective goal generation failed, falling back to neural network: {e}")
         
-        # Create concrete goals from predictions
-        new_goals = self._predictions_to_goals(goal_predictions, context)
+        # Fallback: Use Neural Network (System 1 Thinking)
+        if not new_goals:
+            # Generate state vector for neural network
+            state_vector = self._context_to_state_vector(context)
+            
+            # Generate goals using neural network
+            with torch.no_grad():
+                goal_predictions = self.goal_generator(state_vector)
+            
+            # Create concrete goals from predictions
+            new_goals = self._predictions_to_goals(goal_predictions, context)
         
         # Add goals to system
         added_goals = []
@@ -413,6 +431,93 @@ class AdaptiveGoalSystem(NISAgent):
             "generation_context": asdict(context),
             "next_generation_time": current_time + self.goal_generation_interval
         }
+
+    async def _generate_goals_with_reflection(self, context: GoalGenerationContext) -> List[Goal]:
+        """Generate goals using Reflective Intelligence and Persistent Memory"""
+        if not self.reflective_generator:
+            return []
+            
+        # 1. Retrieve relevant procedural memories (successful past goals)
+        past_wisdom = ""
+        if self.persistent_memory:
+            try:
+                memories = await self.persistent_memory.retrieve(
+                    query="successful goal completion strategy",
+                    memory_type="procedural",
+                    top_k=3
+                )
+                if memories:
+                    past_wisdom = "\nSuccessful past strategies:\n" + "\n".join(
+                        [f"- {m.entry.content}" for m in memories]
+                    )
+            except Exception as e:
+                self.logger.warning(f"Memory retrieval failed: {e}")
+
+        # 2. Construct prompt
+        prompt = f"""
+        Act as the Adaptive Goal System for NIS Protocol.
+        Analyze the current context and generate strategic goals.
+        
+        Context:
+        - System State: {context.system_state}
+        - Recent Performance: {context.recent_performance}
+        - Opportunities: {context.learning_opportunities}
+        - Gaps: {context.domain_knowledge_gaps}
+        {past_wisdom}
+        
+        Generate 1-3 high-value goals in JSON format.
+        Each goal must have: description, type (performance/learning/exploration), priority (high/medium), estimated_effort (1-10), success_criteria (dict).
+        
+        JSON Response:
+        """
+        
+        # 3. Reflective Generation
+        result = await self.reflective_generator.generate(
+            prompt=prompt,
+            context="Goal Generation System",
+            user_id="system",
+            quality_threshold=0.8
+        )
+        
+        # 4. Parse and create goals
+        goals = []
+        try:
+            # Extract JSON from response
+            response_text = result.final_response
+            start = response_text.find('[')
+            end = response_text.rfind(']') + 1
+            if start != -1 and end != -1:
+                goals_data = json.loads(response_text[start:end])
+                
+                for g_data in goals_data:
+                    goal_id = f"goal_reflective_{int(time.time())}_{len(goals)}"
+                    goal_type_str = g_data.get("type", "performance").upper()
+                    goal_type = getattr(GoalType, goal_type_str, GoalType.PERFORMANCE)
+                    
+                    priority_str = g_data.get("priority", "medium").upper()
+                    priority = getattr(GoalPriority, priority_str, GoalPriority.MEDIUM)
+                    
+                    goal = Goal(
+                        goal_id=goal_id,
+                        goal_type=goal_type,
+                        description=g_data.get("description", "Unknown goal"),
+                        priority=priority,
+                        status=GoalStatus.PENDING,
+                        target_metrics={"completion": 1.0},
+                        current_metrics={"completion": 0.0},
+                        success_criteria=g_data.get("success_criteria", {}),
+                        estimated_effort=float(g_data.get("estimated_effort", 1.0)),
+                        expected_value=0.8,  # Reflective goals are high value
+                        success_probability=0.7,
+                        creation_time=time.time(),
+                        last_updated=time.time()
+                    )
+                    goals.append(goal)
+                    
+        except Exception as e:
+            self.logger.error(f"Failed to parse reflective goals: {e}")
+            
+        return goals
     
     async def _gather_goal_generation_context(self) -> GoalGenerationContext:
         """Gather comprehensive context for goal generation"""
@@ -862,6 +967,19 @@ class AdaptiveGoalSystem(NISAgent):
         # Learn from the completion
         self._learn_from_goal_outcome(goal, True, outcome)
         
+        # Store in persistent memory if available
+        if self.persistent_memory:
+            try:
+                import asyncio
+                # Run async memory storage
+                asyncio.create_task(self.persistent_memory.store_pattern(
+                    pattern_description=f"Goal '{goal.description}' completed via strategy: {outcome.get('strategy', 'standard')}. Lessons: {outcome.get('lessons', [])}",
+                    success_rate=1.0
+                ))
+                self.logger.info(f"🧠 Stored goal pattern in persistent memory: {goal.description}")
+            except Exception as e:
+                self.logger.warning(f"Failed to store goal in memory: {e}")
+
         # Update metrics
         self.goal_metrics['goals_completed'] += 1
         self.goal_metrics['goal_value_achieved'] += goal.expected_value

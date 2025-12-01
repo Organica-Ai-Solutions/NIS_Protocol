@@ -51,6 +51,11 @@ try:
     LANGSMITH_AVAILABLE = True
 except ImportError:
     LANGSMITH_AVAILABLE = False
+    # Fallback decorator that does nothing
+    def traceable(func=None, **kwargs):
+        if func is None:
+            return lambda f: f
+        return func
 
 from ...core.agent import NISAgent, NISLayer
 from ..hybrid_agent_core import CompleteScientificProcessingResult, CompleteHybridAgent
@@ -232,7 +237,9 @@ class EnhancedMultiLLMAgent(NISAgent):
                  default_strategy: LLMOrchestrationStrategy = LLMOrchestrationStrategy.PHYSICS_INFORMED,
                  enable_self_audit: bool = True,
                  enable_langsmith: bool = True):
-        super().__init__(agent_id, NISLayer.REASONING, "Enhanced Multi-LLM orchestration agent")
+        super().__init__(agent_id)
+        self.layer = NISLayer.REASONING
+        self.description = "Enhanced Multi-LLM orchestration agent"
         
         # Core components
         self.provider_manager = LLMProviderManager()

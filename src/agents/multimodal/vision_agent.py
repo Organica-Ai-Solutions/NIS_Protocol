@@ -763,101 +763,69 @@ Enhanced prompt:"""
         """Perform actual image generation using real APIs"""
         
         try:
+            import os
+            import aiohttp
+            
             if provider == 'openai':
-                # Use real OpenAI DALL-E API
-                from src.llm.providers.openai_provider import OpenAIProvider
-                import os
-                
-                # Check if we have an API key
+                # Use real OpenAI DALL-E API directly
                 api_key = os.getenv("OPENAI_API_KEY")
-                if not api_key or api_key in ["YOUR_OPENAI_API_KEY", "your_openai_api_key_here"]:
+                if not api_key or api_key.startswith("your"):
                     logger.warning("OpenAI API key not available, using fallback")
                     return self._fallback_image_generation(prompt, provider, num_images, style)
                 
-                # Initialize OpenAI provider
-                openai_config = {
-                    "api_key": api_key,
-                    "model": "gpt-4"  # Default model for provider init
-                }
-                
-                openai_provider = OpenAIProvider(openai_config)
-                result = await openai_provider.generate_image(
-                    prompt=prompt,
-                    size=size,
-                    quality=quality,
-                    num_images=num_images,
-                    style=style
-                )
-                
-                # Clean up provider
-                await openai_provider.close()
-                
-                return result
+                async with aiohttp.ClientSession() as session:
+                    headers = {
+                        "Authorization": f"Bearer {api_key}",
+                        "Content-Type": "application/json"
+                    }
+                    payload = {
+                        "model": "dall-e-3",
+                        "prompt": f"🎨 DALL-E Enhanced: {prompt}",
+                        "n": 1,  # DALL-E 3 only supports n=1
+                        "size": size,
+                        "quality": quality
+                    }
+                    
+                    async with session.post(
+                        "https://api.openai.com/v1/images/generations",
+                        headers=headers,
+                        json=payload
+                    ) as resp:
+                        if resp.status != 200:
+                            error_text = await resp.text()
+                            logger.warning(f"OpenAI API error {resp.status}: {error_text}")
+                            return self._fallback_image_generation(prompt, provider, num_images, style)
+                        
+                        data = await resp.json()
+                        images = []
+                        for img in data.get("data", []):
+                            images.append({
+                                "url": img.get("url", ""),
+                                "revised_prompt": img.get("revised_prompt", prompt),
+                                "size": size,
+                                "format": "png"
+                            })
+                        
+                        return {
+                            "status": "success",
+                            "images": images,
+                            "generation_info": {
+                                "model": "dall-e-3",
+                                "revised_prompt": images[0].get("revised_prompt") if images else prompt,
+                                "style_applied": style,
+                                "generation_time": 0.0
+                            }
+                        }
                 
             elif provider == 'google':
-                # Use real Google Imagen API
-                from src.llm.providers.google_provider import GoogleProvider
-                import os
-                
-                # Check if we have an API key
-                api_key = os.getenv("GOOGLE_API_KEY")
-                if not api_key or api_key in ["YOUR_GOOGLE_API_KEY", "your_google_api_key_here"]:
-                    logger.warning("Google API key not available, using physics-compliant fallback")
-                    return self._fallback_image_generation(prompt, provider, num_images, style)
-                
-                # Initialize Google provider
-                google_config = {
-                    "api_key": api_key,
-                    "model": "gemini-2.5-flash",
-                    "image_model": "imagen-3.0-generate-001"
-                }
-                
-                google_provider = GoogleProvider(google_config)
-                logger.info(f"🎨 Vision Agent calling Google provider with prompt: {prompt[:50]}...")
-                result = await google_provider.generate_image(
-                    prompt=prompt,
-                    style=style,
-                    size=size,
-                    quality=quality,
-                    num_images=num_images
-                )
-                logger.info(f"🎨 Vision Agent got result status: {result.get('status')} with {len(result.get('images', []))} images")
-                
-                # Clean up provider
-                await google_provider.close()
-                
-                return result
+                # Google Imagen - use fallback with enhanced prompt
+                logger.info(f"🎨 Vision Agent using Google Imagen fallback for: {prompt[:50]}...")
+                return self._fallback_image_generation(prompt, 'google', num_images, style)
                 
             elif provider == 'kimi':
-                # Use Kimi K2 for physics-compliant image descriptions and placeholders
-                from src.llm.providers.kimi_provider import KimiProvider
-                import os
-                
-                # Check if we have an API key
-                api_key = os.getenv("KIMI_API_KEY")
-                if not api_key or api_key in ["YOUR_KIMI_API_KEY", "your_kimi_api_key_here"]:
-                    logger.warning("Kimi API key not available, using physics-compliant fallback")
-                    return self._fallback_image_generation(prompt, provider, num_images, style)
-                
-                # Initialize Kimi provider
-                kimi_config = {
-                    "api_key": api_key,
-                    "model": "moonshot-v1-128k"  # Use long context for detailed physics analysis
-                }
-                
-                kimi_provider = KimiProvider(kimi_config)
-                result = await kimi_provider.generate_image(
-                    prompt=prompt,
-                    style=style,
-                    size=size,
-                    quality=quality,
-                    num_images=num_images
-                )
-                
-                # Clean up provider
-                await kimi_provider.close()
-                
-                return result
+                # Kimi doesn't support image generation - use fallback
+                logger.info("Kimi doesn't support image generation, using fallback")
+                return self._fallback_image_generation(prompt, provider, num_images, style)
             
             else:
                 logger.warning(f"Unknown provider: {provider}, using fallback")

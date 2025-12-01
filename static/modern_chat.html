@@ -3991,64 +3991,99 @@ Ready to execute your commands safely! 🚀`, false, 'system');
 
             async handleVoiceResponse(event) {
                 try {
-                        const response = JSON.parse(event.data);
+                    const response = JSON.parse(event.data);
                     console.log('📥 Received:', response.type, response);
                     
                     switch(response.type) {
                         case 'connected':
                             console.log('✅ Connected to voice chat:', response.session_id);
-                            this.updateStatus('Voice chat ready', 'success');
+                            console.log('🎤 Capabilities:', response.capabilities);
+                            // Show TTS engine info
+                            const ttsInfo = response.capabilities.openai_tts ? 'OpenAI TTS (fast)' : 'gTTS (fallback)';
+                            this.updateStatus(`Voice ready - ${ttsInfo}`, 'success');
+                            addMessage(`🎙️ Voice chat connected! Using ${ttsInfo}. Available voices: ${response.capabilities.voices?.join(', ') || 'default'}`, false, 'system');
                             break;
                             
                         case 'transcription':
                             console.log('📝 Transcription:', response.text);
                             console.log(`⏱️ STT: ${response.latency_ms}ms`);
                             addMessage(response.text, true, 'user');
-                            this.updateStatus('Transcribed', 'success');
+                            this.updateStatus(`Transcribed (${response.latency_ms}ms)`, 'success');
                             break;
                             
                         case 'text_response':
                             console.log('💬 AI Response:', response.text);
                             console.log(`⏱️ LLM: ${response.latency_ms}ms`);
                             addMessage(response.text, false, 'assistant');
+                            this.updateStatus(`Thinking done (${response.latency_ms}ms)`, 'success');
                             break;
                             
                         case 'audio_response':
                             console.log('🎵 Audio received');
-                            const latency = response.latency;
-                            console.log(`⏱️ Total: ${latency.total_ms}ms (STT: ${latency.stt_ms}ms, LLM: ${latency.llm_ms}ms, TTS: ${latency.tts_ms}ms)`);
+                            const latency = response.latency || {};
+                            const ttsEngine = response.tts_engine || 'unknown';
+                            console.log(`⏱️ Total: ${latency.total_ms}ms (STT: ${latency.stt_ms || 0}ms, LLM: ${latency.llm_ms || 0}ms, TTS: ${latency.tts_ms || 0}ms) - ${ttsEngine}`);
                             
                             // ✅ Reset processing flag now that we received response
                             this.isProcessing = false;
                             
                             // Decode and play audio
-                            const audioData = atob(response.audio_data);
-                            const audioArray = new Uint8Array(audioData.length);
-                            for (let i = 0; i < audioData.length; i++) {
-                                audioArray[i] = audioData.charCodeAt(i);
+                            try {
+                                const audioData = atob(response.audio_data);
+                                const audioArray = new Uint8Array(audioData.length);
+                                for (let i = 0; i < audioData.length; i++) {
+                                    audioArray[i] = audioData.charCodeAt(i);
+                                }
+                                await this.playAudioFromBytes(audioArray.buffer);
+                            } catch (audioError) {
+                                console.error('Audio decode error:', audioError);
+                                this.updateStatus('Audio playback failed', 'error');
                             }
-                            await this.playAudioFromBytes(audioArray.buffer);
                             
-                            // ✅ SIMPLIFIED: Ready for next recording
-                            this.updateStatus('Ready - Click to record', 'success');
+                            // ✅ Show latency info
+                            this.updateStatus(`Ready (${latency.total_ms}ms total)`, 'success');
                             break;
                             
                         case 'status':
-                            this.updateStatus(response.stage, 'processing');
+                            const stageEmoji = {
+                                'transcribing': '🎤',
+                                'thinking': '🧠',
+                                'synthesizing': '🔊'
+                            };
+                            this.updateStatus(`${stageEmoji[response.stage] || '⏳'} ${response.stage}...`, 'processing');
+                            break;
+                            
+                        case 'voice_changed':
+                            console.log('🎤 Voice changed to:', response.voice);
+                            addMessage(`🎤 Voice changed to: ${response.voice}`, false, 'system');
+                            this.updateStatus(`Voice: ${response.voice}`, 'success');
                             break;
                             
                         case 'error':
                             console.error('❌ Error:', response.message);
                             this.updateStatus(`Error: ${response.message}`, 'error');
+                            this.isProcessing = false;
+                            addMessage(`❌ Voice error: ${response.message}`, false, 'system');
+                            break;
+                            
+                        case 'interrupted':
+                            console.log('🛑 Interrupted');
+                            this.updateStatus('Interrupted', 'info');
+                            this.isProcessing = false;
                             break;
                             
                         case 'status_response':
                             console.log('📊 Status:', response);
+                            addMessage(`📊 Voice Status:\n- TTS: ${response.tts_engine} (OpenAI: ${response.openai_tts})\n- Voice: ${response.current_voice}\n- Messages: ${response.messages_count}`, false, 'system');
                             break;
+                            
+                        default:
+                            console.log('Unknown message type:', response.type);
                     }
                 } catch (error) {
                     console.error('Failed to handle voice response:', error);
                     this.updateStatus('Response processing failed', 'error');
+                    this.isProcessing = false;
                 }
             }
 

@@ -24,6 +24,8 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    volumes:
+      - kafka_data:/var/lib/kafka/data
     depends_on:
       - zookeeper
 
@@ -34,6 +36,8 @@ services:
       - nis-network
     ports:
       - "6379:6379"
+    volumes:
+      - redis_data:/data
 
   backend:
     build: .
@@ -41,8 +45,16 @@ services:
     networks:
       - nis-network
     ports:
-      - "8000:8000"
+      - "8007:8000"
     restart: unless-stopped
+    # GPU Support for NVIDIA
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
     env_file:
       - .env
     environment:
@@ -56,10 +68,15 @@ services:
       - NGC_API_KEY=${NGC_API_KEY:-your_ngc_api_key_here}
       - NIM_BASE_URL=${NIM_BASE_URL:-https://api.nvcf.nvidia.com/v2/nvcf}
       - NVIDIA_NIM_ENABLED=${NVIDIA_NIM_ENABLED:-false}
+      # Service Discovery
+      - REDIS_HOST=redis
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
     volumes:
       # Commenting out Google credentials mount that's causing issues
       # - ${APPDATA}/gcloud/application_default_credentials.json:/app/google-credentials.json:ro
       - ./configs/google-service-account.json:/app/service-account-key.json:ro
+      - ./models:/home/nisuser/app/models
+      - ./logs:/app/logs
     depends_on:
       - redis
       - kafka

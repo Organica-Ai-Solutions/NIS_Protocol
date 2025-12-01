@@ -1,0 +1,26 @@
+# NIS Protocol v4.0.1 - Simple Test Docker Compose
+# For quick testing of the modular route architecture
+# Usage: docker-compose -f docker-compose.test.yml up --build
+
+services:
+  nis-api:
+    build: .
+    container_name: nis-api-test
+    ports:
+      - "8000:8000"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY:-}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY:-}
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./logs:/home/nisuser/app/logs
+      - ./models:/home/nisuser/app/models
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    restart: unless-stopped

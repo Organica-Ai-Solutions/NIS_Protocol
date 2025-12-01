@@ -36,6 +36,7 @@ except ImportError:
 from ..agents.training.optimized_local_model_manager import OptimizedLocalModelManager, LocalModelConfig
 from ..agents.signal_processing.unified_signal_agent import create_enhanced_laplace_transformer
 from ..agents.reasoning.unified_reasoning_agent import create_enhanced_kan_reasoning_agent
+from ..agents.robotics.unified_robotics_agent import UnifiedRoboticsAgent, RobotType
 from ..core.agent_orchestrator import NISAgentOrchestrator
 
 logger = logging.getLogger(__name__)
@@ -137,6 +138,7 @@ class EdgeAIOperatingSystem:
         self.agent_orchestrator = None
         self.signal_processor = None
         self.reasoning_engine = None
+        self.robotics_agent = None
         
         # System state
         self.is_online = False
@@ -280,6 +282,14 @@ class EdgeAIOperatingSystem:
             self.logger.info("✅ Agent orchestrator ready for multi-agent coordination")
         except Exception as e:
             self.logger.warning(f"⚠️ Agent orchestrator initialization failed: {e}")
+
+        # Initialize robotics agent for motion control
+        if self.device_profile.device_type in [EdgeDeviceType.AUTONOMOUS_DRONE, EdgeDeviceType.ROBOTICS_SYSTEM, EdgeDeviceType.AUTONOMOUS_VEHICLE]:
+            try:
+                self.robotics_agent = UnifiedRoboticsAgent(agent_id=f"robotics_{self.device_profile.device_type.value}")
+                self.logger.info("✅ Robotics agent initialized for physics-validated motion control")
+            except Exception as e:
+                self.logger.warning(f"⚠️ Robotics agent initialization failed: {e}")
     
     async def _initialize_edge_optimizations(self):
         """Initialize edge-specific optimizations"""

@@ -41,10 +41,13 @@ from src.utils.self_audit import self_audit_engine, ViolationType, IntegrityViol
 class YOLOModel:
     """
     Wrapper class for YOLO object detection model.
-    Supports both YOLOv5/YOLOv8 via ultralytics and OpenCV's DNN module for older YOLO models.
+    Supports:
+    - YOLOv5/YOLOv8 via ultralytics
+    - WALDO (drone-specific detection)
+    - OpenCV's DNN module for older YOLO models
     """
     
-    def __init__(self, model_path: str = None, confidence_threshold: float = 0.5):
+    def __init__(self, model_path: str = None, confidence_threshold: float = 0.5, use_waldo: bool = False):
         """
         Initialize the YOLO model.
         
@@ -57,6 +60,23 @@ class YOLOModel:
         self.model = None
         self.class_names = []
         self.use_ultralytics = False
+        self.use_waldo = use_waldo
+        
+        # WALDO class names (drone-specific detection)
+        self.waldo_classes = {
+            0: 'LightVehicle',
+            1: 'Person',
+            2: 'Building',
+            3: 'UPole',
+            4: 'Boat',
+            5: 'Bike',
+            6: 'Container',
+            7: 'Truck',
+            8: 'Gastank',
+            10: 'Digger',
+            11: 'Solarpanels',
+            12: 'Bus'
+        }
         
         # Try to load the model
         self._load_model()
@@ -66,10 +86,26 @@ class YOLOModel:
         if not CV2_AVAILABLE:
             print("OpenCV not available. Vision detection disabled.")
             return
+        
+        # Load WALDO for drone detection if requested
+        if self.use_waldo:
+            try:
+                from ultralytics import YOLO
+                print("Loading WALDO model for drone object detection...")
+                # WALDO v3.0 from HuggingFace: StephanST/WALDO30
+                self.model = YOLO('StephanST/WALDO30')
+                self.use_ultralytics = True
+                self.class_names = self.waldo_classes
+                print("✅ WALDO model loaded successfully!")
+                print(f"   Detectable classes: {list(self.waldo_classes.values())}")
+                return
+            except Exception as e:
+                print(f"⚠️ Failed to load WALDO: {e}")
+                print("   Falling back to standard YOLO...")
+                self.use_waldo = False
             
         try:
-            # First try to load using ultralytics (YOLOv5/v8)
-#             import torch
+            # Standard YOLO loading (YOLOv5/v8)
             from ultralytics import YOLO
             
             # Use default YOLOv8n if no model specified
@@ -247,7 +283,8 @@ class VisionAgent(NISAgent):
         emotional_state: Optional[EmotionalState] = None,
         yolo_model_path: Optional[str] = None,
         confidence_threshold: float = 0.5,
-        enable_self_audit: bool = True
+        enable_self_audit: bool = True,
+        use_waldo: bool = False
     ):
         """
         Initialize the Vision Agent.
@@ -259,12 +296,27 @@ class VisionAgent(NISAgent):
             yolo_model_path: Path to YOLO model weights
             confidence_threshold: Minimum confidence for object detection
             enable_self_audit: Whether to enable real-time integrity monitoring
+            use_waldo: Use WALDO model for drone/overhead imagery detection
         """
         super().__init__(agent_id, description, emotional_state)
         
-        # Initialize YOLO model
+        # Set up enhanced logging FIRST (before using logger)
+        if not hasattr(self, 'logger'):
+            self.logger = logging.getLogger(f"nis_vision_agent_{agent_id}")
+            self.logger.setLevel(logging.INFO)
+        
+        # Initialize emotional state (set to None if not provided)
+        if not hasattr(self, 'emotional_state'):
+            self.emotional_state = emotional_state
+        
+        # Store WALDO preference
+        self.use_waldo = use_waldo
+        
+        # Initialize YOLO model (with optional WALDO)
         if CV2_AVAILABLE:
-            self.yolo_model = YOLOModel(yolo_model_path, confidence_threshold)
+            self.yolo_model = YOLOModel(yolo_model_path, confidence_threshold, use_waldo=use_waldo)
+            if use_waldo:
+                self.logger.info("🚁 WALDO drone detection model enabled")
         else:
             self.yolo_model = None
             self.logger.warning("OpenCV (cv2) not available. Vision functionality will be limited.")
@@ -294,15 +346,32 @@ class VisionAgent(NISAgent):
         # Initialize confidence factors for mathematical validation
         self.confidence_factors = create_default_confidence_factors()
         
-        # Set up enhanced logging
-        if not hasattr(self, 'logger'):
-            self.logger = logging.getLogger(f"nis_vision_agent_{agent_id}")
-            self.logger.setLevel(logging.INFO)
-        
         # Register with NIS system
-        NISRegistry.register_agent(self)
+        NISRegistry().register(self)
         
         self.logger.info(f"Vision Agent '{agent_id}' initialized with OpenCV available: {CV2_AVAILABLE}, self-audit: {enable_self_audit}")
+    
+    def _start_processing_timer(self) -> float:
+        """Start processing timer"""
+        return time.time()
+    
+    def _end_processing_timer(self, start_time: float) -> float:
+        """End processing timer and return duration"""
+        return time.time() - start_time
+    
+    def _create_response(self, status: str, data: Dict[str, Any], metadata: Optional[Dict[str, Any]] = None, emotional_state: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        """Create standardized response"""
+        response = {
+            "status": status,
+            "agent_id": self.agent_id,
+            "timestamp": time.time(),
+            **data
+        }
+        if metadata:
+            response["metadata"] = metadata
+        if emotional_state:
+            response["emotional_state"] = emotional_state
+        return response
     
     def process(self, message: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -394,7 +463,7 @@ class VisionAgent(NISAgent):
             metadata={
                 "is_streaming": self.is_streaming
             },
-            emotional_state=self.emotional_state.get_state()
+            emotional_state=self.emotional_state.get_state() if self.emotional_state else None
         )
     
     def _validate_message(self, message: Dict[str, Any]) -> bool:
@@ -474,7 +543,7 @@ class VisionAgent(NISAgent):
     
     def _stop_streaming(self) -> None:
         """Stop the current video stream."""
-        if self.video_capture is not None:
+        if hasattr(self, 'video_capture') and self.video_capture is not None:
             self.video_capture.release()
             self.video_capture = None
         self.is_streaming = False
@@ -637,9 +706,39 @@ class VisionAgent(NISAgent):
         Returns:
             Language code (default: 'en')
         """
-        # In a real implementation, use a language detection library
-        # This is a simple placeholder
-        return "en"
+        if not text:
+            return "en"
+        
+        # Simple language detection using character patterns
+        text_lower = text.lower()
+        
+        # Check for non-ASCII characters common in specific languages
+        if any('\u4e00' <= c <= '\u9fff' for c in text):
+            return "zh"  # Chinese
+        if any('\u3040' <= c <= '\u309f' or '\u30a0' <= c <= '\u30ff' for c in text):
+            return "ja"  # Japanese
+        if any('\uac00' <= c <= '\ud7af' for c in text):
+            return "ko"  # Korean
+        if any('\u0600' <= c <= '\u06ff' for c in text):
+            return "ar"  # Arabic
+        if any('\u0400' <= c <= '\u04ff' for c in text):
+            return "ru"  # Russian
+        
+        # Check for common words in European languages
+        spanish_words = ["el", "la", "de", "que", "es", "en", "los", "del"]
+        french_words = ["le", "la", "de", "et", "est", "les", "des", "que"]
+        german_words = ["der", "die", "und", "ist", "das", "nicht", "ich"]
+        
+        words = text_lower.split()
+        if len(words) >= 3:
+            if sum(1 for w in words if w in spanish_words) >= 2:
+                return "es"
+            if sum(1 for w in words if w in french_words) >= 2:
+                return "fr"
+            if sum(1 for w in words if w in german_words) >= 2:
+                return "de"
+        
+        return "en"  # Default to English
     
     def _detect_unusual_patterns(self, detections: List[Dict[str, Any]]) -> bool:
         """

@@ -1,0 +1,77 @@
+# ========================================================================
+# NVIDIA Cloud Functions (NVCF) Dockerfile for NIS Protocol v4.0
+# Optimized for serverless GPU inference on DGX Cloud
+# ========================================================================
+
+# Use NVIDIA's official CUDA runtime base (NVCF compatible)
+FROM nvcr.io/nvidia/cuda:12.1.1-runtime-ubuntu22.04
+
+# Labels for NGC registry
+LABEL com.nvidia.nvcf.version="1.0.0"
+LABEL com.nvidia.nvcf.name="nis-protocol"
+LABEL com.nvidia.nvcf.description="Neural Intelligence System Protocol - Physics-Informed AI"
+LABEL maintainer="Organica AI Solutions"
+
+# Prevent interactive installs
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install runtime dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3.11 python3.11-venv python3-pip \
+    ffmpeg libsndfile1 libasound2-dev portaudio19-dev \
+    libgomp1 libblas3 liblapack3 curl wget git \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+# Create app directory
+WORKDIR /app
+
+# Copy requirements first for caching
+COPY requirements.txt constraints.txt ./
+
+# Install Python dependencies
+RUN python3.11 -m pip install --no-cache-dir --upgrade pip setuptools wheel && \
+    python3.11 -m pip install --no-cache-dir \
+    -r requirements.txt -c constraints.txt \
+    || python3.11 -m pip install --no-cache-dir -r requirements.txt
+
+# Install additional packages for NVCF
+RUN python3.11 -m pip install --no-cache-dir \
+    soundfile librosa ffmpeg-python \
+    gtts scipy nltk einops boto3 gdown \
+    prometheus-client opentelemetry-api opentelemetry-sdk \
+    || echo 'Some optional packages failed, continuing...'
+
+# Copy application source
+COPY . .
+
+# Prepare directories
+RUN mkdir -p logs static cache models data/chat_memory && \
+    chmod +x *.sh 2>/dev/null || true
+
+# ---------------- NVCF Environment Variables ----------------
+ENV CUDA_HOME=/usr/local/cuda
+ENV NVIDIA_VISIBLE_DEVICES=all
+ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility
+ENV PYTHONUNBUFFERED=1
+
+# NVCF-specific settings
+ENV NVCF_FUNCTION_NAME="nis-protocol"
+ENV NVCF_MAX_BATCH_SIZE=8
+ENV NVCF_TIMEOUT_SECONDS=300
+
+# NIS Protocol settings
+ENV NIS_ENV=production
+ENV LOG_LEVEL=INFO
+ENV API_HOST=0.0.0.0
+ENV API_PORT=8000
+
+# ---------------- Healthcheck ----------------
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:8000/health || exit 1
+
+# ---------------- Port Exposure ----------------
+EXPOSE 8000
+
+# ---------------- Entrypoint ----------------
+CMD ["python3.11", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1"]

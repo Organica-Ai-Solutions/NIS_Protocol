@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NIS Protocol v4.0 - System Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * { font-family: 'Inter', sans-serif; }
+        
+        body {
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+        }
+        
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .glow-green { box-shadow: 0 0 20px rgba(34, 197, 94, 0.3); }
+        .glow-blue { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
+        .glow-purple { box-shadow: 0 0 20px rgba(168, 85, 247, 0.3); }
+        .glow-orange { box-shadow: 0 0 20px rgba(249, 115, 22, 0.3); }
+        
+        .pulse-dot {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-2px);
+            transition: all 0.3s ease;
+        }
+        
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        .scrollbar-thin::-webkit-scrollbar { width: 6px; }
+        .scrollbar-thin::-webkit-scrollbar-track { background: rgba(255,255,255,0.1); border-radius: 3px; }
+        .scrollbar-thin::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 3px; }
+    </style>
+</head>
+<body class="text-white">
+    <div class="min-h-screen p-6">
+        <!-- Header -->
+        <header class="glass rounded-2xl p-6 mb-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                        <i data-lucide="brain" class="w-7 h-7"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold">NIS Protocol v4.0</h1>
+                        <p class="text-gray-400 text-sm">Self-Improving Consciousness System</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div id="system-status" class="flex items-center gap-2 px-4 py-2 rounded-full glass">
+                        <div class="status-indicator bg-green-500"></div>
+                        <span class="text-sm">System Healthy</span>
+                    </div>
+                    <div class="text-sm text-gray-400" id="last-update">Last update: --</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Grid -->
+        <div class="grid grid-cols-12 gap-6">
+            <!-- Left Column - Metrics -->
+            <div class="col-span-12 lg:col-span-3 space-y-6">
+                <!-- LLM Providers -->
+                <div class="glass rounded-2xl p-5">
+                    <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                        <i data-lucide="cpu" class="w-5 h-5 text-blue-400"></i>
+                        LLM Providers
+                    </h3>
+                    <div id="llm-providers" class="space-y-3">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Agents Status -->
+                <div class="glass rounded-2xl p-5">
+                    <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                        <i data-lucide="users" class="w-5 h-5 text-purple-400"></i>
+                        Agents
+                    </h3>
+                    <div id="agents-list" class="space-y-2 max-h-64 overflow-y-auto scrollbar-thin">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Center Column - Main Stats -->
+            <div class="col-span-12 lg:col-span-6 space-y-6">
+                <!-- Quick Stats -->
+                <div class="grid grid-cols-4 gap-4">
+                    <div class="glass rounded-xl p-4 metric-card glow-green">
+                        <div class="text-3xl font-bold text-green-400" id="stat-endpoints">--</div>
+                        <div class="text-sm text-gray-400">Endpoints</div>
+                    </div>
+                    <div class="glass rounded-xl p-4 metric-card glow-blue">
+                        <div class="text-3xl font-bold text-blue-400" id="stat-agents">--</div>
+                        <div class="text-sm text-gray-400">Agents</div>
+                    </div>
+                    <div class="glass rounded-xl p-4 metric-card glow-purple">
+                        <div class="text-3xl font-bold text-purple-400" id="stat-tools">--</div>
+                        <div class="text-sm text-gray-400">Tools</div>
+                    </div>
+                    <div class="glass rounded-xl p-4 metric-card glow-orange">
+                        <div class="text-3xl font-bold text-orange-400" id="stat-conversations">--</div>
+                        <div class="text-sm text-gray-400">Conversations</div>
+                    </div>
+                </div>
+
+                <!-- Protocols Status -->
+                <div class="glass rounded-2xl p-5">
+                    <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                        <i data-lucide="network" class="w-5 h-5 text-cyan-400"></i>
+                        Protocol Integration
+                    </h3>
+                    <div class="grid grid-cols-3 gap-4" id="protocols-grid">
+                        <!-- ACP -->
+                        <div class="glass rounded-xl p-4 text-center">
+                            <div class="text-2xl mb-2">🐝</div>
+                            <div class="font-semibold">ACP</div>
+                            <div class="text-xs text-gray-400">IBM/Linux Foundation</div>
+                            <div class="mt-2 text-xs px-2 py-1 rounded-full bg-green-500/20 text-green-400" id="acp-status">Active</div>
+                        </div>
+                        <!-- A2A -->
+                        <div class="glass rounded-xl p-4 text-center">
+                            <div class="text-2xl mb-2">🔗</div>
+                            <div class="font-semibold">A2A</div>
+                            <div class="text-xs text-gray-400">Google</div>
+                            <div class="mt-2 text-xs px-2 py-1 rounded-full bg-yellow-500/20 text-yellow-400" id="a2a-status">Demo</div>
+                        </div>
+                        <!-- MCP -->
+                        <div class="glass rounded-xl p-4 text-center">
+                            <div class="text-2xl mb-2">🔧</div>
+                            <div class="font-semibold">MCP</div>
+                            <div class="text-xs text-gray-400">Anthropic</div>
+                            <div class="mt-2 text-xs px-2 py-1 rounded-full bg-yellow-500/20 text-yellow-400" id="mcp-status">Demo</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BitNet Learning -->
+                <div class="glass rounded-2xl p-5">
+                    <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                        <i data-lucide="graduation-cap" class="w-5 h-5 text-pink-400"></i>
+                        BitNet Learning
+                    </h3>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span>Training Examples</span>
+                                <span id="bitnet-examples">0 / 400</span>
+                            </div>
+                            <div class="h-2 bg-gray-700 rounded-full overflow-hidden">
+                                <div id="bitnet-progress" class="h-full bg-gradient-to-r from-pink-500 to-purple-500 transition-all duration-500" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <div class="text-gray-400">Quality Score</div>
+                                <div class="text-xl font-semibold" id="bitnet-quality">--</div>
+                            </div>
+                            <div>
+                                <div class="text-gray-400">Status</div>
+                                <div class="text-xl font-semibold" id="bitnet-status">--</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="glass rounded-2xl p-5">
+                    <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                        <i data-lucide="zap" class="w-5 h-5 text-yellow-400"></i>
+                        Quick Actions
+                    </h3>
+                    <div class="grid grid-cols-4 gap-3">
+                        <button onclick="openChat()" class="glass rounded-xl p-4 hover:bg-white/10 transition text-center">
+                            <i data-lucide="message-circle" class="w-6 h-6 mx-auto mb-2 text-blue-400"></i>
+                            <div class="text-xs">Chat</div>
+                        </button>
+                        <button onclick="openVoice()" class="glass rounded-xl p-4 hover:bg-white/10 transition text-center">
+                            <i data-lucide="mic" class="w-6 h-6 mx-auto mb-2 text-green-400"></i>
+                            <div class="text-xs">Voice</div>
+                        </button>
+                        <button onclick="runAutonomous()" class="glass rounded-xl p-4 hover:bg-white/10 transition text-center">
+                            <i data-lucide="play" class="w-6 h-6 mx-auto mb-2 text-purple-400"></i>
+                            <div class="text-xs">Auto Task</div>
+                        </button>
+                        <button onclick="openDocs()" class="glass rounded-xl p-4 hover:bg-white/10 transition text-center">
+                            <i data-lucide="book-open" class="w-6 h-6 mx-auto mb-2 text-orange-400"></i>
+                            <div class="text-xs">API Docs</div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Activity & GPU -->
+            <div class="col-span-12 lg:col-span-3 space-y-6">
+                <!-- GPU Status -->
+                <div class="glass rounded-2xl p-5">
+                    <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                        <i data-lucide="gpu" class="w-5 h-5 text-green-400"></i>
+                        GPU Status
+                    </h3>
+                    <div class="space-y-3">
+                        <div id="gpu-name" class="text-sm text-gray-300">Loading...</div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span>Memory</span>
+                                <span id="gpu-memory">-- / --</span>
+                            </div>
+                            <div class="h-2 bg-gray-700 rounded-full overflow-hidden">
+                                <div id="gpu-memory-bar" class="h-full bg-gradient-to-r from-green-500 to-emerald-500" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span>Utilization</span>
+                                <span id="gpu-util">--%</span>
+                            </div>
+                            <div class="h-2 bg-gray-700 rounded-full overflow-hidden">
+                                <div id="gpu-util-bar" class="h-full bg-gradient-to-r from-blue-500 to-cyan-500" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="glass rounded-2xl p-5">
+                    <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                        <i data-lucide="activity" class="w-5 h-5 text-cyan-400"></i>
+                        Recent Activity
+                    </h3>
+                    <div id="activity-log" class="space-y-2 max-h-80 overflow-y-auto scrollbar-thin text-sm">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- System Info -->
+                <div class="glass rounded-2xl p-5">
+                    <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                        <i data-lucide="info" class="w-5 h-5 text-gray-400"></i>
+                        System Info
+                    </h3>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Version</span>
+                            <span>v4.0</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Branch</span>
+                            <span class="text-purple-400">self-improving-consciousness</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Uptime</span>
+                            <span id="uptime">--</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // State
+        let startTime = Date.now();
+        let activityLog = [];
+
+        // Fetch and update dashboard
+        async function updateDashboard() {
+            try {
+                // Health check
+                const health = await fetch('/health').then(r => r.json());
+                document.getElementById('stat-conversations').textContent = health.conversations_active || 0;
+                
+                // Agents
+                const agents = await fetch('/agents/status').then(r => r.json());
+                document.getElementById('stat-agents').textContent = agents.total_agents || 0;
+                updateAgentsList(agents.agents || {});
+                
+                // Tools
+                const tools = await fetch('/tools/list').then(r => r.json());
+                document.getElementById('stat-tools').textContent = Object.keys(tools).length;
+                
+                // BitNet
+                const bitnet = await fetch('/models/bitnet/status').then(r => r.json());
+                updateBitNet(bitnet);
+                
+                // Models/Providers - providers is an object, not array
+                const models = await fetch('/models').then(r => r.json());
+                updateProviders(models.providers || {});
+                
+                // Endpoints count
+                const spec = await fetch('/openapi.json').then(r => r.json());
+                document.getElementById('stat-endpoints').textContent = Object.keys(spec.paths).length;
+                
+                // GPU Status
+                try {
+                    const gpu = await fetch('/system/gpu').then(r => r.json());
+                    updateGPU(gpu);
+                } catch (e) {
+                    console.warn('GPU status unavailable:', e);
+                }
+                
+                // Update timestamp
+                document.getElementById('last-update').textContent = `Last update: ${new Date().toLocaleTimeString()}`;
+                
+                // Add activity
+                addActivity('System', 'Dashboard refreshed', 'info');
+                
+            } catch (error) {
+                console.error('Dashboard update error:', error);
+                addActivity('Error', error.message, 'error');
+            }
+        }
+
+        function updateAgentsList(agents) {
+            const container = document.getElementById('agents-list');
+            container.innerHTML = '';
+            
+            Object.entries(agents).forEach(([id, agent]) => {
+                const statusColor = agent.status === 'active' ? 'bg-green-500' : 
+                                   agent.status === 'idle' ? 'bg-yellow-500' : 'bg-gray-500';
+                container.innerHTML += `
+                    <div class="flex items-center justify-between p-2 rounded-lg hover:bg-white/5">
+                        <div class="flex items-center gap-2">
+                            <div class="w-2 h-2 rounded-full ${statusColor}"></div>
+                            <span class="text-sm">${id}</span>
+                        </div>
+                        <span class="text-xs text-gray-500">${agent.type || 'agent'}</span>
+                    </div>
+                `;
+            });
+        }
+
+        function updateBitNet(data) {
+            const examples = data.training_metrics?.total_examples_collected || 0;
+            const quality = data.training_metrics?.average_quality_score || 0;
+            const status = data.offline_readiness?.status || 'Unknown';
+            
+            document.getElementById('bitnet-examples').textContent = `${examples} / 400`;
+            document.getElementById('bitnet-progress').style.width = `${Math.min(examples / 4, 100)}%`;
+            document.getElementById('bitnet-quality').textContent = quality.toFixed(2);
+            document.getElementById('bitnet-status').textContent = status;
+        }
+
+        function updateProviders(providers) {
+            const container = document.getElementById('llm-providers');
+            container.innerHTML = '';
+            
+            const providerIcons = {
+                'anthropic': '🧠',
+                'openai': '🤖',
+                'google': '🔮',
+                'deepseek': '🌊',
+                'nvidia': '💚',
+                'kimi': '🌙',
+                'bitnet': '⚡'
+            };
+            
+            // providers is an object with provider names as keys
+            Object.entries(providers).forEach(([name, data]) => {
+                const icon = providerIcons[name.toLowerCase()] || '⚡';
+                const isActive = data.is_active !== false;
+                const statusClass = isActive ? 'bg-green-500/20 text-green-400' : 'bg-gray-500/20 text-gray-400';
+                const statusText = isActive ? 'Active' : 'Inactive';
+                container.innerHTML += `
+                    <div class="flex items-center justify-between p-2 rounded-lg hover:bg-white/5">
+                        <div class="flex items-center gap-2">
+                            <span>${icon}</span>
+                            <span class="text-sm capitalize">${name}</span>
+                        </div>
+                        <span class="text-xs px-2 py-1 rounded-full ${statusClass}">${statusText}</span>
+                    </div>
+                `;
+            });
+        }
+
+        function updateGPU(gpu) {
+            if (gpu.available) {
+                document.getElementById('gpu-name').textContent = gpu.name;
+                document.getElementById('gpu-memory').textContent = `${gpu.memory_used_mb} / ${gpu.memory_total_mb} MB`;
+                document.getElementById('gpu-memory-bar').style.width = `${gpu.memory_percent}%`;
+                document.getElementById('gpu-util').textContent = `${gpu.utilization_percent}%`;
+                document.getElementById('gpu-util-bar').style.width = `${gpu.utilization_percent}%`;
+            } else {
+                document.getElementById('gpu-name').textContent = gpu.error || 'Not available';
+                document.getElementById('gpu-memory').textContent = 'N/A';
+                document.getElementById('gpu-util').textContent = 'N/A';
+            }
+        }
+
+        function addActivity(source, message, type = 'info') {
+            const colors = {
+                'info': 'text-blue-400',
+                'success': 'text-green-400',
+                'warning': 'text-yellow-400',
+                'error': 'text-red-400'
+            };
+            
+            activityLog.unshift({ source, message, type, time: new Date() });
+            activityLog = activityLog.slice(0, 20);
+            
+            const container = document.getElementById('activity-log');
+            container.innerHTML = activityLog.map(a => `
+                <div class="p-2 rounded-lg bg-white/5">
+                    <div class="flex items-center gap-2">
+                        <span class="${colors[a.type]}">${a.source}</span>
+                        <span class="text-gray-500 text-xs">${a.time.toLocaleTimeString()}</span>
+                    </div>
+                    <div class="text-gray-400 text-xs mt-1">${a.message}</div>
+                </div>
+            `).join('');
+        }
+
+        function updateUptime() {
+            const elapsed = Date.now() - startTime;
+            const hours = Math.floor(elapsed / 3600000);
+            const minutes = Math.floor((elapsed % 3600000) / 60000);
+            const seconds = Math.floor((elapsed % 60000) / 1000);
+            document.getElementById('uptime').textContent = `${hours}h ${minutes}m ${seconds}s`;
+        }
+
+        // Quick actions
+        function openChat() {
+            window.open('/static/modern_chat.html', '_blank');
+        }
+        
+        function openVoice() {
+            window.open('/static/chat_console.html', '_blank');
+        }
+        
+        async function runAutonomous() {
+            addActivity('Task', 'Starting autonomous task...', 'info');
+            try {
+                const result = await fetch('/autonomous/quick', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ task: 'Calculate the first 5 prime numbers' })
+                }).then(r => r.json());
+                addActivity('Task', 'Autonomous task completed!', 'success');
+            } catch (e) {
+                addActivity('Task', 'Task failed: ' + e.message, 'error');
+            }
+        }
+        
+        function openDocs() {
+            window.open('/docs', '_blank');
+        }
+
+        // Initialize
+        updateDashboard();
+        setInterval(updateDashboard, 10000); // Refresh every 10s
+        setInterval(updateUptime, 1000);
+        
+        // Initial activity
+        addActivity('System', 'Dashboard initialized', 'success');
+        addActivity('System', 'Connected to NIS Protocol v4.0', 'info');
+    </script>
+</body>
+</html>

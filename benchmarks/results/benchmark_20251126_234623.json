@@ -1,0 +1,336 @@
+{
+  "timestamp": "2025-11-26 23:46:23",
+  "total_tests": 29,
+  "passed_tests": 3,
+  "failed_tests": 26,
+  "overall_score": 10.3,
+  "total_latency_ms": 44755.4,
+  "total_tokens": 188,
+  "total_cost_usd": 0.004,
+  "avg_latency_ms": 1543.3,
+  "results_by_category": {
+    "code_generation": [
+      {
+        "name": "HE_001",
+        "passed": false,
+        "score": 0,
+        "latency_ms": 0,
+        "tokens_used": 0,
+        "cost_usd": 0,
+        "details": {
+          "error": ""
+        }
+      },
+      {
+        "name": "HE_002",
+        "passed": true,
+        "score": 100,
+        "latency_ms": 27259.61709022522,
+        "tokens_used": 22,
+        "cost_usd": 0.001,
+        "details": {}
+      },
+      {
+        "name": "HE_003",
+        "passed": true,
+        "score": 100,
+        "latency_ms": 6234.981060028076,
+        "tokens_used": 82,
+        "cost_usd": 0.001,
+        "details": {}
+      },
+      {
+        "name": "HE_004",
+        "passed": true,
+        "score": 100,
+        "latency_ms": 5623.56424331665,
+        "tokens_used": 62,
+        "cost_usd": 0.001,
+        "details": {}
+      },
+      {
+        "name": "HE_005",
+        "passed": false,
+        "score": 0,
+        "latency_ms": 5637.258052825928,
+        "tokens_used": 22,
+        "cost_usd": 0.001,
+        "details": {
+          "error": "Function find_max not found"
+        }
+      },
+      {
+        "name": "HE_006",
+        "passed": false,
+        "score": 0,
+        "latency_ms": 0,
+        "tokens_used": 0,
+        "cost_usd": 0,
+        "details": {
+          "error": "Cannot connect to host localhost:8000 ssl:default [Multiple exceptions: [Errno 61] Connect call failed ('::1', 8000, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 8000)]"
+        }
+      },
+      {
+        "name": "HE_007",
+        "passed": false,
+        "score": 0,
+        "latency_ms": 0,
+        "tokens_used": 0,
+        "cost_usd": 0,
+        "details": {
+          "error": "Cannot connect to host localhost:8000 ssl:default [Multiple exceptions: [Errno 61] Connect call failed ('::1', 8000, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 8000)]"
+        }
+      },
+      {
+        "name": "HE_008",
+        "passed": false,
+        "score": 0,
+        "latency_ms": 0,
+        "tokens_used": 0,
+        "cost_usd": 0,
+        "details": {
+          "error": "Cannot connect to host localhost:8000 ssl:default [Multiple exceptions: [Errno 61] Connect call failed ('::1', 8000, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 8000)]"
+        }
+      },
+      {
+        "name": "HE_009",
+        "passed": false,
+        "score": 0,
+        "latency_ms": 0,
+        "tokens_used": 0,
+        "cost_usd": 0,
+        "details": {
+          "error": "Cannot connect to host localhost:8000 ssl:default [Multiple exceptions: [Errno 61] Connect call failed ('::1', 8000, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 8000)]"
+        }
+      },
+      {
+        "name": "HE_010",
+        "passed": false,
+        "score": 0,
+        "latency_ms": 0,
+        "tokens_used": 0,
+        "cost_usd": 0,
+        "details": {
+          "error": "Cannot connect to host localhost:8000 ssl:default [Multiple exceptions: [Errno 61] Connect call failed ('::1', 8000, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 8000)]"
+        }
+      }
+    ],
+    "math_reasoning": [
+      {
+        "name": "GSM_001",
+        "passed": false,
+        "score": 0,
+        "latency_ms": 0,
+        "tokens_used": 0,
+        "cost_usd": 0,
+        "details": {
+          "error": "Cannot connect to host localhost:8000 ssl:default [Multiple exceptions: [Errno 61] Connect call failed ('::1', 8000, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 8000)]"
+        }
+      },
+      {
+        "name": "GSM_002",
+        "passed": false,
+        "score": 0,
+        "latency_ms": 0,
+        "tokens_used": 0,
+        "cost_usd": 0,
+        "details": {
+          "error": "Cannot connect to host localhost:8000 ssl:default [Multiple exceptions: [Errno 61] Connect call failed ('::1', 8000, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 8000)]"
+        }
+      },
+      {
+        "name": "GSM_003",
+        "passed": false,
+        "score": 0,
+        "latency_ms": 0,
+        "tokens_used": 0,
+        "cost_usd": 0,
+        "details": {
+          "error": "Cannot connect to host localhost:8000 ssl:default [Multiple exceptions: [Errno 61] Connect call failed ('::1', 8000, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 8000)]"
+        }
+      },
+      {
+        "name": "GSM_004",
+        "passed": false,
+        "score": 0,
+        "latency_ms": 0,
+        "tokens_used": 0,
+        "cost_usd": 0,
+        "details": {
+          "error": "Cannot connect to host localhost:8000 ssl:default [Multiple exceptions: [Errno 61] Connect call failed ('::1', 8000, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 8000)]"
+        }
+      },
+      {
+        "name": "GSM_005",
+        "passed": false,
+        "score": 0,
+        "latency_ms": 0,
+        "tokens_used": 0,
+        "cost_usd": 0,
+        "details": {
+          "error": "Cannot connect to host localhost:8000 ssl:default [Multiple exceptions: [Errno 61] Connect call failed ('::1', 8000, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 8000)]"
+        }
+      },
+      {
+        "name": "GSM_006",
+        "passed": false,
+        "score": 0,
+        "latency_ms": 0,
+        "tokens_used": 0,
+        "cost_usd": 0,
+        "details": {
+          "error": "Cannot connect to host localhost:8000 ssl:default [Multiple exceptions: [Errno 61] Connect call failed ('::1', 8000, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 8000)]"
+        }
+      },
+      {
+        "name": "GSM_007",
+        "passed": false,
+        "score": 0,
+        "latency_ms": 0,
+        "tokens_used": 0,
+        "cost_usd": 0,
+        "details": {
+          "error": "Cannot connect to host localhost:8000 ssl:default [Multiple exceptions: [Errno 61] Connect call failed ('::1', 8000, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 8000)]"
+        }
+      },
+      {
+        "name": "GSM_008",
+        "passed": false,
+        "score": 0,
+        "latency_ms": 0,
+        "tokens_used": 0,
+        "cost_usd": 0,
+        "details": {
+          "error": "Cannot connect to host localhost:8000 ssl:default [Multiple exceptions: [Errno 61] Connect call failed ('::1', 8000, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 8000)]"
+        }
+      },
+      {
+        "name": "GSM_009",
+        "passed": false,
+        "score": 0,
+        "latency_ms": 0,
+        "tokens_used": 0,
+        "cost_usd": 0,
+        "details": {
+          "error": "Cannot connect to host localhost:8000 ssl:default [Multiple exceptions: [Errno 61] Connect call failed ('::1', 8000, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 8000)]"
+        }
+      },
+      {
+        "name": "GSM_010",
+        "passed": false,
+        "score": 0,
+        "latency_ms": 0,
+        "tokens_used": 0,
+        "cost_usd": 0,
+        "details": {
+          "error": "Cannot connect to host localhost:8000 ssl:default [Multiple exceptions: [Errno 61] Connect call failed ('::1', 8000, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 8000)]"
+        }
+      }
+    ],
+    "multi_turn": [
+      {
+        "name": "MT_001",
+        "passed": false,
+        "score": 0,
+        "latency_ms": 0,
+        "tokens_used": 0,
+        "cost_usd": 0,
+        "details": {
+          "error": "Cannot connect to host localhost:8000 ssl:default [Multiple exceptions: [Errno 61] Connect call failed ('::1', 8000, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 8000)]"
+        }
+      },
+      {
+        "name": "MT_002",
+        "passed": false,
+        "score": 0,
+        "latency_ms": 0,
+        "tokens_used": 0,
+        "cost_usd": 0,
+        "details": {
+          "error": "Cannot connect to host localhost:8000 ssl:default [Multiple exceptions: [Errno 61] Connect call failed ('::1', 8000, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 8000)]"
+        }
+      },
+      {
+        "name": "MT_003",
+        "passed": false,
+        "score": 0,
+        "latency_ms": 0,
+        "tokens_used": 0,
+        "cost_usd": 0,
+        "details": {
+          "error": "Cannot connect to host localhost:8000 ssl:default [Multiple exceptions: [Errno 61] Connect call failed ('::1', 8000, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 8000)]"
+        }
+      }
+    ],
+    "physics": [
+      {
+        "name": "PHY_001",
+        "passed": false,
+        "score": 0,
+        "latency_ms": 0,
+        "tokens_used": 0,
+        "cost_usd": 0,
+        "details": {
+          "error": "Cannot connect to host localhost:8000 ssl:default [Multiple exceptions: [Errno 61] Connect call failed ('::1', 8000, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 8000)]"
+        }
+      },
+      {
+        "name": "PHY_002",
+        "passed": false,
+        "score": 0,
+        "latency_ms": 0,
+        "tokens_used": 0,
+        "cost_usd": 0,
+        "details": {
+          "error": "Cannot connect to host localhost:8000 ssl:default [Multiple exceptions: [Errno 61] Connect call failed ('::1', 8000, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 8000)]"
+        }
+      },
+      {
+        "name": "PHY_003",
+        "passed": false,
+        "score": 0,
+        "latency_ms": 0,
+        "tokens_used": 0,
+        "cost_usd": 0,
+        "details": {
+          "error": "Cannot connect to host localhost:8000 ssl:default [Multiple exceptions: [Errno 61] Connect call failed ('::1', 8000, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 8000)]"
+        }
+      }
+    ],
+    "latency": [
+      {
+        "name": "LAT_001",
+        "passed": false,
+        "score": 0,
+        "latency_ms": 0,
+        "tokens_used": 0,
+        "cost_usd": 0,
+        "details": {
+          "error": "Cannot connect to host localhost:8000 ssl:default [Multiple exceptions: [Errno 61] Connect call failed ('::1', 8000, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 8000)]"
+        }
+      },
+      {
+        "name": "LAT_002",
+        "passed": false,
+        "score": 0,
+        "latency_ms": 0,
+        "tokens_used": 0,
+        "cost_usd": 0,
+        "details": {
+          "error": "Cannot connect to host localhost:8000 ssl:default [Multiple exceptions: [Errno 61] Connect call failed ('::1', 8000, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 8000)]"
+        }
+      },
+      {
+        "name": "LAT_003",
+        "passed": false,
+        "score": 0,
+        "latency_ms": 0,
+        "tokens_used": 0,
+        "cost_usd": 0,
+        "details": {
+          "error": "Cannot connect to host localhost:8000 ssl:default [Multiple exceptions: [Errno 61] Connect call failed ('::1', 8000, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 8000)]"
+        }
+      }
+    ]
+  }
+}

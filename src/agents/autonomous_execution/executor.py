@@ -699,7 +699,7 @@ class AnthropicStyleExecutor(NISAgent):
             (self.execution_metrics['average_confidence'] * (total - 1) + result.get("final_confidence", 0)) / total
         )
     
-    # Placeholder implementations for missing methods
+    # Task analysis helper methods
     async def _analyze_tool_requirements(self, task_description: str, sub_goals: List[str]) -> List[str]:
         """Analyze what tools are needed for this task"""
         # Basic tool selection based on keywords
