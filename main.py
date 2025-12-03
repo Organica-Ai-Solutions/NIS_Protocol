@@ -206,7 +206,7 @@ from routes import (
     research_router, voice_router, protocols_router, vision_router,
     reasoning_router, consciousness_router, system_router, nvidia_router,
     auth_router, utilities_router, v4_features_router, llm_router, 
-    unified_router, core_router, isaac_router,
+    unified_router, core_router,
     # Dependency setters
     set_bitnet_trainer, set_monitoring_dependencies, set_memory_dependencies,
     set_chat_dependencies, set_agents_dependencies, set_research_dependencies,
@@ -240,9 +240,8 @@ app.include_router(robotics_router)
 app.include_router(physics_router)
 app.include_router(bitnet_router)
 app.include_router(webhooks_router)
-app.include_router(isaac_router)
 
-logger.info("✅ 25 modular route modules loaded (240+ endpoints)")
+logger.info("✅ 24 modular route modules loaded (222 endpoints)")
 
 # ====== SECURITY MIDDLEWARE ======
 if SECURITY_AVAILABLE:
@@ -290,14 +289,6 @@ async def initialize_system():
     global vision_agent, research_agent, reasoning_chain, document_agent, pipeline_agent
     
     logger.info("🚀 Initializing NIS Protocol v4.0.1...")
-    
-    # Initialize Infrastructure (Kafka, Redis, Zookeeper)
-    try:
-        from src.infrastructure.nis_infrastructure import initialize_infrastructure, get_nis_infrastructure
-        infra_status = await initialize_infrastructure()
-        logger.info(f"✅ Infrastructure connected: Kafka={infra_status.get('kafka')}, Redis={infra_status.get('redis')}")
-    except Exception as e:
-        logger.warning(f"⚠️ Infrastructure initialization: {e}")
     
     # LLM Provider
     try:
