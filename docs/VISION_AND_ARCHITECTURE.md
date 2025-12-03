@@ -307,19 +307,86 @@ async for command in hub.commands():
 
 ---
 
+## 📋 Architecture Decision Records (ADRs)
+
+### ADR-001: Modular Route Architecture
+**Status:** Accepted  
+**Context:** Need scalable API structure for 200+ endpoints  
+**Decision:** 23 modular route files with dependency injection  
+**Consequences:** Easy testing, clear separation, independent deployment possible
+
+### ADR-002: Kafka for Event Streaming
+**Status:** Accepted  
+**Context:** Real-time telemetry for robotics (50-400Hz)  
+**Decision:** Apache Kafka with aiokafka async client  
+**Consequences:** High throughput, replay capability, but added infrastructure complexity
+
+### ADR-003: Redis for Caching & Pub/Sub
+**Status:** Accepted  
+**Context:** Need fast caching and real-time notifications  
+**Decision:** Redis with namespaced keys (session:, robot_state:, etc.)  
+**Consequences:** Sub-ms latency, but requires memory management
+
+### ADR-004: Physics-Informed Neural Networks (PINN)
+**Status:** Accepted  
+**Context:** Robotics commands must respect physical laws  
+**Decision:** PyTorch-based PINN with autograd for PDE solving  
+**Consequences:** Real physics validation, but requires GPU for optimal performance
+
+### ADR-005: CAN Protocol for Automotive
+**Status:** Accepted  
+**Context:** OBD-II integration requires CAN bus communication  
+**Decision:** python-can library with simulation fallback  
+**Consequences:** Real hardware support, graceful degradation without hardware
+
+### ADR-006: Multi-Provider LLM Strategy
+**Status:** Accepted  
+**Context:** Avoid vendor lock-in, optimize cost/performance  
+**Decision:** GeneralLLMProvider with Anthropic, OpenAI, DeepSeek, Google, NVIDIA  
+**Consequences:** Flexibility, but complexity in provider management
+
+### ADR-007: 10-Phase Consciousness Pipeline
+**Status:** Accepted  
+**Context:** Need self-improving, ethically-aware AI system  
+**Decision:** Modular consciousness phases (evolution, genesis, ethics, etc.)  
+**Consequences:** Unique capability, but requires careful orchestration
+
+### ADR-008: Docker-First Deployment
+**Status:** Accepted  
+**Context:** Consistent deployment across environments  
+**Decision:** Multi-stage Dockerfile with NVIDIA CUDA support  
+**Consequences:** Portable, but requires Docker knowledge
+
+---
+
 ## 🔮 Roadmap
 
-### v4.1 - Edge Optimization
+### v4.0.1 (Current) - Infrastructure Integration ✅
+- [x] Kafka/Redis/Zookeeper integration
+- [x] OBD-II automotive protocol
+- [x] CAN bus communication
+- [x] Unified infrastructure management
+- [x] Sub-20ms API performance
+
+### v4.1 - Testing & Security (Next)
+- [ ] Comprehensive pytest test suite
+- [ ] Integration tests for Kafka/Redis
+- [ ] API key rotation mechanism
+- [ ] mTLS for service communication
+- [ ] Secrets management (Vault)
+
+### v4.2 - Edge Optimization
 - [ ] TensorRT integration for NVIDIA Jetson
 - [ ] Quantized models for mobile deployment
 - [ ] Offline-first architecture
+- [ ] BitNet edge deployment
 
-### v4.2 - Swarm Intelligence
+### v4.3 - Swarm Intelligence
 - [ ] Emergent behavior coordination
 - [ ] Distributed consensus protocols
 - [ ] Fault-tolerant collective memory
 
-### v4.3 - Space-Ready
+### v4.4 - Space-Ready
 - [ ] Radiation-hardened inference
 - [ ] Extreme latency handling (hours/days)
 - [ ] Resource-constrained optimization

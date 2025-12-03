@@ -77,8 +77,9 @@ MIGRATION STATUS:
 - [x] llm.py - Ready for testing (7 endpoints)
 - [x] unified.py - Ready for testing (4 endpoints)
 - [x] core.py - Ready for testing (2 endpoints)
+- [x] isaac.py - Ready for testing (18 endpoints)
 
-Total: 222 endpoints in 24 modules (100% complete)
+Total: 240 endpoints in 25 modules (100% complete)
 main.py reduced from 12,291 to 1,196 lines (90% reduction)
 """
 
@@ -105,6 +106,7 @@ from .v4_features import router as v4_features_router, set_dependencies as set_v
 from .llm import router as llm_router, set_dependencies as set_llm_dependencies
 from .unified import router as unified_router, set_dependencies as set_unified_dependencies
 from .core import router as core_router, set_dependencies as set_core_dependencies
+from .isaac import router as isaac_router
 
 __all__ = [
     # Routers
@@ -130,6 +132,7 @@ __all__ = [
     "llm_router",
     "unified_router",
     "core_router",
+    "isaac_router",
     # Dependency setters
     "set_bitnet_trainer",
     "set_monitoring_dependencies",
