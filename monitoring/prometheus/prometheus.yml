@@ -1,0 +1,52 @@
+# NIS Protocol Prometheus Configuration
+# Scrapes metrics from NIS Protocol and infrastructure services
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    monitor: 'nis-protocol'
+
+# Alerting configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          # - alertmanager:9093
+
+# Rule files
+rule_files:
+  - "alerts/*.yml"
+
+# Scrape configurations
+scrape_configs:
+  # NIS Protocol API
+  - job_name: 'nis-protocol'
+    static_configs:
+      - targets: ['nis-protocol:8000']
+    metrics_path: '/observability/metrics/prometheus'
+    scrape_interval: 10s
+
+  # NIS Protocol Health
+  - job_name: 'nis-health'
+    static_configs:
+      - targets: ['nis-protocol:8000']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+
+  # Kafka (if JMX exporter is configured)
+  - job_name: 'kafka'
+    static_configs:
+      - targets: ['nis-kafka:9092']
+    scrape_interval: 30s
+
+  # Redis
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis-exporter:9121']
+    scrape_interval: 30s
+
+  # Prometheus self-monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
