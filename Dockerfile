@@ -60,7 +60,7 @@ COPY --from=builder /root/.local /home/nisuser/.local
 # Set environment paths
 USER nisuser
 ENV PATH="/home/nisuser/.local/bin:${PATH}"
-ENV PYTHONPATH="/home/nisuser/app:${PYTHONPATH}"
+ENV PYTHONPATH="/home/nisuser/app"
 WORKDIR /home/nisuser/app
 
 # Copy project source

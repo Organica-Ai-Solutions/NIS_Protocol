@@ -18,7 +18,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ffmpeg libsndfile1 libasound2-dev portaudio19-dev \
     libgomp1 libblas3 liblapack3 \
     build-essential gcc g++ \
-    libsqlite3-dev \
+    sqlite3 libsqlite3-dev \
     && rm -rf /var/lib/apt/lists/* \
     && sqlite3 --version
 
@@ -72,7 +72,7 @@ USER nisuser
 
 # Set environment paths
 ENV PATH="/home/nisuser/.local/bin:${PATH}"
-ENV PYTHONPATH="/home/nisuser/app:${PYTHONPATH}"
+ENV PYTHONPATH="/home/nisuser/app"
 ENV PYTHONUNBUFFERED=1
 
 # ---------------- CPU-Specific Environment ----------------
