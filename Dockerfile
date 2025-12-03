@@ -43,10 +43,13 @@ FROM nvidia/cuda:12.1.1-runtime-ubuntu22.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install runtime dependencies (audio + system libs)
+# Ubuntu 22.04 includes SQLite 3.37.2 which satisfies ChromaDB >= 3.35.0 requirement
 RUN apt-get update && apt-get install -y --no-install-recommends \
     python3.11 python3-pip ffmpeg libsndfile1 libasound2-dev portaudio19-dev \
     libgomp1 libblas3 liblapack3 curl wget git \
-    && rm -rf /var/lib/apt/lists/*
+    libsqlite3-0 sqlite3 \
+    && rm -rf /var/lib/apt/lists/* \
+    && sqlite3 --version
 
 # Create a non-root user for security
 RUN useradd -m -u 1000 nisuser

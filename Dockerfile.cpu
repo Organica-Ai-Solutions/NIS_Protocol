@@ -5,18 +5,22 @@
 # ========================================================================
 
 # ---------- Single Stage: CPU Runtime ----------------------------------------
-FROM python:3.11-slim-bullseye
+# Use Bookworm (Debian 12) which has SQLite 3.40+ (ChromaDB requires >= 3.35.0)
+FROM python:3.11-slim-bookworm
 
 # Prevent interactive installs
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install runtime dependencies (no CUDA, lighter weight)
+# Bookworm includes SQLite 3.40.1 which satisfies ChromaDB requirements
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl wget git \
     ffmpeg libsndfile1 libasound2-dev portaudio19-dev \
     libgomp1 libblas3 liblapack3 \
     build-essential gcc g++ \
-    && rm -rf /var/lib/apt/lists/*
+    libsqlite3-dev \
+    && rm -rf /var/lib/apt/lists/* \
+    && sqlite3 --version
 
 # Create a non-root user for security
 RUN useradd -m -u 1000 nisuser
