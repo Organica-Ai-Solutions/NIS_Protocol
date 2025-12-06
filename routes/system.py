@@ -1,9 +1,14 @@
 """
 NIS Protocol v4.0 - System Routes
 
-This module contains system-level endpoints:
-- Configuration (models, providers)
-- State Management
+This module contains system-related endpoints:
+- System status
+- Configuration
+- Diagnostics
+- Maintenance
+- Infrastructure (Kafka, Redis, Zookeeper)
+
+MIGRATION STATUS: Ready for testing
 - Edge AI deployment
 - Brain Orchestration
 - Autonomous Execution
@@ -658,6 +663,512 @@ Return ONLY the Python code, no explanations. The code should:
             "success": False,
             "error": str(e)
         }
+
+
+# ========================================================================
+# INFRASTRUCTURE ENDPOINTS (Kafka, Redis, Zookeeper)
+# ========================================================================
+
+@router.get("/infrastructure/status")
+async def get_infrastructure_status():
+    """
+    🔧 Get Infrastructure Status
+    
+    Returns the status of all infrastructure services:
+    - Kafka message broker
+    - Redis cache
+    - Zookeeper coordination
+    - Event streaming metrics
+    - Cache performance
+    """
+    import os
+    
+    try:
+        from src.infrastructure.nis_infrastructure import get_nis_infrastructure
+        
+        infra = get_nis_infrastructure()
+        
+        # Ensure connected
+        if not infra.is_connected:
+            await infra.connect()
+        
+        health = await infra.get_health_status()
+        
+        return {
+            "status": health.get("status", "unknown"),
+            "uptime_seconds": health.get("uptime_seconds", 0),
+            "infrastructure": health.get("infrastructure", {}),
+            "telemetry": health.get("telemetry", {}),
+            "event_types_supported": [
+                "system", "chat", "robotics", "can_bus", 
+                "obd_ii", "physics", "consciousness", "training"
+            ],
+            "cache_namespaces": [
+                "session", "conversation", "robot_state",
+                "vehicle_state", "physics_cache", "telemetry"
+            ],
+            "timestamp": time.time()
+        }
+        
+    except Exception as e:
+        logger.error(f"Infrastructure status error: {e}")
+        
+        # Fallback to direct checks
+        kafka_host = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "kafka:9092")
+        redis_host = os.getenv("REDIS_HOST", "redis")
+        
+        return {
+            "status": "degraded",
+            "error": str(e),
+            "infrastructure": {
+                "kafka": {"host": kafka_host, "available": False},
+                "redis": {"host": redis_host, "available": False},
+                "zookeeper": {"available": False}
+            },
+            "timestamp": time.time()
+        }
+
+
+@router.get("/infrastructure/kafka")
+async def get_kafka_status():
+    """
+    📨 Get Kafka Message Broker Status
+    
+    Returns detailed Kafka broker status and statistics.
+    """
+    import os
+    
+    try:
+        from src.infrastructure.message_broker import KafkaMessageBroker, KAFKA_AVAILABLE
+        
+        kafka = KafkaMessageBroker()
+        await kafka.connect()
+        stats = kafka.get_stats()
+        await kafka.disconnect()
+        
+        return {
+            "status": "success",
+            "kafka": {
+                "available": KAFKA_AVAILABLE,
+                "connected": stats.get("is_connected", False),
+                "bootstrap_servers": stats.get("bootstrap_servers"),
+                "messages_sent": stats.get("messages_sent", 0),
+                "messages_received": stats.get("messages_received", 0),
+                "errors": stats.get("errors", 0),
+                "last_activity": stats.get("last_activity")
+            },
+            "topics": [
+                "robot.command", "robot.telemetry", "robot.status",
+                "can.message", "can.error",
+                "obd.data", "obd.diagnostic",
+                "ai.inference.request", "ai.inference.response"
+            ],
+            "timestamp": time.time()
+        }
+        
+    except Exception as e:
+        logger.error(f"Kafka status error: {e}")
+        return {
+            "status": "error",
+            "error": str(e),
+            "kafka": {"available": False},
+            "timestamp": time.time()
+        }
+
+
+@router.get("/infrastructure/redis")
+async def get_redis_status():
+    """
+    🗄️ Get Redis Cache Status
+    
+    Returns detailed Redis cache status and statistics.
+    """
+    try:
+        from src.infrastructure.message_broker import RedisCache, REDIS_AVAILABLE
+        
+        redis_cache = RedisCache()
+        await redis_cache.connect()
+        stats = redis_cache.get_stats()
+        await redis_cache.disconnect()
+        
+        return {
+            "status": "success",
+            "redis": {
+                "available": REDIS_AVAILABLE,
+                "connected": stats.get("is_connected", False),
+                "host": stats.get("host"),
+                "gets": stats.get("gets", 0),
+                "sets": stats.get("sets", 0),
+                "hits": stats.get("hits", 0),
+                "misses": stats.get("misses", 0),
+                "hit_rate": stats.get("hit_rate", 0),
+                "errors": stats.get("errors", 0)
+            },
+            "features": [
+                "key_value_cache",
+                "pub_sub_messaging",
+                "session_storage",
+                "rate_limiting"
+            ],
+            "timestamp": time.time()
+        }
+        
+    except Exception as e:
+        logger.error(f"Redis status error: {e}")
+        return {
+            "status": "error",
+            "error": str(e),
+            "redis": {"available": False},
+            "timestamp": time.time()
+        }
+
+
+@router.get("/runner/status")
+async def get_runner_status():
+    """
+    🏃 Get Runner Container Status
+    
+    Returns the status of the secure code runner container.
+    """
+    import os
+    
+    runner_url = os.getenv("RUNNER_URL", "http://nis-runner:8001")
+    
+    try:
+        import httpx
+        
+        async with httpx.AsyncClient(timeout=5.0) as client:
+            response = await client.get(f"{runner_url}/health")
+            
+            if response.status_code == 200:
+                runner_health = response.json()
+                return {
+                    "status": "success",
+                    "runner": {
+                        "available": True,
+                        "url": runner_url,
+                        "health": runner_health
+                    },
+                    "capabilities": [
+                        "python_execution",
+                        "sandboxed_environment",
+                        "browser_automation",
+                        "scientific_computing"
+                    ],
+                    "timestamp": time.time()
+                }
+            else:
+                return {
+                    "status": "error",
+                    "runner": {
+                        "available": False,
+                        "url": runner_url,
+                        "error": f"HTTP {response.status_code}"
+                    },
+                    "timestamp": time.time()
+                }
+                
+    except Exception as e:
+        logger.warning(f"Runner status check failed: {e}")
+        return {
+            "status": "unavailable",
+            "runner": {
+                "available": False,
+                "url": runner_url,
+                "error": str(e)
+            },
+            "note": "Runner container may not be running",
+            "timestamp": time.time()
+        }
+
+
+# ====== Observability Endpoints ======
+
+@router.get("/observability/status")
+async def get_observability_status():
+    """
+    📊 Get Observability System Status
+    
+    Returns status of tracing, logging, and metrics.
+    """
+    try:
+        from src.observability import get_tracer, get_metrics
+        
+        tracer = get_tracer()
+        metrics = get_metrics()
+        
+        return {
+            "status": "active",
+            "components": {
+                "tracing": {
+                    "active": True,
+                    **tracer.get_stats()
+                },
+                "metrics": {
+                    "active": True,
+                    **metrics.get_summary()
+                },
+                "logging": {
+                    "active": True,
+                    "format": "json"
+                }
+            },
+            "timestamp": time.time()
+        }
+    except Exception as e:
+        logger.error(f"Observability status error: {e}")
+        return {
+            "status": "error",
+            "error": str(e),
+            "timestamp": time.time()
+        }
+
+
+@router.get("/observability/traces")
+async def get_recent_traces(limit: int = 50):
+    """
+    🔍 Get Recent Traces
+    
+    Returns recent trace spans for debugging.
+    """
+    try:
+        from src.observability import get_tracer
+        
+        tracer = get_tracer()
+        spans = tracer.get_recent_spans(limit)
+        
+        return {
+            "status": "success",
+            "count": len(spans),
+            "spans": spans,
+            "timestamp": time.time()
+        }
+    except Exception as e:
+        logger.error(f"Get traces error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/observability/traces/{trace_id}")
+async def get_trace(trace_id: str):
+    """
+    🔍 Get Specific Trace
+    
+    Returns all spans for a specific trace ID.
+    """
+    try:
+        from src.observability import get_tracer
+        
+        tracer = get_tracer()
+        spans = tracer.get_trace(trace_id)
+        
+        if not spans:
+            raise HTTPException(status_code=404, detail="Trace not found")
+        
+        return {
+            "status": "success",
+            "trace_id": trace_id,
+            "span_count": len(spans),
+            "spans": spans,
+            "timestamp": time.time()
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Get trace error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/observability/metrics/json")
+async def get_metrics_json():
+    """
+    📈 Get Metrics as JSON
+    
+    Returns all metrics in JSON format.
+    """
+    try:
+        from src.observability import get_metrics
+        
+        metrics = get_metrics()
+        
+        return {
+            "status": "success",
+            "metrics": metrics.get_summary(),
+            "timestamp": time.time()
+        }
+    except Exception as e:
+        logger.error(f"Get metrics error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/observability/metrics/prometheus")
+async def get_metrics_prometheus():
+    """
+    📈 Get Metrics in Prometheus Format
+    
+    Returns all metrics in Prometheus text format.
+    """
+    from fastapi.responses import PlainTextResponse
+    
+    try:
+        from src.observability import get_metrics
+        
+        metrics = get_metrics()
+        prometheus_output = metrics.to_prometheus()
+        
+        return PlainTextResponse(
+            content=prometheus_output,
+            media_type="text/plain; version=0.0.4"
+        )
+    except Exception as e:
+        logger.error(f"Get Prometheus metrics error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ====== Resilience Endpoints ======
+
+@router.get("/resilience/status")
+async def get_resilience_status():
+    """
+    🛡️ Get Resilience System Status
+    
+    Returns status of circuit breakers, health checks, and shutdown handler.
+    """
+    try:
+        from src.core.resilience import (
+            get_circuit_registry, 
+            get_health_checker,
+            get_shutdown_handler
+        )
+        
+        circuits = get_circuit_registry()
+        health = get_health_checker()
+        shutdown = get_shutdown_handler()
+        
+        return {
+            "status": "active",
+            "components": {
+                "circuit_breakers": circuits.get_all_status(),
+                "health_checker": health.get_cached_status(),
+                "shutdown_handler": {
+                    "registered_handlers": len(shutdown.cleanup_handlers),
+                    "is_shutting_down": shutdown.is_shutting_down()
+                }
+            },
+            "timestamp": time.time()
+        }
+    except Exception as e:
+        logger.error(f"Resilience status error: {e}")
+        return {
+            "status": "error",
+            "error": str(e),
+            "timestamp": time.time()
+        }
+
+
+@router.get("/resilience/circuits")
+async def get_circuit_breakers():
+    """
+    ⚡ Get Circuit Breaker Status
+    
+    Returns status of all circuit breakers.
+    """
+    try:
+        from src.core.resilience import get_circuit_registry
+        
+        circuits = get_circuit_registry()
+        
+        return {
+            "status": "success",
+            "circuit_breakers": circuits.get_all_status(),
+            "timestamp": time.time()
+        }
+    except Exception as e:
+        logger.error(f"Circuit breakers error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/resilience/health/deep")
+async def deep_health_check():
+    """
+    🏥 Deep Health Check
+    
+    Runs all registered health checks and returns detailed status.
+    """
+    try:
+        from src.core.resilience import get_health_checker
+        
+        checker = get_health_checker()
+        
+        # Register default checks if not already done
+        if not checker.checks:
+            # Add infrastructure checks
+            async def check_kafka():
+                try:
+                    from src.infrastructure.nis_infrastructure import get_nis_infrastructure
+                    infra = get_nis_infrastructure()
+                    return {"healthy": infra.kafka_connected, "type": "kafka"}
+                except:
+                    return {"healthy": False}
+            
+            async def check_redis():
+                try:
+                    from src.infrastructure.nis_infrastructure import get_nis_infrastructure
+                    infra = get_nis_infrastructure()
+                    return {"healthy": infra.redis_connected, "type": "redis"}
+                except:
+                    return {"healthy": False}
+            
+            checker.add_check("kafka", check_kafka)
+            checker.add_check("redis", check_redis)
+        
+        result = await checker.check_all()
+        
+        return {
+            "status": result["status"],
+            "checks": result["checks"],
+            "timestamp": result["timestamp"]
+        }
+    except Exception as e:
+        logger.error(f"Deep health check error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/health/ready")
+async def readiness_check():
+    """
+    ✅ Kubernetes Readiness Probe
+    
+    Returns 200 if the service is ready to accept traffic.
+    """
+    try:
+        from src.core.resilience import get_shutdown_handler
+        
+        shutdown = get_shutdown_handler()
+        
+        if shutdown.is_shutting_down():
+            raise HTTPException(status_code=503, detail="Service is shutting down")
+        
+        return {
+            "status": "ready",
+            "timestamp": time.time()
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=str(e))
+
+
+@router.get("/health/live")
+async def liveness_check():
+    """
+    💓 Kubernetes Liveness Probe
+    
+    Returns 200 if the service is alive.
+    """
+    return {
+        "status": "alive",
+        "timestamp": time.time()
+    }
 
 
 # ====== Dependency Injection Helper ======

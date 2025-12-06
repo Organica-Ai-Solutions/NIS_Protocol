@@ -1,0 +1,138 @@
+# NIS Protocol Alert Rules
+# Production alerting for critical system events
+
+groups:
+  - name: nis-protocol-alerts
+    rules:
+      # Health Alerts
+      - alert: NISProtocolDown
+        expr: up{job="nis-protocol"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "NIS Protocol is down"
+          description: "NIS Protocol has been unreachable for more than 1 minute."
+
+      - alert: NISProtocolUnhealthy
+        expr: nis_health_status == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "NIS Protocol is unhealthy"
+          description: "NIS Protocol health check is failing."
+
+      # Performance Alerts
+      - alert: HighLatency
+        expr: histogram_quantile(0.95, rate(nis_http_request_duration_seconds_bucket[5m])) > 0.5
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High API latency detected"
+          description: "P95 latency is above 500ms for the last 5 minutes."
+
+      - alert: VeryHighLatency
+        expr: histogram_quantile(0.95, rate(nis_http_request_duration_seconds_bucket[5m])) > 2
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Very high API latency"
+          description: "P95 latency is above 2 seconds. Immediate attention required."
+
+      - alert: HighErrorRate
+        expr: sum(rate(nis_http_requests_total{status=~"5.."}[5m])) / sum(rate(nis_http_requests_total[5m])) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High error rate detected"
+          description: "Error rate is above 5% for the last 5 minutes."
+
+      - alert: CriticalErrorRate
+        expr: sum(rate(nis_http_requests_total{status=~"5.."}[5m])) / sum(rate(nis_http_requests_total[5m])) > 0.1
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Critical error rate"
+          description: "Error rate is above 10%. Immediate attention required."
+
+      # Rate Limiting Alerts
+      - alert: HighRateLimitHits
+        expr: sum(rate(nis_rate_limit_hits_total[5m])) > 100
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High rate limit hits"
+          description: "Many requests are being rate limited. Consider adjusting limits or investigating abuse."
+
+      # Infrastructure Alerts
+      - alert: KafkaConnectionLost
+        expr: nis_kafka_connected == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Kafka connection lost"
+          description: "NIS Protocol has lost connection to Kafka."
+
+      - alert: RedisConnectionLost
+        expr: nis_redis_connected == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Redis connection lost"
+          description: "NIS Protocol has lost connection to Redis."
+
+      # LLM Alerts
+      - alert: LLMHighLatency
+        expr: histogram_quantile(0.95, rate(nis_llm_request_duration_seconds_bucket[5m])) > 30
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "LLM response time is high"
+          description: "LLM P95 latency is above 30 seconds."
+
+      - alert: LLMHighTokenUsage
+        expr: sum(rate(nis_llm_tokens_total[1h])) > 100000
+        for: 1h
+        labels:
+          severity: warning
+        annotations:
+          summary: "High LLM token usage"
+          description: "Token usage is unusually high. Check for potential cost issues."
+
+      # Robotics Alerts
+      - alert: RoboticsHighFailureRate
+        expr: sum(rate(nis_physics_validations_total{result="invalid"}[5m])) / sum(rate(nis_physics_validations_total[5m])) > 0.2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High physics validation failure rate"
+          description: "More than 20% of physics validations are failing."
+
+      # Security Alerts
+      - alert: HighAuthFailures
+        expr: sum(rate(nis_auth_attempts_total{result="failed"}[5m])) > 10
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High authentication failure rate"
+          description: "Many authentication attempts are failing. Possible brute force attack."
+
+      - alert: SuspiciousAuthActivity
+        expr: sum(rate(nis_auth_attempts_total{result="failed"}[1m])) > 50
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Suspicious authentication activity"
+          description: "Very high rate of failed authentication attempts. Possible attack in progress."

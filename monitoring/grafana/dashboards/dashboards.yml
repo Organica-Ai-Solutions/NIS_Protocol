@@ -1,0 +1,16 @@
+# Grafana Dashboard Provisioning
+# Auto-loads dashboards from the dashboards directory
+
+apiVersion: 1
+
+providers:
+  - name: 'NIS Protocol Dashboards'
+    orgId: 1
+    folder: 'NIS Protocol'
+    folderUid: 'nis-protocol'
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    options:
+      path: /etc/grafana/provisioning/dashboards

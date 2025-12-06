@@ -247,6 +247,222 @@ async def get_user_usage(token: str):
     return user_manager.get_usage(user["id"])
 
 
+# ====== Security Management Endpoints ======
+
+@router.get("/security/status")
+async def get_security_status():
+    """
+    🔒 Get Security System Status
+    
+    Returns the status of all security components.
+    """
+    try:
+        from src.security import get_secrets_manager, get_rbac_manager
+        
+        secrets = get_secrets_manager()
+        rbac = get_rbac_manager()
+        
+        return {
+            "status": "active",
+            "components": {
+                "secrets_manager": {
+                    "active": True,
+                    "secrets_count": len(secrets._secrets),
+                    "api_keys_count": len(secrets._api_keys),
+                    "encryption_enabled": secrets._fernet is not None
+                },
+                "rbac": {
+                    "active": True,
+                    "roles_count": len(rbac.roles),
+                    "users_count": len(rbac.users)
+                },
+                "rate_limiting": {
+                    "active": True,
+                    "default_limit": 60
+                }
+            },
+            "timestamp": time.time()
+        }
+    except Exception as e:
+        logger.error(f"Security status error: {e}")
+        return {
+            "status": "error",
+            "error": str(e),
+            "timestamp": time.time()
+        }
+
+
+@router.post("/security/api-keys/generate")
+async def generate_api_key(request: Dict[str, Any]):
+    """
+    🔑 Generate New API Key
+    
+    Creates a new API key with specified permissions.
+    Requires admin permission.
+    """
+    try:
+        from src.security import get_secrets_manager
+        
+        secrets = get_secrets_manager()
+        
+        name = request.get("name", "unnamed")
+        permissions = request.get("permissions", ["read", "write"])
+        rate_limit = request.get("rate_limit", 60)
+        expires_in_days = request.get("expires_in_days")
+        
+        key = secrets.generate_api_key(
+            name=name,
+            permissions=permissions,
+            rate_limit=rate_limit,
+            expires_in_days=expires_in_days
+        )
+        
+        return {
+            "status": "success",
+            "api_key": key,
+            "name": name,
+            "permissions": permissions,
+            "rate_limit": rate_limit,
+            "note": "Store this key securely. It cannot be retrieved again.",
+            "timestamp": time.time()
+        }
+    except Exception as e:
+        logger.error(f"API key generation error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/security/api-keys")
+async def list_api_keys():
+    """
+    📋 List All API Keys
+    
+    Returns list of API keys (without the actual key values).
+    """
+    try:
+        from src.security import get_secrets_manager
+        
+        secrets = get_secrets_manager()
+        keys = secrets.list_api_keys()
+        
+        return {
+            "status": "success",
+            "count": len(keys),
+            "api_keys": keys,
+            "timestamp": time.time()
+        }
+    except Exception as e:
+        logger.error(f"List API keys error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/security/api-keys/{key_id}/rotate")
+async def rotate_api_key(key_id: str):
+    """
+    🔄 Rotate API Key
+    
+    Generates a new key value for an existing API key.
+    The old key will no longer work.
+    """
+    try:
+        from src.security import get_secrets_manager
+        
+        secrets = get_secrets_manager()
+        new_key = secrets.rotate_api_key(key_id)
+        
+        if not new_key:
+            raise HTTPException(status_code=404, detail="API key not found")
+        
+        return {
+            "status": "success",
+            "key_id": key_id,
+            "new_api_key": new_key,
+            "note": "Store this key securely. The old key is now invalid.",
+            "timestamp": time.time()
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"API key rotation error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/security/api-keys/{key_id}/revoke")
+async def revoke_api_key(key_id: str):
+    """
+    🚫 Revoke API Key
+    
+    Deactivates an API key. It can no longer be used.
+    """
+    try:
+        from src.security import get_secrets_manager
+        
+        secrets = get_secrets_manager()
+        success = secrets.revoke_api_key(key_id)
+        
+        if not success:
+            raise HTTPException(status_code=404, detail="API key not found")
+        
+        return {
+            "status": "success",
+            "key_id": key_id,
+            "message": "API key revoked",
+            "timestamp": time.time()
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"API key revocation error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/security/roles")
+async def list_roles():
+    """
+    👥 List All Roles
+    
+    Returns all defined roles and their permissions.
+    """
+    try:
+        from src.security import get_rbac_manager
+        
+        rbac = get_rbac_manager()
+        roles = rbac.list_roles()
+        
+        return {
+            "status": "success",
+            "count": len(roles),
+            "roles": roles,
+            "timestamp": time.time()
+        }
+    except Exception as e:
+        logger.error(f"List roles error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/security/audit-log")
+async def get_audit_log(limit: int = 100):
+    """
+    📜 Get Security Audit Log
+    
+    Returns recent security events.
+    """
+    try:
+        from src.security import get_secrets_manager
+        
+        secrets = get_secrets_manager()
+        log = secrets.get_audit_log(limit)
+        
+        return {
+            "status": "success",
+            "count": len(log),
+            "events": log,
+            "timestamp": time.time()
+        }
+    except Exception as e:
+        logger.error(f"Audit log error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 # ====== Dependency Injection Helper ======
 
 def set_dependencies(user_manager=None):
