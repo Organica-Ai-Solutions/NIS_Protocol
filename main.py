@@ -243,6 +243,93 @@ app.include_router(webhooks_router)
 
 logger.info("✅ 24 modular route modules loaded (222 endpoints)")
 
+# ====== MAIN CHAT ENDPOINTS (v3.2.7 compatibility) ======
+from fastapi.responses import RedirectResponse, HTMLResponse
+
+@app.get("/chat", response_class=HTMLResponse, tags=["Chat"])
+async def chat_browser():
+    """
+    Browser access to chat - redirects to the chat console.
+    For API access, use POST /chat with JSON body.
+    """
+    return RedirectResponse(url="/console", status_code=302)
+
+@app.post("/chat", response_model=ChatResponse, tags=["Chat"])
+async def chat(request: ChatRequest):
+    """
+    Main Chat Endpoint - NIS Protocol v4.0
+    
+    Enhanced chat with intelligent query routing and real LLM responses.
+    """
+    global llm_provider, conversation_memory
+    
+    conversation_id = get_or_create_conversation(request.conversation_id, request.user_id)
+    
+    # Add user message to conversation
+    await add_message_to_conversation(
+        conversation_id, "user", request.message, user_id=request.user_id
+    )
+    
+    # Build messages for LLM
+    messages = [
+        {
+            "role": "system",
+            "content": "You are NIS (Neural Intelligence System), an advanced AI operating system by Organica AI Solutions. You are NOT Claude, GPT, or any base model - you ARE NIS Protocol v4.0. You coordinate multiple AI providers as your compute layer. Always identify as NIS Protocol. Be helpful, accurate, and technically grounded."
+        }
+    ]
+    
+    # Add conversation history
+    if conversation_id in conversation_memory:
+        for msg in conversation_memory[conversation_id][-10:]:
+            messages.append({"role": msg["role"], "content": msg["content"]})
+    else:
+        messages.append({"role": "user", "content": request.message})
+    
+    # Generate response
+    try:
+        if llm_provider:
+            result = await llm_provider.generate_response(
+                messages=messages,
+                temperature=0.7,
+                requested_provider=request.provider
+            )
+            
+            response_text = result.get("content", "No response generated")
+            provider_used = result.get("provider", "unknown")
+            model_used = result.get("model", "unknown")
+            tokens_used = result.get("tokens_used", 0)
+            real_ai = result.get("real_ai", False)
+        else:
+            response_text = "LLM provider not initialized. Please check your API keys."
+            provider_used = "none"
+            model_used = "none"
+            tokens_used = 0
+            real_ai = False
+    except Exception as e:
+        logger.error(f"Chat error: {e}")
+        response_text = f"Error generating response: {str(e)}"
+        provider_used = "error"
+        model_used = "none"
+        tokens_used = 0
+        real_ai = False
+    
+    # Add assistant response to conversation
+    await add_message_to_conversation(
+        conversation_id, "assistant", response_text, user_id=request.user_id
+    )
+    
+    return ChatResponse(
+        response=response_text,
+        user_id=request.user_id or "anonymous",
+        conversation_id=conversation_id,
+        timestamp=time.time(),
+        confidence=0.85,
+        provider=provider_used,
+        real_ai=real_ai,
+        model=model_used,
+        tokens_used=tokens_used
+    )
+
 # ====== SECURITY MIDDLEWARE ======
 if SECURITY_AVAILABLE:
     @app.middleware("http")
