@@ -34,7 +34,7 @@ print_error() {
 
 # Function to check if containers are running
 check_containers() {
-    local running_containers=$(docker-compose -p "$PROJECT_NAME" ps -q)
+    local running_containers=$(docker compose -p "$PROJECT_NAME" ps -q)
     if [ -z "$running_containers" ]; then
         return 1
     else
@@ -53,16 +53,16 @@ stop_services() {
     
     # Stop services in reverse order of dependency
     print_status "Stopping reverse proxy..."
-    docker-compose -p "$PROJECT_NAME" stop nginx 2>/dev/null || true
+    docker compose -p "$PROJECT_NAME" stop nginx 2>/dev/null || true
     
     print_status "Stopping monitoring services..."
-    docker-compose -p "$PROJECT_NAME" --profile monitoring stop 2>/dev/null || true
+    docker compose -p "$PROJECT_NAME" --profile monitoring stop 2>/dev/null || true
     
     print_status "Stopping main application..."
-    docker-compose -p "$PROJECT_NAME" stop backend 2>/dev/null || true
+    docker compose -p "$PROJECT_NAME" stop backend 2>/dev/null || true
     
     print_status "Stopping infrastructure services..."
-    docker-compose -p "$PROJECT_NAME" stop kafka redis zookeeper 2>/dev/null || true
+    docker compose -p "$PROJECT_NAME" stop kafka redis zookeeper 2>/dev/null || true
     
     print_success "All services stopped"
 }
@@ -71,8 +71,8 @@ stop_services() {
 remove_containers() {
     if [ "$1" = "--remove-containers" ]; then
         print_status "Removing containers..."
-        docker-compose -p "$PROJECT_NAME" down --remove-orphans 2>/dev/null || true
-        docker-compose -p "$PROJECT_NAME" --profile monitoring down --remove-orphans 2>/dev/null || true
+        docker compose -p "$PROJECT_NAME" down --remove-orphans 2>/dev/null || true
+        docker compose -p "$PROJECT_NAME" --profile monitoring down --remove-orphans 2>/dev/null || true
         print_success "Containers removed"
     fi
 }
@@ -84,8 +84,8 @@ remove_volumes() {
         read -p "This will delete all data. Are you sure? (y/N): " -n 1 -r
         echo
         if [[ $REPLY =~ ^[Yy]$ ]]; then
-            docker-compose -p "$PROJECT_NAME" down -v --remove-orphans 2>/dev/null || true
-            docker-compose -p "$PROJECT_NAME" --profile monitoring down -v --remove-orphans 2>/dev/null || true
+            docker compose -p "$PROJECT_NAME" down -v --remove-orphans 2>/dev/null || true
+            docker compose -p "$PROJECT_NAME" --profile monitoring down -v --remove-orphans 2>/dev/null || true
             print_success "Volumes removed"
         else
             print_status "Volume removal cancelled"
@@ -111,7 +111,7 @@ cleanup_docker() {
 # Function to show status
 show_status() {
     print_status "Current container status:"
-    docker-compose -p "$PROJECT_NAME" ps 2>/dev/null || echo "No containers found"
+    docker compose -p "$PROJECT_NAME" ps 2>/dev/null || echo "No containers found"
     
     echo ""
     print_status "Docker system information:"
@@ -128,12 +128,12 @@ force_stop() {
         print_warning "Force stopping all NIS Protocol v3 containers..."
         
         # Kill all containers
-        docker-compose -p "$PROJECT_NAME" kill 2>/dev/null || true
-        docker-compose -p "$PROJECT_NAME" --profile monitoring kill 2>/dev/null || true
+        docker compose -p "$PROJECT_NAME" kill 2>/dev/null || true
+        docker compose -p "$PROJECT_NAME" --profile monitoring kill 2>/dev/null || true
         
         # Remove containers
-        docker-compose -p "$PROJECT_NAME" rm -f 2>/dev/null || true
-        docker-compose -p "$PROJECT_NAME" --profile monitoring rm -f 2>/dev/null || true
+        docker compose -p "$PROJECT_NAME" rm -f 2>/dev/null || true
+        docker compose -p "$PROJECT_NAME" --profile monitoring rm -f 2>/dev/null || true
         
         print_success "Force stop completed"
     fi
@@ -150,9 +150,9 @@ save_logs() {
         # Save logs for each service
         services=("redis" "kafka" "zookeeper" "backend" "nginx")
         for service in "${services[@]}"; do
-            if docker-compose -p "$PROJECT_NAME" ps "$service" 2>/dev/null | grep -q "Up"; then
+            if docker compose -p "$PROJECT_NAME" ps "$service" 2>/dev/null | grep -q "Up"; then
                 print_status "Saving logs for $service..."
-                docker-compose -p "$PROJECT_NAME" logs "$service" > "$log_dir/$service.log" 2>/dev/null || true
+                docker compose -p "$PROJECT_NAME" logs "$service" > "$log_dir/$service.log" 2>/dev/null || true
             fi
         done
         
