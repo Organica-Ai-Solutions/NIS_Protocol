@@ -25,7 +25,7 @@ echo "DISABLE_REAL_API_CALLS=true" >> .env
 
 # Start services
 echo "🚀 Starting Docker services..."
-docker-compose up -d
+docker compose up -d
 
 # Wait for services to start
 echo "⏳ Waiting for services to initialize..."

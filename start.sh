@@ -10,7 +10,7 @@ PROJECT_NAME="nis-protocol-v3"
 COMPOSE_FILE="docker-compose.yml"
 REQUIRED_DIRS=("logs" "data" "models" "cache")
 ENV_FILE=".env"
-ENV_TEMPLATE="environment-template.txt"
+ENV_TEMPLATE=".env.example"
 BITNET_MODEL_DIR="models/bitnet/models/bitnet"
 BITNET_MODEL_MARKER="${BITNET_MODEL_DIR}/config.json"
 

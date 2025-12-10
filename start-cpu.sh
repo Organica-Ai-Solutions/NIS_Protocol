@@ -43,7 +43,7 @@ echo ""
 
 # 1. Check Docker
 print_info "Checking Docker availability..."
-if ! command -v docker &> /dev/null || ! command -v docker-compose &> /dev/null; then
+if ! command -v docker &> /dev/null; then
     print_error "Docker and Docker Compose are required"
 fi
 print_success "Docker available"
@@ -66,7 +66,7 @@ print_success "API keys configured"
 
 # 3. Start services
 print_info "Starting CPU-only stack..."
-docker-compose -f "$COMPOSE_FILE" -p "$PROJECT_NAME" up -d --force-recreate
+docker compose -f "$COMPOSE_FILE" -p "$PROJECT_NAME" up -d --force-recreate
 
 if [ $? -ne 0 ]; then
     print_error "Failed to start services"
@@ -102,9 +102,9 @@ echo -e "${BLUE}🧪 Quick Test:${NC}"
 echo "  curl http://localhost:8000/health | jq"
 echo ""
 echo -e "${BLUE}📊 View Logs:${NC}"
-echo "  docker-compose -f $COMPOSE_FILE logs -f backend"
+echo "  docker compose -f $COMPOSE_FILE logs -f backend"
 echo ""
 echo -e "${BLUE}🛑 Stop System:${NC}"
-echo "  docker-compose -f $COMPOSE_FILE down"
+echo "  docker compose -f $COMPOSE_FILE down"
 echo ""
 print_success "Ready for testing!"
