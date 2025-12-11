@@ -56,11 +56,25 @@ jobs:
       
       - name: Free up disk space
         run: |
+          echo "=== Initial disk usage ==="
+          df -h
+          # Remove large pre-installed packages
           sudo rm -rf /usr/share/dotnet
           sudo rm -rf /usr/local/lib/android
           sudo rm -rf /opt/ghc
           sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo rm -rf /opt/hostedtoolcache/go
+          sudo rm -rf /opt/hostedtoolcache/node
+          sudo rm -rf /usr/local/share/boost
+          sudo rm -rf /usr/share/swift
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+          # Clean Docker
           sudo docker image prune --all --force
+          sudo docker system prune --all --force --volumes
+          # Clean apt cache
+          sudo apt-get clean
+          sudo rm -rf /var/lib/apt/lists/*
+          echo "=== Disk usage after cleanup ==="
           df -h
       
       - name: Set up Python
@@ -100,11 +114,32 @@ jobs:
       
       - name: Free up disk space
         run: |
+          echo "=== Initial disk usage ==="
+          df -h
+          # Remove large pre-installed packages (frees ~25GB)
           sudo rm -rf /usr/share/dotnet
           sudo rm -rf /usr/local/lib/android
           sudo rm -rf /opt/ghc
           sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo rm -rf /opt/hostedtoolcache/go
+          sudo rm -rf /opt/hostedtoolcache/node
+          sudo rm -rf /opt/hostedtoolcache/Python
+          sudo rm -rf /opt/hostedtoolcache/Ruby
+          sudo rm -rf /usr/local/share/boost
+          sudo rm -rf /usr/share/swift
+          sudo rm -rf /usr/local/share/chromium
+          sudo rm -rf /usr/local/share/powershell
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+          # Clean Docker aggressively
           sudo docker image prune --all --force
+          sudo docker system prune --all --force --volumes
+          # Clean apt cache
+          sudo apt-get clean
+          sudo rm -rf /var/lib/apt/lists/*
+          # Remove swap to free space
+          sudo swapoff -a
+          sudo rm -f /swapfile
+          echo "=== Disk usage after cleanup ==="
           df -h
       
       - name: Set up Docker Buildx
@@ -140,6 +175,26 @@ jobs:
     if: github.event_name == 'push'
     steps:
       - uses: actions/checkout@v4
+      
+      - name: Free up disk space
+        run: |
+          echo "=== Initial disk usage ==="
+          df -h
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo rm -rf /opt/hostedtoolcache/go
+          sudo rm -rf /opt/hostedtoolcache/node
+          sudo rm -rf /opt/hostedtoolcache/Python
+          sudo rm -rf /opt/hostedtoolcache/Ruby
+          sudo rm -rf /usr/local/share/boost
+          sudo rm -rf /usr/share/swift
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+          sudo docker system prune --all --force --volumes
+          sudo apt-get clean
+          echo "=== Disk usage after cleanup ==="
+          df -h
       
       - name: Set up Docker Compose
         run: |
