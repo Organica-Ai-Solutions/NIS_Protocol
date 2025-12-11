@@ -119,6 +119,7 @@ huggingface_hub>=0.15.0,<1.0.0
 faster-whisper>=1.0.0,<2.0.0
 ctranslate2>=4.0.0,<5.0.0
 pydub>=0.25.0,<1.0.0
+gTTS>=2.3.0,<3.0.0  # Google TTS fallback for VibeVoice
 
 # ===== ADDITIONAL UTILITIES =====
 msgpack>=1.0.0,<2.0.0

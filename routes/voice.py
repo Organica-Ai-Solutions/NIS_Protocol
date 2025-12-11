@@ -130,6 +130,130 @@ async def communication_status():
         }
 
 
+# ====== Text-to-Speech (VibeVoice-Realtime) ======
+
+@router.post("/voice/synthesize")
+async def synthesize_speech(request: Dict[str, Any]):
+    """
+    🎙️ Text-to-Speech Synthesis using Microsoft VibeVoice-Realtime
+    
+    Convert text to speech with multiple speaker voices.
+    Supports streaming for low-latency (~300ms first chunk).
+    
+    Request body:
+    {
+        "text": "Hello, world!",
+        "speaker": "Carter",  // Carter, Nova, Aria, Davis
+        "streaming": false
+    }
+    
+    Returns:
+    - Audio file (WAV format) or
+    - JSON with base64 audio data
+    """
+    try:
+        text = request.get("text", "")
+        speaker = request.get("speaker", "Carter")
+        streaming = request.get("streaming", False)
+        return_base64 = request.get("return_base64", True)
+        
+        if not text:
+            return {"success": False, "error": "No text provided"}
+        
+        logger.info(f"🎙️ TTS request: {len(text)} chars, speaker={speaker}")
+        
+        # Use VibeVoice-Realtime
+        try:
+            from src.voice.vibevoice_realtime import get_vibevoice_realtime, VibeVoiceSpeaker
+            
+            engine = await get_vibevoice_realtime()
+            
+            # Map speaker name to enum
+            speaker_map = {
+                "carter": VibeVoiceSpeaker.CARTER,
+                "nova": VibeVoiceSpeaker.NOVA,
+                "aria": VibeVoiceSpeaker.ARIA,
+                "davis": VibeVoiceSpeaker.DAVIS,
+            }
+            speaker_enum = speaker_map.get(speaker.lower(), VibeVoiceSpeaker.CARTER)
+            
+            # Synthesize
+            audio_bytes = await engine.synthesize(text, speaker_enum, streaming)
+            
+            if return_base64:
+                audio_base64 = base64.b64encode(audio_bytes).decode('utf-8')
+                return {
+                    "success": True,
+                    "audio_data": audio_base64,
+                    "format": "wav",
+                    "speaker": speaker,
+                    "text_length": len(text),
+                    "engine": "vibevoice_realtime" if not engine._fallback_mode else "fallback_tts"
+                }
+            else:
+                return Response(
+                    content=audio_bytes,
+                    media_type="audio/wav",
+                    headers={
+                        "Content-Disposition": f"inline; filename=speech.wav",
+                        "X-Speaker": speaker,
+                        "X-Engine": "vibevoice_realtime"
+                    }
+                )
+                
+        except Exception as e:
+            logger.error(f"❌ VibeVoice synthesis failed: {e}")
+            
+            # Fallback to simple TTS
+            try:
+                from src.voice.simple_tts import get_simple_tts
+                tts = get_simple_tts()
+                audio_bytes = await tts.synthesize_async(text)
+                
+                if return_base64:
+                    audio_base64 = base64.b64encode(audio_bytes).decode('utf-8')
+                    return {
+                        "success": True,
+                        "audio_data": audio_base64,
+                        "format": "mp3",
+                        "speaker": speaker,
+                        "engine": "simple_tts_fallback"
+                    }
+                else:
+                    return Response(
+                        content=audio_bytes,
+                        media_type="audio/mpeg",
+                        headers={"Content-Disposition": "inline; filename=speech.mp3"}
+                    )
+            except Exception as fallback_error:
+                logger.error(f"❌ Fallback TTS also failed: {fallback_error}")
+                return {"success": False, "error": str(e)}
+                
+    except Exception as e:
+        logger.error(f"❌ TTS endpoint error: {e}")
+        return {"success": False, "error": str(e)}
+
+
+@router.get("/voice/vibevoice/status")
+async def get_vibevoice_status():
+    """
+    📊 Get VibeVoice-Realtime engine status
+    """
+    try:
+        from src.voice.vibevoice_realtime import get_vibevoice_realtime
+        
+        engine = await get_vibevoice_realtime()
+        return engine.get_status()
+        
+    except Exception as e:
+        logger.error(f"VibeVoice status error: {e}")
+        return {
+            "engine": "VibeVoice-Realtime",
+            "initialized": False,
+            "error": str(e)
+        }
+
+
 # ====== Speech-to-Text ======
 
 @router.post("/voice/transcribe")
