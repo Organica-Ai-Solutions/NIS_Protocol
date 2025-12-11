@@ -277,21 +277,80 @@ class BitNetOnlineTrainer(NISAgent):
         except Exception as e:
             self.logger.error(f"❌ Failed to persist training data: {e}")
     
+    def _detect_gpu_capabilities(self) -> Dict[str, Any]:
+        """Detect GPU capabilities for optimal training configuration"""
+        gpu_info = {
+            "available": False,
+            "device_count": 0,
+            "device_name": None,
+            "is_h100": False,
+            "is_a100": False,
+            "supports_bf16": False,
+            "memory_gb": 0,
+            "recommended_dtype": "float32",
+            "recommended_batch_size": self.config.batch_size
+        }
+        
+        try:
+            if torch.cuda.is_available():
+                gpu_info["available"] = True
+                gpu_info["device_count"] = torch.cuda.device_count()
+                
+                props = torch.cuda.get_device_properties(0)
+                gpu_info["device_name"] = props.name
+                gpu_info["memory_gb"] = props.total_memory / (1024**3)
+                
+                # Detect H100/A100 for optimal settings
+                if "H100" in props.name or props.major >= 9:
+                    gpu_info["is_h100"] = True
+                    gpu_info["supports_bf16"] = True
+                    gpu_info["recommended_dtype"] = "bfloat16"
+                    gpu_info["recommended_batch_size"] = 32  # H100 can handle larger batches
+                elif "A100" in props.name or props.major >= 8:
+                    gpu_info["is_a100"] = True
+                    gpu_info["supports_bf16"] = True
+                    gpu_info["recommended_dtype"] = "bfloat16"
+                    gpu_info["recommended_batch_size"] = 16
+                elif props.major >= 7:  # V100, RTX 20xx+
+                    gpu_info["recommended_dtype"] = "float16"
+                    gpu_info["recommended_batch_size"] = 8
+                
+                self.logger.info(f"🎮 GPU detected: {props.name} ({gpu_info['memory_gb']:.1f}GB)")
+                if gpu_info["is_h100"]:
+                    self.logger.info("🚀 H100 detected - enabling optimal DGX Cloud settings")
+                    
+        except Exception as e:
+            self.logger.warning(f"⚠️ GPU detection failed: {e}")
+        
+        return gpu_info
+    
     def _initialize_training_system(self):
         """Initialize the BitNet training system"""
         try:
             self.logger.info("🔄 Initializing BitNet training system...")
+            
+            # Detect GPU capabilities
+            self.gpu_info = self._detect_gpu_capabilities()
+            
+            # Determine optimal dtype based on GPU
+            if self.gpu_info["is_h100"] or self.gpu_info["is_a100"]:
+                torch_dtype = torch.bfloat16
+                self.logger.info("✅ Using BF16 precision for optimal H100/A100 performance")
+            elif self.gpu_info["available"]:
+                torch_dtype = torch.float16
+            else:
+                torch_dtype = torch.float32
             
             # Load tokenizer
             self.tokenizer = AutoTokenizer.from_pretrained(self.config.model_path)
             if self.tokenizer.pad_token is None:
                 self.tokenizer.pad_token = self.tokenizer.eos_token
             
-            # Load model
+            # Load model with optimal settings
             self.model = AutoModelForCausalLM.from_pretrained(
                 self.config.model_path,
-                torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
-                device_map="auto" if torch.cuda.is_available() else None,
+                torch_dtype=torch_dtype,
+                device_map="auto" if self.gpu_info["available"] else None,
                 trust_remote_code=True
             )
             
