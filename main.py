@@ -245,6 +245,157 @@ app.include_router(hub_gateway_router)
 
 logger.info("✅ 26 modular route modules loaded (250+ endpoints)")
 
+# ====== MAIN WEBSOCKET ENDPOINT ======
+@app.websocket("/ws")
+async def main_websocket(websocket: WebSocket):
+    """
+    Main WebSocket endpoint for real-time chat communication
+    """
+    await websocket.accept()
+    logger.info("🔌 Main WebSocket connected")
+    
+    try:
+        while True:
+            data = await websocket.receive_json()
+            msg_type = data.get("type", "message")
+            
+            if msg_type == "ping":
+                await websocket.send_json({"type": "pong", "timestamp": datetime.now().isoformat()})
+            elif msg_type == "message":
+                message = data.get("content", data.get("message", ""))
+                
+                # Process with LLM if available
+                try:
+                    if llm_provider:
+                        result = await llm_provider.generate_response(
+                            messages=[
+                                {"role": "system", "content": "You are NIS Protocol v4.0, an advanced AI operating system by Organica AI Solutions."},
+                                {"role": "user", "content": message}
+                            ],
+                            temperature=0.7
+                        )
+                        response_text = result.get("content", "Response generated")
+                        provider_used = result.get("provider", "nis-protocol")
+                    else:
+                        response_text = f"NIS Protocol received: {message}"
+                        provider_used = "demo"
+                except Exception as e:
+                    logger.error(f"❌ WebSocket chat error: {e}")
+                    response_text = f"Error processing message: {str(e)}"
+                    provider_used = "error"
+                
+                await websocket.send_json({
+                    "type": "response",
+                    "content": response_text,
+                    "provider": provider_used,
+                    "timestamp": datetime.now().isoformat()
+                })
+            else:
+                await websocket.send_json({
+                    "type": "ack",
+                    "received_type": msg_type,
+                    "timestamp": datetime.now().isoformat()
+                })
+                
+    except WebSocketDisconnect:
+        logger.info("🔌 Main WebSocket disconnected")
+    except Exception as e:
+        logger.error(f"❌ Main WebSocket error: {e}")
+
+# ====== AGENTIC WEBSOCKET ENDPOINT ======
+@app.websocket("/ws/agentic")
+async def agentic_websocket(websocket: WebSocket):
+    """
+    Agentic AI WebSocket - Real-time Agent Visualization
+    Implements AG-UI Protocol for transparent agentic AI workflows
+    """
+    await websocket.accept()
+    logger.info("🤖 Agentic WebSocket connected")
+    
+    message_count = 0
+    
+    try:
+        while True:
+            data = await websocket.receive_json()
+            message = data.get("message", "")
+            message_count += 1
+            
+            logger.info(f"📨 Agentic message #{message_count}: {message[:50]}...")
+            
+            # STEP 1: THINKING PHASE
+            await websocket.send_json({
+                "type": "THINKING_STEP",
+                "step_number": 1,
+                "title": "Analyzing Request",
+                "content": f"Processing: '{message[:100]}...'",
+                "confidence": 0.95,
+                "timestamp": datetime.now().isoformat()
+            })
+            
+            await asyncio.sleep(0.2)
+            
+            # STEP 2: AGENT ACTIVATION
+            agents = [
+                ("Laplace Signal Processor", "Frequency domain analysis"),
+                ("KAN Reasoning Engine", "Symbolic pattern extraction"),
+                ("Physics Validator (PINN)", "Physics constraint validation"),
+            ]
+            
+            for agent_name, task in agents:
+                await websocket.send_json({
+                    "type": "AGENT_ACTIVATION",
+                    "agent_name": agent_name,
+                    "status": "active",
+                    "task": task,
+                    "timestamp": datetime.now().isoformat()
+                })
+                await asyncio.sleep(0.1)
+            
+            # STEP 3: PROCESS MESSAGE
+            try:
+                if llm_provider:
+                    result = await llm_provider.generate_response(
+                        messages=[
+                            {"role": "system", "content": "You are NIS Protocol v4.0, an advanced AI operating system."},
+                            {"role": "user", "content": message}
+                        ],
+                        temperature=0.7
+                    )
+                    response_text = result.get("content", "Response generated")
+                    provider_used = result.get("provider", "nis-protocol")
+                else:
+                    response_text = f"NIS Protocol received: {message}"
+                    provider_used = "demo"
+            except Exception as e:
+                logger.error(f"❌ Agentic chat error: {e}")
+                response_text = f"Demo response for: {message}"
+                provider_used = "demo"
+            
+            # STEP 4: DEACTIVATE AGENTS
+            for agent_name, _ in agents:
+                await websocket.send_json({
+                    "type": "AGENT_DEACTIVATION",
+                    "agent_name": agent_name,
+                    "timestamp": datetime.now().isoformat()
+                })
+                await asyncio.sleep(0.05)
+            
+            # STEP 5: SEND RESPONSE
+            await websocket.send_json({
+                "type": "TEXT_MESSAGE_CONTENT",
+                "content": response_text,
+                "role": "assistant",
+                "metadata": {"provider": provider_used, "real_ai": provider_used != "demo"},
+                "timestamp": datetime.now().isoformat()
+            })
+            
+            logger.info(f"✅ Agentic message #{message_count} completed")
+            
+    except WebSocketDisconnect:
+        logger.info(f"🔌 Agentic WebSocket disconnected after {message_count} messages")
+    except Exception as e:
+        logger.error(f"❌ Agentic WebSocket error: {e}")
+
 # ====== MAIN CHAT ENDPOINTS (v3.2.7 compatibility) ======
 from fastapi.responses import RedirectResponse, HTMLResponse
 

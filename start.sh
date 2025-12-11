@@ -10,7 +10,7 @@ PROJECT_NAME="nis-protocol-v3"
 COMPOSE_FILE="docker-compose.yml"
 REQUIRED_DIRS=("logs" "data" "models" "cache")
 ENV_FILE=".env"
-ENV_TEMPLATE="environment-template.txt"
+ENV_TEMPLATE=".env.example"
 BITNET_MODEL_DIR="models/bitnet/models/bitnet"
 BITNET_MODEL_MARKER="${BITNET_MODEL_DIR}/config.json"
 
@@ -536,7 +536,7 @@ echo ""
 
 # 5. Build Docker Images
 print_info "Building Docker images with Whisper STT (this may take several minutes on the first run)..."
-docker-compose -f "$COMPOSE_FILE" -p "$PROJECT_NAME" build --progress=plain
+docker compose -f "$COMPOSE_FILE" -p "$PROJECT_NAME" build --progress=plain
 if [ $? -ne 0 ]; then
     print_error "Docker build failed. Please check the output above for errors."
 fi
@@ -544,7 +544,7 @@ print_success "Docker images built successfully with Whisper STT for GPT-like vo
 
 # 6. Start Docker Compose
 print_info "Starting NIS Protocol v3.2.5 services in detached mode..."
-docker-compose -f "$COMPOSE_FILE" -p "$PROJECT_NAME" up -d --force-recreate --remove-orphans
+docker compose -f "$COMPOSE_FILE" -p "$PROJECT_NAME" up -d --force-recreate --remove-orphans
 
 if [ $? -ne 0 ]; then
     print_error "Docker Compose failed to start. Please check the logs."
@@ -554,7 +554,7 @@ print_success "Services are starting..."
 # 7. Stream Backend Logs for Insight
 print_info "Streaming logs from the backend service to show startup progress..."
 echo -e "${YELLOW}(Press Ctrl+C to stop streaming logs and continue to health monitoring)${NC}"
-(docker-compose -f "$COMPOSE_FILE" -p "$PROJECT_NAME" logs --follow --tail="1" backend) &
+(docker compose -f "$COMPOSE_FILE" -p "$PROJECT_NAME" logs --follow --tail="1" backend) &
 LOGS_PID=$!
 
 sleep 15
@@ -568,7 +568,7 @@ SECONDS=0
 TIMEOUT=300
 
 while [ $SECONDS -lt $TIMEOUT ]; do
-    unhealthy_services=$(docker-compose -f "$COMPOSE_FILE" -p "$PROJECT_NAME" ps | grep -E "unhealthy|exited")
+    unhealthy_services=$(docker compose -f "$COMPOSE_FILE" -p "$PROJECT_NAME" ps | grep -E "unhealthy|exited")
     
     if [ -z "$unhealthy_services" ]; then
         clear_screen
@@ -694,4 +694,4 @@ done
 
 print_error "One or more services failed to become healthy within the timeout period."
 echo -e "${YELLOW}Please check the container logs for more details:${NC}"
-docker-compose -f "$COMPOSE_FILE" -p "$PROJECT_NAME" logs --tail=100
+docker compose -f "$COMPOSE_FILE" -p "$PROJECT_NAME" logs --tail=100

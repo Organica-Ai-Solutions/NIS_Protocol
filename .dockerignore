@@ -41,8 +41,8 @@ logs/
 
 # Large assets
 assets/
-# BitNet model - include for local inference (4GB)
-# models/  # Commented out to allow BitNet model copy
+# Models are mounted as volumes, not copied into image
+models/
 system/assets/
 system/utilities/reports/
 *.png

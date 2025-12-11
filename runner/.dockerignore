@@ -1,0 +1,19 @@
+# Runner-specific .dockerignore
+# Only exclude what's not needed for the runner service
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Workspace contents (but keep the directory)
+workspace/*
+!workspace/README.md
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.cache

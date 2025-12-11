@@ -16,15 +16,15 @@ if [ "$1" = "--save-logs" ]; then
     LOG_DIR="logs/shutdown-$(date +%Y%m%d-%H%M%S)"
     mkdir -p "$LOG_DIR"
     echo -e "${BLUE}[CPU-MODE] Saving logs to $LOG_DIR${NC}"
-    docker-compose -f "$COMPOSE_FILE" logs > "$LOG_DIR/all-services.log" 2>&1
+    docker compose -f "$COMPOSE_FILE" logs > "$LOG_DIR/all-services.log" 2>&1
 fi
 
 # Stop services
-docker-compose -f "$COMPOSE_FILE" -p "$PROJECT_NAME" down
+docker compose -f "$COMPOSE_FILE" -p "$PROJECT_NAME" down
 
 if [ "$1" = "--volumes" ]; then
     echo -e "${BLUE}[CPU-MODE] Removing volumes...${NC}"
-    docker-compose -f "$COMPOSE_FILE" -p "$PROJECT_NAME" down -v
+    docker compose -f "$COMPOSE_FILE" -p "$PROJECT_NAME" down -v
 fi
 
 echo -e "${GREEN}[SUCCESS] CPU stack stopped${NC}"

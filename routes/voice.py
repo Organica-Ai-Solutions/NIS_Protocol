@@ -130,6 +130,130 @@ async def communication_status():
         }
 
 
+# ====== Text-to-Speech (VibeVoice-Realtime) ======
+
+@router.post("/voice/synthesize")
+async def synthesize_speech(request: Dict[str, Any]):
+    """
+    🎙️ Text-to-Speech Synthesis using Microsoft VibeVoice-Realtime
+    
+    Convert text to speech with multiple speaker voices.
+    Supports streaming for low-latency (~300ms first chunk).
+    
+    Request body:
+    {
+        "text": "Hello, world!",
+        "speaker": "Carter",  // Carter, Nova, Aria, Davis
+        "streaming": false
+    }
+    
+    Returns:
+    - Audio file (WAV format) or
+    - JSON with base64 audio data
+    """
+    try:
+        text = request.get("text", "")
+        speaker = request.get("speaker", "Carter")
+        streaming = request.get("streaming", False)
+        return_base64 = request.get("return_base64", True)
+        
+        if not text:
+            return {"success": False, "error": "No text provided"}
+        
+        logger.info(f"🎙️ TTS request: {len(text)} chars, speaker={speaker}")
+        
+        # Use VibeVoice-Realtime
+        try:
+            from src.voice.vibevoice_realtime import get_vibevoice_realtime, VibeVoiceSpeaker
+            
+            engine = await get_vibevoice_realtime()
+            
+            # Map speaker name to enum
+            speaker_map = {
+                "carter": VibeVoiceSpeaker.CARTER,
+                "nova": VibeVoiceSpeaker.NOVA,
+                "aria": VibeVoiceSpeaker.ARIA,
+                "davis": VibeVoiceSpeaker.DAVIS,
+            }
+            speaker_enum = speaker_map.get(speaker.lower(), VibeVoiceSpeaker.CARTER)
+            
+            # Synthesize
+            audio_bytes = await engine.synthesize(text, speaker_enum, streaming)
+            
+            if return_base64:
+                audio_base64 = base64.b64encode(audio_bytes).decode('utf-8')
+                return {
+                    "success": True,
+                    "audio_data": audio_base64,
+                    "format": "wav",
+                    "speaker": speaker,
+                    "text_length": len(text),
+                    "engine": "vibevoice_realtime" if not engine._fallback_mode else "fallback_tts"
+                }
+            else:
+                return Response(
+                    content=audio_bytes,
+                    media_type="audio/wav",
+                    headers={
+                        "Content-Disposition": f"inline; filename=speech.wav",
+                        "X-Speaker": speaker,
+                        "X-Engine": "vibevoice_realtime"
+                    }
+                )
+                
+        except Exception as e:
+            logger.error(f"❌ VibeVoice synthesis failed: {e}")
+            
+            # Fallback to simple TTS
+            try:
+                from src.voice.simple_tts import get_simple_tts
+                tts = get_simple_tts()
+                audio_bytes = await tts.synthesize_async(text)
+                
+                if return_base64:
+                    audio_base64 = base64.b64encode(audio_bytes).decode('utf-8')
+                    return {
+                        "success": True,
+                        "audio_data": audio_base64,
+                        "format": "mp3",
+                        "speaker": speaker,
+                        "engine": "simple_tts_fallback"
+                    }
+                else:
+                    return Response(
+                        content=audio_bytes,
+                        media_type="audio/mpeg",
+                        headers={"Content-Disposition": "inline; filename=speech.mp3"}
+                    )
+            except Exception as fallback_error:
+                logger.error(f"❌ Fallback TTS also failed: {fallback_error}")
+                return {"success": False, "error": str(e)}
+                
+    except Exception as e:
+        logger.error(f"❌ TTS endpoint error: {e}")
+        return {"success": False, "error": str(e)}
+
+
+@router.get("/voice/vibevoice/status")
+async def get_vibevoice_status():
+    """
+    📊 Get VibeVoice-Realtime engine status
+    """
+    try:
+        from src.voice.vibevoice_realtime import get_vibevoice_realtime
+        
+        engine = await get_vibevoice_realtime()
+        return engine.get_status()
+        
+    except Exception as e:
+        logger.error(f"VibeVoice status error: {e}")
+        return {
+            "engine": "VibeVoice-Realtime",
+            "initialized": False,
+            "error": str(e)
+        }
+
+
 # ====== Speech-to-Text ======
 
 @router.post("/voice/transcribe")
@@ -485,10 +609,15 @@ async def optimized_voice_chat(websocket: WebSocket):
     add_message_to_conversation = getattr(router, '_add_message_to_conversation', None)
     
     try:
-        # Initialize TTS with OpenAI (fast) + gTTS fallback
+        # Initialize TTS engines
         from src.voice.simple_tts import get_simple_tts
-        tts = get_simple_tts()
-        tts_engine = "openai" if tts.use_openai else "gtts"
+        from src.voice.vibevoice_realtime import get_vibevoice_realtime, VibeVoiceSpeaker
+        
+        simple_tts = get_simple_tts()
+        vibevoice = await get_vibevoice_realtime()
+        
+        # Default TTS engine
+        tts_engine_name = "openai" if simple_tts.use_openai else "gtts"
         
         # Send connection confirmation
         await websocket.send_json({
@@ -498,9 +627,10 @@ async def optimized_voice_chat(websocket: WebSocket):
                 "streaming_stt": True,
                 "streaming_llm": True,
                 "streaming_tts": True,
-                "openai_tts": tts.use_openai,
+                "openai_tts": simple_tts.use_openai,
+                "vibevoice_tts": True,
                 "interruption": True,
-                "latency_target_ms": 800,
+                "latency_target_ms": 500,
                 "voices": ["alloy", "echo", "fable", "onyx", "nova", "shimmer"]
             }
         })
@@ -519,6 +649,14 @@ async def optimized_voice_chat(websocket: WebSocket):
             try:
                 data = await websocket.receive_json()
                 msg_type = data.get("type")
+                
+                # Extract settings if provided
+                client_settings = data.get("settings", {})
+                requested_engine = client_settings.get("engine", "gtts")
+                requested_speaker = client_settings.get("default_speaker", "Carter")
+                
+                # Determine active TTS engine for this turn
+                active_tts_engine = "vibevoice" if requested_engine == "vibevoice" else tts_engine_name
                 
                 # ===== AUDIO INPUT (Full Pipeline) =====
                 if msg_type == "audio_input":
@@ -604,27 +742,46 @@ async def optimized_voice_chat(websocket: WebSocket):
                     else:
                         response_text = "I'm sorry, I'm having trouble connecting to my language model."
                     
-                    # STEP 3: TTS (Fast async synthesis with OpenAI)
+                    # STEP 3: TTS (Dynamically selected engine)
                     await websocket.send_json({"type": "status", "stage": "synthesizing"})
                     tts_start = time.time()
                     
-                    # Use async TTS for speed (OpenAI ~200ms, gTTS ~500ms)
                     try:
-                        audio_bytes = await tts.synthesize_async(response_text)
+                        audio_bytes = None
+                        
+                        if active_tts_engine == "vibevoice":
+                            # Use VibeVoice
+                            speaker_map = {
+                                "carter": VibeVoiceSpeaker.CARTER,
+                                "nova": VibeVoiceSpeaker.NOVA,
+                                "aria": VibeVoiceSpeaker.ARIA,
+                                "davis": VibeVoiceSpeaker.DAVIS,
+                            }
+                            # Handle both specific names and generic agent names
+                            speaker_key = requested_speaker.lower()
+                            if speaker_key == "consciousness": speaker_key = "carter"
+                            elif speaker_key == "physics": speaker_key = "davis" 
+                            elif speaker_key == "research": speaker_key = "nova"
+                            
+                            speaker_enum = speaker_map.get(speaker_key, VibeVoiceSpeaker.CARTER)
+                            audio_bytes = await vibevoice.synthesize(response_text, speaker_enum)
+                        else:
+                            # Use SimpleTTS (OpenAI/gTTS)
+                            audio_bytes = await simple_tts.synthesize_async(response_text)
                         
                         if audio_bytes:
                             audio_base64 = base64.b64encode(audio_bytes).decode('utf-8')
                             tts_time = time.time() - tts_start
                             total_time = time.time() - start_time
                             
-                            logger.info(f"⏱️ TTS ({tts_engine}): {tts_time*1000:.0f}ms | Total: {total_time*1000:.0f}ms")
+                            logger.info(f"⏱️ TTS ({active_tts_engine}): {tts_time*1000:.0f}ms | Total: {total_time*1000:.0f}ms")
                             
                             await websocket.send_json({
                                 "type": "audio_response",
                                 "audio_data": audio_base64,
-                                "format": "mp3",
+                                "format": "wav" if active_tts_engine == "vibevoice" else "mp3",
                                 "text": response_text,
-                                "tts_engine": tts_engine,
+                                "tts_engine": active_tts_engine,
                                 "latency": {
                                     "stt_ms": int(stt_time * 1000),
                                     "llm_ms": int(llm_time * 1000),

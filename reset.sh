@@ -72,7 +72,7 @@ stop_all_services() {
     else
         # Fallback to more aggressive stop if stop.sh is not available
         print_warning "stop.sh not found, using aggressive shutdown..."
-        docker-compose -p "$PROJECT_NAME" down --remove-orphans --timeout 30 2>/dev/null || true
+        docker compose -p "$PROJECT_NAME" down --remove-orphans --timeout 30 2>/dev/null || true
     fi
     
     print_success "All services stopped and removed"
@@ -83,8 +83,8 @@ remove_all_data() {
     print_status "Removing all data volumes..."
     
     # Remove all volumes
-    docker-compose -p "$PROJECT_NAME" down -v --remove-orphans 2>/dev/null || true
-    docker-compose -p "$PROJECT_NAME" --profile monitoring down -v --remove-orphans 2>/dev/null || true
+    docker compose -p "$PROJECT_NAME" down -v --remove-orphans 2>/dev/null || true
+    docker compose -p "$PROJECT_NAME" --profile monitoring down -v --remove-orphans 2>/dev/null || true
     
     # Clean up local data directories
     print_status "Cleaning up local data directories..."
@@ -112,7 +112,7 @@ remove_images() {
     print_status "Removing Docker images..."
     
     # Remove project-specific images
-    docker-compose -p "$PROJECT_NAME" down --rmi all 2>/dev/null || true
+    docker compose -p "$PROJECT_NAME" down --rmi all 2>/dev/null || true
     
     # Remove dangling images
     docker image prune -f 2>/dev/null || true
@@ -149,7 +149,7 @@ rebuild_system() {
     
     # Rebuild Docker images
     print_status "Building fresh Docker images..."
-    docker-compose -p "$PROJECT_NAME" build --no-cache --pull
+    docker compose -p "$PROJECT_NAME" build --no-cache --pull
     
     print_success "System rebuilt successfully"
 }

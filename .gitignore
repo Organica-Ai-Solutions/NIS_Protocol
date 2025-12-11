@@ -193,3 +193,4 @@ models/bitnet/models/bitnet/chat_template.jinja
 test_ddg.py
 backend_logs.txt
 FLUTTER_DEMO_INSTRUCTIONS 2.json
+configs/google-service-account.json
