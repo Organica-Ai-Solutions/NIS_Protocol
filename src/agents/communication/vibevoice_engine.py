@@ -21,12 +21,26 @@ limitations under the License.
 import asyncio
 import logging
 import time
-import torch
 import numpy as np
 from typing import Dict, List, Optional, Any, Tuple
 from pathlib import Path
-import soundfile as sf
 import io
+
+try:
+    import torch
+    TORCH_AVAILABLE = True
+except ImportError:
+    torch = None
+    TORCH_AVAILABLE = False
+    logging.warning("PyTorch not available for VibeVoice - using fallback mode")
+
+try:
+    import soundfile as sf
+    SOUNDFILE_AVAILABLE = True
+except ImportError:
+    sf = None
+    SOUNDFILE_AVAILABLE = False
+    logging.warning("soundfile not available for VibeVoice")
 
 logger = logging.getLogger(__name__)
 

@@ -28,6 +28,7 @@ try:
     TORCH_AVAILABLE = True
 except (ImportError, OSError) as e:
     TORCH_AVAILABLE = False
+    torch = None  # For type hints
     logging.warning(f"PyTorch not available in goals ({e}) - using mathematical fallback")
     # Fallback for when torch is not available
     class nn:
@@ -184,7 +185,7 @@ if TORCH_AVAILABLE:
                 nn.Tanh()
             )
         
-        def forward(self, state: torch.Tensor) -> Dict[str, torch.Tensor]:
+        def forward(self, state: "torch.Tensor") -> Dict[str, "torch.Tensor"]:
             """Generate goal properties from system state"""
             features = self.feature_extractor(state)
             
@@ -574,7 +575,7 @@ class AdaptiveGoalSystem(NISAgent):
             domain_knowledge_gaps=["quantum_ml", "causal_reasoning", "meta_learning"]
         )
     
-    def _context_to_state_vector(self, context: GoalGenerationContext) -> torch.Tensor:
+    def _context_to_state_vector(self, context: GoalGenerationContext) -> Any:
         """Convert generation context to neural network input vector"""
         
         # Flatten context into feature vector
@@ -613,7 +614,7 @@ class AdaptiveGoalSystem(NISAgent):
         
         return torch.FloatTensor(features).unsqueeze(0)
     
-    def _predictions_to_goals(self, predictions: Dict[str, torch.Tensor], context: GoalGenerationContext) -> List[Goal]:
+    def _predictions_to_goals(self, predictions: Dict[str, Any], context: GoalGenerationContext) -> List[Goal]:
         """Convert neural network predictions to concrete goals"""
         
         goals = []

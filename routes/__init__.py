@@ -107,6 +107,7 @@ from .llm import router as llm_router, set_dependencies as set_llm_dependencies
 from .unified import router as unified_router, set_dependencies as set_unified_dependencies
 from .core import router as core_router, set_dependencies as set_core_dependencies
 from .isaac import router as isaac_router
+from .hub_gateway import router as hub_gateway_router
 
 __all__ = [
     # Routers
@@ -133,6 +134,7 @@ __all__ = [
     "unified_router",
     "core_router",
     "isaac_router",
+    "hub_gateway_router",
     # Dependency setters
     "set_bitnet_trainer",
     "set_monitoring_dependencies",
