@@ -405,7 +405,14 @@ async def chat_browser():
     Browser access to chat - redirects to the chat console.
     For API access, use POST /chat with JSON body.
     """
-    return RedirectResponse(url="/console", status_code=302)
+    return RedirectResponse(url="/static/chat_console.html", status_code=302)
+
+@app.get("/console", response_class=HTMLResponse, tags=["Chat"])
+async def console_redirect():
+    """
+    Legacy console route - redirects to static chat console.
+    """
+    return RedirectResponse(url="/static/chat_console.html", status_code=302)
 
 @app.post("/chat", response_model=ChatResponse, tags=["Chat"])
 async def chat(request: ChatRequest):
