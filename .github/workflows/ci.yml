@@ -134,12 +134,12 @@ jobs:
       
       - name: Set up Docker Compose
         run: |
-          docker-compose version
+          docker compose version
       
       - name: Build and start services
         run: |
-          docker-compose -f docker-compose.cpu.yml build
-          docker-compose -f docker-compose.cpu.yml up -d
+          docker compose -f docker-compose.cpu.yml build
+          docker compose -f docker-compose.cpu.yml up -d
           sleep 30
       
       - name: Health check
@@ -154,7 +154,7 @@ jobs:
       
       - name: Stop services
         if: always()
-        run: docker-compose -f docker-compose.cpu.yml down
+        run: docker compose -f docker-compose.cpu.yml down
 
   security:
     name: Security Scan
