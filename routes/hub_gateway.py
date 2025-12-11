@@ -433,6 +433,98 @@ async def trigger_ota_update(
 
 
 # ============================================================
+# Device Discovery Endpoints
+# ============================================================
+
+@router.get("/devices")
+async def discover_devices(hub_id: Optional[str] = None) -> Dict[str, Any]:
+    """
+    Discover devices connected to hub(s).
+    
+    Query all hubs for their connected devices, or a specific hub.
+    """
+    import asyncio
+    
+    devices = []
+    
+    if hub_id:
+        # Query specific hub
+        if hub_id not in hub_manager.active_hubs:
+            raise HTTPException(status_code=404, detail="Hub not found")
+        
+        # Request device list from hub
+        request_msg = {
+            "type": "device_discovery_request",
+            "data": {"request_id": f"discovery_{hub_id}"}
+        }
+        await hub_manager.send_to_hub(hub_id, request_msg)
+        
+        # Return hub info with fleet summary
+        hub_info = hub_manager.hub_info.get(hub_id, {})
+        return {
+            "success": True,
+            "hub_id": hub_id,
+            "fleet_summary": hub_info.get("fleet_summary", {}),
+            "message": "Device discovery request sent to hub"
+        }
+    else:
+        # Return aggregated device info from all hubs
+        all_devices = []
+        for hid, info in hub_manager.hub_info.items():
+            fleet = info.get("fleet_summary", {})
+            all_devices.append({
+                "hub_id": hid,
+                "region": info.get("region", "unknown"),
+                "device_count": fleet.get("total_devices", 0),
+                "by_product": fleet.get("by_product_type", {}),
+                "connected_at": info.get("connected_at")
+            })
+        
+        return {
+            "success": True,
+            "hubs": all_devices,
+            "total_hubs": len(all_devices),
+            "timestamp": datetime.utcnow().isoformat()
+        }
+
+
+@router.post("/devices/query")
+async def query_devices_from_hub(
+    hub_id: str,
+    product_type: Optional[str] = None,
+    capability: Optional[str] = None
+) -> Dict[str, Any]:
+    """
+    Query hub for devices matching criteria.
+    
+    Sends a query to the hub and returns immediately.
+    Results will be sent via WebSocket.
+    """
+    if hub_id not in hub_manager.active_hubs:
+        raise HTTPException(status_code=404, detail="Hub not found")
+    
+    query_msg = {
+        "type": "device_query",
+        "data": {
+            "query_id": f"query_{datetime.utcnow().timestamp()}",
+            "filters": {
+                "product_type": product_type,
+                "capability": capability
+            }
+        }
+    }
+    
+    await hub_manager.send_to_hub(hub_id, query_msg)
+    
+    return {
+        "success": True,
+        "message": "Device query sent to hub",
+        "hub_id": hub_id,
+        "filters": {"product_type": product_type, "capability": capability}
+    }
+
+
+# ============================================================
 # Fleet Aggregation Endpoints
 # ============================================================
 
