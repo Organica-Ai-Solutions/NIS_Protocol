@@ -206,7 +206,7 @@ from routes import (
     research_router, voice_router, protocols_router, vision_router,
     reasoning_router, consciousness_router, system_router, nvidia_router,
     auth_router, utilities_router, v4_features_router, llm_router, 
-    unified_router, core_router, isaac_router,
+    unified_router, core_router, isaac_router, hub_gateway_router,
     # Dependency setters
     set_bitnet_trainer, set_monitoring_dependencies, set_memory_dependencies,
     set_chat_dependencies, set_agents_dependencies, set_research_dependencies,
@@ -241,8 +241,9 @@ app.include_router(physics_router)
 app.include_router(bitnet_router)
 app.include_router(webhooks_router)
 app.include_router(isaac_router)
+app.include_router(hub_gateway_router)
 
-logger.info("✅ 25 modular route modules loaded (240+ endpoints)")
+logger.info("✅ 26 modular route modules loaded (250+ endpoints)")
 
 # ====== MAIN CHAT ENDPOINTS (v3.2.7 compatibility) ======
 from fastapi.responses import RedirectResponse, HTMLResponse
