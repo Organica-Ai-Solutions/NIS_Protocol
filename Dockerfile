@@ -10,8 +10,12 @@ FROM nvidia/cuda:12.1.1-devel-ubuntu22.04 AS builder
 # Prevent interactive installs
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install build tools and Python
+# Add deadsnakes PPA for Python 3.11 and install build tools
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    software-properties-common \
+    && add-apt-repository ppa:deadsnakes/ppa -y \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
     python3.11 python3.11-venv python3.11-dev python3-pip \
     build-essential git gcc g++ curl wget \
     libffi-dev libssl-dev pkg-config \
@@ -44,9 +48,13 @@ FROM nvidia/cuda:12.1.1-runtime-ubuntu22.04
 # Prevent interactive installs
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install runtime dependencies (audio + system libs)
+# Add deadsnakes PPA for Python 3.11 and install runtime dependencies
 # Ubuntu 22.04 includes SQLite 3.37.2 which satisfies ChromaDB >= 3.35.0 requirement
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    software-properties-common \
+    && add-apt-repository ppa:deadsnakes/ppa -y \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
     python3.11 python3-pip ffmpeg libsndfile1 libasound2-dev portaudio19-dev \
     libgomp1 libblas3 liblapack3 curl wget git \
     libsqlite3-0 sqlite3 \
