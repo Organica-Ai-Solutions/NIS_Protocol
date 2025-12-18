@@ -10,18 +10,13 @@ FROM nvidia/cuda:12.1.1-devel-ubuntu22.04 AS builder
 # Prevent interactive installs
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Add deadsnakes PPA for Python 3.11 and install build tools
+# Install build tools and Python 3.10 (Ubuntu 22.04 default)
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    software-properties-common \
-    && add-apt-repository ppa:deadsnakes/ppa -y \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends \
-    python3.11 python3.11-venv python3.11-dev python3-pip \
+    python3 python3-venv python3-dev python3-pip \
     build-essential git gcc g++ curl wget \
     libffi-dev libssl-dev pkg-config \
     && rm -rf /var/lib/apt/lists/* \
-    && ln -s /usr/bin/python3.11 /usr/bin/python \
-    && ln -s /usr/bin/python3.11 /usr/bin/python3
+    && ln -s /usr/bin/python3 /usr/bin/python
 
 WORKDIR /app
 
@@ -29,15 +24,15 @@ WORKDIR /app
 COPY requirements.txt constraints.txt ./
 
 # Upgrade pip and install build tools first
-RUN python3.11 -m pip install --no-cache-dir --upgrade pip setuptools wheel
+RUN python3 -m pip install --no-cache-dir --upgrade pip setuptools wheel
 
 # Install dependencies with constraints (security fixes)
-RUN python3.11 -m pip install --no-cache-dir --user \
+RUN python3 -m pip install --no-cache-dir --user \
     -r requirements.txt -c constraints.txt \
-    || python3.11 -m pip install --no-cache-dir --user -r requirements.txt
+    || python3 -m pip install --no-cache-dir --user -r requirements.txt
 
 # Optional: Add core voice & TTS/STT modules (skip problematic packages)
-RUN python3.11 -m pip install --no-cache-dir --user \
+RUN python3 -m pip install --no-cache-dir --user \
     soundfile librosa ffmpeg-python \
     gtts scipy nltk einops boto3 gdown \
     || echo 'Some optional packages failed, continuing...'
@@ -48,20 +43,15 @@ FROM nvidia/cuda:12.1.1-runtime-ubuntu22.04
 # Prevent interactive installs
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Add deadsnakes PPA for Python 3.11 and install runtime dependencies
+# Install runtime dependencies with Python 3.10 (Ubuntu 22.04 default)
 # Ubuntu 22.04 includes SQLite 3.37.2 which satisfies ChromaDB >= 3.35.0 requirement
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    software-properties-common \
-    && add-apt-repository ppa:deadsnakes/ppa -y \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends \
-    python3.11 python3-pip ffmpeg libsndfile1 libasound2-dev portaudio19-dev \
+    python3 python3-pip ffmpeg libsndfile1 libasound2-dev portaudio19-dev \
     libgomp1 libblas3 liblapack3 curl wget git \
     libsqlite3-0 sqlite3 \
     && rm -rf /var/lib/apt/lists/* \
     && sqlite3 --version \
-    && ln -s /usr/bin/python3.11 /usr/bin/python \
-    && ln -s /usr/bin/python3.11 /usr/bin/python3
+    && ln -s /usr/bin/python3 /usr/bin/python
 
 # Create a non-root user for security
 RUN useradd -m -u 1000 nisuser
