@@ -15,7 +15,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3.11 python3.11-venv python3.11-dev python3-pip \
     build-essential git gcc g++ curl wget \
     libffi-dev libssl-dev pkg-config \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && ln -s /usr/bin/python3.11 /usr/bin/python \
+    && ln -s /usr/bin/python3.11 /usr/bin/python3
 
 WORKDIR /app
 
@@ -49,7 +51,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libgomp1 libblas3 liblapack3 curl wget git \
     libsqlite3-0 sqlite3 \
     && rm -rf /var/lib/apt/lists/* \
-    && sqlite3 --version
+    && sqlite3 --version \
+    && ln -s /usr/bin/python3.11 /usr/bin/python \
+    && ln -s /usr/bin/python3.11 /usr/bin/python3
 
 # Create a non-root user for security
 RUN useradd -m -u 1000 nisuser
