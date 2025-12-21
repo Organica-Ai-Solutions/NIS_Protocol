@@ -13,6 +13,9 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+    volumes:
+      - zookeeper_data_cpu:/var/lib/zookeeper/data
+      - zookeeper_log_cpu:/var/lib/zookeeper/log
 
   kafka:
     image: confluentinc/cp-kafka:7.4.0
@@ -26,6 +29,10 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_LOG_RETENTION_HOURS: 168
+    volumes:
+      - kafka_data_cpu:/var/lib/kafka/data
     depends_on:
       - zookeeper
 
@@ -36,6 +43,8 @@ services:
       - nis-network-cpu
     ports:
       - "6379:6379"
+    volumes:
+      - redis_data_cpu:/data
 
   backend:
     build:
@@ -134,7 +143,9 @@ networks:
   nis-network-cpu:
     driver: bridge
 
-# Volumes for persistent data (optional)
+# Volumes for persistent data
 volumes:
   redis_data_cpu:
   kafka_data_cpu:
+  zookeeper_data_cpu:
+  zookeeper_log_cpu:
