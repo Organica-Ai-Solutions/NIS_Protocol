@@ -142,11 +142,16 @@ class KafkaMessageBroker:
                 value_serializer=lambda v: json.dumps(v).encode('utf-8'),
                 key_serializer=lambda k: k.encode('utf-8') if k else None
             )
-            await self.producer.start()
+            # Add timeout to prevent hanging on startup
+            await asyncio.wait_for(self.producer.start(), timeout=5.0)
             self.is_connected = True
             logger.info("✅ Kafka producer connected")
             return True
             
+        except asyncio.TimeoutError:
+            logger.error("❌ Kafka connection timeout (5s) - continuing without Kafka")
+            self.is_connected = False
+            return False
         except Exception as e:
             logger.error(f"❌ Kafka connection failed: {e}")
             self.is_connected = False

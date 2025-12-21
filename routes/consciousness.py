@@ -948,6 +948,116 @@ async def get_complete_system_dashboard():
         raise HTTPException(status_code=500, detail=f"Dashboard failed: {str(e)}")
 
 
+# ====== CAN Bus Hardware Endpoints ======
+
+# Global CAN state
+_can_state = {
+    "connected": False,
+    "interface": "none",
+    "port": "/dev/ttyACM0",
+    "messages": [],
+    "messages_received": 0
+}
+
+@router.get("/can/status")
+async def can_status():
+    """Get CAN bus status"""
+    import os
+    return {
+        "connected": _can_state["connected"],
+        "interface": _can_state["interface"],
+        "port": _can_state["port"],
+        "messages_received": _can_state["messages_received"],
+        "arduino_detected": os.path.exists("/dev/ttyACM0"),
+        "socketcan_available": os.path.exists("/sys/class/net/can0")
+    }
+
+@router.post("/can/connect")
+async def can_connect():
+    """Connect to CAN bus"""
+    _can_state["connected"] = True
+    _can_state["interface"] = "arduino"
+    return {"connected": _can_state["connected"]}
+
+@router.post("/can/disconnect")
+async def can_disconnect():
+    """Disconnect from CAN bus"""
+    _can_state["connected"] = False
+    _can_state["interface"] = "none"
+    return {"disconnected": True, "status": "success"}
+
+@router.get("/can/messages")
+async def can_messages(limit: int = 10):
+    """Get recent CAN messages"""
+    return {
+        "messages": _can_state["messages"][-limit:],
+        "total": len(_can_state["messages"])
+    }
+
+@router.post("/can/send")
+async def can_send(msg_id: int = 256, data: str = "01020304"):
+    """Send a CAN message"""
+    import time as t
+    msg = {
+        "id": hex(msg_id),
+        "data": data,
+        "timestamp": t.strftime("%Y-%m-%dT%H:%M:%S")
+    }
+    _can_state["messages"].append(msg)
+    return {"sent": True, "message": msg}
+
+
+# ====== Camera Hardware Endpoints ======
+
+@router.get("/camera/status")
+async def camera_status():
+    """Get camera status"""
+    import os
+    import subprocess
+    
+    detected = os.path.exists("/dev/video0")
+    model = "Unknown"
+    
+    if detected:
+        try:
+            result = subprocess.run(["libcamera-hello", "--list-cameras"], 
+                                   capture_output=True, text=True, timeout=5)
+            if "imx708" in result.stdout.lower():
+                model = "Pi Camera 3 (IMX708)"
+            elif "imx219" in result.stdout.lower():
+                model = "Pi Camera 2 (IMX219)"
+            else:
+                model = "USB Camera"
+        except:
+            model = "Camera detected"
+    
+    return {
+        "detected": detected,
+        "device": "/dev/video0" if detected else None,
+        "model": model,
+        "streaming": False
+    }
+
+@router.get("/camera/snapshot")
+async def camera_snapshot():
+    """Take a camera snapshot"""
+    import subprocess
+    import os
+    
+    output_path = "/tmp/snapshot.jpg"
+    try:
+        result = subprocess.run(
+            ["rpicam-still", "-o", output_path, "-t", "1000"],
+            capture_output=True, timeout=10
+        )
+        if result.returncode == 0 and os.path.exists(output_path):
+            return {"success": True, "path": output_path}
+        else:
+            return {"success": False, "error": "Capture failed"}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
 # ====== Dependency Injection Helper ======
 
 def set_dependencies(

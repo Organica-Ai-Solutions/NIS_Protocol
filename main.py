@@ -72,6 +72,9 @@ from src.core.agent_orchestrator import NISAgentOrchestrator
 # VibeVoice communication
 from src.agents.communication.vibevoice_engine import VibeVoiceEngine
 
+# A2UI Formatter for GenUI integration
+from src.utils.a2ui_formatter import format_text_as_a2ui, create_error_widget
+
 # NVIDIA NeMo Integration (optional)
 try:
     from src.agents.nvidia_nemo.nemo_integration_manager import NeMoIntegrationManager, NeMoIntegrationConfig
@@ -104,6 +107,7 @@ class ChatRequest(BaseModel):
     context: Optional[Dict[str, Any]] = None
     provider: Optional[str] = None
     model: Optional[str] = None
+    genui_enabled: Optional[bool] = False
 
 class ChatResponse(BaseModel):
     response: str
@@ -414,12 +418,13 @@ async def console_redirect():
     """
     return RedirectResponse(url="/static/chat_console.html", status_code=302)
 
-@app.post("/chat", response_model=ChatResponse, tags=["Chat"])
+@app.post("/chat", tags=["Chat"])
 async def chat(request: ChatRequest):
     """
     Main Chat Endpoint - NIS Protocol v4.0
     
     Enhanced chat with intelligent query routing and real LLM responses.
+    Supports A2UI formatting for GenUI-enabled clients.
     """
     global llm_provider, conversation_memory
     
@@ -478,6 +483,40 @@ async def chat(request: ChatRequest):
         conversation_id, "assistant", response_text, user_id=request.user_id
     )
     
+    # Check if GenUI formatting is requested
+    if request.genui_enabled:
+        try:
+            a2ui_response = format_text_as_a2ui(
+                response_text,
+                wrap_in_card=True,
+                include_actions=True
+            )
+            
+            return {
+                **a2ui_response,
+                "user_id": request.user_id or "anonymous",
+                "conversation_id": conversation_id,
+                "timestamp": time.time(),
+                "provider": provider_used,
+                "model": model_used,
+                "tokens_used": tokens_used,
+                "real_ai": real_ai,
+                "genui_formatted": True
+            }
+        except Exception as e:
+            logger.error(f"A2UI formatting error: {e}")
+            error_widget = create_error_widget(f"Failed to format response: {str(e)}")
+            return {
+                **error_widget,
+                "user_id": request.user_id or "anonymous",
+                "conversation_id": conversation_id,
+                "timestamp": time.time(),
+                "provider": provider_used,
+                "model": model_used,
+                "genui_formatted": True
+            }
+    
+    # Return standard response (backward compatibility)
     return ChatResponse(
         response=response_text,
         user_id=request.user_id or "anonymous",
@@ -539,6 +578,7 @@ async def initialize_system():
     
     # Initialize Infrastructure (Kafka, Redis, Zookeeper)
     try:
+        logger.info("🔄 Initializing infrastructure...")
         from src.infrastructure.nis_infrastructure import initialize_infrastructure, get_nis_infrastructure
         infra_status = await initialize_infrastructure()
         logger.info(f"✅ Infrastructure connected: Kafka={infra_status.get('kafka')}, Redis={infra_status.get('redis')}")
@@ -547,6 +587,7 @@ async def initialize_system():
     
     # LLM Provider
     try:
+        logger.info("🔄 Initializing LLM Provider...")
         llm_provider = GeneralLLMProvider()
         logger.info("✅ LLM Provider initialized")
     except Exception as e:
@@ -555,15 +596,18 @@ async def initialize_system():
     # Agent Orchestrator
     if nis_agent_orchestrator:
         try:
+            logger.info("🔄 Starting Agent Orchestrator...")
             await nis_agent_orchestrator.start_orchestrator()
             logger.info("✅ Agent Orchestrator started")
         except Exception as e:
             logger.error(f"❌ Agent Orchestrator start failed: {e}")
     
     # Core agents
+    logger.info("🔄 Initializing core agents...")
     web_search_agent = WebSearchAgent()
     coordinator = create_scientific_coordinator()
     simulation_coordinator = coordinator
+    logger.info("✅ Core agents initialized")
     
     try:
         learning_agent = LearningAgent(agent_id="core_learning_agent")
