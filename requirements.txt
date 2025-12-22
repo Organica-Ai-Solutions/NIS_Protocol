@@ -57,13 +57,12 @@ torch>=2.0.0,<3.0.0
 torchvision>=0.15.0,<1.0.0
 torchaudio>=2.0.0,<3.0.0
 
-# ===== TENSORFLOW/KERAS (SECURITY UPDATED) =====
-tensorflow==2.15.1
-tf-keras==2.15.1
-# ⚠️ SECURITY WARNING: DO NOT INSTALL keras 2.15.0
-# keras 2.15.0 has 2 CRITICAL vulnerabilities (GHSA-cjgq-5qmw-rcj6, GHSA-36fq-jgmw-4r9c)
-# Use tf-keras instead for Keras functionality (included in tensorflow 2.15.1)
-# constraints.txt blocks vulnerable keras versions
+# ===== TENSORFLOW/KERAS (DISABLED - CAUSES NUMPY CONFLICTS) =====
+# tensorflow==2.15.1
+# tf-keras==2.15.1
+# ⚠️ DISABLED: tensorflow causes numpy/ml_dtypes import errors
+# Backend doesn't actually use tensorflow - vision/physics use PyTorch
+# If needed later, use tensorflow>=2.16.0 with compatible numpy
 
 # ===== TRANSFORMERS (SECURITY FIXED VERSIONS) =====
 transformers>=4.36.0,<5.0.0
