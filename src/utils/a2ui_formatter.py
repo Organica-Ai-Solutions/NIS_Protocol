@@ -394,7 +394,7 @@ def format_text_as_a2ui(text: str, wrap_in_card: bool = True, include_actions: b
         include_actions: Whether to detect and add action buttons
         
     Returns:
-        Complete A2UI message structure
+        Complete A2UI message structure wrapped for GenUI SDK
     """
     formatter = A2UIFormatter()
     message = formatter.format_response(text, include_actions=include_actions)
@@ -402,8 +402,12 @@ def format_text_as_a2ui(text: str, wrap_in_card: bool = True, include_actions: b
     if wrap_in_card and message['widgets']:
         message['widgets'] = [formatter.wrap_in_card(message['widgets'])]
     
+    # GenUI SDK expects messages wrapped in beginRendering/surfaceUpdate
+    # For simplicity, we'll return the raw message and let the frontend handle wrapping
     return {
-        "a2ui_message": message
+        "a2ui_message": {
+            "widgets": message['widgets']
+        }
     }
 
 

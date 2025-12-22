@@ -73,7 +73,10 @@ from src.core.agent_orchestrator import NISAgentOrchestrator
 from src.agents.communication.vibevoice_engine import VibeVoiceEngine
 
 # A2UI Formatter for GenUI integration
-from src.utils.a2ui_formatter import format_text_as_a2ui, create_error_widget
+from src.utils.a2ui_formatter import format_text_as_a2ui, create_error_widget, A2UIFormatter
+
+# A2A Protocol for official GenUI WebSocket integration
+from src.protocols.a2a_protocol import create_a2a_handler, A2AProtocolHandler
 
 # NVIDIA NeMo Integration (optional)
 try:
@@ -136,11 +139,15 @@ persistent_memory = None
 reflective_generator = None
 self_modifier = None
 adaptive_goal_system = None
-vision_agent = None
-research_agent = None
-reasoning_chain = None
-document_agent = None
+vision_agent: Optional[MultimodalVisionAgent] = None
+research_agent: Optional[DeepResearchAgent] = None
+reasoning_chain: Optional[EnhancedReasoningChain] = None
+document_agent: Optional[DocumentAnalysisAgent] = None
 pipeline_agent = None
+
+# A2A Protocol handler
+a2a_handler: Optional[A2AProtocolHandler] = None
+a2ui_formatter_instance: Optional[A2UIFormatter] = None
 nis_agent_orchestrator = None
 
 # Registries
@@ -686,6 +693,19 @@ async def initialize_system():
         except Exception as e:
             logger.warning(f"⚠️ BitNet Trainer skipped: {e}")
     
+    # Initialize A2A Protocol Handler
+    global a2a_handler, a2ui_formatter_instance
+    try:
+        logger.info("🔄 Initializing A2A Protocol Handler...")
+        a2ui_formatter_instance = A2UIFormatter()
+        a2a_handler = create_a2a_handler(
+            llm_provider=llm_provider,
+            a2ui_formatter=a2ui_formatter_instance
+        )
+        logger.info("✅ A2A Protocol Handler initialized (WebSocket support)")
+    except Exception as e:
+        logger.warning(f"⚠️ A2A Protocol Handler skipped: {e}")
+    
     # Inject dependencies into route modules
     inject_route_dependencies()
     
@@ -880,7 +900,51 @@ async def startup_event():
     logger.info("📚 API Docs: http://localhost:8000/docs")
     logger.info("🔬 ReDoc: http://localhost:8000/redoc")
     logger.info("❤️ Health: http://localhost:8000/health")
+    logger.info("🔌 WebSocket A2A: ws://localhost:8000/a2a")
     logger.info("=" * 50)
+
+# ====== WEBSOCKET A2A ENDPOINT ======
+@app.websocket("/a2a")
+async def a2a_websocket_endpoint(websocket: WebSocket):
+    """
+    Official GenUI A2A Protocol WebSocket Endpoint
+    
+    Implements the A2A (Agent-to-Agent) streaming protocol for real-time
+    agent-to-UI communication with GenUI framework.
+    
+    Protocol Flow:
+    1. Client connects via WebSocket
+    2. Server sends AgentCard with agent metadata
+    3. Client sends user messages
+    4. Server streams SurfaceUpdate messages with UI widgets
+    5. Server sends BeginRendering/EndRendering signals
+    
+    Compatible with official genui_a2ui Flutter package.
+    """
+    await websocket.accept()
+    logger.info(f"A2A WebSocket connection established from {websocket.client}")
+    
+    try:
+        if a2a_handler:
+            await a2a_handler.handle_connection(websocket)
+        else:
+            # Fallback if A2A handler not initialized
+            await websocket.send_json({
+                "type": "error",
+                "error": "A2A Protocol handler not initialized"
+            })
+            await websocket.close()
+    except WebSocketDisconnect:
+        logger.info("A2A WebSocket client disconnected")
+    except Exception as e:
+        logger.error(f"A2A WebSocket error: {e}")
+        try:
+            await websocket.send_json({
+                "type": "error",
+                "error": str(e)
+            })
+        except:
+            pass
 
 # ====== MAIN ======
 if __name__ == "__main__":
