@@ -704,6 +704,7 @@ async def initialize_system():
     )
     
     # Multimodal agents
+    logger.info("🔄 Step 10/10: Initializing multimodal agents and final components...")
     vision_agent = MultimodalVisionAgent(agent_id="vision_agent")
     research_agent = DeepResearchAgent(agent_id="research_agent")
     reasoning_chain = EnhancedReasoningChain(agent_id="reasoning_chain")
@@ -711,10 +712,12 @@ async def initialize_system():
     
     # Pipeline agent
     try:
-        pipeline_agent = await create_real_time_pipeline_agent()
-        logger.info("✅ Pipeline Agent initialized")
+        pipeline_agent = await asyncio.wait_for(create_real_time_pipeline_agent(), timeout=30)
+        logger.info("   → Pipeline Agent initialized")
+    except asyncio.TimeoutError:
+        logger.warning("   → Pipeline Agent timeout")
     except Exception as e:
-        logger.warning(f"⚠️ Pipeline Agent skipped: {e}")
+        logger.warning(f"   → Pipeline Agent skipped: {e}")
     
     # BitNet trainer (optional)
     bitnet_dir = os.getenv("BITNET_MODEL_PATH", "models/bitnet/models/bitnet")
@@ -727,27 +730,34 @@ async def initialize_system():
                 config=config,
                 consciousness_service=consciousness_service
             )
-            logger.info("✅ BitNet Trainer initialized")
+            logger.info("   → BitNet Trainer initialized")
         except Exception as e:
-            logger.warning(f"⚠️ BitNet Trainer skipped: {e}")
+            logger.warning(f"   → BitNet Trainer skipped: {e}")
     
     # Initialize A2A Protocol Handler
     global a2a_handler, a2ui_formatter_instance
     try:
-        logger.info("🔄 Initializing A2A Protocol Handler...")
         a2ui_formatter_instance = A2UIFormatter()
         a2a_handler = create_a2a_handler(
             llm_provider=llm_provider,
             a2ui_formatter=a2ui_formatter_instance
         )
-        logger.info("✅ A2A Protocol Handler initialized (WebSocket support)")
+        logger.info("   → A2A Protocol Handler initialized (WebSocket support)")
     except Exception as e:
-        logger.warning(f"⚠️ A2A Protocol Handler skipped: {e}")
+        logger.warning(f"   → A2A Protocol Handler skipped: {e}")
     
     # Inject dependencies into route modules
     inject_route_dependencies()
     
-    logger.info("✅ NIS Protocol v4.0.1 ready!")
+    logger.info("✅ Step 10/10: All components initialized")
+    logger.info("")
+    logger.info("="*60)
+    logger.info("🎉 NIS Protocol v4.0.1 READY FOR REQUESTS")
+    logger.info("="*60)
+    logger.info(f"   Memory System: {'ENABLED' if persistent_memory else 'DISABLED'}")
+    logger.info(f"   LLM Provider: {'READY' if llm_provider else 'UNAVAILABLE'}")
+    logger.info(f"   Agent Orchestrator: {'READY' if nis_agent_orchestrator else 'UNAVAILABLE'}")
+    logger.info("="*60)
 
 def inject_route_dependencies():
     """Inject dependencies into all route modules"""
