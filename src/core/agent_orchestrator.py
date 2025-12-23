@@ -149,7 +149,7 @@ class NISAgentOrchestrator:
     - Monitoring agents (prefrontal cortex): Oversight and control
     """
     
-    def __init__(self):
+    def __init__(self, llm_provider=None, memory_system=None):
         self.agents: Dict[str, AgentDefinition] = {}
         self.agent_instances: Dict[str, Any] = {}
         self.agent_metrics: Dict[str, AgentMetrics] = {}
@@ -169,8 +169,11 @@ class NISAgentOrchestrator:
         self.context_analyzer = ContextAnalyzer()
         self.dependency_resolver = DependencyResolver()
         
-        # Initialize the brain structure
-        self._initialize_brain_structure()
+        # LLM provider for context-aware calls
+        self.llm_provider = llm_provider
+        
+        # Memory system for persistent storage
+        self.memory_system = memory_system
         
         logger.info("🧠 NIS Agent Orchestrator initialized")
     
@@ -909,12 +912,70 @@ class NISAgentOrchestrator:
         return {"state": context.get("state", {})}
     
     async def _handle_query_memory(self, action: ActionDefinition, context: Dict[str, Any]) -> Dict[str, Any]:
-        """Handle QUERY_MEMORY action"""
-        return {"memory": context.get("memory", [])}
+        """Handle QUERY_MEMORY action with actual memory system"""
+        if not self.memory_system:
+            return {"status": "error", "error": "Memory system not available"}
+        
+        try:
+            query = action.parameters.get("query", "")
+            memory_type = action.parameters.get("memory_type")
+            top_k = action.parameters.get("top_k", 5)
+            
+            results = await self.memory_system.retrieve(
+                query=query,
+                memory_type=memory_type,
+                top_k=top_k
+            )
+            
+            memories = []
+            for result in results:
+                memories.append({
+                    "content": result.entry.content,
+                    "type": result.entry.memory_type,
+                    "relevance": result.relevance_score,
+                    "importance": result.importance_score,
+                    "timestamp": result.entry.timestamp,
+                    "metadata": result.entry.metadata
+                })
+            
+            return {
+                "status": "success",
+                "memories": memories,
+                "count": len(memories)
+            }
+        except Exception as e:
+            logger.error(f"QUERY_MEMORY handler error: {e}")
+            return {"status": "error", "error": str(e)}
     
     async def _handle_store_memory(self, action: ActionDefinition, context: Dict[str, Any]) -> Dict[str, Any]:
-        """Handle STORE_MEMORY action"""
-        return {"status": "stored", "memory_id": f"mem_{int(time.time())}"}
+        """Handle STORE_MEMORY action with actual memory system"""
+        if not self.memory_system:
+            return {"status": "error", "error": "Memory system not available"}
+        
+        try:
+            content = action.parameters.get("content", "")
+            memory_type = action.parameters.get("memory_type", "episodic")
+            importance = action.parameters.get("importance", 0.5)
+            metadata = action.parameters.get("metadata", {})
+            
+            if not content:
+                return {"status": "error", "error": "No content provided"}
+            
+            memory_id = await self.memory_system.store(
+                content=content,
+                memory_type=memory_type,
+                importance=importance,
+                metadata=metadata
+            )
+            
+            return {
+                "status": "success",
+                "memory_id": memory_id,
+                "memory_type": memory_type
+            }
+        except Exception as e:
+            logger.error(f"STORE_MEMORY handler error: {e}")
+            return {"status": "error", "error": str(e)}
     
     async def _handle_call_llm(self, action: ActionDefinition, context: Dict[str, Any]) -> Dict[str, Any]:
         """Handle CALL_LLM action with context-aware generation"""

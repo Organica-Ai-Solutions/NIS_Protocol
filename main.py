@@ -563,14 +563,17 @@ if os.path.exists("static"):
     app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # ====== INITIALIZATION ======
-def initialize_agent_orchestrator(llm_provider=None):
-    """Initialize the agent orchestrator with LLM provider"""
+def initialize_agent_orchestrator(llm_provider=None, memory_system=None):
+    """Initialize the agent orchestrator with LLM provider and memory system"""
     global nis_agent_orchestrator
     if nis_agent_orchestrator is None:
         try:
             from src.core.agent_orchestrator import initialize_orchestrator
-            nis_agent_orchestrator = initialize_orchestrator(llm_provider=llm_provider)
-            logger.info("✅ Agent Orchestrator initialized with context-aware execution")
+            nis_agent_orchestrator = initialize_orchestrator(
+                llm_provider=llm_provider,
+                memory_system=memory_system
+            )
+            logger.info("✅ Agent Orchestrator initialized with context-aware execution and memory")
         except Exception as e:
             logger.error(f"❌ Agent Orchestrator failed: {e}")
 
@@ -601,13 +604,26 @@ async def initialize_system():
     except Exception as e:
         logger.error(f"❌ LLM Provider failed: {e}")
     
-    # Re-initialize Agent Orchestrator with LLM Provider (for context-aware execution)
+    # Initialize Memory System
     try:
-        logger.info("🔄 Initializing Agent Orchestrator with LLM Provider...")
-        initialize_agent_orchestrator(llm_provider=llm_provider)
+        logger.info("🔄 Initializing Persistent Memory System...")
+        from src.memory.persistent_memory import PersistentMemorySystem
+        persistent_memory = PersistentMemorySystem()
+        logger.info("✅ Persistent Memory System initialized")
+    except Exception as e:
+        logger.warning(f"⚠️ Memory System initialization failed: {e}")
+        persistent_memory = None
+    
+    # Re-initialize Agent Orchestrator with LLM Provider and Memory System
+    try:
+        logger.info("🔄 Initializing Agent Orchestrator with LLM Provider and Memory...")
+        initialize_agent_orchestrator(
+            llm_provider=llm_provider,
+            memory_system=persistent_memory
+        )
         if nis_agent_orchestrator:
             await nis_agent_orchestrator.start_orchestrator()
-            logger.info("✅ Agent Orchestrator with context-aware execution ready")
+            logger.info("✅ Agent Orchestrator with context-aware execution and memory ready")
     except Exception as e:
         logger.error(f"❌ Agent Orchestrator initialization failed: {e}")
     
