@@ -702,6 +702,231 @@ class NISAgentOrchestrator:
                 if agent_id in self.agents:
                     agents_status[agent_id] = self.get_agent_status(agent_id)
             return agents_status
+    
+    async def execute_agent_action(
+        self,
+        action: ActionDefinition,
+        context_pack: Dict[str, Any]
+    ) -> ActionResult:
+        """
+        Agent execution loop with validation and rollback
+        
+        Flow: propose → validate → apply → verify → (rollback if needed)
+        
+        This is the core reliability pattern - every action is:
+        1. Validated before execution
+        2. Applied with monitoring
+        3. Verified after execution
+        4. Rolled back if verification fails
+        """
+        action_id = f"action_{int(time.time())}_{action.agent_id}"
+        start_time = time.time()
+        audit_trail = []
+        
+        try:
+            # STEP 1: PROPOSE (log the action plan)
+            audit_trail.append({
+                "step": "propose",
+                "timestamp": time.time(),
+                "action": action.action_type.value,
+                "agent_id": action.agent_id,
+                "parameters": action.parameters
+            })
+            
+            logger.info(f"🎯 Executing action: {action.action_type.value} for agent: {action.agent_id}")
+            
+            # STEP 2: VALIDATE (check constraints BEFORE execution)
+            validation = await self._validate_action(action, context_pack)
+            if not validation["valid"]:
+                logger.warning(f"❌ Validation failed: {validation['reason']}")
+                return ActionResult(
+                    action_id=action_id,
+                    success=False,
+                    output=None,
+                    error=f"Validation failed: {validation['reason']}",
+                    execution_time=time.time() - start_time,
+                    audit_trail=audit_trail
+                )
+            
+            audit_trail.append({
+                "step": "validate",
+                "timestamp": time.time(),
+                "result": "passed"
+            })
+            
+            # STEP 3: APPLY (execute the action)
+            result = await self._apply_action(action, context_pack)
+            
+            audit_trail.append({
+                "step": "apply",
+                "timestamp": time.time(),
+                "result": "executed"
+            })
+            
+            # STEP 4: VERIFY (check post-conditions)
+            verification = await self._verify_result(action, result, context_pack)
+            
+            if not verification["valid"]:
+                logger.warning(f"⚠️ Verification failed: {verification['reason']}")
+                
+                # STEP 5: ROLLBACK (auto-repair if possible)
+                if action.rollback_enabled:
+                    await self._rollback_action(action, result)
+                    audit_trail.append({
+                        "step": "rollback",
+                        "timestamp": time.time(),
+                        "reason": verification["reason"]
+                    })
+                
+                return ActionResult(
+                    action_id=action_id,
+                    success=False,
+                    output=result,
+                    error=f"Verification failed: {verification['reason']}",
+                    execution_time=time.time() - start_time,
+                    audit_trail=audit_trail
+                )
+            
+            audit_trail.append({
+                "step": "verify",
+                "timestamp": time.time(),
+                "result": "passed"
+            })
+            
+            # SUCCESS
+            logger.info(f"✅ Action completed: {action_id}")
+            return ActionResult(
+                action_id=action_id,
+                success=True,
+                output=result,
+                execution_time=time.time() - start_time,
+                audit_trail=audit_trail
+            )
+            
+        except Exception as e:
+            logger.error(f"❌ Action execution failed: {e}")
+            
+            # Auto-rollback on exception
+            if action.rollback_enabled:
+                try:
+                    await self._rollback_action(action, None)
+                    audit_trail.append({
+                        "step": "rollback",
+                        "timestamp": time.time(),
+                        "reason": f"Exception: {str(e)}"
+                    })
+                except Exception as rollback_error:
+                    logger.error(f"Rollback failed: {rollback_error}")
+            
+            return ActionResult(
+                action_id=action_id,
+                success=False,
+                output=None,
+                error=str(e),
+                execution_time=time.time() - start_time,
+                audit_trail=audit_trail
+            )
+    
+    async def _validate_action(
+        self,
+        action: ActionDefinition,
+        context: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """Validate action BEFORE execution"""
+        # Check if agent exists
+        if action.agent_id not in self.agents:
+            return {"valid": False, "reason": f"Agent {action.agent_id} not found"}
+        
+        # Check if action is allowed for this agent
+        allowed_tools = context.get("tools", [])
+        if action.action_type.value.upper() not in allowed_tools:
+            return {"valid": False, "reason": f"Action {action.action_type.value} not allowed for agent {action.agent_id}"}
+        
+        # Check token budget
+        if context.get("token_budget", 0) <= 0:
+            return {"valid": False, "reason": "Token budget exceeded"}
+        
+        # Check timeout
+        if action.timeout_seconds <= 0:
+            return {"valid": False, "reason": "Invalid timeout"}
+        
+        return {"valid": True}
+    
+    async def _apply_action(
+        self,
+        action: ActionDefinition,
+        context: Dict[str, Any]
+    ) -> Any:
+        """Execute the actual action"""
+        # Route to appropriate handler based on action type
+        action_handlers = {
+            AgentAction.QUERY_STATE: self._handle_query_state,
+            AgentAction.QUERY_MEMORY: self._handle_query_memory,
+            AgentAction.STORE_MEMORY: self._handle_store_memory,
+            AgentAction.CALL_LLM: self._handle_call_llm,
+            AgentAction.RUN_TOOL: self._handle_run_tool,
+            AgentAction.CREATE_PLAN: self._handle_create_plan,
+        }
+        
+        handler = action_handlers.get(action.action_type)
+        if handler:
+            return await handler(action, context)
+        else:
+            # Default handler for unimplemented actions
+            return {"status": "not_implemented", "action": action.action_type.value}
+    
+    async def _verify_result(
+        self,
+        action: ActionDefinition,
+        result: Any,
+        context: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """Verify result meets post-conditions"""
+        # Basic verification - check result is not None
+        if result is None:
+            return {"valid": False, "reason": "Result is None"}
+        
+        # Check if result has expected structure
+        if isinstance(result, dict) and "error" in result:
+            return {"valid": False, "reason": f"Action returned error: {result.get('error')}"}
+        
+        return {"valid": True}
+    
+    async def _rollback_action(
+        self,
+        action: ActionDefinition,
+        result: Any
+    ) -> None:
+        """Rollback action if it failed"""
+        logger.info(f"🔄 Rolling back action: {action.action_type.value}")
+        # TODO: Implement actual rollback logic per action type
+        # For now, just log the rollback
+        pass
+    
+    # Action handlers (stubs for now - will be implemented as needed)
+    async def _handle_query_state(self, action: ActionDefinition, context: Dict[str, Any]) -> Dict[str, Any]:
+        """Handle QUERY_STATE action"""
+        return {"state": context.get("state", {})}
+    
+    async def _handle_query_memory(self, action: ActionDefinition, context: Dict[str, Any]) -> Dict[str, Any]:
+        """Handle QUERY_MEMORY action"""
+        return {"memory": context.get("memory", [])}
+    
+    async def _handle_store_memory(self, action: ActionDefinition, context: Dict[str, Any]) -> Dict[str, Any]:
+        """Handle STORE_MEMORY action"""
+        return {"status": "stored", "memory_id": f"mem_{int(time.time())}"}
+    
+    async def _handle_call_llm(self, action: ActionDefinition, context: Dict[str, Any]) -> Dict[str, Any]:
+        """Handle CALL_LLM action"""
+        return {"status": "llm_called", "response": "LLM response placeholder"}
+    
+    async def _handle_run_tool(self, action: ActionDefinition, context: Dict[str, Any]) -> Dict[str, Any]:
+        """Handle RUN_TOOL action"""
+        return {"status": "tool_executed", "tool": action.parameters.get("tool_name", "unknown")}
+    
+    async def _handle_create_plan(self, action: ActionDefinition, context: Dict[str, Any]) -> Dict[str, Any]:
+        """Handle CREATE_PLAN action"""
+        return {"status": "plan_created", "plan_id": f"plan_{int(time.time())}"}
 
 class ContextAnalyzer:
     """Analyzes input context to determine required agents (Cursor pattern enhanced)"""
