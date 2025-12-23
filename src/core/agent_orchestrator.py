@@ -704,7 +704,7 @@ class NISAgentOrchestrator:
             return agents_status
 
 class ContextAnalyzer:
-    """Analyzes input context to determine required agents"""
+    """Analyzes input context to determine required agents (Cursor pattern enhanced)"""
     
     async def analyze(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
         """Analyze input to determine context and requirements"""
@@ -742,6 +742,82 @@ class ContextAnalyzer:
         except Exception as e:
             logger.error(f"Context analysis error: {e}")
             return {"text": "", "keywords": [], "primary_context": "general"}
+    
+    def build_context_pack(
+        self,
+        agent_id: str,
+        request_data: Dict[str, Any],
+        agent_state: Optional[Dict[str, Any]] = None,
+        max_tokens: int = 4000
+    ) -> Dict[str, Any]:
+        """
+        Build just-in-time context pack (Cursor's secret sauce)
+        
+        Returns ONLY what this agent needs:
+        - Relevant state (not entire system state)
+        - Relevant memory (semantic search, limited)
+        - Allowed tools (policy-based)
+        - Active policies
+        - NO noise
+        """
+        context_pack = {
+            "agent_id": agent_id,
+            "timestamp": time.time(),
+            "request": request_data,
+            "state": self._get_relevant_state(agent_id, agent_state or {}),
+            "memory": self._get_relevant_memory(agent_id, request_data),
+            "tools": self._get_allowed_tools(agent_id),
+            "policies": self._get_active_policies(agent_id),
+            "token_budget": max_tokens
+        }
+        
+        return context_pack
+    
+    def _get_relevant_state(self, agent_id: str, full_state: Dict[str, Any]) -> Dict[str, Any]:
+        """Get only state relevant to this agent (scoped, not entire state)"""
+        # Filter state by agent scope - only return what this agent needs
+        relevant_keys = {
+            "laplace_signal_processor": ["input_signals", "preprocessing_config"],
+            "kan_reasoning_engine": ["reasoning_context", "symbolic_state"],
+            "physics_validator": ["physics_constraints", "validation_rules"],
+            "multimodal_analysis_engine": ["vision_config", "document_state"],
+            "research_and_search_engine": ["search_history", "research_context"],
+        }
+        
+        agent_keys = relevant_keys.get(agent_id, [])
+        return {k: full_state.get(k) for k in agent_keys if k in full_state}
+    
+    def _get_relevant_memory(self, agent_id: str, request: Dict[str, Any]) -> List[Dict]:
+        """Get only memories relevant to this request (semantic search with limit)"""
+        # TODO: Integrate with actual memory system
+        # For now, return empty list - will be implemented when memory system is integrated
+        return []
+    
+    def _get_allowed_tools(self, agent_id: str) -> List[str]:
+        """Get tools this agent is allowed to use (policy-based)"""
+        # Define tool access per agent type
+        tool_access = {
+            "laplace_signal_processor": ["READ_SENSOR", "QUERY_STATE"],
+            "kan_reasoning_engine": ["CALL_LLM", "QUERY_MEMORY", "RUN_TOOL"],
+            "physics_validator": ["QUERY_STATE", "RUN_TOOL"],
+            "multimodal_analysis_engine": ["CALL_LLM", "RUN_TOOL", "QUERY_MEMORY"],
+            "research_and_search_engine": ["CALL_LLM", "RUN_TOOL", "QUERY_MEMORY"],
+            "consciousness": ["CALL_LLM", "QUERY_MEMORY", "STORE_MEMORY", "CREATE_PLAN"],
+            "memory": ["QUERY_MEMORY", "STORE_MEMORY"],
+            "coordination": ["CREATE_PLAN", "EXECUTE_PLAN", "QUERY_STATE"],
+        }
+        
+        return tool_access.get(agent_id, ["QUERY_STATE"])
+    
+    def _get_active_policies(self, agent_id: str) -> List[Dict]:
+        """Get policies that apply to this agent"""
+        # TODO: Integrate with actual policy engine
+        # For now, return basic policies
+        return [
+            {"rule": "All actions must be auditable", "level": "critical"},
+            {"rule": "Respect token budgets", "level": "high"},
+            {"rule": "No unauthorized data access", "level": "critical"}
+        ]
 
 class DependencyResolver:
     """Resolves agent dependencies and activation order"""
