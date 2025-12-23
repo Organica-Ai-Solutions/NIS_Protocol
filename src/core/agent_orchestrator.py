@@ -49,6 +49,32 @@ class ActivationTrigger(Enum):
     SCHEDULED = "scheduled"
     EVENT_DRIVEN = "event_driven"
 
+class AgentAction(Enum):
+    """Constrained action space - Cursor pattern for agent operations"""
+    # Sensing
+    READ_SENSOR = "read_sensor"
+    QUERY_STATE = "query_state"
+    
+    # Memory
+    QUERY_MEMORY = "query_memory"
+    STORE_MEMORY = "store_memory"
+    
+    # Planning
+    CREATE_PLAN = "create_plan"
+    EXECUTE_PLAN = "execute_plan"
+    
+    # Tools
+    RUN_TOOL = "run_tool"
+    CALL_LLM = "call_llm"
+    
+    # Deployment
+    DEPLOY_EDGE = "deploy_edge"
+    UPDATE_CONFIG = "update_config"
+    
+    # Policy
+    SET_POLICY = "set_policy"
+    CHECK_POLICY = "check_policy"
+
 @dataclass
 class AgentMetrics:
     """Performance metrics for an agent"""
@@ -64,6 +90,31 @@ class AgentMetrics:
     def __post_init__(self):
         if self.resource_usage is None:
             self.resource_usage = {"cpu": 0.0, "memory": 0.0, "tokens": 0}
+
+@dataclass
+class ActionDefinition:
+    """Defines a constrained action with validation rules (Cursor pattern)"""
+    action_type: AgentAction
+    agent_id: str
+    parameters: Dict[str, Any]
+    requires_approval: bool = False
+    rollback_enabled: bool = True
+    timeout_seconds: float = 30.0
+    audit_id: Optional[str] = None
+
+@dataclass
+class ActionResult:
+    """Result of an action execution (Cursor pattern)"""
+    action_id: str
+    success: bool
+    output: Any
+    error: Optional[str] = None
+    execution_time: float = 0.0
+    audit_trail: List[Dict[str, Any]] = None
+    
+    def __post_init__(self):
+        if self.audit_trail is None:
+            self.audit_trail = []
 
 @dataclass
 class AgentDefinition:
