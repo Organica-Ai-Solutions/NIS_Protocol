@@ -917,8 +917,39 @@ class NISAgentOrchestrator:
         return {"status": "stored", "memory_id": f"mem_{int(time.time())}"}
     
     async def _handle_call_llm(self, action: ActionDefinition, context: Dict[str, Any]) -> Dict[str, Any]:
-        """Handle CALL_LLM action"""
-        return {"status": "llm_called", "response": "LLM response placeholder"}
+        """Handle CALL_LLM action with context-aware generation"""
+        if not self.llm_provider:
+            return {"status": "error", "error": "LLM provider not available"}
+        
+        try:
+            # Get user message from action parameters
+            user_message = action.parameters.get("prompt", action.parameters.get("message", ""))
+            if not user_message:
+                return {"status": "error", "error": "No prompt provided"}
+            
+            # Use context-aware LLM generation
+            result = await self.llm_provider.generate_with_context_pack(
+                context_pack=context,
+                user_message=user_message,
+                provider=action.parameters.get("provider"),
+                model=action.parameters.get("model")
+            )
+            
+            if result.get("success"):
+                return {
+                    "status": "success",
+                    "response": result.get("response", ""),
+                    "context_used": result.get("context_used", {}),
+                    "tokens_used": result.get("tokens_used", 0)
+                }
+            else:
+                return {
+                    "status": "error",
+                    "error": result.get("error", "Unknown error")
+                }
+        except Exception as e:
+            logger.error(f"CALL_LLM handler error: {e}")
+            return {"status": "error", "error": str(e)}
     
     async def _handle_run_tool(self, action: ActionDefinition, context: Dict[str, Any]) -> Dict[str, Any]:
         """Handle RUN_TOOL action"""
@@ -1076,5 +1107,11 @@ class DependencyResolver:
         
         return resolved
 
-# Global orchestrator instance
-nis_agent_orchestrator = NISAgentOrchestrator()
+# Global orchestrator instance (will be initialized with LLM provider in main.py)
+nis_agent_orchestrator = None
+
+def initialize_orchestrator(llm_provider=None):
+    """Initialize the global orchestrator with LLM provider"""
+    global nis_agent_orchestrator
+    nis_agent_orchestrator = NISAgentOrchestrator(llm_provider=llm_provider)
+    return nis_agent_orchestrator
