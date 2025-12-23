@@ -578,7 +578,7 @@ def initialize_agent_orchestrator(llm_provider=None, memory_system=None):
             logger.error(f"❌ Agent Orchestrator failed: {e}")
 
 async def initialize_system():
-    """Initialize all NIS Protocol components"""
+    """Initialize all NIS Protocol components with timeout protection"""
     global llm_provider, web_search_agent, simulation_coordinator
     global learning_agent, planning_system, curiosity_engine
     global consciousness_service, protocol_bridge, bitnet_trainer
@@ -586,64 +586,83 @@ async def initialize_system():
     global vision_agent, research_agent, reasoning_chain, document_agent, pipeline_agent
     
     logger.info("🚀 Initializing NIS Protocol v4.0.1...")
+    logger.info("⏱️  Startup timeout: 300 seconds")
     
     # Initialize Infrastructure (Kafka, Redis, Zookeeper)
     try:
-        logger.info("🔄 Initializing infrastructure...")
+        logger.info("🔄 Step 1/10: Initializing infrastructure...")
         from src.infrastructure.nis_infrastructure import initialize_infrastructure, get_nis_infrastructure
-        infra_status = await initialize_infrastructure()
-        logger.info(f"✅ Infrastructure connected: Kafka={infra_status.get('kafka')}, Redis={infra_status.get('redis')}")
+        infra_status = await asyncio.wait_for(initialize_infrastructure(), timeout=30)
+        logger.info(f"✅ Step 1/10: Infrastructure connected: Kafka={infra_status.get('kafka')}, Redis={infra_status.get('redis')}")
+    except asyncio.TimeoutError:
+        logger.warning("⚠️ Step 1/10: Infrastructure timeout - continuing with degraded mode")
     except Exception as e:
-        logger.warning(f"⚠️ Infrastructure initialization: {e}")
+        logger.warning(f"⚠️ Step 1/10: Infrastructure initialization: {e}")
     
     # LLM Provider
     try:
-        logger.info("🔄 Initializing LLM Provider...")
+        logger.info("🔄 Step 2/10: Initializing LLM Provider...")
         llm_provider = GeneralLLMProvider()
-        logger.info("✅ LLM Provider initialized")
+        logger.info("✅ Step 2/10: LLM Provider initialized")
     except Exception as e:
-        logger.error(f"❌ LLM Provider failed: {e}")
+        logger.error(f"❌ Step 2/10: LLM Provider failed: {e}")
     
-    # Initialize Memory System
+    # Initialize Memory System (with timeout - model download can be slow)
     try:
-        logger.info("🔄 Initializing Persistent Memory System...")
+        logger.info("🔄 Step 3/10: Initializing Persistent Memory System...")
+        logger.info("   → This may download sentence-transformers model (~500MB) on first run")
         from src.memory.persistent_memory import PersistentMemorySystem
-        persistent_memory = PersistentMemorySystem()
-        logger.info("✅ Persistent Memory System initialized")
+        
+        # Run in executor to avoid blocking event loop
+        loop = asyncio.get_event_loop()
+        persistent_memory = await asyncio.wait_for(
+            loop.run_in_executor(None, PersistentMemorySystem),
+            timeout=120  # 2 minutes for model download
+        )
+        logger.info("✅ Step 3/10: Persistent Memory System initialized")
+    except asyncio.TimeoutError:
+        logger.warning("⚠️ Step 3/10: Memory System timeout (model download?) - continuing without memory")
+        persistent_memory = None
     except Exception as e:
-        logger.warning(f"⚠️ Memory System initialization failed: {e}")
+        logger.warning(f"⚠️ Step 3/10: Memory System initialization failed: {e}")
         persistent_memory = None
     
     # Re-initialize Agent Orchestrator with LLM Provider and Memory System
     try:
-        logger.info("🔄 Initializing Agent Orchestrator with LLM Provider and Memory...")
+        logger.info("🔄 Step 4/10: Initializing Agent Orchestrator with LLM Provider and Memory...")
         initialize_agent_orchestrator(
             llm_provider=llm_provider,
             memory_system=persistent_memory
         )
         if nis_agent_orchestrator:
-            await nis_agent_orchestrator.start_orchestrator()
-            logger.info("✅ Agent Orchestrator with context-aware execution and memory ready")
+            await asyncio.wait_for(nis_agent_orchestrator.start_orchestrator(), timeout=30)
+            logger.info("✅ Step 4/10: Agent Orchestrator with context-aware execution and memory ready")
+    except asyncio.TimeoutError:
+        logger.error("❌ Step 4/10: Agent Orchestrator timeout")
     except Exception as e:
-        logger.error(f"❌ Agent Orchestrator initialization failed: {e}")
+        logger.error(f"❌ Step 4/10: Agent Orchestrator initialization failed: {e}")
     
     # Core agents
-    logger.info("🔄 Initializing core agents...")
+    logger.info("🔄 Step 5/10: Initializing core agents...")
     web_search_agent = WebSearchAgent()
     coordinator = create_scientific_coordinator()
     simulation_coordinator = coordinator
-    logger.info("✅ Core agents initialized")
+    logger.info("✅ Step 5/10: Core agents initialized")
     
     try:
+        logger.info("🔄 Step 6/10: Initializing Learning Agent...")
         learning_agent = LearningAgent(agent_id="core_learning_agent")
-        logger.info("✅ Learning Agent initialized")
+        logger.info("✅ Step 6/10: Learning Agent initialized")
     except Exception as e:
-        logger.error(f"❌ Learning Agent failed: {e}")
+        logger.error(f"❌ Step 6/10: Learning Agent failed: {e}")
     
+    logger.info("🔄 Step 7/10: Initializing Planning and Curiosity...")
     planning_system = AutonomousPlanningSystem()
     curiosity_engine = CuriosityEngine()
+    logger.info("✅ Step 7/10: Planning and Curiosity initialized")
     
     # Consciousness Service (10-phase pipeline)
+    logger.info("🔄 Step 8/10: Initializing Consciousness Service...")
     consciousness_service = create_consciousness_service()
     try:
         consciousness_service.__init_evolution__()
@@ -655,12 +674,13 @@ async def initialize_system():
         consciousness_service.__init_embodiment__()
         consciousness_service.__init_debugger__()
         consciousness_service.__init_meta_evolution__()
-        logger.info("✅ 10-phase Consciousness Pipeline initialized")
+        logger.info("✅ Step 8/10: 10-phase Consciousness Pipeline initialized")
     except Exception as e:
-        logger.warning(f"⚠️ Some consciousness phases skipped: {e}")
+        logger.warning(f"⚠️ Step 8/10: Some consciousness phases skipped: {e}")
     
     # V4.0 Self-improving components
     try:
+        logger.info("🔄 Step 9/10: Initializing V4.0 Self-improving components...")
         persistent_memory = get_memory_system()
         self_modifier = get_self_modifier()
         reflective_generator = ReflectiveGenerator(
@@ -673,9 +693,9 @@ async def initialize_system():
             persistent_memory=persistent_memory,
             reflective_generator=reflective_generator
         )
-        logger.info("✅ V4.0 Self-improving components initialized")
+        logger.info("✅ Step 9/10: V4.0 Self-improving components initialized")
     except Exception as e:
-        logger.error(f"❌ V4.0 components failed: {e}")
+        logger.error(f"❌ Step 9/10: V4.0 components failed: {e}")
     
     # Protocol bridge
     protocol_bridge = create_protocol_bridge_service(
