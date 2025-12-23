@@ -89,7 +89,7 @@ hnswlib>=0.8.0,<1.0.0
 # Duplicate removed - using first instance above
 
 # ===== OPTIONAL ML DEPENDENCIES (Install separately if needed) =====
-# sentence-transformers==2.2.2  # Enable after dependency conflicts resolved
+sentence-transformers==2.2.2  # Required for memory system
 # nemo_toolkit[all]>=2.4.0      # Enable for full NVIDIA NeMo integration
 
 # ===== DEVELOPMENT AND TESTING =====
