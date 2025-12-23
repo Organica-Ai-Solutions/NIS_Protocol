@@ -889,7 +889,7 @@ async def startup_event():
     """Application startup"""
     logger.info("🚀 Starting NIS Protocol v4.0.1...")
     
-    initialize_agent_orchestrator()
+    # Note: Agent orchestrator will be initialized with LLM provider in initialize_system()
     initialize_protocol_adapters()
     initialize_vibevoice()
     initialize_nemo()
