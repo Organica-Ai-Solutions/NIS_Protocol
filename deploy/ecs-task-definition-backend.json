@@ -1,0 +1,114 @@
+{
+  "family": "nis-backend-task",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["EC2"],
+  "cpu": "1024",
+  "memory": "3072",
+  "executionRoleArn": "arn:aws:iam::774518279463:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::774518279463:role/nis-ecs-role",
+  "containerDefinitions": [
+    {
+      "name": "backend",
+      "image": "774518279463.dkr.ecr.us-east-2.amazonaws.com/nis-backend:gpu",
+      "cpu": 1024,
+      "memory": 3072,
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 8000,
+          "hostPort": 8000,
+          "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        {
+          "name": "AWS_REGION",
+          "value": "us-east-2"
+        },
+        {
+          "name": "AWS_SECRETS_ENABLED",
+          "value": "true"
+        },
+        {
+          "name": "REDIS_HOST",
+          "value": "nis-redis-standalone.d7vi10.ng.0001.use2.cache.amazonaws.com"
+        },
+        {
+          "name": "REDIS_PORT",
+          "value": "6379"
+        },
+        {
+          "name": "KAFKA_BOOTSTRAP_SERVERS",
+          "value": "b-1.niskafka.iheb2p.c3.kafka.us-east-2.amazonaws.com:9092,b-2.niskafka.iheb2p.c3.kafka.us-east-2.amazonaws.com:9092"
+        },
+        {
+          "name": "NVIDIA_NIM_ENABLED",
+          "value": "true"
+        },
+        {
+          "name": "CUDA_VISIBLE_DEVICES",
+          "value": "0"
+        },
+        {
+          "name": "BITNET_TRAINING_ENABLED",
+          "value": "false"
+        },
+        {
+          "name": "NIS_ENV",
+          "value": "production"
+        },
+        {
+          "name": "LOG_LEVEL",
+          "value": "INFO"
+        },
+        {
+          "name": "PYTHONUNBUFFERED",
+          "value": "1"
+        },
+        {
+          "name": "GCP_PROJECT_ID",
+          "value": "organicaaisolutions"
+        }
+      ],
+      "secrets": [
+        {
+          "name": "OPENAI_API_KEY",
+          "valueFrom": "arn:aws:secretsmanager:us-east-2:774518279463:secret:nis/openai-api-key-x0UEEi"
+        },
+        {
+          "name": "DEEPSEEK_API_KEY",
+          "valueFrom": "arn:aws:secretsmanager:us-east-2:774518279463:secret:nis/openai-api-key-x0UEEi"
+        },
+        {
+          "name": "GOOGLE_API_KEY",
+          "valueFrom": "arn:aws:secretsmanager:us-east-2:774518279463:secret:nis/google-api-key-UpwtiO"
+        },
+        {
+          "name": "ANTHROPIC_API_KEY",
+          "valueFrom": "arn:aws:secretsmanager:us-east-2:774518279463:secret:nis/anthropic-api-key-00TnSn"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/backend",
+          "awslogs-region": "us-east-2",
+          "awslogs-stream-prefix": "nis-backend"
+        }
+      },
+      "healthCheck": {
+        "command": ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"],
+        "interval": 10,
+        "timeout": 5,
+        "retries": 12,
+        "startPeriod": 30
+      },
+      "resourceRequirements": [
+        {
+          "type": "GPU",
+          "value": "1"
+        }
+      ]
+    }
+  ]
+}

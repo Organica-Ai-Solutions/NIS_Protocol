@@ -1,0 +1,62 @@
+{
+  "family": "nis-runner-task",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "1024",
+  "memory": "3072",
+  "executionRoleArn": "arn:aws:iam::774518279463:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::774518279463:role/nis-ecs-role",
+  "containerDefinitions": [
+    {
+      "name": "runner",
+      "image": "774518279463.dkr.ecr.us-east-2.amazonaws.com/nis-runner:latest",
+      "cpu": 1024,
+      "memory": 3072,
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 8001,
+          "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        {
+          "name": "AWS_REGION",
+          "value": "us-east-2"
+        },
+        {
+          "name": "AWS_SECRETS_ENABLED",
+          "value": "true"
+        },
+        {
+          "name": "REDIS_HOST",
+          "value": "nis-redis-standalone.d7vi10.ng.0001.use2.cache.amazonaws.com"
+        },
+        {
+          "name": "REDIS_PORT",
+          "value": "6379"
+        },
+        {
+          "name": "KAFKA_BOOTSTRAP_SERVERS",
+          "value": "b-1.niskafka.iheb2p.c3.kafka.us-east-2.amazonaws.com:9092,b-2.niskafka.iheb2p.c3.kafka.us-east-2.amazonaws.com:9092"
+        },
+        {
+          "name": "PYTHONUNBUFFERED",
+          "value": "1"
+        },
+        {
+          "name": "LOG_LEVEL",
+          "value": "INFO"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/runner",
+          "awslogs-region": "us-east-2",
+          "awslogs-stream-prefix": "nis-runner"
+        }
+      }
+    }
+  ]
+}

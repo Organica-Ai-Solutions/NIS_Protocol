@@ -1,0 +1,114 @@
+{
+    "family": "backend",
+    "containerDefinitions": [
+        {
+            "command": [
+                "python3",
+                "-m",
+                "uvicorn",
+                "main:app",
+                "--host",
+                "0.0.0.0",
+                "--port",
+                "8000",
+                "--workers",
+                "1"
+            ],
+            "cpu": 0,
+            "environment": [
+                {
+                    "name": "KAFKA_BOOTSTRAP_SERVERS",
+                    "value": "b-1.niskafka.iheb2p.c3.kafka.us-east-2.amazonaws.com:9092,b-2.niskafka.iheb2p.c3.kafka.us-east-2.amazonaws.com:9092"
+                },
+                {
+                    "name": "REDIS_HOST",
+                    "value": "nis-redis-standalone.d7vi10.ng.0001.use2.cache.amazonaws.com"
+                },
+                {
+                    "name": "NVIDIA_NIM_ENABLED",
+                    "value": "true"
+                },
+                {
+                    "name": "PYTHONUNBUFFERED",
+                    "value": "1"
+                },
+                {
+                    "name": "BITNET_TRAINING_ENABLED",
+                    "value": "false"
+                }
+            ],
+            "essential": true,
+            "healthCheck": {
+                "command": [
+                    "CMD-SHELL",
+                    "curl -f http://localhost:8000/health || exit 1"
+                ],
+                "interval": 10,
+                "retries": 10,
+                "startPeriod": 30,
+                "timeout": 5
+            },
+            "image": "774518279463.dkr.ecr.us-east-2.amazonaws.com/nis-backend:latest",
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/backend",
+                    "awslogs-create-group": "true",
+                    "awslogs-region": "us-east-2",
+                    "awslogs-stream-prefix": "ecs"
+                },
+                "secretOptions": []
+            },
+            "mountPoints": [],
+            "name": "backend",
+            "portMappings": [
+                {
+                    "containerPort": 8000,
+                    "hostPort": 8000,
+                    "name": "backend-8000-tcp",
+                    "protocol": "tcp"
+                }
+            ],
+            "resourceRequirements": [
+                {
+                    "type": "GPU",
+                    "value": "1"
+                }
+            ],
+            "secrets": [
+                {
+                    "name": "ANTHROPIC_API_KEY",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-2:774518279463:secret:nis/anthropic-api-key-00TnSn"
+                },
+                {
+                    "name": "DEEPSEEK_API_KEY",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-2:774518279463:secret:nis/openai-api-key-x0UEEi"
+                },
+                {
+                    "name": "GOOGLE_API_KEY",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-2:774518279463:secret:nis/google-api-key-UpwtiO"
+                },
+                {
+                    "name": "OPENAI_API_KEY",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-2:774518279463:secret:nis/openai-api-key-x0UEEi"
+                }
+            ],
+            "systemControls": [],
+            "volumesFrom": []
+        }
+    ],
+    "taskRoleArn": "arn:aws:iam::774518279463:role/ecsTaskExecutionRole",
+    "executionRoleArn": "arn:aws:iam::774518279463:role/ecsTaskExecutionRole",
+    "networkMode": "awsvpc",
+    "volumes": [],
+    "placementConstraints": [],
+    "requiresCompatibilities": [
+        "EC2"
+    ],
+    "cpu": "1024",
+    "memory": "3072",
+    "runtimePlatform": {
+        "cpuArchitecture": "X86_64",
+        "operatingSystemFamily": "LINUX"
+    }
+}
