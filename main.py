@@ -45,6 +45,7 @@ from pydantic import BaseModel, Field
 import uvicorn
 
 # ====== NIS PROTOCOL IMPORTS ======
+from src.utils.aws_secrets import load_all_api_keys
 from src.core.state_manager import nis_state_manager, StateEventType
 from src.meta.unified_coordinator import create_scientific_coordinator, BehaviorMode
 from src.services.consciousness_service import create_consciousness_service
@@ -407,6 +408,19 @@ async def agentic_websocket(websocket: WebSocket):
     except Exception as e:
         logger.error(f"❌ Agentic WebSocket error: {e}")
 
+# ====== ENHANCED A2A WEBSOCKET ENDPOINT ======
+from enhanced_a2a_websocket import enhanced_a2a_websocket
+
+@app.websocket("/ws/a2a")
+async def a2a_endpoint(websocket: WebSocket):
+    """
+    🚀 Enhanced A2A WebSocket - Full GenUI Integration
+    
+    Combines AG-UI transparency events with A2UIFormatter for rich widget generation.
+    This endpoint properly formats responses as GenUI surfaces.
+    """
+    await enhanced_a2a_websocket(websocket, llm_provider, a2ui_formatter_instance)
+
 # ====== MAIN CHAT ENDPOINTS (v3.2.7 compatibility) ======
 from fastapi.responses import RedirectResponse, HTMLResponse
 
@@ -540,8 +554,8 @@ async def chat(request: ChatRequest):
 if SECURITY_AVAILABLE:
     @app.middleware("http")
     async def security_middleware(request: Request, call_next):
-        # Skip security for docs and health endpoints
-        if request.url.path in ["/health", "/", "/docs", "/openapi.json", "/redoc"]:
+        # Skip security for docs, health endpoints, and WebSocket endpoints
+        if request.url.path in ["/health", "/", "/docs", "/openapi.json", "/redoc"] or request.url.path.startswith("/ws/"):
             return await call_next(request)
         
         client_ip = request.client.host if request.client else "unknown"
@@ -599,17 +613,35 @@ async def initialize_system():
     except Exception as e:
         logger.warning(f"⚠️ Step 1/10: Infrastructure initialization: {e}")
     
+    # Load API Keys (AWS Secrets Manager or Environment Variables)
+    try:
+        logger.info("🔄 Step 2/10: Loading API Keys...")
+        api_keys = load_all_api_keys()
+        
+        # Update environment with loaded keys (for backward compatibility)
+        for key_name, key_value in api_keys.items():
+            if key_value and not os.getenv(key_name):
+                os.environ[key_name] = key_value
+        
+        aws_enabled = os.getenv("AWS_SECRETS_ENABLED", "false").lower() == "true"
+        if aws_enabled:
+            logger.info(f"✅ Step 2/10: Loaded {len(api_keys)} API keys from AWS Secrets Manager")
+        else:
+            logger.info(f"✅ Step 2/10: Loaded {len(api_keys)} API keys from environment variables")
+    except Exception as e:
+        logger.warning(f"⚠️ Step 2/10: API key loading failed: {e}")
+    
     # LLM Provider
     try:
-        logger.info("🔄 Step 2/10: Initializing LLM Provider...")
+        logger.info("🔄 Step 3/10: Initializing LLM Provider...")
         llm_provider = GeneralLLMProvider()
-        logger.info("✅ Step 2/10: LLM Provider initialized")
+        logger.info("✅ Step 3/10: LLM Provider initialized")
     except Exception as e:
-        logger.error(f"❌ Step 2/10: LLM Provider failed: {e}")
+        logger.error(f"❌ Step 3/10: LLM Provider failed: {e}")
     
     # Initialize Memory System (with timeout - model download can be slow)
     try:
-        logger.info("🔄 Step 3/10: Initializing Persistent Memory System...")
+        logger.info("🔄 Step 4/10: Initializing Persistent Memory System...")
         logger.info("   → This may download sentence-transformers model (~500MB) on first run")
         from src.memory.persistent_memory import PersistentMemorySystem
         
@@ -619,50 +651,50 @@ async def initialize_system():
             loop.run_in_executor(None, PersistentMemorySystem),
             timeout=120  # 2 minutes for model download
         )
-        logger.info("✅ Step 3/10: Persistent Memory System initialized")
+        logger.info("✅ Step 4/10: Persistent Memory System initialized")
     except asyncio.TimeoutError:
-        logger.warning("⚠️ Step 3/10: Memory System timeout (model download?) - continuing without memory")
+        logger.warning("⚠️ Step 4/10: Memory System timeout (model download?) - continuing without memory")
         persistent_memory = None
     except Exception as e:
-        logger.warning(f"⚠️ Step 3/10: Memory System initialization failed: {e}")
+        logger.warning(f"⚠️ Step 4/10: Memory System initialization failed: {e}")
         persistent_memory = None
     
     # Re-initialize Agent Orchestrator with LLM Provider and Memory System
     try:
-        logger.info("🔄 Step 4/10: Initializing Agent Orchestrator with LLM Provider and Memory...")
+        logger.info("🔄 Step 5/10: Initializing Agent Orchestrator with LLM Provider and Memory...")
         initialize_agent_orchestrator(
             llm_provider=llm_provider,
             memory_system=persistent_memory
         )
         if nis_agent_orchestrator:
             await asyncio.wait_for(nis_agent_orchestrator.start_orchestrator(), timeout=30)
-            logger.info("✅ Step 4/10: Agent Orchestrator with context-aware execution and memory ready")
+            logger.info("✅ Step 5/10: Agent Orchestrator with context-aware execution and memory ready")
     except asyncio.TimeoutError:
-        logger.error("❌ Step 4/10: Agent Orchestrator timeout")
+        logger.error("❌ Step 5/10: Agent Orchestrator timeout")
     except Exception as e:
-        logger.error(f"❌ Step 4/10: Agent Orchestrator initialization failed: {e}")
+        logger.error(f"❌ Step 5/10: Agent Orchestrator initialization failed: {e}")
     
     # Core agents
-    logger.info("🔄 Step 5/10: Initializing core agents...")
+    logger.info("🔄 Step 6/10: Initializing core agents...")
     web_search_agent = WebSearchAgent()
     coordinator = create_scientific_coordinator()
     simulation_coordinator = coordinator
-    logger.info("✅ Step 5/10: Core agents initialized")
+    logger.info("✅ Step 6/10: Core agents initialized")
     
     try:
-        logger.info("🔄 Step 6/10: Initializing Learning Agent...")
+        logger.info("🔄 Step 7/10: Initializing Learning Agent...")
         learning_agent = LearningAgent(agent_id="core_learning_agent")
-        logger.info("✅ Step 6/10: Learning Agent initialized")
+        logger.info("✅ Step 7/10: Learning Agent initialized")
     except Exception as e:
-        logger.error(f"❌ Step 6/10: Learning Agent failed: {e}")
+        logger.error(f"❌ Step 7/10: Learning Agent failed: {e}")
     
-    logger.info("🔄 Step 7/10: Initializing Planning and Curiosity...")
+    logger.info("🔄 Step 8/10: Initializing Planning and Curiosity...")
     planning_system = AutonomousPlanningSystem()
     curiosity_engine = CuriosityEngine()
-    logger.info("✅ Step 7/10: Planning and Curiosity initialized")
+    logger.info("✅ Step 8/10: Planning and Curiosity initialized")
     
     # Consciousness Service (10-phase pipeline)
-    logger.info("🔄 Step 8/10: Initializing Consciousness Service...")
+    logger.info("🔄 Step 9/10: Initializing Consciousness Service...")
     consciousness_service = create_consciousness_service()
     try:
         consciousness_service.__init_evolution__()
@@ -674,13 +706,13 @@ async def initialize_system():
         consciousness_service.__init_embodiment__()
         consciousness_service.__init_debugger__()
         consciousness_service.__init_meta_evolution__()
-        logger.info("✅ Step 8/10: 10-phase Consciousness Pipeline initialized")
+        logger.info("✅ Step 9/10: 10-phase Consciousness Pipeline initialized")
     except Exception as e:
-        logger.warning(f"⚠️ Step 8/10: Some consciousness phases skipped: {e}")
+        logger.warning(f"⚠️ Step 9/10: Some consciousness phases skipped: {e}")
     
     # V4.0 Self-improving components
     try:
-        logger.info("🔄 Step 9/10: Initializing V4.0 Self-improving components...")
+        logger.info("🔄 Step 10/10: Initializing V4.0 Self-improving components...")
         persistent_memory = get_memory_system()
         self_modifier = get_self_modifier()
         reflective_generator = ReflectiveGenerator(

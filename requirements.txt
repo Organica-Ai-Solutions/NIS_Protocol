@@ -134,3 +134,8 @@ numba>=0.58.0,<1.0.0  # JIT compilation for performance optimization
 # ===== NVIDIA NIM INTEGRATION =====
 # Real LLM inference with GPU acceleration using NGC API
 # Note: NVIDIA NIM uses direct API calls via requests, no separate client package needed
+
+# ===== AWS INTEGRATION =====
+# AWS Secrets Manager for production API key management
+boto3>=1.34.0,<2.0.0
+botocore>=1.34.0,<2.0.0
