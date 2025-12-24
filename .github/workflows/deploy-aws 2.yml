@@ -1,0 +1,179 @@
+## This workflow builds the backedn and runner docker image, pushes them to ECR aand then updates task def and service to deploy them on ecs.
+name: Build → Deploy ECS (Backend + Runner)
+
+on:
+  push:
+    branches: [main, develop]
+    # Skip build for docs/github changes
+    paths-ignore:
+      - '.github/**'
+      - '*.md'
+      - 'docs/**'
+      - 'README*'
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  AWS_REGION: us-east-2
+  ECS_CLUSTER: nis-ecs-cluster
+
+jobs:
+  # JOB 1: Build Backend Image (EVERYTIME except docs)
+  build-backend:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    outputs:
+      backend_image: ${{ steps.build-image.outputs.image }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: arn:aws:iam::774518279463:role/github-actions-role
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+
+    - name: Build Backend Image
+      id: build-image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        docker build -t $ECR_REGISTRY/nis-backend:$IMAGE_TAG \
+                     -t $ECR_REGISTRY/nis-backend:latest \
+                     -f Dockerfile .
+        docker push $ECR_REGISTRY/nis-backend:$IMAGE_TAG
+        docker push $ECR_REGISTRY/nis-backend:latest
+        echo "image=$ECR_REGISTRY/nis-backend:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+  # JOB 2: Build Runner Image (EVERYTIME except docs)
+  build-runner:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    outputs:
+      runner_image: ${{ steps.build-image.outputs.image }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: arn:aws:iam::774518279463:role/github-actions-role
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+
+    - name: Build Runner Image
+      id: build-image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        cd runner
+        docker build -t $ECR_REGISTRY/nis-runner:$IMAGE_TAG \
+                     -t $ECR_REGISTRY/nis-runner:latest \
+                     -f Dockerfile .
+        docker push $ECR_REGISTRY/nis-runner:$IMAGE_TAG
+        docker push $ECR_REGISTRY/nis-runner:latest
+        echo "image=$ECR_REGISTRY/nis-runner:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+  # JOB 3: Deploy Backend
+  deploy-backend:
+    needs: [build-backend]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: arn:aws:iam::774518279463:role/github-actions-role
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Fill backend-taskdef.json with new image
+      id: task-def
+      env:
+        IMAGE: ${{ needs.build-backend.outputs.backend_image || '774518279463.dkr.ecr.us-east-2.amazonaws.com/nis-backend:latest' }}
+      run: |
+        jq --arg image "$IMAGE" \
+           '.containerDefinitions[0].image = $image' \
+           backend-taskdef.json > task-definition.json
+        echo "taskdef=task-definition.json" >> $GITHUB_OUTPUT
+
+    - name: Deploy Backend Service
+      env:
+        ECS_SERVICE: backend-service
+        TASK_FAMILY: backend
+      run: |
+        TASK_REVISION=$(aws ecs register-task-definition \
+          --cli-input-json file://${{ steps.task-def.outputs.taskdef }} \
+          --query 'taskDefinition.revision' \
+          --output text)
+        aws ecs update-service \
+          --cluster $ECS_CLUSTER \
+          --service $ECS_SERVICE \
+          --task-definition $TASK_FAMILY:$TASK_REVISION \
+          --force-new-deployment
+        echo "✅ Backend deployed: $TASK_REVISION"
+
+  # JOB 4: Deploy Runner
+  deploy-runner:
+    needs: [build-runner]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: arn:aws:iam::774518279463:role/github-actions-role
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Fill runner-taskdef.json with new image
+      id: task-def
+      env:
+        IMAGE: ${{ needs.build-runner.outputs.runner_image || '774518279463.dkr.ecr.us-east-2.amazonaws.com/nis-runner:latest' }}
+      run: |
+        jq --arg image "$IMAGE" \
+           '.containerDefinitions[0].image = $image' \
+           runner-taskdef.json > task-definition.json
+        echo "taskdef=task-definition.json" >> $GITHUB_OUTPUT
+
+    - name: Deploy Runner Service
+      env:
+        ECS_SERVICE: runner-service
+        TASK_FAMILY: runner
+      run: |
+        TASK_REVISION=$(aws ecs register-task-definition \
+          --cli-input-json file://${{ steps.task-def.outputs.taskdef }} \
+          --query 'taskDefinition.revision' \
+          --output text)
+        aws ecs update-service \
+          --cluster $ECS_CLUSTER \
+          --service $ECS_SERVICE \
+          --task-definition $TASK_FAMILY:$TASK_REVISION \
+          --force-new-deployment
+        echo "✅ Runner deployed: $TASK_REVISION"
