@@ -50,7 +50,7 @@ class ActivationTrigger(Enum):
     EVENT_DRIVEN = "event_driven"
 
 class AgentAction(Enum):
-    """Constrained action space - Cursor pattern for agent operations"""
+    """Constrained action space - Action Validation Pattern for agent operations"""
     # Sensing
     READ_SENSOR = "read_sensor"
     QUERY_STATE = "query_state"
@@ -93,7 +93,7 @@ class AgentMetrics:
 
 @dataclass
 class ActionDefinition:
-    """Defines a constrained action with validation rules (Cursor pattern)"""
+    """Defines a constrained action with validation rules (Action Validation Pattern)"""
     action_type: AgentAction
     agent_id: str
     parameters: Dict[str, Any]
@@ -104,7 +104,7 @@ class ActionDefinition:
 
 @dataclass
 class ActionResult:
-    """Result of an action execution (Cursor pattern)"""
+    """Result of an action execution (Action Validation Pattern)"""
     action_id: str
     success: bool
     output: Any
@@ -1021,7 +1021,7 @@ class NISAgentOrchestrator:
         return {"status": "plan_created", "plan_id": f"plan_{int(time.time())}"}
 
 class ContextAnalyzer:
-    """Analyzes input context to determine required agents (Cursor pattern enhanced)"""
+    """Analyzes input context to determine required agents (Action Validation Pattern enhanced)"""
     
     async def analyze(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
         """Analyze input to determine context and requirements"""
@@ -1068,7 +1068,7 @@ class ContextAnalyzer:
         max_tokens: int = 4000
     ) -> Dict[str, Any]:
         """
-        Build just-in-time context pack (Cursor's secret sauce)
+        Build just-in-time context pack (optimized context loading)
         
         Returns ONLY what this agent needs:
         - Relevant state (not entire system state)
