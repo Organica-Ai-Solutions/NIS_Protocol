@@ -61,9 +61,8 @@ ENV DISPLAY=:99
 ENV CHROME_BIN=/usr/bin/chromium
 ENV CHROME_ARGS="--headless --no-sandbox --disable-dev-shm-usage --disable-gpu --disable-web-security --disable-features=NetworkService --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-renderer-backgrounding --disable-field-trial-config --disable-ipc-flooding-protection"
 
-# Copy runner application
-COPY runner_app.py /app/
-COPY security_config.py /app/
+# Copy runner application files
+COPY runner_app.py security_config.py security_hardening.py /app/
 COPY browser_security.py /app/
 
 # Set ownership and permissions

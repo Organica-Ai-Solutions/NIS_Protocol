@@ -150,15 +150,15 @@ class ResourceLimiter:
                 (file_bytes, file_bytes)
             )
             
-            # Process limit (RLIMIT_NPROC)
-            resource.setrlimit(
-                resource.RLIMIT_NPROC,
-                (max_processes, max_processes)
-            )
+            # Set process limit (prevent fork bombs)
+            # Allow a few processes for scientific libraries (NumPy/OpenBLAS need threads)
+            if hasattr(resource, 'RLIMIT_NPROC'):
+                resource.setrlimit(resource.RLIMIT_NPROC, (10, 10))
             
             logger.info(
                 f"Resource limits set: CPU={cpu_time_seconds}s, "
                 f"Memory={memory_mb}MB, FileSize={file_size_mb}MB, "
+                f"Processes=10"
                 f"Processes={max_processes}"
             )
             
