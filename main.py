@@ -409,7 +409,11 @@ async def agentic_websocket(websocket: WebSocket):
         logger.error(f"❌ Agentic WebSocket error: {e}")
 
 # ====== ENHANCED A2A WEBSOCKET ENDPOINT ======
-from enhanced_a2a_websocket import enhanced_a2a_websocket
+try:
+    from enhanced_a2a_websocket import enhanced_a2a_websocket
+except ImportError:
+    logger.warning("enhanced_a2a_websocket not available - using standard websocket")
+    enhanced_a2a_websocket = None
 
 @app.websocket("/ws/a2a")
 async def a2a_endpoint(websocket: WebSocket):
