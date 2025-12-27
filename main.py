@@ -566,21 +566,15 @@ async def agentic_websocket(websocket: WebSocket):
         logger.error(f"❌ Agentic WebSocket error: {e}")
 
 # ====== ENHANCED A2A WEBSOCKET ENDPOINT ======
-try:
-    from enhanced_a2a_websocket import enhanced_a2a_websocket
-except ImportError:
-    logger.warning("enhanced_a2a_websocket not available - using standard websocket")
-    enhanced_a2a_websocket = None
-
 @app.websocket("/ws/a2a")
 async def a2a_endpoint(websocket: WebSocket):
     """
     🚀 Enhanced A2A WebSocket - Full GenUI Integration
     
-    Combines AG-UI transparency events with A2UIFormatter for rich widget generation.
-    This endpoint properly formats responses as GenUI surfaces.
+    Implements official GenUI A2A Protocol with A2UI widget formatting.
+    Streams responses as rich interactive widgets in real-time.
     """
-    await enhanced_a2a_websocket(websocket, llm_provider, a2ui_formatter_instance)
+    await a2a_handler.handle_connection(websocket)
 
 # ====== MAIN CHAT ENDPOINTS (v3.2.7 compatibility) ======
 from fastapi.responses import RedirectResponse, HTMLResponse
