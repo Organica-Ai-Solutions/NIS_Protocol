@@ -334,10 +334,19 @@ async def retrieve_memory(request: MemoryRetrieveRequest):
         persistent_memory = get_persistent_memory()
         
         if persistent_memory:
-            value = await persistent_memory.retrieve(
-                namespace=request.namespace,
-                key=request.key
+            # PersistentMemorySystem.retrieve() uses query parameter, not namespace/key
+            # Search for memories with the key in metadata
+            query = f"key:{request.key}"
+            results = await persistent_memory.retrieve(
+                query=query,
+                memory_type="episodic",
+                top_k=1
             )
+            
+            if results:
+                value = results[0].entry.content
+            else:
+                value = None
             return {
                 "status": "success",
                 "namespace": request.namespace,
