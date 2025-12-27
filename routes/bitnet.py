@@ -104,10 +104,10 @@ async def get_bitnet_status_simple():
         }
 
 
-@router.get("/bitnet/training/status")
-async def get_bitnet_training_status_simple():
+@router.get("/training/bitnet/status")
+async def get_bitnet_training_status():
     """
-    🎯 Get BitNet Training Status (Simple endpoint)
+    🎯 Get BitNet Training Status
     
     Quick training status check.
     """

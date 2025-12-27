@@ -171,16 +171,32 @@ async def get_research_agent_status():
     if not _research_agent:
         return {
             "status": "not_initialized",
-            "agent_id": "research_agent",
-            "capabilities": []
+            "message": "Research Agent not initialized"
         }
     
     return {
         "status": "active",
-        "agent_id": getattr(_research_agent, 'agent_id', 'research_agent'),
-        "capabilities": ["web_search", "arxiv_search", "deep_research"],
+        "agent_type": "research",
         "initialized": True
     }
+
+@router.get("/learning/status")
+async def get_learning_agent_status():
+    """Get Learning Agent status"""
+    learning_agent = get_learning_agent()
+    if not learning_agent:
+        return {
+            "status": "not_initialized",
+            "message": "Learning Agent not initialized"
+        }
+    
+    return {
+        "status": "active",
+        "agent_type": "learning",
+        "initialized": True,
+        "capabilities": ["process_learning", "adaptive_learning"]
+    }
+
 
 # ====== Endpoints ======
 
