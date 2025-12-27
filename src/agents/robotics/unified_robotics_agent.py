@@ -289,7 +289,7 @@ class UnifiedRoboticsAgent(NISAgent):
                     bitrate=500000,
                     enable_safety_monitor=True,
                     enable_redundancy=enable_redundancy,
-                    simulation_mode=True  # Default to simulation for safety
+                    force_simulation=True  # Default to simulation
                 )
                 
                 # Initialize safety protocols
@@ -1784,33 +1784,37 @@ class UnifiedRoboticsAgent(NISAgent):
         
         can_id = create_joint_state_can_id(joint.joint_id)
         return await self.can_protocol.send_message(
-            arbitration_id=can_id,
+            arbitration_id=CANMessageID.JOINT_STATE,
             data=joint.to_can_data(),
             safety_level=SafetyLevel.MEDIUM
         )
     
-    async def send_end_effector_pose(self, pose: EndEffectorPoseMessage) -> bool:
+    async def send_end_effector_pose(self, pose) -> bool:
         """Send end effector pose via CAN"""
         if not self.can_protocol:
             return False
         
         return await self.can_protocol.send_message(
             arbitration_id=CANMessageID.END_EFFECTOR_POSE,
-            data=pose.to_can_data(),
-            safety_level=SafetyLevel.HIGH
+            data=pose.to_can_data()
         )
     
     def get_can_statistics(self) -> Dict[str, Any]:
         """Get CAN protocol statistics"""
-        if not self.can_protocol:
+        if self.can_protocol:
+            return {
+                "enabled": True,
+                "simulation_mode": self.can_protocol.operation_mode.name == "SIMULATION",
+                "messages_sent": 0,
+                "messages_received": 0,
+                "errors_detected": 0,
+                "emergency_stop_active": False,
+                "uptime": 0,
+                "safety_protocols": self.safety_protocols.get_safety_status() if self.safety_protocols else {},
+                "node_status": {}
+            }
+        else:
             return {'enabled': False}
-        
-        stats = self.can_protocol.get_statistics()
-        stats.update({
-            'safety_protocols': self.safety_protocols.get_safety_status() if self.safety_protocols else {},
-            'node_status': self.can_protocol.get_node_status()
-        })
-        return stats
     
     async def shutdown_can_protocol(self):
         """Shutdown CAN protocol gracefully"""

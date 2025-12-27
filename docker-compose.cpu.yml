@@ -46,6 +46,23 @@ services:
     volumes:
       - redis_data_cpu:/data
 
+  mcp-server:
+    container_name: nis-mcp-server
+    build:
+      context: .
+      dockerfile: Dockerfile.cpu
+    ports:
+      - "3000:3000"
+    command: python -m src.protocols.mcp_server --host 0.0.0.0 --port 3000
+    networks:
+      - nis-network-cpu
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/tools"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
   backend:
     build:
       context: .
@@ -73,6 +90,9 @@ services:
       # Service Discovery
       - REDIS_HOST=redis
       - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - MCP_SERVER_URL=http://mcp-server:3000
+      - A2A_SERVER_URL=http://localhost:3001
+      - ACP_AGENT_URL=http://localhost:3002
       
       # CPU-Specific Settings
       - CUDA_VISIBLE_DEVICES=

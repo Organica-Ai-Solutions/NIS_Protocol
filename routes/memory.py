@@ -300,11 +300,17 @@ async def store_memory(request: MemoryStoreRequest):
         persistent_memory = get_persistent_memory()
         
         if persistent_memory:
+            # PersistentMemorySystem.store() doesn't take namespace parameter
+            # It uses content, memory_type, importance, metadata
             await persistent_memory.store(
-                namespace=request.namespace,
-                key=request.key,
-                value=request.value,
-                ttl=request.ttl
+                content=str(request.value),
+                memory_type="episodic",
+                importance=0.5,
+                metadata={
+                    "key": request.key,
+                    "namespace": request.namespace,
+                    "ttl": request.ttl
+                }
             )
             return {
                 "status": "success",

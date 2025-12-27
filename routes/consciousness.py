@@ -41,6 +41,13 @@ def get_consciousness_service():
 def get_conversation_memory():
     return getattr(router, '_conversation_memory', {})
 
+def set_dependencies(consciousness_service=None, conversation_memory=None):
+    """Set dependencies for consciousness routes"""
+    if consciousness_service:
+        router._consciousness_service = consciousness_service
+    if conversation_memory:
+        router._conversation_memory = conversation_memory
+
 
 # ====== General Status Endpoint ======
 
@@ -254,6 +261,30 @@ async def get_genesis_history():
 
 # ====== Collective Consciousness Endpoints ======
 
+@router.post("/consciousness/collective")
+async def collective_consciousness(request: Dict[str, Any]):
+    """Collective consciousness decision making"""
+    try:
+        consciousness_service = get_consciousness_service()
+        if not consciousness_service:
+            raise HTTPException(status_code=503, detail="Consciousness service not initialized")
+        
+        problem = request.get("request") or request.get("problem")
+        if not problem:
+            raise HTTPException(status_code=400, detail="request or problem is required")
+        
+        result = await consciousness_service.collective_decision(problem, None)
+        return {
+            "status": "success",
+            "consensus": result.get("consensus", "Collective decision made"),
+            "timestamp": time.time()
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Collective consciousness failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @router.post("/consciousness/collective/register")
 async def register_consciousness_peer(peer_id: str, peer_endpoint: str):
     """
@@ -316,6 +347,86 @@ async def collective_consciousness_decision(request: Dict[str, Any]):
         logger.error(f"Collective decision failed: {e}")
         raise HTTPException(status_code=500, detail=f"Collective decision failed: {str(e)}")
 
+
+@router.post("/consciousness/multipath")
+async def multipath_reasoning(request: Dict[str, Any]):
+    """Multi-path reasoning analysis"""
+    try:
+        consciousness_service = get_consciousness_service()
+        if not consciousness_service:
+            raise HTTPException(status_code=503, detail="Consciousness service not initialized")
+        
+        query = request.get("request") or request.get("query")
+        if not query:
+            raise HTTPException(status_code=400, detail="request or query is required")
+        
+        result = await consciousness_service.multipath_reasoning(query)
+        return {
+            "status": "success",
+            "paths": result.get("paths", []),
+            "best_path": result.get("best_path", "Path 1"),
+            "timestamp": time.time()
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Multipath reasoning failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/consciousness/embodiment")
+async def physical_embodiment(request: Dict[str, Any]):
+    """Physical embodiment control"""
+    try:
+        consciousness_service = get_consciousness_service()
+        if not consciousness_service:
+            raise HTTPException(status_code=503, detail="Consciousness service not initialized")
+        
+        action = request.get("request") or request.get("action")
+        if not action:
+            raise HTTPException(status_code=400, detail="request or action is required")
+        
+        result = await consciousness_service.execute_embodied_action(action)
+        return {
+            "status": "success",
+            "action_executed": True,
+            "result": result,
+            "timestamp": time.time()
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Embodiment action failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/consciousness/ethics")
+async def ethical_evaluation(request: Dict[str, Any]):
+    """Ethical evaluation of actions"""
+    try:
+        consciousness_service = get_consciousness_service()
+        if not consciousness_service:
+            raise HTTPException(status_code=503, detail="Consciousness service not initialized")
+        
+        action = request.get("request") or request.get("action")
+        if not action:
+            raise HTTPException(status_code=400, detail="request or action is required")
+        
+        # Call ethical analysis method
+        data = {"content": action, "action_type": "general"}
+        result = await consciousness_service.evaluate_ethical_decision(data)
+        
+        return {
+            "status": "success",
+            "ethical_score": result.get("overall_ethical_score", 0.8),
+            "concerns": result.get("ethical_concerns", []),
+            "approved": result.get("overall_ethical_score", 0.8) > 0.6,
+            "framework_scores": result.get("framework_scores", {}),
+            "timestamp": time.time()
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Ethical evaluation failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/consciousness/collective/sync")
 async def sync_consciousness_state():

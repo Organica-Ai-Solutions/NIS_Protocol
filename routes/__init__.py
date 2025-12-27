@@ -108,6 +108,7 @@ from .unified import router as unified_router, set_dependencies as set_unified_d
 from .core import router as core_router, set_dependencies as set_core_dependencies
 from .isaac import router as isaac_router
 from .hub_gateway import router as hub_gateway_router
+from .autonomous import router as autonomous_router, set_dependencies as set_autonomous_dependencies
 
 __all__ = [
     # Routers
@@ -135,6 +136,7 @@ __all__ = [
     "core_router",
     "isaac_router",
     "hub_gateway_router",
+    "autonomous_router",
     # Dependency setters
     "set_bitnet_trainer",
     "set_monitoring_dependencies",
@@ -155,6 +157,7 @@ __all__ = [
     "set_llm_dependencies",
     "set_unified_dependencies",
     "set_core_dependencies",
+    "set_autonomous_dependencies",
     # Webhook helpers
     "trigger_webhooks",
     "get_webhooks",

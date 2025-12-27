@@ -122,6 +122,16 @@ async def robotics_forward_kinematics(request: dict):
         raise HTTPException(status_code=500, detail=f"Forward kinematics failed: {str(e)}")
 
 
+@router.post("/kinematics/forward")
+async def robotics_forward_kinematics_alias(request: dict):
+    """
+    🤖 Compute Forward Kinematics (Alias)
+    
+    Same as /forward_kinematics - provided for compatibility.
+    """
+    return await robotics_forward_kinematics(request)
+
+
 @router.post("/inverse_kinematics")
 async def robotics_inverse_kinematics(request: dict):
     """

@@ -26,6 +26,40 @@ logger = logging.getLogger("nis.routes.agents")
 # Create router
 router = APIRouter(prefix="/agents", tags=["Agents"])
 
+# Global agent references
+_physics_agent = None
+_vision_agent = None
+_research_agent = None
+_reasoning_agent = None
+
+def set_dependencies(learning_agent=None, planning_system=None, curiosity_engine=None, 
+                    ethical_reasoner=None, scenario_simulator=None,
+                    physics_agent=None, vision_agent=None, research_agent=None, reasoning_agent=None):
+    """Set agent dependencies"""
+    global _physics_agent, _vision_agent, _research_agent, _reasoning_agent
+
+    # Set specialized agents
+    if physics_agent:
+        _physics_agent = physics_agent
+    if vision_agent:
+        _vision_agent = vision_agent
+    if research_agent:
+        _research_agent = research_agent
+    if reasoning_agent:
+        _reasoning_agent = reasoning_agent
+
+    # Set existing agents to router
+    if learning_agent:
+        router._learning_agent = learning_agent
+    if planning_system:
+        router._planning_system = planning_system
+    if curiosity_engine:
+        router._curiosity_engine = curiosity_engine
+    if ethical_reasoner:
+        router._ethical_reasoner = ethical_reasoner
+    if scenario_simulator:
+        router._scenario_simulator = scenario_simulator
+
 
 # ====== Request Models ======
 
@@ -91,6 +125,62 @@ def get_scenario_simulator():
 def get_agent_registry():
     return getattr(router, '_agent_registry', {})
 
+
+# ====== Specialized Agent Status Endpoints ======
+
+@router.get("/physics/status")
+async def get_physics_agent_status():
+    """Get Physics Agent status"""
+    global _physics_agent
+    if not _physics_agent:
+        return {
+            "status": "not_initialized",
+            "agent_id": "physics_agent",
+            "capabilities": []
+        }
+    
+    return {
+        "status": "active",
+        "agent_id": getattr(_physics_agent, 'agent_id', 'physics_agent'),
+        "capabilities": ["pinn_validation", "kan_reasoning", "physics_simulation"],
+        "initialized": True
+    }
+
+@router.get("/vision/status")
+async def get_vision_agent_status():
+    """Get Vision Agent status"""
+    global _vision_agent
+    if not _vision_agent:
+        return {
+            "status": "not_initialized",
+            "agent_id": "vision_agent",
+            "capabilities": []
+        }
+    
+    return {
+        "status": "active",
+        "agent_id": getattr(_vision_agent, 'agent_id', 'vision_agent'),
+        "capabilities": ["image_analysis", "object_detection", "scene_understanding"],
+        "initialized": True
+    }
+
+@router.get("/research/status")
+async def get_research_agent_status():
+    """Get Research Agent status"""
+    global _research_agent
+    if not _research_agent:
+        return {
+            "status": "not_initialized",
+            "agent_id": "research_agent",
+            "capabilities": []
+        }
+    
+    return {
+        "status": "active",
+        "agent_id": getattr(_research_agent, 'agent_id', 'research_agent'),
+        "capabilities": ["web_search", "arxiv_search", "deep_research"],
+        "initialized": True
+    }
 
 # ====== Endpoints ======
 
@@ -400,6 +490,10 @@ def set_dependencies(
     curiosity_engine=None,
     ethical_reasoner=None,
     scenario_simulator=None,
+    physics_agent=None,
+    vision_agent=None,
+    research_agent=None,
+    reasoning_agent=None,
     agent_registry=None
 ):
     """Set dependencies for the agents router"""
@@ -408,4 +502,8 @@ def set_dependencies(
     router._curiosity_engine = curiosity_engine
     router._ethical_reasoner = ethical_reasoner
     router._scenario_simulator = scenario_simulator
+    router._physics_agent = physics_agent
+    router._vision_agent = vision_agent
+    router._research_agent = research_agent
+    router._reasoning_agent = reasoning_agent
     router._agent_registry = agent_registry or {}

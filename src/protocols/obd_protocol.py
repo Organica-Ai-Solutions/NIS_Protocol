@@ -178,8 +178,8 @@ class OBDProtocol:
             interface="socketcan",
             channel=can_channel,
             bitrate=500000,  # Standard OBD-II bitrate
-            enable_safety_monitor=enable_safety_monitoring,
-            simulation_mode=simulation_mode
+            force_simulation=simulation_mode,
+            enable_safety_monitor=enable_safety_monitoring
         )
         
         # Vehicle state

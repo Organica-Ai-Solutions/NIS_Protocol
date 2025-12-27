@@ -322,35 +322,61 @@ class IsaacSimAgent:
     
     def _randomize_lighting(self):
         """Randomize scene lighting"""
-        pass  # Implement with Isaac Sim API
+        if self.mock_mode:
+            return {"intensity": 0.5 + (time.time() % 1.0) * 0.5, "color": [1.0, 1.0, 1.0]}
+        # Real Isaac Sim API would go here
+        return None
     
     def _randomize_textures(self):
         """Randomize object textures"""
-        pass  # Implement with Isaac Sim API
+        if self.mock_mode:
+            return {"texture_id": int(time.time() % 100), "applied": True}
+        # Real Isaac Sim API would go here
+        return None
     
     def _randomize_camera(self):
         """Randomize camera position/orientation"""
-        pass  # Implement with Isaac Sim API
+        if self.mock_mode:
+            offset = (time.time() % 10.0) - 5.0
+            return {"position": [offset, offset, 2.0], "orientation": [1, 0, 0, 0]}
+        # Real Isaac Sim API would go here
+        return None
     
     def _capture_rgb(self):
         """Capture RGB image"""
-        return None  # Implement with Isaac Sim API
+        if self.mock_mode:
+            return {"width": 640, "height": 480, "format": "RGB", "data": "[mock_rgb_data]"}
+        # Real Isaac Sim API would go here
+        return None
     
     def _capture_depth(self):
         """Capture depth image"""
-        return None  # Implement with Isaac Sim API
+        if self.mock_mode:
+            return {"width": 640, "height": 480, "format": "DEPTH", "data": "[mock_depth_data]"}
+        # Real Isaac Sim API would go here
+        return None
     
     def _capture_segmentation(self):
         """Capture segmentation mask"""
-        return None  # Implement with Isaac Sim API
+        if self.mock_mode:
+            return {"width": 640, "height": 480, "format": "SEGMENTATION", "data": "[mock_seg_data]"}
+        # Real Isaac Sim API would go here
+        return None
     
     def _get_bounding_boxes(self):
         """Get object bounding boxes"""
-        return []  # Implement with Isaac Sim API
+        if self.mock_mode:
+            return [{"object_id": "mock_obj_1", "bbox": [100, 100, 200, 200], "confidence": 0.95}]
+        # Real Isaac Sim API would go here
+        return []
     
     def _save_sample(self, output_dir: str, index: int, data: Dict):
         """Save a synthetic data sample"""
-        pass  # Implement file saving
+        if self.mock_mode:
+            logger.debug(f"Mock: Would save sample {index} to {output_dir}")
+            return True
+        # Real file saving would go here
+        return False
     
     async def run_physics_test(
         self,

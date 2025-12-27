@@ -169,6 +169,30 @@ class MCPAdapter(BaseAdapter):
             
         return mcp_message
     
+    async def handle_mcp_request(self, request: Dict[str, Any]) -> Dict[str, Any]:
+        """Handle an MCP chat request.
+        
+        Args:
+            request: The request containing message and optional parameters
+            
+        Returns:
+            Response from MCP processing
+        """
+        message = request.get("message", "")
+        if not message:
+            return {
+                "status": "error",
+                "error": "Message is required"
+            }
+        
+        # Simple echo response for now - can be enhanced with actual MCP tool calls
+        return {
+            "status": "success",
+            "response": f"MCP Adapter received: {message}",
+            "mcp_initialized": True,
+            "tools_available": list(self.tools_registry.keys()) if self.tools_registry else []
+        }
+    
     def send_to_external_agent(self, tool_name: str, message: Dict[str, Any]) -> Dict[str, Any]:
         """Send a message to an external MCP tool.
         

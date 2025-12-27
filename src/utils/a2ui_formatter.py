@@ -394,20 +394,44 @@ def format_text_as_a2ui(text: str, wrap_in_card: bool = True, include_actions: b
         include_actions: Whether to detect and add action buttons
         
     Returns:
-        Complete A2UI message structure wrapped for GenUI SDK
+        Complete A2UI message structure in GenUI SDK format (beginRendering + surfaceUpdate)
     """
+    import time
+    
     formatter = A2UIFormatter()
     message = formatter.format_response(text, include_actions=include_actions)
     
     if wrap_in_card and message['widgets']:
         message['widgets'] = [formatter.wrap_in_card(message['widgets'])]
     
-    # GenUI SDK expects messages wrapped in beginRendering/surfaceUpdate
-    # For simplicity, we'll return the raw message and let the frontend handle wrapping
+    # Generate unique surface ID
+    surface_id = f"surface_{int(time.time() * 1000)}"
+    
+    # Convert widgets to GenUI components format
+    components = []
+    for i, widget in enumerate(message['widgets']):
+        component_id = f"{surface_id}_component_{i}"
+        component = _widget_to_component(widget, component_id)
+        components.append(component)
+    
+    # Return in GenUI SDK format with beginRendering and surfaceUpdate
+    root_id = components[0]['id'] if components else f"{surface_id}_root"
+    
     return {
-        "a2ui_message": {
-            "widgets": message['widgets']
-        }
+        "a2ui_messages": [
+            {
+                "beginRendering": {
+                    "surfaceId": surface_id,
+                    "root": root_id
+                }
+            },
+            {
+                "surfaceUpdate": {
+                    "surfaceId": surface_id,
+                    "components": components
+                }
+            }
+        ]
     }
 
 
@@ -475,6 +499,48 @@ def create_error_widget(error_message: str) -> Dict[str, Any]:
             ]
         }
     }
+
+
+def _widget_to_component(widget: Dict[str, Any], component_id: str) -> Dict[str, Any]:
+    """
+    Convert a widget structure to GenUI component format.
+    
+    GenUI expects:
+    {
+      "id": "unique_id",
+      "type": "WidgetType",
+      "properties": {...}
+    }
+    """
+    widget_type = widget.get('type', 'Text')
+    widget_data = widget.get('data', {})
+    
+    component = {
+        "id": component_id,
+        "type": widget_type,
+        "properties": {}
+    }
+    
+    # Convert widget data to properties
+    for key, value in widget_data.items():
+        if key == 'child' and isinstance(value, dict):
+            # Nested widget - convert recursively
+            child_id = f"{component_id}_child"
+            child_component = _widget_to_component(value, child_id)
+            component['properties']['child'] = child_component['id']
+            # Return both parent and child as flat list
+            return component  # Will be handled by caller
+        elif key == 'children' and isinstance(value, list):
+            # Multiple children - convert each
+            child_ids = []
+            for i, child in enumerate(value):
+                child_id = f"{component_id}_child_{i}"
+                child_ids.append(child_id)
+            component['properties']['children'] = child_ids
+        else:
+            component['properties'][key] = value
+    
+    return component
 
 
 # Example usage and testing

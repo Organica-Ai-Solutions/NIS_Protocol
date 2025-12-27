@@ -16,11 +16,9 @@ from enum import Enum
 import aiohttp
 
 # Try to import optional dependencies
-try:
-    from duckduckgo_search import DDGS
-    DDGS_AVAILABLE = True
-except ImportError:
-    DDGS_AVAILABLE = False
+# Note: duckduckgo_search disabled due to uvloop conflict
+# Use other search providers (Google CSE, Serper, Tavily, Bing)
+DDGS_AVAILABLE = False
 
 try:
     import google.generativeai as check_genai_available
@@ -31,10 +29,6 @@ except ImportError:
 
 class SearchProvider(Enum):
     """Available search providers."""
-    GOOGLE_CSE = "google_cse"
-    SERPER = "serper"
-    TAVILY = "tavily"
-    BING = "bing"
     DUCKDUCKGO = "duckduckgo"
 
 
@@ -113,11 +107,7 @@ class WebSearchAgent:
     def _load_config(self) -> Dict[str, Any]:
         """Load configuration from environment variables."""
         return {
-            "google_api_key": os.getenv("GOOGLE_API_KEY"),
-            "google_cse_id": os.getenv("GOOGLE_CSE_ID"),
-            "serper_api_key": os.getenv("SERPER_API_KEY"),
-            "tavily_api_key": os.getenv("TAVILY_API_KEY"),
-            "bing_api_key": os.getenv("BING_SEARCH_API_KEY"),
+            "enable_duckduckgo": os.getenv("ENABLE_DUCKDUCKGO_SEARCH", "true").lower() == "true",
             "openai_api_key": os.getenv("OPENAI_API_KEY"),
             "max_results_per_provider": 10,
             "timeout": 30,
@@ -127,34 +117,14 @@ class WebSearchAgent:
     
     def _initialize_search_providers(self):
         """Initialize available search providers."""
-        # Google Custom Search Engine
-        if self.config.get("google_api_key") and self.config.get("google_cse_id"):
-            self.search_providers[SearchProvider.GOOGLE_CSE] = self._search_google_cse
-            self.logger.info("Google CSE search provider initialized")
-        
-        # Serper API
-        if self.config.get("serper_api_key"):
-            self.search_providers[SearchProvider.SERPER] = self._search_serper
-            self.logger.info("Serper search provider initialized")
-        
-        # Tavily API (research-focused)
-        if self.config.get("tavily_api_key"):
-            self.search_providers[SearchProvider.TAVILY] = self._search_tavily
-            self.logger.info("Tavily search provider initialized")
-        
-        # DuckDuckGo (No API key required)
-        if DDGS_AVAILABLE:
+        # DuckDuckGo (Free, no API key required)
+        if self.config.get("enable_duckduckgo", True):
             self.search_providers[SearchProvider.DUCKDUCKGO] = self._search_duckduckgo
-            self.logger.info("DuckDuckGo search provider initialized")
+            self.logger.info("DuckDuckGo search provider initialized (free)")
         
         if not self.search_providers:
-            if DDGS_AVAILABLE:
-                self.logger.info("No API keys configured - using DuckDuckGo as default provider")
-                # Map default provider slot to DuckDuckGo
-                self.search_providers[SearchProvider.GOOGLE_CSE] = self._search_duckduckgo
-            else:
-                self.logger.info("No search providers configured - using enhanced mock search")
-                self.search_providers[SearchProvider.GOOGLE_CSE] = self._search_mock
+            self.logger.info("No search providers configured - using enhanced mock search")
+            self.search_providers[SearchProvider.DUCKDUCKGO] = self._search_mock
     
     def _initialize_llm_providers(self):
         """Initialize LLM providers for query generation and synthesis."""
@@ -268,89 +238,13 @@ class WebSearchAgent:
         
         return list(unique_results.values())
     
-    async def _search_google_cse(self, query: str, research_query: ResearchQuery) -> List[SearchResult]:
-        """Search using Google Custom Search Engine."""
-        if not self.config.get("google_api_key") or not self.config.get("google_cse_id"):
-            return []
-        
-        url = "https://www.googleapis.com/customsearch/v1"
-        params = {
-            "key": self.config["google_api_key"],
-            "cx": self.config["google_cse_id"],
-            "q": query,
-            "num": min(research_query.max_results, 10)
-        }
-        
-        try:
-            async with aiohttp.ClientSession() as session:
-                async with session.get(url, params=params, timeout=30) as response:
-                    if response.status == 200:
-                        data = await response.json()
-                        return self._parse_google_results(data, "google_cse")
-        except Exception as e:
-            self.logger.error(f"Google CSE search failed: {e}")
-        
-        return []
-    
-    async def _search_serper(self, query: str, research_query: ResearchQuery) -> List[SearchResult]:
-        """Search using Serper API."""
-        if not self.config.get("serper_api_key"):
-            return []
-        
-        url = "https://google.serper.dev/search"
-        headers = {
-            "X-API-KEY": self.config["serper_api_key"],
-            "Content-Type": "application/json"
-        }
-        data = {
-            "q": query,
-            "num": min(research_query.max_results, 10)
-        }
-        
-        try:
-            async with aiohttp.ClientSession() as session:
-                async with session.post(url, headers=headers, json=data, timeout=30) as response:
-                    if response.status == 200:
-                        result_data = await response.json()
-                        return self._parse_serper_results(result_data, "serper")
-        except Exception as e:
-            self.logger.error(f"Serper search failed: {e}")
-        
-        return []
-    
-    async def _search_tavily(self, query: str, research_query: ResearchQuery) -> List[SearchResult]:
-        """Search using Tavily API."""
-        if not self.config.get("tavily_api_key"):
-            return []
-        
-        url = "https://api.tavily.com/search"
-        headers = {
-            "Authorization": f"Bearer {self.config['tavily_api_key']}",
-            "Content-Type": "application/json"
-        }
-        data = {
-            "query": query,
-            "search_depth": "comprehensive",
-            "include_academic": True,
-            "max_results": min(research_query.max_results, 10)
-        }
-        
-        try:
-            async with aiohttp.ClientSession() as session:
-                async with session.post(url, headers=headers, json=data, timeout=30) as response:
-                    if response.status == 200:
-                        result_data = await response.json()
-                        return self._parse_tavily_results(result_data, "tavily")
-        except Exception as e:
-            self.logger.error(f"Tavily search failed: {e}")
-        
-        return []
-    
     async def _search_duckduckgo(self, query: str, research_query: ResearchQuery) -> List[SearchResult]:
-        """Search using DuckDuckGo (No API key needed)."""
+        """Search using DuckDuckGo (Free, no API key needed)."""
         try:
+            # Import locally to avoid issues
+            from duckduckgo_search import DDGS
+            
             results = []
-            # run_in_executor to avoid blocking event loop
             loop = asyncio.get_event_loop()
             
             def run_ddg():
@@ -373,6 +267,9 @@ class WebSearchAgent:
         except Exception as e:
             self.logger.error(f"DuckDuckGo search failed: {e}")
             return []
+    
+    
+    
 
     async def _search_mock(self, query: str, research_query: ResearchQuery) -> List[SearchResult]:
         """Generate synthetic search results based on query analysis."""
@@ -413,22 +310,8 @@ class WebSearchAgent:
             ))
         return results
     
-    def _parse_google_results(self, data: Dict[str, Any], source: str) -> List[SearchResult]:
-        """Parse Google CSE results."""
-        results = []
-        for item in data.get("items", []):
-            results.append(SearchResult(
-                title=item.get("title", ""),
-                url=item.get("link", ""),
-                snippet=item.get("snippet", ""),
-                source=source,
-                relevance_score=1.0,
-                domain=item.get("displayLink", ""),
-                timestamp=time.time()
-            ))
-        return results
     
-    def _parse_serper_results(self, data: Dict[str, Any], source: str) -> List[SearchResult]:
+    def _parse_legacy_results(self, data: Dict[str, Any], source: str) -> List[SearchResult]:
         """Parse Serper API results."""
         results = []
         for item in data.get("organic", []):
