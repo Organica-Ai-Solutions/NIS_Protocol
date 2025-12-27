@@ -1,0 +1,629 @@
+{
+	"info": {
+		"_postman_id": "nis-protocol-v4-collection",
+		"name": "NIS Protocol v4.0.1 API",
+		"description": "Complete API collection for NIS Protocol v4.0.1 - Neural Intelligence System\n\nBase URL: http://localhost:8000\n\nLast Updated: December 27, 2025",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Core System",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/health",
+							"host": ["{{base_url}}"],
+							"path": ["health"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "System Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/system/status",
+							"host": ["{{base_url}}"],
+							"path": ["system", "status"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Root Info",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/",
+							"host": ["{{base_url}}"],
+							"path": [""]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Autonomous Agents",
+			"item": [
+				{
+					"name": "Get Autonomous Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/autonomous/status",
+							"host": ["{{base_url}}"],
+							"path": ["autonomous", "status"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List MCP Tools",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/autonomous/tools",
+							"host": ["{{base_url}}"],
+							"path": ["autonomous", "tools"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Execute Autonomous Task",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"type\": \"research\",\n  \"description\": \"Research AI developments\",\n  \"parameters\": {}\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/autonomous/execute",
+							"host": ["{{base_url}}"],
+							"path": ["autonomous", "execute"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Plan and Execute",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"goal\": \"Research quantum computing\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/autonomous/plan-and-execute",
+							"host": ["{{base_url}}"],
+							"path": ["autonomous", "plan-and-execute"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Plan and Execute (Alias)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"goal\": \"Test planning\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/autonomous/plan",
+							"host": ["{{base_url}}"],
+							"path": ["autonomous", "plan"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Physics",
+			"item": [
+				{
+					"name": "Solve Heat Equation",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"boundary_conditions\": {\n    \"left\": 100,\n    \"right\": 0\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/physics/solve/heat-equation",
+							"host": ["{{base_url}}"],
+							"path": ["physics", "solve", "heat-equation"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Solve Wave Equation",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"initial_conditions\": {\n    \"amplitude\": 1.0\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/physics/solve/wave-equation",
+							"host": ["{{base_url}}"],
+							"path": ["physics", "solve", "wave-equation"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Robotics",
+			"item": [
+				{
+					"name": "Forward Kinematics",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"joint_angles\": [0.1, 0.2, 0.3, 0.4, 0.5, 0.6],\n  \"robot_type\": \"manipulator\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/robotics/forward_kinematics",
+							"host": ["{{base_url}}"],
+							"path": ["robotics", "forward_kinematics"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Forward Kinematics (Alias)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"joint_angles\": [0.1, 0.2, 0.3]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/robotics/kinematics/forward",
+							"host": ["{{base_url}}"],
+							"path": ["robotics", "kinematics", "forward"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Inverse Kinematics",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"target_pose\": {\n    \"position\": [0.5, 0.5, 0.5]\n  },\n  \"robot_type\": \"manipulator\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/robotics/inverse_kinematics",
+							"host": ["{{base_url}}"],
+							"path": ["robotics", "inverse_kinematics"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Memory & Storage",
+			"item": [
+				{
+					"name": "Store Memory",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"key\": \"test_key\",\n  \"value\": \"test_value\",\n  \"namespace\": \"default\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/memory/store",
+							"host": ["{{base_url}}"],
+							"path": ["memory", "store"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Retrieve Memory",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"key\": \"test_key\",\n  \"namespace\": \"default\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/memory/retrieve",
+							"host": ["{{base_url}}"],
+							"path": ["memory", "retrieve"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Conversations",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/memory/conversations",
+							"host": ["{{base_url}}"],
+							"path": ["memory", "conversations"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Chat & Communication",
+			"item": [
+				{
+					"name": "Simple Chat",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"message\": \"Hello, how can you help me?\",\n  \"user_id\": \"user123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/chat/simple",
+							"host": ["{{base_url}}"],
+							"path": ["chat", "simple"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "MCP Chat",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"message\": \"Test MCP integration\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/mcp/chat",
+							"host": ["{{base_url}}"],
+							"path": ["mcp", "chat"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Consciousness V4",
+			"item": [
+				{
+					"name": "Get Consciousness Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/v4/consciousness/status",
+							"host": ["{{base_url}}"],
+							"path": ["v4", "consciousness", "status"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Agent Genesis",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"capability\": \"documentation\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/v4/consciousness/genesis",
+							"host": ["{{base_url}}"],
+							"path": ["v4", "consciousness", "genesis"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Trigger Evolution",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"reason\": \"manual_trigger\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/v4/consciousness/evolve",
+							"host": ["{{base_url}}"],
+							"path": ["v4", "consciousness", "evolve"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Genesis History",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/v4/consciousness/genesis/history",
+							"host": ["{{base_url}}"],
+							"path": ["v4", "consciousness", "genesis", "history"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Complete Dashboard",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/v4/dashboard/complete",
+							"host": ["{{base_url}}"],
+							"path": ["v4", "dashboard", "complete"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Research & Analysis",
+			"item": [
+				{
+					"name": "Deep Research",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"query\": \"AI testing methodologies\",\n  \"depth\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/research/deep",
+							"host": ["{{base_url}}"],
+							"path": ["research", "deep"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Vision & Images",
+			"item": [
+				{
+					"name": "Analyze Image",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"image_url\": \"https://example.com/image.jpg\",\n  \"image_data\": \"base64_encoded_image_data_here\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/vision/analyze",
+							"host": ["{{base_url}}"],
+							"path": ["vision", "analyze"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Monitoring & Metrics",
+			"item": [
+				{
+					"name": "Prometheus Metrics",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/metrics",
+							"host": ["{{base_url}}"],
+							"path": ["metrics"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Observability Metrics",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/observability/metrics/prometheus",
+							"host": ["{{base_url}}"],
+							"path": ["observability", "metrics", "prometheus"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Protocol Integration",
+			"item": [
+				{
+					"name": "MCP Tools List",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/protocol/mcp/tools",
+							"host": ["{{base_url}}"],
+							"path": ["protocol", "mcp", "tools"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "All Tools List",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/tools/list",
+							"host": ["{{base_url}}"],
+							"path": ["tools", "list"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Training & Models",
+			"item": [
+				{
+					"name": "BitNet Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/models/bitnet/status",
+							"host": ["{{base_url}}"],
+							"path": ["models", "bitnet", "status"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Agents",
+			"item": [
+				{
+					"name": "Agent Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/agents/status",
+							"host": ["{{base_url}}"],
+							"path": ["agents", "status"]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000",
+			"type": "string"
+		}
+	]
+}
