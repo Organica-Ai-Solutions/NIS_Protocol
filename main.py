@@ -154,6 +154,17 @@ a2a_handler: Optional[A2AProtocolHandler] = None
 a2ui_formatter_instance: Optional[A2UIFormatter] = None
 nis_agent_orchestrator = None
 
+# Global agent instances (initialized during startup)
+vision_agent = None
+coordinator = None
+orchestrator = None
+
+# NVIDIA Stack 2025 global instances
+cosmos_generator_global = None
+cosmos_reasoner_global = None
+groot_agent_global = None
+isaac_lab_trainer_global = None
+
 # Registries
 conversation_memory: Dict[str, List[Dict[str, Any]]] = {}
 agent_registry: Dict[str, Dict[str, Any]] = {}
@@ -265,16 +276,14 @@ try:
     from routes.cosmos import router as cosmos_router
     from routes.humanoid import router as humanoid_router
     from routes.isaac_lab import router as isaac_lab_router
-    from routes.nvidia_unified import router as nvidia_unified_router
     app.include_router(cosmos_router)
     app.include_router(humanoid_router)
     app.include_router(isaac_lab_router)
-    app.include_router(nvidia_unified_router)
-    logger.info("✅ NVIDIA Stack fully integrated (Cosmos, GR00T, Isaac Lab, Unified)")
+    logger.info("✅ NVIDIA Cosmos, GR00T N1, and Isaac Lab 2.2 routes loaded")
 except Exception as e:
     logger.warning(f"NVIDIA stack routes not loaded: {e}")
 
-logger.info("✅ 31 modular route modules loaded (300+ endpoints)")
+logger.info("✅ 30 modular route modules loaded (290+ endpoints)")
 
 # ====== WEBSOCKET ENDPOINTS ======
 
