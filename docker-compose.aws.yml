@@ -1,0 +1,100 @@
+# AWS Production Docker Compose Configuration
+# For deployment to AWS ECS with managed services
+# Uses AWS ElastiCache Redis and MSK Kafka
+
+services:
+  backend:
+    image: 774518279463.dkr.ecr.us-east-2.amazonaws.com/nis-backend:gpu
+    container_name: nis-backend-aws
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    
+    # GPU Support for g4dn.xlarge instances
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    
+    environment:
+      # AWS Secrets Manager - API Keys loaded at runtime
+      - AWS_REGION=us-east-2
+      - AWS_SECRETS_ENABLED=true
+      
+      # AWS Managed Services
+      - REDIS_HOST=nis-redis-standalone.d7vi10.ng.0001.use2.cache.amazonaws.com
+      - REDIS_PORT=6379
+      - KAFKA_BOOTSTRAP_SERVERS=b-1.niskafka.iheb2p.c3.kafka.us-east-2.amazonaws.com:9092,b-2.niskafka.iheb2p.c3.kafka.us-east-2.amazonaws.com:9092
+      
+      # NVIDIA GPU Configuration
+      - NVIDIA_NIM_ENABLED=true
+      - CUDA_VISIBLE_DEVICES=0
+      
+      # BitNet Training (disabled for production)
+      - BITNET_TRAINING_ENABLED=false
+      
+      # Application Settings
+      - NIS_ENV=production
+      - LOG_LEVEL=INFO
+      - PYTHONUNBUFFERED=1
+      
+      # Google Cloud
+      - GCP_PROJECT_ID=organicaaisolutions
+      - GOOGLE_SERVICE_ACCOUNT_KEY=/app/service-account-key.json
+    
+    volumes:
+      - ./configs/google-service-account.json:/app/service-account-key.json:ro
+      - ./models:/home/nisuser/app/models
+      - ./logs:/app/logs
+    
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+  runner:
+    image: 774518279463.dkr.ecr.us-east-2.amazonaws.com/nis-runner:latest
+    container_name: nis-runner-aws
+    ports:
+      - "8001:8001"
+    restart: unless-stopped
+    
+    environment:
+      # AWS Configuration
+      - AWS_REGION=us-east-2
+      - AWS_SECRETS_ENABLED=true
+      
+      # Service Discovery
+      - REDIS_HOST=nis-redis-standalone.d7vi10.ng.0001.use2.cache.amazonaws.com
+      - REDIS_PORT=6379
+      - KAFKA_BOOTSTRAP_SERVERS=b-1.niskafka.iheb2p.c3.kafka.us-east-2.amazonaws.com:9092,b-2.niskafka.iheb2p.c3.kafka.us-east-2.amazonaws.com:9092
+      
+      - PYTHONUNBUFFERED=1
+      - LOG_LEVEL=INFO
+    
+    volumes:
+      - ./runner/workspace:/app/workspace
+    
+    stdin_open: true
+    tty: true
+
+  nginx:
+    build:
+      context: .
+      dockerfile: system/config/Dockerfile.nginx
+    container_name: nis-nginx-aws
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+# No volumes needed - using AWS managed services
+networks:
+  default:
+    name: nis-network-aws

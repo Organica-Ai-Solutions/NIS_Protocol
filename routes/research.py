@@ -102,6 +102,53 @@ async def get_research_capabilities():
         }, status_code=500)
 
 
+@router.post("/query")
+async def research_query(request: Dict[str, Any]):
+    """
+    🔍 Simple Research Query
+    
+    Quick research endpoint for basic queries.
+    """
+    try:
+        query = request.get("query")
+        if not query:
+            raise HTTPException(status_code=400, detail="Query is required")
+        
+        web_search_agent = get_web_search_agent()
+        
+        if web_search_agent:
+            from src.agents.research.web_search_agent import ResearchQuery, ResearchDomain
+            research_query = ResearchQuery(
+                query=query,
+                domain=ResearchDomain.GENERAL,
+                max_results=5
+            )
+            results = await web_search_agent.research(research_query)
+            
+            return {
+                "status": "success",
+                "query": query,
+                "results": results.get('top_results', []),
+                "timestamp": time.time()
+            }
+        else:
+            # Fallback without web search agent
+            return {
+                "status": "success",
+                "query": query,
+                "results": [],
+                "message": "Web search agent not initialized - using fallback mode",
+                "timestamp": time.time()
+            }
+            
+    except Exception as e:
+        logger.error(f"Research query error: {e}")
+        return JSONResponse({
+            "status": "error",
+            "message": str(e)
+        }, status_code=500)
+
+
 @router.post("/deep")
 async def deep_research(request: DeepResearchRequest):
     """

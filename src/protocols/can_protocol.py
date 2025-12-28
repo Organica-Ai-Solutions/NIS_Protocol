@@ -32,6 +32,9 @@ except ImportError:
     CAN_AVAILABLE = False
     logging.warning("python-can not available - using simulation mode")
 
+# Import hardware detection
+from src.core.hardware_detection import CANHardwareDetector, OperationMode
+
 
 class CANStandard(Enum):
     """CAN standard variants"""
@@ -128,7 +131,7 @@ class CANProtocol:
         can_standard: CANStandard = CANStandard.CAN_2_0B,
         enable_safety_monitor: bool = True,
         enable_redundancy: bool = True,
-        simulation_mode: bool = not CAN_AVAILABLE
+        force_simulation: bool = False
     ):
         self.logger = logging.getLogger(f"nis.can.{channel}")
         self.interface = interface
@@ -137,7 +140,11 @@ class CANProtocol:
         self.can_standard = can_standard
         self.enable_safety_monitor = enable_safety_monitor
         self.enable_redundancy = enable_redundancy
-        self.simulation_mode = simulation_mode
+        
+        # Hardware auto-detection
+        self.hardware_detector = CANHardwareDetector(force_simulation=force_simulation or not CAN_AVAILABLE)
+        self.hardware_detector.detect()
+        self.operation_mode = self.hardware_detector.mode
         
         # CAN bus state
         self.bus = None
@@ -180,14 +187,14 @@ class CANProtocol:
         self.logger.info(f"CAN Protocol initialized (Interface: {interface}, "
                         f"Channel: {channel}, Bitrate: {bitrate}, "
                         f"Standard: {can_standard.value}, "
-                        f"Simulation: {simulation_mode})")
+                        f"Mode: {self.operation_mode.value})")
     
     async def initialize(self) -> bool:
         """Initialize CAN bus connection"""
         try:
-            if self.simulation_mode:
+            if self.operation_mode == OperationMode.SIMULATION:
                 self.bus = self._create_simulation_bus()
-                self.logger.info("CAN simulation mode enabled")
+                self.logger.info("CAN simulation mode enabled (no hardware detected)")
             else:
                 config = {
                     'interface': self.interface,
@@ -276,7 +283,7 @@ class CANProtocol:
                     self.logger.warning(f"Redundancy validation failed for ID {arbitration_id}")
             
             # Send message
-            if self.simulation_mode:
+            if self.operation_mode == OperationMode.SIMULATION:
                 msg = can.Message(
                     arbitration_id=frame.arbitration_id,
                     data=frame.data,
@@ -317,7 +324,7 @@ class CANProtocol:
             CAN frame or None if timeout
         """
         try:
-            if self.simulation_mode:
+            if self.operation_mode == OperationMode.SIMULATION:
                 msg = self.bus.recv(timeout)
             else:
                 msg = self.bus.recv(timeout)
@@ -574,7 +581,7 @@ class CANProtocol:
             await self.send_emergency_stop(True)
         
         # Close bus connection
-        if self.bus and not self.simulation_mode:
+        if self.bus and self.operation_mode == OperationMode.REAL:
             self.bus.shutdown()
         
         self.logger.info("CAN Protocol shutdown complete")

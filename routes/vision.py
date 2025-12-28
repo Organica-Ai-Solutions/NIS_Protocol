@@ -39,7 +39,8 @@ router = APIRouter(tags=["Vision"])
 
 class ImageAnalysisRequest(BaseModel):
     """Request model for image analysis"""
-    image_data: str = Field(..., description="Base64 encoded image data")
+    image_url: Optional[str] = Field(default=None, description="URL of image to analyze")
+    image_data: Optional[str] = Field(default=None, description="Base64 encoded image data")
     analysis_type: str = Field(default="general", description="Type of analysis: general, technical, scientific, mathematical")
     provider: Optional[str] = Field(default=None, description="Preferred AI provider")
     context: Optional[Dict[str, Any]] = Field(default=None, description="Additional context for analysis")

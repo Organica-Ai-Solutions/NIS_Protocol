@@ -168,7 +168,7 @@ async def async_client():
 def can_protocol():
     """Create CAN protocol for testing"""
     from src.protocols.can_protocol import CANProtocol
-    protocol = CANProtocol(simulation_mode=True)
+    protocol = CANProtocol(force_simulation=True)
     return protocol
 
 

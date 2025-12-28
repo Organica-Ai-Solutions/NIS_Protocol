@@ -1,0 +1,591 @@
+{
+  "dashboard": {
+    "title": "NIS Protocol - Dev Team Dashboard",
+    "uid": "nis-dev-team",
+    "tags": ["nis", "development", "internal"],
+    "timezone": "browser",
+    "editable": true,
+    "graphTooltip": 1,
+    "panels": [
+      {
+        "title": "🚀 System Overview",
+        "type": "row",
+        "gridPos": {"x": 0, "y": 0, "w": 24, "h": 1},
+        "collapsed": false
+      },
+      {
+        "title": "Total Requests/sec",
+        "type": "stat",
+        "gridPos": {"x": 0, "y": 1, "w": 4, "h": 4},
+        "targets": [
+          {
+            "expr": "sum(rate(nis_requests_total[5m]))",
+            "legendFormat": "req/s"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "reqps",
+            "color": {"mode": "thresholds"},
+            "thresholds": {
+              "steps": [
+                {"color": "green", "value": 0},
+                {"color": "yellow", "value": 10},
+                {"color": "red", "value": 50}
+              ]
+            }
+          }
+        }
+      },
+      {
+        "title": "Error Rate",
+        "type": "stat",
+        "gridPos": {"x": 4, "y": 1, "w": 4, "h": 4},
+        "targets": [
+          {
+            "expr": "sum(rate(nis_errors_total[5m]))",
+            "legendFormat": "errors/s"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short",
+            "color": {"mode": "thresholds"},
+            "thresholds": {
+              "steps": [
+                {"color": "green", "value": 0},
+                {"color": "yellow", "value": 0.1},
+                {"color": "red", "value": 1}
+              ]
+            }
+          }
+        }
+      },
+      {
+        "title": "P95 Latency",
+        "type": "gauge",
+        "gridPos": {"x": 8, "y": 1, "w": 4, "h": 4},
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(nis_request_latency_seconds_bucket[5m]))",
+            "legendFormat": "p95"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s",
+            "min": 0,
+            "max": 10,
+            "thresholds": {
+              "steps": [
+                {"color": "green", "value": 0},
+                {"color": "yellow", "value": 2},
+                {"color": "red", "value": 5}
+              ]
+            }
+          }
+        }
+      },
+      {
+        "title": "Active Conversations",
+        "type": "stat",
+        "gridPos": {"x": 12, "y": 1, "w": 4, "h": 4},
+        "targets": [
+          {
+            "expr": "nis_active_conversations",
+            "legendFormat": "Active"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {"mode": "palette-classic"}
+          }
+        }
+      },
+      {
+        "title": "Active Agents",
+        "type": "stat",
+        "gridPos": {"x": 16, "y": 1, "w": 4, "h": 4},
+        "targets": [
+          {
+            "expr": "nis_active_agents",
+            "legendFormat": "Agents"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {"mode": "palette-classic"}
+          }
+        }
+      },
+      {
+        "title": "Cache Hit Rate",
+        "type": "gauge",
+        "gridPos": {"x": 20, "y": 1, "w": 4, "h": 4},
+        "targets": [
+          {
+            "expr": "sum(rate(nis_cache_hits_total[5m])) / (sum(rate(nis_cache_hits_total[5m])) + sum(rate(nis_cache_misses_total[5m]))) * 100",
+            "legendFormat": "Hit Rate"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "min": 0,
+            "max": 100,
+            "thresholds": {
+              "steps": [
+                {"color": "red", "value": 0},
+                {"color": "yellow", "value": 50},
+                {"color": "green", "value": 80}
+              ]
+            }
+          }
+        }
+      },
+      {
+        "title": "🤖 LLM Performance",
+        "type": "row",
+        "gridPos": {"x": 0, "y": 5, "w": 24, "h": 1},
+        "collapsed": false
+      },
+      {
+        "title": "LLM Requests by Provider",
+        "type": "piechart",
+        "gridPos": {"x": 0, "y": 6, "w": 6, "h": 6},
+        "targets": [
+          {
+            "expr": "sum by (provider) (nis_llm_requests_total)",
+            "legendFormat": "{{provider}}"
+          }
+        ],
+        "options": {
+          "legend": {
+            "displayMode": "table",
+            "placement": "right",
+            "values": ["value", "percent"]
+          }
+        }
+      },
+      {
+        "title": "LLM Success Rate by Provider",
+        "type": "timeseries",
+        "gridPos": {"x": 6, "y": 6, "w": 9, "h": 6},
+        "targets": [
+          {
+            "expr": "sum by (provider) (rate(nis_llm_requests_total{success='True'}[5m])) / sum by (provider) (rate(nis_llm_requests_total[5m])) * 100",
+            "legendFormat": "{{provider}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "min": 0,
+            "max": 100
+          }
+        }
+      },
+      {
+        "title": "LLM Latency by Provider",
+        "type": "timeseries",
+        "gridPos": {"x": 15, "y": 6, "w": 9, "h": 6},
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(nis_llm_latency_seconds_bucket[5m]))",
+            "legendFormat": "{{provider}} p95"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s"
+          }
+        }
+      },
+      {
+        "title": "LLM Token Usage",
+        "type": "timeseries",
+        "gridPos": {"x": 0, "y": 12, "w": 12, "h": 6},
+        "targets": [
+          {
+            "expr": "sum by (provider) (rate(nis_llm_tokens_total[5m]))",
+            "legendFormat": "{{provider}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short"
+          }
+        }
+      },
+      {
+        "title": "Provider Fallbacks",
+        "type": "timeseries",
+        "gridPos": {"x": 12, "y": 12, "w": 12, "h": 6},
+        "targets": [
+          {
+            "expr": "sum by (from_provider, to_provider) (rate(nis_llm_fallbacks_total[5m]))",
+            "legendFormat": "{{from_provider}} → {{to_provider}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short"
+          }
+        }
+      },
+      {
+        "title": "📊 Request Analytics",
+        "type": "row",
+        "gridPos": {"x": 0, "y": 18, "w": 24, "h": 1},
+        "collapsed": false
+      },
+      {
+        "title": "Requests by Endpoint",
+        "type": "timeseries",
+        "gridPos": {"x": 0, "y": 19, "w": 12, "h": 6},
+        "targets": [
+          {
+            "expr": "sum by (endpoint) (rate(nis_requests_total[5m]))",
+            "legendFormat": "{{endpoint}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "reqps"
+          }
+        }
+      },
+      {
+        "title": "Request Latency Percentiles",
+        "type": "timeseries",
+        "gridPos": {"x": 12, "y": 19, "w": 12, "h": 6},
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.50, rate(nis_request_latency_seconds_bucket[5m]))",
+            "legendFormat": "p50"
+          },
+          {
+            "expr": "histogram_quantile(0.90, rate(nis_request_latency_seconds_bucket[5m]))",
+            "legendFormat": "p90"
+          },
+          {
+            "expr": "histogram_quantile(0.95, rate(nis_request_latency_seconds_bucket[5m]))",
+            "legendFormat": "p95"
+          },
+          {
+            "expr": "histogram_quantile(0.99, rate(nis_request_latency_seconds_bucket[5m]))",
+            "legendFormat": "p99"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s"
+          }
+        }
+      },
+      {
+        "title": "Errors by Type",
+        "type": "timeseries",
+        "gridPos": {"x": 0, "y": 25, "w": 12, "h": 6},
+        "targets": [
+          {
+            "expr": "sum by (error_type) (rate(nis_errors_total[5m]))",
+            "legendFormat": "{{error_type}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short",
+            "color": {"mode": "palette-classic"}
+          }
+        }
+      },
+      {
+        "title": "Errors by Endpoint",
+        "type": "timeseries",
+        "gridPos": {"x": 12, "y": 25, "w": 12, "h": 6},
+        "targets": [
+          {
+            "expr": "sum by (endpoint) (rate(nis_errors_total[5m]))",
+            "legendFormat": "{{endpoint}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short"
+          }
+        }
+      },
+      {
+        "title": "🧠 Consciousness & Ethics",
+        "type": "row",
+        "gridPos": {"x": 0, "y": 31, "w": 24, "h": 1},
+        "collapsed": false
+      },
+      {
+        "title": "Consciousness Level",
+        "type": "gauge",
+        "gridPos": {"x": 0, "y": 32, "w": 8, "h": 6},
+        "targets": [
+          {
+            "expr": "nis_consciousness_level",
+            "legendFormat": "Level"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percentunit",
+            "min": 0,
+            "max": 1,
+            "thresholds": {
+              "steps": [
+                {"color": "red", "value": 0},
+                {"color": "yellow", "value": 0.3},
+                {"color": "orange", "value": 0.5},
+                {"color": "green", "value": 0.7},
+                {"color": "blue", "value": 0.9}
+              ]
+            }
+          }
+        },
+        "options": {
+          "showThresholdLabels": true,
+          "showThresholdMarkers": true
+        }
+      },
+      {
+        "title": "Ethics Score",
+        "type": "gauge",
+        "gridPos": {"x": 8, "y": 32, "w": 8, "h": 6},
+        "targets": [
+          {
+            "expr": "nis_ethics_score",
+            "legendFormat": "Score"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percentunit",
+            "min": 0,
+            "max": 1,
+            "thresholds": {
+              "steps": [
+                {"color": "red", "value": 0},
+                {"color": "yellow", "value": 0.5},
+                {"color": "green", "value": 0.8}
+              ]
+            }
+          }
+        },
+        "options": {
+          "showThresholdLabels": true,
+          "showThresholdMarkers": true
+        }
+      },
+      {
+        "title": "Consciousness & Ethics Trend",
+        "type": "timeseries",
+        "gridPos": {"x": 16, "y": 32, "w": 8, "h": 6},
+        "targets": [
+          {
+            "expr": "nis_consciousness_level",
+            "legendFormat": "Consciousness"
+          },
+          {
+            "expr": "nis_ethics_score",
+            "legendFormat": "Ethics"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percentunit",
+            "min": 0,
+            "max": 1
+          }
+        }
+      },
+      {
+        "title": "💾 Cache Performance",
+        "type": "row",
+        "gridPos": {"x": 0, "y": 38, "w": 24, "h": 1},
+        "collapsed": false
+      },
+      {
+        "title": "Cache Hits vs Misses",
+        "type": "timeseries",
+        "gridPos": {"x": 0, "y": 39, "w": 12, "h": 6},
+        "targets": [
+          {
+            "expr": "sum by (cache_type) (rate(nis_cache_hits_total[5m]))",
+            "legendFormat": "{{cache_type}} hits"
+          },
+          {
+            "expr": "sum by (cache_type) (rate(nis_cache_misses_total[5m]))",
+            "legendFormat": "{{cache_type}} misses"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short"
+          }
+        }
+      },
+      {
+        "title": "Cache Hit Rate by Type",
+        "type": "timeseries",
+        "gridPos": {"x": 12, "y": 39, "w": 12, "h": 6},
+        "targets": [
+          {
+            "expr": "sum by (cache_type) (rate(nis_cache_hits_total[5m])) / (sum by (cache_type) (rate(nis_cache_hits_total[5m])) + sum by (cache_type) (rate(nis_cache_misses_total[5m]))) * 100",
+            "legendFormat": "{{cache_type}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "min": 0,
+            "max": 100
+          }
+        }
+      },
+      {
+        "title": "🔧 Development Metrics",
+        "type": "row",
+        "gridPos": {"x": 0, "y": 45, "w": 24, "h": 1},
+        "collapsed": false
+      },
+      {
+        "title": "Request Success Rate",
+        "type": "stat",
+        "gridPos": {"x": 0, "y": 46, "w": 6, "h": 4},
+        "targets": [
+          {
+            "expr": "sum(rate(nis_requests_total{status='success'}[5m])) / sum(rate(nis_requests_total[5m])) * 100",
+            "legendFormat": "Success %"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "decimals": 2,
+            "thresholds": {
+              "steps": [
+                {"color": "red", "value": 0},
+                {"color": "yellow", "value": 95},
+                {"color": "green", "value": 99}
+              ]
+            }
+          }
+        }
+      },
+      {
+        "title": "Average Response Time",
+        "type": "stat",
+        "gridPos": {"x": 6, "y": 46, "w": 6, "h": 4},
+        "targets": [
+          {
+            "expr": "avg(rate(nis_request_latency_seconds_sum[5m]) / rate(nis_request_latency_seconds_count[5m]))",
+            "legendFormat": "Avg"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s",
+            "decimals": 3
+          }
+        }
+      },
+      {
+        "title": "Total Requests (24h)",
+        "type": "stat",
+        "gridPos": {"x": 12, "y": 46, "w": 6, "h": 4},
+        "targets": [
+          {
+            "expr": "sum(increase(nis_requests_total[24h]))",
+            "legendFormat": "Total"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short",
+            "decimals": 0
+          }
+        }
+      },
+      {
+        "title": "Total Errors (24h)",
+        "type": "stat",
+        "gridPos": {"x": 18, "y": 46, "w": 6, "h": 4},
+        "targets": [
+          {
+            "expr": "sum(increase(nis_errors_total[24h]))",
+            "legendFormat": "Errors"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short",
+            "decimals": 0,
+            "color": {"mode": "thresholds"},
+            "thresholds": {
+              "steps": [
+                {"color": "green", "value": 0},
+                {"color": "yellow", "value": 10},
+                {"color": "red", "value": 100}
+              ]
+            }
+          }
+        }
+      },
+      {
+        "title": "Request Volume Heatmap",
+        "type": "heatmap",
+        "gridPos": {"x": 0, "y": 50, "w": 24, "h": 8},
+        "targets": [
+          {
+            "expr": "sum(rate(nis_requests_total[5m])) by (endpoint)",
+            "legendFormat": "{{endpoint}}",
+            "format": "time_series"
+          }
+        ],
+        "options": {
+          "calculate": true,
+          "calculation": {
+            "xBuckets": {
+              "mode": "size",
+              "value": "1m"
+            }
+          },
+          "color": {
+            "mode": "spectrum",
+            "scheme": "Spectral"
+          }
+        }
+      }
+    ],
+    "refresh": "10s",
+    "time": {
+      "from": "now-6h",
+      "to": "now"
+    },
+    "timepicker": {
+      "refresh_intervals": ["5s", "10s", "30s", "1m", "5m", "15m", "30m", "1h"],
+      "time_options": ["5m", "15m", "1h", "6h", "12h", "24h", "2d", "7d", "30d"]
+    },
+    "annotations": {
+      "list": [
+        {
+          "datasource": "Prometheus",
+          "enable": true,
+          "expr": "ALERTS{alertstate=\"firing\"}",
+          "iconColor": "red",
+          "name": "Alerts",
+          "tagKeys": "alertname",
+          "textFormat": "{{alertname}}",
+          "titleFormat": "Alert"
+        }
+      ]
+    }
+  },
+  "overwrite": true
+}

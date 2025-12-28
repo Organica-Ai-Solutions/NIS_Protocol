@@ -19,7 +19,7 @@ class TestCANProtocol:
     @pytest.fixture(autouse=True)
     def setup(self):
         """Setup CAN protocol for each test"""
-        self.can = CANProtocol(simulation_mode=True)
+        self.can = CANProtocol(force_simulation=True)
     
     @pytest.mark.unit
     def test_initialization(self):
@@ -92,7 +92,7 @@ class TestCANSafety:
     @pytest.fixture(autouse=True)
     def setup(self):
         """Setup CAN protocol for each test"""
-        self.can = CANProtocol(simulation_mode=True)
+        self.can = CANProtocol(force_simulation=True)
     
     @pytest.mark.unit
     def test_safety_levels(self):
@@ -224,7 +224,7 @@ class TestCANPerformance:
     @pytest.fixture(autouse=True)
     def setup(self):
         """Setup CAN protocol for each test"""
-        self.can = CANProtocol(simulation_mode=True)
+        self.can = CANProtocol(force_simulation=True)
     
     @pytest.mark.unit
     @pytest.mark.asyncio

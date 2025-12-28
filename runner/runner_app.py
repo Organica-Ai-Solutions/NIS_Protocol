@@ -27,6 +27,7 @@ from RestrictedPython.PrintCollector import PrintCollector
 
 # Security configuration
 from security_config import SecurityConfig
+from security_hardening import SecurityManager
 
 app = FastAPI(
     title="NIS Protocol Optimized Secure Runner",
@@ -51,6 +52,9 @@ MAX_PROCESSES = 5
 
 # Execution tracking
 active_executions: Dict[str, Dict[str, Any]] = {}
+
+# Security manager
+security_manager = SecurityManager()
 
 class CodeExecutionRequest(BaseModel):
     code_content: str = Field(..., description="Code content to execute")  # Clear parameter name
@@ -225,22 +229,33 @@ async def execute_python_code(
     response_format: str = "detailed",  # Response optimization
     token_limit: Optional[int] = None  # Token efficiency
 ) -> ExecutionResult:
-    """Execute Python code in a restricted environment"""
+    """Execute Python code in a restricted environment with enhanced security"""
     
     start_time = time.time()
     
-    # Security validation with optimized parameter name
-    security_violations = validate_code_security(code_content)
-    if security_violations:
+    # Enhanced security validation
+    is_safe, violations = security_manager.validate_code(code_content, "python")
+    if not is_safe:
+        # Log the violation
+        security_manager.log_execution(
+            execution_id=execution_id,
+            code=code_content,
+            language="python",
+            success=False,
+            execution_time=0.0,
+            memory_used_mb=0,
+            violations=violations
+        )
+        
         return ExecutionResult(
             execution_id=execution_id,
             success=False,
             output="",
             error="Security violations detected",
-            execution_time_seconds=0.0,  # Updated field name
-            memory_used_mb=0,  # Updated field name
+            execution_time_seconds=0.0,
+            memory_used_mb=0,
             exit_code=-1,
-            security_violations=security_violations,
+            security_violations=[v.description for v in violations],
             response_format=response_format,
             optimization_applied=True
         )
@@ -259,6 +274,13 @@ async def execute_python_code(
                 exit_code=-1,
                 security_violations=["Compilation failed"]
             )
+        
+        # Prepare secure execution environment
+        network_restore = security_manager.prepare_execution(
+            cpu_time=timeout_seconds,
+            memory_mb=memory_limit_mb,
+            enable_network_isolation=True
+        )
         
         # Create safe execution environment
         safe_globals = create_safe_globals()
@@ -296,7 +318,7 @@ async def execute_python_code(
                     else:
                         output = str(print_collector.txt)
             
-            return ExecutionResult(
+            result = ExecutionResult(
                 execution_id=execution_id,
                 success=True,
                 output=output,
@@ -304,9 +326,25 @@ async def execute_python_code(
                 execution_time_seconds=time.time() - start_time,
                 memory_used_mb=memory_used,
                 exit_code=0,
-                security_violations=[]
+                security_violations=[],
+                response_format=response_format
             )
             
+            # Log successful execution
+            security_manager.log_execution(
+                execution_id=execution_id,
+                code=code_content,
+                language="python",
+                success=True,
+                execution_time=result.execution_time_seconds,
+                memory_used_mb=result.memory_used_mb,
+                violations=violations  # Include warnings
+            )
+            
+            # Cleanup
+            security_manager.cleanup_execution(network_restore)
+            
+            return result
         except TimeoutError:
             return ExecutionResult(
                 execution_id=execution_id,

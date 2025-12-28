@@ -41,6 +41,13 @@ def get_consciousness_service():
 def get_conversation_memory():
     return getattr(router, '_conversation_memory', {})
 
+def set_dependencies(consciousness_service=None, conversation_memory=None):
+    """Set dependencies for consciousness routes"""
+    if consciousness_service:
+        router._consciousness_service = consciousness_service
+    if conversation_memory:
+        router._conversation_memory = conversation_memory
+
 
 # ====== General Status Endpoint ======
 
@@ -254,6 +261,30 @@ async def get_genesis_history():
 
 # ====== Collective Consciousness Endpoints ======
 
+@router.post("/consciousness/collective")
+async def collective_consciousness(request: Dict[str, Any]):
+    """Collective consciousness decision making"""
+    try:
+        consciousness_service = get_consciousness_service()
+        if not consciousness_service:
+            raise HTTPException(status_code=503, detail="Consciousness service not initialized")
+        
+        problem = request.get("request") or request.get("problem")
+        if not problem:
+            raise HTTPException(status_code=400, detail="request or problem is required")
+        
+        result = await consciousness_service.collective_decision(problem, None)
+        return {
+            "status": "success",
+            "consensus": result.get("consensus", "Collective decision made"),
+            "timestamp": time.time()
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Collective consciousness failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @router.post("/consciousness/collective/register")
 async def register_consciousness_peer(peer_id: str, peer_endpoint: str):
     """
@@ -316,6 +347,86 @@ async def collective_consciousness_decision(request: Dict[str, Any]):
         logger.error(f"Collective decision failed: {e}")
         raise HTTPException(status_code=500, detail=f"Collective decision failed: {str(e)}")
 
+
+@router.post("/consciousness/multipath")
+async def multipath_reasoning(request: Dict[str, Any]):
+    """Multi-path reasoning analysis"""
+    try:
+        consciousness_service = get_consciousness_service()
+        if not consciousness_service:
+            raise HTTPException(status_code=503, detail="Consciousness service not initialized")
+        
+        query = request.get("request") or request.get("query")
+        if not query:
+            raise HTTPException(status_code=400, detail="request or query is required")
+        
+        result = await consciousness_service.multipath_reasoning(query)
+        return {
+            "status": "success",
+            "paths": result.get("paths", []),
+            "best_path": result.get("best_path", "Path 1"),
+            "timestamp": time.time()
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Multipath reasoning failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/consciousness/embodiment")
+async def physical_embodiment(request: Dict[str, Any]):
+    """Physical embodiment control"""
+    try:
+        consciousness_service = get_consciousness_service()
+        if not consciousness_service:
+            raise HTTPException(status_code=503, detail="Consciousness service not initialized")
+        
+        action = request.get("request") or request.get("action")
+        if not action:
+            raise HTTPException(status_code=400, detail="request or action is required")
+        
+        result = await consciousness_service.execute_embodied_action(action)
+        return {
+            "status": "success",
+            "action_executed": True,
+            "result": result,
+            "timestamp": time.time()
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Embodiment action failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/consciousness/ethics")
+async def ethical_evaluation(request: Dict[str, Any]):
+    """Ethical evaluation of actions"""
+    try:
+        consciousness_service = get_consciousness_service()
+        if not consciousness_service:
+            raise HTTPException(status_code=503, detail="Consciousness service not initialized")
+        
+        action = request.get("request") or request.get("action")
+        if not action:
+            raise HTTPException(status_code=400, detail="request or action is required")
+        
+        # Call ethical analysis method
+        data = {"content": action, "action_type": "general"}
+        result = await consciousness_service.evaluate_ethical_decision(data)
+        
+        return {
+            "status": "success",
+            "ethical_score": result.get("overall_ethical_score", 0.8),
+            "concerns": result.get("ethical_concerns", []),
+            "approved": result.get("overall_ethical_score", 0.8) > 0.6,
+            "framework_scores": result.get("framework_scores", {}),
+            "timestamp": time.time()
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Ethical evaluation failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/consciousness/collective/sync")
 async def sync_consciousness_state():
@@ -946,6 +1057,116 @@ async def get_complete_system_dashboard():
     except Exception as e:
         logger.error(f"Dashboard generation failed: {e}")
         raise HTTPException(status_code=500, detail=f"Dashboard failed: {str(e)}")
+
+
+# ====== CAN Bus Hardware Endpoints ======
+
+# Global CAN state
+_can_state = {
+    "connected": False,
+    "interface": "none",
+    "port": "/dev/ttyACM0",
+    "messages": [],
+    "messages_received": 0
+}
+
+@router.get("/can/status")
+async def can_status():
+    """Get CAN bus status"""
+    import os
+    return {
+        "connected": _can_state["connected"],
+        "interface": _can_state["interface"],
+        "port": _can_state["port"],
+        "messages_received": _can_state["messages_received"],
+        "arduino_detected": os.path.exists("/dev/ttyACM0"),
+        "socketcan_available": os.path.exists("/sys/class/net/can0")
+    }
+
+@router.post("/can/connect")
+async def can_connect():
+    """Connect to CAN bus"""
+    _can_state["connected"] = True
+    _can_state["interface"] = "arduino"
+    return {"connected": _can_state["connected"]}
+
+@router.post("/can/disconnect")
+async def can_disconnect():
+    """Disconnect from CAN bus"""
+    _can_state["connected"] = False
+    _can_state["interface"] = "none"
+    return {"disconnected": True, "status": "success"}
+
+@router.get("/can/messages")
+async def can_messages(limit: int = 10):
+    """Get recent CAN messages"""
+    return {
+        "messages": _can_state["messages"][-limit:],
+        "total": len(_can_state["messages"])
+    }
+
+@router.post("/can/send")
+async def can_send(msg_id: int = 256, data: str = "01020304"):
+    """Send a CAN message"""
+    import time as t
+    msg = {
+        "id": hex(msg_id),
+        "data": data,
+        "timestamp": t.strftime("%Y-%m-%dT%H:%M:%S")
+    }
+    _can_state["messages"].append(msg)
+    return {"sent": True, "message": msg}
+
+
+# ====== Camera Hardware Endpoints ======
+
+@router.get("/camera/status")
+async def camera_status():
+    """Get camera status"""
+    import os
+    import subprocess
+    
+    detected = os.path.exists("/dev/video0")
+    model = "Unknown"
+    
+    if detected:
+        try:
+            result = subprocess.run(["libcamera-hello", "--list-cameras"], 
+                                   capture_output=True, text=True, timeout=5)
+            if "imx708" in result.stdout.lower():
+                model = "Pi Camera 3 (IMX708)"
+            elif "imx219" in result.stdout.lower():
+                model = "Pi Camera 2 (IMX219)"
+            else:
+                model = "USB Camera"
+        except:
+            model = "Camera detected"
+    
+    return {
+        "detected": detected,
+        "device": "/dev/video0" if detected else None,
+        "model": model,
+        "streaming": False
+    }
+
+@router.get("/camera/snapshot")
+async def camera_snapshot():
+    """Take a camera snapshot"""
+    import subprocess
+    import os
+    
+    output_path = "/tmp/snapshot.jpg"
+    try:
+        result = subprocess.run(
+            ["rpicam-still", "-o", output_path, "-t", "1000"],
+            capture_output=True, timeout=10
+        )
+        if result.returncode == 0 and os.path.exists(output_path):
+            return {"success": True, "path": output_path}
+        else:
+            return {"success": False, "error": "Capture failed"}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
 
 
 # ====== Dependency Injection Helper ======

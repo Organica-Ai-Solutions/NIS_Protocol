@@ -1121,6 +1121,115 @@ print("OK:" + str(config.get("model_type", "unknown")))
             "default": self.default_provider
         }
     
+    async def generate_with_context_pack(
+        self,
+        context_pack: Dict[str, Any],
+        user_message: str,
+        provider: Optional[str] = None,
+        model: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """
+        Generate LLM response with scoped context pack
+        
+        Instead of dumping everything, we send ONLY:
+        - Relevant state (from context pack)
+        - Relevant memory (from context pack)
+        - Allowed tools (from context pack)
+        - Active policies (from context pack)
+        
+        This is the key to reliable agent execution - scoped context.
+        """
+        
+        # Build system prompt from context pack
+        system_prompt = self._build_system_prompt(context_pack)
+        
+        # Build messages
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_message}
+        ]
+        
+        # Add relevant memory as context
+        if context_pack.get("memory"):
+            memory_context = self._format_memory_context(context_pack["memory"])
+            messages.insert(1, {"role": "system", "content": memory_context})
+        
+        # Call LLM with token budget
+        max_tokens = min(context_pack.get("token_budget", 4000), 4000)
+        
+        try:
+            response = await self.generate_response(
+                messages=messages,
+                provider=provider,
+                model=model,
+                max_tokens=max_tokens
+            )
+            
+            return {
+                "response": response,
+                "context_used": {
+                    "agent_id": context_pack.get("agent_id"),
+                    "state_keys": list(context_pack.get("state", {}).keys()),
+                    "memory_count": len(context_pack.get("memory", [])),
+                    "tools_available": context_pack.get("tools", []),
+                    "policies_active": len(context_pack.get("policies", []))
+                },
+                "tokens_used": self._estimate_tokens(messages, response),
+                "success": True
+            }
+        except Exception as e:
+            logger.error(f"Context-aware LLM call failed: {e}")
+            return {
+                "response": "",
+                "error": str(e),
+                "success": False
+            }
+    
+    def _build_system_prompt(self, context_pack: Dict[str, Any]) -> str:
+        """Build focused system prompt from context pack"""
+        agent_id = context_pack.get("agent_id", "unknown")
+        state = context_pack.get("state", {})
+        tools = context_pack.get("tools", [])
+        policies = context_pack.get("policies", [])
+        
+        prompt = f"""You are agent: {agent_id}
+
+Current State:
+{json.dumps(state, indent=2) if state else "No state available"}
+
+Available Tools:
+{', '.join(tools) if tools else "No tools available"}
+
+Active Policies:
+{self._format_policies(policies)}
+
+Respond concisely and follow all policies."""
+        
+        return prompt
+    
+    def _format_memory_context(self, memories: List[Dict]) -> str:
+        """Format relevant memories"""
+        if not memories:
+            return ""
+        
+        context = "Relevant Context:\n"
+        for mem in memories[:5]:  # Limit to top 5
+            context += f"- {mem.get('content', '')}\n"
+        
+        return context
+    
+    def _format_policies(self, policies: List[Dict]) -> str:
+        """Format active policies"""
+        if not policies:
+            return "No special policies"
+        
+        return "\n".join([f"- {p.get('rule', '')}" for p in policies])
+    
+    def _estimate_tokens(self, messages: List[Dict], response: str) -> int:
+        """Rough token estimation"""
+        total_text = " ".join([m.get("content", "") for m in messages]) + response
+        return len(total_text) // 4  # Rough estimate
+    
     def get_optimization_stats(self) -> Dict[str, Any]:
         """Get LLM optimization statistics with REAL calculated metrics"""
         
