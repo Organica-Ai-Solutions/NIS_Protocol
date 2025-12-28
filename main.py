@@ -260,7 +260,17 @@ app.include_router(isaac_router)
 app.include_router(hub_gateway_router)
 app.include_router(autonomous_router)
 
-logger.info("✅ 27 modular route modules loaded (260+ endpoints)")
+# NVIDIA Cosmos and GR00T integration
+try:
+    from routes.cosmos import router as cosmos_router
+    from routes.humanoid import router as humanoid_router
+    app.include_router(cosmos_router)
+    app.include_router(humanoid_router)
+    logger.info("✅ NVIDIA Cosmos and GR00T N1 routes loaded")
+except Exception as e:
+    logger.warning(f"Cosmos/GR00T routes not loaded: {e}")
+
+logger.info("✅ 29 modular route modules loaded (280+ endpoints)")
 
 # ====== WEBSOCKET ENDPOINTS ======
 
