@@ -1,0 +1,624 @@
+{
+  "test_run": {
+    "timestamp": "2025-12-28T02:27:07Z",
+    "base_url": "http://localhost:8000"
+  },
+  "results": [
+    {
+      "endpoint": "/health",
+      "method": "GET",
+      "description": "Health check",
+      "status": "PASS",
+      "http_code": 200,
+      "duration_ms": 320,
+      "response_preview": "{\"status\":\"healthy\",\"version\":\"4.0.1\",\"timestamp\":1766888827.5431929,\"provider\":[],\"model\":[],\"real_ai\":[],\"conversations_active\":0,\"agents_registered\":0,\"tools_available\":0,\"modular_routes\":23,\"patte\n"
+    }
+,
+    {
+      "endpoint": "/docs",
+      "method": "GET",
+      "description": "API documentation",
+      "status": "PASS",
+      "http_code": 200,
+      "duration_ms": 114,
+      "response_preview": "\n    <!DOCTYPE html>\n    <html>\n    <head>\n    <link type=\"text/css\" rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui.css\">\n    <link rel=\"shortcut icon\" href=\"https://fastapi.tiangolo.com/img/favicon.png\">\n    <title>NIS Protocol v4.0.1 - Swagger UI</title>\n    </head>\n    <body>\n    <div id=\"swagger-ui\">\n    </div>\n    <script src=\"https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-bundle.js\"></script>\n    <!-- `SwaggerUIBundle` is now available on the page -->\n    <script>\n    const ui = SwaggerUIBundle({\n        url: '/openapi.json',\n    \"dom_id\": \"#swagger-ui\",\n\"layout\": \"BaseLayout\",\n\"deepLinking\": true,\n\"showExtensions\": true,\n\"showCommonExtensions\": true,\noauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',\n    presets: [\n        SwaggerUIBundle.presets.apis,\n        SwaggerUIBundle.SwaggerUIStandalonePreset\n        ],\n    })\n    </script>\n    </body>\n    </html>\n    \n"
+    }
+,
+    {
+      "endpoint": "/redoc",
+      "method": "GET",
+      "description": "ReDoc documentation",
+      "status": "PASS",
+      "http_code": 200,
+      "duration_ms": 107,
+      "response_preview": "\n    <!DOCTYPE html>\n    <html>\n    <head>\n    <title>NIS Protocol v4.0.1 - ReDoc</title>\n    <!-- needed for adaptive design -->\n    <meta charset=\"utf-8\"/>\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n    \n    <link href=\"https://fonts.googleapis.com/css?family=Montserrat:300,400,700|Roboto:300,400,700\" rel=\"stylesheet\">\n    \n    <link rel=\"shortcut icon\" href=\"https://fastapi.tiangolo.com/img/favicon.png\">\n    <!--\n    ReDoc doesn't change outer page styles\n    -->\n    <style>\n      body {\n        margin: 0;\n        padding: 0;\n      }\n    </style>\n    </head>\n    <body>\n    <noscript>\n        ReDoc requires Javascript to function. Please enable it to browse the documentation.\n    </noscript>\n    <redoc spec-url=\"/openapi.json\"></redoc>\n    <script src=\"https://cdn.jsdelivr.net/npm/redoc@2/bundles/redoc.standalone.js\"> </script>\n    </body>\n    </html>\n    \n"
+    }
+,
+    {
+      "endpoint": "/openapi.json",
+      "method": "GET",
+      "description": "OpenAPI schema",
+      "status": "PASS",
+      "http_code": 200,
+      "duration_ms": 14019,
+      "response_preview": "{\"openapi\":\"3.1.0\",\"info\":{\"title\":\"NIS Protocol v4.0.1\",\"description\":\"Enterprise AI Operating System with Modular Route Architecture\",\"version\":\"4.0.1\"},\"paths\":{\"/\":{\"get\":{\"tags\":[\"System\"],\"summa\n"
+    }
+,
+    {
+      "endpoint": "/chat",
+      "method": "POST",
+      "description": "Basic chat",
+      "status": "PASS",
+      "http_code": 200,
+      "duration_ms": 3509,
+      "response_preview": "{\"response\":\"Hello! I am NIS Protocol v4.0 — Neural Intelligence System by Organica AI Solutions. I am not a base model like Claude or GPT, but an advanced AI operating system coordinating multiple pr\n"
+    }
+,
+    {
+      "endpoint": "/chat/stream",
+      "method": "POST",
+      "description": "Streaming chat",
+      "status": "PASS",
+      "http_code": 200,
+      "duration_ms": 2621,
+      "response_preview": "data: {\"type\": \"content\", \"data\": \"I'm \"}\n\ndata: {\"type\": \"content\", \"data\": \"ready \"}\n\ndata: {\"type\": \"content\", \"data\": \"to \"}\n\ndata: {\"type\": \"content\", \"data\": \"assist \"}\n\ndata: {\"type\": \"content\", \"data\": \"you \"}\n\ndata: {\"type\": \"content\", \"data\": \"with \"}\n\ndata: {\"type\": \"content\", \"data\": \"testing \"}\n\ndata: {\"type\": \"content\", \"data\": \"the \"}\n\ndata: {\"type\": \"content\", \"data\": \"stream. \"}\n\ndata: {\"type\": \"content\", \"data\": \"Please \"}\n\ndata: {\"type\": \"content\", \"data\": \"go \"}\n\ndata: {\"type\": \"content\", \"data\": \"ahead \"}\n\ndata: {\"type\": \"content\", \"data\": \"and \"}\n\ndata: {\"type\": \"content\", \"data\": \"let \"}\n\ndata: {\"type\": \"content\", \"data\": \"me \"}\n\ndata: {\"type\": \"content\", \"data\": \"know \"}\n\ndata: {\"type\": \"content\", \"data\": \"what \"}\n\ndata: {\"type\": \"content\", \"data\": \"you'd \"}\n\ndata: {\"type\": \"content\", \"data\": \"like \"}\n\ndata: {\"type\": \"content\", \"data\": \"me \"}\n\ndata: {\"type\": \"content\", \"data\": \"to \"}\n\ndata: {\"type\": \"content\", \"data\": \"help \"}\n\ndata: {\"type\": \"content\", \"data\": \"you \"}\n\ndata: {\"type\": \"content\", \"data\": \"with. \"}\n\ndata: {\"type\": \"done\"}\n"
+    }
+,
+    {
+      "endpoint": "/v4/chat",
+      "method": "POST",
+      "description": "V4 chat",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 210,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/v4/consciousness/genesis",
+      "method": "POST",
+      "description": "Genesis phase",
+      "status": "FAIL",
+      "http_code": 400,
+      "duration_ms": 155,
+      "response_preview": "{\"detail\":\"capability is required\"}\n"
+    }
+,
+    {
+      "endpoint": "/v4/consciousness/plan",
+      "method": "POST",
+      "description": "Planning phase",
+      "status": "FAIL",
+      "http_code": 400,
+      "duration_ms": 83,
+      "response_preview": "{\"detail\":\"goal_id and high_level_goal are required\"}\n"
+    }
+,
+    {
+      "endpoint": "/v4/consciousness/collective",
+      "method": "POST",
+      "description": "Collective phase",
+      "status": "FAIL",
+      "http_code": 400,
+      "duration_ms": 88,
+      "response_preview": "{\"detail\":\"request or problem is required\"}\n"
+    }
+,
+    {
+      "endpoint": "/v4/consciousness/multipath",
+      "method": "POST",
+      "description": "Multipath phase",
+      "status": "FAIL",
+      "http_code": 400,
+      "duration_ms": 75,
+      "response_preview": "{\"detail\":\"request or query is required\"}\n"
+    }
+,
+    {
+      "endpoint": "/v4/consciousness/embodiment",
+      "method": "POST",
+      "description": "Embodiment phase",
+      "status": "FAIL",
+      "http_code": 400,
+      "duration_ms": 95,
+      "response_preview": "{\"detail\":\"request or action is required\"}\n"
+    }
+,
+    {
+      "endpoint": "/v4/consciousness/ethics",
+      "method": "POST",
+      "description": "Ethics phase",
+      "status": "FAIL",
+      "http_code": 400,
+      "duration_ms": 56,
+      "response_preview": "{\"detail\":\"request or action is required\"}\n"
+    }
+,
+    {
+      "endpoint": "/v4/consciousness/marketplace",
+      "method": "POST",
+      "description": "Marketplace phase",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 70,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/agents/status",
+      "method": "GET",
+      "description": "Agent status",
+      "status": "PASS",
+      "http_code": 200,
+      "duration_ms": 90,
+      "response_preview": "{\"status\":\"success\",\"agent_status\":{\"total_agents\":0,\"active_agents\":0,\"agents\":{}}}\n"
+    }
+,
+    {
+      "endpoint": "/agents/learning/process",
+      "method": "POST",
+      "description": "Learning process",
+      "status": "FAIL",
+      "http_code": 422,
+      "duration_ms": 55,
+      "response_preview": "{\"detail\":[{\"type\":\"missing\",\"loc\":[\"body\",\"operation\"],\"msg\":\"Field required\",\"input\":{\"data\":\"test\"}}]}\n"
+    }
+,
+    {
+      "endpoint": "/agents/learning/status",
+      "method": "GET",
+      "description": "Learning status",
+      "status": "PASS",
+      "http_code": 200,
+      "duration_ms": 55,
+      "response_preview": "{\"status\":\"active\",\"agent_type\":\"learning\",\"initialized\":true,\"capabilities\":[\"process_learning\",\"adaptive_learning\"]}\n"
+    }
+,
+    {
+      "endpoint": "/agents/planning/create",
+      "method": "POST",
+      "description": "Create plan",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 54,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/agents/curiosity/explore",
+      "method": "POST",
+      "description": "Curiosity exploration",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 82,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/agents/self-audit",
+      "method": "POST",
+      "description": "Self audit",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 615,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/agents/ethics/evaluate",
+      "method": "POST",
+      "description": "Ethics evaluation",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 233,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/agents/simulation/run",
+      "method": "POST",
+      "description": "Run simulation",
+      "status": "FAIL",
+      "http_code": 422,
+      "duration_ms": 114,
+      "response_preview": "{\"detail\":[{\"type\":\"missing\",\"loc\":[\"body\",\"scenario_id\"],\"msg\":\"Field required\",\"input\":{\"scenario\":\"test\"}},{\"type\":\"missing\",\"loc\":[\"body\",\"scenario_type\"],\"msg\":\"Field required\",\"input\":{\"scenario\n"
+    }
+,
+    {
+      "endpoint": "/research/deep",
+      "method": "POST",
+      "description": "Deep research",
+      "status": "PASS",
+      "http_code": 200,
+      "duration_ms": 44341,
+      "response_preview": "{\"status\":\"success\",\"query\":\"AI research\",\"research_depth\":\"standard\",\"report\":\"**Research Report: Current Landscape of AI Research**  \\n**Date:** October 26, 2023  \\n**Prepared by:** NIS Protocol Res\n"
+    }
+,
+    {
+      "endpoint": "/research/web-search",
+      "method": "POST",
+      "description": "Web search",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 360,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/research/analyze",
+      "method": "POST",
+      "description": "Research analysis",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 187,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/vision/analyze",
+      "method": "POST",
+      "description": "Image analysis",
+      "status": "PASS",
+      "http_code": 200,
+      "duration_ms": 255,
+      "response_preview": "{\"status\":\"success\",\"analysis\":{\"status\":\"error\",\"error\":\"Invalid image data: 'NoneType' object has no attribute 'startswith'\",\"timestamp\":\"2025-12-28T02:28:18.884231\"},\"agent_id\":\"vision_agent\",\"time\n"
+    }
+,
+    {
+      "endpoint": "/vision/generate",
+      "method": "POST",
+      "description": "Image generation",
+      "status": "PASS",
+      "http_code": 200,
+      "duration_ms": 87,
+      "response_preview": "{\"status\":\"success\",\"generation\":{\"status\":\"error\",\"error\":\"No image generation providers available\",\"timestamp\":\"2025-12-28T02:28:19.124985\"},\"timestamp\":1766888899.1250172}\n"
+    }
+,
+    {
+      "endpoint": "/physics/solve/heat-equation",
+      "method": "POST",
+      "description": "Heat equation",
+      "status": "PASS",
+      "http_code": 200,
+      "duration_ms": 217,
+      "response_preview": "{\"status\":\"success\",\"equation_type\":\"heat_equation_1d\",\"pde_formula\":\"∂T/∂t = α * ∂²T/∂x²\",\"parameters\":{\"thermal_diffusivity\":0.01,\"domain_length\":1.0,\"final_time\":0.1,\"initial_conditions\":null,\"boun\n"
+    }
+,
+    {
+      "endpoint": "/physics/solve/wave-equation",
+      "method": "POST",
+      "description": "Wave equation",
+      "status": "PASS",
+      "http_code": 200,
+      "duration_ms": 113,
+      "response_preview": "{\"status\":\"success\",\"equation_type\":\"wave_equation_1d\",\"pde_formula\":\"∂²u/∂t² = c² * ∂²u/∂x²\",\"parameters\":{\"wave_speed\":1.0,\"domain_length\":1.0,\"final_time\":1.0,\"initial_displacement\":null},\"solution\n"
+    }
+,
+    {
+      "endpoint": "/physics/validate",
+      "method": "POST",
+      "description": "Physics validation",
+      "status": "PASS",
+      "http_code": 200,
+      "duration_ms": 188,
+      "response_preview": "{\"equation\":\"test\",\"values\":{},\"is_valid\":true,\"validation_details\":{\"dimensional_analysis\":\"consistent\",\"conservation_laws\":[\"energy\",\"momentum\"],\"physical_plausibility\":\"high\"},\"calculated_result\":n\n"
+    }
+,
+    {
+      "endpoint": "/models/bitnet/status",
+      "method": "GET",
+      "description": "BitNet status",
+      "status": "PASS",
+      "http_code": 200,
+      "duration_ms": 242,
+      "response_preview": "{\"is_training\":false,\"training_available\":false,\"total_examples\":0,\"unused_examples\":0,\"offline_readiness_score\":0.0,\"metrics\":{\"offline_readiness_score\":0.0,\"total_training_sessions\":0,\"last_training\n"
+    }
+,
+    {
+      "endpoint": "/training/bitnet/force",
+      "method": "POST",
+      "description": "Force training",
+      "status": "PASS",
+      "http_code": 200,
+      "duration_ms": 226,
+      "response_preview": "{\"status\":\"disabled\",\"message\":\"BitNet training is currently disabled\",\"training_triggered\":false,\"reason\":\"test\",\"timestamp\":\"2025-12-28T02:28:20.805101\",\"mock_response\":true}\n"
+    }
+,
+    {
+      "endpoint": "/training/bitnet/metrics",
+      "method": "GET",
+      "description": "Training metrics",
+      "status": "PASS",
+      "http_code": 200,
+      "duration_ms": 122,
+      "response_preview": "{\"status\":\"success\",\"training_available\":false,\"training_metrics\":{\"offline_readiness_score\":0.0,\"total_training_sessions\":0,\"last_training_session\":null,\"average_quality_score\":0.0,\"total_model_updat\n"
+    }
+,
+    {
+      "endpoint": "/downloads/bitnet",
+      "method": "GET",
+      "description": "Download model",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 78,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/memory/store",
+      "method": "POST",
+      "description": "Store memory",
+      "status": "FAIL",
+      "http_code": 429,
+      "duration_ms": 141,
+      "response_preview": "{\"error\":\"Rate limit exceeded\",\"retry_after\":0}\n"
+    }
+,
+    {
+      "endpoint": "/memory/retrieve",
+      "method": "POST",
+      "description": "Retrieve memory",
+      "status": "FAIL",
+      "http_code": 429,
+      "duration_ms": 61,
+      "response_preview": "{\"error\":\"Rate limit exceeded\",\"retry_after\":0}\n"
+    }
+,
+    {
+      "endpoint": "/memory/search",
+      "method": "POST",
+      "description": "Search memory",
+      "status": "FAIL",
+      "http_code": 429,
+      "duration_ms": 60,
+      "response_preview": "{\"error\":\"Rate limit exceeded\",\"retry_after\":0}\n"
+    }
+,
+    {
+      "endpoint": "/memory/clear",
+      "method": "DELETE",
+      "description": "Clear memory",
+      "status": "FAIL",
+      "http_code": 429,
+      "duration_ms": 70,
+      "response_preview": "{\"error\":\"Rate limit exceeded\",\"retry_after\":0}\n"
+    }
+,
+    {
+      "endpoint": "/autonomous/plan",
+      "method": "POST",
+      "description": "Autonomous planning",
+      "status": "FAIL",
+      "http_code": 429,
+      "duration_ms": 57,
+      "response_preview": "{\"error\":\"Rate limit exceeded\",\"retry_after\":0}\n"
+    }
+,
+    {
+      "endpoint": "/autonomous/execute",
+      "method": "POST",
+      "description": "Execute plan",
+      "status": "FAIL",
+      "http_code": 429,
+      "duration_ms": 75,
+      "response_preview": "{\"error\":\"Rate limit exceeded\",\"retry_after\":0}\n"
+    }
+,
+    {
+      "endpoint": "/autonomous/status",
+      "method": "GET",
+      "description": "Autonomous status",
+      "status": "PASS",
+      "http_code": 200,
+      "duration_ms": 149,
+      "response_preview": "{\"status\":\"operational\",\"orchestrator\":\"active\",\"agents\":{\"research\":{\"autonomous_mode\":true,\"tools_available\":16,\"executions_count\":0,\"agent_class\":\"AutonomousResearchAgent\"},\"physics\":{\"autonomous_m\n"
+    }
+,
+    {
+      "endpoint": "/robotics/forward_kinematics",
+      "method": "POST",
+      "description": "Forward kinematics",
+      "status": "FAIL",
+      "http_code": 429,
+      "duration_ms": 75,
+      "response_preview": "{\"error\":\"Rate limit exceeded\",\"retry_after\":3}\n"
+    }
+,
+    {
+      "endpoint": "/robotics/kinematics/forward",
+      "method": "POST",
+      "description": "Forward kinematics (alias)",
+      "status": "FAIL",
+      "http_code": 429,
+      "duration_ms": 56,
+      "response_preview": "{\"error\":\"Rate limit exceeded\",\"retry_after\":2}\n"
+    }
+,
+    {
+      "endpoint": "/robotics/inverse_kinematics",
+      "method": "POST",
+      "description": "Inverse kinematics",
+      "status": "FAIL",
+      "http_code": 429,
+      "duration_ms": 61,
+      "response_preview": "{\"error\":\"Rate limit exceeded\",\"retry_after\":2}\n"
+    }
+,
+    {
+      "endpoint": "/robotics/path_planning",
+      "method": "POST",
+      "description": "Path planning",
+      "status": "FAIL",
+      "http_code": 429,
+      "duration_ms": 68,
+      "response_preview": "{\"error\":\"Rate limit exceeded\",\"retry_after\":2}\n"
+    }
+,
+    {
+      "endpoint": "/robotics/status",
+      "method": "GET",
+      "description": "Robotics status",
+      "status": "FAIL",
+      "http_code": 429,
+      "duration_ms": 123,
+      "response_preview": "{\"error\":\"Rate limit exceeded\",\"retry_after\":2}\n"
+    }
+,
+    {
+      "endpoint": "/audio/transcribe",
+      "method": "POST",
+      "description": "Audio transcription",
+      "status": "FAIL",
+      "http_code": 429,
+      "duration_ms": 145,
+      "response_preview": "{\"error\":\"Rate limit exceeded\",\"retry_after\":1}\n"
+    }
+,
+    {
+      "endpoint": "/audio/synthesize",
+      "method": "POST",
+      "description": "Audio synthesis",
+      "status": "FAIL",
+      "http_code": 429,
+      "duration_ms": 133,
+      "response_preview": "{\"error\":\"Rate limit exceeded\",\"retry_after\":1}\n"
+    }
+,
+    {
+      "endpoint": "/audio/analyze",
+      "method": "POST",
+      "description": "Audio analysis",
+      "status": "FAIL",
+      "http_code": 429,
+      "duration_ms": 238,
+      "response_preview": "{\"error\":\"Rate limit exceeded\",\"retry_after\":1}\n"
+    }
+,
+    {
+      "endpoint": "/simulation/run",
+      "method": "POST",
+      "description": "Run simulation",
+      "status": "FAIL",
+      "http_code": 429,
+      "duration_ms": 269,
+      "response_preview": "{\"error\":\"Rate limit exceeded\",\"retry_after\":0}\n"
+    }
+,
+    {
+      "endpoint": "/simulation/status",
+      "method": "GET",
+      "description": "Simulation status",
+      "status": "FAIL",
+      "http_code": 429,
+      "duration_ms": 122,
+      "response_preview": "{\"error\":\"Rate limit exceeded\",\"retry_after\":0}\n"
+    }
+,
+    {
+      "endpoint": "/simulation/generative",
+      "method": "POST",
+      "description": "Generative simulation",
+      "status": "FAIL",
+      "http_code": 429,
+      "duration_ms": 148,
+      "response_preview": "{\"error\":\"Rate limit exceeded\",\"retry_after\":0}\n"
+    }
+,
+    {
+      "endpoint": "/system/status",
+      "method": "GET",
+      "description": "System status",
+      "status": "PASS",
+      "http_code": 200,
+      "duration_ms": 147,
+      "response_preview": "{\"status\":\"operational\",\"components\":{\"api\":\"healthy\",\"llm_provider\":\"active\",\"agents\":\"ready\",\"memory\":\"available\"},\"timestamp\":1766888906.3942978}\n"
+    }
+,
+    {
+      "endpoint": "/system/metrics",
+      "method": "GET",
+      "description": "System metrics",
+      "status": "FAIL",
+      "http_code": 429,
+      "duration_ms": 110,
+      "response_preview": "{\"error\":\"Rate limit exceeded\",\"retry_after\":2}\n"
+    }
+,
+    {
+      "endpoint": "/system/stream",
+      "method": "GET",
+      "description": "System stream",
+      "status": "FAIL",
+      "http_code": 429,
+      "duration_ms": 170,
+      "response_preview": "{\"error\":\"Rate limit exceeded\",\"retry_after\":1}\n"
+    }
+,
+    {
+      "endpoint": "/tools/list",
+      "method": "GET",
+      "description": "List tools",
+      "status": "FAIL",
+      "http_code": 429,
+      "duration_ms": 112,
+      "response_preview": "{\"error\":\"Rate limit exceeded\",\"retry_after\":1}\n"
+    }
+,
+    {
+      "endpoint": "/tools/execute",
+      "method": "POST",
+      "description": "Execute tool",
+      "status": "FAIL",
+      "http_code": 429,
+      "duration_ms": 79,
+      "response_preview": "{\"error\":\"Rate limit exceeded\",\"retry_after\":1}\n"
+    }
+,
+    {
+      "endpoint": "/mcp/chat",
+      "method": "POST",
+      "description": "MCP chat",
+      "status": "PASS",
+      "http_code": 200,
+      "duration_ms": 372,
+      "response_preview": "{\"status\":\"success\",\"response\":\"MCP Adapter received: test\",\"mcp_initialized\":true,\"tools_available\":[]}\n"
+    }
+,
+    {
+      "endpoint": "/mcp/tools",
+      "method": "GET",
+      "description": "MCP tools",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 182,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/protocols/can/send",
+      "method": "POST",
+      "description": "CAN send",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 124,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/protocols/obd/query",
+      "method": "POST",
+      "description": "OBD query",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 177,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+
+  ],
+  "summary": {
+    "total": 61,
+    "passed": 20,
+    "failed": 41,
+    "pass_rate": "32.78%"
+  }
+}

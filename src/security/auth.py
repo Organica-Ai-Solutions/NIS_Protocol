@@ -24,8 +24,39 @@ from typing import Optional, Dict, Any
 from collections import defaultdict
 from functools import wraps
 import logging
+from enum import Enum
 
 logger = logging.getLogger(__name__)
+
+# ====== USER TIER SYSTEM ======
+class UserTier(Enum):
+    """User tier levels with different rate limits and access levels"""
+    FREE = "free"
+    PREMIUM = "premium"
+    PRO = "pro"
+    ENTERPRISE = "enterprise"
+    ADMIN = "admin"
+    MASTER = "master"
+
+# Rate limits per tier (requests per minute)
+TIER_RATE_LIMITS = {
+    UserTier.FREE: 10,           # 10 requests/min
+    UserTier.PREMIUM: 60,        # 60 requests/min
+    UserTier.PRO: 300,           # 300 requests/min
+    UserTier.ENTERPRISE: 1000,   # 1000 requests/min
+    UserTier.ADMIN: 5000,        # 5000 requests/min
+    UserTier.MASTER: float('inf') # Unlimited
+}
+
+# API key prefix to tier mapping
+API_KEY_TIER_PREFIXES = {
+    'sk-master-': UserTier.MASTER,
+    'sk-admin-': UserTier.ADMIN,
+    'sk-ent-': UserTier.ENTERPRISE,
+    'sk-pro-': UserTier.PRO,
+    'sk-prem-': UserTier.PREMIUM,
+    'sk-free-': UserTier.FREE,
+}
 
 
 # =============================================================================
@@ -107,27 +138,53 @@ class RateLimiter:
     - Can be bypassed with master key
     """
     
-    def __init__(self, requests_per_minute: int = 60, window_seconds: int = 60):
-        self.default_limit = requests_per_minute
-        self.window = window_seconds
-        self.requests: Dict[str, list] = defaultdict(list)
+    def __init__(self, default_requests_per_minute: int = 60):
+        self.default_requests_per_minute = default_requests_per_minute
+        self.requests: Dict[str, list] = {}  # identifier -> list of timestamps
+        self.tier_cache: Dict[str, UserTier] = {}  # api_key -> tier
     
-    def _clean_old_requests(self, key: str, now: float):
-        """Remove requests outside the window"""
-        cutoff = now - self.window
-        self.requests[key] = [t for t in self.requests[key] if t > cutoff]
-    
-    def check(self, identifier: str, limit: int = None) -> tuple:
-        """
-        Check if request is allowed
+    def get_tier_from_api_key(self, api_key: str) -> UserTier:
+        """Determine user tier from API key prefix"""
+        if not api_key:
+            return UserTier.FREE
         
-        Returns: (allowed, remaining, reset_time)
+        # Check cache first
+        if api_key in self.tier_cache:
+            return self.tier_cache[api_key]
+        
+        # Check prefix
+        for prefix, tier in API_KEY_TIER_PREFIXES.items():
+            if api_key.startswith(prefix):
+                self.tier_cache[api_key] = tier
+                return tier
+        
+        # Default to free tier
+        self.tier_cache[api_key] = UserTier.FREE
+        return UserTier.FREE
+    
+    def get_rate_limit_for_tier(self, tier: UserTier) -> int:
+        """Get rate limit for a specific tier"""
+        return TIER_RATE_LIMITS.get(tier, self.default_requests_per_minute)
+    
+    def check_limit(self, identifier: str, api_key: Optional[str] = None, custom_limit: Optional[int] = None) -> tuple:
+        """
+        Check if request is allowed based on user tier
+        
+        Returns: (allowed, remaining, reset_time, tier)
         """
         now = time.time()
-        limit = limit or self.default_limit
+        tier = self.get_tier_from_api_key(api_key) if api_key else UserTier.FREE
+        limit = custom_limit if custom_limit else self.get_rate_limit_for_tier(tier)
+        
+        # Master tier has unlimited access
+        if tier == UserTier.MASTER or limit == float('inf'):
+            return True, float('inf'), 0, tier.value
         
         # Clean old requests
-        self._clean_old_requests(identifier, now)
+        if identifier not in self.requests:
+            self.requests[identifier] = []
+        
+        self.requests[identifier] = [t for t in self.requests[identifier] if t > now - 60]
         
         # Check count
         current_count = len(self.requests[identifier])
@@ -135,28 +192,29 @@ class RateLimiter:
         if current_count >= limit:
             # Calculate reset time
             oldest = min(self.requests[identifier]) if self.requests[identifier] else now
-            reset_time = int(oldest + self.window - now)
-            return (False, 0, reset_time)
+            reset_time = int(oldest + 60 - now)
+            return False, 0, reset_time, tier.value
         
         # Record this request
         self.requests[identifier].append(now)
         
         remaining = limit - current_count - 1
-        reset_time = int(self.window)
+        reset_time = int(60)
         
-        return (True, remaining, reset_time)
+        return True, remaining, reset_time, tier.value
     
-    def get_headers(self, identifier: str, limit: int = None) -> Dict[str, str]:
+    def get_headers(self, identifier: str, api_key: Optional[str] = None, limit: int = None) -> Dict[str, str]:
         """Get rate limit headers for response"""
-        allowed, remaining, reset = self.check(identifier, limit)
+        allowed, remaining, reset, tier = self.check_limit(identifier, api_key, limit)
         # Don't actually count this check
-        if allowed:
+        if allowed and identifier in self.requests and self.requests[identifier]:
             self.requests[identifier].pop()  # Remove the check we just added
         
         return {
-            "X-RateLimit-Limit": str(limit or self.default_limit),
-            "X-RateLimit-Remaining": str(max(0, remaining)),
-            "X-RateLimit-Reset": str(reset)
+            "X-RateLimit-Limit": str(limit or self.default_requests_per_minute),
+            "X-RateLimit-Remaining": str(max(0, int(remaining)) if remaining != float('inf') else 999999),
+            "X-RateLimit-Reset": str(reset),
+            "X-RateLimit-Tier": tier
         }
 
 
@@ -189,9 +247,11 @@ def get_rate_limit_for_key(api_key: Optional[str]) -> int:
 
 
 def check_rate_limit(identifier: str, api_key: Optional[str] = None) -> tuple:
-    """Check rate limit for identifier"""
-    limit = get_rate_limit_for_key(api_key)
-    return rate_limiter.check(identifier, limit)
+    """
+    Check rate limit for identifier with tier-based limits
+    Returns: (allowed, remaining, reset_time, tier)
+    """
+    return rate_limiter.check_limit(identifier, api_key)
 
 
 # =============================================================================

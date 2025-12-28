@@ -94,6 +94,7 @@ from src.adapters.a2a_adapter import A2AAdapter
 from src.adapters.acp_adapter import ACPAdapter
 
 # Security
+import os
 try:
     from src.security.auth import verify_api_key, check_rate_limit
     from src.security.user_management import user_manager
@@ -822,24 +823,53 @@ async def chat(request: ChatRequest):
 # ====== SECURITY MIDDLEWARE ======
 if SECURITY_AVAILABLE:
     @app.middleware("http")
-    async def security_middleware(request: Request, call_next):
-        # Skip security for docs, health endpoints, and WebSocket endpoints
-        if request.url.path in ["/health", "/", "/docs", "/openapi.json", "/redoc"] or request.url.path.startswith("/ws/"):
+    async def rate_limit_middleware(request: Request, call_next):
+        """
+        Global rate limiting middleware - applies to all endpoints except public ones
+        Can be disabled by setting DISABLE_RATE_LIMIT=true environment variable
+        """
+        # Skip rate limiting if disabled for testing
+        disable_flag = os.getenv("DISABLE_RATE_LIMIT", "false").lower()
+        logger.info(f"Rate limit check: DISABLE_RATE_LIMIT={disable_flag}")
+        if disable_flag in ["true", "1", "yes"]:
+            logger.info("⚠️ Rate limiting DISABLED for testing")
             return await call_next(request)
         
-        client_ip = request.client.host if request.client else "unknown"
-        api_key = request.headers.get("X-API-Key")
+        # Skip rate limiting for public endpoints
+        public_endpoints = ["/health", "/docs", "/redoc", "/openapi.json", "/metrics"]
+        if any(request.url.path.startswith(ep) for ep in public_endpoints):
+            return await call_next(request)
         
-        allowed, remaining, reset = check_rate_limit(client_ip, api_key)
-        if not allowed:
-            return JSONResponse(
-                {"error": "Rate limit exceeded", "retry_after": reset},
-                status_code=429
-            )
+        if not SECURITY_AVAILABLE:
+            return await call_next(request)
         
-        response = await call_next(request)
-        response.headers["X-RateLimit-Remaining"] = str(remaining)
-        return response
+        try:
+            client_ip = request.client.host if request.client else "unknown"
+            api_key = request.headers.get("X-API-Key")
+            
+            allowed, remaining, reset, tier = check_rate_limit(client_ip, api_key)
+            if not allowed:
+                return JSONResponse(
+                    {
+                        "error": "Rate limit exceeded", 
+                        "retry_after": reset,
+                        "tier": tier,
+                        "message": f"Rate limit for {tier} tier exceeded. Upgrade for higher limits."
+                    },
+                    status_code=429,
+                    headers={
+                        "X-RateLimit-Remaining": str(remaining),
+                        "X-RateLimit-Reset": str(reset),
+                        "X-RateLimit-Tier": tier
+                    }
+                )
+            response = await call_next(request)
+            response.headers["X-RateLimit-Remaining"] = str(int(remaining) if remaining != float('inf') else "999999")
+            response.headers["X-RateLimit-Tier"] = tier
+            return response
+        except Exception as e:
+            logger.error(f"Rate limiting error: {e}")
+            return JSONResponse({"error": "Rate limiting error"}, status_code=500)
 
 # Mount static files
 if os.path.exists("static"):
