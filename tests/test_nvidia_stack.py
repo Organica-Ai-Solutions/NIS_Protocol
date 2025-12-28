@@ -6,12 +6,16 @@ Tests all NVIDIA components:
 - Cosmos (Predict, Transfer, Reason)
 - GR00T N1 (Humanoid control)
 - Isaac Lab 2.2 (Robot learning)
+- Unified NVIDIA API
+- All API endpoints
 """
 
 import asyncio
 import pytest
+import requests
 import numpy as np
 from typing import Dict, Any
+import time
 
 
 class TestCosmosIntegration:
@@ -343,6 +347,149 @@ class TestEndpointIntegration:
         assert "/robots" in routes
 
 
+class TestAPIEndpoints:
+    """Test all API endpoints"""
+    
+    BASE_URL = "http://localhost:8000"
+    
+    def test_health_endpoint(self):
+        """Test health endpoint"""
+        r = requests.get(f"{self.BASE_URL}/health", timeout=5)
+        assert r.status_code == 200
+        data = r.json()
+        assert "status" in data
+    
+    def test_cosmos_status_endpoint(self):
+        """Test Cosmos status endpoint"""
+        r = requests.get(f"{self.BASE_URL}/cosmos/status", timeout=5)
+        assert r.status_code == 200
+        data = r.json()
+        assert "status" in data
+        assert "components" in data
+    
+    def test_cosmos_initialize_endpoint(self):
+        """Test Cosmos initialize endpoint"""
+        r = requests.post(f"{self.BASE_URL}/cosmos/initialize", json={}, timeout=10)
+        assert r.status_code == 200
+        data = r.json()
+        assert "status" in data
+    
+    def test_cosmos_generate_data_endpoint(self):
+        """Test Cosmos data generation endpoint"""
+        payload = {
+            "num_samples": 10,
+            "tasks": ["test"],
+            "for_bitnet": False
+        }
+        r = requests.post(f"{self.BASE_URL}/cosmos/generate/training_data", json=payload, timeout=10)
+        assert r.status_code == 200
+        data = r.json()
+        assert "status" in data
+    
+    def test_cosmos_reason_endpoint(self):
+        """Test Cosmos reasoning endpoint"""
+        payload = {
+            "task": "Test task",
+            "constraints": ["safe"]
+        }
+        r = requests.post(f"{self.BASE_URL}/cosmos/reason", json=payload, timeout=10)
+        assert r.status_code == 200
+        data = r.json()
+        assert "status" in data
+        assert "plan" in data
+    
+    def test_humanoid_capabilities_endpoint(self):
+        """Test humanoid capabilities endpoint"""
+        r = requests.get(f"{self.BASE_URL}/humanoid/capabilities", timeout=5)
+        assert r.status_code == 200
+        data = r.json()
+        assert "status" in data
+        assert "capabilities" in data
+    
+    def test_humanoid_initialize_endpoint(self):
+        """Test humanoid initialize endpoint"""
+        r = requests.post(f"{self.BASE_URL}/humanoid/initialize", json={}, timeout=10)
+        assert r.status_code == 200
+        data = r.json()
+        assert "status" in data
+    
+    def test_humanoid_execute_task_endpoint(self):
+        """Test humanoid task execution endpoint"""
+        payload = {
+            "task": "Walk forward 2 meters"
+        }
+        r = requests.post(f"{self.BASE_URL}/humanoid/execute_task", json=payload, timeout=10)
+        assert r.status_code == 200
+        data = r.json()
+        assert "status" in data
+    
+    def test_isaac_lab_robots_endpoint(self):
+        """Test Isaac Lab robots endpoint"""
+        r = requests.get(f"{self.BASE_URL}/isaac_lab/robots", timeout=5)
+        assert r.status_code == 200
+        data = r.json()
+        assert "status" in data
+        assert "robots" in data
+    
+    def test_isaac_lab_tasks_endpoint(self):
+        """Test Isaac Lab tasks endpoint"""
+        r = requests.get(f"{self.BASE_URL}/isaac_lab/tasks", timeout=5)
+        assert r.status_code == 200
+        data = r.json()
+        assert "status" in data
+        assert "tasks" in data
+    
+    def test_isaac_lab_initialize_endpoint(self):
+        """Test Isaac Lab initialize endpoint"""
+        r = requests.post(f"{self.BASE_URL}/isaac_lab/initialize", json={}, timeout=10)
+        assert r.status_code == 200
+        data = r.json()
+        assert "status" in data
+    
+    def test_isaac_lab_train_endpoint(self):
+        """Test Isaac Lab training endpoint"""
+        payload = {
+            "robot_type": "franka_panda",
+            "task": "reach",
+            "num_iterations": 5,
+            "algorithm": "PPO"
+        }
+        r = requests.post(f"{self.BASE_URL}/isaac_lab/train", json=payload, timeout=15)
+        assert r.status_code == 200
+        data = r.json()
+        assert "status" in data
+    
+    def test_nvidia_unified_status_endpoint(self):
+        """Test unified NVIDIA status endpoint"""
+        r = requests.get(f"{self.BASE_URL}/nvidia/status", timeout=5)
+        assert r.status_code == 200
+        data = r.json()
+        assert "status" in data
+        assert "components" in data
+    
+    def test_nvidia_unified_capabilities_endpoint(self):
+        """Test unified NVIDIA capabilities endpoint"""
+        r = requests.get(f"{self.BASE_URL}/nvidia/capabilities", timeout=5)
+        assert r.status_code == 200
+        data = r.json()
+        assert "status" in data
+        assert "capabilities" in data
+    
+    def test_nvidia_unified_initialize_endpoint(self):
+        """Test unified NVIDIA initialize endpoint"""
+        r = requests.post(f"{self.BASE_URL}/nvidia/initialize", json={}, timeout=15)
+        assert r.status_code == 200
+        data = r.json()
+        assert "status" in data
+    
+    def test_nvidia_unified_stats_endpoint(self):
+        """Test unified NVIDIA stats endpoint"""
+        r = requests.get(f"{self.BASE_URL}/nvidia/stats", timeout=5)
+        assert r.status_code == 200
+        data = r.json()
+        assert "status" in data
+
+
 if __name__ == "__main__":
     # Run tests
-    pytest.main([__file__, "-v", "--asyncio-mode=auto"])
+    pytest.main([__file__, "-v", "--asyncio-mode=auto", "-x"])
