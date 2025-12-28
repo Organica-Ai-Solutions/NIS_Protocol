@@ -74,7 +74,7 @@ class PlanRequest(BaseModel):
 
 
 class StimulusRequest(BaseModel):
-    stimulus: Dict[str, Any] = Field(..., description="The stimulus to be processed")
+    stimulus: Any = Field(..., description="The stimulus to be processed (string or dict)")
     context: Optional[Dict[str, Any]] = None
 
 
@@ -269,8 +269,9 @@ async def explore_curiosity(request: StimulusRequest):
 @router.post("/self-audit")
 async def self_audit(request: AuditRequest):
     """
-    Perform self-audit of system components
+    🔍 Self-Audit: System performs self-assessment
     """
+    import time
     try:
         return {
             "status": "success",

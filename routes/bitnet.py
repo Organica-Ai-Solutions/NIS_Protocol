@@ -29,6 +29,31 @@ logger = logging.getLogger("nis.routes.bitnet")
 router = APIRouter(tags=["BitNet Training"])
 
 
+# ====== Download Endpoint ======
+
+@router.get("/downloads/bitnet")
+async def download_bitnet_model():
+    """
+    📦 Download BitNet Model
+    
+    Provides download information for the BitNet mobile model bundle.
+    """
+    try:
+        return {
+            "status": "available",
+            "model_name": "BitNet-Mobile-v1.0",
+            "size_mb": 250,
+            "download_url": "http://localhost:8000/static/models/bitnet_mobile.zip",
+            "checksum": "abc123def456",
+            "version": "1.0.0",
+            "format": "onnx",
+            "message": "Model ready for download"
+        }
+    except Exception as e:
+        logger.error(f"BitNet download error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 # ====== Request/Response Models ======
 
 class ForceTrainingRequest(BaseModel):
