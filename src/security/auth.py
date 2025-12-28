@@ -224,7 +224,7 @@ class RateLimiter:
 
 # Global instances
 api_auth = APIKeyAuth()
-rate_limiter = RateLimiter(requests_per_minute=60)
+rate_limiter = RateLimiter(default_requests_per_minute=60)
 
 
 def verify_api_key(api_key: Optional[str]) -> bool:
