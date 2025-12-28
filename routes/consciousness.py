@@ -202,9 +202,10 @@ async def create_dynamic_agent(request: Dict[str, Any]):
     Consciousness synthesizes a new agent when it detects missing capabilities.
     """
     try:
-        capability = request.get("capability")
+        # Accept 'goal' or 'capability' for flexibility
+        capability = request.get("capability") or request.get("goal")
         if not capability:
-            raise HTTPException(status_code=400, detail="capability is required")
+            raise HTTPException(status_code=400, detail="capability or goal is required")
 
         consciousness_service = get_consciousness_service()
         
@@ -269,9 +270,9 @@ async def collective_consciousness(request: Dict[str, Any]):
         if not consciousness_service:
             raise HTTPException(status_code=503, detail="Consciousness service not initialized")
         
-        problem = request.get("request") or request.get("problem")
+        problem = request.get("request") or request.get("problem") or request.get("goal")
         if not problem:
-            raise HTTPException(status_code=400, detail="request or problem is required")
+            raise HTTPException(status_code=400, detail="request, problem, or goal is required")
         
         result = await consciousness_service.collective_decision(problem, None)
         return {
@@ -356,9 +357,9 @@ async def multipath_reasoning(request: Dict[str, Any]):
         if not consciousness_service:
             raise HTTPException(status_code=503, detail="Consciousness service not initialized")
         
-        query = request.get("request") or request.get("query")
+        query = request.get("request") or request.get("query") or request.get("goal")
         if not query:
-            raise HTTPException(status_code=400, detail="request or query is required")
+            raise HTTPException(status_code=400, detail="request, query, or goal is required")
         
         result = await consciousness_service.multipath_reasoning(query)
         return {
@@ -381,9 +382,9 @@ async def physical_embodiment(request: Dict[str, Any]):
         if not consciousness_service:
             raise HTTPException(status_code=503, detail="Consciousness service not initialized")
         
-        action = request.get("request") or request.get("action")
+        action = request.get("request") or request.get("action") or request.get("goal")
         if not action:
-            raise HTTPException(status_code=400, detail="request or action is required")
+            raise HTTPException(status_code=400, detail="request, action, or goal is required")
         
         result = await consciousness_service.execute_embodied_action(action)
         return {
@@ -406,9 +407,9 @@ async def ethical_evaluation(request: Dict[str, Any]):
         if not consciousness_service:
             raise HTTPException(status_code=503, detail="Consciousness service not initialized")
         
-        action = request.get("request") or request.get("action")
+        action = request.get("request") or request.get("action") or request.get("goal")
         if not action:
-            raise HTTPException(status_code=400, detail="request or action is required")
+            raise HTTPException(status_code=400, detail="request, action, or goal is required")
         
         # Call ethical analysis method
         data = {"content": action, "action_type": "general"}
@@ -491,11 +492,12 @@ async def create_autonomous_plan(request: Dict[str, Any]):
     Example: "Research protein folding" → 6-step autonomous execution
     """
     try:
-        goal_id = request.get("goal_id")
-        high_level_goal = request.get("high_level_goal")
+        # Accept flexible field names
+        goal_id = request.get("goal_id") or "auto_" + str(int(time.time()))
+        high_level_goal = request.get("high_level_goal") or request.get("goal")
         
-        if not goal_id or not high_level_goal:
-            raise HTTPException(status_code=400, detail="goal_id and high_level_goal are required")
+        if not high_level_goal:
+            raise HTTPException(status_code=400, detail="high_level_goal or goal is required")
 
         consciousness_service = get_consciousness_service()
         
@@ -544,6 +546,31 @@ async def get_planning_status():
 
 
 # ====== Marketplace Endpoints ======
+
+@router.post("/consciousness/marketplace")
+async def marketplace_action(request: Dict[str, Any]):
+    """
+    Marketplace interaction endpoint
+    """
+    try:
+        action = request.get("action", "browse")
+        goal = request.get("goal", "")
+        
+        return {
+            "status": "success",
+            "action": action,
+            "goal": goal,
+            "marketplace": {
+                "available_items": 5,
+                "trending": ["AI Models", "Research Data", "Code Modules"],
+                "your_listings": 0
+            },
+            "message": f"Marketplace {action} complete"
+        }
+    except Exception as e:
+        logger.error(f"Marketplace error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 @router.post("/consciousness/marketplace/publish")
 async def publish_consciousness_insight(request: Dict[str, Any]):

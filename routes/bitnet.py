@@ -26,7 +26,7 @@ from pydantic import BaseModel, Field
 logger = logging.getLogger("nis.routes.bitnet")
 
 # Create router - note: we use empty prefix since paths vary between /models/bitnet and /training/bitnet
-router = APIRouter(tags=["BitNet"])
+router = APIRouter(tags=["BitNet Training"])
 
 
 # ====== Request/Response Models ======

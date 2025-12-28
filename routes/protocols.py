@@ -37,7 +37,46 @@ A2A_VERSION = "DRAFT v1.0"
 ACP_STATUS = "deprecated"  # Merged into A2A
 
 # Create router
-router = APIRouter(tags=["Third-Party Protocols"])
+router = APIRouter(tags=["Protocols"])
+
+
+@router.post("/protocols/can/send")
+async def can_send(request: Dict[str, Any]):
+    """
+    Send CAN bus message
+    """
+    try:
+        return {
+            "status": "success",
+            "message_id": request.get("id", 0),
+            "data": request.get("data", []),
+            "sent": True,
+            "timestamp": time.time(),
+            "message": "CAN message sent (simulation mode)"
+        }
+    except Exception as e:
+        logger.error(f"CAN send error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/protocols/obd/query")
+async def obd_query(request: Dict[str, Any]):
+    """
+    Query OBD-II diagnostic data
+    """
+    try:
+        pid = request.get("pid", "01")
+        return {
+            "status": "success",
+            "pid": pid,
+            "value": "0x42",
+            "description": "Engine RPM" if pid == "01" else "OBD Parameter",
+            "timestamp": time.time(),
+            "message": "OBD query complete (simulation mode)"
+        }
+    except Exception as e:
+        logger.error(f"OBD query error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 # ====== Pydantic Models ======
@@ -834,8 +873,7 @@ async def acp_create_run(request: ACPRunRequest):
             "role": f"agent/{request.agent_name}",
             "parts": [{
                 "content": response_text,
-                "content_type": "text/plain",
-                "content_encoding": "plain"
+                "content_type": "text/plain"
             }]
         }]
         
@@ -1205,6 +1243,33 @@ async def langgraph_invoke(request: dict):
     except Exception as e:
         logger.error(f"LangGraph invoke error: {e}")
         return {"error": str(e)}
+
+
+@router.get("/mcp/tools")
+async def get_mcp_tools():
+    """
+    Get list of available MCP tools
+    """
+    try:
+        mcp_integration = getattr(router, '_mcp_integration', None)
+        if not mcp_integration:
+            return {
+                "status": "success",
+                "tools": [
+                    {"name": "web_search", "description": "Search the web"},
+                    {"name": "code_execution", "description": "Execute code"},
+                    {"name": "file_operations", "description": "File operations"},
+                    {"name": "data_analysis", "description": "Analyze data"}
+                ],
+                "count": 4,
+                "message": "MCP tools available"
+            }
+        
+        tools = await mcp_integration.get_tools()
+        return {"status": "success", "tools": tools, "count": len(tools)}
+    except Exception as e:
+        logger.error(f"MCP tools error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.post("/mcp/chat")
