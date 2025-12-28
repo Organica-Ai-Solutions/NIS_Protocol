@@ -1273,24 +1273,34 @@ def initialize_protocol_adapters():
 # ====== STARTUP EVENT ======
 @app.on_event("startup")
 async def startup_event():
-    """Application startup"""
-    logger.info("🚀 Starting NIS Protocol v4.0.1...")
+    """Initialize system on startup - FAST MODE for testing"""
+    logger.info("🚀 Initializing NIS Protocol v4.0.1 (FAST MODE)...")
     
-    # Note: Agent orchestrator will be initialized with LLM provider in initialize_system()
-    initialize_protocol_adapters()
-    initialize_vibevoice()
-    initialize_nemo()
+    # Skip heavy initialization if SKIP_INIT is set
+    if os.getenv("SKIP_INIT", "false").lower() in ["true", "1", "yes"]:
+        logger.info("⚡ SKIP_INIT enabled - using minimal initialization")
+        return
     
-    await initialize_system()
-    
-    logger.info("=" * 50)
-    logger.info("NIS Protocol v4.0.1 - Ready")
-    logger.info("=" * 50)
-    logger.info("📚 API Docs: http://localhost:8000/docs")
-    logger.info("🔬 ReDoc: http://localhost:8000/redoc")
-    logger.info("❤️ Health: http://localhost:8000/health")
-    logger.info("🔌 WebSocket A2A: ws://localhost:8000/a2a")
-    logger.info("=" * 50)
+    try:
+        # Run initialization in background to not block server startup
+        asyncio.create_task(initialize_system_background())
+        logger.info("✅ Server ready - initialization running in background")
+    except Exception as e:
+        logger.error(f"❌ Initialization error: {e}")
+        logger.error("System will continue with fallback mode")
+
+async def initialize_system_background():
+    """Initialize system in background"""
+    try:
+        await asyncio.wait_for(
+            initialize_system(),
+            timeout=STARTUP_TIMEOUT
+        )
+        logger.info("✅ Background initialization complete")
+    except asyncio.TimeoutError:
+        logger.error(f"❌ Initialization timeout after {STARTUP_TIMEOUT} seconds")
+    except Exception as e:
+        logger.error(f"❌ Background initialization error: {e}")
 
 # ====== WEBSOCKET A2A ENDPOINT ======
 @app.websocket("/a2a")
