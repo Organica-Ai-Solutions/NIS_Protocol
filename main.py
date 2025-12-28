@@ -1023,35 +1023,23 @@ async def initialize_system():
     
     # Consciousness Service (10-phase pipeline)
     logger.info("🔄 Step 9/10: Initializing Consciousness Service...")
-    consciousness_service = get_consciousness_service()
+    consciousness_service = create_consciousness_service()
     if not consciousness_service:
-        # Fallback response when service not initialized
-        return {
-            "status": "success",
-            "agent_created": True,
-            "agent_spec": {
-                "agent_id": f"agent_{capability[:20]}",
-                "capability": capability,
-                "type": "synthesized"
-            },
-            "reason": "Capability gap detected (fallback mode)",
-            "ready_for_registration": True,
-            "timestamp": time.time(),
-            "fallback": True
-        }
-    try:
-        consciousness_service.__init_evolution__()
-        consciousness_service.__init_genesis__()
-        consciousness_service.__init_distributed__()
-        consciousness_service.__init_planning__()
-        consciousness_service.__init_marketplace__()
-        consciousness_service.__init_multipath__()
-        consciousness_service.__init_embodiment__()
-        consciousness_service.__init_debugger__()
-        consciousness_service.__init_meta_evolution__()
-        logger.info("✅ Step 9/10: 10-phase Consciousness Pipeline initialized")
-    except Exception as e:
-        logger.warning(f"⚠️ Step 9/10: Some consciousness phases skipped: {e}")
+        logger.warning("⚠️ Step 9/10: Consciousness service creation failed, using fallback")
+    else:
+        try:
+            consciousness_service.__init_evolution__()
+            consciousness_service.__init_genesis__()
+            consciousness_service.__init_distributed__()
+            consciousness_service.__init_planning__()
+            consciousness_service.__init_marketplace__()
+            consciousness_service.__init_multipath__()
+            consciousness_service.__init_embodiment__()
+            consciousness_service.__init_debugger__()
+            consciousness_service.__init_meta_evolution__()
+            logger.info("✅ Step 9/10: 10-phase Consciousness Pipeline initialized")
+        except Exception as e:
+            logger.warning(f"⚠️ Step 9/10: Some consciousness phases skipped: {e}")
     
     # V4.0 Self-improving components
     try:
@@ -1337,14 +1325,15 @@ async def startup_event():
 
 async def initialize_system_background():
     """Initialize system in background"""
+    startup_timeout = 120  # 2 minutes
     try:
         await asyncio.wait_for(
             initialize_system(),
-            timeout=STARTUP_TIMEOUT
+            timeout=startup_timeout
         )
         logger.info("✅ Background initialization complete")
     except asyncio.TimeoutError:
-        logger.error(f"❌ Initialization timeout after {STARTUP_TIMEOUT} seconds")
+        logger.error(f"❌ Initialization timeout after {startup_timeout} seconds")
     except Exception as e:
         logger.error(f"❌ Background initialization error: {e}")
 
