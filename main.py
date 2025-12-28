@@ -264,13 +264,15 @@ app.include_router(autonomous_router)
 try:
     from routes.cosmos import router as cosmos_router
     from routes.humanoid import router as humanoid_router
+    from routes.isaac_lab import router as isaac_lab_router
     app.include_router(cosmos_router)
     app.include_router(humanoid_router)
-    logger.info("✅ NVIDIA Cosmos and GR00T N1 routes loaded")
+    app.include_router(isaac_lab_router)
+    logger.info("✅ NVIDIA Cosmos, GR00T N1, and Isaac Lab 2.2 routes loaded")
 except Exception as e:
-    logger.warning(f"Cosmos/GR00T routes not loaded: {e}")
+    logger.warning(f"NVIDIA stack routes not loaded: {e}")
 
-logger.info("✅ 29 modular route modules loaded (280+ endpoints)")
+logger.info("✅ 30 modular route modules loaded (290+ endpoints)")
 
 # ====== WEBSOCKET ENDPOINTS ======
 

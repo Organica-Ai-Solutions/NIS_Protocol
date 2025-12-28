@@ -83,8 +83,14 @@ class CosmosDataGenerator:
             "samples_generated": 0,
             "augmentations_created": 0,
             "predictions_made": 0,
-            "total_generation_time": 0.0
+            "total_generation_time": 0.0,
+            "cache_hits": 0,
+            "cache_misses": 0
         }
+        
+        # Cache for generated data
+        self._cache = {}
+        self._cache_max_size = 100
         
         logger.info("Cosmos Data Generator created")
     
@@ -163,7 +169,8 @@ class CosmosDataGenerator:
         self,
         num_samples: int = 1000,
         tasks: List[str] = None,
-        base_scenarios: Optional[List[np.ndarray]] = None
+        base_scenarios: Optional[List[np.ndarray]] = None,
+        use_cache: bool = True
     ) -> Dict[str, Any]:
         """
         Generate synthetic training data for robot learning
@@ -182,6 +189,14 @@ class CosmosDataGenerator:
         if tasks is None:
             tasks = ["manipulation", "navigation", "interaction"]
         
+        # Check cache first
+        cache_key = f"{num_samples}_{'-'.join(tasks)}"
+        if use_cache and cache_key in self._cache:
+            logger.info(f"Cache hit for {cache_key}")
+            self.stats["cache_hits"] += 1
+            return self._cache[cache_key]
+        
+        self.stats["cache_misses"] += 1
         logger.info(f"Generating {num_samples} samples for tasks: {tasks}")
         
         results = {
@@ -211,6 +226,15 @@ class CosmosDataGenerator:
                 results["samples_generated"] += task_samples["count"]
             
             self.stats["samples_generated"] += results["samples_generated"]
+            
+            # Cache results
+            if use_cache:
+                self._cache[cache_key] = results
+                # Limit cache size
+                if len(self._cache) > self._cache_max_size:
+                    # Remove oldest entry
+                    oldest_key = next(iter(self._cache))
+                    del self._cache[oldest_key]
             
             logger.info(f"✅ Generated {results['samples_generated']} samples")
             return results

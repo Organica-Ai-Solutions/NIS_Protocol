@@ -64,8 +64,13 @@ class GR00TAgent:
             "successful_executions": 0,
             "failed_executions": 0,
             "total_execution_time": 0.0,
-            "safety_stops": 0
+            "safety_stops": 0,
+            "retries": 0
         }
+        
+        # Retry configuration
+        self.max_retries = 3
+        self.retry_delay = 1.0
         
         logger.info("GR00T Agent created")
     
@@ -141,20 +146,48 @@ class GR00TAgent:
         
         logger.info(f"Executing task: {task}")
         
-        try:
-            if self._model:
-                # Real GR00T execution
-                result = await self._execute_with_groot(task, visual_input, proprioception)
-            else:
-                # Fallback execution
-                result = await self._execute_fallback(task)
-            
-            if result.get("success"):
-                self.stats["successful_executions"] += 1
-            else:
-                self.stats["failed_executions"] += 1
-            
-            return result
+        # Retry logic
+        last_error = None
+        for attempt in range(self.max_retries):
+            try:
+                if self._model:
+                    # Real GR00T execution
+                    result = await self._execute_with_groot(task, visual_input, proprioception)
+                else:
+                    # Fallback execution
+                    result = await self._execute_fallback(task)
+                
+                if result.get("success"):
+                    self.stats["successful_executions"] += 1
+                    if attempt > 0:
+                        self.stats["retries"] += attempt
+                    return result
+                else:
+                    last_error = result.get("error", "Unknown error")
+                    if attempt < self.max_retries - 1:
+                        logger.warning(f"Attempt {attempt + 1} failed, retrying...")
+                        await asyncio.sleep(self.retry_delay)
+                        continue
+                    else:
+                        self.stats["failed_executions"] += 1
+                        return result
+                        
+            except Exception as e:
+                last_error = str(e)
+                if attempt < self.max_retries - 1:
+                    logger.warning(f"Attempt {attempt + 1} failed: {e}, retrying...")
+                    await asyncio.sleep(self.retry_delay)
+                    continue
+                else:
+                    break
+        
+        # All retries failed
+        self.stats["failed_executions"] += 1
+        return {
+            "success": False,
+            "error": last_error,
+            "retries_attempted": self.max_retries
+        }
             
         except Exception as e:
             logger.error(f"Task execution error: {e}")
