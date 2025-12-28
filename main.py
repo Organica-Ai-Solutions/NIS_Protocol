@@ -265,14 +265,16 @@ try:
     from routes.cosmos import router as cosmos_router
     from routes.humanoid import router as humanoid_router
     from routes.isaac_lab import router as isaac_lab_router
+    from routes.nvidia_unified import router as nvidia_unified_router
     app.include_router(cosmos_router)
     app.include_router(humanoid_router)
     app.include_router(isaac_lab_router)
-    logger.info("✅ NVIDIA Cosmos, GR00T N1, and Isaac Lab 2.2 routes loaded")
+    app.include_router(nvidia_unified_router)
+    logger.info("✅ NVIDIA Stack fully integrated (Cosmos, GR00T, Isaac Lab, Unified)")
 except Exception as e:
     logger.warning(f"NVIDIA stack routes not loaded: {e}")
 
-logger.info("✅ 30 modular route modules loaded (290+ endpoints)")
+logger.info("✅ 31 modular route modules loaded (300+ endpoints)")
 
 # ====== WEBSOCKET ENDPOINTS ======
 
