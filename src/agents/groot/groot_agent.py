@@ -189,15 +189,6 @@ class GR00TAgent:
             "error": last_error,
             "retries_attempted": self.max_retries
         }
-            
-        except Exception as e:
-            logger.error(f"Task execution error: {e}")
-            self.stats["failed_executions"] += 1
-            return {
-                "success": False,
-                "error": str(e),
-                "fallback": True
-            }
     
     async def _execute_with_groot(
         self,
