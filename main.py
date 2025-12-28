@@ -279,9 +279,17 @@ try:
     app.include_router(cosmos_router)
     app.include_router(humanoid_router)
     app.include_router(isaac_lab_router)
-    logger.info("✅ NVIDIA Cosmos, GR00T N1, and Isaac Lab 2.2 routes loaded")
+    logger.info("✅ NVIDIA Stack integrated (Cosmos, GR00T, Isaac Lab)")
 except Exception as e:
     logger.warning(f"NVIDIA stack routes not loaded: {e}")
+
+# NVIDIA Unified API
+try:
+    from routes.nvidia_unified import router as nvidia_unified_router
+    app.include_router(nvidia_unified_router)
+    logger.info("✅ NVIDIA Unified API loaded")
+except Exception as e:
+    logger.warning(f"NVIDIA Unified API not loaded: {e}")
 
 logger.info("✅ 30 modular route modules loaded (290+ endpoints)")
 
