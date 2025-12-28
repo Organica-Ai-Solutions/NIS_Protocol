@@ -14,6 +14,7 @@ MIGRATION STATUS: Ready for testing
 """
 
 import logging
+import time
 import traceback
 from typing import Any, Dict, List, Optional
 
@@ -271,7 +272,6 @@ async def self_audit(request: AuditRequest):
     """
     🔍 Self-Audit: System performs self-assessment
     """
-    import time
     try:
         return {
             "status": "success",

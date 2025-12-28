@@ -1008,16 +1008,14 @@ async def initialize_system():
             "timestamp": time.time(),
             "fallback": True
         }
-    consciousness_service.__init_evolution__()
-    consciousness_service.__init_genesis__()
-    consciousness_service.__init_distributed__()
-    consciousness_service.__init_planning__()
-    consciousness_service.__init_marketplace__()
-    consciousness_service.__init_multipath__()
-    consciousness_service.__init_embodiment__()
-    consciousness_service.__init_debugger__()
-    consciousness_service.__init_meta_evolution__()
-    logger.info("✅ Step 9/10: 10-phase Consciousness Pipeline initialized")
+    try:
+        consciousness_service.__init_evolution__()
+        consciousness_service.__init_genesis__()
+        consciousness_service.__init_distributed__()
+        consciousness_service.__init_planning__()
+        consciousness_service.__init_marketplace__()
+        consciousness_service.__init_multipath__()
+        consciousness_service.__init_embodiment__()
         consciousness_service.__init_debugger__()
         consciousness_service.__init_meta_evolution__()
         logger.info("✅ Step 9/10: 10-phase Consciousness Pipeline initialized")
