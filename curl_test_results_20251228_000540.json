@@ -1,0 +1,624 @@
+{
+  "test_run": {
+    "timestamp": "2025-12-28T05:05:40Z",
+    "base_url": "http://localhost:8001"
+  },
+  "results": [
+    {
+      "endpoint": "/health",
+      "method": "GET",
+      "description": "Health check",
+      "status": "PASS",
+      "http_code": 200,
+      "duration_ms": 238,
+      "response_preview": "{\"status\":\"healthy\",\"service\":\"nis-secure-runner\",\"version\":\"3.2.1\",\"active_executions\":0,\"workspace_available\":true,\"memory_usage\":35.7,\"cpu_usage\":33.6}\n"
+    }
+,
+    {
+      "endpoint": "/docs",
+      "method": "GET",
+      "description": "API documentation",
+      "status": "PASS",
+      "http_code": 200,
+      "duration_ms": 151,
+      "response_preview": "\n    <!DOCTYPE html>\n    <html>\n    <head>\n    <link type=\"text/css\" rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui.css\">\n    <link rel=\"shortcut icon\" href=\"https://fastapi.tiangolo.com/img/favicon.png\">\n    <title>NIS Protocol Optimized Secure Runner - Swagger UI</title>\n    </head>\n    <body>\n    <div id=\"swagger-ui\">\n    </div>\n    <script src=\"https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-bundle.js\"></script>\n    <!-- `SwaggerUIBundle` is now available on the page -->\n    <script>\n    const ui = SwaggerUIBundle({\n        url: '/openapi.json',\n    \"dom_id\": \"#swagger-ui\",\n\"layout\": \"BaseLayout\",\n\"deepLinking\": true,\n\"showExtensions\": true,\n\"showCommonExtensions\": true,\noauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',\n    presets: [\n        SwaggerUIBundle.presets.apis,\n        SwaggerUIBundle.SwaggerUIStandalonePreset\n        ],\n    })\n    </script>\n    </body>\n    </html>\n    \n"
+    }
+,
+    {
+      "endpoint": "/redoc",
+      "method": "GET",
+      "description": "ReDoc documentation",
+      "status": "PASS",
+      "http_code": 200,
+      "duration_ms": 140,
+      "response_preview": "\n    <!DOCTYPE html>\n    <html>\n    <head>\n    <title>NIS Protocol Optimized Secure Runner - ReDoc</title>\n    <!-- needed for adaptive design -->\n    <meta charset=\"utf-8\"/>\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n    \n    <link href=\"https://fonts.googleapis.com/css?family=Montserrat:300,400,700|Roboto:300,400,700\" rel=\"stylesheet\">\n    \n    <link rel=\"shortcut icon\" href=\"https://fastapi.tiangolo.com/img/favicon.png\">\n    <!--\n    ReDoc doesn't change outer page styles\n    -->\n    <style>\n      body {\n        margin: 0;\n        padding: 0;\n      }\n    </style>\n    </head>\n    <body>\n    <noscript>\n        ReDoc requires Javascript to function. Please enable it to browse the documentation.\n    </noscript>\n    <redoc spec-url=\"/openapi.json\"></redoc>\n    <script src=\"https://cdn.jsdelivr.net/npm/redoc@2/bundles/redoc.standalone.js\"> </script>\n    </body>\n    </html>\n    \n"
+    }
+,
+    {
+      "endpoint": "/openapi.json",
+      "method": "GET",
+      "description": "OpenAPI schema",
+      "status": "PASS",
+      "http_code": 200,
+      "duration_ms": 1269,
+      "response_preview": "{\"openapi\":\"3.1.0\",\"info\":{\"title\":\"NIS Protocol Optimized Secure Runner\",\"description\":\"Sandboxed code execution environment with advanced tool optimization and token efficiency\",\"version\":\"3.2.1\"},\"\n"
+    }
+,
+    {
+      "endpoint": "/chat",
+      "method": "POST",
+      "description": "Basic chat",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 213,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/chat/stream",
+      "method": "POST",
+      "description": "Streaming chat",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 141,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/v4/chat",
+      "method": "POST",
+      "description": "V4 chat",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 142,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/v4/consciousness/genesis",
+      "method": "POST",
+      "description": "Genesis phase",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 101,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/v4/consciousness/plan",
+      "method": "POST",
+      "description": "Planning phase",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 164,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/v4/consciousness/collective",
+      "method": "POST",
+      "description": "Collective phase",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 124,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/v4/consciousness/multipath",
+      "method": "POST",
+      "description": "Multipath phase",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 161,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/v4/consciousness/embodiment",
+      "method": "POST",
+      "description": "Embodiment phase",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 111,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/v4/consciousness/ethics",
+      "method": "POST",
+      "description": "Ethics phase",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 146,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/v4/consciousness/marketplace",
+      "method": "POST",
+      "description": "Marketplace phase",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 197,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/agents/status",
+      "method": "GET",
+      "description": "Agent status",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 128,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/agents/learning/process",
+      "method": "POST",
+      "description": "Learning process",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 137,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/agents/learning/status",
+      "method": "GET",
+      "description": "Learning status",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 107,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/agents/planning/create",
+      "method": "POST",
+      "description": "Create plan",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 82,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/agents/curiosity/explore",
+      "method": "POST",
+      "description": "Curiosity exploration",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 123,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/agents/self-audit",
+      "method": "POST",
+      "description": "Self audit",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 89,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/agents/ethics/evaluate",
+      "method": "POST",
+      "description": "Ethics evaluation",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 130,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/agents/simulation/run",
+      "method": "POST",
+      "description": "Run simulation",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 113,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/research/deep",
+      "method": "POST",
+      "description": "Deep research",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 96,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/research/web-search",
+      "method": "POST",
+      "description": "Web search",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 318,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/research/analyze",
+      "method": "POST",
+      "description": "Research analysis",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 178,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/vision/analyze",
+      "method": "POST",
+      "description": "Image analysis",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 240,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/vision/generate",
+      "method": "POST",
+      "description": "Image generation",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 543,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/physics/solve/heat-equation",
+      "method": "POST",
+      "description": "Heat equation",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 117,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/physics/solve/wave-equation",
+      "method": "POST",
+      "description": "Wave equation",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 238,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/physics/validate",
+      "method": "POST",
+      "description": "Physics validation",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 152,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/models/bitnet/status",
+      "method": "GET",
+      "description": "BitNet status",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 179,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/training/bitnet/force",
+      "method": "POST",
+      "description": "Force training",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 471,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/training/bitnet/metrics",
+      "method": "GET",
+      "description": "Training metrics",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 385,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/downloads/bitnet",
+      "method": "GET",
+      "description": "Download model",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 329,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/memory/store",
+      "method": "POST",
+      "description": "Store memory",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 640,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/memory/retrieve",
+      "method": "POST",
+      "description": "Retrieve memory",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 230,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/memory/search",
+      "method": "POST",
+      "description": "Search memory",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 144,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/memory/clear",
+      "method": "DELETE",
+      "description": "Clear memory",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 120,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/autonomous/plan",
+      "method": "POST",
+      "description": "Autonomous planning",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 197,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/autonomous/execute",
+      "method": "POST",
+      "description": "Execute plan",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 246,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/autonomous/status",
+      "method": "GET",
+      "description": "Autonomous status",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 221,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/robotics/forward_kinematics",
+      "method": "POST",
+      "description": "Forward kinematics",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 121,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/robotics/kinematics/forward",
+      "method": "POST",
+      "description": "Forward kinematics (alias)",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 161,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/robotics/inverse_kinematics",
+      "method": "POST",
+      "description": "Inverse kinematics",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 123,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/robotics/path_planning",
+      "method": "POST",
+      "description": "Path planning",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 165,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/robotics/status",
+      "method": "GET",
+      "description": "Robotics status",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 143,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/audio/transcribe",
+      "method": "POST",
+      "description": "Audio transcription",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 158,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/audio/synthesize",
+      "method": "POST",
+      "description": "Audio synthesis",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 352,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/audio/analyze",
+      "method": "POST",
+      "description": "Audio analysis",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 142,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/simulation/run",
+      "method": "POST",
+      "description": "Run simulation",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 197,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/simulation/status",
+      "method": "GET",
+      "description": "Simulation status",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 231,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/simulation/generative",
+      "method": "POST",
+      "description": "Generative simulation",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 118,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/system/status",
+      "method": "GET",
+      "description": "System status",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 264,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/system/metrics",
+      "method": "GET",
+      "description": "System metrics",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 108,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/system/stream",
+      "method": "GET",
+      "description": "System stream",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 171,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/tools/list",
+      "method": "GET",
+      "description": "List tools",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 151,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/tools/execute",
+      "method": "POST",
+      "description": "Execute tool",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 131,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/mcp/chat",
+      "method": "POST",
+      "description": "MCP chat",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 129,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/mcp/tools",
+      "method": "GET",
+      "description": "MCP tools",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 166,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/protocols/can/send",
+      "method": "POST",
+      "description": "CAN send",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 175,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+,
+    {
+      "endpoint": "/protocols/obd/query",
+      "method": "POST",
+      "description": "OBD query",
+      "status": "FAIL",
+      "http_code": 404,
+      "duration_ms": 159,
+      "response_preview": "{\"detail\":\"Not Found\"}\n"
+    }
+
+  ],
+  "summary": {
+    "total": 61,
+    "passed": 4,
+    "failed": 57,
+    "pass_rate": "6.55%"
+  }
+}
