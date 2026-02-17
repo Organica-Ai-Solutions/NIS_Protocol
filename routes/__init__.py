@@ -110,6 +110,14 @@ from .isaac import router as isaac_router
 from .hub_gateway import router as hub_gateway_router
 from .autonomous import router as autonomous_router, set_dependencies as set_autonomous_dependencies
 
+# NVIDIA Cosmos and GR00T (optional - loaded dynamically)
+try:
+    from .cosmos import router as cosmos_router
+    from .humanoid import router as humanoid_router
+except ImportError:
+    cosmos_router = None
+    humanoid_router = None
+
 __all__ = [
     # Routers
     "robotics_router",

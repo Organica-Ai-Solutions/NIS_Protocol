@@ -94,6 +94,7 @@ from src.adapters.a2a_adapter import A2AAdapter
 from src.adapters.acp_adapter import ACPAdapter
 
 # Security
+import os
 try:
     from src.security.auth import verify_api_key, check_rate_limit
     from src.security.user_management import user_manager
@@ -152,6 +153,17 @@ pipeline_agent = None
 a2a_handler: Optional[A2AProtocolHandler] = None
 a2ui_formatter_instance: Optional[A2UIFormatter] = None
 nis_agent_orchestrator = None
+
+# Global agent instances (initialized during startup)
+vision_agent = None
+coordinator = None
+orchestrator = None
+
+# NVIDIA Stack 2025 global instances
+cosmos_generator_global = None
+cosmos_reasoner_global = None
+groot_agent_global = None
+isaac_lab_trainer_global = None
 
 # Registries
 conversation_memory: Dict[str, List[Dict[str, Any]]] = {}
@@ -259,7 +271,27 @@ app.include_router(isaac_router)
 app.include_router(hub_gateway_router)
 app.include_router(autonomous_router)
 
-logger.info("✅ 27 modular route modules loaded (260+ endpoints)")
+# NVIDIA Cosmos and GR00T integration
+try:
+    from routes.cosmos import router as cosmos_router
+    from routes.humanoid import router as humanoid_router
+    from routes.isaac_lab import router as isaac_lab_router
+    app.include_router(cosmos_router)
+    app.include_router(humanoid_router)
+    app.include_router(isaac_lab_router)
+    logger.info("✅ NVIDIA Stack integrated (Cosmos, GR00T, Isaac Lab)")
+except Exception as e:
+    logger.warning(f"NVIDIA stack routes not loaded: {e}")
+
+# NVIDIA Unified API
+try:
+    from routes.nvidia_unified import router as nvidia_unified_router
+    app.include_router(nvidia_unified_router)
+    logger.info("✅ NVIDIA Unified API loaded")
+except Exception as e:
+    logger.warning(f"NVIDIA Unified API not loaded: {e}")
+
+logger.info("✅ 30 modular route modules loaded (290+ endpoints)")
 
 # ====== WEBSOCKET ENDPOINTS ======
 
@@ -822,24 +854,53 @@ async def chat(request: ChatRequest):
 # ====== SECURITY MIDDLEWARE ======
 if SECURITY_AVAILABLE:
     @app.middleware("http")
-    async def security_middleware(request: Request, call_next):
-        # Skip security for docs, health endpoints, and WebSocket endpoints
-        if request.url.path in ["/health", "/", "/docs", "/openapi.json", "/redoc"] or request.url.path.startswith("/ws/"):
+    async def rate_limit_middleware(request: Request, call_next):
+        """
+        Global rate limiting middleware - applies to all endpoints except public ones
+        Can be disabled by setting DISABLE_RATE_LIMIT=true environment variable
+        """
+        # Skip rate limiting if disabled for testing
+        disable_flag = os.getenv("DISABLE_RATE_LIMIT", "false").lower()
+        logger.info(f"Rate limit check: DISABLE_RATE_LIMIT={disable_flag}")
+        if disable_flag in ["true", "1", "yes"]:
+            logger.info("⚠️ Rate limiting DISABLED for testing")
             return await call_next(request)
         
-        client_ip = request.client.host if request.client else "unknown"
-        api_key = request.headers.get("X-API-Key")
+        # Skip rate limiting for public endpoints
+        public_endpoints = ["/health", "/docs", "/redoc", "/openapi.json", "/metrics"]
+        if any(request.url.path.startswith(ep) for ep in public_endpoints):
+            return await call_next(request)
         
-        allowed, remaining, reset = check_rate_limit(client_ip, api_key)
-        if not allowed:
-            return JSONResponse(
-                {"error": "Rate limit exceeded", "retry_after": reset},
-                status_code=429
-            )
+        if not SECURITY_AVAILABLE:
+            return await call_next(request)
         
-        response = await call_next(request)
-        response.headers["X-RateLimit-Remaining"] = str(remaining)
-        return response
+        try:
+            client_ip = request.client.host if request.client else "unknown"
+            api_key = request.headers.get("X-API-Key")
+            
+            allowed, remaining, reset, tier = check_rate_limit(client_ip, api_key)
+            if not allowed:
+                return JSONResponse(
+                    {
+                        "error": "Rate limit exceeded", 
+                        "retry_after": reset,
+                        "tier": tier,
+                        "message": f"Rate limit for {tier} tier exceeded. Upgrade for higher limits."
+                    },
+                    status_code=429,
+                    headers={
+                        "X-RateLimit-Remaining": str(remaining),
+                        "X-RateLimit-Reset": str(reset),
+                        "X-RateLimit-Tier": tier
+                    }
+                )
+            response = await call_next(request)
+            response.headers["X-RateLimit-Remaining"] = str(int(remaining) if remaining != float('inf') else "999999")
+            response.headers["X-RateLimit-Tier"] = tier
+            return response
+        except Exception as e:
+            logger.error(f"Rate limiting error: {e}")
+            return JSONResponse({"error": "Rate limiting error"}, status_code=500)
 
 # Mount static files
 if os.path.exists("static"):
@@ -963,19 +1024,22 @@ async def initialize_system():
     # Consciousness Service (10-phase pipeline)
     logger.info("🔄 Step 9/10: Initializing Consciousness Service...")
     consciousness_service = create_consciousness_service()
-    try:
-        consciousness_service.__init_evolution__()
-        consciousness_service.__init_genesis__()
-        consciousness_service.__init_distributed__()
-        consciousness_service.__init_planning__()
-        consciousness_service.__init_marketplace__()
-        consciousness_service.__init_multipath__()
-        consciousness_service.__init_embodiment__()
-        consciousness_service.__init_debugger__()
-        consciousness_service.__init_meta_evolution__()
-        logger.info("✅ Step 9/10: 10-phase Consciousness Pipeline initialized")
-    except Exception as e:
-        logger.warning(f"⚠️ Step 9/10: Some consciousness phases skipped: {e}")
+    if not consciousness_service:
+        logger.warning("⚠️ Step 9/10: Consciousness service creation failed, using fallback")
+    else:
+        try:
+            consciousness_service.__init_evolution__()
+            consciousness_service.__init_genesis__()
+            consciousness_service.__init_distributed__()
+            consciousness_service.__init_planning__()
+            consciousness_service.__init_marketplace__()
+            consciousness_service.__init_multipath__()
+            consciousness_service.__init_embodiment__()
+            consciousness_service.__init_debugger__()
+            consciousness_service.__init_meta_evolution__()
+            logger.info("✅ Step 9/10: 10-phase Consciousness Pipeline initialized")
+        except Exception as e:
+            logger.warning(f"⚠️ Step 9/10: Some consciousness phases skipped: {e}")
     
     # V4.0 Self-improving components
     try:
@@ -1243,24 +1307,35 @@ def initialize_protocol_adapters():
 # ====== STARTUP EVENT ======
 @app.on_event("startup")
 async def startup_event():
-    """Application startup"""
-    logger.info("🚀 Starting NIS Protocol v4.0.1...")
+    """Initialize system on startup - FAST MODE for testing"""
+    logger.info("🚀 Initializing NIS Protocol v4.0.1 (FAST MODE)...")
     
-    # Note: Agent orchestrator will be initialized with LLM provider in initialize_system()
-    initialize_protocol_adapters()
-    initialize_vibevoice()
-    initialize_nemo()
+    # Skip heavy initialization if SKIP_INIT is set
+    if os.getenv("SKIP_INIT", "false").lower() in ["true", "1", "yes"]:
+        logger.info("⚡ SKIP_INIT enabled - using minimal initialization")
+        return
     
-    await initialize_system()
-    
-    logger.info("=" * 50)
-    logger.info("NIS Protocol v4.0.1 - Ready")
-    logger.info("=" * 50)
-    logger.info("📚 API Docs: http://localhost:8000/docs")
-    logger.info("🔬 ReDoc: http://localhost:8000/redoc")
-    logger.info("❤️ Health: http://localhost:8000/health")
-    logger.info("🔌 WebSocket A2A: ws://localhost:8000/a2a")
-    logger.info("=" * 50)
+    try:
+        # Run initialization in background to not block server startup
+        asyncio.create_task(initialize_system_background())
+        logger.info("✅ Server ready - initialization running in background")
+    except Exception as e:
+        logger.error(f"❌ Initialization error: {e}")
+        logger.error("System will continue with fallback mode")
+
+async def initialize_system_background():
+    """Initialize system in background"""
+    startup_timeout = 120  # 2 minutes
+    try:
+        await asyncio.wait_for(
+            initialize_system(),
+            timeout=startup_timeout
+        )
+        logger.info("✅ Background initialization complete")
+    except asyncio.TimeoutError:
+        logger.error(f"❌ Initialization timeout after {startup_timeout} seconds")
+    except Exception as e:
+        logger.error(f"❌ Background initialization error: {e}")
 
 # ====== WEBSOCKET A2A ENDPOINT ======
 @app.websocket("/a2a")
