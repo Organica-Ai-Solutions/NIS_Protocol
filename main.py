@@ -300,7 +300,7 @@ logger.info("✅ 30 modular route modules loaded (290+ endpoints)")
 async def agents_websocket(websocket: WebSocket):
     """
     WebSocket endpoint for real-time agent status updates.
-    Sends agent activity, task progress, and resource utilization.
+    Sends only runtime agent data that is actually available.
     """
     await websocket.accept()
     logger.info("🔌 Agent Status WebSocket connected")
@@ -335,37 +335,9 @@ async def agents_websocket(websocket: WebSocket):
                 except Exception as e:
                     logger.debug(f"Agent status error: {e}")
             
-            # Add mock agents if no real agents available
             if not agents_data["agents"]:
-                agents_data["agents"] = [
-                    {
-                        "id": "research_agent",
-                        "name": "Research Agent",
-                        "type": "research",
-                        "status": "active",
-                        "task": "Analyzing papers",
-                        "progress": 0.65,
-                        "resource_usage": {"cpu": 0.45, "memory": 0.32}
-                    },
-                    {
-                        "id": "physics_agent",
-                        "name": "Physics Agent",
-                        "type": "physics",
-                        "status": "idle",
-                        "task": "Ready",
-                        "progress": 0.0,
-                        "resource_usage": {"cpu": 0.05, "memory": 0.12}
-                    },
-                    {
-                        "id": "reasoning_agent",
-                        "name": "Reasoning Agent",
-                        "type": "reasoning",
-                        "status": "active",
-                        "task": "Processing query",
-                        "progress": 0.85,
-                        "resource_usage": {"cpu": 0.62, "memory": 0.48}
-                    }
-                ]
+                agents_data["status"] = "no_registered_agents"
+                agents_data["message"] = "Agent orchestrator is not initialized or has no registered agents."
             
             await websocket.send_json(agents_data)
             await asyncio.sleep(2)  # Update every 2 seconds
@@ -376,28 +348,22 @@ async def agents_websocket(websocket: WebSocket):
         logger.error(f"Agent WebSocket error: {e}")
 
 
-# TAO Loop WebSocket - Real-time thought-action-observation cycle
+# Runtime Pipeline WebSocket
 @app.websocket("/ws/tao")
 async def tao_loop_websocket(websocket: WebSocket):
     """
-    WebSocket endpoint for real-time TAO (Thought-Action-Observation) loop data.
-    Sends thinking steps, tool executions, and observations.
+    WebSocket endpoint for runtime pipeline state.
+    Sends only available state from initialized services.
     """
     await websocket.accept()
     logger.info("🔌 TAO Loop WebSocket connected")
     
     try:
-        # Simulate TAO loop phases
-        phases = ["thinking", "action", "observation"]
-        phase_index = 0
-        
         while True:
-            current_phase = phases[phase_index]
-            
             tao_data = {
                 "type": "tao_update",
                 "timestamp": datetime.now().isoformat(),
-                "phase": current_phase,
+                "phase": "runtime_status",
                 "steps": []
             }
             
@@ -415,29 +381,11 @@ async def tao_loop_websocket(websocket: WebSocket):
                 except Exception as e:
                     logger.debug(f"TAO data error: {e}")
             
-            # Add mock data based on phase if no real data
             if not tao_data["steps"]:
-                if current_phase == "thinking":
-                    tao_data["steps"] = [
-                        {"content": "Analyzing user request...", "confidence": 0.92},
-                        {"content": "Identifying required capabilities...", "confidence": 0.88},
-                        {"content": "Planning response strategy...", "confidence": 0.85}
-                    ]
-                elif current_phase == "action":
-                    tao_data["steps"] = [
-                        {"content": "Executing research query...", "confidence": 0.90},
-                        {"content": "Analyzing results...", "confidence": 0.87}
-                    ]
-                else:  # observation
-                    tao_data["steps"] = [
-                        {"content": "Results validated", "confidence": 0.95},
-                        {"content": "Response synthesized", "confidence": 0.93}
-                    ]
+                tao_data["status"] = "no_runtime_steps"
+                tao_data["message"] = "No live pipeline steps are currently available."
             
             await websocket.send_json(tao_data)
-            
-            # Cycle through phases
-            phase_index = (phase_index + 1) % len(phases)
             await asyncio.sleep(3)  # Update every 3 seconds
             
     except WebSocketDisconnect:
@@ -507,8 +455,8 @@ async def main_websocket(websocket: WebSocket):
 @app.websocket("/ws/agentic")
 async def agentic_websocket(websocket: WebSocket):
     """
-    Agentic AI WebSocket - Real-time Agent Visualization
-    Implements AG-UI Protocol for transparent agentic AI workflows
+    Agentic WebSocket for direct request processing.
+    Reports actual provider status without simulated agent activations.
     """
     await websocket.accept()
     logger.info("🤖 Agentic WebSocket connected")
@@ -523,41 +471,19 @@ async def agentic_websocket(websocket: WebSocket):
             
             logger.info(f"📨 Agentic message #{message_count}: {message[:50]}...")
             
-            # STEP 1: THINKING PHASE
             await websocket.send_json({
                 "type": "THINKING_STEP",
                 "step_number": 1,
                 "title": "Analyzing Request",
-                "content": f"Processing: '{message[:100]}...'",
-                "confidence": 0.95,
+                "content": "Routing request through the configured LLM provider.",
                 "timestamp": datetime.now().isoformat()
             })
-            
-            await asyncio.sleep(0.2)
-            
-            # STEP 2: AGENT ACTIVATION
-            agents = [
-                ("Laplace Signal Processor", "Frequency domain analysis"),
-                ("KAN Reasoning Engine", "Symbolic pattern extraction"),
-                ("Physics Validator (PINN)", "Physics constraint validation"),
-            ]
-            
-            for agent_name, task in agents:
-                await websocket.send_json({
-                    "type": "AGENT_ACTIVATION",
-                    "agent_name": agent_name,
-                    "status": "active",
-                    "task": task,
-                    "timestamp": datetime.now().isoformat()
-                })
-                await asyncio.sleep(0.1)
-            
-            # STEP 3: PROCESS MESSAGE
+
             try:
                 if llm_provider:
                     result = await llm_provider.generate_response(
                         messages=[
-                            {"role": "system", "content": "You are NIS Protocol v4.0, an advanced AI operating system."},
+                            {"role": "system", "content": "You are NIS Protocol v4.0, a robotics and edge-AI orchestration platform. Be accurate, concise, and technically grounded."},
                             {"role": "user", "content": message}
                         ],
                         temperature=0.7
@@ -569,19 +495,9 @@ async def agentic_websocket(websocket: WebSocket):
                     provider_used = "demo"
             except Exception as e:
                 logger.error(f"❌ Agentic chat error: {e}")
-                response_text = f"Demo response for: {message}"
-                provider_used = "demo"
-            
-            # STEP 4: DEACTIVATE AGENTS
-            for agent_name, _ in agents:
-                await websocket.send_json({
-                    "type": "AGENT_DEACTIVATION",
-                    "agent_name": agent_name,
-                    "timestamp": datetime.now().isoformat()
-                })
-                await asyncio.sleep(0.05)
-            
-            # STEP 5: SEND RESPONSE
+                response_text = f"Error processing message: {str(e)}"
+                provider_used = "error"
+
             await websocket.send_json({
                 "type": "TEXT_MESSAGE_CONTENT",
                 "content": response_text,
