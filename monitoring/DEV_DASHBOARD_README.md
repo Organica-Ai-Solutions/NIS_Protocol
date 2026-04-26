@@ -195,11 +195,11 @@ docker-compose -f monitoring/docker-compose.monitoring.yml restart grafana
 
 ```bash
 # Export current dashboard
-curl -u admin:nisprotocol http://localhost:3000/api/dashboards/uid/nis-dev-team > backup.json
+curl -u "$GRAFANA_USER:$GRAFANA_PASSWORD" http://localhost:3000/api/dashboards/uid/nis-dev-team > backup.json
 
 # Import from backup
 curl -X POST -H "Content-Type: application/json" \
-  -u admin:nisprotocol \
+  -u "$GRAFANA_USER:$GRAFANA_PASSWORD" \
   -d @backup.json \
   http://localhost:3000/api/dashboards/db
 ```
@@ -291,3 +291,4 @@ For dashboard issues or feature requests:
 **Dashboard Version**: 1.0.0  
 **Last Updated**: December 2024  
 **Maintained By**: NIS Protocol Dev Team
+

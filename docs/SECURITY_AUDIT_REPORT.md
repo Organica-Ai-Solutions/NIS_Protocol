@@ -50,7 +50,7 @@ NVIDIA_API_KEY=nvapi-[REDACTED]
 **Location**: `/.env` (line 86)
 
 ```
-DATABASE_URL=postgresql://nis_user:[REDACTED]@postgres:5432/nis_protocol_v3
+DATABASE_URL=postgresql://postgres:5432/nis_protocol_v3
 ```
 
 **Risk**: 🟠 **HIGH**
@@ -320,3 +320,4 @@ GRAFANA_ADMIN_PASSWORD=nis_admin_2025
 
 **Audit Completed**: December 27, 2025  
 **Follow-up Audit**: Recommended after fixes applied
+

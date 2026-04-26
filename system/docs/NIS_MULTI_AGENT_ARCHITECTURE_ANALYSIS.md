@@ -304,7 +304,7 @@ services:
     environment:
       - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
       - REDIS_HOST=redis
-      - DATABASE_URL=postgresql://user:pass@postgres:5432/nis
+      - DATABASE_URL=postgresql://postgres:5432/nis
     depends_on:
       - kafka
       - redis
@@ -472,7 +472,7 @@ ANTHROPIC_API_KEY=your-key
 GOOGLE_API_KEY=your-key
 
 # Infrastructure
-DATABASE_URL=postgresql://user:pass@postgres:5432/nis
+DATABASE_URL=postgresql://postgres:5432/nis
 KAFKA_BOOTSTRAP_SERVERS=kafka:9092
 REDIS_HOST=redis
 
@@ -908,4 +908,5 @@ The path to building a successful AI company like Anthropic starts with:
 *- NIS Protocol Engineering Principle*
 
 🚀 Now go build something amazing!
+
 

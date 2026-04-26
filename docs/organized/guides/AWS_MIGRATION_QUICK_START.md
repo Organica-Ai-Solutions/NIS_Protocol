@@ -232,7 +232,7 @@ Benefits: 99.9% uptime, auto-scaling, global reach
 ```python
 REDIS_URL = "redis:6379"
 KAFKA_BROKERS = "kafka:9092"
-DATABASE_URL = "postgres://user:pass@postgres:5432/nisdb"
+DATABASE_URL = "postgres://postgres:5432/nisdb"
 ```
 
 ### **AWS (Managed Services)**

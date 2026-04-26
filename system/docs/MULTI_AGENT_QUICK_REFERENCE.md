@@ -395,7 +395,7 @@ AGENT_RETRY_ATTEMPTS=3
 KAFKA_SERVERS=kafka:9092
 REDIS_HOST=redis
 REDIS_PORT=6379
-DATABASE_URL=postgresql://user:pass@db:5432/nis
+DATABASE_URL=postgresql://db:5432/nis
 
 # Performance
 ENABLE_QUERY_ROUTER=true
@@ -524,4 +524,5 @@ Track these to measure system health:
 **"Build impressive systems, describe them accurately, deploy them reliably."**
 
 🚀 Happy Building!
+
 
