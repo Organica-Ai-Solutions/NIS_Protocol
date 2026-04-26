@@ -232,7 +232,7 @@ Benefits: 99.9% uptime, auto-scaling, global reach
 ```python
 REDIS_URL = "redis:6379"
 KAFKA_BROKERS = "kafka:9092"
-DATABASE_URL = "postgres://user:pass@postgres:5432/nisdb"
+DATABASE_URL = "postgres://postgres:5432/nisdb"
 ```
 
 ### **AWS (Managed Services)**
@@ -266,3 +266,4 @@ DATABASE_URL = "nis-postgres.abc123.us-east-1.rds.amazonaws.com:5432/nisdb"
 ---
 
 **🏺 Simple AWS migration focused on your preferred container split approach with managed services for reliability and no server management complexity.**
+

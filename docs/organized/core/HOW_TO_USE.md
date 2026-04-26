@@ -360,7 +360,7 @@ DEEPSEEK_API_KEY=your_deepseek_key
 # Optional configurations:
 REDIS_URL=redis://localhost:6379
 KAFKA_BROKERS=localhost:9092
-POSTGRES_URL=postgresql://user:pass@localhost:5432/nis
+POSTGRES_URL=postgresql://localhost:5432/nis
 
 # System settings:
 LOG_LEVEL=INFO
@@ -600,3 +600,5 @@ python dev/examples/physics_validation_example.py
 **Need help?** Our [Agent Connection Guide](AGENT_CONNECTION_GUIDE.md) has everything you need for development.
 
 **Want to contribute?** See our [Contribution Guidelines](CONTRIBUTING.md) to get involved!
+
+
