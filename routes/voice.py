@@ -254,6 +254,117 @@ async def get_vibevoice_status():
         }
 
 
+# ====== Pi Hardware Mic (Mode B — no browser mic needed) ======
+
+@router.post("/voice/pi-listen")
+async def pi_mic_listen(request: Dict[str, Any]):
+    """
+    🎙️ Record from Pi hardware mic → Whisper STT → optional cookoff execute.
+
+    Mode B: no browser microphone permission required.
+    Uses `arecord` (ALSA) to capture from C270 webcam mic (card 1).
+
+    Body:
+        seconds  int   recording duration 1-30 (default 5)
+        execute  bool  send transcript to /cookoff/run (default true)
+        card     int   ALSA card index (default 1 = C270)
+    Returns:
+        {ok, transcript, action_result, latency_ms}
+    """
+    import asyncio as _aio, uuid as _uuid, os as _os, base64 as _b64, time as _time
+
+    seconds = min(max(int(request.get("seconds", 5)), 1), 30)
+    execute = request.get("execute", True)
+    card    = int(request.get("card", 1))
+    t0      = _time.time()
+
+    wav_path = f"/tmp/pi_mic_{_uuid.uuid4().hex[:8]}.wav"
+    try:
+        # ── Record via arecord ────────────────────────────────────────────────
+        cmd = [
+            "arecord", "-D", f"hw:{card},0",
+            "-d", str(seconds),
+            "-f", "S16_LE", "-r", "16000", "-c", "1",
+            wav_path,
+        ]
+        proc = await _aio.create_subprocess_exec(
+            *cmd,
+            stdout=_aio.subprocess.PIPE,
+            stderr=_aio.subprocess.PIPE,
+        )
+        _, stderr = await _aio.wait_for(proc.communicate(), timeout=seconds + 8)
+
+        if proc.returncode != 0 or not _os.path.exists(wav_path):
+            return {"ok": False, "error": f"arecord failed: {stderr.decode()[:200]}"}
+
+        # ── Read WAV → base64 ─────────────────────────────────────────────────
+        with open(wav_path, "rb") as fh:
+            audio_b64 = _b64.b64encode(fh.read()).decode()
+
+        # ── Whisper STT ───────────────────────────────────────────────────────
+        try:
+            from src.voice.whisper_stt import get_whisper_stt
+            stt    = get_whisper_stt(model_size="base")
+            result = await stt.transcribe_base64(audio_b64)
+        except Exception as stt_err:
+            logger.error("[pi-listen] whisper error: %s", stt_err)
+            return {"ok": False, "error": f"STT failed: {stt_err}", "transcript": ""}
+
+        if not result.get("success"):
+            return {"ok": False, "error": result.get("error", "transcription failed"), "transcript": ""}
+
+        transcript = result.get("text", "").strip()
+        if not transcript:
+            return {"ok": True, "transcript": "", "action_result": None,
+                    "latency_ms": int((_time.time() - t0) * 1000)}
+
+        # ── Fire autonomy voice_command (non-blocking) ────────────────────────
+        try:
+            from routes.autonomy import get_engine as _get_aut
+            _aio.ensure_future(_get_aut().ingest_event("voice_command", {
+                "text": transcript, "source": "pi_mic",
+                "confidence": result.get("confidence", 0.0),
+            }))
+        except Exception:
+            pass
+
+        # ── Execute via cookoff if requested ──────────────────────────────────
+        action_result = None
+        if execute:
+            try:
+                import httpx as _httpx
+                async with _httpx.AsyncClient(timeout=90.0) as client:
+                    r = await client.post(
+                        "http://localhost:8000/cookoff/run",
+                        json={"query": transcript, "execute_arm": True},
+                    )
+                    if r.status_code == 200:
+                        action_result = r.json()
+            except Exception as ex_err:
+                logger.warning("[pi-listen] cookoff execute error: %s", ex_err)
+                action_result = {"error": str(ex_err)}
+
+        return {
+            "ok":           True,
+            "transcript":   transcript,
+            "confidence":   result.get("confidence", 0.0),
+            "language":     result.get("language", "en"),
+            "action_result": action_result,
+            "latency_ms":   int((_time.time() - t0) * 1000),
+        }
+
+    except _aio.TimeoutError:
+        return {"ok": False, "error": "Recording timed out"}
+    except Exception as e:
+        logger.error("[pi-listen] error: %s", e)
+        return {"ok": False, "error": str(e)}
+    finally:
+        try:
+            _os.unlink(wav_path)
+        except Exception:
+            pass
+
+
 # ====== Speech-to-Text ======
 
 @router.post("/voice/transcribe")
@@ -290,6 +401,18 @@ async def transcribe_audio(request: Dict[str, Any]):
             if result.get("success"):
                 transcribed_text = result.get("text", "").strip()
                 logger.info(f"✅ Whisper transcribed successfully: '{transcribed_text[:100]}...'")
+                # ── Fire autonomy voice_command event non-blocking ────────────
+                if transcribed_text:
+                    try:
+                        import asyncio as _asyncio
+                        from routes.autonomy import get_engine as _get_autonomy
+                        _asyncio.ensure_future(_get_autonomy().ingest_event("voice_command", {
+                            "text":       transcribed_text,
+                            "confidence": result.get("confidence", 0.0),
+                            "language":   result.get("language", "en"),
+                        }))
+                    except Exception:
+                        pass
                 return {
                     "success": True,
                     "text": transcribed_text,
@@ -685,6 +808,17 @@ async def optimized_voice_chat(websocket: WebSocket):
                                 "confidence": stt_result.get("confidence", 0.0),
                                 "latency_ms": int(stt_time * 1000)
                             })
+                            # ── Fire autonomy voice_command event non-blocking ──
+                            try:
+                                import asyncio as _aio
+                                from routes.autonomy import get_engine as _get_eng
+                                _aio.ensure_future(_get_eng().ingest_event("voice_command", {
+                                    "text":       transcription_text,
+                                    "confidence": stt_result.get("confidence", 0.0),
+                                    "source":     "ws_voice_chat",
+                                }))
+                            except Exception:
+                                pass
                     
                     if not transcription_text:
                         await websocket.send_json({"type": "error", "message": "Transcription failed"})

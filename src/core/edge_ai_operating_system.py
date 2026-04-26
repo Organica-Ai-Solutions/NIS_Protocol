@@ -312,9 +312,12 @@ class EdgeAIOperatingSystem:
         """Start continuous system monitoring for edge operation"""
         
         # Start background monitoring tasks
-        asyncio.create_task(self._monitor_system_health())
-        asyncio.create_task(self._monitor_connectivity())
-        asyncio.create_task(self._monitor_performance())
+        def _log_monitor_exc(t):
+            if not t.cancelled() and t.exception():
+                self.logger.error(f"EdgeAIOS monitor crashed: {t.exception()}", exc_info=t.exception())
+        for _coro in (self._monitor_system_health(), self._monitor_connectivity(), self._monitor_performance()):
+            _t = asyncio.create_task(_coro)
+            _t.add_done_callback(_log_monitor_exc)
         
         self.logger.info("✅ System monitoring active for autonomous operation")
     

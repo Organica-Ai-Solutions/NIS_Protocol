@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cosmos Cookoff Dashboard</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#0a0a12;color:#e0e0ff;font-family:'Segoe UI',monospace;font-size:13px;}
+header{background:linear-gradient(90deg,#1a1a3e,#0d2240);padding:10px 18px;display:flex;align-items:center;gap:14px;border-bottom:1px solid #2a2a5a;}
+header h1{font-size:17px;font-weight:700;color:#7df;letter-spacing:1px;}
+header .badge{background:#1a3a5a;color:#4af;padding:2px 9px;border-radius:20px;font-size:11px;border:1px solid #2a5a8a;}
+#conn-dot{width:10px;height:10px;border-radius:50%;background:#f44;margin-left:auto;transition:background .3s;}
+#conn-dot.ok{background:#4f4;}
+.grid{display:grid;grid-template-columns:1fr 400px;grid-template-rows:auto 1fr;gap:10px;padding:10px;height:calc(100vh - 52px);}
+.cam-panel{grid-row:1/3;background:#111122;border:1px solid #2a2a5a;border-radius:8px;overflow:hidden;display:flex;flex-direction:column;}
+.cam-panel canvas{width:100%;flex:1;background:#000;display:block;}
+.cam-footer{padding:5px 10px;background:#0d0d20;display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.cam-footer span{color:#888;font-size:11px;}
+#fps-val{color:#4af;}
+/* Right panel */
+.right-panel{grid-column:2;grid-row:1/3;display:flex;flex-direction:column;gap:0;overflow:hidden;}
+/* Tab bar */
+.tab-bar{display:flex;background:#0d0d20;border:1px solid #2a2a5a;border-radius:8px 8px 0 0;border-bottom:none;}
+.tab-btn{flex:1;padding:7px 10px;background:none;border:none;color:#668;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:.5px;transition:all .15s;text-transform:uppercase;}
+.tab-btn.active{color:#4af;background:#0a1020;border-bottom:2px solid #4af;}
+.tab-btn:hover:not(.active){color:#aad;background:#111128;}
+/* Tab panes */
+.tab-content{flex:1;overflow:hidden;background:#111122;border:1px solid #2a2a5a;border-radius:0 0 8px 8px;display:flex;flex-direction:column;}
+.tab-pane{display:none;flex-direction:column;height:100%;overflow-y:auto;padding:10px;gap:8px;}
+.tab-pane.active{display:flex;}
+/* Vision tab — same as before */
+.section-title{color:#4af;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;padding-bottom:3px;border-bottom:1px solid #1a2a3a;}
+.cosmos-box{background:#0a1020;border:1px solid #1a3a5a;border-radius:6px;padding:7px;min-height:60px;font-size:12px;color:#b0d0ff;line-height:1.5;white-space:pre-wrap;word-break:break-word;}
+.det-list{list-style:none;font-size:11px;max-height:80px;overflow-y:auto;}
+.det-list li{padding:2px 0;color:#8cf;border-bottom:1px solid #1a1a2a;}
+.srv-row{display:flex;align-items:center;gap:5px;margin:2px 0;}
+.srv-row label{width:22px;color:#ff8;font-weight:700;font-size:12px;}
+.srv-row input[type=range]{flex:1;accent-color:#4af;height:4px;}
+.srv-row span{width:34px;text-align:right;color:#fff;font-size:11px;}
+.btn-row{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px;}
+.btn{background:#0d1a2a;color:#4af;border:1px solid #2a4a6a;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:11px;transition:all .15s;}
+.btn:hover{background:#1a2a4a;border-color:#4af;}
+.btn:active{transform:scale(0.97);}
+.btn.go{color:#ff8;border-color:#665500;}
+.btn.ok{color:#4f8;border-color:#225522;}
+.btn.red{color:#f88;border-color:#552222;}
+.btn.purple{color:#d8a;border-color:#553366;}
+.btn.cyan{color:#4ee;border-color:#226655;}
+.btn.orange{color:#fa6;border-color:#663300;}
+#pose-out{font-size:11px;color:#4f8;margin-top:4px;min-height:14px;}
+#hw-out{font-size:11px;color:#fa8;margin-top:4px;min-height:14px;}
+.arm-pos{display:flex;gap:6px;flex-wrap:wrap;margin-top:3px;}
+.arm-pos span{background:#0d1a2a;padding:1px 6px;border-radius:10px;color:#8df;font-size:11px;}
+#query-in{width:100%;background:#0a1020;border:1px solid #2a4a6a;color:#e0e0ff;padding:5px 8px;border-radius:4px;font-size:12px;margin-top:5px;}
+.beat-bar{height:6px;border-radius:3px;background:#1a2a3a;margin-top:3px;overflow:hidden;}
+.beat-fill{height:100%;background:linear-gradient(90deg,#f44,#f84,#ff4);width:0%;transition:width .3s;}
+#dance-status{font-size:11px;color:#d8a;margin-top:3px;min-height:12px;}
+/* Autonomous tab */
+.auto-controls{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:8px 10px;background:#0a0a18;border-bottom:1px solid #1a1a2a;}
+.auto-controls .btn{padding:5px 14px;font-size:12px;}
+.auto-controls .btn.start{color:#4f8;border-color:#225522;font-weight:700;}
+.auto-controls .btn.stop{color:#f88;border-color:#552222;}
+.auto-controls label{color:#888;font-size:11px;}
+.auto-controls input[type=checkbox]{accent-color:#4af;}
+.auto-controls input[type=number]{width:58px;background:#0d1a2a;border:1px solid #2a4a6a;color:#fff;padding:3px 6px;border-radius:4px;font-size:11px;}
+.auto-status-bar{display:flex;gap:12px;padding:5px 10px;background:#0a0f1a;border-bottom:1px solid #1a1a2a;font-size:11px;flex-wrap:wrap;}
+.auto-status-bar .stat{color:#888;}
+.auto-status-bar .stat span{color:#fff;font-weight:700;}
+.auto-status-bar .stat.state span{color:#ff8;}
+#auto-feed{flex:1;overflow-y:auto;padding:6px 10px;font-family:monospace;font-size:11px;background:#080810;}
+#auto-feed:empty::after{content:"Waiting for events...";color:#333;}
+/* Details section collapse */
+.collapse-hdr{padding:5px 10px;background:#0d0d20;color:#668;font-size:11px;cursor:pointer;border-top:1px solid #1a1a2a;user-select:none;}
+.collapse-hdr:hover{color:#aad;}
+.collapse-body{display:none;padding:8px 10px;overflow-y:auto;}
+.collapse-body.open{display:block;}
+</style>
+</head>
+<body>
+<header>
+  <div style="width:30px;height:30px;background:linear-gradient(135deg,#4af,#a4f);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:15px;">&#x1F916;</div>
+  <h1>COSMOS COOKOFF</h1>
+  <span class="badge">Pi 192.168.1.163:8085</span>
+  <span class="badge" id="sim-badge">sim=?</span>
+  <span class="badge" id="nis-badge" style="color:#888;border-color:#334;">NIS:?</span>
+  <span class="badge" id="bitnet-badge" style="color:#888;border-color:#334;">BitNet:?</span>
+  <button class="badge" id="h100-btn" onclick="toggleH100()"
+    style="cursor:pointer;background:#1a2a1a;color:#4f8;border-color:#225522;"
+    title="Toggle between Pi and H100">Pi</button>
+  <div id="conn-dot" title="WebSocket connection"></div>
+</header>
+
+<div class="grid">
+  <!-- Camera panel -->
+  <div class="cam-panel">
+    <canvas id="cam" width="1280" height="720"></canvas>
+    <div class="cam-footer">
+      <span>WS /ws/cosmos</span>
+      <span>FPS: <span id="fps-val">--</span></span>
+      <span id="cam-src">waiting...</span>
+      <button class="btn" onclick="setFps(5)" style="padding:2px 7px;font-size:10px;">5fps</button>
+      <button class="btn" onclick="setFps(10)" style="padding:2px 7px;font-size:10px;">10fps</button>
+      <button class="btn" onclick="setFps(1)" style="padding:2px 7px;font-size:10px;">1fps</button>
+      <button class="btn" onclick="snapNow()" style="padding:2px 7px;font-size:10px;">&#x1F4F8; Snap</button>
+    </div>
+  </div>
+
+  <!-- Right panel with tabs -->
+  <div class="right-panel">
+    <div class="tab-bar">
+      <button class="tab-btn active" id="tab-vision-btn" onclick="switchTab('vision')">&#x1F441; Vision</button>
+      <button class="tab-btn" id="tab-auto-btn" onclick="switchTab('auto')">&#x1F916; Autonomous</button>
+    </div>
+    <div class="tab-content">
+
+      <!-- ── Vision tab ── -->
+      <div class="tab-pane active" id="tab-vision">
+        <div>
+          <div class="section-title">BitNet Status</div>
+          <div class="cosmos-box" id="bitnet-status-box" style="font-size:11px;min-height:40px;">Loading...</div>
+        </div>
+        <div>
+          <div class="section-title">Cosmos Reason2</div>
+          <div class="cosmos-box" id="cosmos-text">Waiting for frame...</div>
+          <input id="query-in" type="text" placeholder="Override query... (press Enter)" onkeydown="if(event.key==='Enter')sendQuery(this.value)">
+        </div>
+        <div>
+          <div class="section-title">YOLO Detections</div>
+          <ul class="det-list" id="det-list"><li style="color:#555">none</li></ul>
+        </div>
+        <div>
+          <div class="section-title">Live Arm Positions</div>
+          <div class="arm-pos" id="arm-pos"></div>
+        </div>
+
+        <!-- Servo sliders -->
+        <div class="section-title" style="margin-top:4px;">Servo Control</div>
+        <div id="srv-sliders"></div>
+        <div id="pose-out"></div>
+        <div class="btn-row">
+          <button class="btn go" onclick="sendMove()">&#x25B6; SEND</button>
+          <button class="btn ok" onclick="saveTouchPose()">&#x2714; SAVE TOUCH</button>
+          <button class="btn cyan" onclick="readHW()">&#x1F4CB; Read HW</button>
+        </div>
+
+        <!-- Quick poses -->
+        <div class="section-title" style="margin-top:6px;">Quick Poses</div>
+        <div class="btn-row">
+          <button class="btn ok"     onclick="loadPreset('home')">HOME</button>
+          <button class="btn"        onclick="loadPreset('hover')">HOVER</button>
+          <button class="btn"        onclick="loadPreset('mid')">MID</button>
+          <button class="btn orange" onclick="loadPreset('pick')">PICK</button>
+          <button class="btn ok"     onclick="loadPreset('lift')">LIFT</button>
+          <button class="btn"        onclick="loadPreset('place')">PLACE</button>
+        </div>
+        <div class="btn-row" style="margin-top:4px;">
+          <button class="btn ok"  onclick="goHome()">&#x1F3E0; Go HOME</button>
+          <button class="btn"     onclick="openGrip()">&#x1F450; OPEN</button>
+          <button class="btn red" onclick="closeGrip()">&#x270A; GRIP (700)</button>
+          <button class="btn red" onclick="stopArm()">&#x23F9; STOP</button>
+        </div>
+
+        <!-- Touch poses -->
+        <div class="section-title" style="margin-top:6px;">Saved Touch Poses</div>
+        <div class="btn-row">
+          <button class="btn" onclick="loadTouchPose('home')">home</button>
+          <button class="btn" onclick="loadTouchPose('pick_hover_center')">hover_c</button>
+          <button class="btn" onclick="loadTouchPose('pick_down_center')">pick_c</button>
+          <button class="btn" onclick="loadTouchPose('lift_center')">lift_c</button>
+          <button class="btn" onclick="loadTouchPose('place_left90')">place_L</button>
+        </div>
+
+        <!-- Pick & Place -->
+        <div class="section-title" style="margin-top:6px;">Pick & Place (IK Confirmed)</div>
+        <div class="btn-row">
+          <button class="btn red" onclick="runIKPick('left90')">&#x1F91A; PICK &#x2192; LEFT</button>
+          <button class="btn red" onclick="runIKPick('left45')">&#x1F91A; PICK &#x2192; L45</button>
+          <button class="btn" onclick="runIKPick('right45')">&#x1F91A; PICK &#x2192; R45</button>
+        </div>
+        <div class="btn-row" style="margin-top:4px;">
+          <button class="btn ok" onclick="runWave()">&#x1F44B; WAVE</button>
+          <button class="btn" onclick="runInspect()">&#x1F50D; INSPECT</button>
+          <button class="btn purple" onclick="cosmosDepthCal()">&#x1F5FA; Depth Cal</button>
+          <button class="btn purple" onclick="cosmosDepthMap()">&#x1F4CA; Depth Map</button>
+        </div>
+
+        <!-- Dance -->
+        <div class="section-title" style="margin-top:6px;">&#x1F483; Latino Dance (NIS)</div>
+        <div class="btn-row">
+          <button class="btn red"    onclick="startDance('reggaeton')">&#x1F525; REGGAETON</button>
+          <button class="btn orange" onclick="startDance('cumbia')">&#x1F3BA; CUMBIA</button>
+          <button class="btn purple" onclick="startDance('bachata')">&#x1F339; BACHATA</button>
+          <button class="btn ok"     onclick="startDance('salsa')">&#x1F35B; SALSA</button>
+        </div>
+        <div class="btn-row" style="margin-top:4px;">
+          <button class="btn cyan" onclick="startMicDance()">&#x1F3A4; MIC LIVE</button>
+          <button class="btn red"  onclick="stopDance()">&#x23F9; STOP DANCE</button>
+        </div>
+        <div id="dance-status"></div>
+        <div class="beat-bar"><div class="beat-fill" id="beat-fill"></div></div>
+        <div id="hw-out"></div>
+      </div><!-- /tab-vision -->
+
+      <!-- ── Autonomous tab ── -->
+      <div class="tab-pane" id="tab-auto" style="padding:0;gap:0;">
+        <!-- Controls bar -->
+        <div class="auto-controls">
+          <button class="btn start" onclick="startAutonomous()">&#x25B6; START</button>
+          <button class="btn stop"  onclick="stopAutonomous()">&#x23F9; STOP</button>
+          <label><input type="checkbox" id="auto-sim"> SIM</label>
+          <label style="margin-left:4px;">conf: <input type="number" id="auto-conf" value="0.08" step="0.01" min="0.01" max="0.5"></label>
+        </div>
+        <!-- Status bar -->
+        <div class="auto-status-bar">
+          <div class="stat state">State: <span id="as-state">IDLE</span></div>
+          <div class="stat">Picks: <span id="as-picks">0/0</span></div>
+          <div class="stat">Retries: <span id="as-retries">0</span></div>
+          <div class="stat">Time: <span id="as-time">--</span></div>
+        </div>
+        <!-- Event feed -->
+        <div id="auto-feed"></div>
+        <!-- Manual override (collapsed) -->
+        <div class="collapse-hdr" onclick="toggleOverride(this)">&#x25BC; Manual Override</div>
+        <div class="collapse-body" id="override-body">
+          <div class="btn-row" style="margin-bottom:6px;">
+            <button class="btn ok"  onclick="goHome()">&#x1F3E0; HOME</button>
+            <button class="btn"     onclick="openGrip()">&#x1F450; OPEN</button>
+            <button class="btn red" onclick="closeGrip()">&#x270A; GRIP</button>
+            <button class="btn red" onclick="stopArm()">&#x23F9; STOP</button>
+          </div>
+          <div id="srv-sliders-auto"></div>
+          <div class="btn-row" style="margin-top:4px;">
+            <button class="btn go" onclick="sendMoveAuto()">&#x25B6; SEND</button>
+            <button class="btn cyan" onclick="readHW()">&#x1F4CB; Read HW</button>
+          </div>
+        </div>
+      </div><!-- /tab-auto -->
+
+    </div><!-- /tab-content -->
+  </div><!-- /right-panel -->
+</div>
+
+<script>
+// ── Constants ─────────────────────────────────────────────────────────────────
+const _host = location.hostname && location.hostname !== 'localhost'
+  ? location.hostname
+  : '192.168.1.163';
+const _agentPort = '8085';
+const _nisPort   = '8000';
+const PI   = (location.protocol==='https:'?'wss:':'ws:')+'//'+ _host +':'+ _agentPort;
+const HTTP = location.protocol+'//'+ _host +':'+ _agentPort;
+let   NIS  = location.protocol+'//'+ _host +':'+ _nisPort;
+let   NIS_HOST = _host;
+
+const PRESETS = {
+  home:  {1:100, 2:500, 3:310, 4:870, 5:680, 6:500},
+  hover: {1:100, 2:500, 3:222, 4:697, 5:604, 6:500},
+  mid:   {1:100, 2:500, 3:158, 4:798, 5:502, 6:500},
+  pick:  {1:100, 2:500, 3:142, 4:856, 5:430, 6:500},
+  lift:  {1:700, 2:500, 3:310, 4:870, 5:680, 6:500},
+  place: {1:700, 2:500, 3:220, 4:827, 5:425, 6:875},
+};
+
+let ws = null, vals = {...PRESETS.home};
+let lastFrameT = 0, frameCount = 0, fpsTimer = 0;
+const canvas = document.getElementById('cam');
+const ctx = canvas.getContext('2d');
+
+// ── Tab switching ─────────────────────────────────────────────────────────────
+function switchTab(name) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  document.getElementById('tab-' + name + '-btn').classList.add('active');
+}
+
+function toggleOverride(hdr) {
+  const body = document.getElementById('override-body');
+  const open = body.classList.toggle('open');
+  hdr.textContent = (open ? '▲' : '▼') + ' Manual Override';
+  if (open && document.getElementById('srv-sliders-auto').innerHTML === '') {
+    buildSliders('srv-sliders-auto');
+  }
+}
+
+// ── Servo sliders ─────────────────────────────────────────────────────────────
+function buildSliders(targetId) {
+  const id = targetId || 'srv-sliders';
+  const d = document.getElementById(id);
+  d.innerHTML = '';
+  for (let i = 1; i <= 6; i++) {
+    d.innerHTML += `<div class="srv-row">
+      <label>S${i}</label>
+      <input type="range" min="0" max="1000" value="${vals[i]}" id="${id}-s${i}"
+             oninput="upd('${id}',${i},this.value)">
+      <span id="${id}-v${i}">${vals[i]}</span>
+    </div>`;
+  }
+}
+function upd(id, i, v) {
+  vals[i] = parseInt(v);
+  const el = document.getElementById(id + '-v' + i);
+  if (el) el.innerText = v;
+}
+function setSliders(obj) {
+  for (const k in obj) { vals[parseInt(k)] = parseInt(obj[k]); }
+  ['srv-sliders', 'srv-sliders-auto'].forEach(id => {
+    for (let i = 1; i <= 6; i++) {
+      const el = document.getElementById(id + '-s' + i);
+      if (el) { el.value = vals[i]; document.getElementById(id + '-v' + i).innerText = vals[i]; }
+    }
+  });
+}
+
+// ── WebSocket cosmos stream ───────────────────────────────────────────────────
+function connect() {
+  ws = new WebSocket(PI + '/ws/cosmos');
+  ws.onopen = () => {
+    document.getElementById('conn-dot').className = 'ok';
+    document.getElementById('cam-src').innerText = 'connected';
+    setFps(5);
+  };
+  ws.onclose = () => {
+    document.getElementById('conn-dot').className = '';
+    document.getElementById('cam-src').innerText = 'reconnecting...';
+    setTimeout(connect, 3000);
+  };
+  ws.onerror = () => ws.close();
+  ws.onmessage = (ev) => {
+    try {
+      const d = JSON.parse(ev.data);
+      if (d.frame) {
+        const img = new Image();
+        img.onload = () => { ctx.drawImage(img, 0, 0, canvas.width, canvas.height); };
+        img.src = 'data:image/jpeg;base64,' + d.frame;
+      }
+      if (d.cosmos !== undefined)
+        document.getElementById('cosmos-text').innerText = d.cosmos || '(no response)';
+      if (d.detections) {
+        const ul = document.getElementById('det-list');
+        ul.innerHTML = d.detections.length === 0
+          ? '<li style="color:#555">none</li>'
+          : d.detections.map(det => `<li>&#x1F4CD; <b>${det.label}</b> cx=${det.cx} cy=${det.cy} conf=${det.conf.toFixed(2)}</li>`).join('');
+      }
+      if (d.arm_positions) {
+        document.getElementById('arm-pos').innerHTML =
+          Object.entries(d.arm_positions).sort((a, b) => a[0] - b[0])
+            .map(([k, v]) => `<span>S${k}:${v}</span>`).join('');
+      }
+      document.getElementById('sim-badge').innerText = d.sim ? 'SIM' : 'HW';
+      frameCount++;
+      const now = Date.now();
+      if (now - fpsTimer >= 2000) {
+        document.getElementById('fps-val').innerText = (frameCount / ((now - fpsTimer) / 1000)).toFixed(1);
+        frameCount = 0; fpsTimer = now;
+      }
+    } catch (e) { console.error('ws msg error', e); }
+  };
+}
+function setFps(n) { if (ws && ws.readyState === 1) ws.send(JSON.stringify({fps: n})); }
+function sendQuery(q) { if (ws && ws.readyState === 1) ws.send(JSON.stringify({query: q})); }
+
+// ── Basic arm ─────────────────────────────────────────────────────────────────
+function groupMove(positions, dur_ms = 800) {
+  return fetch(HTTP + '/arm/group_move', {method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({positions, duration_ms: dur_ms})}).then(r => r.json());
+}
+function sendMove() {
+  const pos = {};
+  for (let i = 1; i <= 6; i++) pos[i] = vals[i];
+  groupMove(pos).then(d => pose(d.ok ? 'Sent OK' : 'Err: ' + JSON.stringify(d))).catch(e => pose('Err: ' + e));
+}
+function sendMoveAuto() { sendMove(); }
+function loadPreset(name) {
+  if (!PRESETS[name]) { pose('Unknown preset: ' + name); return; }
+  setSliders(PRESETS[name]);
+  pose('Preset loaded: ' + name + ' (press SEND to move)');
+}
+function goHome() {
+  setSliders(PRESETS.home);
+  groupMove(PRESETS.home, 1000).then(() => pose('HOME')).catch(e => pose('err:' + e));
+}
+function openGrip() {
+  vals[1] = 100; setSliders(vals);
+  groupMove({...vals, 1: 100}, 500).then(() => pose('Grip open')).catch(e => pose('err:' + e));
+}
+function closeGrip() {
+  vals[1] = 700; setSliders(vals);
+  groupMove({...vals, 1: 700}, 500).then(() => pose('Grip closed (S1=700)')).catch(e => pose('err:' + e));
+}
+function stopArm() {
+  fetch(HTTP + '/arm/stop', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: '{}'})
+    .then(() => pose('STOPPED')).catch(e => pose('err:' + e));
+}
+function runWave() {
+  pose('Waving...');
+  fetch(HTTP + '/arm/wave', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: '{}'})
+    .then(r => r.json()).then(d => pose('Wave done: ' + JSON.stringify(d))).catch(e => pose('err:' + e));
+}
+function runInspect() {
+  pose('Inspecting...');
+  fetch(HTTP + '/arm/inspect', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: '{}'})
+    .then(r => r.json()).then(d => pose(JSON.stringify(d))).catch(e => pose('err:' + e));
+}
+function readHW() {
+  fetch(HTTP + '/arm/read_hw_positions')
+    .then(r => r.json()).then(d => {
+      const hw = d.hw_positions || {};
+      const txt = 'HW: ' + Object.entries(hw).map(([k, v]) => 'S' + k + ':' + v).join(' ');
+      document.getElementById('hw-out').innerText = txt;
+      if (Object.keys(hw).length) setSliders(hw);
+    }).catch(e => document.getElementById('hw-out').innerText = 'err:' + e);
+}
+
+// ── Touch poses ───────────────────────────────────────────────────────────────
+function loadTouchPose(name) {
+  fetch(HTTP + '/arm/touch_poses').then(r => r.json()).then(d => {
+    const poses = d.touch_poses || d.poses || {};
+    if (poses[name]) { setSliders(poses[name]); pose('Touch pose: ' + name); }
+    else pose('Not found: ' + name + ' | saved: ' + Object.keys(poses).join(', '));
+  }).catch(e => pose('err:' + e));
+}
+function saveTouchPose() {
+  const name = prompt('Name for this touch pose:', 'pick_test');
+  if (!name) return;
+  fetch(HTTP + '/arm/save_touch_pose', {method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({name})})
+  .then(r => r.json()).then(d => {
+    pose('Saved: ' + name + ' -> ' + JSON.stringify(d.positions));
+    document.getElementById('hw-out').innerText = 'Touch poses: ' + (d.all_poses || []).join(', ');
+  }).catch(e => pose('err:' + e));
+}
+function snapNow() {
+  if (ws && ws.readyState === 1) {
+    ws.send(JSON.stringify({fps: 15}));
+    setTimeout(() => { if (ws && ws.readyState === 1) ws.send(JSON.stringify({fps: 5})); }, 800);
+  }
+}
+
+// ── Full IK Pick sequence ─────────────────────────────────────────────────────
+const PLACE_ZONES = {
+  left90: {1:700, 2:500, 3:220, 4:827, 5:425, 6:875},
+  left45: {1:700, 2:500, 3:220, 4:827, 5:425, 6:690},
+  right45:{1:700, 2:500, 3:220, 4:827, 5:425, 6:310},
+  right90:{1:700, 2:500, 3:220, 4:827, 5:425, 6:125},
+};
+
+async function runIKPick(zone = 'left90') {
+  const place = PLACE_ZONES[zone] || PLACE_ZONES.left90;
+  const relax = {...place, 1: 100};
+  const steps = [
+    ['home',       PRESETS.home,  1000],
+    ['grip open',  {...PRESETS.home, 1: 100}, 500],
+    ['hover',      PRESETS.hover,  900],
+    ['mid',        PRESETS.mid,    700],
+    ['pick',       PRESETS.pick,   600],
+    ['grip close', {...PRESETS.pick, 1: 700}, 500],
+    ['lift',       PRESETS.lift,   800],
+    ['place',      place,          900],
+    ['release',    relax,          600],
+    ['home',       PRESETS.home,  1000],
+  ];
+  pose('IK Pick -> ' + zone + ' (10 steps)...');
+  const hw = document.getElementById('hw-out');
+  hw.innerText = 'Pick sequence running...';
+  let stepsDone = 0;
+  for (const [label, pos, dur] of steps) {
+    try {
+      await groupMove(pos, dur);
+      stepsDone++;
+      hw.innerText = `Step ${stepsDone}/10: ${label}`;
+      await sleep(dur / 1000 + 0.15);
+    } catch (e) {
+      pose('Error at step ' + label + ': ' + e);
+      return;
+    }
+  }
+  hw.innerText = 'Pick complete! ' + stepsDone + '/10 steps OK';
+  pose('Pick & Place done!');
+}
+
+function sleep(sec) { return new Promise(r => setTimeout(r, sec * 1000)); }
+
+// ── Dance controls ────────────────────────────────────────────────────────────
+let danceRunning = false;
+
+async function startDance(genre) {
+  if (danceRunning) { danceStatus('Already running — stop first'); return; }
+  danceRunning = true;
+  danceStatus('Starting ' + genre + ' demo... (8 moves)');
+  document.getElementById('beat-fill').style.width = '60%';
+  try {
+    const r = await fetch(NIS + '/cosmos-dance/demo', {method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({genre, moves: 8, energy: 0.20}),
+      signal: AbortSignal.timeout(45000)});
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const d = await r.json();
+    danceStatus(genre.toUpperCase() + ' done — ' + (d.moves_done || '?') + ' moves');
+  } catch (e) {
+    danceStatus('Dance error: ' + e.message.slice(0, 60));
+  }
+  danceRunning = false;
+  document.getElementById('beat-fill').style.width = '0%';
+}
+
+async function startMicDance() {
+  if (danceRunning) { danceStatus('Already running — stop first'); return; }
+  danceRunning = true;
+  danceStatus('MIC live mode — play music near Pi! (32 moves)');
+  document.getElementById('beat-fill').style.width = '80%';
+  try {
+    const r = await fetch(NIS + '/cosmos-dance/start', {method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({genre: 'reggaeton', moves: 32, energy: 0.15}),
+      signal: AbortSignal.timeout(120000)});
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const d = await r.json();
+    danceStatus('MIC done — ' + (d.moves_done || '?') + ' moves');
+  } catch (e) {
+    danceStatus('Mic dance: ' + e.message.slice(0, 60));
+  }
+  danceRunning = false;
+  document.getElementById('beat-fill').style.width = '0%';
+}
+
+function stopDance() {
+  danceRunning = false;
+  fetch(NIS + '/cosmos-dance/stop', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: '{}'})
+    .then(r => r.json()).then(d => danceStatus('Stopped: ' + JSON.stringify(d)))
+    .catch(e => danceStatus('Stop err: ' + e));
+  document.getElementById('beat-fill').style.width = '0%';
+}
+
+function danceStatus(msg) { document.getElementById('dance-status').innerText = msg; }
+
+// ── Cosmos depth ──────────────────────────────────────────────────────────────
+function cosmosDepthCal() {
+  pose('Cosmos depth calibration...');
+  fetch(HTTP + '/cosmos/depth_calibrate', {method: 'POST',
+    headers: {'Content-Type': 'application/json'}, body: '{}'})
+  .then(r => r.json()).then(d => {
+    pose('Cosmos found ' + (d.cosmos_objects_found || 0) + ' objects');
+    let out = 'Suggested poses:\n';
+    for (const [k, v] of Object.entries(d.suggested_poses || {}))
+      out += k + ': ' + JSON.stringify(v) + '\n';
+    document.getElementById('hw-out').innerText = out;
+    document.getElementById('cosmos-text').innerText = JSON.stringify(d.cosmos_raw, null, 2);
+  }).catch(e => pose('err:' + e));
+}
+function cosmosDepthMap() {
+  fetch(HTTP + '/cosmos/depth_map').then(r => r.json()).then(d => {
+    document.getElementById('hw-out').innerText =
+      d.ok && d.data && d.data.suggested_poses
+        ? 'Depth map: ' + JSON.stringify(d.data.suggested_poses, null, 2)
+        : 'No depth map. Run Depth Cal first.';
+  }).catch(e => document.getElementById('hw-out').innerText = 'err:' + e);
+}
+
+// ── NIS health check ──────────────────────────────────────────────────────────
+function checkNIS() {
+  fetch(NIS + '/health', {signal: AbortSignal.timeout(3000)})
+    .then(r => r.json()).then(d => {
+      const b = document.getElementById('nis-badge');
+      const label = NIS_HOST === '172.16.1.83' ? 'H100:OK' : 'NIS:OK';
+      b.innerText = label; b.style.color = '#4f8'; b.style.borderColor = '#225522';
+    }).catch(() => {
+      const b = document.getElementById('nis-badge');
+      b.innerText = 'NIS:down'; b.style.color = '#f88'; b.style.borderColor = '#552222';
+    });
+  fetch(NIS + '/bitnet/status', {signal: AbortSignal.timeout(3000)})
+    .then(r => r.json()).then(d => {
+      const b = document.getElementById('bitnet-badge');
+      const box = document.getElementById('bitnet-status-box');
+      const loaded = d.model_loaded ?? (d.status === 'active');
+      const score  = d.offline_readiness_score ?? 0;
+      const examples = d.total_examples ?? 0;
+      b.innerText = loaded ? 'BitNet:⚡' : 'BitNet:idle';
+      b.style.color = loaded ? '#f4a' : '#888';
+      b.style.borderColor = loaded ? '#553366' : '#334';
+      box.innerText = loaded
+        ? `✅ 2.41B loaded | examples: ${examples} | readiness: ${(score * 100).toFixed(0)}%`
+        : `⏳ model not loaded | examples: ${examples}`;
+    }).catch(() => {
+      document.getElementById('bitnet-badge').innerText = 'BitNet:?';
+      document.getElementById('bitnet-status-box').innerText = 'BitNet endpoint unreachable';
+    });
+}
+
+function toggleH100() {
+  const btn = document.getElementById('h100-btn');
+  if (NIS_HOST === '172.16.1.83') {
+    NIS_HOST = '192.168.1.163';
+    NIS = location.protocol + '//192.168.1.163:8000';
+    btn.innerText = 'Pi'; btn.style.color = '#4f8';
+    pose('Switched to Pi NIS (192.168.1.163:8000)');
+  } else {
+    NIS_HOST = '172.16.1.83';
+    NIS = location.protocol + '//172.16.1.83:8000';
+    btn.innerText = 'H100'; btn.style.color = '#f4a';
+    pose('Switched to H100 NIS (172.16.1.83:8000)');
+  }
+  checkNIS();
+}
+
+// ── Autonomous Challenge ──────────────────────────────────────────────────────
+let evtSrc = null;
+let autoRunning = false;
+
+function startAutonomous() {
+  if (autoRunning) return;
+  autoRunning = true;
+  clearFeed();
+  updateStatusBar('RUNNING...', 0, 0, 0, '--');
+
+  const sim  = document.getElementById('auto-sim').checked;
+  const conf = parseFloat(document.getElementById('auto-conf').value || '0.08');
+
+  // Subscribe SSE first
+  evtSrc = new EventSource(HTTP + '/autonomous/stream');
+  evtSrc.onmessage = (e) => {
+    try {
+      // SSE data lines arrive as "data: {...}"
+      const raw = e.data.startsWith('data: ') ? e.data.slice(6) : e.data;
+      renderEvent(JSON.parse(raw));
+    } catch (err) { /* ignore parse errors */ }
+  };
+  evtSrc.onerror = () => { appendEvent('#f44', '⚡', 'SSE error — reconnecting...'); };
+
+  // Fire the autonomous sweep
+  fetch(HTTP + '/autonomous/run', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({execute_arm: !sim, max_picks: 10, max_retries: 3, conf})
+  }).then(r => r.json()).then(d => {
+    renderFinalSummary(d);
+    autoRunning = false;
+    if (evtSrc) { evtSrc.close(); evtSrc = null; }
+  }).catch(e => {
+    appendEvent('#f44', '❌', 'Request error: ' + e);
+    autoRunning = false;
+    if (evtSrc) { evtSrc.close(); evtSrc = null; }
+  });
+}
+
+function stopAutonomous() {
+  if (evtSrc) { evtSrc.close(); evtSrc = null; }
+  autoRunning = false;
+  appendEvent('#fa8', '⬛', 'Stopped by user');
+  updateStatusBar('STOPPED', null, null, null, null);
+}
+
+function clearFeed() {
+  document.getElementById('auto-feed').innerHTML = '';
+}
+
+function updateStatusBar(state, picks, total, retries, time) {
+  if (state !== null) document.getElementById('as-state').innerText = state;
+  if (picks !== null && total !== null) document.getElementById('as-picks').innerText = picks + '/' + total;
+  if (retries !== null) document.getElementById('as-retries').innerText = retries;
+  if (time !== null) document.getElementById('as-time').innerText = time;
+}
+
+function renderEvent(d) {
+  const ev = d.event || '';
+  if (d.topic === 'heartbeat') return;
+  let color = '#666', icon = '●', text = '';
+  switch (ev) {
+    case 'autonomous_start':
+      color = '#4af'; icon = '▶';
+      text = `SWEEP STARTED: ${d.task || ''} execute_arm=${d.execute_arm}`;
+      updateStatusBar('RUNNING', 0, 0, 0, '--');
+      break;
+    case 'autonomous_scan':
+      color = '#4cf'; icon = '👁';
+      text = `SCAN loop=${d.loop_pick}: ${d.n_lighters} lighters | ${(d.scene || '').slice(0, 70)}`;
+      break;
+    case 'cosmos_positions':
+      color = '#c4f'; icon = '🧠';
+      text = `COSMOS: ${d.n} positions → ${JSON.stringify(d.positions || []).slice(0, 90)}`;
+      break;
+    case 'picking':
+      color = '#ff8'; icon = '🤖';
+      text = `PICK #${d.pick_n}: yolo_cx=${d.yolo_cx} cosmos_cx=${d.cosmos_cx || '?'} → ${d.place}`;
+      break;
+    case 'pick_attempt':
+      color = d.disappeared ? '#4f8' : '#fa4';
+      icon  = d.disappeared ? '✓' : '⟳';
+      text  = `attempt=${d.attempt} s6=${d.s6} → ${d.disappeared ? 'PICKED!' : 'miss — retry'}`;
+      break;
+    case 'autonomous_done':
+      color = d.table_clear ? '#4f8' : '#f84';
+      icon  = d.table_clear ? '✅' : '⚠';
+      text  = `DONE: ${d.picks_success}/${d.picks_total} | clear=${d.table_clear} | ${d.latency_ms}ms`;
+      updateStatusBar(
+        d.table_clear ? 'CLEAR' : 'INCOMPLETE',
+        d.picks_success, d.picks_total,
+        d.total_retries,
+        d.latency_ms + 'ms'
+      );
+      break;
+    default:
+      if (d.topic === 'arm') {
+        color = '#888'; icon = '🦾';
+        text = `ARM: ${ev} ${JSON.stringify(d).slice(0, 60)}`;
+      } else if (d.topic === 'error') {
+        color = '#f44'; icon = '⚠';
+        text = `ERROR: ${d.msg || JSON.stringify(d).slice(0, 80)}`;
+      } else {
+        text = JSON.stringify(d).slice(0, 80);
+      }
+  }
+  if (text) appendEvent(color, icon, text);
+}
+
+function renderFinalSummary(d) {
+  if (d.ok === false) {
+    appendEvent('#f44', '❌', 'Run failed: ' + (d.error || JSON.stringify(d).slice(0, 80)));
+    updateStatusBar('ERROR', null, null, null, null);
+  } else if (d.table_clear !== undefined) {
+    // already handled by autonomous_done event — no duplicate
+  } else {
+    appendEvent('#4af', '●', 'Run complete: ' + JSON.stringify(d).slice(0, 100));
+  }
+}
+
+function appendEvent(color, icon, text) {
+  const ts   = new Date().toISOString().slice(11, 19);
+  const feed = document.getElementById('auto-feed');
+  const row  = document.createElement('div');
+  row.style.cssText = `color:${color};padding:2px 0;border-bottom:1px solid #1a1a2a;font-size:11px`;
+  row.innerHTML = `<span style="color:#444">${ts}</span> ${icon} ${text}`;
+  feed.appendChild(row);
+  feed.scrollTop = feed.scrollHeight;
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+function pose(msg) { document.getElementById('pose-out').innerText = msg; }
+buildSliders('srv-sliders');
+fpsTimer = Date.now();
+connect();
+checkNIS();
+setInterval(checkNIS, 10000);
+</script>
+</body>
+</html>

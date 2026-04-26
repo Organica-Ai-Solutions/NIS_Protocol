@@ -507,42 +507,23 @@ async def process_with_agents(request: dict):
 
 @router.post("/autonomous/run")
 async def run_autonomous_endpoint(request: Dict[str, Any]):
-    """
-    🤖 Run an autonomous task - the system will iterate until complete
-    
-    This is the GPT Code Interpreter / Claude Artifacts equivalent.
-    The LLM will:
-    1. Analyze the task
-    2. Generate code if needed
-    3. Execute the code
-    4. See the results (stdout, plots, errors)
-    5. Iterate until done or fix errors
-    
-    Returns task ID for tracking, or waits for completion if wait=true.
-    """
-    llm_provider = get_llm_provider()
+    """Cosmos-guided autonomous sweep — proxies to /cookoff/run pipeline."""
+    import httpx as _hx
+    task = request.get("task") or request.get("request") or "scan workspace and pick objects"
+    execute = request.get("execute_arm", True)
+    try:
+        async with _hx.AsyncClient(timeout=300.0) as _c:
+            r = await _c.post("http://localhost:8000/cookoff/run", json={
+                "prompt": task,
+                "execute_arm": execute,
+                "simulation": not execute,
+            })
+            return r.json()
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=str(e))
+
+    # Legacy code below — kept for reference but no longer reached
     autonomous_executor = get_autonomous_executor()
-    
-    task_request = request.get("request") or request.get("task")
-    if not task_request:
-        raise HTTPException(status_code=400, detail="Request/task is required")
-    
-    wait_for_completion = request.get("wait", True)
-    max_iterations = request.get("max_iterations", 10)
-    
-    # Create LLM callback using our chat system
-    async def llm_callback(prompt: str) -> str:
-        try:
-            result = await llm_provider.generate_response(
-                messages=prompt,
-                requested_provider="anthropic",
-                temperature=0.7
-            )
-            return result.get("response", result.get("content", ""))
-        except Exception as e:
-            logger.error(f"LLM callback error: {e}")
-            return f"Error calling LLM: {e}"
-    
     if not autonomous_executor:
         raise HTTPException(status_code=503, detail="Autonomous executor not initialized")
     
@@ -1190,3 +1171,53 @@ def set_dependencies(
     router._enhanced_schemas = enhanced_schemas
     router._token_manager = token_manager
     router._autonomous_executor = autonomous_executor
+
+
+# ====== Devices Endpoint (Dashboard - Devices Tab) ======
+
+@router.get("/devices")
+async def list_devices():
+    """List all connected hardware devices on this node"""
+    import os, subprocess, time
+    devices = []
+
+    # USB devices via lsusb
+    try:
+        r = subprocess.run(["lsusb"], capture_output=True, text=True, timeout=3)
+        for line in r.stdout.strip().splitlines():
+            parts = line.split(" ", 6)
+            devices.append({
+                "id": parts[3].rstrip(":") if len(parts) > 3 else "?",
+                "name": parts[6] if len(parts) > 6 else line,
+                "type": "usb",
+                "connected": True,
+                "bus": parts[1] if len(parts) > 1 else "?",
+            })
+    except Exception:
+        pass
+
+    # Serial ports
+    for port in ["/dev/ttyACM0", "/dev/ttyUSB0", "/dev/ttyS0", "/dev/ttyAMA0"]:
+        if os.path.exists(port):
+            devices.append({"id": port, "name": port, "type": "serial", "connected": True})
+
+    # Camera
+    for cam in ["/dev/video0", "/dev/video1"]:
+        if os.path.exists(cam):
+            devices.append({"id": cam, "name": f"Camera ({cam})", "type": "camera", "connected": True})
+
+    # I2C buses
+    for i2c in ["/dev/i2c-1", "/dev/i2c-0"]:
+        if os.path.exists(i2c):
+            devices.append({"id": i2c, "name": f"I2C bus ({i2c})", "type": "i2c", "connected": True})
+
+    # SPI
+    for spi in ["/dev/spidev0.0", "/dev/spidev0.1"]:
+        if os.path.exists(spi):
+            devices.append({"id": spi, "name": f"SPI ({spi})", "type": "spi", "connected": True})
+
+    return {
+        "devices": devices,
+        "count": len(devices),
+        "timestamp": time.time(),
+    }

@@ -81,7 +81,8 @@ SERVO_MIN_POS = 0
 SERVO_MAX_POS = 1000
 SERVO_CENTER = 500
 
-# xArm 1S joint configuration
+# xArm 1S / 1.6 joint configuration (both use LX-16A bus servos, 6DOF)
+# xArm 1.6: Same protocol, may use 9600 or 115200 baud depending on controller
 XARM_JOINTS = {
     1: {"name": "base",     "min": 0,   "max": 1000, "home": 500, "angle_range": 240},
     2: {"name": "shoulder", "min": 100, "max": 900,  "home": 500, "angle_range": 240},
@@ -226,6 +227,7 @@ class HiwonderXArmDriver(RobotInterface):
         serial_port: str = "/dev/ttyUSB0",
         baudrate: int = 115200,
         simulation: bool = False,
+        model: str = "1s",  # "1s" (xArm 1S) or "1.6" (xArm 1.6 - same protocol, may need 9600 baud)
         **kwargs,
     ):
         capabilities = RobotCapabilities(
@@ -248,6 +250,7 @@ class HiwonderXArmDriver(RobotInterface):
         self.serial_port = serial_port
         self.baudrate = baudrate
         self.simulation = simulation
+        self.model = model  # "1s" or "1.6" - xArm 1.6 may need baudrate=9600
         self._serial = None
         self._lock = asyncio.Lock()
         
@@ -286,7 +289,7 @@ class HiwonderXArmDriver(RobotInterface):
             
             if self._serial.is_open:
                 self._connected = True
-                logger.info(f"Connected to xArm 1S on {self.serial_port}")
+                logger.info(f"Connected to xArm {self.model.upper()} on {self.serial_port}")
                 
                 # Read initial positions
                 await self._read_all_positions()

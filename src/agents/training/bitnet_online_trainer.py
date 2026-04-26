@@ -297,12 +297,25 @@ class BitNetOnlineTrainer(NISAgent):
             
             # Apply LoRA for efficient training
             if self.config.use_lora:
+                # Auto-detect layer names: HF BitNet/Llama vs custom transformer
+                param_names = [n for n, _ in self.model.named_parameters()]
+                if any("q_proj" in n for n in param_names):
+                    # HF LlamaForCausalLM / BitNet-b1.58 format
+                    target_modules = ["q_proj", "v_proj", "k_proj", "o_proj",
+                                      "gate_proj", "up_proj", "down_proj"]
+                elif any("in_proj_weight" in n for n in param_names):
+                    # Custom transformer (nn.MultiheadAttention)
+                    target_modules = ["in_proj", "out_proj"]
+                else:
+                    # Fallback: target all Linear layers
+                    target_modules = ["linear1", "linear2"]
+                self.logger.info(f"🔧 LoRA targeting: {target_modules}")
                 lora_config = LoraConfig(
                     task_type=TaskType.CAUSAL_LM,
                     r=self.config.lora_r,
                     lora_alpha=self.config.lora_alpha,
                     lora_dropout=self.config.lora_dropout,
-                    target_modules=["q_proj", "v_proj", "k_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
+                    target_modules=target_modules
                 )
                 self.model = get_peft_model(self.model, lora_config)
                 self.logger.info("✅ Applied LoRA configuration for efficient training")

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NIS Protocol v3.2 - VibeVoice API Test Console</title>
+    <title>NIS Protocol v4.0.1 - API Test Console</title>
     <style>
         * {
             margin: 0;
@@ -178,9 +178,9 @@
 </head>
 <body>
     <div class="header">
-        <h1>🧠 NIS Protocol v3.2 - API Test Console</h1>
+        <h1>🧠 NIS Protocol v4.0.1 - API Test Console</h1>
         <p style="text-align: center; margin-top: 10px; color: #a0a0a0;">
-            Test all 32 working API endpoints
+            Test live API endpoints — 290+ available
         </p>
         <div style="text-align: center; margin-top: 15px;">
             <button id="voiceToggle" style="background: rgba(59, 130, 246, 0.2); border: 1px solid #3b82f6; color: #6b7280; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 14px;" title="Voice responses (like Grok/GPT)">
@@ -190,7 +190,7 @@
     </div>
 
     <button class="global-test-button" onclick="testAllEndpoints()">
-        🚀 Test All 32 Endpoints
+        🚀 Test All Core Endpoints
     </button>
 
     <div class="endpoint-grid">
@@ -213,10 +213,10 @@
             </div>
             <div class="endpoint-item">
                 <div class="endpoint-path">
-                    <span class="endpoint-method method-get">GET</span> /status
+                    <span class="endpoint-method method-get">GET</span> /system/status
                     <span class="status-indicator" id="status-status"></span>
                 </div>
-                <button class="test-button" onclick="testEndpoint('GET', '/status', 'status')">Test</button>
+                <button class="test-button" onclick="testEndpoint('GET', '/system/status', 'status')">Test</button>
             </div>
             <div class="endpoint-item">
                 <div class="endpoint-path">
@@ -246,7 +246,7 @@
             </div>
             <div class="endpoint-item">
                 <div class="endpoint-path">
-                    <span class="endpoint-method method-post">POST</span> /communication/synthesize
+                    <span class="endpoint-method method-post">POST</span> /communication/consciousness_voice
                     <span class="status-indicator" id="status-communication-synthesize"></span>
                 </div>
                 <button class="test-button" onclick="testVibeVoiceTTS()">Test TTS</button>
@@ -293,7 +293,7 @@
             </div>
             <div class="endpoint-item">
                 <div class="endpoint-path">
-                    <span class="endpoint-method method-post">POST</span> /physics/pinn/solve
+                    <span class="endpoint-method method-post">POST</span> /physics/validate/true-pinn
                     <span class="status-indicator" id="status-physics-pinn"></span>
                 </div>
                 <button class="test-button" onclick="testPhysicsPinn()">Test</button>
@@ -319,10 +319,10 @@
             </div>
             <div class="endpoint-item">
                 <div class="endpoint-path">
-                    <span class="endpoint-method method-get">GET</span> /nvidia/nemo/cosmos/demo
+                    <span class="endpoint-method method-get">GET</span> /nvidia/nemo/enterprise/showcase
                     <span class="status-indicator" id="status-nemo-cosmos"></span>
                 </div>
-                <button class="test-button" onclick="testEndpoint('GET', '/nvidia/nemo/cosmos/demo', 'nemo-cosmos')">Test</button>
+                <button class="test-button" onclick="testEndpoint('GET', '/nvidia/nemo/enterprise/showcase', 'nemo-cosmos')">Test</button>
             </div>
             <div class="endpoint-item">
                 <div class="endpoint-path">
@@ -392,21 +392,21 @@
             <div class="category-title">🤖 Agents (5 endpoints)</div>
             <div class="endpoint-item">
                 <div class="endpoint-path">
-                    <span class="endpoint-method method-get">GET</span> /agents/status
+                    <span class="endpoint-method method-get">GET</span> /api/agents/status
                     <span class="status-indicator" id="status-agents-status"></span>
                 </div>
-                <button class="test-button" onclick="testEndpoint('GET', '/agents/status', 'agents-status')">Test</button>
+                <button class="test-button" onclick="testEndpoint('GET', '/api/agents/status', 'agents-status')">Test</button>
             </div>
             <div class="endpoint-item">
                 <div class="endpoint-path">
-                    <span class="endpoint-method method-post">POST</span> /agents/consciousness/analyze
+                    <span class="endpoint-method method-post">POST</span> /agents/self-audit
                     <span class="status-indicator" id="status-agents-consciousness"></span>
                 </div>
                 <button class="test-button" onclick="testAgentsConsciousness()">Test</button>
             </div>
             <div class="endpoint-item">
                 <div class="endpoint-path">
-                    <span class="endpoint-method method-post">POST</span> /agents/memory/store
+                    <span class="endpoint-method method-post">POST</span> /memory/store
                     <span class="status-indicator" id="status-agents-memory"></span>
                 </div>
                 <button class="test-button" onclick="testAgentsMemory()">Test</button>
@@ -420,16 +420,16 @@
             </div>
             <div class="endpoint-item">
                 <div class="endpoint-path">
-                    <span class="endpoint-method method-get">GET</span> /agents/capabilities
+                    <span class="endpoint-method method-get">GET</span> /v4/self/status
                     <span class="status-indicator" id="status-agents-capabilities"></span>
                 </div>
-                <button class="test-button" onclick="testEndpoint('GET', '/agents/capabilities', 'agents-capabilities')">Test</button>
+                <button class="test-button" onclick="testEndpoint('GET', '/v4/self/status', 'agents-capabilities')">Test</button>
             </div>
         </div>
 
         <!-- MCP Integration Endpoints -->
         <div class="endpoint-category">
-            <div class="category-title">🔌 MCP Integration (3 endpoints)</div>
+            <div class="category-title">🔌 MCP / LangGraph Integration (3 endpoints)</div>
             <div class="endpoint-item">
                 <div class="endpoint-path">
                     <span class="endpoint-method method-get">GET</span> /api/mcp/demo
@@ -439,14 +439,14 @@
             </div>
             <div class="endpoint-item">
                 <div class="endpoint-path">
-                    <span class="endpoint-method method-get">GET</span> /api/langgraph/status
+                    <span class="endpoint-method method-get">GET</span> /api/mcp/demo
                     <span class="status-indicator" id="status-langgraph-status"></span>
                 </div>
-                <button class="test-button" onclick="testEndpoint('GET', '/api/langgraph/status', 'langgraph-status')">Test</button>
+                <button class="test-button" onclick="testEndpoint('GET', '/api/mcp/demo', 'langgraph-status')">Test</button>
             </div>
             <div class="endpoint-item">
                 <div class="endpoint-path">
-                    <span class="endpoint-method method-post">POST</span> /api/langgraph/invoke
+                    <span class="endpoint-method method-post">POST</span> /api/mcp/invoke
                     <span class="status-indicator" id="status-langgraph-invoke"></span>
                 </div>
                 <button class="test-button" onclick="testLanggraphInvoke()">Test</button>
@@ -465,24 +465,24 @@
             </div>
             <div class="endpoint-item">
                 <div class="endpoint-path">
-                    <span class="endpoint-method method-post">POST</span> /chat/enhanced
+                    <span class="endpoint-method method-post">POST</span> /chat/reflective
                     <span class="status-indicator" id="status-chat-enhanced"></span>
                 </div>
                 <button class="test-button" onclick="testChatEnhanced()">Test</button>
             </div>
             <div class="endpoint-item">
                 <div class="endpoint-path">
-                    <span class="endpoint-method method-get">GET</span> /chat/sessions
+                    <span class="endpoint-method method-get">GET</span> /memory/conversations
                     <span class="status-indicator" id="status-chat-sessions"></span>
                 </div>
-                <button class="test-button" onclick="testEndpoint('GET', '/chat/sessions', 'chat-sessions')">Test</button>
+                <button class="test-button" onclick="testEndpoint('GET', '/memory/conversations', 'chat-sessions')">Test</button>
             </div>
             <div class="endpoint-item">
                 <div class="endpoint-path">
-                    <span class="endpoint-method method-get">GET</span> /chat/memory/test
+                    <span class="endpoint-method method-get">GET</span> /memory/stats
                     <span class="status-indicator" id="status-chat-memory"></span>
                 </div>
-                <button class="test-button" onclick="testEndpoint('GET', '/chat/memory/test', 'chat-memory')">Test</button>
+                <button class="test-button" onclick="testEndpoint('GET', '/memory/stats', 'chat-memory')">Test</button>
             </div>
         </div>
     </div>
@@ -529,11 +529,11 @@
                 const cleanText = typeof text === 'object' ? JSON.stringify(text, null, 2) : text.toString();
                 
                 // Synthesize speech using VibeVoice
-                const response = await fetch('/communication/synthesize', {
+                const response = await fetch('/communication/consciousness_voice', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        text: cleanText.substring(0, 500), // Limit length for API responses
+                        text: cleanText.substring(0, 500),
                         speaker: 'consciousness',
                         emotion: 'informative'
                     })
@@ -603,7 +603,7 @@
         }
 
         async function testPhysicsPinn() {
-            await testPostEndpoint('/physics/pinn/solve', 'physics-pinn', {
+            await testPostEndpoint('/physics/validate/true-pinn', 'physics-pinn', {
                 equation_type: "heat_equation",
                 boundary_conditions: {"x0": 0, "xL": 1, "t0": 0}
             });
@@ -651,14 +651,14 @@
         }
 
         async function testAgentsConsciousness() {
-            await testPostEndpoint('/agents/consciousness/analyze', 'agents-consciousness', {
+            await testPostEndpoint('/agents/self-audit', 'agents-consciousness', {
                 scenario: "Test consciousness analysis",
                 depth: "basic"
             });
         }
 
         async function testAgentsMemory() {
-            await testPostEndpoint('/agents/memory/store', 'agents-memory', {
+            await testPostEndpoint('/memory/store', 'agents-memory', {
                 content: "Test memory content",
                 memory_type: "episodic"
             });
@@ -672,7 +672,7 @@
         }
 
         async function testLanggraphInvoke() {
-            await testPostEndpoint('/api/langgraph/invoke', 'langgraph-invoke', {
+            await testPostEndpoint('/api/mcp/invoke', 'langgraph-invoke', {
                 messages: [{"role": "user", "content": "test message"}],
                 session_id: "test_session"
             });
@@ -686,7 +686,7 @@
         }
 
         async function testChatEnhanced() {
-            await testPostEndpoint('/chat/enhanced', 'chat-enhanced', {
+            await testPostEndpoint('/chat/reflective', 'chat-enhanced', {
                 message: "Enhanced test",
                 session_id: "test_session",
                 enable_memory: true
@@ -695,7 +695,7 @@
 
         // VibeVoice Communication Test Functions
         async function testVibeVoiceTTS() {
-            await testPostEndpoint('/communication/synthesize', 'communication-synthesize', {
+            await testPostEndpoint('/communication/consciousness_voice', 'communication-synthesize', {
                 text: "Hello from the NIS Protocol consciousness agent using VibeVoice technology",
                 speaker: "consciousness",
                 emotion: "thoughtful"
@@ -811,7 +811,7 @@
             await delay(100);
             await testEndpoint('GET', '/health', 'health');
             await delay(100);
-            await testEndpoint('GET', '/status', 'status');
+            await testEndpoint('GET', '/system/status', 'status');
             await delay(100);
             await testEndpoint('GET', '/docs', 'docs');
             await delay(100);
@@ -833,7 +833,7 @@
             await delay(100);
             await testEndpoint('GET', '/nvidia/nemo/enterprise/showcase', 'nemo-showcase');
             await delay(100);
-            await testEndpoint('GET', '/nvidia/nemo/cosmos/demo', 'nemo-cosmos');
+            await testEndpoint('GET', '/nvidia/nemo/enterprise/showcase', 'nemo-cosmos');
             await delay(100);
             await testEndpoint('GET', '/nvidia/nemo/toolkit/status', 'nemo-toolkit');
             await delay(100);
@@ -855,7 +855,7 @@
             await delay(100);
             
             // Agent endpoints
-            await testEndpoint('GET', '/agents/status', 'agents-status');
+            await testEndpoint('GET', '/api/agents/status', 'agents-status');
             await delay(100);
             await testAgentsConsciousness();
             await delay(100);
@@ -863,13 +863,13 @@
             await delay(100);
             await testAgentsPlanning();
             await delay(100);
-            await testEndpoint('GET', '/agents/capabilities', 'agents-capabilities');
+            await testEndpoint('GET', '/v4/self/status', 'agents-capabilities');
             await delay(100);
             
             // MCP endpoints
             await testEndpoint('GET', '/api/mcp/demo', 'mcp-demo');
             await delay(100);
-            await testEndpoint('GET', '/api/langgraph/status', 'langgraph-status');
+            await testEndpoint('GET', '/api/mcp/demo', 'langgraph-status');
             await delay(100);
             await testLanggraphInvoke();
             await delay(100);
@@ -889,9 +889,9 @@
             await delay(100);
             await testChatEnhanced();
             await delay(100);
-            await testEndpoint('GET', '/chat/sessions', 'chat-sessions');
+            await testEndpoint('GET', '/memory/conversations', 'chat-sessions');
             await delay(100);
-            await testEndpoint('GET', '/chat/memory/test', 'chat-memory');
+            await testEndpoint('GET', '/memory/stats', 'chat-memory');
             
             // Calculate results
             const successCount = testResults.filter(r => r.success).length;

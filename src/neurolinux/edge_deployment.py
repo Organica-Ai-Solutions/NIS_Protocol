@@ -136,10 +136,14 @@ class HardwareDetector:
         except FileNotFoundError:
             pass
         
-        # Check if Linux
+        # Check platform type
+        if sys.platform == "win32" or sys.platform == "cygwin":
+            return EdgePlatform.WINDOWS_PC
         if sys.platform.startswith("linux"):
             return EdgePlatform.GENERIC_LINUX
-        
+        if sys.platform == "darwin":
+            return EdgePlatform.GENERIC_LINUX  # macOS treated as generic Linux for edge purposes
+
         return EdgePlatform.UNKNOWN
     
     def _get_cpu_cores(self) -> int:
@@ -151,15 +155,45 @@ class HardwareDetector:
             return 4
     
     def _get_ram_gb(self) -> float:
-        """Get RAM in GB"""
+        """Get RAM in GB — cross-platform"""
+        # Try psutil first (works everywhere)
+        try:
+            import psutil
+            return psutil.virtual_memory().total / (1024 ** 3)
+        except ImportError:
+            pass
+        # Linux fallback
         try:
             with open("/proc/meminfo", "r") as f:
                 for line in f:
                     if line.startswith("MemTotal"):
                         kb = int(line.split()[1])
                         return kb / (1024 * 1024)
-        except:
+        except Exception:
             pass
+        # Windows fallback via ctypes
+        if sys.platform == "win32":
+            try:
+                import ctypes
+                kernel32 = ctypes.windll.kernel32  # type: ignore[attr-defined]
+                c_ulong = ctypes.c_ulong
+                class MEMORYSTATUS(ctypes.Structure):
+                    _fields_ = [
+                        ("dwLength", c_ulong),
+                        ("dwMemoryLoad", c_ulong),
+                        ("dwTotalPhys", c_ulong),
+                        ("dwAvailPhys", c_ulong),
+                        ("dwTotalPageFile", c_ulong),
+                        ("dwAvailPageFile", c_ulong),
+                        ("dwTotalVirtual", c_ulong),
+                        ("dwAvailVirtual", c_ulong),
+                    ]
+                mem = MEMORYSTATUS()
+                mem.dwLength = ctypes.sizeof(MEMORYSTATUS)
+                kernel32.GlobalMemoryStatus(ctypes.byref(mem))
+                return mem.dwTotalPhys / (1024 ** 3)
+            except Exception:
+                pass
         return 4.0
     
     def _check_gpu(self) -> bool:
@@ -456,11 +490,27 @@ class EdgeModelOptimizer:
 # OFFLINE MODE MANAGER
 # =============================================================================
 
+def _default_cache_dir() -> str:
+    """Return a writable cache directory that works on Linux, Windows, and macOS."""
+    if sys.platform == "win32":
+        base = os.environ.get("LOCALAPPDATA") or os.path.expanduser("~")
+        return os.path.join(base, "neurolinux", "cache")
+    if sys.platform == "darwin":
+        return os.path.expanduser("~/Library/Caches/neurolinux")
+    # Linux / Jetson / Pi — try XDG first, fall back to /var/cache
+    xdg = os.environ.get("XDG_CACHE_HOME")
+    if xdg:
+        return os.path.join(xdg, "neurolinux")
+    if os.access("/var/cache", os.W_OK):
+        return "/var/cache/neurolinux"
+    return os.path.expanduser("~/.cache/neurolinux")
+
+
 class OfflineModeManager:
     """Manages offline operation when cloud is unavailable"""
-    
-    def __init__(self, cache_dir: str = "/var/cache/neurolinux"):
-        self.cache_dir = Path(cache_dir)
+
+    def __init__(self, cache_dir: str = ""):
+        self.cache_dir = Path(cache_dir if cache_dir else _default_cache_dir())
         self.cache_dir.mkdir(parents=True, exist_ok=True)
         
         self.logger = logging.getLogger("neurolinux.offline")

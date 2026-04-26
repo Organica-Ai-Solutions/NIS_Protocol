@@ -344,9 +344,12 @@ class NISAgentOrchestrator:
         await self._activate_core_agents()
         
         # Start background monitoring
-        asyncio.create_task(self._monitor_agents())
-        asyncio.create_task(self._process_queue())
-        asyncio.create_task(self._update_system_state())
+        def _log_task_exc(t):
+            if not t.cancelled() and t.exception():
+                logger.error(f"Background task crashed: {t.exception()}", exc_info=t.exception())
+        for _coro in (self._monitor_agents(), self._process_queue(), self._update_system_state()):
+            _t = asyncio.create_task(_coro)
+            _t.add_done_callback(_log_task_exc)
         
         logger.info("✅ Agent Orchestrator started successfully")
     

@@ -1,4 +1,4 @@
-# 🚀 Welcome to Organica AI Solutions, Camrin!
+# 🚀 Welcome to Organica AI Solutions, Camrin Neiss!
 
 **TL;DR**: We're building the future of AI robotics AND publishing. You joined at the perfect time - we have 8x NVIDIA H100 GPUs training models RIGHT NOW.
 
@@ -68,11 +68,19 @@ We're training 6 AI model types simultaneously:
 └─────────────────────────────────────────────────────────┘
 ```
 
-**Your marketing brain + coding skills** = Perfect for:
-- Dashboard UX/UI
-- Demo videos & presentations
-- Developer documentation
-- Landing pages & pitch decks
+**Camrin's background** (Marketing Analyst · Web Developer · Growth Generalist):
+- Full-stack marketing execution: analytics, SEO, paid acquisition, CRO
+- React + JavaScript front-end development — builds without engineering handoff
+- GA4, SQL, HubSpot dashboards and attribution systems
+- Launched **SpadesFitness.com** e-commerce end-to-end (100+ digital product sales)
+- Built **Plinza.com** — React travel/social web app, university pilot with 500+ students
+- SDSU BS Marketing · Meta Front-End Developer Certificate · React (Coursera)
+
+**Perfect for Organica AI:**
+- Dashboard UX/UI (React skills, no handoff needed)
+- Demo videos & investor presentations
+- Developer documentation & landing pages
+- Growth strategy for NIS Hub launch
 
 ---
 
@@ -164,9 +172,11 @@ ssh nvidia@awesome-gpu-name "tail -f /data/organica-ai/logs/vla_gpu0.log"
 
 ## 📞 Communication
 
-- **Discord/Slack**: [TBD]
-- **GitHub**: All code reviews happen here
-- **Meetings**: [TBD]
+- **GitHub**: [`Organica-Ai-Solutions/NIS_Protocol`](https://github.com/Organica-Ai-Solutions/NIS_Protocol) — all code reviews, PRs, issues
+- **LinkedIn**: Connect with Diego Torres + Camrin Neiss — updates posted there
+- **Live System**: NeuroHub UI at `http://192.168.1.163:3000` — see the system running
+- **Agent Comms**: `~/Desktop/agents_coms.md` on Pi — shared context doc between all agents
+- **Meetings**: Async-first via GitHub issues; sync calls as needed (coordinate via LinkedIn DM)
 
 ---
 
@@ -175,7 +185,7 @@ ssh nvidia@awesome-gpu-name "tail -f /data/organica-ai/logs/vla_gpu0.log"
 | Who | Role |
 |-----|------|
 | Diego | Founder, Lead Dev |
-| Camrin (You!) | Co-founder, Marketing + Frontend |
+| Camrin Neiss | Co-founder, Marketing + Frontend Dev |
 
 ---
 
@@ -191,4 +201,4 @@ Welcome aboard! 🤖
 
 ---
 
-*Last updated: January 28, 2026*
+*Last updated: February 23, 2026*

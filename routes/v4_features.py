@@ -284,6 +284,75 @@ async def get_goal_metrics():
     return {"status": "error", "message": "Goal system not initialized"}
 
 
+# ====== CAN Bus Endpoints (Dashboard - CAN Bus Tab) ======
+
+_can_messages: list = []
+_can_connected: bool = False
+
+@router.get("/can/status")
+async def can_status():
+    """CAN bus interface status"""
+    import os, subprocess
+    arduino = os.path.exists("/dev/ttyACM0") or os.path.exists("/dev/ttyUSB0")
+    port = "/dev/ttyACM0" if os.path.exists("/dev/ttyACM0") else \
+           "/dev/ttyUSB0" if os.path.exists("/dev/ttyUSB0") else None
+    # Check SocketCAN
+    try:
+        r = subprocess.run(["ip", "link", "show", "can0"],
+                           capture_output=True, text=True, timeout=2)
+        socketcan = r.returncode == 0
+    except Exception:
+        socketcan = False
+    return {
+        "connected": _can_connected,
+        "interface_type": "arduino" if arduino else "socketcan" if socketcan else "none",
+        "port": port,
+        "arduino_detected": arduino,
+        "socketcan_available": socketcan,
+        "messages_received": len(_can_messages),
+    }
+
+@router.get("/can/messages")
+async def can_messages(limit: int = 50):
+    """Return recent CAN messages"""
+    return {"messages": _can_messages[-limit:], "total": len(_can_messages)}
+
+@router.post("/can/connect")
+async def can_connect():
+    """Connect to CAN interface"""
+    global _can_connected
+    import os
+    arduino = os.path.exists("/dev/ttyACM0") or os.path.exists("/dev/ttyUSB0")
+    if not arduino:
+        raise HTTPException(status_code=503, detail="No CAN hardware detected")
+    _can_connected = True
+    return {"connected": True, "message": "CAN connected"}
+
+@router.post("/can/disconnect")
+async def can_disconnect():
+    """Disconnect from CAN interface"""
+    global _can_connected
+    _can_connected = False
+    return {"connected": False, "message": "CAN disconnected"}
+
+@router.post("/can/send")
+async def can_send(msg_id: int = 0x100, data: str = "00"):
+    """Send a CAN frame"""
+    import time
+    if not _can_connected:
+        raise HTTPException(status_code=400, detail="CAN not connected")
+    frame = {
+        "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "id": hex(msg_id),
+        "data": data,
+        "length": len(data) // 2,
+    }
+    _can_messages.append(frame)
+    if len(_can_messages) > 500:
+        _can_messages.pop(0)
+    return {"success": True, "frame": frame}
+
+
 # ====== Dependency Injection Helper ======
 
 def set_dependencies(

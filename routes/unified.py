@@ -228,7 +228,7 @@ async def unified_autonomous_endpoint(request: Dict[str, Any]):
     }
 
 
-@router.get("/system/integration")
+@router.get("/unified/integration")
 async def system_integration_status():
     """
     📊 Complete system integration status - shows all connected components

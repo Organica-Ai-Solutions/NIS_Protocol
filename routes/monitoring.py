@@ -24,48 +24,17 @@ logger = logging.getLogger("nis.routes.monitoring")
 # Create router
 router = APIRouter(tags=["Monitoring"])
 
+_injected_llm = None
+
+def set_dependencies(llm_provider=None, **kwargs):
+    global _injected_llm
+    _injected_llm = llm_provider
+
 
 # ====== Health Check ======
 
-@router.get("/health")
-async def health_check():
-    """
-    🏥 Health Check
-    
-    Returns the current health status of the NIS Protocol system.
-    """
-    try:
-        # These will be injected from main app
-        llm_provider = getattr(router, '_llm_provider', None)
-        conversation_memory = getattr(router, '_conversation_memory', {})
-        agent_registry = getattr(router, '_agent_registry', {})
-        tool_registry = getattr(router, '_tool_registry', {})
-        
-        provider_names = []
-        models = []
-        if llm_provider and getattr(llm_provider, 'providers', None):
-            provider_names = list(llm_provider.providers.keys())
-            for p in llm_provider.providers.values():
-                if isinstance(p, dict):
-                    models.append(p.get("model", "default"))
-                else:
-                    models.append(getattr(p, 'model', 'default'))
-        
-        return {
-            "status": "healthy",
-            "timestamp": time.time(),
-            "provider": provider_names,
-            "model": models,
-            "real_ai": provider_names,
-            "conversations_active": len(conversation_memory) if isinstance(conversation_memory, dict) else 0,
-            "agents_registered": len(agent_registry) if isinstance(agent_registry, dict) else 0,
-            "tools_available": len(tool_registry) if isinstance(tool_registry, dict) else 0,
-            "pattern": "nis_v4_modular"
-        }
-    except Exception as e:
-        import traceback
-        error_details = traceback.format_exc()
-        raise HTTPException(status_code=500, detail=f"Internal Error: {str(e)}\n{error_details}")
+# NOTE: GET /health is defined in routes/core.py (registered first).
+# The authoritative health endpoint lives there to avoid duplicate registration.
 
 
 # ====== Metrics ======
@@ -406,6 +375,84 @@ async def get_system_integration():
             "features": ["streaming", "webhooks", "analytics", "rate_limiting"]
         },
         "timestamp": time.time()
+    }
+
+
+# ====== Sensors Endpoint (Dashboard - Sensors Tab) ======
+
+@router.get("/sensors")
+async def get_sensors():
+    """Return Pi onboard sensor data for the dashboard Sensors tab"""
+    import subprocess, time
+
+    def _read_file(path, default=None):
+        try:
+            with open(path) as f:
+                return f.read().strip()
+        except Exception:
+            return default
+
+    # CPU temperature (Pi thermal zone)
+    temp_c = None
+    raw = _read_file("/sys/class/thermal/thermal_zone0/temp")
+    if raw:
+        try:
+            temp_c = round(int(raw) / 1000.0, 1)
+        except Exception:
+            pass
+
+    # CPU usage
+    cpu_pct = None
+    try:
+        import psutil
+        cpu_pct = psutil.cpu_percent(interval=0.2)
+    except Exception:
+        pass
+
+    # Memory
+    mem = {}
+    try:
+        import psutil
+        m = psutil.virtual_memory()
+        mem = {"total_gb": round(m.total / 1e9, 2), "used_gb": round(m.used / 1e9, 2),
+               "percent": m.percent}
+    except Exception:
+        pass
+
+    # I2C devices (detect what's on the bus)
+    i2c_devices = []
+    try:
+        r = subprocess.run(["i2cdetect", "-y", "1"], capture_output=True, text=True, timeout=3)
+        for line in r.stdout.splitlines()[1:]:
+            parts = line.split(":")[1].strip().split() if ":" in line else []
+            for p in parts:
+                if p != "--":
+                    i2c_devices.append({"address": f"0x{p}", "bus": "i2c-1"})
+    except Exception:
+        pass
+
+    # GPIO info
+    gpio_info = {}
+    try:
+        r = subprocess.run(["raspi-gpio", "get"], capture_output=True, text=True, timeout=2)
+        gpio_info = {"raw": r.stdout[:200] if r.returncode == 0 else "unavailable"}
+    except Exception:
+        gpio_info = {"raw": "raspi-gpio not available"}
+
+    return {
+        "timestamp": time.time(),
+        "temperature": {
+            "cpu_c": temp_c,
+            "source": "/sys/class/thermal/thermal_zone0/temp",
+        },
+        "cpu": {"usage_percent": cpu_pct},
+        "memory": mem,
+        "i2c_devices": i2c_devices,
+        "gpio": gpio_info,
+        "onboard": {
+            "platform": "Raspberry Pi",
+            "available": True,
+        }
     }
 
 

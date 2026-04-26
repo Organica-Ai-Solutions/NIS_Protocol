@@ -198,7 +198,7 @@ async def clear_llm_cache(provider: Optional[str] = None):
 
 # ====== Analytics Endpoints ======
 
-@router.get("/analytics/dashboard")
+@router.get("/llm/analytics/dashboard")
 async def analytics_dashboard():
     """
     📊 LLM Analytics Dashboard - AWS Style
@@ -252,7 +252,7 @@ async def analytics_dashboard():
         }, status_code=500)
 
 
-@router.get("/analytics/tokens")
+@router.get("/llm/analytics/tokens")
 async def token_analytics(hours_back: int = 24):
     """
     🔢 Token Usage Analytics
@@ -292,7 +292,7 @@ async def token_analytics(hours_back: int = 24):
         raise HTTPException(status_code=500, detail=f"Token analytics failed: {str(e)}")
 
 
-@router.get("/analytics/costs")
+@router.get("/llm/analytics/costs")
 async def cost_analytics(hours_back: int = 24):
     """
     💰 Cost Analytics Dashboard

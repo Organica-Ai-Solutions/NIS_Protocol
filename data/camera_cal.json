@@ -1,0 +1,60 @@
+{
+  "cam_w": 1280,
+  "cam_h": 720,
+  "cam_cx": 640,
+  "cam_cy": 360,
+  "scale_x": 14.059,
+  "scale_y": 9.261,
+  "cam_y_ref": 620.4,
+  "known_points": [
+    [
+      0.0,
+      17.0,
+      911,
+      338
+    ],
+    [
+      8.0,
+      17.0,
+      910,
+      343
+    ],
+    [
+      -8.0,
+      17.0,
+      916,
+      339
+    ],
+    [
+      0.0,
+      13.5,
+      943,
+      333
+    ],
+    [
+      0.0,
+      20.5,
+      574,
+      112
+    ]
+  ],
+  "method": "video-recorded-affine",
+  "calibrated_at": "2026-02-27T21:00:49",
+  "note": "Single-point confirmed working. Run calibrate_from_recorded_video.py --pi_burst for full grid.",
+  "affine_M": [
+    [
+      -0.071130303873146,
+      0.10913090554122665
+    ],
+    [
+      -0.08326784263028926,
+      0.1079742365532441
+    ]
+  ],
+  "affine_T": [
+    28.542307211694656,
+    56.20782919974929
+  ],
+  "affine_rms_cm": 4.9309,
+  "n_points": 5
+}

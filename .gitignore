@@ -194,3 +194,18 @@ test_ddg.py
 backend_logs.txt
 FLUTTER_DEMO_INSTRUCTIONS 2.json
 configs/google-service-account.json
+
+# NeuroKernel v2 runtime data
+data/audit_chain.db
+data/audit_chain.db-shm
+data/audit_chain.db-wal
+data/*.db
+
+# curl test results
+curl_test_results_*.json
+
+# Local env/config overrides
+.env.h100
+.continue/
+neurohub_next.zip
+docs/arm_docs

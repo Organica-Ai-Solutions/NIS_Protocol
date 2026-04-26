@@ -1123,7 +1123,7 @@
 
         .code-header {
             display: flex;
-            justify-content: between;
+            justify-content: space-between;
             align-items: center;
             margin-bottom: 8px;
             padding-bottom: 8px;
@@ -1745,6 +1745,7 @@
             width: 80px;
             height: 4px;
             -webkit-appearance: none;
+            appearance: none;
             background: rgba(59, 130, 246, 0.3);
             border-radius: 2px;
             cursor: pointer;
@@ -2066,7 +2067,7 @@
                         <select id="endpointSelect" style="flex: 1; background-color: #2a2a2a; color: white; border: 1px solid #374151; border-radius: 4px; padding: 6px;">
                             <option value="/chat">Standard Chat</option>
                             <option value="/chat/stream" selected>Streaming Chat</option>
-                            <option value="/chat/formatted">Formatted Chat</option>
+                            <option value="/chat/reflective">Reflective Chat</option>
                         </select>
                         <button id="testEndpoint" style="background-color: #3b82f6; color: white; border: none; border-radius: 4px; padding: 6px 12px; cursor: pointer;">Test</button>
                     </div>
@@ -2312,7 +2313,7 @@
     </div>
 
     <script>
-        // 🎨 NIS Protocol Modern Chat - v3.3.0-voice-settings-complete
+        // 🎨 NIS Protocol Modern Chat - v4.0.1
         // Cache version: 2025-10-04-02:00 - Voice Settings & Enhanced Debugging
         // 🆕 Voice Settings Panel with TTS/Voice/Whisper selection
         // 🆕 Quick presets (Fastest/Balanced/Best Quality)
@@ -2369,8 +2370,8 @@
             }
         }
 
-        // 🎤 Voice Settings Global State
-        let voiceSettings = {
+        // 🎤 Voice Settings Global State (raw config — VoiceSettingsManager instance declared below)
+        let voiceSettingsState = {
             engine: 'gtts',
             voice: 'en',
             whisperModel: 'base',
@@ -2895,7 +2896,7 @@ Ready to execute your commands safely! 🚀`, false, 'system');
         // Execute runner command
         async function executeRunnerCommand(command) {
             try {
-                const response = await fetch('/api/langgraph/invoke', {
+                const response = await fetch('/api/mcp/invoke', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -2923,8 +2924,8 @@ Ready to execute your commands safely! 🚀`, false, 'system');
         // Execute Python script
         async function executePythonScript(filename, content) {
             try {
-                // First, write the script
-                await fetch('/tools/run', {
+                // First, write the script (best-effort; no-op if endpoint absent)
+                await fetch('/api/mcp/invoke', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -2933,10 +2934,10 @@ Ready to execute your commands safely! 🚀`, false, 'system');
                         tool: "write_script",
                         args: { filename: filename, content: content }
                     })
-                });
+                }).catch(() => {});
 
                 // Then execute it
-                const response = await fetch('/api/langgraph/invoke', {
+                const response = await fetch('/api/mcp/invoke', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -4586,7 +4587,7 @@ Ready to execute your commands safely! 🚀`, false, 'system');
                                     .trim();
                 
                 // Synthesize speech using VibeVoice
-                const response = await fetch('/communication/synthesize', {
+                const response = await fetch('/communication/consciousness_voice', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -4636,7 +4637,7 @@ Ready to execute your commands safely! 🚀`, false, 'system');
         // Enhanced runner commands
         async function executeRunnerTool(tool, args) {
             try {
-                const response = await fetch('/api/langgraph/invoke', {
+                const response = await fetch('/api/mcp/invoke', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -5455,21 +5456,21 @@ Ready to execute your commands safely! 🚀`, false, 'system');
                     }
                 };
                 
-                // Send via fetch to a test endpoint
-                fetch('/api/test/event', {
+                // Send via fetch to the execute endpoint
+                fetch('/execute', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(testEvent)
+                    body: JSON.stringify({ code: `print("Test event: ${JSON.stringify(testEvent)}")` })
                 })
                 .then(response => {
                     if (response.ok) {
-                        logNetworkRequest('EVENT', '/api/test/event', 'Test event sent successfully');
+                        logNetworkRequest('EVENT', '/execute', 'Test event sent successfully');
                     } else {
-                        logNetworkRequest('EVENT_ERROR', '/api/test/event', `Error ${response.status}: ${response.statusText}`);
+                        logNetworkRequest('EVENT_ERROR', '/execute', `Error ${response.status}: ${response.statusText}`);
                     }
                 })
                 .catch(error => {
-                    logNetworkRequest('EVENT_ERROR', '/api/test/event', `Exception: ${error.message}`);
+                    logNetworkRequest('EVENT_ERROR', '/execute', `Exception: ${error.message}`);
                 });
             });
             
@@ -6335,7 +6336,7 @@ print("First 10 Fibonacci numbers:", result)
 print("Sum:", sum(result))`;
             
             try {
-                const response = await fetch('/execute/code', {
+                const response = await fetch('/execute', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({

@@ -770,7 +770,7 @@ async def acp_execute_agent(request: ProtocolExecuteRequest, demo_mode: bool = F
 
 # ====== ACP BeeAI Compatible Endpoints ======
 
-@router.get("/agents")
+@router.get("/acp/agents")
 async def acp_list_agents():
     """
     🤖 ACP: List available agents (following IBM/Linux Foundation ACP spec)

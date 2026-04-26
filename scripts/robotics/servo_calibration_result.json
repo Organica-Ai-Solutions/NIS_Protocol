@@ -1,0 +1,75 @@
+{
+  "_comment": "Canonical xArm calibration — servo units (0-1000). S1=Gripper, S6=Base Rotation.",
+  "_servo_map": {
+    "S1": "Gripper      (100=open, 550=closed on object, 500=neutral)",
+    "S2": "Shoulder     (low=forward-lean/reach, high=upright; 484=workspace-ready)",
+    "S3": "Elbow        (low=extended/reach, high=folded; 433=workspace-ready)",
+    "S4": "Wrist Yaw    (500=center)",
+    "S5": "Wrist Pitch  (low=tilt-up, high=tilt-down; 432=workspace-ready)",
+    "S6": "Base Rotate  (100=far-left/bin, 350=center, 850=far-right)"
+  },
+  "_gripper": "S1: 100=fully open, 550=closed on object, 500=neutral",
+  "_workspace_cm": {"width": 17.0, "depth": 20.5},
+  "_home_note": "HOME = 17x20.5cm workspace-ready (arm leaning forward, NOT upright). Position 1 on remote controller. ATTENTION = safe upright transit pose.",
+
+  "home": {
+    "note": "Workspace-ready home. Arm leans slightly forward over workspace center. Matches remote controller Position 1.",
+    "1": 500, "2": 484, "3": 433, "4": 500, "5": 432, "6": 350
+  },
+
+  "attention": {
+    "note": "Safe upright transit pose (mechanical center). Used between operations, NOT the workspace home.",
+    "1": 500, "2": 500, "3": 400, "4": 500, "5": 400, "6": 350
+  },
+
+  "inspect": {
+    "1": 500, "2": 625, "3": 485, "4": 500, "5": 335, "6": 500
+  },
+
+  "pick_table": {
+    "note": "Arm lowered to object. S1=500 (neutral) — gripper opened separately before this step.",
+    "1": 500, "2": 258, "3": 733, "4": 500, "5": 850, "6": 500
+  },
+
+  "lift_grip": {
+    "note": "Arm raised holding object. S1=550 (closed grip held).",
+    "1": 550, "2": 625, "3": 485, "4": 500, "5": 335, "6": 500
+  },
+
+  "place_bin": {
+    "note": "Arm over bin, still gripping. S1=550. Gripper opened separately after this step.",
+    "1": 550, "2": 370, "3": 720, "4": 380, "5": 680, "6": 240
+  },
+
+  "ready": {
+    "1": 500, "2": 484, "3": 433, "4": 500, "5": 432, "6": 350
+  },
+
+  "reach_left": {
+    "1": 162, "2": 433, "3": 650, "4": 375, "5": 550, "6": 350
+  },
+
+  "reach_right": {
+    "1": 859, "2": 153, "3": 650, "4": 525, "5": 550, "6": 350
+  },
+
+  "wave_up": {
+    "1": 500, "2": 834, "3": 154, "4": 500, "5": 225, "6": 350
+  },
+
+  "wave_side": {
+    "1": 634, "2": 662, "3": 350, "4": 435, "5": 300, "6": 350
+  },
+
+  "_pipeline_sequence": [
+    "home",
+    "inspect",
+    "open_gripper  (S1 → 100, handled by /arm/gripper/open)",
+    "pick_table",
+    "close_gripper (S1 → 550, handled by /arm/gripper/close)",
+    "lift_grip",
+    "place_bin",
+    "open_gripper  (S1 → 100, release into bin)",
+    "home"
+  ]
+}

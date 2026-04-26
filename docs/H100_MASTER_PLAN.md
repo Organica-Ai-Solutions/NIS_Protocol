@@ -42,53 +42,99 @@
 
 ---
 
-## 2. Completed Model Inventory (160+)
+## 2. Production Model Inventory — Post-Audit (Feb 24 2026)
 
-### Large Models
+> **Audit completed Feb 24 2026.** ~300 GB of intermediate checkpoints deleted.
+> Storage: 3.6T → 3.3T. Only final/best models kept.
 
-| Model | Steps | Training Time | Size | Notes |
-|-------|-------|---------------|------|-------|
-| NIS-LLM | 100 K | 76.16 h | ~14 GB | Llama-based, robot command parsing |
-| Robotics-LLM | 100 K | 53.34 h | ~14 GB | Mistral-based, robotics specialist |
-| NIS-MoE v1 | 100 K | 5.6 h | ~1 GB | 276 M params, Loss: 0.093 |
-| VLA-PushT Real | 100 K | 0.4 h | ~100 MB | Real robot data |
-| VLA-4 | 500 K | ~24 h | ~500 MB | Manipulation |
-| VLA-6 | 500 K | ~24 h | ~500 MB | Navigation |
-| VLA-Bimanual | 500 K | ~24 h | ~500 MB | Dual arm |
-| VLA-Mobile | 500 K | ~24 h | ~500 MB | Mobile robot |
+### Cosmos Inference Stack (Live on H100 — serving 24/7)
 
-### Earlier Batches (Jan 15–28)
+| Model | Size | Port | Status | NIS Route |
+|-------|------|------|--------|-----------|
+| cosmos-reason2-8b | 17 GB | :8100 | ✅ LIVE | `/cosmos/reason`, `/cookoff/robot-plan` |
+| nis-cosmos-reason2-v2 (LoRA) | 3.7 GB | :8100 | ✅ ACTIVE (upgraded Feb 24) | adapter on reason2 |
+| predict2/2B-Video2World | 249 GB | :8200 | ✅ LIVE | `/cosmos/predict`, `/cookoff/predict` |
+| predict25-robotics-lora | 6.5 GB | :8200 | ✅ KEPT (final+best) | future: load on predict2 |
+| transfer2.5/2B/general/edge | 48 GB | :8300 | ✅ LIVE | `/cookoff/transfer` |
+| qwen3-vl-8b-instruct | 17 GB | :8200 | ✅ KEPT | Predict2.5 base |
+| cosmos_demo_server | — | :8400 | ✅ LIVE | `/cookoff/status` |
 
-| Category | Count | Total Size | Edge Compatible |
-|----------|-------|------------|-----------------|
-| PINN (heat equation) | 966 | ~2 GB | ✅ Pi5 |
-| NeMo ASR | 41 | ~540 MB | ✅ Pi5/Jetson |
-| Vision / YOLO | 32 | 79 MB | ✅ Pi5/Jetson |
-| RL / PPO | 55 | 18.5 MB | ✅ Pi5/Jetson |
-| Isaac Navigation | 10+ | ~20 MB | ✅ Pi5/Jetson |
-| Embeddings (SBERT) | 13 | ~200 MB | ✅ Pi5/Jetson |
-| Transformer / GPT | 10 | 1.98 GB | ✅ Jetson |
-| BitNet | 4 | 132 MB | ✅ Pi5/Jetson |
+### Large Language Models (H100 Fine-Tunes)
 
-### Cluster Model Paths
+| Model | Size | Adapter | Status |
+|-------|------|---------|--------|
+| llm_base/qwen2.5-72b-instruct | 136 GB | qwen72b-nis-qlora-v2 (3.2 GB) | ✅ KEPT |
+| llm_base/codellama-34b-instruct | 126 GB | codellama-34b-nis/best_lora (3.3 GB) | ✅ KEPT |
+| llm_base/llama-3.1-70b-instruct | 68 KB* | — | ✅ KEPT |
+| nis_llm/nis_llm_final.pt | 137 GB | — | ✅ KEPT |
+| robotics_llm/robotics_llm_final.pt | 137 GB | — | ✅ KEPT |
+
+*llama base is a symlink/stub — full weights in nis_llm
+
+### VLA Models (Robot Action)
+
+| Model | Size | Hardware | Status | NIS Route |
+|-------|------|----------|--------|-----------|
+| vla_xarm_v2 | 544 MB | xArm (our robot) | ✅ PRODUCTION | `/cookoff/execute` (pending wire) |
+| vla_realdata_v4 | 186 MB | general | ✅ PRODUCTION | — |
+| vla_pusht_real_final.pt | 17 MB | PushT | ✅ KEPT | — |
+| vla_heavy_v2 | 14 GB | general | 🔄 TRAINING (ETA done) | — |
+
+### Edge Models (Pi5 / Jetson Deployable)
+
+| Category | Location | Size | Status | NIS Route |
+|----------|----------|------|--------|-----------|
+| NeMo ASR | neurolinux/nemo/ | 1.8 GB | ✅ PRODUCTION | `/voice/stt` |
+| YOLO Vision | neurolinux/vision/ | 171 MB | ✅ PRODUCTION | `/vision/detect` |
+| RL/PPO | neurolinux/rl/ | 35 MB | ✅ PRODUCTION | `/agents/rl` |
+| Isaac Nav | neurolinux/isaac/ | 130 MB | ✅ PRODUCTION | `/agents/navigate` |
+| SBERT Embeddings | neurolinux/embeddings/ | 2.3 GB | ✅ PRODUCTION | `/memory/embed` |
+| World Model v4 | world_model_v4/final | 75 MB | ✅ KEPT | — |
+
+### Archived / Deleted (Feb 24 2026)
+
+| What | Why | Space Freed |
+|------|-----|-------------|
+| vla_maxbatch_step*.pt (50 files) | Intermediate checkpoints | ~210 GB |
+| world_model_v4/epoch_* (500 dirs) | Intermediate epochs | ~37 GB |
+| vla_pusht_real_step*.pt (20 files) | Intermediate checkpoints | ~340 MB |
+| vla_realdata_unified_v3 steps (17) | Intermediate checkpoints | ~1.5 GB |
+| cosmos_reason2_lora_v1/checkpoint-* | Superseded by v2 | ~500 MB |
+| qwen72b_nis_qlora v1 | Superseded by v2 | ~3 GB |
+| cosmos-reason2-8b-gguf | GGUF not used by server | ~5 GB |
+| cosmos-aloha-policy | ALOHA robot, not xArm | ~2 GB |
+| predict25-robotics-lora/checkpoint-* | Intermediate (kept final+best) | ~4 GB |
+| **Total** | | **~263 GB** |
+
+### Cluster Model Paths (Clean — Feb 24 2026)
 
 ```
 /data/organica-ai/models/
-├── nis_llm_h100/                 # NIS-LLM (~14 GB)
-├── robotics_llm_h100/            # Robotics-LLM (~14 GB)
-├── nis_moe_h100_final.pt         # NIS-MoE v1
-├── nis_moe_h100_step*.pt         # 20 MoE checkpoints
-├── vla_pusht_real_final.pt       # Real robot VLA
-├── vla_max4_final.pt             # VLA manipulation
-├── vla_max6_final.pt             # VLA navigation
-├── neurolinux/
-│   ├── nemo/asr_*.pt            # 41 ASR models
-│   ├── isaac/nav_*.pt           # Isaac RL policies
-│   ├── vision/yolo_*.pt         # 32 vision models
-│   ├── rl/ppo_*.pt              # 55 RL models
-│   └── embeddings/sbert_*.pt    # 13 embedding models
-├── pinn_heat_*.pt                # 966 PINN models
-└── transformer_*.pt              # 10 transformer models
+├── cosmos/
+│   ├── cosmos-reason2-8b/          # 17 GB — base model :8100
+│   ├── nis-cosmos-reason2-v2/      # 3.7 GB — ACTIVE LoRA on :8100
+│   ├── predict2/                   # 249 GB — base model :8200
+│   ├── predict25-robotics-lora/    # 6.5 GB — robotics LoRA (final+best)
+│   ├── transfer2.5/                # 48 GB — :8300
+│   └── qwen3-vl-8b-instruct/       # 17 GB — Predict2.5 base
+├── llm_base/
+│   ├── qwen2.5-72b-instruct/       # 136 GB
+│   ├── codellama-34b-instruct/     # 126 GB
+│   └── llama-3.1-70b-instruct/     # stub
+├── qwen72b-nis-qlora-v2/final_lora # 3.2 GB — best NIS LLM adapter
+├── codellama-34b-nis/best_lora     # 3.3 GB — code adapter
+├── nis_llm/nis_llm_final.pt        # 137 GB — NIS-LLM
+├── robotics_llm/robotics_llm_final.pt # 137 GB — Robotics-LLM
+├── vla_xarm_v2/                    # 544 MB — xArm VLA (our hardware)
+├── vla_realdata_v4/                # 186 MB — real data VLA
+├── vla_pusht_real_final.pt         # 17 MB
+├── world_model_v4/final            # 75 MB
+└── neurolinux/
+    ├── nemo/                       # 1.8 GB — ASR
+    ├── vision/                     # 171 MB — YOLO
+    ├── rl/                         # 35 MB — PPO
+    ├── isaac/                      # 130 MB — nav
+    └── embeddings/                 # 2.3 GB — SBERT
 ```
 
 ---

@@ -1,0 +1,269 @@
+{
+  "calibrated_at": "2026-02-27T19:26:35",
+  "s6_green": 400,
+  "s6_blue": null,
+  "s6_pick": 500,
+  "s6_place": 875,
+  "s3_pick": 142,
+  "x_pick": 0.0,
+  "y_pick": 17.0,
+  "place_key": "left90",
+  "trial_ok": true,
+  "poses": {
+    "home": {
+      "1": 100,
+      "2": 500,
+      "3": 310,
+      "4": 870,
+      "5": 680,
+      "6": 500
+    },
+    "pick_approach": {
+      "1": 100,
+      "2": 500,
+      "3": 310,
+      "4": 870,
+      "5": 680,
+      "6": 400
+    },
+    "pick_low": {
+      "1": 100,
+      "2": 500,
+      "3": 177,
+      "4": 814,
+      "5": 432,
+      "6": 400
+    },
+    "lift": {
+      "1": 500,
+      "2": 500,
+      "3": 310,
+      "4": 870,
+      "5": 680,
+      "6": 400
+    },
+    "transit": {
+      "1": 500,
+      "2": 500,
+      "3": 310,
+      "4": 870,
+      "5": 680,
+      "6": 875
+    },
+    "place_low": {
+      "3": 220,
+      "4": 827,
+      "5": 425,
+      "6": 875,
+      "1": 500,
+      "2": 500
+    },
+    "release": {
+      "3": 220,
+      "4": 827,
+      "5": 425,
+      "6": 875,
+      "1": 100,
+      "2": 500
+    }
+  },
+  "ki_positions": {
+    "home": "(0, 17, 20.5, 0)",
+    "pick": "(6.9, 15.5, 0.70, -71)",
+    "place": "ki_move left90"
+  },
+  "s4_pick": 856,
+  "s5_pick": 430,
+  "z_pick": 1.5,
+  "z_correction_cm": 0.5,
+  "cosmos_recommendation": "Moving to pick position",
+  "ik_sweep": [
+    {
+      "z": 1.5,
+      "s3": 182,
+      "s4": 791,
+      "s5": 461
+    },
+    {
+      "z": 1.25,
+      "s3": 180,
+      "s4": 799,
+      "s5": 452
+    },
+    {
+      "z": 1.0,
+      "s3": 179,
+      "s4": 805,
+      "s5": 443
+    },
+    {
+      "z": 0.75,
+      "s3": 178,
+      "s4": 812,
+      "s5": 434
+    },
+    {
+      "z": 0.5,
+      "s3": 177,
+      "s4": 819,
+      "s5": 425
+    },
+    {
+      "z": 0.25,
+      "s3": 177,
+      "s4": 825,
+      "s5": 416
+    },
+    {
+      "z": 0.0,
+      "s3": 177,
+      "s4": 831,
+      "s5": 408
+    },
+    {
+      "z": -0.25,
+      "s3": 177,
+      "s4": 837,
+      "s5": 399
+    },
+    {
+      "z": -0.5,
+      "s3": 178,
+      "s4": 843,
+      "s5": 390
+    },
+    {
+      "z": -0.75,
+      "s3": 179,
+      "s4": 848,
+      "s5": 381
+    },
+    {
+      "z": -1.0,
+      "s3": 181,
+      "s4": 854,
+      "s5": 373
+    },
+    {
+      "z": -1.25,
+      "s3": 183,
+      "s4": 859,
+      "s5": 364
+    },
+    {
+      "z": -1.5,
+      "s3": 185,
+      "s4": 864,
+      "s5": 356
+    },
+    {
+      "z": -1.75,
+      "s3": 188,
+      "s4": 869,
+      "s5": 347
+    },
+    {
+      "z": -2.0,
+      "s3": 190,
+      "s4": 873,
+      "s5": 338
+    }
+  ],
+  "demo_run_at": "2026-02-27T19:45:29",
+  "reps_run": 1,
+  "official_sources": [
+    "5.2.5 Fixed-Point Motion -> HOME/PICK/PLACE coordinates",
+    "5.3.7 Color Sorting -> pick-and-place workflow",
+    "5.4.3 Color Tracking -> camera pixel-to-arm formula",
+    "5.4.8 Waste Sorting -> vision classification + ki_move",
+    "5.5.5 Voice Sorting -> gripper 400ms close timing",
+    "5.5.6 Adaptive Grasping -> ki_move_adapt pattern"
+  ],
+  "place_joints": {
+    "left90": {
+      "3": 220,
+      "4": 827,
+      "5": 425,
+      "6": 875
+    },
+    "left45": {
+      "3": 225,
+      "4": 827,
+      "5": 425,
+      "6": 685
+    },
+    "right45": {
+      "3": 225,
+      "4": 827,
+      "5": 425,
+      "6": 315
+    },
+    "right90": {
+      "3": 220,
+      "4": 827,
+      "5": 425,
+      "6": 125
+    }
+  },
+  "place_z_correction_cm": 1.0,
+  "last_vision_pick_at": "2026-02-27T21:10:19",
+  "last_vision_cam": null,
+  "last_vision_arm": [
+    6.91,
+    15.53
+  ],
+  "camera_cal": {
+    "scale_x": 14.059,
+    "scale_y": 9.261,
+    "cam_y_ref": 620.4
+  },
+  "gate1_servo_deviation": {
+    "checked_at": "2026-02-27T20:18:11",
+    "positions_read": {
+      "1": 100,
+      "2": 500,
+      "3": 310,
+      "4": 870,
+      "5": 680,
+      "6": 500
+    },
+    "dev_from_neutral": {
+      "1": -400,
+      "2": 0,
+      "3": -190,
+      "4": 370,
+      "5": 180,
+      "6": 0
+    },
+    "minor_deviation_servos": [],
+    "major_deviation_servos": [],
+    "gate1_pass": true,
+    "threshold_pass_units": 20,
+    "threshold_minor_units": 125,
+    "deg_per_unit": 0.24
+  },
+  "camera_affine": {
+    "M": [
+      [
+        -0.071130303873146,
+        0.10913090554122665
+      ],
+      [
+        -0.08326784263028926,
+        0.1079742365532441
+      ]
+    ],
+    "T": [
+      28.542307211694656,
+      56.20782919974929
+    ],
+    "rms_cm": 4.9309
+  },
+  "z_pick_effective": 2.5,
+  "pick_alpha": -65,
+  "gripper_grip_value": 700,
+  "z_pick_confirmed": true,
+  "s1_grip": 700,
+  "pick_confirmed_at": "2026-02-27T21:29:11",
+  "pick_method": "guided_pick_camera_confirmed"
+}

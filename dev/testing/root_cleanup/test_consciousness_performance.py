@@ -392,7 +392,7 @@ class TestMetaCognitiveProcessorPerformance:
                 quality_metrics={"accuracy": 0.85 + np.random.normal(0, 0.05), "consistency": 0.9},
                 bias_assessment={"confirmation_bias": 0.2, "anchoring_bias": 0.15},
                 processing_time=0.1 + np.random.exponential(0.05),
-                confidence_score=calculate_score(metrics)5
+                confidence_score=calculate_score(metrics)
             )
             test_analyses.append(analysis)
         

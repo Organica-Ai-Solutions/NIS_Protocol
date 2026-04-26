@@ -187,8 +187,12 @@ class GeneralLLMProvider:
             for provider, models in self.available_models.items()
         }
         
-        # BitNet local model path
-        self.bitnet_model_path = os.getenv("BITNET_MODEL_PATH", "models/bitnet/models/bitnet")
+        # BitNet local model path — resolve to absolute path so it works from any cwd
+        _default_bitnet = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+            "models", "bitnet", "models", "bitnet"
+        )
+        self.bitnet_model_path = os.getenv("BITNET_MODEL_PATH", _default_bitnet)
         self.bitnet_model = None
         self.bitnet_tokenizer = None
         self._bitnet_loaded = False
@@ -220,9 +224,10 @@ class GeneralLLMProvider:
         else:
             logger.warning("⚠️ No API keys configured - using mock responses")
         
-        # API endpoints
+        # API endpoints (OPENAI_API_BASE lets us point at local vLLM/Qwen proxy)
+        _openai_base = os.getenv("OPENAI_API_BASE", "https://api.openai.com/v1").rstrip("/")
         self.endpoints = {
-            "openai": "https://api.openai.com/v1/chat/completions",
+            "openai": f"{_openai_base}/chat/completions",
             "anthropic": "https://api.anthropic.com/v1/messages",
             "google": "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent",
             "deepseek": "https://api.deepseek.com/chat/completions",
@@ -280,19 +285,28 @@ class GeneralLLMProvider:
         return None
     
     def _check_bitnet_available(self) -> bool:
-        """Check if BitNet local model is available"""
+        """Check if BitNet local model is available (HF format or raw .pt checkpoint)."""
         if not TORCH_AVAILABLE:
             return False
         model_path = Path(self.bitnet_model_path)
-        # Check for model files - require BOTH config.json AND a model file
+        # HF format: need config.json + model weights
         has_config = (model_path / "config.json").exists()
-        has_model = (model_path / "pytorch_model.bin").exists() or \
-                    (model_path / "model.safetensors").exists()
-        is_available = has_config and has_model
+        has_hf_model = (model_path / "pytorch_model.bin").exists() or \
+                       (model_path / "model.safetensors").exists() or \
+                       len(list(model_path.glob("model-*-of-*.safetensors"))) > 0
+        # Raw .pt checkpoint fallback (custom trained models)
+        has_pt = len(list(model_path.glob("*.pt"))) > 0
+        # Also check sibling dirs for trained checkpoints
+        parent = model_path.parent.parent.parent  # models/
+        has_trained = (
+            (parent / "bitnet_nis" / "bitnet_best.pt").exists() or
+            len(list((parent / "bitnet_realdata_v4").glob("*best*.pt"))) > 0
+        )
+        is_available = (has_config and has_hf_model) or (has_config and has_pt) or has_trained
         if is_available:
-            logger.info(f"🧠 BitNet local model found at {model_path}")
+            logger.info(f"🧠 BitNet model found — hf={has_hf_model} pt={has_pt} trained={has_trained} @ {model_path}")
         else:
-            logger.debug(f"BitNet model not available at {model_path} (config: {has_config}, model: {has_model})")
+            logger.debug(f"BitNet not available at {model_path} (config={has_config} hf={has_hf_model} pt={has_pt})")
         return is_available
     
     def _load_bitnet_model(self):
@@ -376,17 +390,23 @@ print("OK:" + str(config.get("model_type", "unknown")))
             
             logger.info("✅ Tokenizer loaded, loading model weights...")
             
+            import torch as _torch
+            # Use GPU if available — H100/CUDA first, CPU fallback for Pi
+            _device_map = "auto" if _torch.cuda.is_available() else None
+            _dtype = _torch.float16 if _torch.cuda.is_available() else _torch.float32
             from transformers import AutoModelForCausalLM as AMLM
             self.bitnet_model = AMLM.from_pretrained(
                 load_path,
-                torch_dtype=torch.float32,
-                device_map=None,
+                torch_dtype=_dtype,
+                device_map=_device_map,
                 trust_remote_code=True,
                 low_cpu_mem_usage=True,
                 local_files_only=True
             )
-            self.bitnet_model = self.bitnet_model.to("cpu")
+            if _device_map is None:
+                self.bitnet_model = self.bitnet_model.to("cpu")
             self.bitnet_model.eval()
+            logger.info(f"🚀 BitNet loaded on {'GPU (device_map=auto)' if _device_map else 'CPU'} dtype={_dtype}")
             
             gc.collect()
             

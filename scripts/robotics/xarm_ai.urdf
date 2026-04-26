@@ -1,0 +1,361 @@
+<?xml version="1.0"?>
+<!--
+  xArm AI URDF - 6DOF Robotic Arm
+  ================================
+  Generated from confirmed official Hiwonder kinematic parameters.
+  Source: corex.py files, ArmPi Ultra URDF tutorial, official docs.
+
+  Link lengths (from kinematics.set_link_length):
+    L1 = 6.9 cm  (base to shoulder height)
+    L2 = 9.5 cm  (upper arm / humerus)
+    L3 = 9.5 cm  (forearm)
+    L4 = 16.9 cm (hand / gripper link)
+
+  Servo ID map:
+    S1 = gripper (continuous open/close)
+    S2 = wrist tilt (pitch)
+    S3 = wrist rotate (roll)
+    S4 = elbow
+    S5 = shoulder
+    S6 = base (yaw)
+
+  Coordinate convention (Hiwonder):
+    x = right (positive = arm rotates right, S6 < 500)
+    y = forward (positive = arm extends forward)
+    z = up (positive = upward)
+
+  Servo range: 0-1000 -> 0-240 deg, centered at 500 = 0 deg
+  -> radians per unit = (240 * pi/180) / 1000 = 0.004189 rad/unit
+  -> full range = +/- 120 deg from neutral (+/- 2.094 rad)
+
+  Joint limits are set conservatively to the usable pick-and-place range:
+    S6 (base):     -90 to +90 deg   (-1.571 to +1.571 rad)
+    S5 (shoulder):  ~0 to +180 deg  (practical: 60-120 deg from neutral)
+    S4 (elbow):    ~0 to +180 deg
+    S3 (wrist):    -120 to +120 deg
+    S2 (tilt):     -60 to +60 deg
+    S1 (gripper):  0 to 90 deg (open/close)
+-->
+<robot name="xarm_ai">
+
+  <!-- ======================================================================
+       MATERIALS
+  ====================================================================== -->
+  <material name="black">
+    <color rgba="0.1 0.1 0.1 1.0"/>
+  </material>
+  <material name="grey">
+    <color rgba="0.5 0.5 0.5 1.0"/>
+  </material>
+  <material name="dark_grey">
+    <color rgba="0.3 0.3 0.3 1.0"/>
+  </material>
+  <material name="white">
+    <color rgba="0.9 0.9 0.9 1.0"/>
+  </material>
+  <material name="orange">
+    <color rgba="1.0 0.5 0.0 1.0"/>
+  </material>
+
+  <!-- ======================================================================
+       BASE LINK (fixed to table/world)
+  ====================================================================== -->
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <cylinder length="0.02" radius="0.05"/>
+      </geometry>
+      <origin xyz="0 0 0.01" rpy="0 0 0"/>
+      <material name="black"/>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder length="0.02" radius="0.05"/>
+      </geometry>
+      <origin xyz="0 0 0.01" rpy="0 0 0"/>
+    </collision>
+    <inertial>
+      <mass value="0.5"/>
+      <inertia ixx="0.001" iyy="0.001" izz="0.001" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+  </link>
+
+  <!-- ======================================================================
+       JOINT 6: BASE ROTATION (S6, LX-15D)
+       Axis: Z (yaw)
+       Neutral: S6=500 -> 0 rad
+       Range: ±90 deg (-1.571 to +1.571 rad)
+       S6 unit to rad: (500-S6) * 0.004189
+  ====================================================================== -->
+  <joint name="joint6_base_rotation" type="revolute">
+    <parent link="base_link"/>
+    <child  link="link6_shoulder_base"/>
+    <origin xyz="0 0 0.02" rpy="0 0 0"/>
+    <axis   xyz="0 0 1"/>
+    <limit lower="-1.5708" upper="1.5708" effort="50" velocity="2.0"/>
+    <dynamics damping="0.5" friction="0.2"/>
+  </joint>
+
+  <!-- ======================================================================
+       LINK 6: SHOULDER BASE (rotates with S6)
+       Height L1 = 6.9 cm = 0.069 m from base pivot to shoulder pivot
+  ====================================================================== -->
+  <link name="link6_shoulder_base">
+    <visual>
+      <geometry>
+        <box size="0.04 0.04 0.069"/>
+      </geometry>
+      <origin xyz="0 0 0.0345" rpy="0 0 0"/>
+      <material name="dark_grey"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.04 0.04 0.069"/>
+      </geometry>
+      <origin xyz="0 0 0.0345" rpy="0 0 0"/>
+    </collision>
+    <inertial>
+      <mass value="0.15"/>
+      <inertia ixx="0.0001" iyy="0.0001" izz="0.0001" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+  </link>
+
+  <!-- ======================================================================
+       JOINT 5: SHOULDER (S5, LX-225)
+       Axis: Y (pitch - forward/backward tilt)
+       Neutral: S5=680 -> correspnds to HOME shoulder angle ~45.4 deg
+       Range: practical 30-150 deg
+  ====================================================================== -->
+  <joint name="joint5_shoulder" type="revolute">
+    <parent link="link6_shoulder_base"/>
+    <child  link="link5_upper_arm"/>
+    <origin xyz="0 0 0.069" rpy="0 0 0"/>
+    <axis   xyz="0 1 0"/>
+    <limit lower="-1.5708" upper="1.5708" effort="80" velocity="2.0"/>
+    <dynamics damping="0.8" friction="0.3"/>
+  </joint>
+
+  <!-- ======================================================================
+       LINK 5: UPPER ARM (L2 = 9.5 cm = 0.095 m)
+  ====================================================================== -->
+  <link name="link5_upper_arm">
+    <visual>
+      <geometry>
+        <box size="0.03 0.03 0.095"/>
+      </geometry>
+      <origin xyz="0 0 0.0475" rpy="0 0 0"/>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.03 0.03 0.095"/>
+      </geometry>
+      <origin xyz="0 0 0.0475" rpy="0 0 0"/>
+    </collision>
+    <inertial>
+      <mass value="0.12"/>
+      <inertia ixx="0.0001" iyy="0.0001" izz="0.0001" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+  </link>
+
+  <!-- ======================================================================
+       JOINT 4: ELBOW (S4, LX-15D)
+       Axis: Y (pitch)
+       Neutral: S4=870 -> corresponds to HOME elbow ~88.6 deg
+       Range: practical 0-180 deg
+  ====================================================================== -->
+  <joint name="joint4_elbow" type="revolute">
+    <parent link="link5_upper_arm"/>
+    <child  link="link4_forearm"/>
+    <origin xyz="0 0 0.095" rpy="0 0 0"/>
+    <axis   xyz="0 1 0"/>
+    <limit lower="-1.5708" upper="1.5708" effort="50" velocity="2.0"/>
+    <dynamics damping="0.5" friction="0.2"/>
+  </joint>
+
+  <!-- ======================================================================
+       LINK 4: FOREARM (L3 = 9.5 cm = 0.095 m)
+  ====================================================================== -->
+  <link name="link4_forearm">
+    <visual>
+      <geometry>
+        <box size="0.025 0.025 0.095"/>
+      </geometry>
+      <origin xyz="0 0 0.0475" rpy="0 0 0"/>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.025 0.025 0.095"/>
+      </geometry>
+      <origin xyz="0 0 0.0475" rpy="0 0 0"/>
+    </collision>
+    <inertial>
+      <mass value="0.10"/>
+      <inertia ixx="0.0001" iyy="0.0001" izz="0.0001" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+  </link>
+
+  <!-- ======================================================================
+       JOINT 3: WRIST ROTATE (S3, LX-15D)
+       Axis: Z (roll around forearm axis)
+       Neutral: S3=500 -> 0 rad
+       Hiwonder HOME: S3=310 -> rotated
+  ====================================================================== -->
+  <joint name="joint3_wrist_rotate" type="revolute">
+    <parent link="link4_forearm"/>
+    <child  link="link3_wrist"/>
+    <origin xyz="0 0 0.095" rpy="0 0 0"/>
+    <axis   xyz="0 0 1"/>
+    <limit lower="-2.0944" upper="2.0944" effort="20" velocity="3.0"/>
+    <dynamics damping="0.2" friction="0.1"/>
+  </joint>
+
+  <!-- ======================================================================
+       LINK 3: WRIST BODY
+  ====================================================================== -->
+  <link name="link3_wrist">
+    <visual>
+      <geometry>
+        <sphere radius="0.02"/>
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <material name="orange"/>
+    </visual>
+    <collision>
+      <geometry>
+        <sphere radius="0.02"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.05"/>
+      <inertia ixx="0.00005" iyy="0.00005" izz="0.00005" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+  </link>
+
+  <!-- ======================================================================
+       JOINT 2: WRIST TILT (S2, HTS-16L)
+       Axis: Y (pitch - end effector angle)
+       Neutral: S2=500 -> 0 rad
+       HOME: S2=500 (wrist horizontal)
+       PICK: S2=500 with alpha=-71 deg applied via S3/S4/S5
+  ====================================================================== -->
+  <joint name="joint2_wrist_tilt" type="revolute">
+    <parent link="link3_wrist"/>
+    <child  link="link2_hand"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <axis   xyz="0 1 0"/>
+    <limit lower="-1.5708" upper="1.5708" effort="30" velocity="2.0"/>
+    <dynamics damping="0.3" friction="0.15"/>
+  </joint>
+
+  <!-- ======================================================================
+       LINK 2: HAND (L4 = 16.9 cm = 0.169 m)
+       This is the long hand/gripper link
+  ====================================================================== -->
+  <link name="link2_hand">
+    <visual>
+      <geometry>
+        <box size="0.025 0.03 0.169"/>
+      </geometry>
+      <origin xyz="0 0 0.0845" rpy="0 0 0"/>
+      <material name="dark_grey"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.025 0.03 0.169"/>
+      </geometry>
+      <origin xyz="0 0 0.0845" rpy="0 0 0"/>
+    </collision>
+    <inertial>
+      <mass value="0.08"/>
+      <inertia ixx="0.0003" iyy="0.0003" izz="0.00002" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+  </link>
+
+  <!-- ======================================================================
+       JOINT 1: GRIPPER (S1, HX-06L)
+       Type: prismatic (simplified - actual is parallel jaw)
+       Axis: X (jaw open/close)
+       Range: 0 (open) to 0.04 m (closed)
+       S1=100 -> open, S1=500 -> closed
+  ====================================================================== -->
+  <joint name="joint1_gripper" type="prismatic">
+    <parent link="link2_hand"/>
+    <child  link="link1_gripper_tip"/>
+    <origin xyz="0 0 0.169" rpy="0 0 0"/>
+    <axis   xyz="1 0 0"/>
+    <limit lower="0.0" upper="0.04" effort="10" velocity="0.1"/>
+    <dynamics damping="0.1" friction="0.05"/>
+  </joint>
+
+  <!-- ======================================================================
+       LINK 1: GRIPPER TIP (EEF)
+       This is the tool center point (TCP)
+  ====================================================================== -->
+  <link name="link1_gripper_tip">
+    <visual>
+      <geometry>
+        <box size="0.04 0.01 0.02"/>
+      </geometry>
+      <origin xyz="0 0 0.01" rpy="0 0 0"/>
+      <material name="black"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.04 0.01 0.02"/>
+      </geometry>
+      <origin xyz="0 0 0.01" rpy="0 0 0"/>
+    </collision>
+    <inertial>
+      <mass value="0.02"/>
+      <inertia ixx="0.000002" iyy="0.000002" izz="0.000002" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+  </link>
+
+  <!-- ======================================================================
+       EEF FRAME (tool center point)
+  ====================================================================== -->
+  <joint name="joint_eef" type="fixed">
+    <parent link="link1_gripper_tip"/>
+    <child  link="eef_link"/>
+    <origin xyz="0 0 0.02" rpy="0 0 0"/>
+  </joint>
+  <link name="eef_link"/>
+
+  <!-- ======================================================================
+       CAMERA MOUNT (top-down, mounted above workspace)
+       Position: above arm, pointing straight down
+       Offset: 0 forward, 0 lateral, ~60cm above table
+  ====================================================================== -->
+  <link name="camera_link">
+    <visual>
+      <geometry>
+        <box size="0.03 0.03 0.02"/>
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <material name="white"/>
+    </visual>
+    <inertial>
+      <mass value="0.05"/>
+      <inertia ixx="0.00001" iyy="0.00001" izz="0.00001" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+  </link>
+
+  <joint name="camera_mount" type="fixed">
+    <parent link="base_link"/>
+    <child  link="camera_link"/>
+    <!-- Mounted ~60cm above table, looking straight down -->
+    <!-- Actual height = fx / scale_px_per_cm = fx / 12.6 (from calibration) -->
+    <origin xyz="0 0 0.60" rpy="0 1.5708 0"/>
+  </joint>
+
+  <!-- Camera optical frame (z=forward/down, x=right, y=down) -->
+  <joint name="camera_optical" type="fixed">
+    <parent link="camera_link"/>
+    <child  link="camera_optical_link"/>
+    <origin xyz="0 0 0" rpy="-1.5708 0 -1.5708"/>
+  </joint>
+  <link name="camera_optical_link"/>
+
+</robot>
