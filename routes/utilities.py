@@ -18,6 +18,7 @@ Usage:
 
 import json
 import logging
+import os
 import time
 from datetime import datetime
 from typing import Any, Dict, Optional
@@ -315,6 +316,10 @@ async def search_templates(request: Dict[str, Any]):
 
 # ====== Code Execution Endpoints ======
 
+def _code_execution_enabled() -> bool:
+    return os.getenv("ENABLE_CODE_EXECUTION", "false").lower() in {"1", "true", "yes"}
+
+
 @router.post("/execute")
 async def execute_code_endpoint(request: Dict[str, Any]):
     """
@@ -329,6 +334,9 @@ async def execute_code_endpoint(request: Dict[str, Any]):
     
     Returns stdout, plots (base64), dataframes, and any errors.
     """
+    if not _code_execution_enabled():
+        raise HTTPException(status_code=403, detail="Code execution endpoints are disabled. Set ENABLE_CODE_EXECUTION=true to enable in a trusted environment.")
+
     try:
         from src.execution.code_executor import execute_code as exec_code
         
@@ -371,6 +379,9 @@ async def execute_and_plot(request: Dict[str, Any]):
     Convenience endpoint that wraps code in plot setup.
     Just provide the plotting code, we handle plt.figure() and capture.
     """
+    if not _code_execution_enabled():
+        raise HTTPException(status_code=403, detail="Code execution endpoints are disabled. Set ENABLE_CODE_EXECUTION=true to enable in a trusted environment.")
+
     try:
         from src.execution.code_executor import execute_code as exec_code
         
@@ -416,6 +427,9 @@ async def execute_data_analysis(request: Dict[str, Any]):
     
     Provide data and analysis code, get back results and visualizations.
     """
+    if not _code_execution_enabled():
+        raise HTTPException(status_code=403, detail="Code execution endpoints are disabled. Set ENABLE_CODE_EXECUTION=true to enable in a trusted environment.")
+
     try:
         from src.execution.code_executor import execute_code as exec_code
         

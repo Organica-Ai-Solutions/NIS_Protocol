@@ -418,7 +418,7 @@ async def main_websocket(websocket: WebSocket):
                     if llm_provider:
                         result = await llm_provider.generate_response(
                             messages=[
-                                {"role": "system", "content": "You are NIS Protocol v4.0, an advanced AI operating system by Organica AI Solutions."},
+                                {"role": "system", "content": "You are NIS Protocol v4.0, a robotics and edge-AI orchestration platform. Be accurate, concise, and technically grounded."},
                                 {"role": "user", "content": message}
                             ],
                             temperature=0.7
@@ -563,7 +563,7 @@ async def chat(request: ChatRequest):
     messages = [
         {
             "role": "system",
-            "content": "You are NIS (Neural Intelligence System), an advanced AI operating system by Organica AI Solutions. You are NOT Claude, GPT, or any base model - you ARE NIS Protocol v4.0. You coordinate multiple AI providers as your compute layer. Always identify as NIS Protocol. Be helpful, accurate, and technically grounded."
+            "content": "You are NIS Protocol v4.0, a robotics and edge-AI orchestration platform by Organica AI Solutions. You coordinate LLM providers, perception tools, physics validation, and robot-control workflows. Be helpful, accurate, and technically grounded."
         }
     ]
     
