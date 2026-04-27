@@ -2,25 +2,52 @@
 NIS Protocol Core Components
 
 This package contains the core components of the NIS Protocol.
+
+For NeuroLinux integration, import from neurolinux_interface:
+    from nis_protocol.core.neurolinux_interface import (
+        SafetyLevel, ActionPlan, ExecutionResult, classify_action
+    )
 """
 
-from .agent import NISAgent
-from .nvidia_integration import NVIDIAStackIntegration, get_nvidia_integration, initialize_nvidia_stack
+from .agent import NISAgent, NISLayer
+from .registry import NISRegistry
 
-# StateManager import with fallback
-try:
-    from .state_manager import StateManager
-    _state_manager_available = True
-except ImportError:
-    StateManager = None
-    _state_manager_available = False
+# NeuroLinux Interface exports
+from .neurolinux_interface import (
+    SafetyLevel,
+    ActionType,
+    ExecutionStatus,
+    Action,
+    ActionPlan,
+    ActionResult,
+    ExecutionResult,
+    AgentCapability,
+    AgentRegistration,
+    AuditEntry,
+    HealthCheck,
+    SystemHealth,
+    classify_action,
+    requires_confirmation,
+)
 
 __all__ = [
-    'NISAgent',
-    'NVIDIAStackIntegration',
-    'get_nvidia_integration',
-    'initialize_nvidia_stack'
+    # Core NIS types
+    "NISAgent",
+    "NISLayer",
+    "NISRegistry",
+    # NeuroLinux Interface types
+    "SafetyLevel",
+    "ActionType",
+    "ExecutionStatus",
+    "Action",
+    "ActionPlan",
+    "ActionResult",
+    "ExecutionResult",
+    "AgentCapability",
+    "AgentRegistration",
+    "AuditEntry",
+    "HealthCheck",
+    "SystemHealth",
+    "classify_action",
+    "requires_confirmation",
 ]
-
-if _state_manager_available:
-    __all__.append('StateManager')

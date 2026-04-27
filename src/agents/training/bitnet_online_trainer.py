@@ -7,7 +7,7 @@ This enables BitNet to continuously learn from conversations and improve for off
 
 Features:
 - Continuous online training from real conversations
-- Consciousness-guided training data quality assessment
+- pipeline-guided training data quality assessment
 - Physics-informed response validation for training
 - Automatic model checkpointing and offline preparation
 - Real-time performance monitoring and adaptation
@@ -34,7 +34,7 @@ try:
     import torch.nn as nn
     from torch.utils.data import DataLoader, Dataset
     from transformers import (
-        AutoTokenizer, AutoModelForCausalLM, 
+        AutoTokenizer, AutoModelForCausalLM,
         TrainingArguments, Trainer, DataCollatorForLanguageModeling,
         get_scheduler
     )
@@ -46,7 +46,7 @@ except (ImportError, OSError) as e:
 
 # NIS Protocol imports
 from ...core.agent import NISAgent
-from ...services.consciousness_service import ConsciousnessService
+from ...services.pipeline_service import pipelineService
 from ...utils.confidence_calculator import calculate_confidence
 from ...utils.integrity_metrics import calculate_confidence, create_default_confidence_factors
 
@@ -56,7 +56,7 @@ class TrainingExample:
     """Single training example with NIS validation"""
     prompt: str
     response: str
-    consciousness_score: float
+    pipeline_score: float
     physics_compliance: float
     user_feedback: Optional[float] = None
     timestamp: datetime = field(default_factory=datetime.now)
@@ -74,30 +74,30 @@ class OnlineTrainingConfig:
     mobile_variant: str = "bitnet-b1.58-2b4t-mobile"
     mobile_version: str = "v1"
     create_mobile_bundle: bool = True
-    
+
     # Training hyperparameters
     learning_rate: float = 1e-5  # Lower for online learning
     batch_size: int = 4
     gradient_accumulation_steps: int = 8
     max_grad_norm: float = 1.0
-    
+
     # LoRA settings for efficient training
     use_lora: bool = True
     lora_r: int = 16
     lora_alpha: int = 32
     lora_dropout: float = 0.1
-    
+
     # Online training settings
     min_examples_before_training: int = 10
     training_interval_seconds: float = 300.0  # 5 minutes
     quality_threshold: float = 0.7
     max_training_examples: int = 1000
-    
+
     # Validation settings
-    consciousness_weight: float = 0.3
+    pipeline_weight: float = 0.3
     physics_weight: float = 0.3
     user_feedback_weight: float = 0.4
-    
+
     # Checkpointing
     checkpoint_interval_minutes: int = 30
     max_checkpoints: int = 10
@@ -106,21 +106,21 @@ class OnlineTrainingConfig:
 if TRAINING_AVAILABLE:
     class NISTrainingDataset(Dataset):
         """Dataset for NIS Protocol training examples"""
-        
+
         def __init__(self, examples: List[TrainingExample], tokenizer, max_length: int = 512):
             self.examples = examples
             self.tokenizer = tokenizer
             self.max_length = max_length
-        
+
         def __len__(self):
             return len(self.examples)
-        
+
         def __getitem__(self, idx):
             example = self.examples[idx]
-            
+
             # Format as conversation
             text = f"Human: {example.prompt}\n\nAssistant: {example.response}"
-            
+
             # Tokenize
             encoding = self.tokenizer(
                 text,
@@ -129,7 +129,7 @@ if TRAINING_AVAILABLE:
                 max_length=self.max_length,
                 return_tensors="pt"
             )
-            
+
             return {
                 "input_ids": encoding["input_ids"].squeeze(),
                 "attention_mask": encoding["attention_mask"].squeeze(),
@@ -140,27 +140,27 @@ if TRAINING_AVAILABLE:
 class BitNetOnlineTrainer(NISAgent):
     """
     🚀 BitNet Online Trainer
-    
+
     Continuously trains BitNet models using real conversation data with:
     - Real-time learning from user interactions
-    - Consciousness-guided quality assessment
+    - pipeline-guided quality assessment
     - Physics-informed validation
     - Automatic offline model preparation
     - Performance monitoring and adaptation
     """
-    
+
     def __init__(
         self,
         agent_id: str = "bitnet_online_trainer",
         config: Optional[OnlineTrainingConfig] = None,
-        consciousness_service: Optional[ConsciousnessService] = None
+        pipeline_service: Optional[pipelineService] = None
     ):
         super().__init__(agent_id)
-        
+
         self.config = config or OnlineTrainingConfig()
-        self.consciousness_service = consciousness_service
+        self.pipeline_service = pipeline_service
         self.logger = logging.getLogger(f"nis.training.{agent_id}")
-        
+
         # Training state
         self.training_examples: Deque[TrainingExample] = deque(
             maxlen=self.config.max_training_examples
@@ -170,7 +170,7 @@ class BitNetOnlineTrainer(NISAgent):
         self.tokenizer = None
         self.optimizer = None
         self.scheduler = None
-        
+
         # Performance tracking
         self.training_metrics = {
             'total_examples_collected': 0,
@@ -192,35 +192,35 @@ class BitNetOnlineTrainer(NISAgent):
             "lora_available": False,
             "download_url": None,
         }
-        
+
         # Background training thread
         self.training_thread = None
         self.should_stop_training = False
-        
+
         # Training data persistence path
         self.training_data_path = Path("data/bitnet_training")
         self.training_data_path.mkdir(parents=True, exist_ok=True)
-        
+
         # Load persisted training examples
         self._load_persisted_examples()
-        
+
         # Initialize training system
         if TRAINING_AVAILABLE:
             self._initialize_training_system()
         else:
             self.logger.warning("🔄 Training simulation mode - libraries not available")
-        
+
         # Ensure mobile bundle directory exists
         Path(self.config.mobile_bundle_dir).mkdir(parents=True, exist_ok=True)
 
         self.logger.info(f"🚀 BitNet Online Trainer initialized: {agent_id}")
-    
+
     def _load_persisted_examples(self):
         """Load previously saved training examples from disk"""
         try:
             examples_file = self.training_data_path / "training_examples.json"
             metrics_file = self.training_data_path / "training_metrics.json"
-            
+
             if examples_file.exists():
                 with open(examples_file, 'r') as f:
                     examples_data = json.load(f)
@@ -228,7 +228,7 @@ class BitNetOnlineTrainer(NISAgent):
                         example = TrainingExample(
                             prompt=ex_data['prompt'],
                             response=ex_data['response'],
-                            consciousness_score=ex_data.get('consciousness_score', 0.7),
+                            pipeline_score=ex_data.get('pipeline_score', 0.7),
                             physics_compliance=ex_data.get('physics_compliance', 0.7),
                             user_feedback=ex_data.get('user_feedback'),
                             quality_score=ex_data.get('quality_score', 0.7),
@@ -236,16 +236,16 @@ class BitNetOnlineTrainer(NISAgent):
                         )
                         self.training_examples.append(example)
                 self.logger.info(f"📂 Loaded {len(self.training_examples)} persisted training examples")
-            
+
             if metrics_file.exists():
                 with open(metrics_file, 'r') as f:
                     saved_metrics = json.load(f)
                     self.training_metrics.update(saved_metrics)
                 self.logger.info(f"📊 Loaded persisted training metrics")
-                
+
         except Exception as e:
             self.logger.warning(f"⚠️ Could not load persisted examples: {e}")
-    
+
     def _persist_training_data(self):
         """Save training examples and metrics to disk"""
         try:
@@ -255,7 +255,7 @@ class BitNetOnlineTrainer(NISAgent):
                 {
                     'prompt': ex.prompt,
                     'response': ex.response,
-                    'consciousness_score': ex.consciousness_score,
+                    'pipeline_score': ex.pipeline_score,
                     'physics_compliance': ex.physics_compliance,
                     'user_feedback': ex.user_feedback,
                     'quality_score': ex.quality_score,
@@ -266,35 +266,94 @@ class BitNetOnlineTrainer(NISAgent):
             ]
             with open(examples_file, 'w') as f:
                 json.dump(examples_data, f, indent=2)
-            
+
             # Save metrics
             metrics_file = self.training_data_path / "training_metrics.json"
             with open(metrics_file, 'w') as f:
                 json.dump(self.training_metrics, f, indent=2)
-            
+
             self.logger.info(f"💾 Persisted {len(self.training_examples)} training examples")
-            
+
         except Exception as e:
             self.logger.error(f"❌ Failed to persist training data: {e}")
-    
+
+    def _detect_gpu_capabilities(self) -> Dict[str, Any]:
+        """Detect GPU capabilities for optimal training configuration"""
+        gpu_info = {
+            "available": False,
+            "device_count": 0,
+            "device_name": None,
+            "is_h100": False,
+            "is_a100": False,
+            "supports_bf16": False,
+            "memory_gb": 0,
+            "recommended_dtype": "float32",
+            "recommended_batch_size": self.config.batch_size
+        }
+
+        try:
+            if torch.cuda.is_available():
+                gpu_info["available"] = True
+                gpu_info["device_count"] = torch.cuda.device_count()
+
+                props = torch.cuda.get_device_properties(0)
+                gpu_info["device_name"] = props.name
+                gpu_info["memory_gb"] = props.total_memory / (1024**3)
+
+                # Detect H100/A100 for optimal settings
+                if "H100" in props.name or props.major >= 9:
+                    gpu_info["is_h100"] = True
+                    gpu_info["supports_bf16"] = True
+                    gpu_info["recommended_dtype"] = "bfloat16"
+                    gpu_info["recommended_batch_size"] = 32  # H100 can handle larger batches
+                elif "A100" in props.name or props.major >= 8:
+                    gpu_info["is_a100"] = True
+                    gpu_info["supports_bf16"] = True
+                    gpu_info["recommended_dtype"] = "bfloat16"
+                    gpu_info["recommended_batch_size"] = 16
+                elif props.major >= 7:  # V100, RTX 20xx+
+                    gpu_info["recommended_dtype"] = "float16"
+                    gpu_info["recommended_batch_size"] = 8
+
+                self.logger.info(f"🎮 GPU detected: {props.name} ({gpu_info['memory_gb']:.1f}GB)")
+                if gpu_info["is_h100"]:
+                    self.logger.info("🚀 H100 detected - enabling optimal DGX Cloud settings")
+
+        except Exception as e:
+            self.logger.warning(f"⚠️ GPU detection failed: {e}")
+
+        return gpu_info
+
     def _initialize_training_system(self):
         """Initialize the BitNet training system"""
         try:
             self.logger.info("🔄 Initializing BitNet training system...")
-            
+
+            # Detect GPU capabilities
+            self.gpu_info = self._detect_gpu_capabilities()
+
+            # Determine optimal dtype based on GPU
+            if self.gpu_info["is_h100"] or self.gpu_info["is_a100"]:
+                torch_dtype = torch.bfloat16
+                self.logger.info("✅ Using BF16 precision for optimal H100/A100 performance")
+            elif self.gpu_info["available"]:
+                torch_dtype = torch.float16
+            else:
+                torch_dtype = torch.float32
+
             # Load tokenizer
             self.tokenizer = AutoTokenizer.from_pretrained(self.config.model_path)
             if self.tokenizer.pad_token is None:
                 self.tokenizer.pad_token = self.tokenizer.eos_token
-            
-            # Load model
+
+            # Load model with optimal settings
             self.model = AutoModelForCausalLM.from_pretrained(
                 self.config.model_path,
-                torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
-                device_map="auto" if torch.cuda.is_available() else None,
+                torch_dtype=torch_dtype,
+                device_map="auto" if self.gpu_info["available"] else None,
                 trust_remote_code=True
             )
-            
+
             # Apply LoRA for efficient training
             if self.config.use_lora:
                 lora_config = LoraConfig(
@@ -306,29 +365,29 @@ class BitNetOnlineTrainer(NISAgent):
                 )
                 self.model = get_peft_model(self.model, lora_config)
                 self.logger.info("✅ Applied LoRA configuration for efficient training")
-            
+
             # Setup optimizer and scheduler
             self.optimizer = torch.optim.AdamW(
                 self.model.parameters(),
                 lr=self.config.learning_rate,
                 weight_decay=0.01
             )
-            
+
             # Create checkpoint directory
             Path(self.config.checkpoint_dir).mkdir(parents=True, exist_ok=True)
-            
+
             self.logger.info("✅ BitNet training system initialized successfully")
-            
+
             # Start background training
             self._start_background_training()
-            
+
         except Exception as e:
             self.logger.error(f"❌ Failed to initialize training system: {e}")
             self.logger.warning("⚠️ Falling back to training simulation mode (Logic Only)")
             self.model = None
             self.tokenizer = None
             # Do NOT raise, allow agent to exist in mock mode
-    
+
     async def add_training_example(
         self,
         prompt: str,
@@ -338,127 +397,127 @@ class BitNetOnlineTrainer(NISAgent):
     ) -> bool:
         """
         Add a new training example from real conversation data
-        
+
         Args:
             prompt: User prompt/input
             response: System response
             user_feedback: Optional user feedback score (0.0-1.0)
             additional_context: Additional context for validation
-            
+
         Returns:
             bool: True if example was added successfully
         """
         try:
             self.logger.info(f"📝 Adding training example: prompt length {len(prompt)}")
-            
-            # 1. 🧠 Consciousness validation
-            consciousness_score = 0.7  # Default
-            if self.consciousness_service:
-                consciousness_result = await self.consciousness_service.process_through_consciousness({
+
+            # 1. 🧠 pipeline validation
+            pipeline_score = 0.7  # Default
+            if self.pipeline_service:
+                pipeline_result = await self.pipeline_service.process_through_pipeline({
                     "prompt": prompt,
                     "response": response,
                     "context": additional_context or {}
                 })
-                consciousness_score = consciousness_result.get(
-                    "consciousness_validation", {}
-                ).get("consciousness_confidence", 0.7)
-            
+                pipeline_score = pipeline_result.get(
+                    "pipeline_validation", {}
+                ).get("pipeline_confidence", 0.7)
+
             # 2. ⚗️ Physics compliance check (heuristic analysis)
             physics_compliance = self._assess_physics_compliance(response, additional_context)
-            
+
             # 3. 📊 Calculate overall quality score
             quality_score = self._calculate_quality_score(
-                consciousness_score, physics_compliance, user_feedback
+                pipeline_score, physics_compliance, user_feedback
             )
-            
+
             # 4. ✅ Add example if quality meets threshold
             if quality_score >= self.config.quality_threshold:
                 example = TrainingExample(
                     prompt=prompt,
                     response=response,
-                    consciousness_score=consciousness_score,
+                    pipeline_score=pipeline_score,
                     physics_compliance=physics_compliance,
                     user_feedback=user_feedback,
                     quality_score=quality_score
                 )
-                
+
                 self.training_examples.append(example)
                 self.training_metrics['total_examples_collected'] += 1
-                
+
                 # Update average quality score
                 self._update_average_quality_score(quality_score)
-                
+
                 # Persist every 10 examples
                 if self.training_metrics['total_examples_collected'] % 10 == 0:
                     self._persist_training_data()
-                
+
                 self.logger.info(f"✅ Training example added: quality={quality_score:.3f}")
                 return True
             else:
                 self.logger.info(f"⚠️ Training example rejected: quality={quality_score:.3f} < {self.config.quality_threshold}")
                 return False
-                
+
         except Exception as e:
             self.logger.error(f"❌ Error adding training example: {e}")
             return False
-    
+
     def _assess_physics_compliance(self, response: str, context: Optional[Dict[str, Any]]) -> float:
         """Assess physics compliance of response using heuristic analysis"""
         response_lower = response.lower()
         score = 0.7  # Base score
-        
+
         # Physics-aware content indicators (+)
         physics_terms = ["energy", "conservation", "momentum", "force", "mass", "velocity",
                         "acceleration", "newton", "thermodynamic", "entropy", "equation"]
         term_count = sum(1 for term in physics_terms if term in response_lower)
         score += min(0.15, term_count * 0.03)
-        
+
         # Scientific rigor indicators (+)
         rigor_terms = ["approximately", "measured", "calculated", "empirical", "theory", "model"]
         if any(term in response_lower for term in rigor_terms):
             score += 0.05
-        
+
         # Physics violation indicators (-)
         violation_terms = [
-            "perpetual motion", "free energy", "faster than light", 
+            "perpetual motion", "free energy", "faster than light",
             "infinite energy", "100% efficient", "violates conservation"
         ]
         if any(term in response_lower for term in violation_terms):
             score -= 0.3
-        
+
         # Mathematical consistency check
         if context and context.get("contains_equations"):
             # Check for unit consistency (simplified)
             if any(unit in response_lower for unit in ["joules", "newtons", "meters", "kg"]):
                 score += 0.05
-        
+
         return max(0.0, min(1.0, score))
-    
+
     def _calculate_quality_score(
-        self, 
-        consciousness_score: float, 
-        physics_compliance: float, 
+        self,
+        pipeline_score: float,
+        physics_compliance: float,
         user_feedback: Optional[float]
     ) -> float:
         """Calculate overall quality score for training example"""
-        
-        scores = [consciousness_score, physics_compliance]
-        weights = [self.config.consciousness_weight, self.config.physics_weight]
-        
+
+        scores = [pipeline_score, physics_compliance]
+        weights = [self.config.pipeline_weight, self.config.physics_weight]
+
         if user_feedback is not None:
             scores.append(user_feedback)
             weights.append(self.config.user_feedback_weight)
         else:
             # Redistribute weights if no user feedback
             weights = [w / sum(weights[:2]) for w in weights[:2]]
-        
+
         return sum(score * weight for score, weight in zip(scores, weights))
-    
+
     def _update_average_quality_score(self, new_score: float):
         """Update running average of quality scores"""
         current_avg = self.training_metrics['average_quality_score']
         total_examples = self.training_metrics['total_examples_collected']
-        
+
         if total_examples == 1:
             self.training_metrics['average_quality_score'] = new_score
         else:
@@ -466,34 +525,34 @@ class BitNetOnlineTrainer(NISAgent):
             self.training_metrics['average_quality_score'] = (
                 (current_avg * (total_examples - 1) + new_score) / total_examples
             )
-    
+
     def _start_background_training(self):
         """Start background training thread"""
         if not TRAINING_AVAILABLE:
             self.logger.warning("Training libraries not available - skipping background training")
             return
-        
+
         self.training_thread = threading.Thread(
             target=self._background_training_loop,
             daemon=True
         )
         self.training_thread.start()
         self.logger.info("🔄 Background training thread started")
-    
+
     def _background_training_loop(self):
         """Background loop for periodic training"""
         last_training_time = 0
         last_checkpoint_time = 0
-        
+
         while not self.should_stop_training:
             try:
                 current_time = time.time()
-                
+
                 # Check if it's time for training
                 if (current_time - last_training_time) >= self.config.training_interval_seconds:
                     if len(self.training_examples) >= self.config.min_examples_before_training:
                         self.logger.info(f"🚀 Starting training session with {len(self.training_examples)} examples")
-                        
+
                         success = self._execute_training_session()
                         if success:
                             last_training_time = current_time
@@ -501,67 +560,67 @@ class BitNetOnlineTrainer(NISAgent):
                             self.training_metrics['next_training_time'] = (
                                 datetime.now() + timedelta(seconds=self.config.training_interval_seconds)
                             ).isoformat()
-                
+
                 # Check if it's time for checkpointing
                 if (current_time - last_checkpoint_time) >= (self.config.checkpoint_interval_minutes * 60):
                     self._save_checkpoint()
                     last_checkpoint_time = current_time
-                
+
                 # Sleep for a short interval
                 time.sleep(30)  # Check every 30 seconds
-                
+
             except Exception as e:
                 self.logger.error(f"❌ Error in background training loop: {e}")
                 time.sleep(60)  # Wait longer if there's an error
-    
+
     def _execute_training_session(self) -> bool:
         """Execute a training session with current examples"""
         if self.is_training or not TRAINING_AVAILABLE:
             return False
-        
+
         try:
             self.is_training = True
             start_time = time.time()
-            
+
             # Get unused training examples
             unused_examples = [ex for ex in self.training_examples if not ex.used_for_training]
             if len(unused_examples) < self.config.min_examples_before_training:
                 self.logger.info("🔄 Not enough unused examples for training")
                 return False
-            
+
             self.logger.info(f"🎯 Training with {len(unused_examples)} new examples")
-            
+
             # Create dataset and dataloader
             dataset = NISTrainingDataset(unused_examples, self.tokenizer)
             dataloader = DataLoader(
-                dataset, 
-                batch_size=self.config.batch_size, 
+                dataset,
+                batch_size=self.config.batch_size,
                 shuffle=True,
                 collate_fn=DataCollatorForLanguageModeling(
                     tokenizer=self.tokenizer,
                     mlm=False
                 )
             )
-            
+
             # Training loop
             self.model.train()
             total_loss = 0.0
             num_batches = 0
-            
+
             for batch_idx, batch in enumerate(dataloader):
                 # Move batch to device
                 if torch.cuda.is_available():
                     batch = {k: v.cuda() for k, v in batch.items()}
-                
+
                 # Forward pass
                 outputs = self.model(**batch)
                 loss = outputs.loss / self.config.gradient_accumulation_steps
-                
+
                 # Backward pass
                 loss.backward()
                 total_loss += loss.item() * self.config.gradient_accumulation_steps
                 num_batches += 1
-                
+
                 # Update weights
                 if (batch_idx + 1) % self.config.gradient_accumulation_steps == 0:
                     torch.nn.utils.clip_grad_norm_(self.model.parameters(), self.config.max_grad_norm)
@@ -569,15 +628,15 @@ class BitNetOnlineTrainer(NISAgent):
                     if self.scheduler:
                         self.scheduler.step()
                     self.optimizer.zero_grad()
-            
+
             # Mark examples as used
             for example in unused_examples:
                 example.used_for_training = True
-            
+
             # Calculate training metrics
             avg_loss = total_loss / num_batches if num_batches > 0 else 0.0
             training_time = time.time() - start_time
-            
+
             # Update training metrics
             self.training_metrics['total_training_sessions'] += 1
             improvement_score = max(0, 1.0 - avg_loss)  # Simple improvement metric
@@ -586,68 +645,68 @@ class BitNetOnlineTrainer(NISAgent):
                 [ex.quality_score for ex in self.training_examples]
             )) if self.training_examples else 0.0
             self.training_metrics['last_training_time'] = datetime.now().isoformat()
-            
+
             # Update offline readiness score
             self._update_offline_readiness_score()
-            
+
             self.logger.info(f"✅ Training session completed: loss={avg_loss:.4f}, time={training_time:.2f}s")
             self.logger.info(f"📊 Offline readiness: {self.training_metrics['offline_readiness_score']:.2f}")
-            
+
             # Prepare mobile bundle if enabled
             if self.config.create_mobile_bundle:
                 self._prepare_mobile_bundle(checkpoint_hint="training")
-            
+
             return True
-            
+
         except Exception as e:
             self.logger.error(f"❌ Training session failed: {e}")
             return False
         finally:
             self.is_training = False
-    
+
     def _update_offline_readiness_score(self):
         """Update the offline readiness score"""
         # Calculate readiness based on multiple factors
         factors = []
-        
+
         # Number of training examples
         example_score = min(1.0, len(self.training_examples) / 500)  # Target 500 examples
         factors.append(example_score)
-        
+
         # Average quality of examples
         quality_score = self.training_metrics['average_quality_score']
         factors.append(quality_score)
-        
+
         # Model improvement score
         improvement_score = self.training_metrics['model_improvement_score']
         factors.append(improvement_score)
-        
+
         # Number of training sessions
         sessions_score = min(1.0, self.training_metrics['total_training_sessions'] / 10)  # Target 10 sessions
         factors.append(sessions_score)
-        
+
         # Calculate overall readiness
         self.training_metrics['offline_readiness_score'] = float(np.mean(factors))
-    
+
     def _save_checkpoint(self):
         """Save model checkpoint for offline use"""
         if not TRAINING_AVAILABLE or self.model is None:
             return
-        
+
         try:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             checkpoint_path = Path(self.config.checkpoint_dir) / f"bitnet_checkpoint_{timestamp}"
             checkpoint_path.mkdir(parents=True, exist_ok=True)
-            
+
             # Save model and tokenizer
             self.model.save_pretrained(checkpoint_path)
             self.tokenizer.save_pretrained(checkpoint_path)
-            
+
             # Save training metrics
             metrics_path = checkpoint_path / "training_metrics.json"
             with open(metrics_path, 'w') as f:
                 json.dump(self.training_metrics, f, indent=2)
-            
+
             # Save training configuration
             config_path = checkpoint_path / "training_config.json"
             with open(config_path, 'w') as f:
@@ -661,19 +720,19 @@ class BitNetOnlineTrainer(NISAgent):
                     'total_examples': len(self.training_examples),
                     'offline_readiness_score': self.training_metrics['offline_readiness_score']
                 }, f, indent=2)
-            
+
             self.logger.info(f"💾 Checkpoint saved: {checkpoint_path}")
-            
+
             # Clean up old checkpoints
             self._cleanup_old_checkpoints()
-            
+
             # Prepare mobile bundle if enabled
             if self.config.create_mobile_bundle:
                 self._prepare_mobile_bundle(checkpoint_hint=checkpoint_path)
-            
+
         except Exception as e:
             self.logger.error(f"❌ Failed to save checkpoint: {e}")
-    
+
     def _cleanup_old_checkpoints(self):
         """Remove old checkpoints to save disk space"""
         try:
@@ -683,16 +742,16 @@ class BitNetOnlineTrainer(NISAgent):
                 key=lambda x: x.stat().st_mtime,
                 reverse=True
             )
-            
+
             # Keep only the latest N checkpoints
             for checkpoint in checkpoints[self.config.max_checkpoints:]:
                 import shutil
                 shutil.rmtree(checkpoint)
                 self.logger.info(f"🗑️ Removed old checkpoint: {checkpoint.name}")
-                
+
         except Exception as e:
             self.logger.error(f"❌ Failed to cleanup old checkpoints: {e}")
-    
+
     def _prepare_mobile_bundle(self, checkpoint_hint: Optional[Union[Path, str]] = None) -> None:
         """Prepare mobile-friendly BitNet bundle for edge devices."""
         try:
@@ -772,7 +831,7 @@ class BitNetOnlineTrainer(NISAgent):
                     break
                 sha256.update(chunk)
         return sha256.hexdigest()
-    
+
     async def get_training_status(self) -> Dict[str, Any]:
         """Get current training status and metrics"""
         return {
@@ -790,27 +849,27 @@ class BitNetOnlineTrainer(NISAgent):
             },
             "mobile_bundle": self.mobile_bundle_metadata.copy()
         }
-    
+
     async def force_training_session(self) -> Dict[str, Any]:
         """Force an immediate training session"""
         if self.is_training:
             return {"success": False, "message": "Training already in progress"}
-        
+
         if len(self.training_examples) < self.config.min_examples_before_training:
             return {
-                "success": False, 
+                "success": False,
                 "message": f"Not enough examples: {len(self.training_examples)} < {self.config.min_examples_before_training}"
             }
-        
+
         # Execute training in background
         success = self._execute_training_session()
-        
+
         return {
             "success": success,
             "message": "Training session completed" if success else "Training session failed",
             "metrics": self.training_metrics.copy()
         }
-    
+
     def stop_training(self):
         """Stop background training"""
         self.should_stop_training = True
@@ -823,13 +882,13 @@ class BitNetOnlineTrainer(NISAgent):
 def create_bitnet_online_trainer(
     agent_id: str = "bitnet_online_trainer",
     config: Optional[OnlineTrainingConfig] = None,
-    consciousness_service: Optional[ConsciousnessService] = None
+    pipeline_service: Optional[pipelineService] = None
 ) -> BitNetOnlineTrainer:
     """Create a BitNet online trainer instance"""
     return BitNetOnlineTrainer(
         agent_id=agent_id,
         config=config,
-        consciousness_service=consciousness_service
+        pipeline_service=pipeline_service
     )
 
 
@@ -837,14 +896,14 @@ def create_bitnet_online_trainer(
 async def main():
     """Example usage of BitNet Online Trainer"""
     trainer = create_bitnet_online_trainer()
-    
+
     # Add training examples
     await trainer.add_training_example(
         prompt="Explain quantum entanglement",
         response="Quantum entanglement is a phenomenon where particles become correlated...",
         user_feedback=0.9
     )
-    
+
     # Get training status
     status = await trainer.get_training_status()
     print(f"Training status: {status}")
