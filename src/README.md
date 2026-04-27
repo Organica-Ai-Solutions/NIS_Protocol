@@ -1,40 +1,32 @@
-# NIS Protocol Reference Implementation
+# NIS Protocol Source Directory
 
-This directory contains the reference implementation of the Neuro-Inspired System Protocol.
+This directory contains the core architecture and reference implementation of the Neural Intelligence System (NIS) Protocol v4.0.4.
 
-## Structure
+## Core Architecture
 
-- `/core` - Core protocol implementation
-- `/agents` - Agent implementations for each layer
-- `/memory` - Memory management system
-- `/emotion` - Emotional modulation system
-- `/communication` - Inter-agent communication
-- `/examples` - Example implementations
+The \src/\ directory is built around the **NeuroKernel v2**, an autonomous orchestration engine designed to coordinate multiple LLMs, physical robotics (OpenClaw), edge deployments (NeuroLinux), and simulation physics.
+
+### Directory Structure
+
+- **\/core\**: The central orchestration pipeline (NeuroKernel v2). Includes \AuditChain\ (tamper-proof logs), \LoopGuard\ (autonomous circuit breakers), \DriveScheduler\, and \SkillLoader\.
+- **\/agents\**: Specialized agent implementations (e.g., VisionAgent, DocumentAnalysisAgent, ResearchAgent) and training scaffolding (BitNet).
+- **\/neurolinux\**: Edge AI operating system bridges. Contains \pc_bridge.py\, edge deployment routines, and Hiwonder xArm drivers for Raspberry Pi.
+- **\/llm\**: Multi-provider LLM gateway supporting Anthropic, OpenAI, DeepSeek, Google, NVIDIA NIM, and local offline models (BitNet).
+- **\/calibration\**: Advanced camera and robotics calibration systems (video calibrators, intrinsic matrices).
+- **\/skills\**: Dynamically loaded \SKILL.md\ behaviors injected into agents at runtime.
+- **\/kinematics\**: Inverse and Forward kinematics engines for precise robotics control.
+- **\/memory\**: Persistent conversation and context storage systems.
+
+## Key Subsystems
+
+### NeuroKernel v2
+The heart of the autonomous loop. It provides an execution cycle of \scan\ -> \skills\ -> \loop\ -> \xecute\ -> \udit\. It ensures agents operate safely within hardware limits.
+
+### OpenClaw & NeuroLinux
+The translation layer that converts abstract LLM intents into deterministic, physics-validated hardware signals for edge devices (like the Raspberry Pi controlling a robotic arm).
+
+### Local BitNet Fallback
+A high-efficiency 1-bit LLM integration ensuring the orchestration layer remains operational even during network outages.
 
 ## Getting Started
-
-To use the reference implementation:
-
-1. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-2. Import the desired components:
-```python
-from nis_protocol.core import NISRegistry
-from nis_protocol.agents import VisionAgent, MemoryAgent, EmotionAgent
-```
-
-3. See the examples directory for sample applications.
-
-## Minimum Requirements
-
-- Python 3.8+
-- Redis 6.0+
-- OpenCV (for vision capabilities)
-- FastAPI (for API endpoints)
-
-## Development Status
-
-The reference implementation is currently under development. See the roadmap in the main documentation for details on completion status. 
+See the main repository \README.md\ and \docs/\ directory for deployment instructions and API contracts.
