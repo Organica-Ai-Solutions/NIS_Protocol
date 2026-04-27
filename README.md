@@ -20,11 +20,12 @@ NIS Protocol is a high-performance FastAPI orchestration shell designed to bridg
 
 The system operates as a FastAPI monolith coordinating specialized modules:
 
-- src/physics/: Mathematical and physical validation (PINN, KAN, Laplace).
-- src/robotics/: Kinematics, path planning, and hardware interfaces.
-- src/llm/: Provider SDK wrappers and routing logic.
-- outes/: Modular endpoints for REST and WebSocket clients.
-- main_pi.py / main.py: Entry points tailored for edge (Raspberry Pi) and cloud/desktop environments.
+- **src/core/**: Central orchestration pipeline (**NeuroKernel v2**). Includes tamper-proof audit logs, autonomous circuit breakers, and skill injection.
+- **src/neurolinux/**: Edge AI OS bridges. Contains direct hardware control for the Raspberry Pi and Hiwonder xArm.
+- **src/physics/**: Mathematical and physical validation (PINN, KAN, Laplace) ensuring generated trajectories obey real-world physics.
+- **src/llm/**: Provider SDK wrappers and routing logic supporting Anthropic, OpenAI, DeepSeek, Google, NVIDIA NIM, and local offline models (BitNet).
+- **routes/**: Modular endpoints for REST, WebSockets, and Edge telemetry.
+- **main_pi.py / main.py**: Entry points tailored for edge (Raspberry Pi) and cloud/desktop (H100) environments.
 
 ## Quick Start
 
@@ -66,4 +67,5 @@ Access the interactive API documentation at: [http://localhost:8000/docs](http:/
 ## License
 
 This project is licensed under the **Business Source License (BSL)**. It is free for research and educational purposes. Commercial licensing is available upon request.
+
 
