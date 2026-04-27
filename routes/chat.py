@@ -17,11 +17,11 @@ import asyncio
 import json
 import logging
 import time
-from typing import Any, Dict, Optional
+from typing import Optional
 
 from fastapi import APIRouter, HTTPException
-from fastapi.responses import StreamingResponse, HTMLResponse
-from pydantic import BaseModel, Field
+from fastapi.responses import StreamingResponse
+from pydantic import BaseModel
 
 logger = logging.getLogger("nis.routes.chat")
 

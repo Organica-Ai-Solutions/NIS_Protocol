@@ -44,7 +44,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("nis_protocol")
 
 # ====== FASTAPI SETUP ======
-from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect, Request
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
@@ -53,8 +53,7 @@ import uvicorn
 
 # ====== NIS PROTOCOL IMPORTS ======
 from src.utils.aws_secrets import load_all_api_keys
-from src.core.state_manager import nis_state_manager, StateEventType
-from src.meta.unified_coordinator import create_scientific_coordinator, BehaviorMode
+from src.meta.unified_coordinator import create_scientific_coordinator
 from src.services.pipeline_service import create_pipeline_service
 from src.services.protocol_bridge_service import create_protocol_bridge_service
 from src.agents.research.web_search_agent import WebSearchAgent
@@ -63,8 +62,6 @@ from src.agents.learning.learning_agent import LearningAgent
 from src.agents.planning.autonomous_planning_system import AutonomousPlanningSystem
 from src.agents.goals.curiosity_engine import CuriosityEngine
 from src.agents.goals.adaptive_goal_system import AdaptiveGoalSystem
-from src.agents.alignment.ethical_reasoner import EthicalReasoner
-from src.agents.simulation.enhanced_scenario_simulator import EnhancedScenarioSimulator
 from src.llm.reflective_generator import ReflectiveGenerator
 from src.memory.persistent_memory import get_memory_system
 from src.core.self_modifier import get_self_modifier
@@ -72,10 +69,7 @@ from src.agents.multimodal.vision_agent import MultimodalVisionAgent
 from src.agents.research.deep_research_agent import DeepResearchAgent
 from src.agents.reasoning.enhanced_reasoning_chain import EnhancedReasoningChain
 from src.agents.document.document_analysis_agent import DocumentAnalysisAgent
-from src.agents.autonomous_execution.executor import create_anthropic_style_executor
-from src.agents.visualization.diagram_agent import DiagramAgent
 from src.agents.data_pipeline.real_time_pipeline_agent import create_real_time_pipeline_agent
-from src.core.agent_orchestrator import NISAgentOrchestrator
 
 # VibeVoice communication
 from src.agents.communication.vibevoice_engine import VibeVoiceEngine
@@ -103,7 +97,7 @@ from src.adapters.acp_adapter import ACPAdapter
 # Security
 import os
 try:
-    from src.security.auth import verify_api_key, check_rate_limit
+    from src.security.auth import check_rate_limit
     from src.security.user_management import user_manager
     SECURITY_AVAILABLE = True
 except ImportError:
@@ -1249,7 +1243,7 @@ async def initialize_system():
     # Initialize Infrastructure (Kafka, Redis, Zookeeper)
     try:
         logger.info("🔄 Step 1/10: Initializing infrastructure...")
-        from src.infrastructure.nis_infrastructure import initialize_infrastructure, get_nis_infrastructure
+        from src.infrastructure.nis_infrastructure import initialize_infrastructure
         infra_status = await asyncio.wait_for(initialize_infrastructure(), timeout=30)
         logger.info(f"✅ Step 1/10: Infrastructure connected: Kafka={infra_status.get('kafka')}, Redis={infra_status.get('redis')}")
     except asyncio.TimeoutError:

@@ -18,7 +18,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import asyncio
 import logging
 import os
 import json
@@ -30,7 +29,6 @@ logger = logging.getLogger(__name__)
 # BitNet local model imports
 try:
     import torch
-    from transformers import AutoTokenizer, AutoModelForCausalLM
     TORCH_AVAILABLE = True
 except ImportError:
     TORCH_AVAILABLE = False
@@ -328,7 +326,6 @@ class GeneralLLMProvider:
             # STRATEGY: Copy to /tmp to avoid VirtioFS deadlock on macOS Docker
             # Reading large files (safetensors) from mounted volumes often causes deadlock
             import shutil
-            import tempfile
             
             load_path = self.bitnet_model_path
             temp_dir = "/tmp/bitnet_model_cache"
