@@ -32,7 +32,7 @@ This document traces the complete journey of a request/token through the NIS Pro
 ┌─────────────────────────────────────────────────────────────┐
 │                   ROUTE LAYER (27 modules)                   │
 │  Core│Chat│Memory│Agents│Research│Vision│Physics│Robotics   │
-│  Protocols│Consciousness│Autonomous│Isaac│NeMo│etc.          │
+│  Protocols│pipeline│Autonomous│Isaac│NeMo│etc.          │
 └──────────────────────┬──────────────────────────────────────┘
                        │
                        ▼
@@ -330,7 +330,7 @@ if "tools" in response or "function_call" in response:
 5. `vision_analyze` - Analyze images
 6. `memory_store` - Store data
 7. `memory_retrieve` - Retrieve data
-8. `consciousness_genesis` - Create agents
+8. `pipeline_genesis` - Create agents
 9. `llm_chat` - Call LLM
 
 **Tool Execution Flow**:
@@ -819,3 +819,4 @@ Client → HTTPS → FastAPI → Internal HTTP → Services
 ---
 
 **This is the complete, honest dataflow of the NIS Protocol system.**
+

@@ -122,7 +122,7 @@ ENDPOINTS = [
     }),
     ("GET", "/observability/status", 1, None),
     ("GET", "/security/status", 1, None),
-    ("GET", "/v4/consciousness/status", 2, None),
+    ("GET", "/v4/pipeline/status", 2, None),
 ]
 
 
@@ -334,3 +334,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

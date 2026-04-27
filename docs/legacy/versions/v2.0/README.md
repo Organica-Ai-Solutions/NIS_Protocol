@@ -361,7 +361,7 @@ POST /validation/physics
 ### Identified Improvements
 1. **Production Architecture**: Enterprise-grade scalability and reliability
 2. **Multimodal Capabilities**: Image generation and vision analysis
-3. **Consciousness Framework**: Self-aware agent coordination
+3. **pipeline Framework**: Self-aware agent coordination
 4. **Real-Time Processing**: WebSocket and streaming support
 5. **Advanced APIs**: Comprehensive REST API with full documentation
 
@@ -371,7 +371,7 @@ v2.0 Advanced Features → v3.0 Foundation Release
     │                         │
     ├─ Multi-LLM System      ─→ Enhanced Provider Pool (4+ providers)
     ├─ KAN Networks          ─→ Advanced Symbolic Processing
-    ├─ PINN Physics          ─→ Consciousness-Driven Validation
+    ├─ PINN Physics          ─→ pipeline-Driven Validation
     ├─ Agent Coordination    ─→ Self-Aware Agent System
     └─ Text Processing       ─→ Multimodal Capabilities
 ```
@@ -446,7 +446,7 @@ physics_config = {
 ## 🔗 Related Documentation
 
 - **[v1.0 Documentation](../v1.0/README.md)** - Foundational concepts and basic implementation
-- **[v3.0 Documentation](../v3.0/README.md)** - Production release and consciousness framework
+- **[v3.0 Documentation](../v3.0/README.md)** - Production release and pipeline framework
 - **[Migration Guide v2→v3](../migrations/v2-to-v3.md)** - Upgrade instructions and breaking changes
 - **[Complete Version History](../NIS_PROTOCOL_VERSION_EVOLUTION.md)** - Full evolution overview
 
@@ -462,7 +462,7 @@ physics_config = {
 
 ---
 
-*NIS Protocol v2.0 represented a quantum leap in AI system sophistication, introducing mathematical rigor and physics-informed validation that set the foundation for the revolutionary consciousness-driven architecture that would follow in v3.0.*
+*NIS Protocol v2.0 represented a quantum leap in AI system sophistication, introducing mathematical rigor and physics-informed validation that set the foundation for the revolutionary pipeline-driven architecture that would follow in v3.0.*
 
 **Status**: Superseded  
 **Current Version**: v3.2.0  

@@ -30,7 +30,7 @@ Instead of static, pre-built UI components, the backend sends **UI specification
 
 ### ✅ What's Ready
 
-**1. Consciousness Pipeline** (`/v4/consciousness/*`)
+**1. pipeline Pipeline** (`/v4/pipeline/*`)
 - Genesis, Plan, Collective, Multipath, Embodiment, Ethics endpoints
 - All return structured JSON with execution traces
 - Ready for UI generation
@@ -104,7 +104,7 @@ const componentRegistry = {
       {
         "type": "card",
         "props": {
-          "title": "Consciousness Genesis",
+          "title": "pipeline Genesis",
           "status": "active",
           "metrics": {
             "agents_created": 5,
@@ -115,7 +115,7 @@ const componentRegistry = {
           {
             "id": "view_details",
             "label": "View Details",
-            "endpoint": "/v4/consciousness/genesis",
+            "endpoint": "/v4/pipeline/genesis",
             "method": "POST"
           }
         ]
@@ -204,15 +204,15 @@ function GenUIRenderer({ spec }: { spec: GenUIComponent }) {
 
 ## Backend Endpoints to Integrate
 
-### 1. Consciousness Endpoints (GenUI Ready)
+### 1. pipeline Endpoints (GenUI Ready)
 
 ```bash
-POST /v4/consciousness/genesis
-POST /v4/consciousness/plan
-POST /v4/consciousness/collective
-POST /v4/consciousness/multipath
-POST /v4/consciousness/embodiment
-POST /v4/consciousness/ethics
+POST /v4/pipeline/genesis
+POST /v4/pipeline/plan
+POST /v4/pipeline/collective
+POST /v4/pipeline/multipath
+POST /v4/pipeline/embodiment
+POST /v4/pipeline/ethics
 ```
 
 **Each returns:**
@@ -292,7 +292,7 @@ POST /protocol/mcp/execute?tool_name={tool}
 
 ## Example Use Cases
 
-### 1. Consciousness Dashboard
+### 1. pipeline Dashboard
 
 **User clicks "Run Genesis"**
 → Backend generates UI showing:
@@ -346,7 +346,7 @@ POST /protocol/mcp/execute?tool_name={tool}
 ```json
 {
   "action": "execute",
-  "endpoint": "/v4/consciousness/genesis",
+  "endpoint": "/v4/pipeline/genesis",
   "payload": {
     "capability": "physics_validation"
   },
@@ -447,7 +447,7 @@ POST /protocol/mcp/execute?tool_name={tool}
 - Dynamic UI rendering based on backend specs
 - Good engineering for adaptive interfaces
 - NOT "AI that designs UIs from scratch"
-- NOT "AGI-powered UX"
+- NOT "AI-powered UX"
 
 **What This Enables:**
 - Backend controls UI without frontend deploys
@@ -465,3 +465,4 @@ POST /protocol/mcp/execute?tool_name={tool}
 ---
 
 **Let's build this right. No marketing BS. Just good code.**
+

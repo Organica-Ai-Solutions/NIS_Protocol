@@ -329,7 +329,7 @@ validated = await isaac.execute_full_pipeline(
 - ❌ Does NOT include NVIDIA model weights
 - ❌ Does NOT replace existing Isaac implementation
 - ❌ Does NOT require NVIDIA hardware (fallback works on CPU)
-- ❌ Does NOT claim AGI or breakthrough science
+- ❌ Does NOT claim AI or breakthrough science
 
 ### **Capability Score:**
 - **With NVIDIA Models:** 85% - State-of-the-art physical AI
@@ -352,3 +352,4 @@ validated = await isaac.execute_full_pipeline(
 **Contact:** diego.torres@organicaai.com  
 **License:** Apache 2.0  
 **Status:** ✅ Production Ready
+

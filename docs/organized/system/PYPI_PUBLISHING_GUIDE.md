@@ -244,7 +244,7 @@ pip install nis-protocol
 **Usage:**
 ```python
 from core.agent import NISAgent
-from agents.consciousness.enhanced_conscious_agent import EnhancedConsciousAgent
+from agents.pipeline.enhanced_conscious_agent import EnhancedConsciousAgent
 from integrations.langchain_integration import NISLangChainIntegration
 
 # Initialize the NIS Protocol v3.0 system

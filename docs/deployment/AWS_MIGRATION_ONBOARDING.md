@@ -128,7 +128,7 @@ NIS Protocol v3.2.5 is a complete AI Operating System featuring:
 ✅ Robotics: 4 robot types supported
 ✅ NVIDIA NeMo: Manager initialized
 ✅ Communication: VibeVoice operational
-✅ Consciousness: 87.5% level
+✅ pipeline: 87.5% level
 ```
 
 ---
@@ -435,7 +435,7 @@ aws elbv2 create-listener \
 | NVIDIA | `/nvidia/nemo/status` | GET | 200 |
 | Robotics | `/robotics/capabilities` | GET | 200 |
 | Communication | `/communication/status` | GET | 200 |
-| Consciousness | `/consciousness/status` | GET | 200 |
+| pipeline | `/pipeline/status` | GET | 200 |
 
 ### **Automated Test Script**
 
@@ -574,3 +574,4 @@ The NIS Protocol v3.2.5 has been thoroughly tested locally and all critical issu
 *Document Version: 1.0*  
 *Last Updated: November 17, 2025*  
 *Prepared for: CloudElligent AWS Migration Team*
+

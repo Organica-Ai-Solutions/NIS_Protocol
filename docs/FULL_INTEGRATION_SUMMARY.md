@@ -131,12 +131,12 @@ curl -X POST http://localhost:8000/nvidia/execute \
 
 ## 🔄 Integration with Existing Systems
 
-### **1. Consciousness Service Integration**
+### **1. pipeline Service Integration**
 
-NVIDIA reasoning can now be called from consciousness endpoints:
+NVIDIA reasoning can now be called from pipeline endpoints:
 
 ```python
-# In consciousness service
+# In pipeline service
 from src.core import get_nvidia_integration
 
 nvidia = get_nvidia_integration()
@@ -239,13 +239,13 @@ plan = await nvidia.reason_about_task(task="Pick up box")
 result = await nvidia.execute_humanoid_task(task="Walk forward")
 ```
 
-### **2. From Consciousness Service**
+### **2. From pipeline Service**
 
 ```python
-# In consciousness endpoints
+# In pipeline endpoints
 from src.core import get_nvidia_integration
 
-@router.post("/v4/consciousness/plan")
+@router.post("/v4/pipeline/plan")
 async def create_plan(request: Dict[str, Any]):
     # Use NVIDIA reasoning
     nvidia = get_nvidia_integration()
@@ -254,8 +254,8 @@ async def create_plan(request: Dict[str, Any]):
         constraints=request.get("constraints", [])
     )
     
-    # Combine with consciousness planning
-    plan = consciousness_service.create_plan(reasoning)
+    # Combine with pipeline planning
+    plan = pipeline_service.create_plan(reasoning)
     return plan
 ```
 
@@ -298,7 +298,7 @@ curl -X POST http://localhost:8000/nvidia/execute \
 - ✅ Core module system
 - ✅ Global state management
 - ✅ System initialization
-- ✅ Consciousness service
+- ✅ pipeline service
 - ✅ Physics validation
 - ✅ Robotics agents
 - ✅ API routes
@@ -319,7 +319,7 @@ curl -X POST http://localhost:8000/nvidia/execute \
 - Shared error handling
 
 ### **3. Seamless Interoperability**
-- Consciousness ↔ NVIDIA reasoning
+- pipeline ↔ NVIDIA reasoning
 - Physics ↔ Isaac Lab validation
 - Robotics ↔ GR00T execution
 
@@ -433,7 +433,7 @@ except Exception as e:
 - ✅ A **core NIS Protocol module**
 - ✅ Initialized at **system startup**
 - ✅ Accessible **system-wide**
-- ✅ Integrated with **consciousness, physics, robotics**
+- ✅ Integrated with **pipeline, physics, robotics**
 - ✅ Available via **unified API**
 - ✅ **Production ready**
 
@@ -444,3 +444,4 @@ except Exception as e:
 **Contact:** diego.torres@organicaai.com  
 **License:** Apache 2.0  
 **Version:** NIS Protocol v4.0.1 + NVIDIA Stack 2025 (Fully Integrated)
+

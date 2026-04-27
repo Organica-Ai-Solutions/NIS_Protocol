@@ -179,7 +179,7 @@ print(f"Available topics: {topics}")
 # Topic routing
 def route_message_to_topic(message_type: MessageType) -> str:
     topic_mapping = {
-        MessageType.CONSCIOUSNESS_EVENT: StreamingTopics.CONSCIOUSNESS,
+        MessageType.pipeline_EVENT: StreamingTopics.pipeline,
         MessageType.SIMULATION_RESULT: StreamingTopics.SIMULATION,
         MessageType.ALIGNMENT_CHECK: StreamingTopics.ALIGNMENT,
         MessageType.SYSTEM_HEALTH: StreamingTopics.SYSTEM_HEALTH
@@ -248,7 +248,7 @@ from src.infrastructure.caching_system import CacheNamespace
 
 # Namespace-specific TTLs
 namespace_ttls = {
-    CacheNamespace.CONSCIOUSNESS.value: 1800,  # 30 minutes
+    CacheNamespace.pipeline.value: 1800,  # 30 minutes
     CacheNamespace.SIMULATION.value: 7200,    # 2 hours
     CacheNamespace.MEMORY.value: 3600,        # 1 hour
     CacheNamespace.AUDIT.value: 86400         # 24 hours

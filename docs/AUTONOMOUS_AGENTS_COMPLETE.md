@@ -55,7 +55,7 @@
 | **vision_analyze** | Analyzes images using vision agent | 85% - Real analysis (fallback mode) |
 | **memory_store** | Stores data in persistent memory system | 90% - Real Redis storage |
 | **memory_retrieve** | Retrieves data from memory | 90% - Real Redis retrieval |
-| **consciousness_genesis** | Creates agent via consciousness endpoint | 80% - Real agent creation |
+| **pipeline_genesis** | Creates agent via pipeline endpoint | 80% - Real agent creation |
 | **llm_chat** | Calls LLM providers (OpenAI, Anthropic, Google) | 95% - Real LLM calls |
 
 **Overall Tool Score: 90% real execution**
@@ -225,9 +225,9 @@ curl -X POST http://localhost:8000/autonomous/plan \
 
 ### ❌ What This is NOT
 
-**Not AGI**:
+**Not AI**:
 - Agents don't "think" or "reason"
-- No self-awareness or consciousness
+- No self-awareness or pipeline
 - Deterministic function calls
 
 **Not Self-Learning**:
@@ -461,7 +461,7 @@ result = await orchestrator.plan_and_execute(
 
 ### The Bottom Line
 
-**This is good engineering, not AGI.**
+**This is good engineering, not AI.**
 
 Agents can now execute real actions using 9 MCP tools. They make real HTTP calls to backend services, run real code, solve real equations, and store real data. The orchestration is deterministic and heuristic-based, not emergent or intelligent.
 
@@ -484,3 +484,4 @@ Agents can now execute real actions using 9 MCP tools. They make real HTTP calls
 **Recommendation**: Deploy and use for real tasks  
 
 **This is what we promised: Agents that DO things, not just return text.**
+

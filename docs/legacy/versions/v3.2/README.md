@@ -8,7 +8,7 @@
 
 ## 🎯 Overview
 
-NIS Protocol v3.2 represents the pinnacle of multimodal AI system evolution, featuring revolutionary **precision visualization**, **zero-error engineering**, enhanced console experience with multiple response formats, and artistic intent preservation. This production-ready release eliminates all critical warnings, introduces code-based chart generation with mathematical accuracy, and achieves seamless real-time pipeline integration while maintaining the sophisticated consciousness-driven architecture.
+NIS Protocol v3.2 represents the pinnacle of multimodal AI system evolution, featuring revolutionary **precision visualization**, **zero-error engineering**, enhanced console experience with multiple response formats, and artistic intent preservation. This production-ready release eliminates all critical warnings, introduces code-based chart generation with mathematical accuracy, and achieves seamless real-time pipeline integration while maintaining the sophisticated pipeline-driven architecture.
 
 ---
 
@@ -585,7 +585,7 @@ class VisualResponseFormatter:
                                     │
                                     ▼
 ┌─────────────────────────────────────────────────────────────────────────────────┐
-│            🧠 ENHANCED CONSCIOUSNESS LAYER (Smart Content Aware)                │
+│            🧠 ENHANCED pipeline LAYER (Smart Content Aware)                │
 │                                                                                 │
 │  ┌─────────────────────────────────────────────────────────────────────────┐   │
 │  │              🎨 Smart Content Classification Engine                     │   │
@@ -747,7 +747,7 @@ class VisualResponseFormatter:
 4. **Response Text Formatting**: Clean HTML/markdown conversion for improved readability
 5. **Console Interface Refinement**: Removed legacy elements for professional appearance
 
-### 🧠 Consciousness-Driven Reliability
+### 🧠 pipeline-Driven Reliability
 1. **Self-Healing Architecture**: System automatically adapts to missing dependencies
 2. **Intelligent Error Recovery**: Comprehensive fallback systems maintain functionality
 3. **Proactive Monitoring**: Real-time health checks with performance optimization
@@ -871,7 +871,7 @@ user_satisfaction = 8.8/10
 - **Global Scaling**: Multi-region deployment support
 
 ### Long-term Goals (v4.0+)
-- **AGI Foundation**: True artificial general intelligence
+- **AI Robotics Foundation**: True artificial general intelligence
 - **Self-Modifying Code**: Autonomous system evolution
 - **Emergent Behaviors**: Novel problem-solving approaches
 - **Revolutionary Capabilities**: Beyond current AI limitations

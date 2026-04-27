@@ -33,7 +33,7 @@
 │  ├── Robotics Agent (FK/IK/Trajectory)                       │
 │  ├── Physics Agent (PINN validation)                         │
 │  ├── Isaac Integration (ROS 2 Bridge)                        │
-│  └── Consciousness Pipeline                                  │
+│  └── pipeline Pipeline                                  │
 ├─────────────────────────────────────────────────────────────┤
 │  Infrastructure Layer                                        │
 │  ├── Kafka (Event streaming)                                 │
@@ -439,3 +439,4 @@ curl http://localhost:8000/resilience/health/deep
 **Document Owner:** Platform Team  
 **Review Cycle:** Monthly  
 **Last Review:** December 2025
+

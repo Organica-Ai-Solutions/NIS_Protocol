@@ -178,7 +178,7 @@ curl -X GET http://localhost:8000/agents
     "laplace_transformer_01": { /* status */ },
     "kan_reasoning_01": { /* status */ },
     "pinn_physics_01": { /* status */ },
-    "consciousness_01": { /* status */ }
+    "pipeline_01": { /* status */ }
   },
   "total_count": 4,
   "active_agents": 4,
@@ -192,18 +192,18 @@ curl -X GET http://localhost:8000/agents
 
 ### System Monitoring
 
-#### `GET /consciousness/status`
+#### `GET /pipeline/status`
 **Description:** Returns the current status of the `EnhancedConsciousAgent`, including its operational level and awareness metrics.
 
 **`curl` Example:**
 ```bash
-curl -X GET http://localhost:8000/consciousness/status
+curl -X GET http://localhost:8000/pipeline/status
 ```
 
 **Example Response (`200 OK`):**
 ```json
 {
-  "consciousness_level": "enhanced",
+  "pipeline_level": "enhanced",
   "introspection_active": true,
   "awareness_metrics": {
     "self_awareness": "calculated_value",
@@ -259,3 +259,4 @@ The API returns standard HTTP status codes to indicate the success or failure of
 - `500 Internal Server Error`: An unexpected error occurred on the server.
 
 Error responses will contain a `detail` field with a description of the error.
+

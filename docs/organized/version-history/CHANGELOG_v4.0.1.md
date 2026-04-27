@@ -19,7 +19,7 @@ Migrated 93% of API endpoints (220 of 236) from monolithic `main.py` to dedicate
 
 | Module | Endpoints | Description |
 |--------|-----------|-------------|
-| `routes/consciousness.py` | 28 | V4.0 evolution, genesis, collective, embodiment |
+| `routes/pipeline.py` | 28 | V4.0 evolution, genesis, collective, embodiment |
 | `routes/robotics.py` | 5 | FK/IK, trajectory planning, telemetry |
 | `routes/physics.py` | 6 | PINN validation, heat/wave equations |
 | `routes/voice.py` | 7 | STT, TTS, WebSocket voice chat |
@@ -154,3 +154,4 @@ The route modules are **ready for integration** but `main.py` has not been modif
 - [Route Migration Guide](../architecture/ROUTE_MIGRATION.md)
 - [NIS Protocol Engineering Rules](/.cursorrules)
 - [API Documentation](/docs)
+

@@ -11,7 +11,7 @@
 
 ---
 
-## 🚀 **v4.0: Paragraph-Based AGI Core (2025 Q2)**
+## 🚀 **v4.0: Paragraph-Based AI Core (2025 Q2)**
 
 ### **📊 Overall Progress: 0% (Planning Phase)**
 
@@ -228,13 +228,13 @@
 
 ---
 
-## 🔬 **v6.0: Local Emergent AGI (2027 Q1)**
+## 🔬 **v6.0: Local Emergent AI (2027 Q1)**
 
 ### **📊 Overall Progress: 0% (Conceptual)**
 
 #### **🔬 Research Phase (Pre-Development)**
 
-##### **Research Task R6.1: Local AGI Constraints**
+##### **Research Task R6.1: Local AI Constraints**
 - [ ] **8GB memory constraint optimization research**
   - Areas: Model quantization, efficient architectures
   - Timeline: 2 months
@@ -380,7 +380,7 @@
 #### **Research Risks**
 - **Entanglement theory validation**: Collaborate with academic partners
 - **Emergence unpredictability**: Extensive simulation before deployment
-- **Local AGI feasibility**: Proof-of-concept development before full implementation
+- **Local AI feasibility**: Proof-of-concept development before full implementation
 
 #### **Business Risks**
 - **Market timing**: Flexible release schedule based on competitive landscape
@@ -410,7 +410,7 @@
 - **1x UI/Visualization Engineer** (part-time)
 
 #### **v6 Development Team (12 months)**
-- **1x AGI Research Lead** (full-time)
+- **1x AI Research Lead** (full-time)
 - **1x Technical Lead** (full-time)
 - **2x Edge Computing Engineers** (full-time)
 - **2x Optimization/Quantization Engineers** (full-time)
@@ -447,7 +447,7 @@
 - **Q1**: v5 alpha release, SEED protocol validation
 - **Q2**: v5 beta testing, entanglement stability validation
 - **Q3**: v5 production release, commercial deployment
-- **Q4**: v6 research completion, local AGI prototype
+- **Q4**: v6 research completion, local AI prototype
 
 #### **2027 Milestones**
 - **Q1**: v6 alpha release, local deployment validation

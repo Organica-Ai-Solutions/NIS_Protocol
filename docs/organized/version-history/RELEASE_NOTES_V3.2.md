@@ -401,7 +401,7 @@ Special thanks to all community members who provided feedback, bug reports, and 
 - **Integration APIs**: Third-party service connections
 
 ### Research Initiatives
-- **Consciousness Scaling**: Enhanced self-awareness capabilities
+- **pipeline Scaling**: Enhanced self-awareness capabilities
 - **Physics Validation**: More sophisticated physics checking
 - **Multimodal Fusion**: Better integration of text, image, and audio
 

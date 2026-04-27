@@ -90,15 +90,15 @@ class TestChat:
 
 
 # =============================================================================
-# V4 CONSCIOUSNESS TESTS
+# V4 pipeline TESTS
 # =============================================================================
 
-class TestV4Consciousness:
-    """V4 Consciousness endpoint tests"""
+class TestV4pipeline:
+    """V4 pipeline endpoint tests"""
     
     def test_genesis(self, client):
-        """Test consciousness genesis"""
-        response = client.post("/v4/consciousness/genesis", json={
+        """Test pipeline genesis"""
+        response = client.post("/v4/pipeline/genesis", json={
             "request": {
                 "seed_concept": "test_agent",
                 "capabilities": ["reasoning"]
@@ -108,8 +108,8 @@ class TestV4Consciousness:
         assert response.status_code in [200, 500]
     
     def test_plan(self, client):
-        """Test consciousness planning"""
-        response = client.post("/v4/consciousness/plan", json={
+        """Test pipeline planning"""
+        response = client.post("/v4/pipeline/plan", json={
             "request": {
                 "goal": "Test goal",
                 "constraints": []
@@ -120,7 +120,7 @@ class TestV4Consciousness:
     
     def test_ethics_evaluate(self, client):
         """Test ethics evaluation"""
-        response = client.post("/v4/consciousness/ethics/evaluate", json={
+        response = client.post("/v4/pipeline/ethics/evaluate", json={
             "action": "help user",
             "context": "testing"
         })
@@ -130,7 +130,7 @@ class TestV4Consciousness:
     
     def test_debug_explain(self, client):
         """Test debug explanation"""
-        response = client.get("/v4/consciousness/debug/explain")
+        response = client.get("/v4/pipeline/debug/explain")
         assert response.status_code == 200
         data = response.json()
         assert data.get("status") == "success"
@@ -449,3 +449,4 @@ class TestSearch:
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v", "--tb=short"])
+

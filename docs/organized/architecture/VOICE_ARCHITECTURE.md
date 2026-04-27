@@ -16,7 +16,7 @@ The NIS Protocol Voice Communication Architecture integrates **Microsoft VibeVoi
 
 1. **🎭 Multi-Agent Voice Identity** - Each NIS agent has distinct voice characteristics
 2. **⚡ Real-Time Performance** - <500ms end-to-end latency for voice interactions  
-3. **🧠 Deep NIS Integration** - Direct voice interface to consciousness, physics, research
+3. **🧠 Deep NIS Integration** - Direct voice interface to pipeline, physics, research
 4. **🌊 Streaming Architecture** - WebSocket-based real-time audio streaming
 5. **🔍 Intelligent Activation** - Wake word detection and context-aware responses
 6. **🎪 Scalable Design** - Support for concurrent voice sessions and multi-speaker dialogues
@@ -44,7 +44,7 @@ The NIS Protocol Voice Communication Architecture integrates **Microsoft VibeVoi
 ┌─────────────────────────────────────────────────────────────┐
 │                   🧠 NIS Integration Layer                   │
 ├─────────────────────────────────────────────────────────────┤
-│  Agent Routing  │ Consciousness │  Physics     │  Research   │
+│  Agent Routing  │ pipeline │  Physics     │  Research   │
 │  & Handoff      │  Monitoring   │  Validation  │  Engine     │
 └─────────────────────────────────────────────────────────────┘
                               ↕
@@ -69,7 +69,7 @@ The NIS Protocol Voice Communication Architecture integrates **Microsoft VibeVoi
     ↓
 🧠 NIS Agent Router (determine target agent)
     ↓
-🤖 Agent Processing (consciousness/physics/research, 75ms avg)
+🤖 Agent Processing (pipeline/physics/research, 75ms avg)
     ↓
 🎭 Voice Response Generation (agent-specific characteristics)
     ↓
@@ -90,7 +90,7 @@ Total End-to-End Latency: ~350ms average
 
 | **Agent** | **Voice ID** | **Base Frequency** | **Style** | **Use Cases** |
 |-----------|--------------|-------------------|-----------|---------------|
-| **🧠 Consciousness** | `consciousness_v1` | 180Hz | Deep, thoughtful | System awareness, introspection, cognitive analysis |
+| **🧠 pipeline** | `pipeline_v1` | 180Hz | Deep, thoughtful | System awareness, introspection, cognitive analysis |
 | **⚡ Physics** | `physics_v1` | 160Hz | Clear, authoritative | Physics validation, equation explanations, PINN results |
 | **🔬 Research** | `research_v1` | 200Hz | Analytical, enthusiastic | Research findings, data analysis, web search results |
 | **🤝 Coordination** | `coordination_v1` | 170Hz | Warm, collaborative | Agent coordination, user interaction, system status |
@@ -100,9 +100,9 @@ Total End-to-End Latency: ~350ms average
 ```python
 # Agent Voice Mapping Configuration
 AGENT_VOICE_CONFIG = {
-    "consciousness": {
-        "speaker": "consciousness",
-        "voice_id": "consciousness_v1",
+    "pipeline": {
+        "speaker": "pipeline",
+        "voice_id": "pipeline_v1",
         "pitch": 0.8,
         "speed": 0.95,
         "style": "thoughtful",
@@ -152,9 +152,9 @@ AGENT_ROUTING_RULES = {
         "target_agent": "research", 
         "confidence_threshold": 0.7
     },
-    "consciousness_keywords": {
-        "triggers": ["consciousness", "awareness", "mind", "think", "cognitive"],
-        "target_agent": "consciousness",
+    "pipeline_keywords": {
+        "triggers": ["pipeline", "awareness", "mind", "think", "cognitive"],
+        "target_agent": "pipeline",
         "confidence_threshold": 0.7
     },
     "memory_keywords": {
@@ -222,7 +222,7 @@ Server → Client: Raw audio response (streamed in chunks)
 Client → Server: {
   "type": "start_conversation",
   "agents_content": {
-    "consciousness": "System awareness at 94.2%",
+    "pipeline": "System awareness at 94.2%",
     "physics": "Energy conservation validated", 
     "research": "15 relevant papers analyzed"
   }
@@ -231,7 +231,7 @@ Client → Server: {
 // Real-Time Audio Chunks
 Server → Client: {
   "type": "audio_chunk",
-  "speaker": "consciousness",
+  "speaker": "pipeline",
   "text_chunk": "System",
   "audio_data": "[base64_encoded_audio]",
   "timestamp": 1737123456.789,
@@ -277,25 +277,25 @@ STT_CONFIG = {
 
 ### **🔗 Core Integration Points**
 
-#### **1. Consciousness System Integration**
+#### **1. pipeline System Integration**
 ```python
-# Voice interface to consciousness monitoring
-async def vocalize_consciousness_status():
-    # Get real-time consciousness data
-    consciousness_data = await consciousness_service.get_current_state()
+# Voice interface to pipeline monitoring
+async def vocalize_pipeline_status():
+    # Get real-time pipeline data
+    pipeline_data = await pipeline_service.get_current_state()
     
     # Format for voice output
     status_text = f"""
-    Consciousness level at {consciousness_data.consciousness_level:.1%}.
-    Self-awareness: {consciousness_data.awareness_metrics.self_awareness:.1%}.
-    Environmental awareness: {consciousness_data.awareness_metrics.environmental_awareness:.1%}.
-    Current cognitive focus: {consciousness_data.cognitive_state.attention_focus}.
+    pipeline level at {pipeline_data.pipeline_level:.1%}.
+    Self-awareness: {pipeline_data.awareness_metrics.self_awareness:.1%}.
+    Environmental awareness: {pipeline_data.awareness_metrics.environmental_awareness:.1%}.
+    Current cognitive focus: {pipeline_data.cognitive_state.attention_focus}.
     """
     
-    # Synthesize with consciousness voice
+    # Synthesize with pipeline voice
     audio = await vibevoice_engine.synthesize_speech(
         text=status_text,
-        speaker="consciousness", 
+        speaker="pipeline", 
         emotion="thoughtful"
     )
     
@@ -445,7 +445,7 @@ class WakeWordDetector:
         self.confidence_threshold = 0.6
         self.voice_commands = {
             'physics': ['physics', 'physical', 'equation', 'force', 'energy'],
-            'consciousness': ['consciousness', 'aware', 'mind', 'think'],
+            'pipeline': ['pipeline', 'aware', 'mind', 'think'],
             'research': ['research', 'search', 'find', 'study', 'analyze'],
             'coordination': ['coordinate', 'manage', 'organize', 'control']
         }
@@ -494,7 +494,7 @@ class ContinuousConversationManager:
     def __init__(self, session_timeout=30.0):
         self.session_timeout = session_timeout
         self.conversation_context = []
-        self.current_agent = "consciousness"
+        self.current_agent = "pipeline"
         self.topic_context = {}
     
     def start_session(self, session_id):
@@ -717,23 +717,23 @@ async def setup_voice_conversation():
     }
 ```
 
-### **🧠 Consciousness Voice Integration**
+### **🧠 pipeline Voice Integration**
 
 ```python
-# Voice interface for consciousness monitoring
-async def consciousness_voice_interface():
-    # Get consciousness status
-    consciousness_data = await get_consciousness_status()
+# Voice interface for pipeline monitoring
+async def pipeline_voice_interface():
+    # Get pipeline status
+    pipeline_data = await get_pipeline_status()
     
     # Create voice agent
     voice_agent = create_vibevoice_communication_agent()
     
-    # Generate consciousness status audio
-    audio_result = await voice_agent.vocalize_consciousness(consciousness_data)
+    # Generate pipeline status audio
+    audio_result = await voice_agent.vocalize_pipeline(pipeline_data)
     
     return {
-        "consciousness_audio": audio_result.audio_data,
-        "consciousness_level": consciousness_data.consciousness_level,
+        "pipeline_audio": audio_result.audio_data,
+        "pipeline_level": pipeline_data.pipeline_level,
         "duration_seconds": audio_result.duration_seconds,
         "voice_characteristics": "deep, thoughtful tone"
     }
@@ -776,10 +776,11 @@ async def physics_voice_explanation(equation_input):
 
 ### **🌟 Future Vision (v5.0+)**
 - [ ] Quantum-enhanced voice processing
-- [ ] Consciousness-driven voice personality evolution
+- [ ] pipeline-driven voice personality evolution
 - [ ] Cross-platform voice agent sharing
-- [ ] AGI-level conversational capabilities
+- [ ] AI-level conversational capabilities
 
 ---
 
 **🎙️ The NIS Protocol Voice Communication Architecture represents a breakthrough in enterprise AI voice interaction, combining the power of Microsoft VibeVoice with intelligent multi-agent coordination to create natural, context-aware conversations that feel truly intelligent.**
+

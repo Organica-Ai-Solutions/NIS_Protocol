@@ -51,7 +51,7 @@ class NISTrainingConfig:
     max_length: int = 2048
     use_physics_validation: bool = True
     agent_coordination_weight: float = 1.0
-    consciousness_monitoring_weight: float = 0.8
+    pipeline_monitoring_weight: float = 0.8
 
 class NISDatasetProcessor:
     """Process NIS Protocol training data"""
@@ -74,7 +74,7 @@ class NISDatasetProcessor:
                 "output": "Physics constraint violation detected. Adjusting movement trajectory to satisfy momentum conservation: p_initial = p_final. Recalculating agent coordination parameters with physics-informed constraints."
             },
             {
-                "input": "Consciousness monitoring shows elevated uncertainty in decision agent. Confidence: 0.3",
+                "input": "pipeline monitoring shows elevated uncertainty in decision agent. Confidence: 0.3",
                 "output": "Low confidence detected. Initiating meta-cognitive review protocol. Requesting additional sensory input and consulting memory agent for similar past experiences. Temporarily reducing decision authority until confidence exceeds 0.7 threshold."
             }
         ]

@@ -1,5 +1,5 @@
 """
-NIS Protocol v4.0 - Self-Improving Consciousness Test Suite
+NIS Protocol v4.0 - Self-Improving pipeline Test Suite
 Tests all v4.0 features: Reflective Generation, Persistent Memory, Self-Modification
 """
 
@@ -292,3 +292,4 @@ class TestIntegration:
 # Run tests
 if __name__ == "__main__":
     pytest.main([__file__, "-v", "--tb=short"])
+

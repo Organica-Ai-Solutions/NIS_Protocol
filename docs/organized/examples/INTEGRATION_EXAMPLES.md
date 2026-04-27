@@ -18,7 +18,7 @@ import logging
 
 # NIS Protocol imports
 from src.cognitive_agents.cognitive_system import CognitiveSystem
-from src.agents.consciousness.enhanced_conscious_agent import EnhancedConsciousAgent
+from src.agents.pipeline.enhanced_conscious_agent import EnhancedConsciousAgent
 from src.infrastructure.integration_coordinator import InfrastructureCoordinator
 
 # Setup logging
@@ -43,7 +43,7 @@ app.add_middleware(
 
 # Global instances
 cognitive_system = None
-consciousness_agent = None
+pipeline_agent = None
 infrastructure_coordinator = None
 
 # Request/Response models
@@ -58,7 +58,7 @@ class IntelligenceResponse(BaseModel):
     confidence: float
     processing_time: float
     agents_involved: list
-    consciousness_state: Dict[str, Any]
+    pipeline_state: Dict[str, Any]
 
 class SystemHealthResponse(BaseModel):
     status: str
@@ -70,7 +70,7 @@ class SystemHealthResponse(BaseModel):
 @app.on_event("startup")
 async def startup_event():
     """Initialize NIS Protocol components"""
-    global cognitive_system, consciousness_agent, infrastructure_coordinator
+    global cognitive_system, pipeline_agent, infrastructure_coordinator
     
     logger.info("🚀 Starting NIS Protocol API...")
     
@@ -83,9 +83,9 @@ async def startup_event():
         cognitive_system = CognitiveSystem()
         logger.info("✅ Cognitive system initialized")
         
-        # Initialize consciousness agent
-        consciousness_agent = EnhancedConsciousAgent()
-        logger.info("✅ Consciousness agent initialized")
+        # Initialize pipeline agent
+        pipeline_agent = EnhancedConsciousAgent()
+        logger.info("✅ pipeline agent initialized")
         
         logger.info("🎉 NIS Protocol API ready!")
         
@@ -123,8 +123,8 @@ async def process_intelligence(
         import time
         start_time = time.time()
         
-        # Check consciousness state
-        consciousness_state = consciousness_agent.get_current_state()
+        # Check pipeline state
+        pipeline_state = pipeline_agent.get_current_state()
         
         # Process through cognitive system
         response = cognitive_sys.process_input(
@@ -148,10 +148,10 @@ async def process_intelligence(
             confidence=response.confidence,
             processing_time=processing_time,
             agents_involved=getattr(response, 'agents_used', ['cognitive_system']),
-            consciousness_state={
-                "awareness_level": consciousness_state.awareness_level,
-                "overall_confidence": consciousness_state.confidence,
-                "active_agents": consciousness_state.active_agents
+            pipeline_state={
+                "awareness_level": pipeline_state.awareness_level,
+                "overall_confidence": pipeline_state.confidence,
+                "active_agents": pipeline_state.active_agents
             }
         )
         
@@ -169,8 +169,8 @@ async def health_check():
         agents_health = {}
         if cognitive_system:
             agents_health["cognitive_system"] = "healthy"
-        if consciousness_agent:
-            agents_health["consciousness_agent"] = "healthy"
+        if pipeline_agent:
+            agents_health["pipeline_agent"] = "healthy"
         
         # Get memory usage (mock implementation)
         memory_usage = {
@@ -197,16 +197,16 @@ async def health_check():
         logger.error(f"❌ Health check error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-# Consciousness Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) endpoint
-@app.get("/consciousness/state")
-async def get_consciousness_state():
-    """Get detailed consciousness state"""
+# pipeline Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) endpoint
+@app.get("/pipeline/state")
+async def get_pipeline_state():
+    """Get detailed pipeline state"""
     
     try:
-        if not consciousness_agent:
-            raise HTTPException(status_code=503, detail="Consciousness agent not available")
+        if not pipeline_agent:
+            raise HTTPException(status_code=503, detail="pipeline agent not available")
         
-        state = consciousness_agent.get_current_state()
+        state = pipeline_agent.get_current_state()
         
         return {
             "awareness_level": state.awareness_level,
@@ -219,7 +219,7 @@ async def get_consciousness_state():
         }
         
     except Exception as e:
-        logger.error(f"❌ Consciousness state error: {e}")
+        logger.error(f"❌ pipeline state error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 # Scientific analysis endpoint
@@ -411,7 +411,7 @@ sys.path.append('./src')
 
 # Import NIS components
 from cognitive_agents.cognitive_system import CognitiveSystem
-from agents.consciousness.enhanced_conscious_agent import EnhancedConsciousAgent
+from agents.pipeline.enhanced_conscious_agent import EnhancedConsciousAgent
 from agents.signal_processing.enhanced_laplace_transformer import EnhancedLaplaceTransformer
 from agents.physics.enhanced_pinn_physics_agent import EnhancedPINNPhysicsAgent
 
@@ -423,19 +423,19 @@ def initialize_nis_system():
     
     # Create components
     cognitive_system = CognitiveSystem()
-    consciousness_agent = EnhancedConsciousAgent()
+    pipeline_agent = EnhancedConsciousAgent()
     laplace_transformer = EnhancedLaplaceTransformer()
     physics_agent = EnhancedPINNPhysicsAgent()
     
     print("✅ Cognitive System: Initialized")
-    print("✅ Consciousness Agent: Initialized") 
+    print("✅ pipeline Agent: Initialized") 
     print("✅ Laplace Transformer: Initialized")
     print("✅ Physics Agent: Initialized")
     
-    return cognitive_system, consciousness_agent, laplace_transformer, physics_agent
+    return cognitive_system, pipeline_agent, laplace_transformer, physics_agent
 
 # Initialize system
-cognitive_system, consciousness_agent, laplace_transformer, physics_agent = initialize_nis_system()
+cognitive_system, pipeline_agent, laplace_transformer, physics_agent = initialize_nis_system()
 
 # Cell 3: Interactive Analysis Function
 def analyze_with_nis(question, data=None, domain="general"):
@@ -451,16 +451,16 @@ def analyze_with_nis(question, data=None, domain="general"):
         context={"domain": domain, "data": data} if data is not None else {"domain": domain}
     )
     
-    # Get consciousness state
-    consciousness_state = consciousness_agent.get_current_state()
+    # Get pipeline state
+    pipeline_state = pipeline_agent.get_current_state()
     
     # Display results
     print(f"📝 Response: {response.response_text}")
     print(f"🎯 Confidence: {response.confidence:.2f}")
-    print(f"💭 Consciousness Level: {consciousness_state.awareness_level}")
-    print(f"🧠 Active Agents: {', '.join(consciousness_state.active_agents)}")
+    print(f"💭 pipeline Level: {pipeline_state.awareness_level}")
+    print(f"🧠 Active Agents: {', '.join(pipeline_state.active_agents)}")
     
-    return response, consciousness_state
+    return response, pipeline_state
 
 # Cell 4: Scientific Data Analysis Example
 def demo_scientific_analysis():
@@ -480,7 +480,7 @@ def demo_scientific_analysis():
     plt.ylabel('Amplitude')
     
     # Analyze with NIS Protocol
-    response, consciousness = analyze_with_nis(
+    response, pipeline = analyze_with_nis(
         "What patterns do you see in this time-series data? Is there any periodic behavior?",
         data=signal.tolist(),
         domain="scientific"
@@ -500,11 +500,11 @@ def demo_scientific_analysis():
     plt.tight_layout()
     plt.show()
     
-    return response, consciousness
+    return response, pipeline
 
-# Cell 5: Consciousness Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) Demo
-def demo_consciousness_monitoring():
-    """Demonstrate consciousness Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) capabilities"""
+# Cell 5: pipeline Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) Demo
+def demo_pipeline_monitoring():
+    """Demonstrate pipeline Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) capabilities"""
     
     questions = [
         "What is 2 + 2?",  # High confidence
@@ -512,21 +512,21 @@ def demo_consciousness_monitoring():
         "What is the meaning of life?",  # Low confidence
     ]
     
-    consciousness_data = []
+    pipeline_data = []
     
     for question in questions:
         print(f"\n🤔 Question: {question}")
-        response, consciousness = analyze_with_nis(question)
+        response, pipeline = analyze_with_nis(question)
         
-        consciousness_data.append({
+        pipeline_data.append({
             'question': question,
             'response_confidence': response.confidence,
-            'consciousness_level': consciousness.awareness_level,
-            'system_confidence': consciousness.confidence
+            'pipeline_level': pipeline.awareness_level,
+            'system_confidence': pipeline.confidence
         })
     
-    # Create consciousness tracking plot
-    df = pd.DataFrame(consciousness_data)
+    # Create pipeline tracking plot
+    df = pd.DataFrame(pipeline_data)
     
     plt.figure(figsize=(10, 6))
     x = range(len(df))
@@ -540,10 +540,10 @@ def demo_consciousness_monitoring():
     plt.legend()
     
     plt.subplot(1, 2, 2)
-    plt.bar(x, df['consciousness_level'], alpha=0.7, color='orange')
+    plt.bar(x, df['pipeline_level'], alpha=0.7, color='orange')
     plt.xticks(x, [f"Q{i+1}" for i in x])
-    plt.ylabel('Consciousness Level')
-    plt.title('Consciousness Level')
+    plt.ylabel('pipeline Level')
+    plt.title('pipeline Level')
     
     plt.tight_layout()
     plt.show()
@@ -563,7 +563,7 @@ def demo_physics_validation():
     
     for scenario in physics_scenarios:
         print(f"\n⚛️ Physics Scenario: {scenario}")
-        response, consciousness = analyze_with_nis(scenario, domain="physics")
+        response, pipeline = analyze_with_nis(scenario, domain="physics")
         
         # Additional physics validation
         try:
@@ -580,9 +580,9 @@ print("=" * 50)
 print("\n📊 Scientific Analysis Demo:")
 demo_scientific_analysis()
 
-# Run consciousness Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) demo
-print("\n💭 Consciousness Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) Demo:")
-consciousness_df = demo_consciousness_monitoring()
+# Run pipeline Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) demo
+print("\n💭 pipeline Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) Demo:")
+pipeline_df = demo_pipeline_monitoring()
 
 # Run physics validation demo
 print("\n⚛️ Physics Validation Demo:")
@@ -607,7 +607,7 @@ import asyncio
 
 # NIS Protocol imports
 from src.cognitive_agents.cognitive_system import CognitiveSystem
-from src.agents.consciousness.enhanced_conscious_agent import EnhancedConsciousAgent
+from src.agents.pipeline.enhanced_conscious_agent import EnhancedConsciousAgent
 
 # Page configuration
 st.set_page_config(
@@ -620,14 +620,14 @@ st.set_page_config(
 # Initialize session state
 if 'cognitive_system' not in st.session_state:
     st.session_state.cognitive_system = CognitiveSystem()
-    st.session_state.consciousness_agent = EnhancedConsciousAgent()
+    st.session_state.pipeline_agent = EnhancedConsciousAgent()
     st.session_state.analysis_history = []
 
 # Title and description
 st.title("🧠 NIS Protocol Interactive Dashboard")
 st.markdown("""
 This dashboard provides an interactive interface to the Neural Intelligence Synthesis (NIS) Protocol.
-Explore consciousness Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/), intelligence processing (implemented) (implemented), and system performance in real-time.
+Explore pipeline Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/), intelligence processing (implemented) (implemented), and system performance in real-time.
 """)
 
 # Sidebar
@@ -671,8 +671,8 @@ with col1:
                     context={"mode": analysis_mode.lower().replace(" ", "_")}
                 )
                 
-                # Get consciousness state
-                consciousness_state = st.session_state.consciousness_agent.get_current_state()
+                # Get pipeline state
+                pipeline_state = st.session_state.pipeline_agent.get_current_state()
                 
                 # Store in history
                 st.session_state.analysis_history.append({
@@ -681,7 +681,7 @@ with col1:
                     'response': response.response_text,
                     'confidence': response.confidence,
                     'mode': analysis_mode,
-                    'consciousness_level': consciousness_state.awareness_level
+                    'pipeline_level': pipeline_state.awareness_level
                 })
                 
                 # Display results
@@ -700,22 +700,22 @@ with col1:
                 with col1_metrics:
                     st.metric("Confidence", f"{response.confidence:.2f}")
                 with col2_metrics:
-                    st.metric("Consciousness Level", consciousness_state.awareness_level)
+                    st.metric("pipeline Level", pipeline_state.awareness_level)
                 with col3_metrics:
                     st.metric("processing (implemented) (implemented) Mode", analysis_mode)
 
 with col2:
     st.header("📊 System Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/)")
     
-    # Consciousness state
-    if st.button("🔄 Refresh Consciousness State"):
-        consciousness_state = st.session_state.consciousness_agent.get_current_state()
+    # pipeline state
+    if st.button("🔄 Refresh pipeline State"):
+        pipeline_state = st.session_state.pipeline_agent.get_current_state()
         
-        st.subheader("💭 Current Consciousness State")
+        st.subheader("💭 Current pipeline State")
         st.json({
-            "awareness_level": consciousness_state.awareness_level,
-            "confidence": consciousness_state.confidence,
-            "active_agents": consciousness_state.active_agents,
+            "awareness_level": pipeline_state.awareness_level,
+            "confidence": pipeline_state.confidence,
+            "active_agents": pipeline_state.active_agents,
             "memory_state": "active",
             "reasoning_state": "optimal"
         })
@@ -724,7 +724,7 @@ with col2:
     st.subheader("❤️ System Health")
     health_metrics = {
         "Cognitive System": "🟢 Healthy",
-        "Consciousness Agent": "🟢 Active", 
+        "pipeline Agent": "🟢 Active", 
         "Memory System": "🟢 Optimal",
         "Physics Validation": "🟢 Ready"
     }
@@ -839,6 +839,6 @@ These integration examples provide:
 - ✅ **Multiple Frameworks**: FastAPI, Django, Jupyter, Streamlit
 - ✅ **Configuration Examples**: Docker, environment variables, Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/)
 - ✅ **recommended Practices**: Error handling, logging, health checks
-- ✅ **Real-World Usage**: Scientific analysis, consciousness Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/)
+- ✅ **Real-World Usage**: Scientific analysis, pipeline Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/)
 
 professional for your AWS MAP program development and demonstrating NIS Protocol capabilities! 

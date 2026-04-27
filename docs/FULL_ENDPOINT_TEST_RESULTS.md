@@ -34,7 +34,7 @@
 
 | Category | Tested | Passed | Rate |
 |----------|--------|--------|------|
-| **Consciousness** | 5 | 5 | 100% |
+| **pipeline** | 5 | 5 | 100% |
 | **System** | 3 | 3 | 100% |
 | **Protocols** | 3 | 3 | 100% |
 | **Robotics** | 4 | 4 | 100% |
@@ -57,11 +57,11 @@
 
 ## Detailed Test Results
 
-### Consciousness (5/5 - 100%)
-- ✅ `GET /v4/consciousness/status`
-- ✅ `POST /v4/consciousness/genesis`
-- ✅ `POST /v4/consciousness/evolve`
-- ✅ `GET /v4/consciousness/genesis/history`
+### pipeline (5/5 - 100%)
+- ✅ `GET /v4/pipeline/status`
+- ✅ `POST /v4/pipeline/genesis`
+- ✅ `POST /v4/pipeline/evolve`
+- ✅ `GET /v4/pipeline/genesis/history`
 - ✅ `GET /v4/dashboard/complete`
 
 ### System (3/3 - 100%)
@@ -236,3 +236,4 @@ Features:
 ---
 
 **Last Updated**: December 27, 2025 4:15 AM
+

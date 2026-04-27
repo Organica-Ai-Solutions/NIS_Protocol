@@ -16,35 +16,35 @@ format_json() {
 # 1. Genesis
 echo ""
 echo "🧬 1. GENESIS: Creating Planetary Exploration Agent..."
-curl -s -X POST "$BASE_URL/v4/consciousness/genesis" \
+curl -s -X POST "$BASE_URL/v4/pipeline/genesis" \
   -H "Content-Type: application/json" \
   -d '{"capability": "planetary_exploration", "model_recommendation": "specialized"}' | format_json
 
 # 2. Plan
 echo ""
 echo "🎯 2. PLAN: Designing Mission 'Survey Mars Sector 4'..."
-curl -s -X POST "$BASE_URL/v4/consciousness/plan" \
+curl -s -X POST "$BASE_URL/v4/pipeline/plan" \
   -H "Content-Type: application/json" \
   -d '{"goal_id": "mars_mission_01", "high_level_goal": "Survey Mars Sector 4 for water ice deposits"}' | format_json
 
 # 3. Collective Decision
 echo ""
 echo "⚖️ 3. COLLECTIVE: Allocating energy resources..."
-curl -s -X POST "$BASE_URL/v4/consciousness/collective/decide" \
+curl -s -X POST "$BASE_URL/v4/pipeline/collective/decide" \
   -H "Content-Type: application/json" \
   -d '{"problem": "Energy allocation for deep scan vs wide scan", "local_decision": {"priority": "deep_scan", "confidence": 0.85}}' | format_json
 
 # 4. Multipath Reasoning
 echo ""
 echo "🌳 4. MULTIPATH: Resolving Sensor Ambiguity..."
-curl -s -X POST "$BASE_URL/v4/consciousness/multipath/start" \
+curl -s -X POST "$BASE_URL/v4/pipeline/multipath/start" \
   -H "Content-Type: application/json" \
   -d '{"problem": "Spectrometer reading 14.2: Ice vs Dry Ice", "num_paths": 3}' | format_json
 
 # 5. Ethics
 echo ""
 echo "🛡️ 5. ETHICS: Evaluating Drilling Risk..."
-curl -s -X POST "$BASE_URL/v4/consciousness/ethics/evaluate" \
+curl -s -X POST "$BASE_URL/v4/pipeline/ethics/evaluate" \
   -H "Content-Type: application/json" \
   -d '{"decision_context": {"action": "drill_deep_core", "risk": "biological_contamination", "benefit": "scientific_discovery"}}' | format_json
 
@@ -74,17 +74,18 @@ curl -s -X POST "$BASE_URL/vision/analyze" \
 # 9. Embodiment
 echo ""
 echo "🤖 9. EMBODIMENT: Executing Drill Deployment..."
-curl -s -X POST "$BASE_URL/v4/consciousness/embodiment/action/execute" \
+curl -s -X POST "$BASE_URL/v4/pipeline/embodiment/action/execute" \
   -H "Content-Type: application/json" \
   -d '{"action_type": "deploy_drill", "parameters": {"depth": 5.0, "rpm": 1200}}' | format_json
 
 # 10. Marketplace
 echo ""
 echo "💼 10. MARKETPLACE: Publishing Discovery..."
-curl -s -X POST "$BASE_URL/v4/consciousness/marketplace/publish" \
+curl -s -X POST "$BASE_URL/v4/pipeline/marketplace/publish" \
   -H "Content-Type: application/json" \
   -d '{"insight_type": "scientific_discovery", "content": {"finding": "Water Ice Confirmed at 5m depth"}, "metadata": {"confidence": 0.99}}' | format_json
 
 echo ""
 echo "========================================"
 echo "🏁 DEMO COMPLETE"
+

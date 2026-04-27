@@ -55,8 +55,8 @@ ENDPOINTS = {
         ("GET", "/protocol/health", "Protocol health"),
         ("GET", "/tools/list", "Tools list"),
     ],
-    "consciousness": [
-        ("GET", "/v4/consciousness/status", "Consciousness status"),
+    "pipeline": [
+        ("GET", "/v4/pipeline/status", "pipeline status"),
         ("GET", "/v4/dashboard/complete", "V4 dashboard"),
     ],
     "system": [
@@ -204,3 +204,4 @@ def run_tests():
 
 if __name__ == "__main__":
     sys.exit(run_tests())
+

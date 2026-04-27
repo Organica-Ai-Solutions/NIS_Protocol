@@ -17,7 +17,7 @@
 | **[NIS Complete Dataflow](system_flow/nis_complete_dataflow.md)** | End-to-end data processing (implemented) (implemented) | Developers & Architects | ✅ READY |
 | **[Memory System Architecture](system_flow/memory_system_architecture.md)** | Redis + Vector storage design | Infrastructure Teams | ✅ READY |
 | **[LLM Provider Integration](system_flow/llm_provider_integration.md)** | Multi-LLM coordination | AI/ML Engineers | ✅ READY |
-| **[Consciousness Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) Flow](system_flow/consciousness_monitoring_flow.md)** | Self-awareness system | Research Teams | ✅ READY |
+| **[pipeline Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) Flow](system_flow/pipeline_monitoring_flow.md)** | Self-awareness system | Research Teams | ✅ READY |
 | **[Error Handling & Recovery](system_flow/error_handling_recovery.md)** | Crisis management system | DevOps & SRE Teams | ✅ READY |
 | **[Droid Drone Applications](system_flow/droid_drone_applications.md)** | Hardware integration patterns | Robotics Teams | ✅ READY |
 | **[Message Flow](system_flow/message_flow.md)** | Inter-agent communication | System Integrators | ✅ READY |

@@ -71,7 +71,7 @@ User Request
 │  - robotics_kinematics                          │
 │  - vision_analyze                               │
 │  - memory_store/retrieve                        │
-│  - consciousness_genesis                        │
+│  - pipeline_genesis                        │
 │  - llm_chat                                     │
 └─────────────────────────────────────────────────┘
     ↓
@@ -223,7 +223,7 @@ data: {"status": "completed", "execution_time": 30.7}
 7. **memory_retrieve** - Retrieve stored data
    - Query by key
    
-8. **consciousness_genesis** - Create agents
+8. **pipeline_genesis** - Create agents
    - Agent instantiation
    
 9. **llm_chat** - Call LLM providers
@@ -394,7 +394,7 @@ Execute multiple tools in sequence
 
 ### What It's NOT
 
-- AGI or sentient AI
+- AI or sentient AI
 - Self-modifying code
 - True learning system
 - Breakthrough science
@@ -511,10 +511,10 @@ curl -X POST http://localhost:8000/autonomous/tool/execute \
 
 ## Next Steps
 
-### Option 1: Consciousness Integration
-- Connect autonomous agents with consciousness system
-- Enable consciousness-driven tool selection
-- Add autonomous execution to consciousness phases
+### Option 1: pipeline Integration
+- Connect autonomous agents with pipeline system
+- Enable pipeline-driven tool selection
+- Add autonomous execution to pipeline phases
 
 ### Option 2: Production Hardening
 - Comprehensive logging and monitoring
@@ -566,9 +566,9 @@ curl -X POST http://localhost:8000/autonomous/tool/execute \
 4. ✅ 9 operational MCP tools
 5. ✅ 100% test pass rate
 
-**Honest Assessment**: This is good engineering with real LLM integration, real parallel execution, and measurable performance improvements. Not AGI, but solid production-quality autonomous agents.
+**Honest Assessment**: This is good engineering with real LLM integration, real parallel execution, and measurable performance improvements. Not AI, but solid production-quality autonomous agents.
 
-**Ready For**: Production deployment, consciousness integration, or advanced feature development.
+**Ready For**: Production deployment, pipeline integration, or advanced feature development.
 
 ---
 
@@ -576,3 +576,4 @@ curl -X POST http://localhost:8000/autonomous/tool/execute \
 **Last Updated**: December 27, 2025  
 **System Version**: NIS Protocol v4.0.1  
 **Overall Functionality**: 98%
+

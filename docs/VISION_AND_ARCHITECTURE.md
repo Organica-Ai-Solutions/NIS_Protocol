@@ -14,7 +14,7 @@ Traditional AI systems are:
 
 NIS Protocol enables:
 - **Distributed**: Run on edge devices, drones, satellites, cities
-- **Collective**: Shared consciousness across all deployments
+- **Collective**: Shared pipeline across all deployments
 - **Evolving**: Self-modification and adaptation
 - **General**: Physics-aware, embodiment-ready, multi-modal
 
@@ -41,9 +41,9 @@ NIS Protocol enables:
 
 ---
 
-## 🧠 The 10-Phase Consciousness Pipeline
+## 🧠 The 10-Phase pipeline Pipeline
 
-### Why Consciousness?
+### Why pipeline?
 
 When deploying AI to:
 - **Drones** flying autonomously in disaster zones
@@ -194,7 +194,7 @@ deployment: NIS-DRONE
 instances: 50
 coordination: NIS-HUB
 features:
-  - collective_consciousness: true  # Share obstacle maps
+  - collective_pipeline: true  # Share obstacle maps
   - physics_validation: true        # Validate flight commands
   - self_evolution: true            # Improve flight patterns
   - ethical_constraints:
@@ -258,7 +258,7 @@ class DroneAgent(Agent):
         super().__init__(
             agent_type="drone",
             physics_validator=PhysicsValidator(domain="aerodynamics"),
-            consciousness_enabled=True
+            pipeline_enabled=True
         )
     
     async def execute_mission(self, waypoints):
@@ -269,7 +269,7 @@ class DroneAgent(Agent):
         async for position in self.execute_trajectory(trajectory):
             await self.broadcast_telemetry(position)
             
-            # Collective consciousness: share with swarm
+            # Collective pipeline: share with swarm
             await self.collective.share_observation(position)
 ```
 
@@ -345,10 +345,10 @@ async for command in hub.commands():
 **Decision:** GeneralLLMProvider with Anthropic, OpenAI, DeepSeek, Google, NVIDIA  
 **Consequences:** Flexibility, but complexity in provider management
 
-### ADR-007: 10-Phase Consciousness Pipeline
+### ADR-007: 10-Phase pipeline Pipeline
 **Status:** Accepted  
 **Context:** Need self-improving, ethically-aware AI system  
-**Decision:** Modular consciousness phases (evolution, genesis, ethics, etc.)  
+**Decision:** Modular pipeline phases (evolution, genesis, ethics, etc.)  
 **Consequences:** Unique capability, but requires careful orchestration
 
 ### ADR-008: Docker-First Deployment
@@ -393,7 +393,7 @@ async for command in hub.commands():
 
 ### v5.0 - NeuroLinux Integration
 - [ ] Native OS-level AI primitives
-- [ ] Hardware-accelerated consciousness
+- [ ] Hardware-accelerated pipeline
 - [ ] Zero-copy sensor integration
 
 ---
@@ -419,3 +419,4 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for development guidelines.
 *"Building the neural infrastructure for planetary intelligence."*
 
 **Organica AI Solutions** 🧠🌍
+

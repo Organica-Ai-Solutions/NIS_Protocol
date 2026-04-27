@@ -228,7 +228,7 @@ POST /visualization/create
 - **Integration APIs**: Third-party service connections
 
 ### Research Areas
-- **Consciousness Scaling**: Enhanced self-awareness capabilities
+- **pipeline Scaling**: Enhanced self-awareness capabilities
 - **Physics Validation**: More sophisticated physics checking
 - **Multimodal Fusion**: Better integration of text, image, and audio
 - **Performance Optimization**: Latency targets configurable per deployment

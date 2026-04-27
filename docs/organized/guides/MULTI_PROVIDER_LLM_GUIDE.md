@@ -316,17 +316,17 @@ memory_llm = llm_manager.get_agent_llm("memory_agent")
 
 The multi-provider system is already integrated throughout NIS Protocol:
 
-- **🧠 Consciousness Agents**: Use providers for self-reflection
+- **🧠 pipeline Agents**: Use providers for self-reflection
 - **🎯 Goal Generation**: Use providers for autonomous goal creation
 - **📚 Memory System**: Use providers for semantic understanding
 - **😊 Emotional processing (implemented) (implemented)**: Use providers for sentiment analysis
 - **🎭 Agent Communication**: Use providers for natural language
 
-Choose your provider and start building AGI with the cognitive architecture that works well for your needs!
+Choose your provider and start building AI with the cognitive architecture that works well for your needs!
 
 ## 🔗 **Related Documentation**
 
-- [AGI System Overview](AGI_SYSTEM_OVERVIEW.md)
+- [AI Orchestration System Overview](AGI_SYSTEM_OVERVIEW.md)
 - [Tech Stack Integration](TECH_STACK_INTEGRATION.md)
 - [Getting Started Guide](getting_started/Quick_Start_Guide.md)
 - [API Reference](API_Reference.md) 

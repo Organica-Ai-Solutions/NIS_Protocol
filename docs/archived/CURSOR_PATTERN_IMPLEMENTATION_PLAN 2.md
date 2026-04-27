@@ -19,7 +19,7 @@
 - ✅ Real: Scoped context (no dumping entire state)
 - ✅ Real: Validation loops (auto-repair on failure)
 - ❌ Not: "AI that thinks" - it's pattern matching with constraints
-- ❌ Not: "AGI" - it's good engineering
+- ❌ Not: "AI" - it's good engineering
 
 ---
 
@@ -575,7 +575,7 @@ class AuditTrail:
 - ✅ LLM calls are focused (better responses)
 
 **What SUCCESS is NOT**:
-- ❌ Not "AGI" or "self-aware"
+- ❌ Not "AI" or "self-aware"
 - ❌ Not "thinking" - it's pattern matching
 - ❌ Not "learning" - it's execution discipline
 - ❌ Not magic - it's good engineering
@@ -645,3 +645,4 @@ But 60% is HUGE for agent reliability.
 **Estimated time**: 4-6 weeks for full implementation
 **Risk level**: Medium (modifying core orchestrator)
 **Rollback plan**: Branch-based, can revert anytime
+

@@ -164,14 +164,14 @@ curl "http://localhost/metrics"
 
 ---
 
-### **GET /consciousness/status** - Consciousness Service
+### **GET /pipeline/status** - pipeline Service
 **Status**: ✅ **WORKING**
 
 ```bash
-curl "http://localhost/consciousness/status"
+curl "http://localhost/pipeline/status"
 ```
 
-**Response**: Consciousness service capabilities and status
+**Response**: pipeline service capabilities and status
 
 ---
 
@@ -195,15 +195,15 @@ curl "http://localhost/infrastructure/status"
 curl -X POST "http://localhost/communication/synthesize" \
   -H "Content-Type: application/json" \
   -d '{
-    "text": "Hello, this is the NIS Protocol consciousness agent speaking.",
-    "speaker": "consciousness",
+    "text": "Hello, this is the NIS Protocol pipeline agent speaking.",
+    "speaker": "pipeline",
     "emotion": "thoughtful"
   }'
 ```
 
 **Response**: High-quality WAV audio with agent-specific voice characteristics
 
-**Available Speakers**: `consciousness`, `physics`, `research`, `coordination`
+**Available Speakers**: `pipeline`, `physics`, `research`, `coordination`
 
 ### **POST /communication/agent_dialogue** - Multi-Agent Voice Conversations
 **Status**: 🆕 **NEW** - Create conversations between NIS agents with distinct voices
@@ -213,7 +213,7 @@ curl -X POST "http://localhost/communication/agent_dialogue" \
   -H "Content-Type: application/json" \
   -d '{
     "agents_content": {
-      "consciousness": "System awareness at 94.2%",
+      "pipeline": "System awareness at 94.2%",
       "physics": "Energy conservation validated",
       "research": "Analysis complete - 15 papers found",
       "coordination": "All agents synchronized"
@@ -224,14 +224,14 @@ curl -X POST "http://localhost/communication/agent_dialogue" \
 
 **Response**: Multi-speaker dialogue audio with seamless voice transitions
 
-### **POST /communication/consciousness_voice** - Consciousness Status Vocalization
-**Status**: 🆕 **NEW** - Vocalize consciousness system status and metrics
+### **POST /communication/pipeline_voice** - pipeline Status Vocalization
+**Status**: 🆕 **NEW** - Vocalize pipeline system status and metrics
 
 ```bash
-curl -X POST "http://localhost/communication/consciousness_voice"
+curl -X POST "http://localhost/communication/pipeline_voice"
 ```
 
-**Response**: Audio representation of consciousness levels and awareness metrics
+**Response**: Audio representation of pipeline levels and awareness metrics
 
 ### **GET /communication/status** - Voice Communication Status
 **Status**: 🆕 **NEW** - Comprehensive voice system capabilities
@@ -250,7 +250,7 @@ const ws = new WebSocket('ws://localhost/communication/stream');
 ws.send(JSON.stringify({
   "type": "start_conversation",
   "agents_content": {
-    "consciousness": "Analyzing system state",
+    "pipeline": "Analyzing system state",
     "physics": "Validating physics constraints"
   }
 }));
@@ -296,7 +296,7 @@ curl -X POST "http://localhost/chat" \
 **Example Responses**:
 - **Math**: `"message": "Calculate 15 * 23"` → Detailed calculation with explanation
 - **Physics**: `"message": "Explain E=mc²"` → Graduate-level physics with LaTeX
-- **BitNet**: `"provider": "bitnet"` → NIS-enhanced responses with consciousness validation
+- **BitNet**: `"provider": "bitnet"` → NIS-enhanced responses with pipeline validation
 
 ---
 
@@ -350,7 +350,7 @@ curl -X POST "http://localhost/process" \
 ## 🚀 **NVIDIA MODEL INTEGRATION**
 
 ### **POST /nvidia/process** - NVIDIA Models
-**Status**: ⚠️ **PARTIAL** - Consciousness validation working, some internal errors
+**Status**: ⚠️ **PARTIAL** - pipeline validation working, some internal errors
 
 ```bash
 curl -X POST "http://localhost/nvidia/process" \
@@ -359,7 +359,7 @@ curl -X POST "http://localhost/nvidia/process" \
     "prompt": "Explain machine learning fundamentals",
     "model_type": "nemotron",
     "domain": "general",
-    "enable_consciousness_validation": true,
+    "enable_pipeline_validation": true,
     "enable_physics_validation": false
   }'
 ```
@@ -370,7 +370,7 @@ curl -X POST "http://localhost/nvidia/process" \
 - `modulus`: Advanced physics simulation
 
 **Features**:
-- ✅ Consciousness validation (5 levels, 7 bias types, 5 ethical frameworks)
+- ✅ pipeline validation (5 levels, 7 bias types, 5 ethical frameworks)
 - ✅ Physics validation (conservation laws, relativistic effects)
 - ✅ NIS signature propagation
 - ⚠️ Internal pipeline errors (doesn't affect response quality)

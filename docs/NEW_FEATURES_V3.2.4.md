@@ -21,7 +21,7 @@ New capabilities for analyzing and generating images.
 ### 3. System Observability ("Brain Scan")
 Eliminating the "Black Box" with real-time introspection.
 - **Status**: `GET /system/status`
-  - Returns real-time state of all agents (Laplace, KAN, Physics, Consciousness).
+  - Returns real-time state of all agents (Laplace, KAN, Physics, pipeline).
 - **Stream**: `WS /system/stream`
   - WebSocket for watching agent thought processes live.
 
@@ -58,3 +58,4 @@ curl -X POST http://localhost:8000/simulation/run \
 -H "Content-Type: application/json" \
 -d '{"concept": "quantum entanglement"}'
 ```
+

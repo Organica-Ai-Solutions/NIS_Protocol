@@ -84,4 +84,4 @@ OPENAI_API_KEY=sk-your_actual_openai_key_here
 ## 🌟 Ready to Create Art!
 
 Your NIS Protocol v3.2 now has **REAL AI image generation**! 
-The consciousness awakening startup sequence + real DALL-E = **pure magic!** ✨
+The pipeline awakening startup sequence + real DALL-E = **pure magic!** ✨

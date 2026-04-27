@@ -247,7 +247,7 @@ def main():
 Examples:
   python manage_providers.py status              # Show provider status
   python manage_providers.py routing             # Show task routing config
-  python manage_providers.py test consciousness  # Test consciousness routing
+  python manage_providers.py test pipeline  # Test pipeline routing
   python manage_providers.py compare             # Compare all providers
   python manage_providers.py monitor             # Monitor performance
   python manage_providers.py env dev speed_first # Set dev env to speed_first
@@ -264,7 +264,7 @@ Examples:
     
     # Test command
     test_parser = subparsers.add_parser('test', help='Test routing for specific task')
-    test_parser.add_argument('task_type', help='Task type to test (consciousness, reasoning, physics, etc.)')
+    test_parser.add_argument('task_type', help='Task type to test (pipeline, reasoning, physics, etc.)')
     
     # Compare command
     subparsers.add_parser('compare', help='Compare all providers')

@@ -105,7 +105,7 @@ AWS Benefits:
 - ✅ Embeddings (sentence-transformers + PyTorch)
 - ✅ All 250+ endpoints
 - ✅ A2A WebSocket protocol
-- ✅ Consciousness service
+- ✅ pipeline service
 - ✅ BitNet trainer
 - ✅ All multimodal agents
 
@@ -431,3 +431,4 @@ If issues arise during AWS migration, check:
 4. Memory/CPU metrics (should be lower than before)
 
 **Expected result**: Everything works better and costs less.
+

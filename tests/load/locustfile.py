@@ -226,17 +226,17 @@ class NISProtocolUser(HttpUser):
         self.client.get("/security/roles")
     
     # ========================================
-    # CONSCIOUSNESS (Low frequency)
+    # pipeline (Low frequency)
     # ========================================
     
     @task(2)
-    @tag("consciousness")
-    def consciousness_status(self):
-        """Consciousness status"""
-        self.client.get("/v4/consciousness/status")
+    @tag("pipeline")
+    def pipeline_status(self):
+        """pipeline status"""
+        self.client.get("/v4/pipeline/status")
     
     @task(1)
-    @tag("consciousness")
+    @tag("pipeline")
     def dashboard_complete(self):
         """Complete dashboard"""
         self.client.get("/v4/dashboard/complete")
@@ -335,3 +335,4 @@ class MonitoringUser(HttpUser):
     def security_audit(self):
         """Security audit log"""
         self.client.get("/security/audit-log")
+

@@ -59,7 +59,7 @@ graph TB
     
     subgraph "Output Consumers"
         RA[Reasoning Agent]
-        CA[Consciousness Agent]
+        CA[pipeline Agent]
         LA[Learning Agent]
         COORD[Coordination Agent]
     end
@@ -216,7 +216,7 @@ def consolidate_memories():
 - **Experience Lookup**: Find similar past problem-solving experiences
 - **Pattern Matching**: Identify recurring patterns and solutions
 
-### **Consciousness Agent Integration**
+### **pipeline Agent Integration**
 - **Self-Awareness**: Track system's own performance and capabilities
 - **Confidence Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/)**: Store and retrieve confidence assessments
 - **Meta-Cognitive Memory**: Remember how the system thinks and learns

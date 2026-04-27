@@ -69,7 +69,7 @@ The NIS Protocol uses a modular adapter architecture for third-party integration
 │          NIS Protocol Core          │
 │                                     │
 │  ┌─────────┐ ┌─────────┐ ┌────────┐ │
-│  │Consciousness│ Memory│ │ Action │ │
+│  │pipeline│ Memory│ │ Action │ │
 │  │ Agent   │ │ Agent   │ │ Agent  │ │
 │  └─────────┘ └─────────┘ └────────┘ │
 │         │         │          │      │
@@ -258,7 +258,7 @@ print(f"Platforms involved: {len(response['participating_platforms'])}")
 ### Automated Audit Fixing Workflow
 
 1. **Detection Phase**
-   - Consciousness agent performs codebase integrity scan
+   - pipeline agent performs codebase integrity scan
    - Self-audit engine identifies violations (hardcoded values, hype language)
    - Violations categorized by type and severity
 
@@ -273,7 +273,7 @@ print(f"Platforms involved: {len(response['participating_platforms'])}")
    - A2A protocols coordinate cross-platform updates
 
 4. **Validation Phase**
-   - Consciousness agent validates fixes
+   - pipeline agent validates fixes
    - Quality assurance through ACP agents
    - Updated audit trail and metrics
 

@@ -21,7 +21,7 @@
 - **🔬 Physics Validation (2 new)**: `/physics/constants`, `/physics/pinn/solve`
 - **🚀 NVIDIA NeMo (5 new)**: Complete enterprise integration endpoints
 - **🔍 Research (4 new)**: Deep research, ArXiv, analysis, capabilities
-- **🤖 Agent Coordination (5 new)**: Consciousness, memory, planning, status
+- **🤖 Agent Coordination (5 new)**: pipeline, memory, planning, status
 - **🔌 MCP Integration (3 new)**: Model Context Protocol, LangGraph
 - **💬 Enhanced Chat (3 new)**: Enhanced chat, sessions, memory management
 
@@ -75,7 +75,7 @@
 - **PINN Solver Documentation**: Differential equation solving
 - **NVIDIA NeMo Integration**: Enterprise-grade documentation
 - **Research Capabilities**: Deep research, ArXiv, analysis
-- **Agent Coordination**: Consciousness, memory, planning
+- **Agent Coordination**: pipeline, memory, planning
 - **MCP Integration**: LangGraph and protocol documentation
 - **Enhanced Chat**: Session management and memory
 
@@ -141,7 +141,7 @@ Comprehensive documentation of:
 4. **🔍 Research & Deep Agents** (4 endpoints)
    - Deep Research, ArXiv, Analysis, Capabilities
 5. **🤖 Agent Coordination** (5 endpoints)
-   - Status, Consciousness, Memory, Planning, Capabilities
+   - Status, pipeline, Memory, Planning, Capabilities
 6. **🔌 MCP Integration** (3 endpoints)
    - MCP Demo, LangGraph Status, LangGraph Invoke
 7. **💬 Chat & Interaction** (4 endpoints)
@@ -239,3 +239,4 @@ Comprehensive documentation of:
 **📞 Support**: All endpoints documented for immediate use
 
 *This documentation update represents a complete transformation from partial functionality to 100% API reliability with comprehensive documentation coverage.*
+

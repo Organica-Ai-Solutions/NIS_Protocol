@@ -59,7 +59,7 @@ main.py
   │   ├─→ LLM Provider (GeneralLLMProvider)
   │   ├─→ Agent Orchestrator (NISAgentOrchestrator)
   │   ├─→ Core Agents (WebSearch, Learning, etc.)
-  │   ├─→ Consciousness Service
+  │   ├─→ pipeline Service
   │   ├─→ A2A Protocol Handler
   │   └─→ Route Dependencies
   └─→ HTTP/WebSocket endpoints
@@ -423,3 +423,4 @@ llm_manager.py
 - 📊 System is 80% complete, 20% needs wiring
 
 **Recommendation**: Fix Priority 1 issues before production deployment.
+

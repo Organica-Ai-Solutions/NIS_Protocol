@@ -23,14 +23,14 @@
 
 ---
 
-### 🧠 **PRIORITY 2: CONSCIOUSNESS & META-COGNITION** *(Self-Awareness)*
+### 🧠 **PRIORITY 2: pipeline & META-COGNITION** *(Self-Awareness)*
 **Status**: Provides self-Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) ([health tracking](src/infrastructure/integration_coordinator.py)), introspection, and meta-cognitive capabilities
 
 | Agent | File | Status | Lines | Priority | Dependencies |
 |-------|------|--------|--------|----------|--------------|
-| **Meta-Cognitive Processor** | `consciousness/meta_cognitive_processor.py` | 🔄 **NEEDS REVIEW** | ~500 | **P2.1** | Self-Audit Engine |
-| **Introspection Manager** | `consciousness/introspection_manager.py` | 🔄 **NEEDS REVIEW** | ~400 | **P2.2** | Self-Audit Engine |
-| **Conscious Agent** | `consciousness/conscious_agent.py` | 🔄 **NEEDS REVIEW** | ? | **P2.3** | Meta-Cognitive Processor |
+| **Meta-Cognitive Processor** | `pipeline/meta_cognitive_processor.py` | 🔄 **NEEDS REVIEW** | ~500 | **P2.1** | Self-Audit Engine |
+| **Introspection Manager** | `pipeline/introspection_manager.py` | 🔄 **NEEDS REVIEW** | ~400 | **P2.2** | Self-Audit Engine |
+| **Conscious Agent** | `pipeline/conscious_agent.py` | 🔄 **NEEDS REVIEW** | ? | **P2.3** | Meta-Cognitive Processor |
 
 **Estimated Total**: 3 agents, ~1,200 lines
 
@@ -160,7 +160,7 @@
 
 ### **Rebuild Phases**
 1. **Phase 1** (P1): Core scientific pipeline ([integration tests](test_week3_complete_pipeline.py)) → ✅ **COMPLETE**
-2. **Phase 2** (P2): Consciousness & Meta-Cognition → 🔄 **IN PROGRESS**
+2. **Phase 2** (P2): pipeline & Meta-Cognition → 🔄 **IN PROGRESS**
 3. **Phase 3** (P3): Memory & Learning → 📋 **PLANNED**
 4. **Phase 4** (P4): Perception & Input → 📋 **PLANNED**
 5. **Phase 5** (P5): Reasoning & Logic → 📋 **PLANNED**

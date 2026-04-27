@@ -1,4 +1,4 @@
-# NIS Protocol Consciousness Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) Flow
+# NIS Protocol pipeline Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) Flow
 
 ```mermaid
 graph TB
@@ -9,11 +9,11 @@ graph TB
         AE[Agent Events<br/>🤖 Agent Activities]
     end
     
-    subgraph "Consciousness Core"
-        CA[Consciousness Agent<br/>💭 Central Monitor]
+    subgraph "pipeline Core"
+        CA[pipeline Agent<br/>💭 Central Monitor]
         MCP[Meta-Cognitive Processor<br/>🧠 Self-Reflection]
         ICA[Introspection Manager<br/>🔍 Self-Analysis]
-        CSM[Consciousness State Manager<br/>📊 State Tracking]
+        CSM[pipeline State Manager<br/>📊 State Tracking]
     end
     
     subgraph "Confidence Assessment"
@@ -84,7 +84,7 @@ graph TB
     EE --> CA
     AE --> CA
     
-    %% Consciousness core flow
+    %% pipeline core flow
     CA --> MCP
     CA --> ICA
     CA --> CSM
@@ -170,13 +170,13 @@ graph TB
     class CC,AA,LR,EA output
 ```
 
-## Consciousness Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) Components
+## pipeline Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) Components
 
-### 💭 **Consciousness Core**
-- **Consciousness Agent**: Central Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) and coordination hub
+### 💭 **pipeline Core**
+- **pipeline Agent**: Central Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) and coordination hub
 - **Meta-Cognitive Processor**: Analyzes the system's own thinking processes
 - **Introspection Manager**: Deep self-analysis and pattern recognition
-- **Consciousness State Manager**: Tracks overall awareness state
+- **pipeline State Manager**: Tracks overall awareness state
 
 ### 📈 **Confidence Assessment System**
 Multi-dimensional confidence scoring based on:
@@ -186,7 +186,7 @@ Multi-dimensional confidence scoring based on:
 - **Experience**: How similar is this to past successful cases?
 
 ### 🧠 **Self-Awareness Levels**
-Progressive levels of system consciousness:
+Progressive levels of system pipeline:
 
 #### **Level 1: Basic Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/)** 
 ```python
@@ -388,7 +388,7 @@ def detect_confidence_crisis():
 ### **Crisis Response Actions**
 ```python
 def trigger_crisis_response(indicators):
-    """Respond to consciousness/confidence crisis"""
+    """Respond to pipeline/confidence crisis"""
     
     if indicators["low_confidence"]:
         # Switch to ensemble methods
@@ -425,29 +425,29 @@ def trigger_crisis_response(indicators):
 ### **Reasoning Agent Integration**
 ```python
 # Before reasoning
-consciousness_state = consciousness_agent.get_current_state()
-if consciousness_state.confidence < 0.7:
+pipeline_state = pipeline_agent.get_current_state()
+if pipeline_state.confidence < 0.7:
     reasoning_agent.enable_verification_mode()
     reasoning_agent.increase_consensus_requirements()
 
 # After reasoning
 reasoning_confidence = reasoning_agent.get_reasoning_confidence()
-consciousness_agent.update_confidence("reasoning", reasoning_confidence)
+pipeline_agent.update_confidence("reasoning", reasoning_confidence)
 ```
 
 ### **Memory Agent Integration**
 ```python
 # Monitor memory reliability
 memory_confidence = memory_agent.assess_retrieval_confidence()
-consciousness_agent.track_memory_performance(memory_confidence)
+pipeline_agent.track_memory_performance(memory_confidence)
 
-# Adjust memory strategies based on consciousness
-if consciousness_agent.is_uncertain():
+# Adjust memory strategies based on pipeline
+if pipeline_agent.is_uncertain():
     memory_agent.increase_verification_depth()
     memory_agent.enable_cross_reference_checking()
 ```
 
-This consciousness Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) system ensures:
+This pipeline Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) system ensures:
 - ✅ **Self-Awareness**: System knows its own capabilities and limitations
 - ✅ **Uncertainty Quantification**: Honest assessment of confidence levels
 - ✅ **Adaptive Behavior**: Adjusts strategies based on confidence

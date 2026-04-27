@@ -83,7 +83,7 @@
 **These endpoints DON'T EXIST in the codebase:**
 
 1. POST `/v4/chat` - 404
-2. POST `/v4/consciousness/marketplace` - 404
+2. POST `/v4/pipeline/marketplace` - 404
 3. POST `/agents/planning/create` - 404
 4. POST `/agents/curiosity/explore` - 404
 5. POST `/agents/self-audit` - 404
@@ -106,12 +106,12 @@
 
 **Bad request formats in test script:**
 
-1. POST `/v4/consciousness/genesis` - 400
-2. POST `/v4/consciousness/plan` - 400
-3. POST `/v4/consciousness/collective` - 400
-4. POST `/v4/consciousness/multipath` - 400
-5. POST `/v4/consciousness/embodiment` - 400
-6. POST `/v4/consciousness/ethics` - 400
+1. POST `/v4/pipeline/genesis` - 400
+2. POST `/v4/pipeline/plan` - 400
+3. POST `/v4/pipeline/collective` - 400
+4. POST `/v4/pipeline/multipath` - 400
+5. POST `/v4/pipeline/embodiment` - 400
+6. POST `/v4/pipeline/ethics` - 400
 7. POST `/agents/learning/process` - 422
 8. POST `/agents/simulation/run` - 422
 
@@ -199,3 +199,4 @@
 ---
 
 **Bottom Line**: Good engineering foundation, but needs honesty about current state and focus on making core features production-ready before adding more.
+

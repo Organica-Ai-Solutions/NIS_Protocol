@@ -96,7 +96,7 @@
 5. `vision_analyze` - Analyze images
 6. `memory_store` - Store data
 7. `memory_retrieve` - Retrieve data
-8. `consciousness_genesis` - Create agents
+8. `pipeline_genesis` - Create agents
 9. `llm_chat` - Call LLM providers
 
 ### 6. Specialized Agents
@@ -247,7 +247,7 @@ POST /autonomous/tool/chain
 
 ### What It's NOT
 
-- AGI or sentient AI
+- AI or sentient AI
 - Self-modifying code
 - True learning system
 - Breakthrough science
@@ -305,7 +305,7 @@ User Request
 │  - code_execute, web_search, physics_solve      │
 │  - robotics_kinematics, vision_analyze          │
 │  - memory_store/retrieve                        │
-│  - consciousness_genesis, llm_chat              │
+│  - pipeline_genesis, llm_chat              │
 └─────────────────────────────────────────────────┘
     ↓
 Real Results + Performance Metrics
@@ -365,10 +365,10 @@ Real Results + Performance Metrics
 - Collaborative problem solving
 - Consensus building
 
-### Option 5: Consciousness Integration
-- Connect autonomous agents with consciousness system
-- Enable consciousness-driven tool selection
-- Add autonomous execution to consciousness phases
+### Option 5: pipeline Integration
+- Connect autonomous agents with pipeline system
+- Enable pipeline-driven tool selection
+- Add autonomous execution to pipeline phases
 
 ### Option 6: Production Hardening
 - Comprehensive logging and monitoring
@@ -413,9 +413,9 @@ Real Results + Performance Metrics
 5. ✅ Zero single-provider dependency
 6. ✅ 100% test pass rate
 
-**Honest Assessment**: This is good engineering with real LLM integration, real parallel execution, real streaming, and real multi-provider redundancy. Not AGI, but solid production-quality autonomous agents with measurable improvements.
+**Honest Assessment**: This is good engineering with real LLM integration, real parallel execution, real streaming, and real multi-provider redundancy. Not AI, but solid production-quality autonomous agents with measurable improvements.
 
-**Ready For**: Production deployment, advanced features, or consciousness integration.
+**Ready For**: Production deployment, advanced features, or pipeline integration.
 
 ---
 
@@ -424,3 +424,4 @@ Real Results + Performance Metrics
 **System Version**: NIS Protocol v4.0.1  
 **Overall Functionality**: 98%  
 **Production Ready**: Yes ✅
+

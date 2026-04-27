@@ -166,10 +166,11 @@ Once connected to ChatGPT or Claude:
 
 Your NIS Protocol is now **fully integrated** with ChatGPT and Claude via MCP!
 
-**No mocks. No placeholders. Just real AGI connectivity.**
+**No mocks. No placeholders. Just real AI connectivity.**
 
 ---
 
 **Built with honest engineering. 🚀**
 **Organica AI Solutions**
+
 

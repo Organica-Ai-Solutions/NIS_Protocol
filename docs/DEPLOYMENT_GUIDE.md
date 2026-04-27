@@ -13,7 +13,7 @@ NIS Protocol is a production-ready autonomous agent system with:
 - **7 LLM Providers** with automatic fallback
 - **6 Speed Optimizations** for 4-7x performance
 - **4 Specialized Agents** (research, physics, robotics, vision)
-- **Consciousness Integration** for advanced reasoning
+- **pipeline Integration** for advanced reasoning
 
 ---
 
@@ -143,7 +143,7 @@ result = await orchestrator.plan_and_execute(
 15. `db_tables` - List database tables
 
 ### Advanced
-16. `consciousness_genesis` - Consciousness reasoning
+16. `pipeline_genesis` - pipeline reasoning
 
 ---
 
@@ -451,7 +451,7 @@ REDIS_URL=redis://redis:6379
 - ❌ True pipeline processing (Phase 3)
 - ❌ Shared workspace (Phase 3)
 
-**Reality**: Good engineering with real performance gains. Not AGI, not magic, just solid async optimization.
+**Reality**: Good engineering with real performance gains. Not AI, not magic, just solid async optimization.
 
 ---
 
@@ -484,7 +484,7 @@ tail -f logs/performance.log
 - ✅ Database query tool
 - ✅ RAG memory system
 - ✅ Multi-agent negotiation
-- ✅ Consciousness integration
+- ✅ pipeline integration
 
 ### v3.0
 - LLM-powered planning
@@ -506,3 +506,4 @@ tail -f logs/performance.log
 **Monitoring**: Comprehensive stats and health checks
 
 Ready for production deployment.
+

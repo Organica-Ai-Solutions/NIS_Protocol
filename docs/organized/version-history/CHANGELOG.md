@@ -57,7 +57,7 @@
 - **Laplace Transform Layer**: Signal processing for input analysis
 - **KAN Network Integration**: Kolmogorov-Arnold Networks for symbolic reasoning  
 - **PINN Physics Validation**: Physics-Informed Neural Networks for constraint checking
-- **Consciousness Framework**: Self-aware agent coordination
+- **pipeline Framework**: Self-aware agent coordination
 
 ### 🔬 Advanced Capabilities
 - **Vision Analysis**: Image understanding and processing

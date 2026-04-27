@@ -2,7 +2,7 @@
 
 ## 📋 **Overview**
 
-The **Neural Intelligence System (NIS) Protocol v3.2.1** is a comprehensive multi-agent AI architecture that combines consciousness modeling, physics-informed reasoning, and multi-LLM orchestration into a unified, scalable platform.
+The **Neural Intelligence System (NIS) Protocol v3.2.1** is a comprehensive multi-agent AI architecture that combines pipeline modeling, physics-informed reasoning, and multi-LLM orchestration into a unified, scalable platform.
 
 **🎯 MOCK-FREE ARCHITECTURE**: All components use genuine mathematical implementations - no mock implementations or placeholders.
 
@@ -228,7 +228,7 @@ The **Neural Intelligence System (NIS) Protocol v3.2.1** is a comprehensive mult
 #### **Agent Voice Mapping**
 ```python
 Voice Characteristics:
-├── 🧠 Consciousness Agent → Deep, thoughtful (180Hz base)
+├── 🧠 pipeline Agent → Deep, thoughtful (180Hz base)
 ├── ⚡ Physics Agent → Clear, authoritative (160Hz base)  
 ├── 🔬 Research Agent → Analytical, precise (200Hz base)
 └── 🤝 Coordination Agent → Warm, collaborative (170Hz base)
@@ -271,7 +271,7 @@ Voice Commands → NIS Agent Actions:
 ├── "Hey NIS" → Activate conversation mode
 ├── "Switch to physics" → Route to Physics Agent
 ├── "Switch to research" → Route to Research Agent  
-├── "Switch to consciousness" → Route to Consciousness Agent
+├── "Switch to pipeline" → Route to pipeline Agent
 ├── "Show status" → Vocalize system status
 └── "Stop listening" → End conversation session
 ```
@@ -334,9 +334,9 @@ Docker Compose Stack:
 - ✅ Infrastructure layer deployed
 
 ### **🛣️ Roadmap (v4.0-v6.0)**
-- **v4.0**: Advanced consciousness modeling, enhanced NVIDIA integration
+- **v4.0**: Advanced pipeline modeling, enhanced NVIDIA integration
 - **v5.0**: Quantum computing preparation, advanced physics simulation
-- **v6.0**: AGI capabilities, autonomous system evolution
+- **v6.0**: AI capabilities, autonomous system evolution
 
 ### **🔄 A2A Protocol Migration**
 - **Phase 1**: Core A2A compatibility layer implementation
@@ -394,3 +394,4 @@ The NIS Protocol v3.1 represents a breakthrough in **mathematically-traceable AI
 - ⚡ **Production Ready**: Enterprise-grade scalability and reliability
 
 This architecture positions NIS Protocol as the foundation for next-generation AI systems that require both high intelligence and mathematical rigor.
+

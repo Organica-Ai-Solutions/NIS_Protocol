@@ -326,7 +326,7 @@ item_id = await workspace.post_item(
 - Good AI engineering
 
 **It's NOT**:
-- AGI
+- AI
 - Self-learning (yet)
 - Fine-tuned models
 - Breakthrough research
@@ -433,3 +433,4 @@ All systems integrated, tested, and ready for production deployment.
 **Honesty**: 100%
 
 Ready to deploy.
+

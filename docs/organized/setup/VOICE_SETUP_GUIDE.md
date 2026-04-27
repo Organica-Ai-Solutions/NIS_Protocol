@@ -110,7 +110,7 @@ STREAMING_ENABLED = True
 
 # Speaker voice profiles - Customize as needed
 SPEAKER_PROFILES = {
-    "consciousness": {"voice_id": 0, "pitch": 0.8, "speed": 0.95},
+    "pipeline": {"voice_id": 0, "pitch": 0.8, "speed": 0.95},
     "physics": {"voice_id": 1, "pitch": 1.0, "speed": 1.0},
     "research": {"voice_id": 2, "pitch": 1.1, "speed": 1.05},
     "coordination": {"voice_id": 3, "pitch": 1.05, "speed": 1.0}
@@ -145,20 +145,20 @@ STT_CONFIG = {
 ### **Test 1: Basic Speech Synthesis**
 
 ```bash
-# Test consciousness agent voice
+# Test pipeline agent voice
 curl -X POST http://localhost:8000/communication/synthesize \
   -H "Content-Type: application/json" \
   -d '{
-    "text": "Hello, this is the NIS Protocol consciousness agent speaking.",
-    "speaker": "consciousness",
+    "text": "Hello, this is the NIS Protocol pipeline agent speaking.",
+    "speaker": "pipeline",
     "emotion": "thoughtful"
   }' \
-  --output test_consciousness.wav
+  --output test_pipeline.wav
 
 # Play the audio file
-# macOS: open test_consciousness.wav
-# Linux: aplay test_consciousness.wav
-# Windows: start test_consciousness.wav
+# macOS: open test_pipeline.wav
+# Linux: aplay test_pipeline.wav
+# Windows: start test_pipeline.wav
 ```
 
 ### **Test 2: Multi-Agent Dialogue**
@@ -169,7 +169,7 @@ curl -X POST http://localhost:8000/communication/agent_dialogue \
   -H "Content-Type: application/json" \
   -d '{
     "agents_content": {
-      "consciousness": "System awareness is at 94.2 percent",
+      "pipeline": "System awareness is at 94.2 percent",
       "physics": "Energy conservation laws are validated",
       "research": "Analysis of 15 research papers complete",
       "coordination": "All agents are synchronized and operational"
@@ -207,7 +207,7 @@ ws.onopen = () => {
   ws.send(JSON.stringify({
     "type": "start_conversation",
     "agents_content": {
-      "consciousness": "Testing real-time voice streaming",
+      "pipeline": "Testing real-time voice streaming",
       "physics": "Physics validation systems online"
     }
   }));
@@ -543,7 +543,7 @@ server {
 
 - [ ] Voice commands route to correct NIS agents
 - [ ] Agent responses have distinct voice characteristics
-- [ ] Consciousness vocalization includes system metrics
+- [ ] pipeline vocalization includes system metrics
 - [ ] Physics explanations are technically accurate
 - [ ] Research findings are properly narrated
 
@@ -580,3 +580,4 @@ server {
 ---
 
 **🎙️ Your NIS Protocol voice conversation system is now ready for enterprise-grade voice interactions with multi-agent intelligence!**
+

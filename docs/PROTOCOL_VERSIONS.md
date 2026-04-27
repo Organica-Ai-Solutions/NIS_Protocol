@@ -20,7 +20,7 @@
 - User approval/consent mechanisms
 
 **NIS Implementation**:
-- Built-in MCP tools (9 tools): code_execute, web_search, physics_solve, robotics_kinematics, llm_chat, memory_store, memory_retrieve, consciousness_genesis, vision_analyze
+- Built-in MCP tools (9 tools): code_execute, web_search, physics_solve, robotics_kinematics, llm_chat, memory_store, memory_retrieve, pipeline_genesis, vision_analyze
 - Endpoints: `/protocol/mcp/tools`, `/protocol/mcp/execute`
 - Mode: Local execution (no external MCP server required)
 
@@ -43,7 +43,7 @@
 - Streaming support
 
 **NIS Implementation**:
-- Local task execution through consciousness pipeline
+- Local task execution through pipeline pipeline
 - Endpoints: `/protocol/a2a/create-task`, `/protocol/a2a/task/{id}`, `/protocol/a2a/tasks`
 - Mode: Local execution using NIS Protocol agents
 - Task storage: In-memory with full lifecycle tracking
@@ -157,3 +157,4 @@ If you're using A2A:
 4. 📋 Add protocol version negotiation headers
 5. 📋 Implement capability discovery per spec
 6. 📋 Add comprehensive protocol tests
+

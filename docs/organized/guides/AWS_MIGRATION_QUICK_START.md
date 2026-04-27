@@ -50,7 +50,7 @@ Service Name: nis-meta-coordinators
 Contents:
 ├── src/meta/unified_coordinator.py
 ├── src/agents/coordination/
-├── src/services/consciousness_service.py
+├── src/services/pipeline_service.py
 └── Agent orchestration
 
 Environment:
@@ -266,3 +266,4 @@ DATABASE_URL = "nis-postgres.abc123.us-east-1.rds.amazonaws.com:5432/nisdb"
 ---
 
 **🏺 Simple AWS migration focused on your preferred container split approach with managed services for reliability and no server management complexity.**
+

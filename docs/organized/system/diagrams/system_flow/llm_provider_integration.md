@@ -5,7 +5,7 @@ graph TB
     subgraph "NIS Protocol Core"
         CA[Coordination Agent<br/>🎯 Request Router]
         RA[Reasoning Agent<br/>🤔 Logic processing (implemented) (implemented)]
-        CON[Consciousness Agent<br/>💭 Confidence Monitor]
+        CON[pipeline Agent<br/>💭 Confidence Monitor]
     end
     
     subgraph "LLM Management Layer"
@@ -389,15 +389,15 @@ performance_metrics = {
 
 ## Integration with NIS Pipeline
 
-### **Consciousness Integration**
+### **pipeline Integration**
 ```python
-async def consciousness_aware_llm_call(prompt, context):
-    """LLM call with consciousness Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/)"""
+async def pipeline_aware_llm_call(prompt, context):
+    """LLM call with pipeline Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/)"""
     
     # Check system confidence
-    consciousness_state = consciousness_agent.get_current_state()
+    pipeline_state = pipeline_agent.get_current_state()
     
-    if consciousness_state.confidence < 0.7:
+    if pipeline_state.confidence < 0.7:
         # Use ensemble approach for low confidence
         response = await get_ensemble_response(prompt)
         confidence = calculate_ensemble_confidence(response)
@@ -407,8 +407,8 @@ async def consciousness_aware_llm_call(prompt, context):
         response = await get_provider_response(provider, prompt)
         confidence = extract_response_confidence(response)
     
-    # Update consciousness with new confidence
-    consciousness_agent.update_confidence(confidence)
+    # Update pipeline with new confidence
+    pipeline_agent.update_confidence(confidence)
     
     return response, confidence
 ```
@@ -417,5 +417,5 @@ This LLM integration architecture ensures:
 - ✅ **Provider Redundancy**: Multiple fallback options
 - ✅ **Cost Optimization**: Intelligent routing based on cost/quality tradeoffs
 - ✅ **Quality Assurance**: Response evaluation and ensemble methods
-- ✅ **Consciousness Integration**: Confidence-aware provider selection
+- ✅ **pipeline Integration**: Confidence-aware provider selection
 - ✅ **Performance Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/)**: Real-time metrics and health checking 

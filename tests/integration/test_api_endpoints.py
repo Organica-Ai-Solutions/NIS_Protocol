@@ -340,15 +340,15 @@ class TestBitNetEndpoints:
         assert "status" in data
 
 
-class TestConsciousnessEndpoints:
-    """Test Consciousness API Endpoints"""
+class TestpipelineEndpoints:
+    """Test pipeline API Endpoints"""
     
     @pytest.mark.integration
     @pytest.mark.asyncio
-    async def test_consciousness_status(self):
-        """Consciousness status endpoint"""
+    async def test_pipeline_status(self):
+        """pipeline status endpoint"""
         async with httpx.AsyncClient() as client:
-            response = await client.get(f"{BASE_URL}/v4/consciousness/status")
+            response = await client.get(f"{BASE_URL}/v4/pipeline/status")
         
         assert response.status_code == 200
         data = response.json()
@@ -369,3 +369,4 @@ class TestConsciousnessEndpoints:
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v", "-m", "integration"])
+

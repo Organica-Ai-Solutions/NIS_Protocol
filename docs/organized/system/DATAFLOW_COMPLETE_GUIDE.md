@@ -46,7 +46,7 @@ This document provides a comprehensive guide to how data flows through the NIS P
 │                     🧠 NIS PROTOCOL CORE LAYER                          │
 ├─────────────────────────────────────────────────────────────────────────┤
 │  🎭 Agent Routing   🗃️ Memory Systems  🔬 NIS Pipeline   🤖 Multi-LLM   │
-│  Consciousness      Physics Validation  Research Engine  Coordination   │
+│  pipeline      Physics Validation  Research Engine  Coordination   │
 └─────────────────────────────────────────────────────────────────────────┘
                                 ↕
 ┌─────────────────────────────────────────────────────────────────────────┐
@@ -95,7 +95,7 @@ This document provides a comprehensive guide to how data flows through the NIS P
 ├─────────────────────────────────────────────────────────────────────────┤
 │  Provider Selection: OpenAI, Anthropic, DeepSeek, Google, BitNet       │
 │  Context Integration: Conversation history + semantic context           │
-│  NIS Pipeline Results: Physics validation, consciousness metrics        │
+│  NIS Pipeline Results: Physics validation, pipeline metrics        │
 │  Response Generation: Technical analysis with formatting               │
 └─────────────────────────────────────────────────────────────────────────┘
                                 ↕
@@ -180,7 +180,7 @@ Total: ~2.3 seconds (95th percentile)
 │  Voice Command Recognition:                                            │
 │  ├── "Physics" → Physics Agent                                          │
 │  ├── "Research" → Research Agent                                        │
-│  ├── "Consciousness" → Consciousness Agent                              │
+│  ├── "pipeline" → pipeline Agent                              │
 │  └── "Coordinate" → Coordination Agent                                  │
 │                                                                         │
 │  Content Analysis:                                                      │
@@ -198,7 +198,7 @@ Total: ~2.3 seconds (95th percentile)
 │  ├── Equation solving                                                   │
 │  └── Physics explanations                                               │
 │                                                                         │
-│  Consciousness Agent:                                                  │
+│  pipeline Agent:                                                  │
 │  ├── Awareness level monitoring                                         │
 │  ├── Cognitive state analysis                                          │
 │  └── Meta-cognitive processing                                          │
@@ -280,7 +280,7 @@ Total: ~350ms (target: <500ms)
 │                    🎭 AGENT VOICE SWITCHING                            │
 ├─────────────────────────────────────────────────────────────────────────┤
 │  Dynamic Voice Characteristics:                                        │
-│  ├── Consciousness: Deep, thoughtful (180Hz base)                       │
+│  ├── pipeline: Deep, thoughtful (180Hz base)                       │
 │  ├── Physics: Clear, authoritative (160Hz base)                          │
 │  ├── Research: Analytical, precise (200Hz base)                         │
 │  ├── Coordination: Warm, collaborative (170Hz base)                     │
@@ -447,7 +447,7 @@ Total: ~350ms (target: <500ms)
 │                                                                         │
 │  Agent Matching:                                                       │
 │  ├── Physics Agent (equations, validation, simulations)                 │
-│  ├── Consciousness Agent (awareness, meta-cognition)                    │
+│  ├── pipeline Agent (awareness, meta-cognition)                    │
 │  ├── Research Agent (search, analysis, synthesis)                       │
 │  └── Coordination Agent (multi-agent, user interaction)                │
 └─────────────────────────────────────────────────────────────────────────┘
@@ -457,7 +457,7 @@ Total: ~350ms (target: <500ms)
 ├─────────────────────────────────────────────────────────────────────────┤
 │  Concurrent Agent Execution:                                           │
 │  ├── Physics validation via PINN                                        │
-│  ├── Consciousness monitoring                                           │
+│  ├── pipeline monitoring                                           │
 │  ├── Research data retrieval                                            │
 │  └── Coordination response synthesis                                    │
 │                                                                         │
@@ -913,3 +913,4 @@ The NIS Protocol v3.2.1 data flow architecture represents a **comprehensive, ent
 The system successfully integrates **Microsoft VibeVoice 1.5B**, **Whisper STT**, **multi-agent coordination**, and **advanced memory systems** into a unified, high-performance architecture that scales from single-user interactions to enterprise deployments.
 
 **🚀 The NIS Protocol data flow architecture is production-ready and optimized for real-time AI interactions with enterprise-grade reliability and performance.**
+

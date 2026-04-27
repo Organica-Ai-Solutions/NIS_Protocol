@@ -25,7 +25,7 @@ The console is ready to demonstrate the full NIS Protocol capabilities.
 ### 🧠 **Complete Pipeline Visualization**
 Watch your requests flow through:
 - 🌊 **Laplace Transform** - Signal processing in frequency domain
-- 🧠 **Consciousness** - Self-awareness and bias detection  
+- 🧠 **pipeline** - Self-awareness and bias detection  
 - 🧮 **KAN Networks** - Symbolic reasoning with mathematical traceability
 - 🔬 **PINN Physics** - Physics-informed validation and auto-correction
 - 🤖 **Multi-LLM** - Intelligent provider selection and response fusion
@@ -34,7 +34,7 @@ Watch your requests flow through:
 
 #### **Quick Demo Buttons**
 - **⚽ Physics Demo**: "Explain the physics of a bouncing ball"
-- **🧠 Consciousness**: "Analyze your consciousness level"
+- **🧠 pipeline**: "Analyze your pipeline level"
 - **🧮 Math Reasoning**: "Solve a complex mathematical equation"
 - **🔬 Simulation**: "Run a physics simulation"
 - **❓ Capabilities**: "What are your capabilities?"
@@ -49,7 +49,7 @@ Watch your requests flow through:
 #### **Agent Types**
 - **Default**: Balanced general-purpose processing
 - **Physics**: Specialized for physics validation and simulation
-- **Consciousness**: Focused on self-awareness and ethical reasoning
+- **pipeline**: Focused on self-awareness and ethical reasoning
 - **Reasoning**: Optimized for logical and mathematical problem-solving
 - **Simulation**: Enhanced for scenario modeling and testing
 
@@ -63,10 +63,10 @@ Input: "A 5kg ball is dropped from 10 meters. Calculate impact velocity and vali
 Expected: Real physics calculations with conservation law verification
 ```
 
-### 🧠 **Consciousness Analysis Demo**
+### 🧠 **pipeline Analysis Demo**
 ```
 Input: "Reflect on your own thought processes and describe your current awareness level."
-Expected: Meta-cognitive self-analysis with consciousness metrics
+Expected: Meta-cognitive self-analysis with pipeline metrics
 ```
 
 ### 🧮 **Complex Reasoning Demo**
@@ -97,7 +97,7 @@ Each response includes detailed information:
 ### **Pipeline Validation**
 Look for the green checkmark indicating:
 ```
-✅ Processed through: Laplace → Consciousness → KAN → PINN → LLM Pipeline
+✅ Processed through: Laplace → pipeline → KAN → PINN → LLM Pipeline
 ```
 
 ### **Error Handling**
@@ -194,6 +194,6 @@ curl -X POST http://localhost/simulation/run \
 
 ---
 
-**🎯 Ready to experience consciousness-driven AI with physics validation!**
+**🎯 Ready to experience pipeline-driven AI with physics validation!**
 
-*The chat console provides a comprehensive demonstration of the NIS Protocol's unique capabilities, showcasing the integration of consciousness, physics, and advanced reasoning in a single, verifiable pipeline.*
+*The chat console provides a comprehensive demonstration of the NIS Protocol's unique capabilities, showcasing the integration of pipeline, physics, and advanced reasoning in a single, verifiable pipeline.*

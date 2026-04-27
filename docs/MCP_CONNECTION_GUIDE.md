@@ -169,10 +169,10 @@ With NIS Protocol connected to ChatGPT/Claude:
 - Track agent metrics and performance
 - Coordinate complex AI workflows
 
-✅ **AGI Foundation**
+✅ **AI Robotics Foundation**
 - Local + cloud hybrid intelligence
 - BitNet SEED model integration
-- Consciousness-driven processing
+- pipeline-driven processing
 
 ---
 
@@ -186,4 +186,5 @@ With NIS Protocol connected to ChatGPT/Claude:
 ---
 
 **🚀 Your Complete AI Operating System is now available to ChatGPT and Claude!**
+
 

@@ -157,7 +157,7 @@ AUTONOMOUS_PROMPTS = [
 NIS_PROTOCOL_PROMPTS = [
     # Core NIS Features
     "What is the NIS Protocol?",
-    "Explain the consciousness service in NIS Protocol",
+    "Explain the pipeline service in NIS Protocol",
     "How does multi-agent collaboration work in NIS?",
     "What is the physics validation system?",
     "Explain the BitNet local AI model",
@@ -369,3 +369,4 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+

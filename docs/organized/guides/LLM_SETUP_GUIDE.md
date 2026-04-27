@@ -30,7 +30,7 @@ The NIS Protocol v3 uses multiple LLM providers through an environment-based con
   ```
 
 ### Anthropic (Claude)
-- **recommended for:** Consciousness, reasoning, cultural intelligence, archaeological analysis
+- **recommended for:** pipeline, reasoning, cultural intelligence, archaeological analysis
 - **API Key:** Get from [Anthropic Console](https://console.anthropic.com/)
 - **Environment Variables:**
   ```bash
@@ -75,7 +75,7 @@ The system systematically assigns the recommended provider for each cognitive fu
 
 ```bash
 # Primary providers for different cognitive functions
-CONSCIOUSNESS_PROVIDER=anthropic     # Meta-cognition, self-reflection
+pipeline_PROVIDER=anthropic     # Meta-cognition, self-reflection
 REASONING_PROVIDER=anthropic         # Logical analysis, problem solving
 CREATIVITY_PROVIDER=openai           # Creative ideas, creative thinking
 CULTURAL_PROVIDER=anthropic          # Cultural intelligence, sensitivity
@@ -112,7 +112,7 @@ COGNITIVE_HARMONY_THRESHOLD=0.7
   ```
 
 ### For Research/Specialized Use
-- **Primary:** Anthropic Claude (reasoning and consciousness)
+- **Primary:** Anthropic Claude (reasoning and pipeline)
 - **Secondary:** OpenAI GPT-4 (creativity and perception)
 - **Cost-effective:** DeepSeek (memory and execution)
 
@@ -186,7 +186,7 @@ async def test_provider():
 
 The NIS Protocol v3 includes a **Cognitive Orchestra** that systematically selects the appropriate LLM for each task:
 
-- **Consciousness tasks** → Anthropic Claude (for self-reflection)
+- **pipeline tasks** → Anthropic Claude (for self-reflection)
 - **Creative tasks** → OpenAI GPT-4 (for creative ideas)
 - **Reasoning tasks** → Anthropic Claude (for logical analysis)
 - **Memory tasks** → DeepSeek (cost-effective, good memory)
@@ -248,7 +248,7 @@ This happens systematically - you don't need to manually assign providers.
 from src.agents.reasoning.enhanced_reasoning_agent import EnhancedReasoningAgent
 
 agent = EnhancedReasoningAgent()
-result = await agent.reason("What are the implications of AI consciousness?")
+result = await agent.reason("What are the implications of AI pipeline?")
 # systematically uses recommended provider for reasoning (Anthropic)
 ```
 

@@ -50,7 +50,7 @@ This document tracks the migration of API endpoints from the monolithic `main.py
 | `protocols.py` | 22 | 34KB | ✅ Ready | MCP, A2A, ACP integrations |
 | `vision.py` | 12 | 32KB | ✅ Ready | Image analysis, generation, visualization |
 | `reasoning.py` | 3 | 8KB | ✅ Ready | Collaborative reasoning, debate |
-| `consciousness.py` | 28 | 35KB | ✅ Ready | V4.0 evolution, genesis, collective, embodiment |
+| `pipeline.py` | 28 | 35KB | ✅ Ready | V4.0 evolution, genesis, collective, embodiment |
 | `system.py` | 18 | 25KB | ✅ Ready | Configuration, state, edge AI, brain orchestration |
 | `nvidia.py` | 8 | 15KB | ✅ Ready | NVIDIA Inception, NeMo, enterprise features |
 | `auth.py` | 11 | 10KB | ✅ Ready | Authentication, user management, API keys |
@@ -199,7 +199,7 @@ routes/
 - `POST /physics/validate` - General validation
 
 ### Voice
-- `POST /communication/consciousness_voice` - Vocalize consciousness
+- `POST /communication/pipeline_voice` - Vocalize pipeline
 - `GET /communication/status` - Communication status
 - `POST /voice/transcribe` - Speech-to-text
 - `GET /voice/settings` - Get voice settings
@@ -245,32 +245,32 @@ routes/
 - `POST /mcp/chat` - MCP chat
 - `GET /tools/list` - List tools
 
-### Consciousness (`/v4`)
-- `POST /v4/consciousness/evolve` - Trigger self-evolution
-- `GET /v4/consciousness/evolution/history` - Evolution history
-- `GET /v4/consciousness/performance` - Performance trends
-- `POST /v4/consciousness/genesis` - Create dynamic agent
-- `GET /v4/consciousness/genesis/history` - Genesis history
-- `POST /v4/consciousness/collective/register` - Register peer
-- `POST /v4/consciousness/collective/decide` - Collective decision
-- `POST /v4/consciousness/collective/sync` - Sync state
-- `GET /v4/consciousness/collective/status` - Collective status
-- `POST /v4/consciousness/plan` - Create autonomous plan
-- `GET /v4/consciousness/plan/status` - Plan status
-- `POST /v4/consciousness/marketplace/publish` - Publish insight
-- `GET /v4/consciousness/marketplace/list` - List insights
-- `GET /v4/consciousness/marketplace/insight/{id}` - Get insight
-- `POST /v4/consciousness/multipath/start` - Start multipath reasoning
-- `POST /v4/consciousness/multipath/collapse` - Collapse to single path
-- `GET /v4/consciousness/multipath/state` - Get multipath state
-- `POST /v4/consciousness/ethics/evaluate` - Ethical evaluation
-- `POST /v4/consciousness/embodiment/state/update` - Update body state
-- `POST /v4/consciousness/embodiment/motion/check` - Check motion safety
-- `POST /v4/consciousness/embodiment/action/execute` - Execute action
-- `GET /v4/consciousness/embodiment/status` - Embodiment status
-- `GET /v4/consciousness/embodiment/redundancy/status` - Redundancy status
-- `POST /v4/consciousness/embodiment/diagnostics` - Self-diagnostics
-- `GET /v4/consciousness/embodiment/redundancy/degradation` - Degradation mode
+### pipeline (`/v4`)
+- `POST /v4/pipeline/evolve` - Trigger self-evolution
+- `GET /v4/pipeline/evolution/history` - Evolution history
+- `GET /v4/pipeline/performance` - Performance trends
+- `POST /v4/pipeline/genesis` - Create dynamic agent
+- `GET /v4/pipeline/genesis/history` - Genesis history
+- `POST /v4/pipeline/collective/register` - Register peer
+- `POST /v4/pipeline/collective/decide` - Collective decision
+- `POST /v4/pipeline/collective/sync` - Sync state
+- `GET /v4/pipeline/collective/status` - Collective status
+- `POST /v4/pipeline/plan` - Create autonomous plan
+- `GET /v4/pipeline/plan/status` - Plan status
+- `POST /v4/pipeline/marketplace/publish` - Publish insight
+- `GET /v4/pipeline/marketplace/list` - List insights
+- `GET /v4/pipeline/marketplace/insight/{id}` - Get insight
+- `POST /v4/pipeline/multipath/start` - Start multipath reasoning
+- `POST /v4/pipeline/multipath/collapse` - Collapse to single path
+- `GET /v4/pipeline/multipath/state` - Get multipath state
+- `POST /v4/pipeline/ethics/evaluate` - Ethical evaluation
+- `POST /v4/pipeline/embodiment/state/update` - Update body state
+- `POST /v4/pipeline/embodiment/motion/check` - Check motion safety
+- `POST /v4/pipeline/embodiment/action/execute` - Execute action
+- `GET /v4/pipeline/embodiment/status` - Embodiment status
+- `GET /v4/pipeline/embodiment/redundancy/status` - Redundancy status
+- `POST /v4/pipeline/embodiment/diagnostics` - Self-diagnostics
+- `GET /v4/pipeline/embodiment/redundancy/degradation` - Degradation mode
 - `GET /v4/dashboard/complete` - Complete system dashboard
 
 ---
@@ -287,7 +287,7 @@ from routes import (
     robotics_router, physics_router, bitnet_router, webhooks_router,
     monitoring_router, memory_router, chat_router, agents_router,
     research_router, voice_router, protocols_router, vision_router,
-    reasoning_router, consciousness_router, system_router, nvidia_router,
+    reasoning_router, pipeline_router, system_router, nvidia_router,
     auth_router, utilities_router, v4_features_router, llm_router, unified_router,
     # ... dependency setters
 )
@@ -306,7 +306,7 @@ set_chat_dependencies(
     llm_provider=llm_provider,
     reflective_generator=reflective_generator,
     bitnet_trainer=bitnet_trainer,
-    consciousness_service=consciousness_service
+    pipeline_service=pipeline_service
 )
 ```
 
@@ -334,3 +334,4 @@ set_chat_dependencies(
 - Migrated 119 endpoints (50%)
 - Found and fixed 2 bugs (missing decorators)
 - Created comprehensive documentation
+

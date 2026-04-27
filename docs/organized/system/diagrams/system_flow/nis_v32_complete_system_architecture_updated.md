@@ -59,8 +59,8 @@ graph TB
         RFC --> RFE[Visual Generator<br/>Charts & Diagrams]
     end
     
-    subgraph "🧠 Enhanced Consciousness Coordination Layer"
-        RFC --> CCL[Consciousness Coordination]
+    subgraph "🧠 Enhanced pipeline Coordination Layer"
+        RFC --> CCL[pipeline Coordination]
         CCL --> CCA[Meta-Cognitive Processor<br/>Thinking About Thinking]
         CCL --> CCB[Decision Quality Tracker<br/>Choice Validation]
         CCL --> CCD[Performance Optimizer<br/>Real-Time Adaptation]
@@ -248,3 +248,4 @@ documentation:
 **🏆 NIS Protocol v3.2 - Production-Ready AI Operating System with Enterprise Security**
 
 *Combining cutting-edge AI capabilities with production-grade security and visual excellence*
+

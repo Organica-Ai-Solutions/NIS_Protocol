@@ -14,7 +14,7 @@
 | 🔬 **Physics** | ✅ Working | 4 | Validation, constants, PINN solving |
 | 🚀 **NVIDIA NeMo** | ✅ Working | 7 | Enterprise integration, toolkit, simulation |
 | 🔍 **Research** | ✅ Working | 4 | Deep research, ArXiv, analysis |
-| 🤖 **Agent Coordination** | ✅ Working | 5 | Status, consciousness, memory, planning |
+| 🤖 **Agent Coordination** | ✅ Working | 5 | Status, pipeline, memory, planning |
 | 🔌 **MCP Integration** | ✅ Working | 3 | Model Context Protocol, LangGraph |
 | 💬 **Chat & Interaction** | ✅ Working | 4 | Basic, enhanced, sessions, memory |
 
@@ -87,13 +87,13 @@ Get system performance metrics and uptime.
 curl -X GET "http://localhost/metrics"
 ```
 
-### **GET /consciousness/status** - Consciousness Status
+### **GET /pipeline/status** - pipeline Status
 **Status:** ✅ Working | **Auth:** None | **Rate Limit:** None
 
-Get consciousness service status and capabilities.
+Get pipeline service status and capabilities.
 
 ```bash
-curl -X GET "http://localhost/consciousness/status"
+curl -X GET "http://localhost/pipeline/status"
 ```
 
 ### **GET /infrastructure/status** - Infrastructure Status
@@ -119,7 +119,7 @@ Chat with specific LLM provider with NIS pipeline processing.
 {
   "message": "string (required)",
   "provider": "string (required: deepseek|openai|anthropic|bitnet)", 
-  "agent_type": "string (optional: default|reasoning|consciousness)"
+  "agent_type": "string (optional: default|reasoning|pipeline)"
 }
 ```
 
@@ -259,7 +259,7 @@ curl -X POST "http://localhost/process" \
 ### **POST /nvidia/process** - NVIDIA AI Processing
 **Status:** ⚠️ Partial (internal coroutine errors) | **Auth:** None | **Rate Limit:** None
 
-Process requests using NVIDIA Nemotron, Nemo, and Modulus models with consciousness and physics validation.
+Process requests using NVIDIA Nemotron, Nemo, and Modulus models with pipeline and physics validation.
 
 **Request Body:**
 ```json
@@ -267,7 +267,7 @@ Process requests using NVIDIA Nemotron, Nemo, and Modulus models with consciousn
   "prompt": "string (required)",
   "model_type": "string (required: nemotron|nemo|modulus)",
   "domain": "string (optional: general|physics|simulation)",
-  "enable_consciousness_validation": "boolean (optional: true)",
+  "enable_pipeline_validation": "boolean (optional: true)",
   "enable_physics_validation": "boolean (optional: true)"
 }
 ```
@@ -280,7 +280,7 @@ curl -X POST "http://localhost/nvidia/process" \
     "prompt": "Explain machine learning fundamentals",
     "model_type": "nemotron",
     "domain": "general",
-    "enable_consciousness_validation": true,
+    "enable_pipeline_validation": true,
     "enable_physics_validation": false
   }'
 ```
@@ -293,7 +293,7 @@ curl -X POST "http://localhost/nvidia/process" \
     "prompt": "Model fluid dynamics in a pipe",
     "model_type": "nemo", 
     "domain": "physics",
-    "enable_consciousness_validation": true,
+    "enable_pipeline_validation": true,
     "enable_physics_validation": true
   }'
 ```
@@ -306,7 +306,7 @@ curl -X POST "http://localhost/nvidia/process" \
     "prompt": "Simulate heat transfer in a metal rod",
     "model_type": "modulus",
     "domain": "simulation",
-    "enable_consciousness_validation": false,
+    "enable_pipeline_validation": false,
     "enable_physics_validation": true
   }'
 ```
@@ -317,9 +317,9 @@ curl -X POST "http://localhost/nvidia/process" \
   "status": "success",
   "nvidia_response": "Machine learning fundamentals include...",
   "model_type": "nemotron",
-  "consciousness_validation": {
-    "consciousness_level": "introspective",
-    "consciousness_confidence": 0.7,
+  "pipeline_validation": {
+    "pipeline_level": "introspective",
+    "pipeline_confidence": 0.7,
     "ethical_reasoning_capability": 0.9,
     "requires_human_review": false
   },
@@ -1006,13 +1006,13 @@ Get comprehensive status of the multi-agent coordination system.
 curl -X GET "http://localhost/agents/status"
 ```
 
-### **POST /agents/consciousness/analyze** - Consciousness Analysis
+### **POST /agents/pipeline/analyze** - pipeline Analysis
 **Status:** ✅ Working | **Auth:** None | **Rate Limit:** 10/min
 
-Analyze scenarios through consciousness and self-awareness modeling.
+Analyze scenarios through pipeline and self-awareness modeling.
 
 ```bash
-curl -X POST "http://localhost/agents/consciousness/analyze" \
+curl -X POST "http://localhost/agents/pipeline/analyze" \
   -H "Content-Type: application/json" \
   -d '{
     "scenario": "Analyzing my own decision-making process",

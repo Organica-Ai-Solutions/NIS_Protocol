@@ -390,7 +390,7 @@ const batchResponse = await fetch('/image/generate', {
   method: 'POST',
   headers: {'Content-Type': 'application/json'},
   body: JSON.stringify({
-    prompt: "AI consciousness visualization: abstract digital mind",
+    prompt: "AI pipeline visualization: abstract digital mind",
     style: "artistic",
     provider: "auto",
     num_images: 4  // Generate 4 variations
@@ -472,7 +472,7 @@ const analysis = await fetch('/document/analyze', {
 ```
 NIS Protocol v3.2 Enhanced Pipeline:
 ┌─────────────────────────────────────────────────────┐
-│ 🌊 Laplace Transform → 🧠 Consciousness → 🧮 KAN   │
+│ 🌊 Laplace Transform → 🧠 pipeline → 🧮 KAN   │
 │ ↓                                                   │
 │ 🔬 PINN Physics → 🤖 Multi-LLM → 🎨 Multimodal     │
 │ ↓                                                   │

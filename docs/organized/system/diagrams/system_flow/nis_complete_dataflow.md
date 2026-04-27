@@ -24,7 +24,7 @@ graph TB
     subgraph "Agent Coordination Layer"
         CA[Coordination Agent]
         MA[Memory Agent]
-        COA[Consciousness Agent]
+        COA[pipeline Agent]
     end
     
     subgraph "Infrastructure Layer"
@@ -98,7 +98,7 @@ This diagram shows the complete NIS Protocol dataflow from input to output, high
 ### 🤖 **Agent Coordination**
 - **Coordination Agent**: Orchestrates multi-agent workflows
 - **Memory Agent**: Manages short and long-term memory
-- **Consciousness Agent**: Monitors system awareness and confidence
+- **pipeline Agent**: Monitors system awareness and confidence
 
 ### 🏗️ **Infrastructure**
 - **Kafka**: Event streaming and message passing
@@ -107,11 +107,11 @@ This diagram shows the complete NIS Protocol dataflow from input to output, high
 
 ### 🔄 **Feedback Loops**
 - Learning Agent feeds back to Memory Agent
-- Response Agent updates Consciousness Agent
+- Response Agent updates pipeline Agent
 - Action Agent publishes to Kafka for coordination
 
 This architecture ensures:
 - ✅ **Scientific Validity**: All outputs validated by physics
 - ✅ **Mathematical Transparency**: KAN networks provide mathematically-traceable functions
-- ✅ **Self-Awareness**: Consciousness Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) throughout
+- ✅ **Self-Awareness**: pipeline Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/) throughout
 - ✅ **Scalability**: Event-driven infrastructure for production 

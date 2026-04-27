@@ -59,9 +59,9 @@ setInterval(async () => {
         "trajectories": "76K+"
       }
     },
-    "consciousness": {
+    "pipeline": {
       "thresholds": {
-        "consciousness": 0.7,
+        "pipeline": 0.7,
         "bias": 0.3,
         "ethics": 0.8
       },
@@ -92,7 +92,7 @@ setInterval(async () => {
         "details": "Created code_gen_1234567890"
       },
       {
-        "type": "consciousness_evolution",
+        "type": "pipeline_evolution",
         "timestamp": 1234567880,
         "details": "Evolved: 1 parameters changed"
       }
@@ -155,32 +155,32 @@ function AgentsWidget({ dashboard }) {
 }
 ```
 
-### Consciousness Metrics Widget
+### pipeline Metrics Widget
 ```jsx
-function ConsciousnessWidget({ dashboard }) {
-  const { consciousness } = dashboard;
+function pipelineWidget({ dashboard }) {
+  const { pipeline } = dashboard;
   
   return (
-    <div className="consciousness-widget">
-      <h3>Consciousness Metrics</h3>
+    <div className="pipeline-widget">
+      <h3>pipeline Metrics</h3>
       
       <ThresholdGauge 
-        label="Consciousness"
-        value={consciousness.thresholds.consciousness}
+        label="pipeline"
+        value={pipeline.thresholds.pipeline}
       />
       <ThresholdGauge 
         label="Bias Detection"
-        value={consciousness.thresholds.bias}
+        value={pipeline.thresholds.bias}
       />
       <ThresholdGauge 
         label="Ethics"
-        value={consciousness.thresholds.ethics}
+        value={pipeline.thresholds.ethics}
       />
       
       <Stats>
-        <Stat label="Evolutions" value={consciousness.evolution.total_evolutions} />
-        <Stat label="Agents Created" value={consciousness.genesis.total_agents_created} />
-        <Stat label="Collective Size" value={consciousness.collective.collective_size} />
+        <Stat label="Evolutions" value={pipeline.evolution.total_evolutions} />
+        <Stat label="Agents Created" value={pipeline.genesis.total_agents_created} />
+        <Stat label="Collective Size" value={pipeline.collective.collective_size} />
       </Stats>
     </div>
   );
@@ -213,7 +213,7 @@ function EventTimeline({ dashboard }) {
 
 **Create Agent**:
 ```javascript
-POST /v4/consciousness/genesis?capability=code_synthesis
+POST /v4/pipeline/genesis?capability=code_synthesis
 
 Response:
 {
@@ -229,7 +229,7 @@ Response:
 
 **Get Genesis History**:
 ```javascript
-GET /v4/consciousness/genesis/history
+GET /v4/pipeline/genesis/history
 
 Response:
 {
@@ -253,7 +253,7 @@ Response:
 
 **Trigger Evolution**:
 ```javascript
-POST /v4/consciousness/evolve
+POST /v4/pipeline/evolve
 
 Response:
 {
@@ -271,21 +271,21 @@ Response:
 
 **Get Evolution History**:
 ```javascript
-GET /v4/consciousness/evolution/history
+GET /v4/pipeline/evolution/history
 
 Response:
 {
   "evolution_enabled": true,
   "total_evolutions": 10,
   "total_parameters_changed": 15,
-  "unique_parameters_evolved": ["bias_threshold", "consciousness_threshold"],
+  "unique_parameters_evolved": ["bias_threshold", "pipeline_threshold"],
   "avg_evolution_interval_seconds": 45.2,
   "current_state": {
-    "consciousness_threshold": 0.714,
+    "pipeline_threshold": 0.714,
     "bias_threshold": 0.243
   },
   "initial_state": {
-    "consciousness_threshold": 0.7,
+    "pipeline_threshold": 0.7,
     "bias_threshold": 0.3
   }
 }
@@ -295,7 +295,7 @@ Response:
 
 **Start Reasoning**:
 ```javascript
-POST /v4/consciousness/multipath/start?problem=Optimize%20trajectory&num_paths=3
+POST /v4/pipeline/multipath/start?problem=Optimize%20trajectory&num_paths=3
 
 Response:
 {
@@ -319,7 +319,7 @@ Response:
 ### Ethics Evaluation
 
 ```javascript
-POST /v4/consciousness/ethics/evaluate
+POST /v4/pipeline/ethics/evaluate
 Content-Type: application/json
 
 {
@@ -366,7 +366,7 @@ Response:
 ### Robotics Systems
 
 ```javascript
-GET /v4/consciousness/embodiment/robotics/info
+GET /v4/pipeline/embodiment/robotics/info
 
 Response:
 {
@@ -434,7 +434,7 @@ const monitor = new NISMonitor();
 monitor.subscribe(dashboard => {
   updateSystemHealth(dashboard.system_health);
   updateAgents(dashboard.agents);
-  updateMetrics(dashboard.consciousness);
+  updateMetrics(dashboard.pipeline);
   updateTimeline(dashboard.recent_events);
 });
 monitor.start();
@@ -442,11 +442,11 @@ monitor.start();
 
 ## 📈 Visualization Examples
 
-### Consciousness Evolution Chart
+### pipeline Evolution Chart
 ```javascript
 // Fetch evolution history and plot
 async function plotEvolution() {
-  const res = await fetch('http://localhost:8000/v4/consciousness/evolution/history');
+  const res = await fetch('http://localhost:8000/v4/pipeline/evolution/history');
   const data = await res.json();
   
   const chartData = data.recent_evolutions.map(e => ({
@@ -463,7 +463,7 @@ async function plotEvolution() {
 ### Agent Network Graph
 ```javascript
 async function renderAgentNetwork() {
-  const res = await fetch('http://localhost:8000/v4/consciousness/genesis/history');
+  const res = await fetch('http://localhost:8000/v4/pipeline/genesis/history');
   const data = await res.json();
   
   const nodes = data.recent_agents.map(agent => ({
@@ -534,7 +534,7 @@ function NISProtocolDashboard() {
       <Grid>
         <SystemHealthWidget dashboard={dashboard} />
         <AgentsWidget dashboard={dashboard} />
-        <ConsciousnessWidget dashboard={dashboard} />
+        <pipelineWidget dashboard={dashboard} />
         <OperationsWidget operations={dashboard.operations} />
         <EventTimeline events={dashboard.recent_events} />
         <PerformanceWidget performance={dashboard.performance} />
@@ -569,3 +569,4 @@ function NISProtocolDashboard() {
 
 **Production Ready** ✅  
 All endpoints tested and verified at 100% functionality.
+

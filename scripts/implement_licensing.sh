@@ -49,7 +49,7 @@ The NIS Protocol uses a dual licensing approach:
 To ensure sustainable development while maintaining open source principles. We want to support the community while enabling commercial partnerships that fund continued innovation.
 
 **Current Status:**
-- **v3.x**: Production-ready, MIT licensed, 75,359+ lines of AGI foundation code
+- **v3.x**: Production-ready, MIT licensed, 75,359+ lines of AI Robotics Foundation code
 - **v3.x**: Current version, BSL licensed, production-ready with full feature set
 
 For commercial licensing inquiries: **diego@organicaai.com**
@@ -204,7 +204,7 @@ echo
 echo "💼 AWS Partnership Terms Ready:"
 echo "  - Strategic Partner License: $250,000/year + 3% revenue share"
 echo "  - 6-month exclusivity on new features"
-echo "  - White-label rights for AWS AGI services"
+echo "  - White-label rights for AWS AI services"
 echo "  - Joint technical development and support"
 echo
 echo "📞 Commercial licensing contact: diego@organicaai.com"

@@ -12,7 +12,7 @@
 |---------|--------|--------------|--------------|---------------|
 | **[v3.2](#v32---current-stable)** | 🟢 **Current** | Q1 2025 | Security Hardening, Visual Docs | [📖 Complete Guide](./v3.2/README.md) |
 | **[v3.1](#v31---real-ai-integration)** | 🟡 Superseded | Q4 2024 | 100% Real AI, 5 Providers | [📖 Complete Guide](./v3.1/README.md) |
-| **[v3.0](#v30---foundation-release)** | 🟡 Superseded | Q2 2024 | Consciousness Framework | [📖 Complete Guide](./v3.0/README.md) |
+| **[v3.0](#v30---foundation-release)** | 🟡 Superseded | Q2 2024 | pipeline Framework | [📖 Complete Guide](./v3.0/README.md) |
 | **[v2.0](#v20---advanced-features)** | 🔴 Historical | Q3 2023 | KAN Networks, Multi-LLM | [📖 Complete Guide](./v2.0/README.md) |
 | **[v1.0](#v10---proof-of-concept)** | 🔴 Historical | Q1 2023 | Foundation, Basic Agents | [📖 Complete Guide](./v1.0/README.md) |
 
@@ -43,7 +43,7 @@
 - Performance optimization tooling to analyze and tune processing speeds.
 
 ### v3.0 - Foundation Release
-**🧠 Consciousness-Driven Architecture**
+**🧠 pipeline-Driven Architecture**
 - **Self-Aware Agents**: Meta-cognitive processing capabilities
 - **Production Scale**: Enterprise-grade architecture
 - **Multimodal Capabilities**: Image generation and vision analysis
@@ -94,7 +94,7 @@ docs/v3.1/
 ```
 docs/v3.0/
 ├── README.md                           # Complete v3.0 overview
-├── consciousness-framework.md         # Self-aware architecture
+├── pipeline-framework.md         # Self-aware architecture
 ├── multimodal-capabilities.md         # Image and vision features
 ├── production-deployment.md           # Enterprise deployment
 └── migration-from-v2.0.md            # Upgrade instructions
@@ -130,7 +130,7 @@ system/docs/diagrams/
 │   ├── nis_version_progression_architecture.md    # Complete evolution
 │   ├── nis_v32_complete_system_architecture.md    # Current architecture
 │   ├── nis_complete_system_architecture.md        # Legacy diagrams
-│   ├── consciousness_monitoring_flow.md           # Consciousness system
+│   ├── pipeline_monitoring_flow.md           # pipeline system
 │   └── message_flow.md                            # Communication flow
 ├── pipelines/
 │   └── laplace_kan_pinn_pipeline.md              # Processing pipeline
@@ -191,7 +191,7 @@ docs/
 
 ### 📊 Researchers
 **Research & Innovation**:
-1. **Consciousness Framework**: [v3.0 Consciousness](./v3.0/README.md#consciousness-driven-architecture)
+1. **pipeline Framework**: [v3.0 pipeline](./v3.0/README.md#pipeline-driven-architecture)
 2. **Mathematical Framework**: [v2.0 KAN Networks](./v2.0/README.md#mathematical-framework)
 3. **Performance Analysis**: [Version Progression](../system/docs/diagrams/system_flow/nis_version_progression_architecture.md)
 4. **Future Roadmap**: [Evolution Overview](./NIS_PROTOCOL_VERSION_EVOLUTION.md#future-roadmap)
@@ -212,7 +212,7 @@ docs/
 | **Basic Chat** | ✅ | ✅ | ✅ | ✅ | ✅ | [API Reference](../system/docs/COMPLETE_API_REFERENCE.md) |
 | **Multi-LLM Support** | ❌ | ✅ | ✅ | ✅ | ✅ | [Multi-Provider Guide](../system/docs/MULTI_PROVIDER_LLM_GUIDE.md) |
 | **Image Generation** | ❌ | ❌ | 🔶 | 🔶 | ✅ | [Smart Image Generation](./v3.2/README.md#smart-image-generation-system) |
-| **Consciousness Framework** | ❌ | 🔶 | ✅ | ✅ | ✅ | [Consciousness Framework](./v3.0/README.md#consciousness-driven-architecture) |
+| **pipeline Framework** | ❌ | 🔶 | ✅ | ✅ | ✅ | [pipeline Framework](./v3.0/README.md#pipeline-driven-architecture) |
 | **Real AI Integration** | 🔶 | 🔶 | ✅ | ✅ | ✅ | [Real AI Integration](./v3.1/README.md#revolutionary-ai-integration) |
 | **Physics Compliance** | 🔶 | ✅ | ✅ | ✅ | ✅ | [PINN Physics](./v2.0/README.md#pinn-physics-validation) |
 | **Response Formatting** | ❌ | ❌ | ❌ | ❌ | ✅ | [Multiple Formats](./v3.2/README.md#enhanced-multimodal-console) |
@@ -310,7 +310,7 @@ open system/docs/COMPLETE_API_REFERENCE.md
 1. **[Version Evolution Overview](./NIS_PROTOCOL_VERSION_EVOLUTION.md)** - Start here for the big picture
 2. **[v1.0 Documentation](./v1.0/README.md)** - Understand the foundations
 3. **[v2.0 Documentation](./v2.0/README.md)** - Mathematical framework
-4. **[v3.0 Documentation](./v3.0/README.md)** - Consciousness breakthrough
+4. **[v3.0 Documentation](./v3.0/README.md)** - pipeline breakthrough
 5. **[v3.1 Documentation](./v3.1/README.md)** - Real AI integration
 6. **[v3.2 Documentation](./v3.2/README.md)** - Current capabilities
 
@@ -321,7 +321,7 @@ open system/docs/COMPLETE_API_REFERENCE.md
 4. **[Version Comparison](./VERSION_COMPARISON.md)** - Feature matrix
 
 ### For Research & Innovation
-1. **[Consciousness Framework](./v3.0/README.md#consciousness-driven-architecture)** - Self-aware AI
+1. **[pipeline Framework](./v3.0/README.md#pipeline-driven-architecture)** - Self-aware AI
 2. **[Mathematical Framework](./v2.0/README.md#mathematical-framework)** - KAN & PINN
 3. **[Smart Classification](./v3.2/README.md#smart-image-generation-system)** - Content intelligence
 4. **[Performance Analysis](../system/docs/diagrams/system_flow/nis_version_progression_architecture.md)** - Evolution metrics

@@ -222,16 +222,16 @@ def main():
     test_endpoint("GET", "/bitnet/training/status", check_fields=["status"])
     
     # ========================================
-    # CONSCIOUSNESS TESTS
+    # pipeline TESTS
     # ========================================
-    print("\n🌟 Consciousness Tests")
+    print("\n🌟 pipeline Tests")
     print("-" * 40)
     
-    consciousness_data = test_endpoint("GET", "/v4/consciousness/status", 
+    pipeline_data = test_endpoint("GET", "/v4/pipeline/status", 
                                        check_fields=["status", "phases"])
-    if consciousness_data:
-        test("Consciousness operational", 
-             consciousness_data.get("status") == "operational")
+    if pipeline_data:
+        test("pipeline operational", 
+             pipeline_data.get("status") == "operational")
     
     dashboard_data = test_endpoint("GET", "/v4/dashboard/complete", 
                                    check_fields=["status", "dashboard"])
@@ -278,3 +278,4 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
+

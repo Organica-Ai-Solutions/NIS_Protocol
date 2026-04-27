@@ -10,11 +10,11 @@
 
 ## 🎯 **Overview**
 
-NIS Protocol's voice conversation feature provides **enterprise-grade speech synthesis and recognition** with seamless integration to the core multi-agent system. Users can interact with consciousness monitoring, physics validation, research capabilities, and agent coordination through **natural voice conversations**.
+NIS Protocol's voice conversation feature provides **enterprise-grade speech synthesis and recognition** with seamless integration to the core multi-agent system. Users can interact with pipeline monitoring, physics validation, research capabilities, and agent coordination through **natural voice conversations**.
 
 ### **🌟 Key Capabilities**
 
-- **🎭 Multi-Speaker Synthesis** - 4 distinct agent voices (consciousness, physics, research, coordination)
+- **🎭 Multi-Speaker Synthesis** - 4 distinct agent voices (pipeline, physics, research, coordination)
 - **⚡ Real-Time Streaming** - <100ms latency like GPT-5/Grok with voice switching
 - **🧠 NIS Agent Integration** - Direct voice interface to all NIS Protocol agents
 - **🔍 Wake Word Detection** - "Hey NIS" activation with continuous conversation mode
@@ -34,7 +34,7 @@ NIS Protocol's voice conversation feature provides **enterprise-grade speech syn
     ↓
 📝 Streaming STT (Whisper-based, <500ms)
     ↓
-🧠 NIS Platform Processing (consciousness, physics, research, coordination)
+🧠 NIS Platform Processing (pipeline, physics, research, coordination)
     ↓
 🎙️ VibeVoice TTS Synthesis (Microsoft VibeVoice 1.5B)
     ↓
@@ -45,7 +45,7 @@ NIS Protocol's voice conversation feature provides **enterprise-grade speech syn
 
 | **Agent** | **Voice Profile** | **Characteristics** | **Use Cases** |
 |-----------|------------------|-------------------|---------------|
-| **🧠 Consciousness** | Deep, thoughtful | Base: 180Hz, thoughtful style | System awareness, introspection, meta-cognitive analysis |
+| **🧠 pipeline** | Deep, thoughtful | Base: 180Hz, thoughtful style | System awareness, introspection, meta-cognitive analysis |
 | **⚡ Physics** | Clear, authoritative | Base: 160Hz, analytical style | Physics validation, equation explanations, PINN results |
 | **🔬 Research** | Analytical, precise | Base: 200Hz, enthusiastic style | Research findings, data analysis, web search results |
 | **🤝 Coordination** | Warm, collaborative | Base: 170Hz, professional style | Agent coordination, user interaction, system status |
@@ -71,8 +71,8 @@ python -c "from src.agents.communication.vibevoice_engine import VibeVoiceEngine
 curl -X POST http://localhost:8000/communication/synthesize \
   -H "Content-Type: application/json" \
   -d '{
-    "text": "Hello, this is the NIS Protocol consciousness agent speaking.",
-    "speaker": "consciousness",
+    "text": "Hello, this is the NIS Protocol pipeline agent speaking.",
+    "speaker": "pipeline",
     "emotion": "thoughtful"
   }'
 ```
@@ -115,7 +115,7 @@ X-VibeVoice-Version: 1.5B
 ```
 
 **Available Speakers:**
-- `consciousness` - Deep, thoughtful voice
+- `pipeline` - Deep, thoughtful voice
 - `physics` - Clear, authoritative voice  
 - `research` - Analytical, precise voice
 - `coordination` - Warm, collaborative voice
@@ -135,7 +135,7 @@ Create conversations between multiple NIS agents with distinct voices.
 ```json
 {
   "agents_content": {
-    "consciousness": "I'm monitoring system awareness levels at 94.2%",
+    "pipeline": "I'm monitoring system awareness levels at 94.2%",
     "physics": "Energy conservation validated - no violations detected",
     "research": "Web search analysis complete - 15 relevant papers found",
     "coordination": "All agents synchronized and operating efficiently"
@@ -164,19 +164,19 @@ Create conversations between multiple NIS agents with distinct voices.
 
 ---
 
-### **🧠 Consciousness Vocalization**
+### **🧠 pipeline Vocalization**
 
-#### `POST /communication/consciousness_voice`
+#### `POST /communication/pipeline_voice`
 
-Generate audio representation of current consciousness state.
+Generate audio representation of current pipeline state.
 
 **Response:**
 ```json
 {
   "success": true,
-  "consciousness_audio": "[Base64 encoded consciousness status audio]",
+  "pipeline_audio": "[Base64 encoded pipeline status audio]",
   "duration_seconds": 8.7,
-  "consciousness_level": 0.942,
+  "pipeline_level": 0.942,
   "processing_time": 1.1,
   "timestamp": 1737123456.789
 }
@@ -200,12 +200,12 @@ Get comprehensive status of voice communication capabilities.
     "model_name": "microsoft/VibeVoice-1.5B",
     "max_duration_minutes": 90,
     "max_speakers": 4,
-    "supported_voices": ["consciousness_voice", "physics_voice", "research_voice", "coordination_voice"]
+    "supported_voices": ["pipeline_voice", "physics_voice", "research_voice", "coordination_voice"]
   },
   "capabilities": [
     "text_to_speech",
     "multi_speaker_synthesis",
-    "consciousness_vocalization",
+    "pipeline_vocalization",
     "physics_explanation", 
     "agent_dialogue_creation",
     "realtime_streaming",
@@ -239,7 +239,7 @@ ws.onopen = () => {
   ws.send(JSON.stringify({
     "type": "start_conversation",
     "agents_content": {
-      "consciousness": "Analyzing system state",
+      "pipeline": "Analyzing system state",
       "physics": "Validating energy conservation",
       "research": "Processing research queries",
       "coordination": "Coordinating agent responses"
@@ -287,7 +287,7 @@ High-performance voice chat with <500ms latency optimization.
 - `"Hey NIS"` - Activate conversation mode
 - `"Switch to physics"` - Change to physics agent
 - `"Switch to research"` - Change to research agent
-- `"Switch to consciousness"` - Change to consciousness agent
+- `"Switch to pipeline"` - Change to pipeline agent
 - `"Stop"` - End conversation
 - `"Status"` - Get system status
 
@@ -343,7 +343,7 @@ STREAMING_ENABLED = True
 
 # Speaker voice profiles
 SPEAKER_PROFILES = {
-    "consciousness": {"voice_id": 0, "pitch": 0.8, "speed": 0.95},
+    "pipeline": {"voice_id": 0, "pitch": 0.8, "speed": 0.95},
     "physics": {"voice_id": 1, "pitch": 1.0, "speed": 1.0},
     "research": {"voice_id": 2, "pitch": 1.1, "speed": 1.05},
     "coordination": {"voice_id": 3, "pitch": 1.05, "speed": 1.0}
@@ -376,18 +376,18 @@ from src.agents.communication.vibevoice_communication_agent import (
     create_vibevoice_communication_agent, TTSRequest, SpeakerVoice
 )
 
-async def consciousness_voice_status():
-    # Get consciousness data from NIS
-    consciousness_data = await get_consciousness_status()
+async def pipeline_voice_status():
+    # Get pipeline data from NIS
+    pipeline_data = await get_pipeline_status()
     
     # Create voice agent
     voice_agent = create_vibevoice_communication_agent()
     
-    # Generate consciousness vocalization
-    result = await voice_agent.vocalize_consciousness(consciousness_data)
+    # Generate pipeline vocalization
+    result = await voice_agent.vocalize_pipeline(pipeline_data)
     
     if result.success:
-        # Play or stream the consciousness status audio
+        # Play or stream the pipeline status audio
         play_audio(result.audio_data)
         print(f"Duration: {result.duration_seconds}s")
 ```
@@ -415,7 +415,7 @@ async def explain_physics_result(physics_result):
 async def create_agent_conference():
     # Get status from all agents
     agents_data = {
-        "consciousness": await consciousness_agent.get_status_report(),
+        "pipeline": await pipeline_agent.get_status_report(),
         "physics": await physics_agent.get_validation_summary(),
         "research": await research_agent.get_findings_summary(),
         "coordination": await coordination_agent.get_system_status()
@@ -478,7 +478,7 @@ python -c "import torch, transformers, soundfile; print('✅ Dependencies OK')"
 # Test audio generation
 curl -X POST http://localhost:8000/communication/synthesize \
   -H "Content-Type: application/json" \
-  -d '{"text": "Test", "speaker": "consciousness"}'
+  -d '{"text": "Test", "speaker": "pipeline"}'
 ```
 
 #### **High Latency**
@@ -570,3 +570,4 @@ SUPPORTED_LANGUAGES = ["en", "zh", "es", "fr", "de", "ja"]
 ---
 
 **🎙️ The NIS Protocol Voice Conversation system transforms your AI interactions into natural, multi-agent conversations with enterprise-grade performance and reliability.**
+

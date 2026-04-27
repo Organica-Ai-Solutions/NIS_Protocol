@@ -8,7 +8,7 @@
 
 ## 🌟 System Overview
 
-NIS Protocol v3.2 represents the pinnacle of multimodal AI system design, featuring smart content classification, artistic intent preservation, multiple response formats, and revolutionary performance optimizations. This architecture seamlessly integrates consciousness-driven processing with intelligent content adaptation.
+NIS Protocol v3.2 represents the pinnacle of multimodal AI system design, featuring smart content classification, artistic intent preservation, multiple response formats, and revolutionary performance optimizations. This architecture seamlessly integrates pipeline-driven processing with intelligent content adaptation.
 
 ---
 
@@ -42,8 +42,8 @@ graph TB
         RFC --> RFE[Visual Generator<br/>Charts & Diagrams]
     end
     
-    subgraph "🧠 Enhanced Consciousness Coordination Layer"
-        RFC --> CCL[Consciousness Coordination]
+    subgraph "🧠 Enhanced pipeline Coordination Layer"
+        RFC --> CCL[pipeline Coordination]
         CCL --> CCA[Meta-Cognitive Processor<br/>Thinking About Thinking]
         CCL --> CCB[Decision Quality Tracker<br/>Choice Validation]
         CCL --> CCD[Performance Optimizer<br/>Real-Time Adaptation]
@@ -509,7 +509,7 @@ class PerformanceDashboard:
 - **Mobile Native Support**: iOS/Android applications
 
 ### Long-Term Vision (v4.0+)
-- **AGI Foundation**: True artificial general intelligence capabilities
+- **AI Robotics Foundation**: True artificial general intelligence capabilities
 - **Self-Modifying Architecture**: Autonomous system evolution
 - **Universal Problem Solving**: Beyond current AI limitations
 - **Reality Synthesis**: Complete understanding and generation capabilities
@@ -530,7 +530,7 @@ class PerformanceDashboard:
 
 ---
 
-*The NIS Protocol v3.2 architecture represents the pinnacle of multimodal AI system design, seamlessly integrating smart content classification, artistic intent preservation, multiple response formats, and revolutionary performance optimizations into a cohesive, consciousness-driven system.*
+*The NIS Protocol v3.2 architecture represents the pinnacle of multimodal AI system design, seamlessly integrating smart content classification, artistic intent preservation, multiple response formats, and revolutionary performance optimizations into a cohesive, pipeline-driven system.*
 
 **Current Version**: v3.2.0  
 **Architecture Status**: Production-Ready  

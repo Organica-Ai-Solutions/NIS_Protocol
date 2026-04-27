@@ -176,11 +176,11 @@ curl -X GET "http://localhost/research/capabilities"
 curl -X GET "http://localhost/agents/status"
 ```
 
-### **POST /agents/consciousness/analyze** - Consciousness Analysis
+### **POST /agents/pipeline/analyze** - pipeline Analysis
 **Status:** ✅ Working | **Auth:** None | **Rate Limit:** 10/min
 
 ```bash
-curl -X POST "http://localhost/agents/consciousness/analyze" \
+curl -X POST "http://localhost/agents/pipeline/analyze" \
   -H "Content-Type: application/json" \
   -d '{
     "scenario": "Analyzing my own decision-making process",
@@ -288,7 +288,7 @@ curl -X GET "http://localhost/chat/memory/user_123"
 - **Physics**: 2 new endpoints (constants, pinn/solve)
 - **NVIDIA NeMo**: 5 new endpoints (status, toolkit/status, physics/simulate, orchestrate, toolkit/test)
 - **Research**: 4 new endpoints (deep, arxiv, analyze, capabilities)
-- **Agent Coordination**: 5 new endpoints (status, consciousness/analyze, memory/store, planning/create, capabilities)
+- **Agent Coordination**: 5 new endpoints (status, pipeline/analyze, memory/store, planning/create, capabilities)
 - **MCP Integration**: 3 new endpoints (mcp/demo, langgraph/status, langgraph/invoke)
 - **Enhanced Chat**: 3 new endpoints (enhanced, sessions, memory/{session_id})
 - **Documentation**: 1 new endpoint (openapi.json)
@@ -300,3 +300,4 @@ curl -X GET "http://localhost/chat/memory/user_123"
 - **Enterprise Ready**: ✅ Yes
 
 All endpoints include robust fallback implementations ensuring 100% reliability even without full ML dependencies installed.
+

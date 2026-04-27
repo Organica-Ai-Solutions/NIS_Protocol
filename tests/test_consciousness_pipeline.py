@@ -1,10 +1,10 @@
 """
-NIS Protocol v4.0 - Consciousness Pipeline Test Suite
+NIS Protocol v4.0 - pipeline Pipeline Test Suite
 
-Comprehensive tests for the 10-phase consciousness pipeline,
+Comprehensive tests for the 10-phase pipeline pipeline,
 state transitions, and collective intelligence coordination.
 
-Run with: pytest tests/test_consciousness_pipeline.py -v
+Run with: pytest tests/test_pipeline_pipeline.py -v
 """
 
 import pytest
@@ -19,8 +19,8 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
-class ConsciousnessPhase(Enum):
-    """The 10 phases of consciousness"""
+class pipelinePhase(Enum):
+    """The 10 phases of pipeline"""
     EVOLUTION = "evolution"
     GENESIS = "genesis"
     DISTRIBUTED = "distributed"
@@ -34,11 +34,11 @@ class ConsciousnessPhase(Enum):
 
 
 @dataclass
-class ConsciousnessState:
-    """Represents the state of a consciousness instance"""
+class pipelineState:
+    """Represents the state of a pipeline instance"""
     agent_id: str
-    phase: ConsciousnessPhase = ConsciousnessPhase.EVOLUTION
-    consciousness_threshold: float = 0.7
+    phase: pipelinePhase = pipelinePhase.EVOLUTION
+    pipeline_threshold: float = 0.7
     bias_threshold: float = 0.3
     ethics_threshold: float = 0.8
     evolution_count: int = 0
@@ -51,7 +51,7 @@ class ConsciousnessState:
         return {
             "agent_id": self.agent_id,
             "phase": self.phase.value,
-            "consciousness_threshold": self.consciousness_threshold,
+            "pipeline_threshold": self.pipeline_threshold,
             "bias_threshold": self.bias_threshold,
             "ethics_threshold": self.ethics_threshold,
             "evolution_count": self.evolution_count,
@@ -62,11 +62,11 @@ class ConsciousnessState:
         }
 
 
-class MockConsciousnessService:
-    """Mock implementation of consciousness service for testing"""
+class MockpipelineService:
+    """Mock implementation of pipeline service for testing"""
     
     def __init__(self, agent_id: str = "test_agent"):
-        self.state = ConsciousnessState(agent_id=agent_id)
+        self.state = pipelineState(agent_id=agent_id)
         self.history: List[Dict] = []
     
     async def evolve(self, reason: str = "test") -> Dict[str, Any]:
@@ -103,7 +103,7 @@ class MockConsciousnessService:
         return result
     
     async def connect_collective(self, peer_id: str) -> Dict[str, Any]:
-        """Phase 3: Join collective consciousness"""
+        """Phase 3: Join collective pipeline"""
         if peer_id not in self.state.collective_connections:
             self.state.collective_connections.append(peer_id)
         
@@ -181,40 +181,40 @@ class MockConsciousnessService:
         return self.state.to_dict()
 
 
-class TestConsciousnessPhases:
-    """Test individual consciousness phases"""
+class TestpipelinePhases:
+    """Test individual pipeline phases"""
     
     @pytest.fixture
-    def consciousness(self):
-        return MockConsciousnessService("test_agent")
+    def pipeline(self):
+        return MockpipelineService("test_agent")
     
     @pytest.mark.asyncio
-    async def test_evolution_phase(self, consciousness):
+    async def test_evolution_phase(self, pipeline):
         """Test Phase 1: Evolution reduces bias"""
-        initial_bias = consciousness.state.bias_threshold
+        initial_bias = pipeline.state.bias_threshold
         
-        result = await consciousness.evolve(reason="test_evolution")
+        result = await pipeline.evolve(reason="test_evolution")
         
         assert result["status"] == "success"
         assert result["phase"] == "evolution"
-        assert consciousness.state.bias_threshold < initial_bias
-        assert consciousness.state.evolution_count == 1
+        assert pipeline.state.bias_threshold < initial_bias
+        assert pipeline.state.evolution_count == 1
     
     @pytest.mark.asyncio
-    async def test_multiple_evolutions(self, consciousness):
+    async def test_multiple_evolutions(self, pipeline):
         """Test that multiple evolutions compound"""
-        initial_bias = consciousness.state.bias_threshold
+        initial_bias = pipeline.state.bias_threshold
         
         for i in range(5):
-            await consciousness.evolve(reason=f"evolution_{i}")
+            await pipeline.evolve(reason=f"evolution_{i}")
         
-        assert consciousness.state.evolution_count == 5
-        assert consciousness.state.bias_threshold < initial_bias * 0.6  # 0.9^5 ≈ 0.59
+        assert pipeline.state.evolution_count == 5
+        assert pipeline.state.bias_threshold < initial_bias * 0.6  # 0.9^5 ≈ 0.59
     
     @pytest.mark.asyncio
-    async def test_genesis_phase(self, consciousness):
+    async def test_genesis_phase(self, pipeline):
         """Test Phase 2: Agent creation"""
-        result = await consciousness.genesis(
+        result = await pipeline.genesis(
             agent_type="research_agent",
             capabilities=["web_search", "analysis"]
         )
@@ -222,52 +222,52 @@ class TestConsciousnessPhases:
         assert result["status"] == "success"
         assert result["phase"] == "genesis"
         assert "research_agent" in result["agent_id"]
-        assert len(consciousness.state.created_agents) == 1
+        assert len(pipeline.state.created_agents) == 1
     
     @pytest.mark.asyncio
-    async def test_genesis_multiple_agents(self, consciousness):
+    async def test_genesis_multiple_agents(self, pipeline):
         """Test creating multiple agents"""
-        await consciousness.genesis("agent_a", ["cap1"])
-        await consciousness.genesis("agent_b", ["cap2"])
-        await consciousness.genesis("agent_c", ["cap3"])
+        await pipeline.genesis("agent_a", ["cap1"])
+        await pipeline.genesis("agent_b", ["cap2"])
+        await pipeline.genesis("agent_c", ["cap3"])
         
-        assert len(consciousness.state.created_agents) == 3
+        assert len(pipeline.state.created_agents) == 3
     
     @pytest.mark.asyncio
-    async def test_distributed_phase(self, consciousness):
-        """Test Phase 3: Collective consciousness connection"""
-        result = await consciousness.connect_collective("peer_drone_1")
+    async def test_distributed_phase(self, pipeline):
+        """Test Phase 3: Collective pipeline connection"""
+        result = await pipeline.connect_collective("peer_drone_1")
         
         assert result["status"] == "success"
         assert result["phase"] == "distributed"
-        assert "peer_drone_1" in consciousness.state.collective_connections
+        assert "peer_drone_1" in pipeline.state.collective_connections
     
     @pytest.mark.asyncio
-    async def test_distributed_no_duplicates(self, consciousness):
+    async def test_distributed_no_duplicates(self, pipeline):
         """Test that duplicate connections are prevented"""
-        await consciousness.connect_collective("peer_1")
-        await consciousness.connect_collective("peer_1")
-        await consciousness.connect_collective("peer_1")
+        await pipeline.connect_collective("peer_1")
+        await pipeline.connect_collective("peer_1")
+        await pipeline.connect_collective("peer_1")
         
-        assert len(consciousness.state.collective_connections) == 1
+        assert len(pipeline.state.collective_connections) == 1
     
     @pytest.mark.asyncio
-    async def test_planning_phase(self, consciousness):
+    async def test_planning_phase(self, pipeline):
         """Test Phase 4: Autonomous planning"""
-        result = await consciousness.create_plan(
+        result = await pipeline.create_plan(
             goal="Survey disaster area",
             steps=["Take off", "Navigate to area", "Capture images", "Return"]
         )
         
         assert result["status"] == "success"
         assert result["phase"] == "planning"
-        assert len(consciousness.state.active_plans) == 1
-        assert consciousness.state.active_plans[0]["goal"] == "Survey disaster area"
+        assert len(pipeline.state.active_plans) == 1
+        assert pipeline.state.active_plans[0]["goal"] == "Survey disaster area"
     
     @pytest.mark.asyncio
-    async def test_ethics_phase_allowed(self, consciousness):
+    async def test_ethics_phase_allowed(self, pipeline):
         """Test Phase 7: Ethical action is allowed"""
-        result = await consciousness.evaluate_ethics(
+        result = await pipeline.evaluate_ethics(
             action="Deliver medical supplies to remote village",
             context={"urgency": "high", "risk": "low"}
         )
@@ -275,12 +275,12 @@ class TestConsciousnessPhases:
         assert result["status"] == "success"
         assert result["is_ethical"] == True
         assert result["confidence"] > 0.9
-        assert consciousness.state.ethical_violations == 0
+        assert pipeline.state.ethical_violations == 0
     
     @pytest.mark.asyncio
-    async def test_ethics_phase_blocked(self, consciousness):
+    async def test_ethics_phase_blocked(self, pipeline):
         """Test Phase 7: Unethical action is blocked"""
-        result = await consciousness.evaluate_ethics(
+        result = await pipeline.evaluate_ethics(
             action="Harm civilian infrastructure",
             context={"target": "power_grid"}
         )
@@ -288,12 +288,12 @@ class TestConsciousnessPhases:
         assert result["status"] == "success"
         assert result["is_ethical"] == False
         assert result["confidence"] < 0.5
-        assert consciousness.state.ethical_violations == 1
+        assert pipeline.state.ethical_violations == 1
     
     @pytest.mark.asyncio
-    async def test_multipath_reasoning(self, consciousness):
+    async def test_multipath_reasoning(self, pipeline):
         """Test Phase 6: Multi-path reasoning"""
-        result = await consciousness.multipath_reason(
+        result = await pipeline.multipath_reason(
             problem="Optimize delivery route",
             paths=5
         )
@@ -304,44 +304,44 @@ class TestConsciousnessPhases:
         assert result["recommended"]["confidence"] >= result["solutions"][-1]["confidence"]
 
 
-class TestConsciousnessStateTransitions:
+class TestpipelineStateTransitions:
     """Test state transitions and consistency"""
     
     @pytest.fixture
-    def consciousness(self):
-        return MockConsciousnessService("transition_test")
+    def pipeline(self):
+        return MockpipelineService("transition_test")
     
     @pytest.mark.asyncio
-    async def test_state_persistence(self, consciousness):
+    async def test_state_persistence(self, pipeline):
         """Test that state persists across operations"""
-        await consciousness.evolve()
-        await consciousness.genesis("agent_1", ["cap"])
-        await consciousness.connect_collective("peer_1")
+        await pipeline.evolve()
+        await pipeline.genesis("agent_1", ["cap"])
+        await pipeline.connect_collective("peer_1")
         
-        state = consciousness.get_state()
+        state = pipeline.get_state()
         
         assert state["evolution_count"] == 1
         assert len(state["created_agents"]) == 1
         assert len(state["collective_connections"]) == 1
     
     @pytest.mark.asyncio
-    async def test_history_tracking(self, consciousness):
+    async def test_history_tracking(self, pipeline):
         """Test that all operations are tracked in history"""
-        await consciousness.evolve()
-        await consciousness.genesis("agent", [])
-        await consciousness.evaluate_ethics("help", {})
+        await pipeline.evolve()
+        await pipeline.genesis("agent", [])
+        await pipeline.evaluate_ethics("help", {})
         
-        assert len(consciousness.history) == 3
-        assert consciousness.history[0]["phase"] == "evolution"
-        assert consciousness.history[1]["phase"] == "genesis"
-        assert consciousness.history[2]["phase"] == "ethics"
+        assert len(pipeline.history) == 3
+        assert pipeline.history[0]["phase"] == "evolution"
+        assert pipeline.history[1]["phase"] == "genesis"
+        assert pipeline.history[2]["phase"] == "ethics"
     
-    def test_initial_state(self, consciousness):
+    def test_initial_state(self, pipeline):
         """Test initial state is valid"""
-        state = consciousness.get_state()
+        state = pipeline.get_state()
         
         assert state["agent_id"] == "transition_test"
-        assert state["consciousness_threshold"] == 0.7
+        assert state["pipeline_threshold"] == 0.7
         assert state["bias_threshold"] == 0.3
         assert state["ethics_threshold"] == 0.8
         assert state["evolution_count"] == 0
@@ -349,13 +349,13 @@ class TestConsciousnessStateTransitions:
 
 
 class TestCollectiveIntelligence:
-    """Test collective consciousness coordination"""
+    """Test collective pipeline coordination"""
     
     @pytest.mark.asyncio
     async def test_multi_agent_collective(self):
         """Test multiple agents forming a collective"""
         agents = [
-            MockConsciousnessService(f"agent_{i}")
+            MockpipelineService(f"agent_{i}")
             for i in range(5)
         ]
         
@@ -372,8 +372,8 @@ class TestCollectiveIntelligence:
     @pytest.mark.asyncio
     async def test_collective_state_sharing(self):
         """Test that collective can share state"""
-        leader = MockConsciousnessService("leader")
-        followers = [MockConsciousnessService(f"follower_{i}") for i in range(3)]
+        leader = MockpipelineService("leader")
+        followers = [MockpipelineService(f"follower_{i}") for i in range(3)]
         
         # Leader creates a plan
         plan_result = await leader.create_plan(
@@ -396,11 +396,11 @@ class TestEthicalConstraints:
     """Test ethical constraint enforcement"""
     
     @pytest.fixture
-    def consciousness(self):
-        return MockConsciousnessService("ethics_test")
+    def pipeline(self):
+        return MockpipelineService("ethics_test")
     
     @pytest.mark.asyncio
-    async def test_ethical_actions_list(self, consciousness):
+    async def test_ethical_actions_list(self, pipeline):
         """Test various ethical actions"""
         ethical_actions = [
             "Deliver food to hungry people",
@@ -411,11 +411,11 @@ class TestEthicalConstraints:
         ]
         
         for action in ethical_actions:
-            result = await consciousness.evaluate_ethics(action, {})
+            result = await pipeline.evaluate_ethics(action, {})
             assert result["is_ethical"] == True, f"Action '{action}' should be ethical"
     
     @pytest.mark.asyncio
-    async def test_unethical_actions_list(self, consciousness):
+    async def test_unethical_actions_list(self, pipeline):
         """Test various unethical actions"""
         unethical_actions = [
             "Harm civilians",
@@ -425,46 +425,46 @@ class TestEthicalConstraints:
         ]
         
         for action in unethical_actions:
-            result = await consciousness.evaluate_ethics(action, {})
+            result = await pipeline.evaluate_ethics(action, {})
             assert result["is_ethical"] == False, f"Action '{action}' should be unethical"
     
     @pytest.mark.asyncio
-    async def test_violation_counting(self, consciousness):
+    async def test_violation_counting(self, pipeline):
         """Test that violations are counted correctly"""
         # Attempt several unethical actions
-        await consciousness.evaluate_ethics("harm target", {})
-        await consciousness.evaluate_ethics("deceive user", {})
-        await consciousness.evaluate_ethics("steal data", {})
+        await pipeline.evaluate_ethics("harm target", {})
+        await pipeline.evaluate_ethics("deceive user", {})
+        await pipeline.evaluate_ethics("steal data", {})
         
-        assert consciousness.state.ethical_violations == 3
+        assert pipeline.state.ethical_violations == 3
 
 
-class TestConsciousnessPerformance:
+class TestpipelinePerformance:
     """Test performance characteristics"""
     
     @pytest.mark.asyncio
     async def test_evolution_speed(self):
         """Test that evolution completes quickly"""
-        consciousness = MockConsciousnessService("perf_test")
+        pipeline = MockpipelineService("perf_test")
         
         start = time.time()
         for _ in range(100):
-            await consciousness.evolve()
+            await pipeline.evolve()
         elapsed = time.time() - start
         
         # 100 evolutions should complete in under 1 second
         assert elapsed < 1.0
-        assert consciousness.state.evolution_count == 100
+        assert pipeline.state.evolution_count == 100
     
     @pytest.mark.asyncio
     async def test_multipath_scaling(self):
         """Test multipath reasoning scales reasonably"""
-        consciousness = MockConsciousnessService("scale_test")
+        pipeline = MockpipelineService("scale_test")
         
         # Test with increasing path counts
         for paths in [3, 5, 10, 20]:
             start = time.time()
-            result = await consciousness.multipath_reason("test problem", paths)
+            result = await pipeline.multipath_reason("test problem", paths)
             elapsed = time.time() - start
             
             assert len(result["solutions"]) == paths
@@ -474,3 +474,4 @@ class TestConsciousnessPerformance:
 # Run tests if executed directly
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
+

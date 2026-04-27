@@ -95,8 +95,8 @@ INFO:nis_protocol:🔄 Step 6/10: Initializing Learning Agent...
 INFO:nis_protocol:✅ Step 6/10: Learning Agent initialized
 INFO:nis_protocol:🔄 Step 7/10: Initializing Planning and Curiosity...
 INFO:nis_protocol:✅ Step 7/10: Planning and Curiosity initialized
-INFO:nis_protocol:🔄 Step 8/10: Initializing Consciousness Service...
-INFO:nis_protocol:✅ Step 8/10: 10-phase Consciousness Pipeline initialized
+INFO:nis_protocol:🔄 Step 8/10: Initializing pipeline Service...
+INFO:nis_protocol:✅ Step 8/10: 10-phase pipeline Pipeline initialized
 INFO:nis_protocol:🔄 Step 9/10: Initializing V4.0 Self-improving components...
 INFO:nis_protocol:✅ Step 9/10: V4.0 Self-improving components initialized
 INFO:nis_protocol:🔄 Step 10/10: Initializing multimodal agents and final components...
@@ -122,7 +122,7 @@ INFO:nis_protocol:🎉 NIS Protocol v4.0.1 READY FOR REQUESTS
 - LLM Provider: ✅ READY
 - Memory System: ✅ ENABLED
 - Agent Orchestrator: ✅ READY
-- Consciousness Service: ✅ 10-phase pipeline active
+- pipeline Service: ✅ 10-phase pipeline active
 - A2A Protocol: ✅ WebSocket support enabled
 
 ---
@@ -169,7 +169,7 @@ INFO:nis_protocol:🎉 NIS Protocol v4.0.1 READY FOR REQUESTS
 - ✅ Full observability
 
 **What This Is NOT**:
-- ❌ Not "AGI" - it's good engineering
+- ❌ Not "AI" - it's good engineering
 - ❌ Not "perfect" - Kafka still fails (expected)
 - ❌ Not "complete" - 20% TODOs remain (documented)
 
@@ -248,3 +248,4 @@ The memory system integration is **complete and operational**. The startup hang 
 ---
 
 **NIS Protocol v4.0.1 - FULLY OPERATIONAL** 🎉
+

@@ -244,5 +244,6 @@ pip install -r requirements.txt
 
 Questions? Open an issue or ping @Organica-Ai-Solutions
 
-**Built with honest engineering. No mocks. No hype. Just real AGI.**
+**Built with honest engineering. No mocks. No hype. Just real AI.**
+
 

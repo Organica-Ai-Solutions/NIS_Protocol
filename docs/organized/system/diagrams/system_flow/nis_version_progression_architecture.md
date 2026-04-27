@@ -83,13 +83,13 @@ graph TD
 
 ---
 
-## 🏛️ Version 3.0 - Consciousness-Driven Architecture
+## 🏛️ Version 3.0 - pipeline-Driven Architecture
 
 ```mermaid
 graph TD
     subgraph "NIS Protocol v3.0 - Foundation Release"
         A[Multimodal Interface<br/>WebSocket + REST] --> B[Advanced API Ecosystem<br/>Comprehensive Endpoints]
-        B --> CC[Consciousness Coordination<br/>Meta-Cognitive Layer]
+        B --> CC[pipeline Coordination<br/>Meta-Cognitive Layer]
         
         CC --> CA[System Monitor<br/>Health & Performance]
         CC --> CB[Decision Tracker<br/>Choice Quality]
@@ -106,10 +106,10 @@ graph TD
         
         D --> J[Enhanced Laplace<br/>Signal Processing]
         J --> K[Advanced KAN<br/>Symbolic AI]
-        K --> L[PINN Physics<br/>Consciousness-Aware]
+        K --> L[PINN Physics<br/>pipeline-Aware]
         
         L --> M[4-Provider LLM Pool<br/>OpenAI + Anthropic + Google + DeepSeek]
-        M --> N[Consciousness Router<br/>Intelligent Selection]
+        M --> N[pipeline Router<br/>Intelligent Selection]
         N --> O[Enhanced Response<br/>Meta-Cognitive Review]
         
         style CC fill:#f0f,stroke:#333,stroke-width:3px
@@ -119,7 +119,7 @@ graph TD
 ```
 
 ### Key Characteristics v3.0:
-- **Consciousness Framework**: Self-aware agent coordination
+- **pipeline Framework**: Self-aware agent coordination
 - **Multimodal Capabilities**: Image generation and vision analysis
 - **4 LLM Providers**: Added DeepSeek for mathematical reasoning
 - **Meta-Cognitive Processing**: Thinking about thinking
@@ -133,7 +133,7 @@ graph TD
 graph TD
     subgraph "NIS Protocol v3.1 - Real AI Integration"
         A[Real-Time Interface<br/>WebSocket Streaming] --> B[Enhanced API<br/>100% Real AI]
-        B --> CC[Real AI Consciousness<br/>Validated Processing]
+        B --> CC[Real AI pipeline<br/>Validated Processing]
         
         CC --> CA[Real AI Monitor<br/>Live Performance]
         CC --> CB[AI Decision Track<br/>Quality Scoring]
@@ -242,15 +242,15 @@ xychart-beta
 
 ---
 
-## 🧠 Consciousness Evolution Diagram
+## 🧠 pipeline Evolution Diagram
 
 ```mermaid
 graph LR
-    subgraph "Consciousness Evolution"
+    subgraph "pipeline Evolution"
         A[v1.0<br/>Basic Concepts] --> B[v2.0<br/>Mathematical Framework]
-        B --> C[v3.0<br/>Working Consciousness]
-        C --> D[v3.1<br/>Real AI Consciousness]
-        D --> E[v3.2<br/>Smart Content Consciousness]
+        B --> C[v3.0<br/>Working pipeline]
+        C --> D[v3.1<br/>Real AI pipeline]
+        D --> E[v3.2<br/>Smart Content pipeline]
         
         style A fill:#fcc,stroke:#333,stroke-width:2px
         style B fill:#fcf,stroke:#333,stroke-width:2px
@@ -260,12 +260,12 @@ graph LR
     end
 ```
 
-### Consciousness Milestones:
-- **v1.0**: Theoretical consciousness concepts
-- **v2.0**: Mathematical framework for consciousness
-- **v3.0**: Working consciousness implementation
-- **v3.1**: Real AI-validated consciousness
-- **v3.2**: Smart content-aware consciousness
+### pipeline Milestones:
+- **v1.0**: Theoretical pipeline concepts
+- **v2.0**: Mathematical framework for pipeline
+- **v3.0**: Working pipeline implementation
+- **v3.1**: Real AI-validated pipeline
+- **v3.2**: Smart content-aware pipeline
 
 ---
 
@@ -275,7 +275,7 @@ graph LR
 |---------|------|------|------|------|------|
 | **LLM Providers** | 1 | 3 | 4 | 5 | 5+ |
 | **Response Time** | 5.0s | 3.2s | 2.1s | 1.8s | 1.2s |
-| **Consciousness** | ❌ | 🔶 | ✅ | ✅ | ✅ |
+| **pipeline** | ❌ | 🔶 | ✅ | ✅ | ✅ |
 | **Image Generation** | ❌ | ❌ | 🔶 | 🔶 | ✅ |
 | **Multimodal** | ❌ | ❌ | 🔶 | ✅ | ✅ |
 | **Real AI** | 🔶 | 🔶 | ✅ | ✅ | ✅ |
@@ -292,13 +292,13 @@ graph LR
 
 ```mermaid
 graph TD
-    subgraph "NIS Protocol v4.0+ - AGI Foundation (Future)"
-        A[Universal Interface<br/>All Modalities] --> B[AGI Core<br/>Self-Modifying]
+    subgraph "NIS Protocol v4.0+ - AI Robotics Foundation (Future)"
+        A[Universal Interface<br/>All Modalities] --> B[AI Core<br/>Self-Modifying]
         B --> C[Autonomous Goal Generation<br/>Self-Directed Learning]
         
         C --> D[Emergent Intelligence<br/>Novel Behaviors]
         C --> E[Self-Rewriting Code<br/>Evolutionary Development]
-        C --> F[Universal Problem Solving<br/>AGI Capabilities]
+        C --> F[Universal Problem Solving<br/>AI Capabilities]
         
         D --> G[∞ Provider Network<br/>Universal AI Access]
         G --> H[Reality Synthesis<br/>Complete Understanding]
@@ -310,7 +310,7 @@ graph TD
 ```
 
 ### Future Vision:
-- **Artificial General Intelligence**: True AGI capabilities
+- **Artificial General Intelligence**: True AI capabilities
 - **Self-Modifying Architecture**: Autonomous system evolution
 - **Universal Problem Solving**: Beyond current AI limitations
 - **Reality Synthesis**: Complete understanding and generation
@@ -322,7 +322,7 @@ graph TD
 ### Version-Specific Architecture Guides
 - **[v1.0 Architecture](../../v1.0/README.md)** - Foundation and proof of concept
 - **[v2.0 Architecture](../../v2.0/README.md)** - Advanced features and mathematical framework
-- **[v3.0 Architecture](../../v3.0/README.md)** - Consciousness-driven production system
+- **[v3.0 Architecture](../../v3.0/README.md)** - pipeline-driven production system
 - **[v3.1 Architecture](../../v3.1/README.md)** - Real AI integration and optimization
 - **[v3.2 Architecture](../../v3.2/README.md)** - Smart multimodal intelligence
 
@@ -333,7 +333,7 @@ graph TD
 
 ---
 
-*The NIS Protocol architecture has evolved from a simple proof-of-concept to a sophisticated, consciousness-driven AI system capable of smart content classification, multimodal intelligence, and revolutionary user experience. Each version has built upon the foundation of the previous, creating a truly revolutionary AI system.*
+*The NIS Protocol architecture has evolved from a simple proof-of-concept to a sophisticated, pipeline-driven AI system capable of smart content classification, multimodal intelligence, and revolutionary user experience. Each version has built upon the foundation of the previous, creating a truly revolutionary AI system.*
 
 **Current Version**: v3.2.0  
 **Next Evolution**: v3.3 Real-Time Collaboration (Q2 2025)

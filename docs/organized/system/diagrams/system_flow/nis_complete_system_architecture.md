@@ -55,8 +55,8 @@ graph TB
     end
     
     subgraph "Cognitive Architecture"
-        subgraph "Consciousness Layer"
-            CA[Consciousness Agent<br/>💭 Self-Awareness]
+        subgraph "pipeline Layer"
+            CA[pipeline Agent<br/>💭 Self-Awareness]
             MCP[Meta-Cognitive Processor<br/>🧠 System Reflection]
             IC[Introspection Manager<br/>👁️ Internal Monitoring (implemented in src/monitoring/) (see src/Monitoring (implemented in src/monitoring/)/)]
         end
@@ -236,7 +236,7 @@ graph TB
 | **Client Layer** | Web, API, CLI | Low | Standard web technologies |
 | **Gateway** | Load Balancer, Auth, Rate Limiting | Medium | Infrastructure services |
 | **Intelligence Pipeline** | 20+ specialized agents | High | Custom neural networks |
-| **Cognitive Architecture** | Consciousness, Executive, Learning | High | Inter-agent communication |
+| **Cognitive Architecture** | pipeline, Executive, Learning | High | Inter-agent communication |
 | **Memory Management** | Short/Long-term, Vector storage | Medium | Database systems |
 
 ### **🏗️ Infrastructure Requirements**
@@ -296,7 +296,7 @@ graph LR
 4. **LLM Integration**: Language model coordination
 
 ### **🎯 Phase 3: Cognitive Architecture**
-1. **Consciousness Layer**: Self-awareness and meta-cognition
+1. **pipeline Layer**: Self-awareness and meta-cognition
 2. **Executive Control**: Decision making and coordination
 3. **Learning Systems**: Adaptation and neuroplasticity
 4. **Memory Management**: Knowledge consolidation

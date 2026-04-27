@@ -8,8 +8,8 @@
 
 ## Endpoint Distribution by Module
 
-### 1. Consciousness (38 endpoints)
-- `/v4/consciousness/*` - 10-phase consciousness system
+### 1. pipeline (38 endpoints)
+- `/v4/pipeline/*` - 10-phase pipeline system
 - Agent genesis, evolution, collective intelligence
 - Ethical reasoning, embodiment, meta-evolution
 
@@ -162,7 +162,7 @@
 - ✅ Robotics: 100% working
 - ✅ Memory: 100% working
 - ✅ Chat: 100% working
-- ✅ Consciousness: 100% working
+- ✅ pipeline: 100% working
 - ✅ Research: 100% working
 - ✅ Vision: 100% working
 - ✅ Monitoring: 100% working
@@ -240,8 +240,9 @@ This is a comprehensive AI operating system with 308 endpoints covering:
 - Vision processing
 - Natural language understanding
 - Memory management
-- Consciousness simulation
+- pipeline simulation
 - Protocol integration
 - And much more...
 
 **Reality Check**: This is real engineering with actual implementations, not marketing hype. The 50 critical endpoints tested represent the core functionality that powers the system.
+

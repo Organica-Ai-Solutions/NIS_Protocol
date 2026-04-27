@@ -387,7 +387,7 @@ resources:
 curl https://your-domain.com/infrastructure/status
 
 # Test each phase
-curl -X POST https://your-domain.com/v4/consciousness/evolve?reason=smoke_test
+curl -X POST https://your-domain.com/v4/pipeline/evolve?reason=smoke_test
 
 # Check metrics
 curl https://your-domain.com/metrics
@@ -494,3 +494,4 @@ psql -c "SELECT count(*) FROM pg_stat_activity;"
 - Then ask for help
 
 **This is honest deployment documentation. Follow it and you'll have a solid production system.**
+

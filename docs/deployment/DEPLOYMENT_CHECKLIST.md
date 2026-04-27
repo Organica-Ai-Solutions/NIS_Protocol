@@ -5,7 +5,7 @@
 ### System Components (All at 100%)
 - [x] **Infrastructure**: 6/6 Docker containers healthy
 - [x] **Embodiment**: Robotics, Vision, Data agents operational
-- [x] **Consciousness**: All features working with rich data
+- [x] **pipeline**: All features working with rich data
 - [x] **Dashboard**: Complete system monitoring endpoint
 - [x] **Evolution**: Real parameter changes with statistics
 - [x] **Code Runner**: Python execution verified working
@@ -15,7 +15,7 @@
 - [x] Autonomous Planning (multi-step execution)
 - [x] Multipath Reasoning (3 parallel paths)
 - [x] Ethics Evaluation (multi-framework analysis)
-- [x] Collective Consciousness (peer management)
+- [x] Collective pipeline (peer management)
 - [x] Code Execution (secure sandboxed environment)
 - [x] TMR Redundancy (5 sensors, 3 watchdogs)
 - [x] YOLO Vision (standard + WALDO drone detection)
@@ -84,10 +84,10 @@ curl http://localhost:8000/v4/dashboard/complete | jq '.dashboard.system_health'
 ### 4. Test Critical Endpoints
 ```bash
 # Robotics
-curl http://localhost:8000/v4/consciousness/embodiment/robotics/info
+curl http://localhost:8000/v4/pipeline/embodiment/robotics/info
 
 # Vision
-curl http://localhost:8000/v4/consciousness/embodiment/vision/detect
+curl http://localhost:8000/v4/pipeline/embodiment/vision/detect
 
 # Code execution
 curl -X POST http://localhost:8001/execute \
@@ -147,7 +147,7 @@ docker-compose logs -f
 ### Metrics to Monitor
 - **System Health**: Container status, uptime
 - **Agent Availability**: Robotics, Vision, Data
-- **Consciousness Metrics**: Thresholds, evolutions
+- **pipeline Metrics**: Thresholds, evolutions
 - **Performance**: Response times, active conversations
 - **Operations**: Active plans, multipath states
 - **Events**: Recent activity timeline
@@ -212,7 +212,7 @@ docker stats
 ```bash
 # Create multiple agents rapidly
 for i in {1..20}; do
-  curl -X POST "http://localhost:8000/v4/consciousness/genesis?capability=test_$i" &
+  curl -X POST "http://localhost:8000/v4/pipeline/genesis?capability=test_$i" &
 done
 wait
 
@@ -263,11 +263,11 @@ docker-compose restart backend nginx
 ## 📋 Post-Deployment Verification
 
 ### Functional Tests
-- [ ] Create agent via `/v4/consciousness/genesis`
-- [ ] Trigger evolution via `/v4/consciousness/evolve`
+- [ ] Create agent via `/v4/pipeline/genesis`
+- [ ] Trigger evolution via `/v4/pipeline/evolve`
 - [ ] Execute code via runner endpoint
 - [ ] Start multipath reasoning
-- [ ] Register peer for collective consciousness
+- [ ] Register peer for collective pipeline
 - [ ] Create autonomous plan
 - [ ] Evaluate ethics
 - [ ] Check redundancy status
@@ -332,3 +332,4 @@ curl https://your-domain.com/v4/dashboard/complete
 ---
 
 **All components tested and verified. System ready for production deployment.**
+

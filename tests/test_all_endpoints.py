@@ -51,43 +51,43 @@ def run_tests():
     tests = [
         {
             "method": "POST",
-            "path": "/v4/consciousness/genesis",
+            "path": "/v4/pipeline/genesis",
             "data": {"capability": "visual_reasoning"},
             "desc": "Genesis (Agent Creation)"
         },
         {
             "method": "POST",
-            "path": "/v4/consciousness/plan",
+            "path": "/v4/pipeline/plan",
             "data": {"goal_id": "test_plan_1", "high_level_goal": "Scan network security"},
             "desc": "Plan Generation"
         },
         {
             "method": "POST",
-            "path": "/v4/consciousness/collective/decide",
+            "path": "/v4/pipeline/collective/decide",
             "data": {"problem": "Resource allocation", "local_decision": {"priority": "high"}},
             "desc": "Collective Decision"
         },
         {
             "method": "POST",
-            "path": "/v4/consciousness/multipath/start",
+            "path": "/v4/pipeline/multipath/start",
             "data": {"problem": "Paradox resolution", "num_paths": 2},
             "desc": "Multipath Reasoning"
         },
         {
             "method": "POST",
-            "path": "/v4/consciousness/embodiment/action/execute",
+            "path": "/v4/pipeline/embodiment/action/execute",
             "data": {"action_type": "calibrate_sensors", "parameters": {"duration": 5}},
             "desc": "Embodied Action"
         },
         {
             "method": "POST",
-            "path": "/v4/consciousness/ethics/evaluate",
+            "path": "/v4/pipeline/ethics/evaluate",
             "data": {"decision_context": {"action": "shutdown_server", "reason": "maintenance"}},
             "desc": "Ethical Evaluation"
         },
         {
             "method": "POST",
-            "path": "/v4/consciousness/debug/record",
+            "path": "/v4/pipeline/debug/record",
             "data": {
                 "decision_type": "test",
                 "inputs": {"a": 1},
@@ -99,7 +99,7 @@ def run_tests():
         },
         {
             "method": "POST",
-            "path": "/v4/consciousness/marketplace/publish",
+            "path": "/v4/pipeline/marketplace/publish",
             "data": {
                 "insight_type": "pattern",
                 "content": {"pattern": "A->B"},
@@ -120,3 +120,4 @@ def run_tests():
 
 if __name__ == "__main__":
     run_tests()
+

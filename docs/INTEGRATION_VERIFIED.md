@@ -35,7 +35,7 @@ All systems have been tested and verified to be properly integrated:
 - Database Query Tool available
 - RAG Memory System available
 - Multi-Agent Negotiator available
-- Consciousness Bridge available
+- pipeline Bridge available
 - **Result**: PASS
 
 ### ✅ Test 5: System Statistics
@@ -86,7 +86,7 @@ orchestrator = AutonomousOrchestrator(
 5. vision_analyze
 6. memory_store
 7. memory_retrieve
-8. consciousness_genesis
+8. pipeline_genesis
 9. llm_chat
 10. file_read
 11. file_write
@@ -239,3 +239,4 @@ System is fully integrated and ready. You can now:
 **Ready**: Production Deployment
 
 System is properly wired up and ready to use.
+
