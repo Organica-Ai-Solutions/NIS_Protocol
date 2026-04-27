@@ -1,0 +1,6 @@
+services:
+  backend:
+    volumes:
+      - ./routes:/home/nisuser/app/routes
+      - ./src:/home/nisuser/app/src
+      - ./main.py:/home/nisuser/app/main.py

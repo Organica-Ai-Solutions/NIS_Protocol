@@ -405,6 +405,7 @@ async def health_check():
             "status": "healthy",
             "version": "4.0.1",
             "timestamp": time.time(),
+            "uptime_seconds": time.time() - getattr(router, '_start_time', time.time()),
             "provider": provider_names,
             "model": models,
             "real_ai": provider_names,
@@ -433,3 +434,5 @@ def set_dependencies(
     router._conversation_memory = conversation_memory or {}
     router._agent_registry = agent_registry or {}
     router._tool_registry = tool_registry or {}
+    if not hasattr(router, '_start_time'):
+        router._start_time = time.time()

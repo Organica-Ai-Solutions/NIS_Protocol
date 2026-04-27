@@ -111,13 +111,24 @@ from .core import router as core_router, set_dependencies as set_core_dependenci
 from .isaac import router as isaac_router
 from .hub_gateway import router as hub_gateway_router
 from .autonomous import router as autonomous_router, set_dependencies as set_autonomous_dependencies
+from .skills import router as skills_router
+from .openclaw import router as openclaw_router
+try:
+    from .openfang import router as openfang_router
+except ImportError:
+    openfang_router = None
+from .neurokernel import router as neurokernel_router
+from .events import router as events_router
+from .prototype import router as prototype_router
 
-# NVIDIA Cosmos and GR00T (optional - loaded dynamically)
+# NVIDIA Cosmos, Cookoff, and GR00T (optional - loaded dynamically)
 try:
     from .cosmos import router as cosmos_router
+    from .cookoff import router as cookoff_router
     from .humanoid import router as humanoid_router
 except ImportError:
     cosmos_router = None
+    cookoff_router = None
     humanoid_router = None
 
 __all__ = [
@@ -148,6 +159,14 @@ __all__ = [
     "isaac_router",
     "hub_gateway_router",
     "autonomous_router",
+    "skills_router",
+    "openclaw_router",
+    "openfang_router",
+    "neurokernel_router",
+    "events_router",
+    "prototype_router",
+    "cosmos_router",
+    "cookoff_router",
     # Dependency setters
     "set_bitnet_trainer",
     "set_monitoring_dependencies",

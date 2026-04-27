@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' http: https: data: blob: 'unsafe-inline'; connect-src 'self' ws: wss: http: https:; script-src 'self' 'unsafe-inline' 'unsafe-eval';">
-    <title>NIS Protocol v3.2 - VibeVoice Chat Console</title>
+    <title>NIS Protocol v4.0.1 - VibeVoice Chat Console</title>
     
     <!-- Include marked.js for Markdown parsing -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -452,7 +452,8 @@
             margin-bottom: 10px;
         }
 
-        select, input[type="text"] {
+        /* Scoped to .controls only — prevents green bleed into modal form inputs */
+        .controls select, .controls input[type="text"], .quick-commands select {
             background: rgba(0, 0, 0, 0.8);
             border: 1px solid #00ff00;
             color: #00ff00;
@@ -462,10 +463,14 @@
             font-size: 12px;
         }
 
-        select:focus, input[type="text"]:focus, textarea:focus {
+        .controls select:focus, .controls input[type="text"]:focus {
             outline: none;
             border-color: #66ff66;
             box-shadow: 0 0 5px #00ff00;
+        }
+
+        textarea:focus {
+            outline: none;
         }
 
         textarea {
@@ -650,12 +655,12 @@
         }
 
         ::-webkit-scrollbar-thumb {
-            background: #00ff00;
+            background: #1e4d2b;
             border-radius: 4px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: #66ff66;
+            background: #2d7a40;
         }
         
         /* New Response Formatting Styles */
@@ -945,13 +950,15 @@
         }
         
         .message.system {
-            background: linear-gradient(135deg, #0f766e, #059669);
+            background: linear-gradient(135deg, rgba(15, 118, 110, 0.4), rgba(5, 150, 105, 0.3));
             border-left: 4px solid #34d399;
+            color: #6ee7b7;
         }
         
         .message.error {
-            background: linear-gradient(135deg, #0c4a6e, #075985);
-            border-left: 4px solid #0ea5e9;
+            background: linear-gradient(135deg, rgba(127, 29, 29, 0.6), rgba(153, 27, 27, 0.4));
+            border-left: 4px solid #ef4444;
+            color: #fca5a5;
         }
         
         /* Enhanced Response Mode Styling */
@@ -1868,7 +1875,7 @@
             <div class="status-item">
                 <span id="dev-status" style="color: #3b82f6;">Development Mode</span>
             </div>
-            <a href="/chat/formatted" class="nav-button">
+            <a href="/static/modern_chat.html" class="nav-button">
                 ✨ Modern Chat UI
             </a>
             <button id="toggleDevTools" class="nav-button" style="margin-left: 8px; background-color: #2a2a2a; cursor: pointer;">
@@ -1890,7 +1897,7 @@
                 <select id="endpointSelect" style="flex: 1; background-color: #2a2a2a; color: white; border: 1px solid #374151; border-radius: 4px; padding: 6px;">
                     <option value="/chat">Standard Chat</option>
                     <option value="/chat/stream" selected>Streaming Chat</option>
-                    <option value="/chat/formatted">Formatted Chat</option>
+                    <option value="/chat/reflective">Reflective Chat</option>
                 </select>
                 <button id="testEndpoint" style="background-color: #3b82f6; color: white; border: none; border-radius: 4px; padding: 6px 12px; cursor: pointer;">Test</button>
             </div>
@@ -1950,7 +1957,7 @@
             </div>
         </div>
         <div style="color: #64748b;">
-            Powered by NIS Protocol v3.2.1
+            Powered by NIS Protocol v4.0.1
         </div>
     </div>
 
@@ -2269,7 +2276,7 @@
                                     .trim();
                 
                 // Synthesize speech using VibeVoice
-                const response = await fetch('/communication/synthesize', {
+                const response = await fetch('/communication/consciousness_voice', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -2954,7 +2961,7 @@
                 const includeVisuals = safeGetElement('includeVisuals')?.checked || false;
                 const showConfidence = safeGetElement('showConfidence')?.checked || true;
                 
-                let endpoint = '/chat/formatted';
+                let endpoint = '/chat';
                 let requestData = {
                     message: message,
                     user_id: safeGetElement('userId')?.value || 'demo_user',
@@ -3158,14 +3165,14 @@
             addMessage('system', '🎨 Testing Vision Analysis Endpoint...', {});
             
             try {
-                const response = await fetch('/agents/consciousness/analyze', {
+                const response = await fetch('/vision/analyze', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
                         image_data: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
                         analysis_type: "comprehensive",
                         provider: "auto",
-                        context: "Testing NIS Protocol v3.2 vision capabilities"
+                        context: "Testing NIS Protocol v4.0.1 vision capabilities"
                     })
                 });
                 
@@ -3188,7 +3195,7 @@
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
-                        document_data: "Sample academic paper content for testing NIS Protocol v3.2 document processing capabilities.",
+                        document_data: "Sample academic paper content for testing NIS Protocol v4.0.1 document processing capabilities.",
                         document_type: "academic_paper",
                         processing_mode: "comprehensive",
                         extract_images: true,
@@ -3331,7 +3338,7 @@
                 reader.onload = async function(e) {
                     const base64Data = e.target.result.split(',')[1];
                     
-                    const response = await fetch('/agents/consciousness/analyze', {
+                    const response = await fetch('/vision/analyze', {
                         method: 'POST',
                         headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify({
@@ -3524,7 +3531,7 @@
                         data: {
                             diagram_type: 'pipeline',
                             data: {
-                                title: 'NIS Protocol v3 Processing Pipeline'
+                                title: 'NIS Protocol v4.0.1 Processing Pipeline'
                             },
                             style: 'scientific'
                         }
@@ -3897,7 +3904,7 @@
             addMessage('system', `🎨 Creating your beautiful image with ${provider === 'google' ? 'Google Gemini 2.0' : provider === 'kimi' ? 'Kimi K2' : provider === 'openai' ? 'DALL-E' : provider}...`, {});
             
             try {
-                const response = await fetch('/nvidia/nemo/cosmos/demo', {
+                const response = await fetch('/nvidia/nemo/orchestrate', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
@@ -3936,7 +3943,7 @@
             addMessage('system', '🎨 Testing AI Image Generation Endpoint...', {});
             
             try {
-                const response = await fetch('/nvidia/nemo/cosmos/demo', {
+                const response = await fetch('/nvidia/nemo/orchestrate', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
@@ -3979,7 +3986,7 @@ ${JSON.stringify(result, null, 2)}`;
 
         function showEndpointDemo() {
             const endpointInfo = `
-🚀 NIS Protocol v3.2 - Enhanced API Endpoints
+🚀 NIS Protocol v4.0.1 - Enhanced API Endpoints
 
 📊 MULTIMODAL & RESEARCH APIs:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -4020,7 +4027,7 @@ ${JSON.stringify(result, null, 2)}`;
             addMessage('system', endpointInfo, {
                 format: 'documentation',
                 endpoint_count: 12,
-                version: 'v3.2'
+                version: 'v4.0.1'
             });
         }
 
@@ -4737,8 +4744,8 @@ This represents a **breakthrough in artificial intelligence** with measurable, r
             
             try {
                 // Start monitoring
-                const startResponse = await fetch('/status', {
-                    method: 'POST',
+                const startResponse = await fetch('/health', {
+                    method: 'GET',
                     headers: { 'Content-Type': 'application/json' }
                 });
                 
@@ -4861,7 +4868,7 @@ This represents a **breakthrough in artificial intelligence** with measurable, r
                 }
                 
                 try {
-                    const response = await fetch('/status');
+                    const response = await fetch('/health');
                     if (response.ok) {
                         const result = await response.json();
                         updateDashboard(dashboardId, result);
@@ -4917,11 +4924,6 @@ This represents a **breakthrough in artificial intelligence** with measurable, r
                     pipelineMetricsInterval = null;
                 }
                 
-                const response = await fetch('/status', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' }
-                });
-                
                 const statusEl = safeGetElement(dashboardId + '-status');
                 if (statusEl) {
                     statusEl.innerHTML = '<strong>Status:</strong> <span style="color: #dc2626;">● MONITORING STOPPED</span>';
@@ -4936,7 +4938,7 @@ This represents a **breakthrough in artificial intelligence** with measurable, r
         
         async function refreshPipelineData(dashboardId) {
             try {
-                const response = await fetch('/pipeline/metrics?time_range=1h');
+                const response = await fetch('/metrics');
                 if (response.ok) {
                     const result = await response.json();
                     updateDashboard(dashboardId, result);
@@ -5347,7 +5349,7 @@ Examples:
                     border-radius: 0;
                 ">
                     <div id="terminalOutput">
-                        <div style="color: #00ff41;">NIS Protocol v3.2 - Secure Terminal</div>
+                        <div style="color: #00ff41;">NIS Protocol v4.0.1 - Secure Terminal</div>
                         <div style="color: #808080;">Type 'help' for available commands</div>
                         <div style="color: #808080;">⚠️ Only allowlisted commands permitted</div>
                         <br>
@@ -5397,7 +5399,7 @@ Examples:
 
         function clearTerminal() {
             document.getElementById('terminalOutput').innerHTML = `
-                <div style="color: #00ff41;">NIS Protocol v3.2 - Secure Terminal</div>
+                <div style="color: #00ff41;">NIS Protocol v4.0.1 - Secure Terminal</div>
                 <div style="color: #808080;">Type 'help' for available commands</div>
                 <div style="color: #808080;">⚠️ Only allowlisted commands permitted</div>
                 <br>
@@ -5457,8 +5459,8 @@ Examples:
                     args = { filepath: filepath };
                 }
 
-                // Execute via /tools/run endpoint
-                const response = await fetch('/api/langgraph/invoke', {
+                // Execute via /api/mcp/invoke endpoint
+                const response = await fetch('/api/mcp/invoke', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -6723,7 +6725,7 @@ print("First 10 Fibonacci numbers:", result)
 print("Sum:", sum(result))`;
             
             try {
-                const response = await fetch('/execute/code', {
+                const response = await fetch('/execute', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({

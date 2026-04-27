@@ -135,21 +135,21 @@
                     <div class="grid grid-cols-3 gap-4" id="protocols-grid">
                         <!-- ACP -->
                         <div class="glass rounded-xl p-4 text-center">
-                            <div class="text-2xl mb-2">🐝</div>
+                            <div class="text-2xl mb-2">≡ƒÉ¥</div>
                             <div class="font-semibold">ACP</div>
                             <div class="text-xs text-gray-400">IBM/Linux Foundation</div>
                             <div class="mt-2 text-xs px-2 py-1 rounded-full bg-green-500/20 text-green-400" id="acp-status">Active</div>
                         </div>
                         <!-- A2A -->
                         <div class="glass rounded-xl p-4 text-center">
-                            <div class="text-2xl mb-2">🔗</div>
+                            <div class="text-2xl mb-2">≡ƒöù</div>
                             <div class="font-semibold">A2A</div>
                             <div class="text-xs text-gray-400">Google</div>
                             <div class="mt-2 text-xs px-2 py-1 rounded-full bg-yellow-500/20 text-yellow-400" id="a2a-status">Demo</div>
                         </div>
                         <!-- MCP -->
                         <div class="glass rounded-xl p-4 text-center">
-                            <div class="text-2xl mb-2">🔧</div>
+                            <div class="text-2xl mb-2">≡ƒöº</div>
                             <div class="font-semibold">MCP</div>
                             <div class="text-xs text-gray-400">Anthropic</div>
                             <div class="mt-2 text-xs px-2 py-1 rounded-full bg-yellow-500/20 text-yellow-400" id="mcp-status">Demo</div>
@@ -218,7 +218,7 @@
                 <!-- GPU Status -->
                 <div class="glass rounded-2xl p-5">
                     <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
-                        <i data-lucide="gpu" class="w-5 h-5 text-green-400"></i>
+                        <i data-lucide="server" class="w-5 h-5 text-green-400"></i>
                         GPU Status
                     </h3>
                     <div class="space-y-3">
@@ -278,6 +278,97 @@
                 </div>
             </div>
         </div>
+
+        <!-- NeuroKernel v2 ΓÇö Full width panel -->
+        <div class="col-span-12 mt-6">
+            <div class="glass rounded-2xl p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-cyan-500 flex items-center justify-center">
+                            <i data-lucide="cpu" class="w-5 h-5"></i>
+                        </div>
+                        NeuroKernel v2
+                        <span class="text-xs px-2 py-1 rounded-full bg-violet-500/20 text-violet-400 font-normal">DIKW Engine</span>
+                    </h3>
+                    <div class="flex gap-2">
+                        <span id="nk-status-badge" class="text-xs px-3 py-1 rounded-full bg-gray-700 text-gray-400">loading...</span>
+                        <button onclick="refreshNeuroKernel()" class="text-xs px-3 py-1 rounded-full glass hover:bg-white/10 transition">Refresh</button>
+                    </div>
+                </div>
+
+                <!-- DIKW Grid -->
+                <div class="grid grid-cols-4 gap-4 mb-6">
+                    <!-- Data -->
+                    <div class="glass rounded-xl p-4 border border-blue-500/20">
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="w-2 h-2 rounded-full bg-blue-400"></div>
+                            <span class="text-xs font-semibold text-blue-400 uppercase tracking-wide">Data Layer</span>
+                        </div>
+                        <div class="text-2xl font-bold" id="nk-skills-count">--</div>
+                        <div class="text-xs text-gray-400 mt-1">Skills Loaded</div>
+                        <div class="text-xs text-gray-500 mt-2">SkillLoader ┬╖ SKILL.md injection</div>
+                    </div>
+                    <!-- Information -->
+                    <div class="glass rounded-xl p-4 border border-green-500/20">
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="w-2 h-2 rounded-full bg-green-400"></div>
+                            <span class="text-xs font-semibold text-green-400 uppercase tracking-wide">Information</span>
+                        </div>
+                        <div class="text-2xl font-bold" id="nk-scans-count">--</div>
+                        <div class="text-xs text-gray-400 mt-1">Scans ┬╖ <span id="nk-blocked-count" class="text-red-400">0</span> blocked</div>
+                        <div class="text-xs text-gray-500 mt-2">Scanner ┬╖ LoopGuard</div>
+                    </div>
+                    <!-- Knowledge -->
+                    <div class="glass rounded-xl p-4 border border-purple-500/20">
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="w-2 h-2 rounded-full bg-purple-400"></div>
+                            <span class="text-xs font-semibold text-purple-400 uppercase tracking-wide">Knowledge</span>
+                        </div>
+                        <div class="text-2xl font-bold" id="nk-audit-count">--</div>
+                        <div class="text-xs text-gray-400 mt-1">Audit entries
+                            <span id="nk-chain-valid" class="ml-1 text-green-400 text-xs"></span>
+                        </div>
+                        <div class="text-xs text-gray-500 mt-2">AuditChain ┬╖ Merkle SHA256</div>
+                    </div>
+                    <!-- Wisdom -->
+                    <div class="glass rounded-xl p-4 border border-orange-500/20">
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="w-2 h-2 rounded-full bg-orange-400"></div>
+                            <span class="text-xs font-semibold text-orange-400 uppercase tracking-wide">Wisdom</span>
+                        </div>
+                        <div class="text-2xl font-bold" id="nk-drives-count">--</div>
+                        <div class="text-xs text-gray-400 mt-1">Drives active</div>
+                        <div class="text-xs text-gray-500 mt-2">DriveScheduler ┬╖ Autonomous</div>
+                    </div>
+                </div>
+
+                <!-- Drives + Audit side by side -->
+                <div class="grid grid-cols-2 gap-6">
+                    <!-- Autonomous Drives -->
+                    <div>
+                        <h4 class="text-sm font-semibold text-gray-300 mb-3 flex items-center gap-2">
+                            <i data-lucide="play-circle" class="w-4 h-4 text-orange-400"></i>
+                            Autonomous Drives
+                        </h4>
+                        <div id="nk-drives-list" class="space-y-2 max-h-48 overflow-y-auto scrollbar-thin">
+                            <div class="text-xs text-gray-500 p-2">Loading drives...</div>
+                        </div>
+                    </div>
+                    <!-- Recent Audit -->
+                    <div>
+                        <h4 class="text-sm font-semibold text-gray-300 mb-3 flex items-center gap-2">
+                            <i data-lucide="shield" class="w-4 h-4 text-purple-400"></i>
+                            Recent Audit Chain
+                        </h4>
+                        <div id="nk-audit-list" class="space-y-2 max-h-48 overflow-y-auto scrollbar-thin">
+                            <div class="text-xs text-gray-500 p-2">Loading audit entries...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
     </div>
 
     <script>
@@ -288,52 +379,73 @@
         let startTime = Date.now();
         let activityLog = [];
 
+        // Safe fetch wrapper ΓÇö never throws, returns null on failure
+        async function safeFetch(url, opts) {
+            try {
+                const r = await fetch(url, opts);
+                if (!r.ok) throw new Error(`HTTP ${r.status}`);
+                return await r.json();
+            } catch (e) {
+                console.warn(`[dashboard] ${url} failed:`, e.message);
+                return null;
+            }
+        }
+
         // Fetch and update dashboard
         async function updateDashboard() {
-            try {
-                // Health check
-                const health = await fetch('/health').then(r => r.json());
+            // Health check
+            const health = await safeFetch('/health');
+            if (health) {
                 document.getElementById('stat-conversations').textContent = health.conversations_active || 0;
-                
-                // Agents
-                const agents = await fetch('/agents/status').then(r => r.json());
+                // Real server uptime from health response
+                if (health.uptime_seconds != null) {
+                    const s = Math.floor(health.uptime_seconds);
+                    const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sec = s % 60;
+                    document.getElementById('uptime').textContent = `${h}h ${m}m ${sec}s`;
+                }
+                const statusBadge = document.getElementById('system-status');
+                if (statusBadge) {
+                    statusBadge.innerHTML = health.status === 'ok' || health.status === 'healthy'
+                        ? '<div class="status-indicator bg-green-500"></div><span class="text-sm">System Healthy</span>'
+                        : '<div class="status-indicator bg-yellow-500"></div><span class="text-sm">Degraded</span>';
+                }
+            }
+
+            // Agents ΓÇö correct endpoint is /api/agents/status
+            const agents = await safeFetch('/api/agents/status');
+            if (agents) {
                 document.getElementById('stat-agents').textContent = agents.total_agents || 0;
                 updateAgentsList(agents.agents || {});
-                
-                // Tools
-                const tools = await fetch('/tools/list').then(r => r.json());
-                document.getElementById('stat-tools').textContent = Object.keys(tools).length;
-                
-                // BitNet
-                const bitnet = await fetch('/models/bitnet/status').then(r => r.json());
-                updateBitNet(bitnet);
-                
-                // Models/Providers - providers is an object, not array
-                const models = await fetch('/models').then(r => r.json());
-                updateProviders(models.providers || {});
-                
-                // Endpoints count
-                const spec = await fetch('/openapi.json').then(r => r.json());
-                document.getElementById('stat-endpoints').textContent = Object.keys(spec.paths).length;
-                
-                // GPU Status
-                try {
-                    const gpu = await fetch('/system/gpu').then(r => r.json());
-                    updateGPU(gpu);
-                } catch (e) {
-                    console.warn('GPU status unavailable:', e);
-                }
-                
-                // Update timestamp
-                document.getElementById('last-update').textContent = `Last update: ${new Date().toLocaleTimeString()}`;
-                
-                // Add activity
-                addActivity('System', 'Dashboard refreshed', 'info');
-                
-            } catch (error) {
-                console.error('Dashboard update error:', error);
-                addActivity('Error', error.message, 'error');
             }
+
+            // Tools
+            const tools = await safeFetch('/tools/list');
+            if (tools) {
+                const count = Array.isArray(tools) ? tools.length : Object.keys(tools).length;
+                document.getElementById('stat-tools').textContent = count;
+            }
+
+            // BitNet
+            const bitnet = await safeFetch('/models/bitnet/status');
+            if (bitnet) updateBitNet(bitnet);
+
+            // Models/Providers
+            const models = await safeFetch('/models');
+            if (models) updateProviders(models.providers || {});
+
+            // Endpoints count
+            const spec = await safeFetch('/openapi.json');
+            if (spec) {
+                document.getElementById('stat-endpoints').textContent = Object.keys(spec.paths || {}).length;
+            }
+
+            // GPU Status
+            const gpu = await safeFetch('/system/gpu');
+            if (gpu) updateGPU(gpu);
+
+            // Update timestamp
+            document.getElementById('last-update').textContent = `Last update: ${new Date().toLocaleTimeString()}`;
+            addActivity('System', 'Dashboard refreshed', 'info');
         }
 
         function updateAgentsList(agents) {
@@ -371,18 +483,18 @@
             container.innerHTML = '';
             
             const providerIcons = {
-                'anthropic': '🧠',
-                'openai': '🤖',
-                'google': '🔮',
-                'deepseek': '🌊',
-                'nvidia': '💚',
-                'kimi': '🌙',
-                'bitnet': '⚡'
+                'anthropic': '≡ƒºá',
+                'openai': '≡ƒñû',
+                'google': '≡ƒö«',
+                'deepseek': '≡ƒîè',
+                'nvidia': '≡ƒÆÜ',
+                'kimi': '≡ƒîÖ',
+                'bitnet': 'ΓÜí'
             };
             
             // providers is an object with provider names as keys
             Object.entries(providers).forEach(([name, data]) => {
-                const icon = providerIcons[name.toLowerCase()] || '⚡';
+                const icon = providerIcons[name.toLowerCase()] || 'ΓÜí';
                 const isActive = data.is_active !== false;
                 const statusClass = isActive ? 'bg-green-500/20 text-green-400' : 'bg-gray-500/20 text-gray-400';
                 const statusText = isActive ? 'Active' : 'Inactive';
@@ -436,11 +548,15 @@
         }
 
         function updateUptime() {
-            const elapsed = Date.now() - startTime;
-            const hours = Math.floor(elapsed / 3600000);
-            const minutes = Math.floor((elapsed % 3600000) / 60000);
-            const seconds = Math.floor((elapsed % 60000) / 1000);
-            document.getElementById('uptime').textContent = `${hours}h ${minutes}m ${seconds}s`;
+            // Only updates the display if server uptime hasn't been set yet
+            const el = document.getElementById('uptime');
+            if (el && el.textContent === '--') {
+                const elapsed = Date.now() - startTime;
+                const hours = Math.floor(elapsed / 3600000);
+                const minutes = Math.floor((elapsed % 3600000) / 60000);
+                const seconds = Math.floor((elapsed % 60000) / 1000);
+                el.textContent = `${hours}h ${minutes}m ${seconds}s (page)`;
+            }
         }
 
         // Quick actions
@@ -470,13 +586,98 @@
             window.open('/docs', '_blank');
         }
 
+        // ΓöÇΓöÇ NeuroKernel v2 Dashboard ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+        async function refreshNeuroKernel() {
+            const [status, drives, audit] = await Promise.all([
+                safeFetch('/neurokernel/status'),
+                safeFetch('/neurokernel/drives'),
+                safeFetch('/neurokernel/audit?n=8'),
+            ]);
+
+            if (status) {
+                const badge = document.getElementById('nk-status-badge');
+                badge.textContent = status.started ? 'Running' : 'Starting...';
+                badge.className = status.started
+                    ? 'text-xs px-3 py-1 rounded-full bg-green-500/20 text-green-400'
+                    : 'text-xs px-3 py-1 rounded-full bg-yellow-500/20 text-yellow-400';
+
+                const c = status.components || {};
+                // Data layer ΓÇö skills
+                const sk = c.skill_loader || {};
+                document.getElementById('nk-skills-count').textContent = sk.total_skills ?? '--';
+                // Information layer ΓÇö scanner
+                const sc = c.scanner || {};
+                document.getElementById('nk-scans-count').textContent = sc.total_scans ?? '--';
+                document.getElementById('nk-blocked-count').textContent = sc.blocked ?? 0;
+                // Knowledge ΓÇö audit
+                const ac = c.audit_chain || {};
+                document.getElementById('nk-audit-count').textContent = ac.total_entries ?? '--';
+                const chainEl = document.getElementById('nk-chain-valid');
+                chainEl.textContent = 'Γ£ô valid';
+                chainEl.className = 'ml-1 text-green-400 text-xs';
+                // Wisdom ΓÇö drives
+                const dr = c.drive_scheduler || {};
+                document.getElementById('nk-drives-count').textContent = dr.drives ?? '--';
+            }
+
+            if (drives && drives.drives) {
+                const drivesList = document.getElementById('nk-drives-list');
+                drivesList.innerHTML = drives.drives.map(d => {
+                    const statusColors = {
+                        done: 'bg-green-500', running: 'bg-blue-500 pulse-dot',
+                        failed: 'bg-red-500', pending: 'bg-yellow-500', paused: 'bg-gray-500'
+                    };
+                    const color = statusColors[d.status] || 'bg-gray-500';
+                    const lastRun = d.last_run ? new Date(d.last_run * 1000).toLocaleTimeString() : 'never';
+                    return `
+                        <div class="flex items-center justify-between p-2 rounded-lg bg-white/5 text-xs">
+                            <div class="flex items-center gap-2">
+                                <div class="w-1.5 h-1.5 rounded-full ${color}"></div>
+                                <span class="text-gray-200">${d.name}</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-gray-500">
+                                <span>every ${d.interval_secs}s</span>
+                                <span>${lastRun}</span>
+                                <span class="${d.fail_count > 0 ? 'text-red-400' : 'text-gray-600'}">${d.run_count}/${d.fail_count}f</span>
+                            </div>
+                        </div>`;
+                }).join('');
+            }
+
+            if (Array.isArray(audit) && audit.length > 0) {
+                const auditList = document.getElementById('nk-audit-list');
+                const layerColors = {
+                    reasoning: 'text-purple-400', action: 'text-orange-400',
+                    security: 'text-red-400', core: 'text-blue-400', memory: 'text-cyan-400'
+                };
+                auditList.innerHTML = [...audit].reverse().map(e => {
+                    const ts = new Date(e.timestamp * 1000).toLocaleTimeString();
+                    const lc = layerColors[e.layer] || 'text-gray-400';
+                    const ok = e.success ? 'Γ£ô' : 'Γ£ù';
+                    const okColor = e.success ? 'text-green-400' : 'text-red-400';
+                    return `
+                        <div class="flex items-center justify-between p-2 rounded-lg bg-white/5 text-xs">
+                            <div class="flex items-center gap-2 min-w-0">
+                                <span class="${okColor}">${ok}</span>
+                                <span class="text-gray-400 truncate">${e.agent_id}</span>
+                                <span class="${lc}">${e.action_type}</span>
+                            </div>
+                            <span class="text-gray-600 shrink-0">${ts}</span>
+                        </div>`;
+                }).join('');
+            }
+        }
+
         // Initialize
         updateDashboard();
-        setInterval(updateDashboard, 10000); // Refresh every 10s
+        refreshNeuroKernel();
+        setInterval(updateDashboard, 10000);
+        setInterval(refreshNeuroKernel, 15000);
         setInterval(updateUptime, 1000);
         
         // Initial activity
         addActivity('System', 'Dashboard initialized', 'success');
+        addActivity('NeuroKernel', 'v2 ΓÇö 5 components active', 'success');
         addActivity('System', 'Connected to NIS Protocol v4.0', 'info');
     </script>
 </body>

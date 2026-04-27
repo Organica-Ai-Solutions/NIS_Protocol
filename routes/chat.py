@@ -71,7 +71,9 @@ async def chat_simple(request: SimpleChatRequest):
         messages = [
             {
                 "role": "system", 
+
                 "content": "You are NIS Protocol v4.0, a robotics and edge-AI orchestration platform by Organica AI Solutions. You coordinate LLM providers, perception tools, physics validation, and robot-control workflows. Be helpful, accurate, and technically grounded."
+
             },
             {"role": "user", "content": request.message}
         ]
@@ -338,3 +340,4 @@ def set_dependencies(llm_provider=None, reflective_generator=None):
     """Set dependencies for the chat router"""
     router._llm_provider = llm_provider
     router._reflective_generator = reflective_generator
+

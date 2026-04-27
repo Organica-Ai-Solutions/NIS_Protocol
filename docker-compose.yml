@@ -71,12 +71,25 @@ services:
       # Service Discovery
       - REDIS_HOST=redis
       - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      # Organica AI Windows host services (reachable via host.docker.internal on Docker Desktop)
+      - ALPHACORTEX_URL=http://host.docker.internal:5000
+      - ARBITRAGE_URL=http://host.docker.internal:8000
+      - SMARTPORTFOLIO_URL=http://host.docker.internal:8002
+      - ORGANICA_URL=http://host.docker.internal:8900
+      - ORION_URL=http://host.docker.internal:8080
+      - INTERNAL_API_KEY=${INTERNAL_API_KEY:-}
+      # AWS S3 — NIS training bucket
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-}
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:-us-east-1}
     volumes:
       # Commenting out Google credentials mount that's causing issues
       # - ${APPDATA}/gcloud/application_default_credentials.json:/app/google-credentials.json:ro
       - ./configs/google-service-account.json:/app/service-account-key.json:ro
       - ./models:/home/nisuser/app/models
       - ./logs:/app/logs
+      # Live-mount routes so edits on host take effect after container restart (no rebuild needed)
+      - ./routes:/home/nisuser/app/routes
     depends_on:
       - redis
       - kafka

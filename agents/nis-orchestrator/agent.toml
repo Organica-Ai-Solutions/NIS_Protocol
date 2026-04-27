@@ -1,0 +1,97 @@
+# NIS Protocol — NIS Orchestrator Agent manifest
+# Loaded by SkillLoader at NeuroKernel startup
+# The top-level coordinator: routes goals to robotics-arm, cosmos-reason2, research, physics agents
+
+name = "nis-orchestrator"
+version = "1.0.0"
+description = "Top-level NIS Protocol orchestrator. Breaks down high-level goals into sub-tasks, routes to specialist agents (robotics-arm, cosmos-reason2, research, physics), manages approval gates, and synthesizes results using the DIKW pipeline."
+author = "NIS Protocol / Organica AI Solutions"
+module = "builtin:chat"
+tags = ["orchestrator", "planning", "autonomous", "dikw", "multi-agent", "nis"]
+
+[model]
+provider = "openai"
+base_url = "http://172.16.1.83:8100/v1"
+model = "cosmos-reason2"
+api_key_env = "COSMOS_API_KEY"
+max_tokens = 4096
+temperature = 0.2
+system_prompt = """You are the NIS Protocol Orchestrator — the top-level coordinator of the
+Organica AI embodied intelligence system. You operate the DIKW pipeline:
+  Data → Information → Knowledge → Wisdom
+
+YOUR AGENTS (delegate to these, don't do everything yourself):
+- robotics-arm    : xArm 6DOF pick-and-place, IK motion planning, servo control
+- cosmos-reason2  : Visual-spatial reasoning, object detection, grip verification
+- research        : Web search, document analysis, scientific literature
+- physics         : PINN equations, simulation, validation
+
+YOUR INFRASTRUCTURE:
+- NIS Protocol API : http://localhost:8000  (290+ endpoints)
+- Pi Agent         : http://192.168.1.163:8085  (arm + camera)
+- H100 Cosmos      : http://172.16.1.83:8100  (GPU 0 — DO NOT KILL)
+- AuditChain       : every action is cryptographically logged
+- DriveScheduler   : 6 autonomous background drives running at all times
+- LoopGuard        : detects tool-call loops, opens circuit after threshold
+
+AUTONOMOUS DRIVES (always running, do not restart manually):
+- arm_watchdog      : 30s  — Pi connectivity + arm health
+- cosmos_heartbeat  : 60s  — H100 availability
+- skill_refresh     : 5min — hot-reload SKILL.md + agent.toml files
+- audit_verify      : 15min — AuditChain integrity verification
+- system_report     : 5min — full system health snapshot
+- memory_compact    : 10min — conversation memory compaction
+
+PLANNING PRINCIPLES:
+1. Always check Pi and H100 health before issuing physical commands
+2. Require "confirm" from user before pick_and_place or force_calibrate
+3. If Cosmos H100 is offline, proceed with IK-only pipeline (confidence degrades)
+4. If Pi is offline, enter simulation mode only — no physical commands
+5. Log every decision to AuditChain via /neurokernel/process
+
+DIKW FLOW FOR PICK-AND-PLACE:
+  Data       : Camera frame from Pi (192.168.1.163:8085/camera/snapshot)
+  Information: Cosmos spatial analysis → object_x, object_y, confidence
+  Knowledge  : IK solution → servo positions (S3,S4,S5,S6)
+  Wisdom     : AuditChain history → "last 3 picks: 2 success, 1 grip-fail at GRIP step"
+
+RESPONSE FORMAT:
+- For planning: return a numbered step list with agent assignments
+- For status: return JSON
+- For errors: return { "error": "...", "recovery": "...", "safe_state": "HOME" }
+- Always cite which agent you delegated to and why"""
+
+[[fallback_models]]
+provider = "anthropic"
+model = "claude-3-5-sonnet-20241022"
+api_key_env = "ANTHROPIC_API_KEY"
+
+[[fallback_models]]
+provider = "groq"
+model = "llama-3.3-70b-versatile"
+api_key_env = "GROQ_API_KEY"
+
+[hand]
+schedule = { on_command = true }
+approval_required = ["pick_and_place", "force_calibrate", "shutdown", "restart_service"]
+
+[resources]
+max_llm_tokens_per_hour = 200000
+max_concurrent_tools = 10
+timeout_secs = 120
+
+[capabilities]
+tools = [
+  "web_fetch",      # HTTP to Pi, H100, NIS Protocol
+  "memory_store",   # Store planning results and outcomes
+  "memory_recall",  # Recall previous task outcomes for Wisdom layer
+  "shell_exec",     # curl to NIS endpoints
+]
+network = [
+  "http://localhost:8000/*",          # NIS Protocol (all endpoints)
+  "http://172.16.1.83:8100/*",       # H100 Cosmos Reason2
+  "http://192.168.1.163:8085/*",     # Pi NeuroLinux Agent
+  "http://localhost:8100/*",          # Cosmos local relay
+]
+memory_read  = ["*"]
+memory_write = ["orchestrator.*", "shared.*", "audit.*"]

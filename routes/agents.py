@@ -24,6 +24,9 @@ from pydantic import BaseModel, Field
 
 logger = logging.getLogger("nis.routes.agents")
 
+# Module-level agent registry (persists for lifetime of process)
+_REGISTRY: dict = {}
+
 # Create router
 router = APIRouter(prefix="/agents", tags=["Agents"])
 
@@ -44,10 +47,13 @@ def set_dependencies(learning_agent=None, planning_system=None, curiosity_engine
         _physics_agent = physics_agent
     if vision_agent:
         _vision_agent = vision_agent
+        router._vision_agent = vision_agent
     if research_agent:
         _research_agent = research_agent
+        router._research_agent = research_agent
     if reasoning_agent:
         _reasoning_agent = reasoning_agent
+        router._reasoning_agent = reasoning_agent
 
     # Set existing agents to router
     if learning_agent:
@@ -60,6 +66,23 @@ def set_dependencies(learning_agent=None, planning_system=None, curiosity_engine
         router._ethical_reasoner = ethical_reasoner
     if scenario_simulator:
         router._scenario_simulator = scenario_simulator
+
+    # Populate module-level _REGISTRY so /agents/status reflects real agents
+    global _REGISTRY
+    if learning_agent:
+        _REGISTRY["learning_agent"] = learning_agent
+    if vision_agent:
+        _REGISTRY["vision_agent"] = vision_agent
+    if research_agent:
+        _REGISTRY["research_agent"] = research_agent
+    if reasoning_agent:
+        _REGISTRY["reasoning_agent"] = reasoning_agent
+    if planning_system:
+        _REGISTRY["planning_system"] = planning_system
+    if curiosity_engine:
+        _REGISTRY["curiosity_engine"] = curiosity_engine
+    if physics_agent:
+        _REGISTRY["physics_agent"] = physics_agent
 
 
 # ====== Request Models ======
@@ -130,7 +153,7 @@ def get_scenario_simulator():
     return getattr(router, '_scenario_simulator', None)
 
 def get_agent_registry():
-    return getattr(router, '_agent_registry', {})
+    return _REGISTRY
 
 
 # ====== Specialized Agent Status Endpoints ======
@@ -574,17 +597,21 @@ async def create_agent(request: AgentCreateRequest):
     ➕ Create a new agent instance.
     """
     try:
-        agent_registry = get_agent_registry()
-        
-        # Agent creation logic would go here
+        if not hasattr(router, '_agent_registry'):
+            router._agent_registry = {}
         agent_id = f"{request.agent_type}_{request.name}"
-        
+        router._agent_registry[agent_id] = {
+            'type': request.agent_type,
+            'name': request.name,
+            'status': 'active',
+            'capabilities': [],
+        }
         return {
             "status": "success",
             "agent_id": agent_id,
             "agent_type": request.agent_type,
             "name": request.name,
-            "message": "Agent created successfully"
+            "message": "Agent created and registered"
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -614,28 +641,33 @@ async def list_agents():
 
 @router.get("/status")
 async def get_agents_status():
-    """
-    📊 Get status of all agents.
-    """
-    agent_registry = get_agent_registry()
-    
+    """Get status of all agents."""
+    combined = dict(get_agent_registry())
+    for name, agent in [
+        ("vision_agent",    getattr(router, "_vision_agent", _vision_agent)),
+        ("physics_agent",   _physics_agent),
+        ("research_agent",  getattr(router, "_research_agent", _research_agent)),
+        ("reasoning_agent", getattr(router, "_reasoning_agent", _reasoning_agent)),
+        ("learning_agent",  getattr(router, "_learning_agent", None)),
+        ("planning_system", getattr(router, "_planning_system", None)),
+        ("curiosity_engine", getattr(router, "_curiosity_engine", None)),
+    ]:
+        if agent is not None and name not in combined:
+            combined[name] = agent
+
     status = {
-        "total_agents": len(agent_registry),
-        "active_agents": len(agent_registry),
-        "agents": {}
+        "total_agents": len(combined),
+        "active_agents": len(combined),
+        "agents": {
+            aid: {
+                "type": type(a).__name__,
+                "status": "active",
+                "capabilities": getattr(a, "capabilities", []),
+            }
+            for aid, a in combined.items()
+        },
     }
-    
-    for agent_id, agent in agent_registry.items():
-        status["agents"][agent_id] = {
-            "type": type(agent).__name__,
-            "status": "active",
-            "capabilities": getattr(agent, 'capabilities', [])
-        }
-    
-    return {
-        "status": "success",
-        "agent_status": status
-    }
+    return {"status": "success", "agent_status": status}
 
 
 # ====== Dependency Injection Helper ======
