@@ -1,4 +1,4 @@
-# NIS Protocol v4.0
+# NIS Protocol v4.0.4
 
 **Multi-LLM Gateway & Physics-Validated Robotics Control**
 
@@ -66,3 +66,4 @@ Access the interactive API documentation at: [http://localhost:8000/docs](http:/
 ## License
 
 This project is licensed under the **Business Source License (BSL)**. It is free for research and educational purposes. Commercial licensing is available upon request.
+
