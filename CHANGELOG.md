@@ -1,5 +1,27 @@
 # NIS Protocol - Version History & Changelog
 
+## 🔥 Version 4.0.4 (2026-04-27) - "The Integration Release"
+
+### 🚀 Major Addition: NeuroKernel v2 & Edge Orchestration
+
+**ARCHITECTURE UPDATE: Multi-Modal AI OS (NeuroLinux + OpenClaw + H100)**
+
+#### 🔥 New Core Features
+- **NeuroKernel v2**: Complete overhaul of the core agent loop. Introduces \AuditChain\ (tamper-proof logs), \LoopGuard\ (SHA256 circuit breakers for autonomous loops), \DriveScheduler\ (autonomous scheduled drives), and \SkillLoader\ (hot-reloading knowledge injection).
+- **OpenClaw & xArm Robotics**: A brand new hardware integration layer for robotic arms. Features complete IK/FK solvers, real-time video calibration, servo deviation mapping, and dynamic trajectory planning.
+- **Edge Deployment Tools**: Introduced \dev/cookoff-pcbridge\ infrastructure. Contains 100+ deployment, auto-patching, diagnostics, and CLI tools for Raspberry Pi edge deployments and H100 GPU clusters.
+- **Heavy H100 Training Pipelines**: Added physics validation and multi-agent benchmarking scripts in \scripts/h100_heavy/\ for BitNet, Cosmos Reason2, GR00T, Isaac RL, and VLA model fine-tuning.
+- **DGX Cloud Readiness**: Added NVIDIA DGX Cloud integration, API contracts, benchmarking, and survey tools.
+- **Advanced Diagnostics**: Added extensive suite for debugging 500s, H100 endpoints, Transfer CLI, and hardware routes.
+
+#### 🛡 Security & Repository Hardening
+- **Deprecation of AGI Terminology**: Standardized terminology across the repository. Replaced ungrounded "AGI" and "Consciousness" references with deterministic system terms ("AI Orchestration", "Pipeline", "NeuroKernel").
+- **Cruft & Bloat Removal**: Deleted 500+ redundant JSON curl test files and duplicated requirements backups.
+- **Dependency Consolidation**: Reduced False-Positive GitHub Dependabot vulnerabilities from 467 down to 90 by enforcing a single, secure \equirements.txt\ file.
+- **Execution Sandboxing**: Hardened code execution endpoints (now gated by \ENABLE_CODE_EXECUTION\) and fallback local model states (gated by \ALLOW_MOCK_LLM\).
+- **Formatting Standards**: Enforced \utoflake\ across the codebase, removing unused variables, imports, and fixing line-ending artifacts.
+
+
 ## 🔥 Version 3.2.5 (2025-01-11) - "Hybrid Streaming Robotics Architecture"
 
 ### 🚀 Major Addition: Real-Time Streaming for Robotics Control
