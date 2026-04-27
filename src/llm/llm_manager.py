@@ -500,9 +500,20 @@ print("OK:" + str(config.get("model_type", "unknown")))
                         break
         
         if last_error:
-            logger.error(f"All providers failed. Last error: {last_error}, falling back to mock")
-        
-        # Mock response fallback
+            logger.error(f"All providers failed. Last error: {last_error}")
+
+        if os.getenv("ALLOW_MOCK_LLM", "false").lower() not in {"1", "true", "yes"}:
+            return {
+                "content": "No configured LLM provider is currently available. Configure an API key, enable BitNet, or set ALLOW_MOCK_LLM=true for local development only.",
+                "provider": provider,
+                "model": "unavailable",
+                "confidence": 0.0,
+                "real_ai": False,
+                "degraded": True,
+                "error": str(last_error) if last_error else "No provider available"
+            }
+
+        logger.warning("ALLOW_MOCK_LLM=true; returning local development mock response")
         return await self._generate_mock_response(
             messages,
             provider,

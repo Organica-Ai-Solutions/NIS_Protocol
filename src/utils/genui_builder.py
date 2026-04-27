@@ -66,26 +66,26 @@ def build_chat_response_genui(
     }
 
 
-def build_consciousness_status_genui(
+def build_pipeline_status_genui(
     status: str,
     phases_active: int,
     capabilities: List[str],
     metadata: Optional[Dict[str, Any]] = None
 ) -> Dict[str, Any]:
     """
-    Build GenUI response for consciousness status endpoints.
+    Build GenUI response for pipeline status endpoints.
     
-    Displays system consciousness status with phase indicators and capabilities.
+    Displays system pipeline status with phase indicators and capabilities.
     """
     return {
         "status": "success",
         "data": {
-            "consciousness_status": status,
+            "pipeline_status": status,
             "phases_active": phases_active,
             "capabilities": capabilities,
         },
         "genui": {
-            "type": "consciousness-status-dashboard",
+            "type": "pipeline-status-dashboard",
             "props": {
                 "status": status,
                 "phases_active": phases_active,
@@ -95,28 +95,28 @@ def build_consciousness_status_genui(
                 {
                     "id": "evolve",
                     "label": "Trigger Evolution",
-                    "endpoint": "/v4/consciousness/evolve",
+                    "endpoint": "/v4/pipeline/evolve",
                     "method": "POST",
                     "payload": {"reason": "user_triggered"}
                 },
                 {
                     "id": "genesis",
                     "label": "Create Agent",
-                    "endpoint": "/v4/consciousness/genesis",
+                    "endpoint": "/v4/pipeline/genesis",
                     "method": "POST",
                     "payload": {"capability": "specialized"}
                 },
                 {
                     "id": "refresh",
                     "label": "Refresh Status",
-                    "endpoint": "/v4/consciousness/status",
+                    "endpoint": "/v4/pipeline/status",
                     "method": "GET",
                 }
             ]
         },
         "metadata": {
             "timestamp": time.time(),
-            "agent": "consciousness_service"
+            "agent": "pipeline_service"
         }
     }
 
@@ -290,3 +290,4 @@ def build_error_response_genui(
             "agent": "error_handler"
         }
     }
+

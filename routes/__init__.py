@@ -21,7 +21,7 @@ Modules:
 - protocols.py: MCP, A2A, ACP protocol integrations (22 endpoints)
 - vision.py: Image analysis, generation, visualization (12 endpoints)
 - reasoning.py: Collaborative reasoning, debate (3 endpoints)
-- consciousness.py: V4.0 evolution, genesis, collective, embodiment (28 endpoints)
+- pipeline.py: V4.0 evolution, genesis, collective, embodiment (28 endpoints)
 - system.py: Configuration, state, edge AI, brain orchestration (18 endpoints)
 - nvidia.py: NVIDIA Inception, NeMo, enterprise features (8 endpoints)
 - auth.py: Authentication, user management, API keys (11 endpoints)
@@ -68,7 +68,7 @@ MIGRATION STATUS:
 - [x] protocols.py - Ready for testing (22 endpoints)
 - [x] vision.py - Ready for testing (12 endpoints)
 - [x] reasoning.py - Ready for testing (3 endpoints)
-- [x] consciousness.py - Ready for testing (28 endpoints)
+- [x] pipeline.py - Ready for testing (28 endpoints)
 - [x] system.py - Ready for testing (18 endpoints)
 - [x] nvidia.py - Ready for testing (8 endpoints)
 - [x] auth.py - Ready for testing (11 endpoints)
@@ -98,6 +98,8 @@ from .protocols import router as protocols_router, set_dependencies as set_proto
 from .vision import router as vision_router, set_dependencies as set_vision_dependencies
 from .reasoning import router as reasoning_router, set_dependencies as set_reasoning_dependencies
 from .consciousness import router as consciousness_router, set_dependencies as set_consciousness_dependencies
+pipeline_router = consciousness_router
+set_pipeline_dependencies = set_consciousness_dependencies
 from .system import router as system_router, set_dependencies as set_system_dependencies
 from .nvidia import router as nvidia_router, set_dependencies as set_nvidia_dependencies
 from .auth import router as auth_router, set_dependencies as set_auth_dependencies
@@ -134,6 +136,7 @@ __all__ = [
     "vision_router",
     "reasoning_router",
     "consciousness_router",
+    "pipeline_router",
     "system_router",
     "nvidia_router",
     "auth_router",
@@ -157,6 +160,7 @@ __all__ = [
     "set_vision_dependencies",
     "set_reasoning_dependencies",
     "set_consciousness_dependencies",
+    "set_pipeline_dependencies",
     "set_system_dependencies",
     "set_nvidia_dependencies",
     "set_auth_dependencies",
@@ -170,3 +174,4 @@ __all__ = [
     "trigger_webhooks",
     "get_webhooks",
 ]
+

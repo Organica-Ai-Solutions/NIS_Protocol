@@ -11,7 +11,8 @@ class NISLayer(Enum):
     SIGNAL_PROCESSING = "signal_processing"  # Data transformation and analysis
     REASONING = "reasoning"  # Logical inference and decision-making
     PHYSICS = "physics"  # Physics-informed validation and simulation
-    CONSCIOUSNESS = "consciousness"  # Meta-cognition and self-awareness
+    pipeline = "pipeline"  # Meta-cognition and self-awareness
     LEARNING = "learning"  # Adaptation and model training
     INTERPRETATION = "interpretation"  # Semantic understanding of data
     META = "meta"  # System-level coordination and orchestration 
+

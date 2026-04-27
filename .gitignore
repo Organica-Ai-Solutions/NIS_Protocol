@@ -194,3 +194,10 @@ test_ddg.py
 backend_logs.txt
 FLUTTER_DEMO_INSTRUCTIONS 2.json
 configs/google-service-account.json
+
+# Local development artifacts
+.continue/
+.env.*
+data/*.db
+docs/arm_docs/
+*.zip

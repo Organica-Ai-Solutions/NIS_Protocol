@@ -53,7 +53,7 @@
 ## 🌟 **Key Features**
 
 ### **🎭 Multi-Agent Voice System**
-- **4 Distinct Agent Voices** - Consciousness, Physics, Research, Coordination
+- **4 Distinct Agent Voices** - pipeline, Physics, Research, Coordination
 - **Real-Time Voice Switching** - Dynamic speaker changes mid-conversation
 - **Long-Form Generation** - Up to 90 minutes of continuous conversation
 - **Enterprise-Grade Quality** - 24kHz broadcast quality audio
@@ -65,7 +65,7 @@
 - **Concurrent Sessions** - Support for multiple simultaneous voice chats
 
 ### **🧠 Deep NIS Integration**
-- **Consciousness Vocalization** - Speak system awareness and cognitive state
+- **pipeline Vocalization** - Speak system awareness and cognitive state
 - **Physics Explanations** - Narrate validation results with technical accuracy
 - **Research Narration** - Voice presentation of research findings
 - **Agent Coordination** - Multi-agent conversations with distinct voices
@@ -79,8 +79,8 @@
 curl -X POST http://localhost:8000/communication/synthesize \
   -H "Content-Type: application/json" \
   -d '{
-    "text": "Hello from the NIS Protocol consciousness agent",
-    "speaker": "consciousness",
+    "text": "Hello from the NIS Protocol Pipeline Agent",
+    "speaker": "pipeline",
     "emotion": "thoughtful"
   }'
 ```
@@ -91,7 +91,7 @@ curl -X POST http://localhost:8000/communication/agent_dialogue \
   -H "Content-Type: application/json" \
   -d '{
     "agents_content": {
-      "consciousness": "System awareness at 94.2%",
+      "pipeline": "System awareness at 94.2%",
       "physics": "Energy conservation validated",
       "research": "15 research papers analyzed"
     }
@@ -161,8 +161,9 @@ ws.onmessage = (event) => {
 ### **Future Roadmap**
 - **v3.2.2**: Custom voice training, multi-language support
 - **v4.0**: Neural voice cloning, spatial audio, AR/VR integration
-- **v5.0**: Quantum-enhanced processing, consciousness-driven personalities
+- **v5.0**: Quantum-enhanced processing, pipeline-driven personalities
 
 ---
 
 **🎙️ Welcome to the future of voice-enabled AI interaction with the NIS Protocol voice conversation system!**
+

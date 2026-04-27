@@ -6,17 +6,17 @@ This directory contains a collection of examples that demonstrate the various fe
 
 To run the examples, you will need to have the NIS Protocol application running. If you have not already done so, please follow the instructions in the [Getting Started guide](../getting_started/README.md) to set up and start the application.
 
-Once the application is running, you can run the examples by executing the corresponding Python script. For example, to run the `agi_evolution_demo.py` example, you would run the following command from the root of the project:
+Once the application is running, you can run the examples by executing the corresponding Python script. For example, to run the `AI_evolution_demo.py` example, you would run the following command from the root of the project:
 
 ```sh
-python dev/examples/agi_evolution_demo.py
+python dev/examples/AI_evolution_demo.py
 ```
 
 ## Available Examples
 
 The following is a list of the available examples and a brief description of what they demonstrate:
 
-*   **`agi_evolution_demo.py`**: A demonstration of the AGI evolution capabilities of the NIS Protocol.
+*   **`AI_evolution_demo.py`**: A demonstration of the AI evolution capabilities of the NIS Protocol.
 *   **`basic_agent_communication`**: A collection of examples that demonstrate basic communication between agents.
 *   **`cognitive_orchestra_demo.py`**: A demonstration of the cognitive orchestra, which is responsible for coordinating the various cognitive functions of the system.
 *   **`cognitive_system_demo.py`**: A demonstration of the cognitive system as a whole.
@@ -33,13 +33,13 @@ The following is a list of the available examples and a brief description of wha
 *   **`data_flow_walkthrough.py`**: A walkthrough of the data flow within the system.
 *   **`data_flow_analysis.py`**: An analysis of the data flow within the system.
 *   **`comprehensive_drl_integration_demo.py`**: A comprehensive demonstration of the DRL integration.
-*   **`complete_agi_foundation_demo.py`**: A complete demonstration of the AGI foundation.
+*   **`complete_AI_foundation_demo.py`**: A complete demonstration of the AI Robotics Foundation.
 *   **`test_simulation_week3_4.py`**: A test of the simulation capabilities of the system.
 *   **`test_first_contact_golden_egg.py`**: A test of the first contact protocol.
 *   **`test_simulation_direct.py`**: A direct test of the simulation capabilities.
-*   **`test_core_agi_minimal.py`**: A minimal test of the core AGI capabilities.
+*   **`test_core_AI_minimal.py`**: A minimal test of the core AI orchestration capabilities.
 *   **`test_direct_imports.py`**: A test of the direct imports.
-*   **`test_agi_v2_implementation.py`**: A test of the AGI v2 implementation.
+*   **`test_AI_v2_implementation.py`**: A test of the AI v2 implementation.
 *   **`simple_provider_test.py`**: A simple test of the provider system.
 *   **`tech_stack_integration_demo.py`**: A demonstration of the tech stack integration.
 *   **`llm_agents_demo.py`**: A demonstration of the LLM agents.

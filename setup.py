@@ -143,9 +143,9 @@ setup(
         "Topic :: System :: Distributed Computing",
     ],
     keywords=[
-        "ai", "agi", "multi-agent", "autonomous", "llm", "machine-learning",
+        "ai", "multi-agent", "autonomous", "llm", "machine-learning",
         "physics-informed", "kan", "pinn", "neuro-inspired", "langchain",
-        "langgraph", "cognitive-architecture", "consciousness", "reasoning",
+        "langgraph", "agent-orchestration", "reasoning",
         "drone", "robotics", "edge-ai", "autonomous-systems"
     ],
     include_package_data=True,

@@ -51,6 +51,7 @@ def set_dependencies(consciousness_service=None, conversation_memory=None):
 
 # ====== General Status Endpoint ======
 
+@router.get("/pipeline/status")
 @router.get("/consciousness/status")
 async def get_consciousness_status():
     """
@@ -63,7 +64,7 @@ async def get_consciousness_status():
     if consciousness_service is None:
         return {
             "status": "initializing",
-            "message": "Consciousness service not yet initialized",
+            "message": "Pipeline validation service not yet initialized",
             "phases_active": 0,
             "timestamp": time.time()
         }
@@ -81,7 +82,7 @@ async def get_consciousness_status():
             "capabilities": [
                 "self_evolution",
                 "agent_genesis",
-                "collective_consciousness",
+                "distributed_coordination",
                 "autonomous_planning",
                 "ethical_reasoning",
                 "physical_embodiment"
@@ -94,6 +95,7 @@ async def get_consciousness_status():
 
 # ====== Evolution Endpoints ======
 
+@router.post("/pipeline/evolve")
 @router.post("/consciousness/evolve")
 async def trigger_consciousness_evolution(reason: str = "manual_trigger"):
     """
@@ -132,6 +134,7 @@ async def trigger_consciousness_evolution(reason: str = "manual_trigger"):
         raise HTTPException(status_code=500, detail=f"Evolution failed: {str(e)}")
 
 
+@router.get("/pipeline/evolution/history")
 @router.get("/consciousness/evolution/history")
 async def get_evolution_history():
     """
@@ -160,6 +163,7 @@ async def get_evolution_history():
         raise HTTPException(status_code=500, detail=f"Failed to get evolution history: {str(e)}")
 
 
+@router.get("/pipeline/performance")
 @router.get("/consciousness/performance")
 async def get_performance_trend():
     """
@@ -194,6 +198,7 @@ async def get_performance_trend():
 
 # ====== Agent Genesis Endpoints ======
 
+@router.post("/pipeline/genesis")
 @router.post("/consciousness/genesis")
 async def create_dynamic_agent(request: Dict[str, Any]):
     """
@@ -247,6 +252,7 @@ async def create_dynamic_agent(request: Dict[str, Any]):
         raise HTTPException(status_code=500, detail=f"Agent genesis failed: {str(e)}")
 
 
+@router.get("/pipeline/genesis/history")
 @router.get("/consciousness/genesis/history")
 async def get_genesis_history():
     """
@@ -276,7 +282,7 @@ async def get_genesis_history():
 # ====== Collective Consciousness Endpoints ======
 
 @router.post("/consciousness/collective")
-async def collective_consciousness(request: Dict[str, Any]):
+async def distributed_coordination(request: Dict[str, Any]):
     """Collective consciousness decision making"""
     try:
         consciousness_service = get_consciousness_service()
@@ -338,7 +344,7 @@ async def register_consciousness_peer(peer_id: str, peer_endpoint: str):
 
 
 @router.post("/consciousness/collective/decide")
-async def collective_consciousness_decision(request: Dict[str, Any]):
+async def distributed_coordination_decision(request: Dict[str, Any]):
     """
     🧠 V4.0: Make collective decision across multiple instances
     
@@ -371,6 +377,7 @@ async def collective_consciousness_decision(request: Dict[str, Any]):
         raise HTTPException(status_code=500, detail=f"Collective decision failed: {str(e)}")
 
 
+@router.post("/pipeline/multipath")
 @router.post("/consciousness/multipath")
 async def multipath_reasoning(request: Dict[str, Any]):
     """Multi-path reasoning analysis"""
@@ -443,6 +450,7 @@ async def physical_embodiment(request: Dict[str, Any]):
         logger.error(f"Embodiment action failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@router.post("/pipeline/ethics")
 @router.post("/consciousness/ethics")
 async def ethical_evaluation(request: Dict[str, Any]):
     """Ethical evaluation of actions"""
@@ -509,7 +517,7 @@ async def sync_consciousness_state():
 
 
 @router.get("/consciousness/collective/status")
-async def get_collective_consciousness_status():
+async def get_distributed_coordination_status():
     """
     📊 V4.0: Get distributed consciousness network status
     """
@@ -536,6 +544,7 @@ async def get_collective_consciousness_status():
 
 # ====== Autonomous Planning Endpoints ======
 
+@router.post("/pipeline/plan")
 @router.post("/consciousness/plan")
 async def create_autonomous_plan(request: Dict[str, Any]):
     """
@@ -583,6 +592,7 @@ async def create_autonomous_plan(request: Dict[str, Any]):
         raise HTTPException(status_code=500, detail=f"Planning failed: {str(e)}")
 
 
+@router.get("/pipeline/plan/status")
 @router.get("/consciousness/plan/status")
 async def get_planning_status():
     """
@@ -939,6 +949,7 @@ async def execute_embodied_action(request: Dict[str, Any]):
         raise HTTPException(status_code=500, detail=f"Embodied action execution failed: {str(e)}")
 
 
+@router.get("/pipeline/embodiment/status")
 @router.get("/consciousness/embodiment/status")
 async def get_embodiment_status():
     """Get current embodiment status"""
@@ -1271,3 +1282,5 @@ def set_dependencies(
     router._consciousness_service = consciousness_service
     router._conversation_memory = conversation_memory or {}
     router._server_start_time = server_start_time or time.time()
+
+

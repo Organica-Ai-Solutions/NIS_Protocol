@@ -10,16 +10,16 @@ Quick Start
 .. code-block:: python
 
     from nis_protocol import NISAgent, NISPlatform
-    from nis_protocol.agents import ConsciousnessAgent, PhysicsAgent
+    from nis_protocol.agents import PipelineAgent, PhysicsAgent
     
     # Create a platform instance
     platform = NISPlatform()
     
     # Add agents to your system
-    consciousness = ConsciousnessAgent("consciousness_001")
+    pipeline = PipelineAgent("pipeline_001")
     physics = PhysicsAgent("physics_validator")
     
-    platform.add_agent(consciousness)
+    platform.add_agent(pipeline)
     platform.add_agent(physics)
     
     # Deploy to edge device
@@ -198,7 +198,7 @@ def health_check():
     }
     
     # Check core agents
-    health["core_agents"]["consciousness"] = ConsciousnessAgent is not None
+    health["core_agents"]["pipeline"] = ConsciousnessAgent is not None
     health["core_agents"]["physics"] = PhysicsAgent is not None
     health["core_agents"]["reasoning"] = ReasoningAgent is not None
     health["core_agents"]["memory"] = MemoryAgent is not None
@@ -233,7 +233,7 @@ def platform_info():
         "capabilities": {
             "edge_deployment": True,
             "physics_validation": True,
-            "consciousness_modeling": True,
+            "pipeline_validation": True,
             "multi_agent_coordination": True,
             "protocol_integration": True,
             "hybrid_intelligence": True,
@@ -289,3 +289,4 @@ if "dev" in __version__ or "alpha" in __version__ or "beta" in __version__:
         UserWarning,
         stacklevel=2
     )
+
