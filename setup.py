@@ -35,10 +35,10 @@ setup(
     python_requires=">=3.10",
     install_requires=[
         # Core dependencies
-        "fastapi>=0.110.0",
-        "uvicorn[standard]>=0.27.0",
-        "pydantic>=2.6.0",
-        "python-multipart>=0.0.9",
+        "fastapi>=0.115.0",
+        "uvicorn[standard]>=0.30.0",
+        "pydantic>=2.7.0",
+        "python-multipart>=0.0.18",
         
         # LLM Providers
         "openai>=1.12.0",
@@ -51,8 +51,8 @@ setup(
         "scipy>=1.12.0",
         
         # LangChain & LangGraph
-        "langchain>=0.1.9",
-        "langchain-core>=0.1.27",
+        "langchain>=0.3.0",
+        "langchain-core>=0.3.0",
         "langgraph>=0.0.20",
         "langsmith>=0.1.0",
         
@@ -64,9 +64,9 @@ setup(
         "pydub>=0.25.1",
         
         # Web & APIs
-        "requests>=2.31.0",
+        "requests>=2.32.3",
         "beautifulsoup4>=4.12.0",
-        "aiohttp>=3.9.0",
+        "aiohttp>=3.11.0",
         
         # Data & Storage
         "redis>=5.0.0",
@@ -92,12 +92,12 @@ setup(
         # Full installation with all optional features
         "full": [
             "suno-bark>=0.1.0",  # Bark TTS
-            "transformers>=4.37.0",  # Hugging Face models
+            "transformers>=4.50.0",  # Hugging Face models
             "einops>=0.7.0",
             "encodec>=0.1.1",
             "nltk>=3.8.1",
             "boto3>=1.34.0",  # AWS integration
-            "pillow>=10.2.0",  # Image processing
+            "pillow>=10.4.0",  # Image processing
             "matplotlib>=3.8.0",  # Visualization
             "pandas>=2.2.0",  # Data analysis
         ],
@@ -151,3 +151,5 @@ setup(
     include_package_data=True,
     zip_safe=False,
 )
+
+
