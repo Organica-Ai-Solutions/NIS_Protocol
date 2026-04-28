@@ -12,7 +12,7 @@ NIS Protocol is a high-performance FastAPI orchestration shell designed to bridg
 
 - **Multi-LLM Gateway:** Unified API routing across Anthropic, OpenAI, Google, DeepSeek, NVIDIA NIM, and local offline models (BitNet).
 - **Physics Validation:** Built-in PINN solvers, KAN, and Laplace transforms to validate generated trajectories and constraints against real-world physics.
-- **Robotics Control:** Forward and Inverse Kinematics (FK/IK) solvers, trajectory planning, and direct hardware integration for the Hiwonder xArm 1S.
+- **Robotics Control:** Forward and Inverse Kinematics (FK/IK) solvers, trajectory planning, and direct hardware integration for the Hiwonder xArm 1S (via OpenClaw).
 - **Multimodal Workflows:** Live vision processing (YOLOv8, Grounding DINO) and real-time voice (TTS/STT) via WebSockets.
 - **Modular Architecture:** Clean dependency injection, modular FastAPI routers, and robust error handling designed for edge deployments (e.g., Raspberry Pi 5).
 
@@ -29,13 +29,8 @@ The system operates as a FastAPI monolith coordinating specialized modules:
 
 ## Quick Start
 
-### Prerequisites
-- Python 3.8+
-- Optional: NVIDIA GPU for local Cosmos/YOLO acceleration
-
-### Installation
-
 `ash
+# Clone the repository
 git clone https://github.com/Organica-Ai-Solutions/NIS_Protocol.git
 cd NIS_Protocol
 
@@ -46,26 +41,28 @@ venv\Scripts\activate
 # Linux/Mac:
 # source venv/bin/activate
 
-# Install dependencies
+# Install dependencies (Includes recent CVE security fixes)
 pip install -r requirements.txt
 `
 
 ### Running the Server
 
-For edge deployment (Raspberry Pi):
+For edge deployment (Raspberry Pi / NeuroLinux):
 `ash
 python main_pi.py
 `
 
-For full desktop/server deployment:
+For full desktop/server deployment (H100/DGX):
 `ash
 python main.py
 `
 
 Access the interactive API documentation at: [http://localhost:8000/docs](http://localhost:8000/docs)
 
+## Version 4.0.4 - The Integration Release
+
+The latest release introduces **NeuroKernel v2**, the **OpenClaw** robotic integration, and extensive edge deployment tools for controlling Raspberry Pi devices and H100 GPU clusters natively. The underlying system has been completely restructured to remove undocumented dependencies and "AGI" terminology in favor of hardened, deterministic orchestration pipelines.
+
 ## License
 
 This project is licensed under the **Business Source License (BSL)**. It is free for research and educational purposes. Commercial licensing is available upon request.
-
-
